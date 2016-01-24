@@ -3197,15 +3197,12 @@
   QUnit.module('lodash.countBy');
 
   (function() {
-    var array = [4.2, 6.1, 6.4];
+    var array = [6.1, 4.2, 6.3];
 
-    QUnit.test('should work with an iteratee', function(assert) {
+    QUnit.test('should transform keys by `iteratee`', function(assert) {
       assert.expect(1);
 
-      var actual = _.countBy(array, function(num) {
-        return Math.floor(num);
-      }, Math);
-
+      var actual = _.countBy(array, Math.floor);
       assert.deepEqual(actual, { '4': 1, '6': 2 });
     });
 
@@ -3233,7 +3230,7 @@
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.countBy([4.2, 6.1, 6.4], function(num) {
+      var actual = _.countBy(array, function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
@@ -3257,7 +3254,7 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.countBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
+      var actual = _.countBy({ 'a': 6.1, 'b': 4.2, 'c': 6.3 }, function(num) {
         return Math.floor(num);
       });
 
@@ -6466,12 +6463,19 @@
   QUnit.module('lodash.groupBy');
 
   (function() {
-    var array = [4.2, 6.1, 6.4];
+    var array = [6.1, 4.2, 6.3];
+
+    QUnit.test('should transform keys by `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var actual = _.groupBy(array, Math.floor);
+      assert.deepEqual(actual, { '4': [4.2], '6': [6.1, 6.3] });
+    });
 
     QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
       assert.expect(1);
 
-      var array = [4, 6, 6],
+      var array = [6, 4, 6],
           values = [, null, undefined],
           expected = lodashStable.map(values, lodashStable.constant({ '4': [4], '6':  [6, 6] }));
 
@@ -6492,12 +6496,12 @@
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.groupBy([4.2, 6.1, 6.4], function(num) {
+      var actual = _.groupBy(array, function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
       assert.deepEqual(actual.constructor, [4.2]);
-      assert.deepEqual(actual.hasOwnProperty, [6.1, 6.4]);
+      assert.deepEqual(actual.hasOwnProperty, [6.1, 6.3]);
     });
 
     QUnit.test('should work with a number for `iteratee`', function(assert) {
@@ -6516,11 +6520,8 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.groupBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      assert.deepEqual(actual, { '4': [4.2], '6': [6.1, 6.4] });
+      var actual = _.groupBy({ 'a': 6.1, 'b': 4.2, 'c': 6.3 }, Math.floor);
+      assert.deepEqual(actual, { '4': [4.2], '6': [6.1, 6.3] });
     });
 
     QUnit.test('should work in a lazy sequence', function(assert) {
@@ -7401,6 +7402,61 @@
       else {
         skipTest(assert, 2);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.invertBy');
+
+  (function() {
+    var object = { 'a': 1, 'b': 2, 'c': 1 };
+
+    QUnit.test('should transform keys by `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var expected = { 'group1': ['a', 'c'], 'group2': ['b'] };
+
+      var actual = _.invertBy(object, function(value) {
+        return 'group' + value;
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant({ '1': ['a', 'c'], '2': ['b'] }));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.invertBy(object, value) : _.invertBy(object);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant({ '1': ['a', 'c'], '2': ['b'] }));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.invertBy(object, value) : _.invertBy(object);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should only add multiple values to own, not inherited, properties', function(assert) {
+      assert.expect(1);
+
+      var expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] },
+          object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
+
+      assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
     });
   }());
 
@@ -11227,6 +11283,23 @@
   QUnit.module('lodash.keyBy');
 
   (function() {
+    var array = [
+      { 'dir': 'left', 'code': 97 },
+      { 'dir': 'right', 'code': 100 }
+    ];
+
+    QUnit.test('should transform keys by `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var expected = { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } };
+
+      var actual = _.keyBy(array, function(object) {
+        return String.fromCharCode(object.code);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
       assert.expect(1);
 
@@ -11244,19 +11317,21 @@
     QUnit.test('should work with a "_.property" style `iteratee`', function(assert) {
       assert.expect(1);
 
-      var actual = _.keyBy(['one', 'two', 'three'], 'length');
-      assert.deepEqual(actual, { '3': 'two', '5': 'three' });
+      var expected = { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } },
+          actual = _.keyBy(array, 'dir');
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.keyBy([4.2, 6.1, 6.4], function(num) {
+      var actual = _.keyBy([6.1, 4.2, 6.3], function(num) {
         return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
       assert.deepEqual(actual.constructor, 4.2);
-      assert.deepEqual(actual.hasOwnProperty, 6.4);
+      assert.deepEqual(actual.hasOwnProperty, 6.3);
     });
 
     QUnit.test('should work with a number for `iteratee`', function(assert) {
@@ -11275,11 +11350,8 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.keyBy({ 'a': 4.2, 'b': 6.1, 'c': 6.4 }, function(num) {
-        return Math.floor(num);
-      });
-
-      assert.deepEqual(actual, { '4': 4.2, '6': 6.4 });
+      var actual = _.keyBy({ 'a': 6.1, 'b': 4.2, 'c': 6.3 }, Math.floor);
+      assert.deepEqual(actual, { '4': 4.2, '6': 6.3 });
     });
 
     QUnit.test('should work in a lazy sequence', function(assert) {
@@ -15393,7 +15465,7 @@
   (function() {
     var array = [1, 0, 1];
 
-    QUnit.test('should return two groups of elements', function(assert) {
+    QUnit.test('should split elements into two groups by `predicate`', function(assert) {
       assert.expect(3);
 
       assert.deepEqual(_.partition([], identity), [[], []]);
@@ -15439,10 +15511,7 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.partition({ 'a': 1.1, 'b': 0.2, 'c': 1.3 }, function(num) {
-        return Math.floor(num);
-      });
-
+      var actual = _.partition({ 'a': 1.1, 'b': 0.2, 'c': 1.3 }, Math.floor);
       assert.deepEqual(actual, [[1.1, 1.3], [0.2]]);
     });
   }());
@@ -18068,7 +18137,7 @@
       { 'a': 'y', 'b': 2 }
     ];
 
-    QUnit.test('should sort in ascending order', function(assert) {
+    QUnit.test('should sort in ascending order by `iteratee`', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(_.sortBy(objects, function(object) {
@@ -18102,10 +18171,7 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.sortBy({ 'a': 1, 'b': 2, 'c': 3 }, function(num) {
-        return Math.sin(num);
-      });
-
+      var actual = _.sortBy({ 'a': 1, 'b': 2, 'c': 3 }, Math.sin);
       assert.deepEqual(actual, [3, 1, 2]);
     });
 
@@ -23353,7 +23419,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(288);
+      assert.expect(289);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

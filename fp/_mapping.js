@@ -75,9 +75,9 @@ module.exports = {
   'aryMethod': {
     1:[
         'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
-        'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over', 'overEvery',
-        'overSome', 'rest', 'reverse', 'round', 'runInContext', 'template', 'trim',
-        'trimEnd', 'trimStart', 'uniqueId', 'words'
+        'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
+        'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
+        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
       ],
     2:[
         'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
@@ -88,12 +88,12 @@ module.exports = {
         'findLast', 'findLastIndex', 'findLastKey', 'flatMap', 'forEach',
         'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get',
         'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
-        'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf',
-        'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty', 'maxBy',
-        'merge', 'minBy', 'omit', 'omitBy', 'orderBy', 'overArgs', 'pad', 'padEnd',
-        'padStart', 'parseInt', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
-        'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
-        'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
+        'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy',
+        'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty',
+        'maxBy', 'merge', 'minBy', 'omit', 'omitBy', 'orderBy', 'overArgs', 'pad',
+        'padEnd', 'padStart', 'parseInt', 'partition', 'pick', 'pickBy', 'pull',
+        'pullAll', 'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject',
+        'remove', 'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
         'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
         'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
         'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',

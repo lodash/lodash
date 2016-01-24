@@ -11,8 +11,8 @@ module.exports = {
     'flowRight': ['compose'],
     'forEach': ['each'],
     'forEachRight': ['eachRight'],
-    'get': ['path', 'prop'],
-    'getOr': ['pathOr', 'propOr'],
+    'get': ['path'],
+    'getOr': ['pathOr'],
     'head': ['first'],
     'includes': ['contains'],
     'initial': ['init'],
@@ -24,6 +24,7 @@ module.exports = {
     'overEvery': ['allPass'],
     'overSome': ['somePass'],
     'pick': ['pickAll'],
+    'property': ['get'],
     'propertyOf': ['propOf'],
     'rest': ['unapply'],
     'some': ['all'],
@@ -77,7 +78,7 @@ module.exports = {
         'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
         'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
         'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
-        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
+        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'unset', 'words'
       ],
     2:[
         'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
@@ -90,42 +91,35 @@ module.exports = {
         'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
         'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf',
         'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty', 'maxBy',
-        'merge', 'minBy', 'omit', 'omitBy', 'orderBy', 'overArgs', 'pad', 'padEnd',
-        'padStart', 'parseInt', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
-        'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
-        'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
-        'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
-        'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
-        'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject'
+        'mean', 'merge', 'minBy', 'omit', 'orderBy', 'overArgs', 'pad', 'padEnd',
+        'padStart', 'parseInt', 'partition', 'pick', 'pull', 'pullAll', 'pullAt',
+        'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat',
+        'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf',
+        'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy', 'split', 'startsWith',
+        'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile', 'takeWhile',
+        'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy', 'uniqWith',
+        'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
       ],
     3:[
         'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
         'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-        'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce', 'reduceRight', 'replace',
-        'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
-        'unionWith', 'xorBy', 'xorWith', 'zipWith'
+        'isMatchWith', 'mergeWith', 'omitBy', 'pickBy', 'pullAllBy', 'reduce',
+        'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
+        'transform', 'unionBy', 'unionWith', 'xorBy', 'xorWith', 'zipWith'
       ],
     4:[
         'fill', 'setWith'
       ]
   },
 
-  /** Used to map ary to rearg configs. */
+  /** Used to map ary to rearg configs by method ary. */
   'aryRearg': {
     2: [1, 0],
     3: [2, 1, 0],
     4: [3, 2, 0, 1]
   },
 
-  /** Used to map method names to iteratee rearg configs. */
-  'iterateeRearg': {
-    'findKey': [1],
-    'findLastKey': [1],
-    'mapKeys': [1]
-  },
-
-  /** Used to map method names to rearg configs. */
+  /** Used to map ary to rearg configs by method names. */
   'methodRearg': {
     'clamp': [2, 0, 1],
     'reduce': [2, 0, 1],
@@ -187,7 +181,6 @@ module.exports = {
   'skipRearg': {
     'assign': true,
     'assignIn': true,
-    'concat': true,
     'defaults': true,
     'defaultsDeep': true,
     'difference': true,

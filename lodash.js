@@ -603,14 +603,14 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+   * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
    * @returns {*} Returns the accumulated value.
    */
-  function arrayReduce(array, iteratee, accumulator, initFromArray) {
+  function arrayReduce(array, iteratee, accumulator, initAccum) {
     var index = -1,
         length = array.length;
 
-    if (initFromArray && length) {
+    if (initAccum && length) {
       accumulator = array[++index];
     }
     while (++index < length) {
@@ -627,12 +627,12 @@
    * @param {Array} array The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
-   * @param {boolean} [initFromArray] Specify using the last element of `array` as the initial value.
+   * @param {boolean} [initAccum] Specify using the last element of `array` as the initial value.
    * @returns {*} Returns the accumulated value.
    */
-  function arrayReduceRight(array, iteratee, accumulator, initFromArray) {
+  function arrayReduceRight(array, iteratee, accumulator, initAccum) {
     var length = array.length;
-    if (initFromArray && length) {
+    if (initAccum && length) {
       accumulator = array[--length];
     }
     while (length--) {
@@ -768,14 +768,14 @@
    * @param {Array|Object} collection The collection to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} accumulator The initial value.
-   * @param {boolean} initFromCollection Specify using the first or last element of `collection` as the initial value.
+   * @param {boolean} initAccum Specify using the first or last element of `collection` as the initial value.
    * @param {Function} eachFunc The function to iterate over `collection`.
    * @returns {*} Returns the accumulated value.
    */
-  function baseReduce(collection, iteratee, accumulator, initFromCollection, eachFunc) {
+  function baseReduce(collection, iteratee, accumulator, initAccum, eachFunc) {
     eachFunc(collection, function(value, index, collection) {
-      accumulator = initFromCollection
-        ? (initFromCollection = false, value)
+      accumulator = initAccum
+        ? (initAccum = false, value)
         : iteratee(accumulator, value, index, collection);
     });
     return accumulator;
@@ -7832,9 +7832,9 @@
      */
     function reduce(collection, iteratee, accumulator) {
       var func = isArray(collection) ? arrayReduce : baseReduce,
-          initFromCollection = arguments.length < 3;
+          initAccum = arguments.length < 3;
 
-      return func(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEach);
+      return func(collection, getIteratee(iteratee, 4), accumulator, initAccum, baseEach);
     }
 
     /**
@@ -7859,9 +7859,9 @@
      */
     function reduceRight(collection, iteratee, accumulator) {
       var func = isArray(collection) ? arrayReduceRight : baseReduce,
-          initFromCollection = arguments.length < 3;
+          initAccum = arguments.length < 3;
 
-      return func(collection, getIteratee(iteratee, 4), accumulator, initFromCollection, baseEachRight);
+      return func(collection, getIteratee(iteratee, 4), accumulator, initAccum, baseEachRight);
     }
 
     /**

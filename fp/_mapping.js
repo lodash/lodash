@@ -78,7 +78,7 @@ module.exports = {
         'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
         'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
         'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
-        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'unset', 'words'
+        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
       ],
     2:[
         'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
@@ -98,7 +98,7 @@ module.exports = {
         'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
         'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
         'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-        'uniqWith', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject'
+        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject'
       ],
     3:[
         'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',

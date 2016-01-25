@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.0.1';
+  var VERSION = '4.1.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -420,20 +420,21 @@
    * `differenceBy`, `differenceWith`, `drop`, `dropRight`, `dropRightWhile`,
    * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`,
    * `flowRight`, `fromPairs`, `functions`, `functionsIn`, `groupBy`, `initial`,
-   * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invokeMap`,
-   * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
-   * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
-   * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
-   * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
-   * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
-   * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
-   * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
-   * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`,
-   * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-   * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
-   * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
-   * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-   * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
+   * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invertBy`,
+   * `invokeMap`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
+   * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
+   * `method`, `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`,
+   * `orderBy`, `over`, `overArgs`, `overEvery`, `overSome`, `partial`,
+   * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
+   * `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`,
+   * `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`,
+   * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`,
+   * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+   * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+   * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+   * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+   * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
+   * `zipObjectDeep`, and `zipWith`
    *
    * The wrapper methods that are **not** chainable by default are:
    * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -1360,9 +1361,11 @@
    */
   function indexKeys(object) {
     var length = object ? object.length : undefined;
-    return (isLength(length) && (isArray(object) || isString(object) || isArguments(object)))
-      ? baseTimes(length, String)
-      : null;
+    if (isLength(length) &&
+        (isArray(object) || isString(object) || isArguments(object))) {
+      return baseTimes(length, String);
+    }
+    return null;
   }
 
   /**
@@ -1872,36 +1875,6 @@
   }
 
   /**
-   * Invokes the method at `path` of each element in `collection`, returning
-   * an array of the results of each invoked method. Any additional arguments
-   * are provided to each invoked method. If `methodName` is a function it's
-   * invoked for, and `this` bound to, each element in `collection`.
-   *
-   * @static
-   * @memberOf _
-   * @category Collection
-   * @param {Array|Object} collection The collection to iterate over.
-   * @param {Array|Function|string} path The path of the method to invoke or
-   *  the function invoked per iteration.
-   * @param {...*} [args] The arguments to invoke each method with.
-   * @returns {Array} Returns the array of results.
-   * @example
-   *
-   * _.invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
-   * // => [[1, 5, 7], [1, 2, 3]]
-   *
-   * _.invokeMap([123, 456], String.prototype.split, '');
-   * // => [['1', '2', '3'], ['4', '5', '6']]
-   */
-  var invokeMap = rest(function(collection, path, args) {
-    var isFunc = typeof path == 'function';
-    return baseMap(collection, function(value) {
-      var func = isFunc ? path : value[path];
-      return func == null ? func : func.apply(value, args);
-    });
-  });
-
-  /**
    * Creates an array of values by running each element in `collection` through
    * `iteratee`. The iteratee is invoked with three arguments:
    * (value, index|key, collection).
@@ -1972,7 +1945,7 @@
    *
    * _.reduce([1, 2], function(sum, n) {
    *   return sum + n;
-   * });
+   * }, 0);
    * // => 3
    *
    * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
@@ -2095,26 +2068,6 @@
       return compareAscending(object.criteria, other.criteria) || (object.index - other.index);
     }), baseProperty('value'));
   }
-
-  /*------------------------------------------------------------------------*/
-
-  /**
-   * Gets the timestamp of the number of milliseconds that have elapsed since
-   * the Unix epoch (1 January 1970 00:00:00 UTC).
-   *
-   * @static
-   * @memberOf _
-   * @type Function
-   * @category Date
-   * @returns {number} Returns the timestamp.
-   * @example
-   *
-   * _.defer(function(stamp) {
-   *   console.log(_.now() - stamp);
-   * }, _.now());
-   * // => logs the number of milliseconds it took for the deferred function to be invoked
-   */
-  var now = Date.now;
 
   /*------------------------------------------------------------------------*/
 
@@ -2593,9 +2546,16 @@
    * // => false
    */
   function isEmpty(value) {
-    return (!isObjectLike(value) || isFunction(value.splice))
-      ? !size(value)
-      : !keys(value).length;
+    if (isArrayLike(value) &&
+        (isArray(value) || isString(value) || isFunction(value.splice) || isArguments(value))) {
+      return !value.length;
+    }
+    for (var key in value) {
+      if (hasOwnProperty.call(value, key)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -2733,8 +2693,6 @@
    * // => false
    */
   function isObject(value) {
-    // Avoid a V8 JIT bug in Chrome 19-20.
-    // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
     var type = typeof value;
     return !!value && (type == 'object' || type == 'function');
   }
@@ -3720,7 +3678,6 @@
   lodash.filter = filter;
   lodash.flatten = flatten;
   lodash.flattenDeep = flattenDeep;
-  lodash.invokeMap = invokeMap;
   lodash.iteratee = iteratee;
   lodash.keys = keys;
   lodash.map = map;
@@ -3774,7 +3731,6 @@
   lodash.min = min;
   lodash.noConflict = noConflict;
   lodash.noop = noop;
-  lodash.now = now;
   lodash.reduce = reduce;
   lodash.result = result;
   lodash.size = size;

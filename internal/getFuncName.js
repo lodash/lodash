@@ -1,5 +1,11 @@
 import realNames from './realNames';
 
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
 /**
  * Gets the name of `func`.
  *
@@ -10,7 +16,7 @@ import realNames from './realNames';
 function getFuncName(func) {
   var result = (func.name + ''),
       array = realNames[result],
-      length = array ? array.length : 0;
+      length = hasOwnProperty.call(realNames, result) ? array.length : 0;
 
   while (length--) {
     var data = array[length],

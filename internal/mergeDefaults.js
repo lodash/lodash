@@ -1,4 +1,3 @@
-import baseClone from './baseClone';
 import baseMerge from './baseMerge';
 import isObject from '../isObject';
 
@@ -17,9 +16,9 @@ import isObject from '../isObject';
 function mergeDefaults(objValue, srcValue, key, object, source, stack) {
   if (isObject(objValue) && isObject(srcValue)) {
     stack.set(srcValue, objValue);
-    baseMerge(objValue, srcValue, mergeDefaults, stack);
+    baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
   }
-  return objValue === undefined ? baseClone(srcValue) : objValue;
+  return objValue;
 }
 
 export default mergeDefaults;

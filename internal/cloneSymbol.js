@@ -1,8 +1,8 @@
-import _Symbol from './_Symbol';
+import Symbol from './Symbol';
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolValueOf = _Symbol ? symbolProto.valueOf : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
 
 /**
  * Creates a clone of the `symbol` object.
@@ -12,7 +12,7 @@ var symbolProto = _Symbol ? _Symbol.prototype : undefined,
  * @returns {Object} Returns the cloned symbol object.
  */
 function cloneSymbol(symbol) {
-  return _Symbol ? Object(symbolValueOf.call(symbol)) : {};
+  return Symbol ? Object(symbolValueOf.call(symbol)) : {};
 }
 
 export default cloneSymbol;

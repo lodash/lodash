@@ -19,7 +19,7 @@ import basePickBy from './internal/basePickBy';
  * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
-  return object == null ? {} : basePickBy(object, baseIteratee(predicate));
+  return object == null ? {} : basePickBy(object, baseIteratee(predicate, 2));
 }
 
 export default pickBy;

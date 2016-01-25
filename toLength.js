@@ -14,7 +14,7 @@ var MAX_ARRAY_LENGTH = 4294967295;
  * @memberOf _
  * @category Lang
  * @param {*} value The value to convert.
- * @return {number} Returns the converted integer.
+ * @returns {number} Returns the converted integer.
  * @example
  *
  * _.toLength(3);

@@ -5,6 +5,8 @@ export { default as assignWith } from './assignWith';
 export { default as create } from './create';
 export { default as defaults } from './defaults';
 export { default as defaultsDeep } from './defaultsDeep';
+export { default as extend } from './extend';
+export { default as extendWith } from './extendWith';
 export { default as findKey } from './findKey';
 export { default as findLastKey } from './findLastKey';
 export { default as forIn } from './forIn';

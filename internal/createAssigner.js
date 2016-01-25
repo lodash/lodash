@@ -24,7 +24,7 @@ function createAssigner(assigner) {
     while (++index < length) {
       var source = sources[index];
       if (source) {
-        assigner(object, source, customizer);
+        assigner(object, source, index, customizer);
       }
     }
     return object;

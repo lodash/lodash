@@ -1,4 +1,4 @@
-import _Symbol from './internal/_Symbol';
+import Symbol from './internal/Symbol';
 import copyArray from './internal/copyArray';
 import getTag from './internal/getTag';
 import isArrayLike from './isArrayLike';
@@ -14,7 +14,7 @@ var mapTag = '[object Map]',
     setTag = '[object Set]';
 
 /** Built-in value references. */
-var iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
+var iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
 
 /**
  * Converts `value` to an array.

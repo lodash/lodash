@@ -5,6 +5,8 @@ import assignWith from './assignWith';
 import create from './create';
 import defaults from './defaults';
 import defaultsDeep from './defaultsDeep';
+import extend from './extend';
+import extendWith from './extendWith';
 import findKey from './findKey';
 import findLastKey from './findLastKey';
 import forIn from './forIn';
@@ -40,11 +42,12 @@ import valuesIn from './valuesIn';
 
 export default {
   assign, assignIn, assignInWith, assignWith, create,
-  defaults, defaultsDeep, findKey, findLastKey, forIn,
-  forInRight, forOwn, forOwnRight, functions, functionsIn,
-  get, has, hasIn, invert, invoke,
-  keys, keysIn, mapKeys, mapValues, merge,
-  mergeWith, omit, omitBy, pick, pickBy,
-  result, set, setWith, toPairs, toPairsIn,
-  transform, unset, values, valuesIn
+  defaults, defaultsDeep, extend, extendWith, findKey,
+  findLastKey, forIn, forInRight, forOwn, forOwnRight,
+  functions, functionsIn, get, has, hasIn,
+  invert, invoke, keys, keysIn, mapKeys,
+  mapValues, merge, mergeWith, omit, omitBy,
+  pick, pickBy, result, set, setWith,
+  toPairs, toPairsIn, transform, unset, values,
+  valuesIn
 };

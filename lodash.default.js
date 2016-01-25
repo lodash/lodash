@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -20,7 +20,7 @@ import string from './string';
 import util from './util';
 import LazyWrapper from './internal/LazyWrapper';
 import LodashWrapper from './internal/LodashWrapper';
-import _Symbol from './internal/_Symbol';
+import Symbol from './internal/Symbol';
 import arrayEach from './internal/arrayEach';
 import arrayPush from './internal/arrayPush';
 import baseForOwn from './internal/baseForOwn';
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.0.0';
+var VERSION = '4.0.1';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -64,7 +64,7 @@ var arrayProto = Array.prototype,
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /** Built-in value references. */
-var iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
+var iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
@@ -231,8 +231,6 @@ lodash.zipObject = array.zipObject;
 lodash.zipWith = array.zipWith;
 
 // Add aliases.
-lodash.each = collection.forEach;
-lodash.eachRight = collection.forEachRight;
 lodash.extend = object.assignIn;
 lodash.extendWith = object.assignInWith;
 
@@ -371,6 +369,8 @@ lodash.upperCase = string.upperCase;
 lodash.upperFirst = string.upperFirst;
 
 // Add aliases.
+lodash.each = collection.forEach;
+lodash.eachRight = collection.forEachRight;
 lodash.first = array.head;
 
 mixin(lodash, (function() {

@@ -14,6 +14,7 @@ import toArrayLikeObject from './internal/toArrayLikeObject';
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of shared values.
  * @example
+ *
  * _.intersection([2, 1], [4, 2], [1, 2]);
  * // => [2]
  */

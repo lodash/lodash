@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -60,6 +60,8 @@ export { default as eq } from './eq';
 export { default as escape } from './escape';
 export { default as escapeRegExp } from './escapeRegExp';
 export { default as every } from './every';
+export { default as extend } from './extend';
+export { default as extendWith } from './extendWith';
 export { default as fill } from './fill';
 export { default as filter } from './filter';
 export { default as find } from './find';
@@ -285,6 +287,7 @@ export { default as wrapperAt } from './wrapperAt';
 export { default as wrapperChain } from './wrapperChain';
 export { default as wrapperCommit } from './commit';
 export { default as wrapperFlatMap } from './wrapperFlatMap';
+export { default as wrapperLodash } from './wrapperLodash';
 export { default as wrapperNext } from './next';
 export { default as wrapperPlant } from './plant';
 export { default as wrapperReverse } from './wrapperReverse';

@@ -1,6 +1,6 @@
 import root from './root';
 
 /** Built-in value references. */
-var _Symbol = root.Symbol;
+var Symbol = root.Symbol;
 
-export default _Symbol;
+export default Symbol;

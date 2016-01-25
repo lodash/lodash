@@ -7361,7 +7361,6 @@ This method is like `_.tap` except that it returns the result of `interceptor`.
 #### Example
 ```js
 _('  abc  ')
- .chain()
  .trim()
  .thru(function(value) {
    return [value];

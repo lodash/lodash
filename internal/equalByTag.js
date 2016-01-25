@@ -1,4 +1,4 @@
-define(['./Uint8Array', './_Symbol', './mapToArray', './setToArray'], function(Uint8Array, _Symbol, mapToArray, setToArray) {
+define(['./Symbol', './Uint8Array', './mapToArray', './setToArray'], function(Symbol, Uint8Array, mapToArray, setToArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -21,8 +21,8 @@ define(['./Uint8Array', './_Symbol', './mapToArray', './setToArray'], function(U
   var arrayBufferTag = '[object ArrayBuffer]';
 
   /** Used to convert symbols to primitives and strings. */
-  var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-      symbolValueOf = _Symbol ? symbolProto.valueOf : undefined;
+  var symbolProto = Symbol ? Symbol.prototype : undefined,
+      symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
 
   /**
    * A specialized version of `baseIsEqualDeep` for comparing objects of
@@ -80,7 +80,7 @@ define(['./Uint8Array', './_Symbol', './mapToArray', './setToArray'], function(U
           equalFunc(convert(object), convert(other), customizer, bitmask | UNORDERED_COMPARE_FLAG);
 
       case symbolTag:
-        return !!_Symbol && (symbolValueOf.call(object) == symbolValueOf.call(other));
+        return !!Symbol && (symbolValueOf.call(object) == symbolValueOf.call(other));
     }
     return false;
   }

@@ -19,9 +19,9 @@ define(['./internal/baseIteratee', './internal/basePickBy'], function(baseIterat
    * // => { 'b': '2' }
    */
   function omitBy(object, predicate) {
-    predicate = baseIteratee(predicate);
-    return basePickBy(object, function(value) {
-      return !predicate(value);
+    predicate = baseIteratee(predicate, 2);
+    return basePickBy(object, function(value, key) {
+      return !predicate(value, key);
     });
   }
 

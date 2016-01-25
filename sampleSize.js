@@ -1,7 +1,8 @@
 define(['./internal/baseClamp', './internal/baseRandom', './toArray', './toInteger'], function(baseClamp, baseRandom, toArray, toInteger) {
 
   /**
-   * Gets `n` random elements from `collection`.
+   * Gets `n` random elements at unique keys from `collection` up to the
+   * size of `collection`.
    *
    * @static
    * @memberOf _
@@ -11,8 +12,11 @@ define(['./internal/baseClamp', './internal/baseRandom', './toArray', './toInteg
    * @returns {Array} Returns the random elements.
    * @example
    *
-   * _.sampleSize([1, 2, 3, 4], 2);
+   * _.sampleSize([1, 2, 3], 2);
    * // => [3, 1]
+   *
+   * _.sampleSize([1, 2, 3], 4);
+   * // => [2, 3, 1]
    */
   function sampleSize(collection, n) {
     var index = -1,

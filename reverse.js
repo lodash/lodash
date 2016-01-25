@@ -13,6 +13,7 @@ define([], function() {
    * **Note:** This method mutates `array` and is based on
    * [`Array#reverse`](https://mdn.io/Array/reverse).
    *
+   * @static
    * @memberOf _
    * @category Array
    * @returns {Array} Returns `array`.

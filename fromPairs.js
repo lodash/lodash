@@ -1,4 +1,4 @@
-define(['./internal/baseSet'], function(baseSet) {
+define([], function() {
 
   /**
    * The inverse of `_.toPairs`; this method returns an object composed
@@ -21,7 +21,7 @@ define(['./internal/baseSet'], function(baseSet) {
 
     while (++index < length) {
       var pair = pairs[index];
-      baseSet(result, pair[0], pair[1]);
+      result[pair[0]] = pair[1];
     }
     return result;
   }

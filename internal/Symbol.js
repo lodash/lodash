@@ -1,7 +1,7 @@
 define(['./root'], function(root) {
 
   /** Built-in value references. */
-  var _Symbol = root.Symbol;
+  var Symbol = root.Symbol;
 
-  return _Symbol;
+  return Symbol;
 });

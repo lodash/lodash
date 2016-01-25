@@ -26,7 +26,7 @@ define(['./internal/copyObjectWith', './internal/createAssigner', './keys'], fun
    * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
    * // => { 'a': 1, 'b': 2 }
    */
-  var assignWith = createAssigner(function(object, source, customizer) {
+  var assignWith = createAssigner(function(object, source, srcIndex, customizer) {
     copyObjectWith(source, keys(source), object, customizer);
   });
 

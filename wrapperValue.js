@@ -5,7 +5,7 @@ define(['./internal/baseWrapperValue'], function(baseWrapperValue) {
    *
    * @name value
    * @memberOf _
-   * @alias run, toJSON, valueOf
+   * @alias toJSON, valueOf
    * @category Seq
    * @returns {*} Returns the resolved unwrapped value.
    * @example

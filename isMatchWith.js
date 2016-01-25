@@ -6,7 +6,7 @@ define(['./internal/baseIsMatch', './internal/getMatchData'], function(baseIsMat
   /**
    * This method is like `_.isMatch` except that it accepts `customizer` which
    * is invoked to compare values. If `customizer` returns `undefined` comparisons
-   * are handled by the method instead. The `customizer` is invoked with three
+   * are handled by the method instead. The `customizer` is invoked with five
    * arguments: (objValue, srcValue, index|key, object, source).
    *
    * @static

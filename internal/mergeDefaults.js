@@ -1,4 +1,4 @@
-define(['./baseClone', './baseMerge', '../isObject'], function(baseClone, baseMerge, isObject) {
+define(['./baseMerge', '../isObject'], function(baseMerge, isObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -18,9 +18,9 @@ define(['./baseClone', './baseMerge', '../isObject'], function(baseClone, baseMe
   function mergeDefaults(objValue, srcValue, key, object, source, stack) {
     if (isObject(objValue) && isObject(srcValue)) {
       stack.set(srcValue, objValue);
-      baseMerge(objValue, srcValue, mergeDefaults, stack);
+      baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
     }
-    return objValue === undefined ? baseClone(srcValue) : objValue;
+    return objValue;
   }
 
   return mergeDefaults;

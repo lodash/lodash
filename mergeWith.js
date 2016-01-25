@@ -35,8 +35,8 @@ define(['./internal/baseMerge', './internal/createAssigner'], function(baseMerge
    * _.mergeWith(object, other, customizer);
    * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
    */
-  var mergeWith = createAssigner(function(object, source, customizer) {
-    baseMerge(object, source, customizer);
+  var mergeWith = createAssigner(function(object, source, srcIndex, customizer) {
+    baseMerge(object, source, srcIndex, customizer);
   });
 
   return mergeWith;

@@ -1,4 +1,4 @@
-define(['./internal/_Symbol', './internal/copyArray', './internal/getTag', './isArrayLike', './isString', './internal/iteratorToArray', './internal/mapToArray', './internal/setToArray', './internal/stringToArray', './values'], function(_Symbol, copyArray, getTag, isArrayLike, isString, iteratorToArray, mapToArray, setToArray, stringToArray, values) {
+define(['./internal/Symbol', './internal/copyArray', './internal/getTag', './isArrayLike', './isString', './internal/iteratorToArray', './internal/mapToArray', './internal/setToArray', './internal/stringToArray', './values'], function(Symbol, copyArray, getTag, isArrayLike, isString, iteratorToArray, mapToArray, setToArray, stringToArray, values) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -8,7 +8,7 @@ define(['./internal/_Symbol', './internal/copyArray', './internal/getTag', './is
       setTag = '[object Set]';
 
   /** Built-in value references. */
-  var iteratorSymbol = typeof (iteratorSymbol = _Symbol && _Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
+  var iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
 
   /**
    * Converts `value` to an array.

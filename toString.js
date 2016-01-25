@@ -1,4 +1,4 @@
-define(['./internal/_Symbol', './isSymbol'], function(_Symbol, isSymbol) {
+define(['./internal/Symbol', './isSymbol'], function(Symbol, isSymbol) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -7,8 +7,8 @@ define(['./internal/_Symbol', './isSymbol'], function(_Symbol, isSymbol) {
   var INFINITY = 1 / 0;
 
   /** Used to convert symbols to primitives and strings. */
-  var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-      symbolToString = _Symbol ? symbolProto.toString : undefined;
+  var symbolProto = Symbol ? Symbol.prototype : undefined,
+      symbolToString = Symbol ? symbolProto.toString : undefined;
 
   /**
    * Converts `value` to a string if it's not one. An empty string is returned
@@ -39,7 +39,7 @@ define(['./internal/_Symbol', './isSymbol'], function(_Symbol, isSymbol) {
       return '';
     }
     if (isSymbol(value)) {
-      return _Symbol ? symbolToString.call(value) : '';
+      return Symbol ? symbolToString.call(value) : '';
     }
     var result = (value + '');
     return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;

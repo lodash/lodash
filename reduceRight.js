@@ -22,9 +22,9 @@ define(['./internal/arrayReduceRight', './internal/baseEachRight', './internal/b
    */
   function reduceRight(collection, iteratee, accumulator) {
     var func = isArray(collection) ? arrayReduceRight : baseReduce,
-        initFromCollection = arguments.length < 3;
+        initAccum = arguments.length < 3;
 
-    return func(collection, baseIteratee(iteratee, 4), accumulator, initFromCollection, baseEachRight);
+    return func(collection, baseIteratee(iteratee, 4), accumulator, initAccum, baseEachRight);
   }
 
   return reduceRight;

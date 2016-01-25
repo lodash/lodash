@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -40,6 +40,12 @@ var reNoMatch = /($^)/;
 /** Used to match unescaped characters in compiled string literals. */
 var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
 /** Used to escape characters for inclusion in compiled string literals. */
 var stringEscapes = {
   '\\': '\\',
@@ -50,6 +56,32 @@ var stringEscapes = {
   '\u2029': 'u2029'
 };
 
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
+
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
  * with the `this` binding of `thisArg` and the arguments of `args`.
@@ -57,11 +89,11 @@ var stringEscapes = {
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} [args] The arguments to invoke `func` with.
+ * @param {...*} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
-  var length = args ? args.length : 0;
+  var length = args.length;
   switch (length) {
     case 0: return func.call(thisArg);
     case 1: return func.call(thisArg, args[0]);
@@ -85,6 +117,17 @@ function baseValues(object, props) {
   return arrayMap(props, function(key) {
     return object[key];
   });
+}
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
 }
 
 /**
@@ -113,7 +156,7 @@ function isIndex(value, length) {
 }
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -125,7 +168,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
-var Symbol = global.Symbol;
+var Symbol = root.Symbol;
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,
@@ -477,54 +520,54 @@ function toString(value) {
  * @returns {Function} Returns the compiled template function.
  * @example
  *
- * // using the "interpolate" delimiter to create a compiled template
+ * // Use the "interpolate" delimiter to create a compiled template.
  * var compiled = _.template('hello <%= user %>!');
  * compiled({ 'user': 'fred' });
  * // => 'hello fred!'
  *
- * // using the HTML "escape" delimiter to escape data property values
+ * // Use the HTML "escape" delimiter to escape data property values.
  * var compiled = _.template('<b><%- value %></b>');
  * compiled({ 'value': '<script>' });
  * // => '<b>&lt;script&gt;</b>'
  *
- * // using the "evaluate" delimiter to execute JavaScript and generate HTML
+ * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
  * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
  * compiled({ 'users': ['fred', 'barney'] });
  * // => '<li>fred</li><li>barney</li>'
  *
- * // using the internal `print` function in "evaluate" delimiters
+ * // Use the internal `print` function in "evaluate" delimiters.
  * var compiled = _.template('<% print("hello " + user); %>!');
  * compiled({ 'user': 'barney' });
  * // => 'hello barney!'
  *
- * // using the ES delimiter as an alternative to the default "interpolate" delimiter
+ * // Use the ES delimiter as an alternative to the default "interpolate" delimiter.
  * var compiled = _.template('hello ${ user }!');
  * compiled({ 'user': 'pebbles' });
  * // => 'hello pebbles!'
  *
- * // using custom template delimiters
+ * // Use custom template delimiters.
  * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
  * var compiled = _.template('hello {{ user }}!');
  * compiled({ 'user': 'mustache' });
  * // => 'hello mustache!'
  *
- * // using backslashes to treat delimiters as plain text
+ * // Use backslashes to treat delimiters as plain text.
  * var compiled = _.template('<%= "\\<%- value %\\>" %>');
  * compiled({ 'value': 'ignored' });
  * // => '<%- value %>'
  *
- * // using the `imports` option to import `jQuery` as `jq`
+ * // Use the `imports` option to import `jQuery` as `jq`.
  * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
  * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
  * compiled({ 'users': ['fred', 'barney'] });
  * // => '<li>fred</li><li>barney</li>'
  *
- * // using the `sourceURL` option to specify a custom sourceURL for the template
+ * // Use the `sourceURL` option to specify a custom sourceURL for the template.
  * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
  * compiled(data);
  * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
  *
- * // using the `variable` option to ensure a with-statement isn't used in the compiled template
+ * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
  * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
  * compiled.source;
  * // => function(data) {
@@ -533,8 +576,8 @@ function toString(value) {
  * //   return __p;
  * // }
  *
- * // using the `source` property to inline compiled templates for meaningful
- * // line numbers in error messages and a stack trace
+ * // Use the `source` property to inline compiled templates for meaningful
+ * // line numbers in error messages and stack traces.
  * fs.writeFileSync(path.join(cwd, 'jst.js'), '\
  *   var JST = {\
  *     "main": ' + _.template(mainText).source + '\
@@ -654,7 +697,7 @@ function template(string, options, guard) {
  * @returns {*} Returns the `func` result or error object.
  * @example
  *
- * // avoid throwing errors for invalid selectors
+ * // Avoid throwing errors for invalid selectors.
  * var elements = _.attempt(function(selector) {
  *   return document.querySelectorAll(selector);
  * }, '>_>');
@@ -667,7 +710,7 @@ var attempt = rest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
-    return isError(e) ? e : new Error(e);
+    return isObject(e) ? e : new Error(e);
   }
 });
 

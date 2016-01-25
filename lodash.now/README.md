@@ -1,4 +1,4 @@
-# lodash.now v4.0.1
+# lodash.now v4.0.2
 
 The [lodash](https://lodash.com/) method `_.now` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var now = require('lodash.now');
 ```
 
-See the [documentation](https://lodash.com/docs#now) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.now) for more details.
+See the [documentation](https://lodash.com/docs#now) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.now) for more details.

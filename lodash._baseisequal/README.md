@@ -1,4 +1,4 @@
-# lodash._baseisequal v4.0.1
+# lodash._baseisequal v4.0.2
 
 The internal [lodash](https://lodash.com/) function `baseIsEqual` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseIsEqual = require('lodash._baseisequal');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash._baseisequal) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash._baseisequal) for more details.

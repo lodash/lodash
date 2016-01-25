@@ -1,6 +1,6 @@
 {
   "name": "lodash.sorteduniqby",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "The lodash method `_.sortedUniqBy` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

@@ -1,11 +1,17 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used as the internal argument placeholder. */
+var PLACEHOLDER = '__lodash_placeholder__';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -18,17 +24,11 @@ var BIND_FLAG = 1,
     ARY_FLAG = 128,
     FLIP_FLAG = 512;
 
-/** Used as the `TypeError` message for "Functions" methods. */
-var FUNC_ERROR_TEXT = 'Expected a function';
-
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
     MAX_SAFE_INTEGER = 9007199254740991,
     MAX_INTEGER = 1.7976931348623157e+308,
     NAN = 0 / 0;
-
-/** Used as the internal argument placeholder. */
-var PLACEHOLDER = '__lodash_placeholder__';
 
 /** `Object#toString` result references. */
 var funcTag = '[object Function]',
@@ -168,14 +168,14 @@ function isIndex(value, length) {
 function replaceHolders(array, placeholder) {
   var index = -1,
       length = array.length,
-      resIndex = -1,
+      resIndex = 0,
       result = [];
 
   while (++index < length) {
     var value = array[index];
     if (value === placeholder || value === PLACEHOLDER) {
       array[index] = PLACEHOLDER;
-      result[++resIndex] = index;
+      result[resIndex++] = index;
     }
   }
   return result;
@@ -660,8 +660,8 @@ function reorder(array, indexes) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

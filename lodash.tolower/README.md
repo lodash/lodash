@@ -1,4 +1,4 @@
-# lodash.tolower v4.0.1
+# lodash.tolower v4.0.2
 
 The [lodash](https://lodash.com/) method `_.toLower` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var toLower = require('lodash.tolower');
 ```
 
-See the [documentation](https://lodash.com/docs#toLower) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.tolower) for more details.
+See the [documentation](https://lodash.com/docs#toLower) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.tolower) for more details.

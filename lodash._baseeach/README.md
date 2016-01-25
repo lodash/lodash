@@ -1,4 +1,4 @@
-# lodash._baseeach v4.0.1
+# lodash._baseeach v4.0.2
 
 The internal [lodash](https://lodash.com/) function `baseEach` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseEach = require('lodash._baseeach');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash._baseeach) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash._baseeach) for more details.

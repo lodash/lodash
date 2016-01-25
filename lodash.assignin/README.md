@@ -1,4 +1,4 @@
-# lodash.assignin v4.0.1
+# lodash.assignin v4.0.2
 
 The [lodash](https://lodash.com/) method `_.assignIn` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var assignIn = require('lodash.assignin');
 ```
 
-See the [documentation](https://lodash.com/docs#assignIn) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.assignin) for more details.
+See the [documentation](https://lodash.com/docs#assignIn) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.assignin) for more details.

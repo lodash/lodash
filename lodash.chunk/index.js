@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -72,11 +72,11 @@ function chunk(array, size) {
     return [];
   }
   var index = 0,
-      resIndex = -1,
+      resIndex = 0,
       result = Array(nativeCeil(length / size));
 
   while (index < length) {
-    result[++resIndex] = baseSlice(array, index, (index += size));
+    result[resIndex++] = baseSlice(array, index, (index += size));
   }
   return result;
 }
@@ -99,8 +99,8 @@ function chunk(array, size) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

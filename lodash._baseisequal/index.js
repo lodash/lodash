@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -161,7 +161,7 @@ var reIsNative = RegExp('^' +
 );
 
 /** Built-in value references. */
-var _Symbol = global.Symbol,
+var Symbol = global.Symbol,
     Uint8Array = global.Uint8Array,
     getPrototypeOf = Object.getPrototypeOf;
 
@@ -174,8 +174,8 @@ var mapCtorString = Map ? funcToString.call(Map) : '',
     setCtorString = Set ? funcToString.call(Set) : '';
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolValueOf = _Symbol ? symbolProto.valueOf : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
 
 /**
  * The base implementation of `_.has` without support for deep paths.
@@ -398,7 +398,7 @@ function equalByTag(object, other, tag, equalFunc, customizer, bitmask) {
         equalFunc(convert(object), convert(other), customizer, bitmask | UNORDERED_COMPARE_FLAG);
 
     case symbolTag:
-      return !!_Symbol && (symbolValueOf.call(object) == symbolValueOf.call(other));
+      return !!Symbol && (symbolValueOf.call(object) == symbolValueOf.call(other));
   }
   return false;
 }
@@ -418,7 +418,6 @@ function equalByTag(object, other, tag, equalFunc, customizer, bitmask) {
  */
 function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
   var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-      isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
       objProps = keys(object),
       objLength = objProps.length,
       othProps = keys(other),
@@ -430,8 +429,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
   var index = objLength;
   while (index--) {
     var key = objProps[index];
-    if (!(isPartial ? key in other : baseHas(other, key)) ||
-        !(isUnordered || key == othProps[index])) {
+    if (!(isPartial ? key in other : baseHas(other, key))) {
       return false;
     }
   }
@@ -624,8 +622,6 @@ function isLength(value) {
  * // => false
  */
 function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }

@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -26,14 +26,14 @@ var LARGE_ARRAY_SIZE = 200;
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
  * @returns {*} Returns the accumulated value.
  */
-function arrayReduce(array, iteratee, accumulator, initFromArray) {
+function arrayReduce(array, iteratee, accumulator, initAccum) {
   var index = -1,
       length = array.length;
 
-  if (initFromArray && length) {
+  if (initAccum && length) {
     accumulator = array[++index];
   }
   while (++index < length) {

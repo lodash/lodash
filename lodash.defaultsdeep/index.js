@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -141,14 +141,14 @@ function apply(func, thisArg, args) {
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initFromArray] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
  * @returns {*} Returns the accumulated value.
  */
-function arrayReduce(array, iteratee, accumulator, initFromArray) {
+function arrayReduce(array, iteratee, accumulator, initAccum) {
   var index = -1,
       length = array.length;
 
-  if (initFromArray && length) {
+  if (initAccum && length) {
     accumulator = array[++index];
   }
   while (++index < length) {
@@ -232,7 +232,7 @@ var reIsNative = RegExp('^' +
 );
 
 /** Built-in value references. */
-var _Symbol = global.Symbol,
+var Symbol = global.Symbol,
     Uint8Array = global.Uint8Array,
     getOwnPropertySymbols = Object.getOwnPropertySymbols,
     propertyIsEnumerable = objectProto.propertyIsEnumerable;
@@ -246,8 +246,8 @@ var mapCtorString = Map ? funcToString.call(Map) : '',
     setCtorString = Set ? funcToString.call(Set) : '';
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = _Symbol ? _Symbol.prototype : undefined,
-    symbolValueOf = _Symbol ? symbolProto.valueOf : undefined;
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
 
 /**
  * This function is like `assignValue` except that it doesn't assign `undefined` values.
@@ -397,10 +397,11 @@ function baseForOwn(object, iteratee) {
  * @private
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
+ * @param {number} srcIndex The index of `source`.
  * @param {Function} [customizer] The function to customize merged values.
  * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
  */
-function baseMerge(object, source, customizer, stack) {
+function baseMerge(object, source, srcIndex, customizer, stack) {
   if (object === source) {
     return;
   }
@@ -412,7 +413,7 @@ function baseMerge(object, source, customizer, stack) {
     }
     if (isObject(srcValue)) {
       stack || (stack = new Stack);
-      baseMergeDeep(object, source, key, baseMerge, customizer, stack);
+      baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
     }
     else {
       var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stack) : undefined;
@@ -433,11 +434,12 @@ function baseMerge(object, source, customizer, stack) {
  * @param {Object} object The destination object.
  * @param {Object} source The source object.
  * @param {string} key The key of the value to merge.
+ * @param {number} srcIndex The index of `source`.
  * @param {Function} mergeFunc The function to merge values.
  * @param {Function} [customizer] The function to customize assigned values.
  * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
  */
-function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
+function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
   var objValue = object[key],
       srcValue = source[key],
       stacked = stack.get(srcValue) || stack.get(objValue);
@@ -452,24 +454,36 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stack) {
   if (isCommon) {
     newValue = srcValue;
     if (isArray(srcValue) || isTypedArray(srcValue)) {
-      newValue = isArray(objValue)
-        ? objValue
-        : ((isArrayLikeObject(objValue)) ? copyArray(objValue) : baseClone(srcValue));
+      if (isArray(objValue)) {
+        newValue = srcIndex ? copyArray(objValue) : objValue;
+      }
+      else if (isArrayLikeObject(objValue)) {
+        newValue = copyArray(objValue);
+      }
+      else {
+        newValue = baseClone(srcValue);
+      }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-      newValue = isArguments(objValue)
-        ? toPlainObject(objValue)
-        : (isObject(objValue) ? objValue : baseClone(srcValue));
+      if (isArguments(objValue)) {
+        newValue = toPlainObject(objValue);
+      }
+      else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+        newValue = baseClone(srcValue);
+      }
+      else {
+        newValue = srcIndex ? baseClone(objValue) : objValue;
+      }
     }
     else {
-      isCommon = isFunction(srcValue);
+      isCommon = false;
     }
   }
   stack.set(srcValue, newValue);
 
   if (isCommon) {
     // Recursively merge objects and arrays (susceptible to call stack limits).
-    mergeFunc(newValue, srcValue, customizer, stack);
+    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
   }
   assignMergeValue(object, key, newValue);
 }
@@ -550,7 +564,7 @@ function cloneSet(set) {
  * @returns {Object} Returns the cloned symbol object.
  */
 function cloneSymbol(symbol) {
-  return _Symbol ? Object(symbolValueOf.call(symbol)) : {};
+  return Symbol ? Object(symbolValueOf.call(symbol)) : {};
 }
 
 /**
@@ -795,9 +809,9 @@ function initCloneByTag(object, tag, isDeep) {
 function mergeDefaults(objValue, srcValue, key, object, source, stack) {
   if (isObject(objValue) && isObject(srcValue)) {
     stack.set(srcValue, objValue);
-    baseMerge(objValue, srcValue, mergeDefaults, stack);
+    baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
   }
-  return objValue === undefined ? baseClone(srcValue) : objValue;
+  return objValue;
 }
 
 /**

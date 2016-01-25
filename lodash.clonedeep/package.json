@@ -1,6 +1,6 @@
 {
   "name": "lodash.clonedeep",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "The lodash method `_.cloneDeep` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

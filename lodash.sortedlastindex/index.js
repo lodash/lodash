@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -51,10 +51,12 @@ function baseSortedIndex(array, value, retHighest) {
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Array
  * @param {Array} array The sorted array to inspect.
  * @param {*} value The value to evaluate.
- * @returns {number} Returns the index at which `value` should be inserted into `array`.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
  * @example
  *
  * _.sortedLastIndex([4, 5], 4);
@@ -68,6 +70,7 @@ function sortedLastIndex(array, value) {
  * This method returns the first argument given to it.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {*} value Any value.

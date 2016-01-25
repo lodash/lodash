@@ -1,4 +1,4 @@
-# lodash.samplesize v4.0.1
+# lodash.samplesize v4.0.2
 
 The [lodash](https://lodash.com/) method `_.sampleSize` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var sampleSize = require('lodash.samplesize');
 ```
 
-See the [documentation](https://lodash.com/docs#sampleSize) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.samplesize) for more details.
+See the [documentation](https://lodash.com/docs#sampleSize) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.samplesize) for more details.

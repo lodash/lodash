@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -31,6 +31,27 @@ var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
 /** Used to match backslashes in property paths. */
 var reEscapeChar = /\\(\\)?/g;
 
+/**
+ * A specialized version of `baseAggregator` for arrays.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} setter The function to set `accumulator` values.
+ * @param {Function} iteratee The iteratee to transform keys.
+ * @param {Object} accumulator The initial aggregated object.
+ * @returns {Function} Returns `accumulator`.
+ */
+function arrayAggregator(array, setter, iteratee, accumulator) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    var value = array[index];
+    setter(accumulator, value, iteratee(value), array);
+  }
+  return accumulator;
+}
+
 /** Used for built-in method references. */
 var objectProto = global.Object.prototype;
 
@@ -46,6 +67,24 @@ var Symbol = global.Symbol;
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,
     symbolToString = Symbol ? symbolProto.toString : undefined;
+
+/**
+ * Aggregates elements of `collection` on `accumulator` with keys transformed
+ * by `iteratee` and values set by `setter`.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} setter The function to set `accumulator` values.
+ * @param {Function} iteratee The iteratee to transform keys.
+ * @param {Object} accumulator The initial aggregated object.
+ * @returns {Function} Returns `accumulator`.
+ */
+function baseAggregator(collection, setter, iteratee, accumulator) {
+  baseEach(collection, function(value, key, collection) {
+    setter(accumulator, value, iteratee(value), collection);
+  });
+  return accumulator;
+}
 
 /**
  * The base implementation of `_.get` without support for default values.
@@ -175,29 +214,16 @@ function baseToPath(value) {
  * Creates a function like `_.groupBy`.
  *
  * @private
- * @param {Function} setter The function to set keys and values of the accumulator object.
- * @param {Function} [initializer] The function to initialize the accumulator object.
+ * @param {Function} setter The function to set accumulator values.
+ * @param {Function} [initializer] The accumulator object initializer.
  * @returns {Function} Returns the new aggregator function.
  */
 function createAggregator(setter, initializer) {
   return function(collection, iteratee) {
-    var result = initializer ? initializer() : {};
-    iteratee = baseIteratee(iteratee);
+    var func = isArray(collection) ? arrayAggregator : baseAggregator,
+        accumulator = initializer ? initializer() : {};
 
-    if (isArray(collection)) {
-      var index = -1,
-          length = collection.length;
-
-      while (++index < length) {
-        var value = collection[index];
-        setter(result, value, iteratee(value), collection);
-      }
-    } else {
-      baseEach(collection, function(value, key, collection) {
-        setter(result, value, iteratee(value), collection);
-      });
-    }
-    return result;
+    return func(collection, setter, baseIteratee(iteratee), accumulator);
   };
 }
 
@@ -276,17 +302,17 @@ function stringToPath(string) {
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * var keyData = [
+ * var array = [
  *   { 'dir': 'left', 'code': 97 },
  *   { 'dir': 'right', 'code': 100 }
  * ];
  *
- * _.keyBy(keyData, function(o) {
+ * _.keyBy(array, function(o) {
  *   return String.fromCharCode(o.code);
  * });
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  *
- * _.keyBy(keyData, 'dir');
+ * _.keyBy(array, 'dir');
  * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
 var keyBy = createAggregator(function(result, value, key) {
@@ -342,8 +368,6 @@ var isArray = Array.isArray;
  * // => false
  */
 function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }

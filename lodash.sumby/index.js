@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -49,7 +49,7 @@ function baseSum(array, iteratee) {
       result = result === undefined ? current : (result + current);
     }
   }
-  return result;
+  return length ? result : 0;
 }
 
 /** Used for built-in method references. */
@@ -302,8 +302,6 @@ var isArray = Array.isArray;
  * // => false
  */
 function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }
@@ -460,7 +458,7 @@ function property(path) {
 function sumBy(array, iteratee) {
   return (array && array.length)
     ? baseSum(array, baseIteratee(iteratee))
-    : undefined;
+    : 0;
 }
 
 module.exports = sumBy;

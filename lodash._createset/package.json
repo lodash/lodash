@@ -1,6 +1,6 @@
 {
   "name": "lodash._createset",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "The internal lodash function `createSet` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

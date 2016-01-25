@@ -1,4 +1,4 @@
-# lodash.differencewith v4.0.1
+# lodash.differencewith v4.0.2
 
 The [lodash](https://lodash.com/) method `_.differenceWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var differenceWith = require('lodash.differencewith');
 ```
 
-See the [documentation](https://lodash.com/docs#differenceWith) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.differencewith) for more details.
+See the [documentation](https://lodash.com/docs#differenceWith) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.differencewith) for more details.

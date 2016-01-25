@@ -1,4 +1,4 @@
-# lodash.findindex v4.0.1
+# lodash.findindex v4.0.2
 
 The [lodash](https://lodash.com/) method `_.findIndex` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var findIndex = require('lodash.findindex');
 ```
 
-See the [documentation](https://lodash.com/docs#findIndex) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.findindex) for more details.
+See the [documentation](https://lodash.com/docs#findIndex) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.findindex) for more details.

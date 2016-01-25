@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -16,6 +16,7 @@ var HASH_UNDEFINED = '__lodash_hash_undefined__';
  * Creates a set cache object to store unique values.
  *
  * @private
+ * @constructor
  * @param {Array} [values] The values to cache.
  */
 function SetCache(values) {
@@ -59,7 +60,7 @@ function cachePush(value) {
 function isKeyable(value) {
   var type = typeof value;
   return type == 'number' || type == 'boolean' ||
-    (type == 'string' && value !== '__proto__') || value == null;
+    (type == 'string' && value != '__proto__') || value == null;
 }
 
 // Add functions to the `SetCache`.

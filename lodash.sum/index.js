@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,7 +8,8 @@
  */
 
 /**
- * The base implementation of `_.sum` without support for iteratee shorthands.
+ * The base implementation of `_.sum` and `_.sumBy` without support for
+ * iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to iterate over.
@@ -26,22 +27,23 @@ function baseSum(array, iteratee) {
       result = result === undefined ? current : (result + current);
     }
   }
-  return length ? result : 0;
+  return result;
 }
 
 /**
- * This method returns the first argument provided to it.
+ * This method returns the first argument it receives.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {*} value Any value.
  * @returns {*} Returns `value`.
  * @example
  *
- * var object = { 'user': 'fred' };
+ * var object = { 'a': 1 };
  *
- * _.identity(object) === object;
+ * console.log(_.identity(object) === object);
  * // => true
  */
 function identity(value) {
@@ -53,6 +55,7 @@ function identity(value) {
  *
  * @static
  * @memberOf _
+ * @since 3.4.0
  * @category Math
  * @param {Array} array The array to iterate over.
  * @returns {number} Returns the sum.

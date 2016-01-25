@@ -1,4 +1,4 @@
-# lodash.sum v4.0.1
+# lodash.sum v4.0.2
 
 The [lodash](https://lodash.com/) method `_.sum` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var sum = require('lodash.sum');
 ```
 
-See the [documentation](https://lodash.com/docs#sum) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.sum) for more details.
+See the [documentation](https://lodash.com/docs#sum) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.sum) for more details.

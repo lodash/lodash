@@ -1,4 +1,4 @@
-# lodash.findlastindex v4.0.1
+# lodash.findlastindex v4.0.2
 
 The [lodash](https://lodash.com/) method `_.findLastIndex` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var findLastIndex = require('lodash.findlastindex');
 ```
 
-See the [documentation](https://lodash.com/docs#findLastIndex) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.findlastindex) for more details.
+See the [documentation](https://lodash.com/docs#findLastIndex) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.findlastindex) for more details.

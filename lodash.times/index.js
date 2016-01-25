@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -67,13 +67,13 @@ var objectToString = objectProto.toString;
 var nativeMin = Math.min;
 
 /**
- * Converts `value` to a function if it's not one.
+ * Casts `value` to `identity` if it's not a function.
  *
  * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
  */
-function toFunction(value) {
+function baseCastFunction(value) {
   return typeof value == 'function' ? value : identity;
 }
 
@@ -95,8 +95,8 @@ function toFunction(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }
@@ -223,8 +223,8 @@ function identity(value) {
 }
 
 /**
- * Invokes the iteratee function `n` times, returning an array of the results
- * of each invocation. The iteratee is invoked with one argument; (index).
+ * Invokes the iteratee `n` times, returning an array of the results of
+ * each invocation. The iteratee is invoked with one argument; (index).
  *
  * @static
  * @memberOf _
@@ -248,7 +248,7 @@ function times(n, iteratee) {
   var index = MAX_ARRAY_LENGTH,
       length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-  iteratee = toFunction(iteratee);
+  iteratee = baseCastFunction(iteratee);
   n -= MAX_ARRAY_LENGTH;
 
   var result = baseTimes(length, iteratee);

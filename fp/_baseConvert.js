@@ -215,7 +215,7 @@ function baseConvert(util, name, func) {
 
   // Wrap the lodash method and its aliases.
   each(keys(_), function(key) {
-    each(mapping.alias[key] || [], function(alias) {
+    each(mapping.realToAlias[key] || [], function(alias) {
       _[alias] = _[key];
     });
   });

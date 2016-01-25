@@ -290,7 +290,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // Wrap the lodash method and its aliases.
 	  each(keys(_), function(key) {
-	    each(mapping.alias[key] || [], function(alias) {
+	    each(mapping.realToAlias[key] || [], function(alias) {
 	      _[alias] = _[key];
 	    });
 	  });
@@ -306,37 +306,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	module.exports = {
-
-	  /** Used to map method names to their aliases. */
-	  'alias': {
-	    'ary': ['nAry'],
-	    'assignIn': ['extend'],
-	    'assignInWith': ['extendWith'],
-	    'filter': ['whereEq'],
-	    'flatten': ['unnest'],
-	    'flow': ['pipe'],
-	    'flowRight': ['compose'],
-	    'forEach': ['each'],
-	    'forEachRight': ['eachRight'],
-	    'get': ['path', 'prop'],
-	    'getOr': ['pathOr', 'propOr'],
-	    'head': ['first'],
-	    'includes': ['contains'],
-	    'initial': ['init'],
-	    'isEqual': ['equals'],
-	    'mapValues': ['mapObj'],
-	    'matchesProperty': ['pathEq'],
-	    'omit': ['dissoc', 'omitAll'],
-	    'overArgs': ['useWith'],
-	    'overEvery': ['allPass'],
-	    'overSome': ['somePass'],
-	    'pick': ['pickAll'],
-	    'propertyOf': ['propOf'],
-	    'rest': ['unapply'],
-	    'some': ['all'],
-	    'spread': ['apply'],
-	    'zipObject': ['zipObj']
-	  },
 
 	  /** Used to map method names to their iteratee ary. */
 	  'aryIteratee': {
@@ -380,13 +349,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /** Used to map ary to method names. */
 	  'aryMethod': {
-	    1:[
+	    1: [
 	        'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
 	        'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
 	        'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
 	        'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
 	      ],
-	    2:[
+	    2: [
 	        'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
 	        'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
 	        'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
@@ -395,25 +364,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'findLast', 'findLastIndex', 'findLastKey', 'flatMap', 'forEach',
 	        'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get',
 	        'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
-	        'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf',
-	        'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty', 'maxBy',
-	        'merge', 'minBy', 'omit', 'omitBy', 'orderBy', 'overArgs', 'pad', 'padEnd',
-	        'padStart', 'parseInt', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
-	        'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
-	        'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
+	        'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy',
+	        'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty',
+	        'maxBy', 'merge', 'minBy', 'omit', 'omitBy', 'orderBy', 'overArgs', 'pad',
+	        'padEnd', 'padStart', 'parseInt', 'partition', 'pick', 'pickBy', 'pull',
+	        'pullAll', 'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject',
+	        'remove', 'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
 	        'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
 	        'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
 	        'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-	        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject'
+	        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
+	        'zipObjectDeep'
 	      ],
-	    3:[
+	    3: [
 	        'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
 	        'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
 	        'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce', 'reduceRight', 'replace',
 	        'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
 	        'unionWith', 'xorBy', 'xorWith', 'zipWith'
 	      ],
-	    4:[
+	    4: [
 	        'fill', 'setWith'
 	      ]
 	  },
@@ -488,6 +458,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'curryRight': true,
 	    'partial': true,
 	    'partialRight': true
+	  },
+
+	  /** Used to map real names to their aliases. */
+	  'realToAlias': {
+	    'ary': ['nAry'],
+	    'assignIn': ['extend'],
+	    'assignInWith': ['extendWith'],
+	    'filter': ['whereEq'],
+	    'flatten': ['unnest'],
+	    'flow': ['pipe'],
+	    'flowRight': ['compose'],
+	    'forEach': ['each'],
+	    'forEachRight': ['eachRight'],
+	    'get': ['path', 'prop'],
+	    'getOr': ['pathOr', 'propOr'],
+	    'head': ['first'],
+	    'includes': ['contains'],
+	    'initial': ['init'],
+	    'isEqual': ['equals'],
+	    'mapValues': ['mapObj'],
+	    'matchesProperty': ['pathEq'],
+	    'omit': ['dissoc', 'omitAll'],
+	    'overArgs': ['useWith'],
+	    'overEvery': ['allPass'],
+	    'overSome': ['somePass'],
+	    'pick': ['pickAll'],
+	    'propertyOf': ['propOf'],
+	    'rest': ['unapply'],
+	    'some': ['all'],
+	    'spread': ['apply'],
+	    'zipObject': ['zipObj']
 	  },
 
 	  /** Used to track methods that skip `_.rearg`. */

@@ -1,4 +1,4 @@
-# lodash v4.0.0
+# lodash v4.0.1
 
 The [lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
@@ -18,8 +18,8 @@ $ lodash core -o ./dist/lodash.core.js
 Lodash is also available in a variety of other builds & module formats.
 
  * [lodash](https://www.npmjs.com/package/lodash) & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) packages
- * [lodash-amd](https://github.com/lodash/lodash/tree/4.0.0-amd)
- * [lodash-es](https://github.com/lodash/lodash/tree/4.0.0-es)
+ * [lodash-amd](https://github.com/lodash/lodash/tree/4.0.1-amd)
+ * [lodash-es](https://github.com/lodash/lodash/tree/4.0.1-es)
 
 ## Further Reading
 

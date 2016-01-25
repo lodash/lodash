@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash -o ./dist/lodash.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.0.1';
+  var VERSION = '4.1.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -409,6 +409,27 @@
       case 3: return func.call(thisArg, args[0], args[1], args[2]);
     }
     return func.apply(thisArg, args);
+  }
+
+  /**
+   * A specialized version of `baseAggregator` for arrays.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} setter The function to set `accumulator` values.
+   * @param {Function} iteratee The iteratee to transform keys.
+   * @param {Object} accumulator The initial aggregated object.
+   * @returns {Function} Returns `accumulator`.
+   */
+  function arrayAggregator(array, setter, iteratee, accumulator) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      var value = array[index];
+      setter(accumulator, value, iteratee(value), array);
+    }
+    return accumulator;
   }
 
   /**
@@ -1378,20 +1399,21 @@
      * `differenceBy`, `differenceWith`, `drop`, `dropRight`, `dropRightWhile`,
      * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`,
      * `flowRight`, `fromPairs`, `functions`, `functionsIn`, `groupBy`, `initial`,
-     * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invokeMap`,
-     * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
-     * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
-     * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
-     * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
-     * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
-     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
-     * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`,
-     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-     * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
-     * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
-     * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
+     * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invertBy`,
+     * `invokeMap`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
+     * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
+     * `method`, `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`,
+     * `orderBy`, `over`, `overArgs`, `overEvery`, `overSome`, `partial`,
+     * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
+     * `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`,
+     * `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`,
+     * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`,
+     * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+     * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+     * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+     * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
+     * `zipObjectDeep`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -2124,6 +2146,24 @@
     }
 
     /**
+     * Aggregates elements of `collection` on `accumulator` with keys transformed
+     * by `iteratee` and values set by `setter`.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function} setter The function to set `accumulator` values.
+     * @param {Function} iteratee The iteratee to transform keys.
+     * @param {Object} accumulator The initial aggregated object.
+     * @returns {Function} Returns `accumulator`.
+     */
+    function baseAggregator(collection, setter, iteratee, accumulator) {
+      baseEach(collection, function(value, key, collection) {
+        setter(accumulator, value, iteratee(value), collection);
+      });
+      return accumulator;
+    }
+
+    /**
      * The base implementation of `_.assign` without support for multiple sources
      * or `customizer` functions.
      *
@@ -2667,6 +2707,24 @@
         }
       }
       return result;
+    }
+
+    /**
+     * The base implementation of `_.invert` and `_.invertBy` which inverts
+     * `object` with values transformed by `iteratee` and set by `setter`.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} setter The function to set `accumulator` values.
+     * @param {Function} iteratee The iteratee to transform values.
+     * @param {Object} accumulator The initial inverted object.
+     * @returns {Function} Returns `accumulator`.
+     */
+    function baseInverter(object, setter, iteratee, accumulator) {
+      baseForOwn(object, function(value, key, object) {
+        setter(accumulator, iteratee(value), key, object);
+      });
+      return accumulator;
     }
 
     /**
@@ -3627,6 +3685,27 @@
     }
 
     /**
+     * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
+     *
+     * @private
+     * @param {Array} props The property names.
+     * @param {Array} values The property values.
+     * @param {Function} assignFunc The function to assign values.
+     * @returns {Object} Returns the new object.
+     */
+    function baseZipObject(props, values, assignFunc) {
+      var index = -1,
+          length = props.length,
+          valsLength = values.length,
+          result = {};
+
+      while (++index < length) {
+        assignFunc(result, props[index], index < valsLength ? values[index] : undefined);
+      }
+      return result;
+    }
+
+    /**
      * Creates a clone of `buffer`.
      *
      * @private
@@ -3843,29 +3922,16 @@
      * Creates a function like `_.groupBy`.
      *
      * @private
-     * @param {Function} setter The function to set keys and values of the accumulator object.
-     * @param {Function} [initializer] The function to initialize the accumulator object.
+     * @param {Function} setter The function to set accumulator values.
+     * @param {Function} [initializer] The accumulator object initializer.
      * @returns {Function} Returns the new aggregator function.
      */
     function createAggregator(setter, initializer) {
       return function(collection, iteratee) {
-        var result = initializer ? initializer() : {};
-        iteratee = getIteratee(iteratee);
+        var func = isArray(collection) ? arrayAggregator : baseAggregator,
+            accumulator = initializer ? initializer() : {};
 
-        if (isArray(collection)) {
-          var index = -1,
-              length = collection.length;
-
-          while (++index < length) {
-            var value = collection[index];
-            setter(result, value, iteratee(value), collection);
-          }
-        } else {
-          baseEach(collection, function(value, key, collection) {
-            setter(result, value, iteratee(value), collection);
-          });
-        }
-        return result;
+        return func(collection, setter, getIteratee(iteratee), accumulator);
       };
     }
 
@@ -4196,6 +4262,20 @@
         return fn.apply(thisBinding, args);
       }
       return wrapper;
+    }
+
+    /**
+     * Creates a function like `_.invertBy`.
+     *
+     * @private
+     * @param {Function} setter The function to set accumulator values.
+     * @param {Function} toIteratee The function to resolve iteratees.
+     * @returns {Function} Returns the new inverter function.
+     */
+    function createInverter(setter, toIteratee) {
+      return function(object, iteratee) {
+        return baseInverter(object, setter, toIteratee(iteratee), {});
+      };
     }
 
     /**
@@ -6908,19 +6988,29 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.zipObject(['fred', 'barney'], [30, 40]);
-     * // => { 'fred': 30, 'barney': 40 }
+     * _.zipObject(['a', 'b'], [1, 2]);
+     * // => { 'a': 1, 'b': 2 }
      */
     function zipObject(props, values) {
-      var index = -1,
-          length = props ? props.length : 0,
-          valsLength = values ? values.length : 0,
-          result = {};
+      return baseZipObject(props || [], values || [], assignValue);
+    }
 
-      while (++index < length) {
-        baseSet(result, props[index], index < valsLength ? values[index] : undefined);
-      }
-      return result;
+    /**
+     * This method is like `_.zipObject` except that it supports property paths.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} [props=[]] The property names.
+     * @param {Array} [values=[]] The property values.
+     * @returns {Object} Returns the new object.
+     * @example
+     *
+     * _.zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);
+     * // => { 'a': { 'b': [{ 'c': 1 }, { 'd': 2 }] } }
+     */
+    function zipObjectDeep(props, values) {
+      return baseZipObject(props || [], values || [], baseSet);
     }
 
     /**
@@ -7651,17 +7741,17 @@
      * @returns {Object} Returns the composed aggregate object.
      * @example
      *
-     * var keyData = [
+     * var array = [
      *   { 'dir': 'left', 'code': 97 },
      *   { 'dir': 'right', 'code': 100 }
      * ];
      *
-     * _.keyBy(keyData, function(o) {
+     * _.keyBy(array, function(o) {
      *   return String.fromCharCode(o.code);
      * });
      * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
      *
-     * _.keyBy(keyData, 'dir');
+     * _.keyBy(array, 'dir');
      * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
      */
     var keyBy = createAggregator(function(result, value, key) {
@@ -10932,14 +11022,12 @@
     /**
      * Creates an object composed of the inverted keys and values of `object`.
      * If `object` contains duplicate values, subsequent values overwrite property
-     * assignments of previous values unless `multiVal` is `true`.
+     * assignments of previous values.
      *
      * @static
      * @memberOf _
      * @category Object
      * @param {Object} object The object to invert.
-     * @param {boolean} [multiVal] Allow multiple values per key.
-     * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {Object} Returns the new inverted object.
      * @example
      *
@@ -10947,27 +11035,43 @@
      *
      * _.invert(object);
      * // => { '1': 'c', '2': 'b' }
-     *
-     * // with `multiVal`
-     * _.invert(object, true);
-     * // => { '1': ['a', 'c'], '2': ['b'] }
      */
-    function invert(object, multiVal, guard) {
-      return arrayReduce(keys(object), function(result, key) {
-        var value = object[key];
-        if (multiVal && !guard) {
-          if (hasOwnProperty.call(result, value)) {
-            result[value].push(key);
-          } else {
-            result[value] = [key];
-          }
-        }
-        else {
-          result[value] = key;
-        }
-        return result;
-      }, {});
-    }
+    var invert = createInverter(function(result, value, key) {
+      result[value] = key;
+    }, constant(identity));
+
+    /**
+     * This method is like `_.invert` except that the inverted object is generated
+     * from the results of running each element of `object` through `iteratee`.
+     * The corresponding inverted value of each inverted key is an array of keys
+     * responsible for generating the inverted value. The iteratee is invoked
+     * with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to invert.
+     * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
+     * @returns {Object} Returns the new inverted object.
+     * @example
+     *
+     * var object = { 'a': 1, 'b': 2, 'c': 1 };
+     *
+     * _.invertBy(object);
+     * // => { '1': ['a', 'c'], '2': ['b'] }
+     *
+     * _.invertBy(object, function(value) {
+     *   return 'group' + value;
+     * });
+     * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
+     */
+    var invertBy = createInverter(function(result, value, key) {
+      if (hasOwnProperty.call(result, value)) {
+        result[value].push(key);
+      } else {
+        result[value] = [key];
+      }
+    }, getIteratee);
 
     /**
      * Invokes the method at `path` of `object`.
@@ -13928,6 +14032,7 @@
     lodash.intersectionBy = intersectionBy;
     lodash.intersectionWith = intersectionWith;
     lodash.invert = invert;
+    lodash.invertBy = invertBy;
     lodash.invokeMap = invokeMap;
     lodash.iteratee = iteratee;
     lodash.keyBy = keyBy;
@@ -14016,6 +14121,7 @@
     lodash.xorWith = xorWith;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipObjectDeep = zipObjectDeep;
     lodash.zipWith = zipWith;
 
     // Add aliases.

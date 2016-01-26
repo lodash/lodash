@@ -1,4 +1,4 @@
-var baseInRange = require('./internal/baseInRange'),
+var baseInRange = require('./_baseInRange'),
     toNumber = require('./toNumber');
 
 /**

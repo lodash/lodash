@@ -1,6 +1,6 @@
-var baseFlatten = require('./internal/baseFlatten'),
-    baseIteratee = require('./internal/baseIteratee'),
-    baseUniq = require('./internal/baseUniq'),
+var baseFlatten = require('./_baseFlatten'),
+    baseIteratee = require('./_baseIteratee'),
+    baseUniq = require('./_baseUniq'),
     isArrayLikeObject = require('./isArrayLikeObject'),
     last = require('./last'),
     rest = require('./rest');

@@ -1,7 +1,7 @@
-var baseEach = require('./internal/baseEach'),
-    baseFind = require('./internal/baseFind'),
-    baseFindIndex = require('./internal/baseFindIndex'),
-    baseIteratee = require('./internal/baseIteratee'),
+var baseEach = require('./_baseEach'),
+    baseFind = require('./_baseFind'),
+    baseFindIndex = require('./_baseFindIndex'),
+    baseIteratee = require('./_baseIteratee'),
     isArray = require('./isArray');
 
 /**

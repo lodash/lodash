@@ -1,6 +1,6 @@
-var arrayMap = require('./internal/arrayMap'),
+var arrayMap = require('./_arrayMap'),
     isArray = require('./isArray'),
-    stringToPath = require('./internal/stringToPath');
+    stringToPath = require('./_stringToPath');
 
 /**
  * Converts `value` to a property path array.

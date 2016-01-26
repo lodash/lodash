@@ -1,5 +1,5 @@
 var isFunction = require('./isFunction'),
-    isHostObject = require('./internal/isHostObject'),
+    isHostObject = require('./_isHostObject'),
     isObjectLike = require('./isObjectLike');
 
 /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */

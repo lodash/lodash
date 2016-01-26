@@ -1,6 +1,6 @@
-var baseForRight = require('./internal/baseForRight'),
+var baseForRight = require('./_baseForRight'),
     keysIn = require('./keysIn'),
-    toFunction = require('./internal/toFunction');
+    toFunction = require('./_toFunction');
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of

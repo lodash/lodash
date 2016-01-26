@@ -1,5 +1,5 @@
-var arrayEvery = require('./internal/arrayEvery'),
-    createOver = require('./internal/createOver');
+var arrayEvery = require('./_arrayEvery'),
+    createOver = require('./_createOver');
 
 /**
  * Creates a function that checks if **all** of the `predicates` return

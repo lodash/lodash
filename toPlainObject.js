@@ -1,4 +1,4 @@
-var copyObject = require('./internal/copyObject'),
+var copyObject = require('./_copyObject'),
     keysIn = require('./keysIn');
 
 /**

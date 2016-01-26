@@ -1,5 +1,5 @@
-var baseDifference = require('./internal/baseDifference'),
-    baseFlatten = require('./internal/baseFlatten'),
+var baseDifference = require('./_baseDifference'),
+    baseFlatten = require('./_baseFlatten'),
     isArrayLikeObject = require('./isArrayLikeObject'),
     rest = require('./rest');
 

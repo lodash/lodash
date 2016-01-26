@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    baseUniq = require('./internal/baseUniq');
+var baseIteratee = require('./_baseIteratee'),
+    baseUniq = require('./_baseUniq');
 
 /**
  * This method is like `_.uniq` except that it accepts `iteratee` which is

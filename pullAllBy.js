@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    basePullAllBy = require('./internal/basePullAllBy');
+var baseIteratee = require('./_baseIteratee'),
+    basePullAllBy = require('./_basePullAllBy');
 
 /**
  * This method is like `_.pullAll` except that it accepts `iteratee` which is

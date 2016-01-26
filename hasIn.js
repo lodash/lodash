@@ -1,5 +1,5 @@
-var baseHasIn = require('./internal/baseHasIn'),
-    hasPath = require('./internal/hasPath');
+var baseHasIn = require('./_baseHasIn'),
+    hasPath = require('./_hasPath');
 
 /**
  * Checks if `path` is a direct or inherited property of `object`.

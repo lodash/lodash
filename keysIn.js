@@ -1,7 +1,7 @@
-var baseKeysIn = require('./internal/baseKeysIn'),
-    indexKeys = require('./internal/indexKeys'),
-    isIndex = require('./internal/isIndex'),
-    isPrototype = require('./internal/isPrototype');
+var baseKeysIn = require('./_baseKeysIn'),
+    indexKeys = require('./_indexKeys'),
+    isIndex = require('./_isIndex'),
+    isPrototype = require('./_isPrototype');
 
 /** Used for built-in method references. */
 var objectProto = global.Object.prototype;

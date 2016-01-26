@@ -1,4 +1,4 @@
-var baseClamp = require('./internal/baseClamp'),
+var baseClamp = require('./_baseClamp'),
     toInteger = require('./toInteger');
 
 /** Used as references for the maximum length and index of an array. */

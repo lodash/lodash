@@ -1,4 +1,4 @@
-var baseGet = require('./internal/baseGet');
+var baseGet = require('./_baseGet');
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is

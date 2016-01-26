@@ -1,4 +1,4 @@
-var baseIteratee = require('./internal/baseIteratee'),
+var baseIteratee = require('./_baseIteratee'),
     isArray = require('./isArray'),
     isObjectLike = require('./isObjectLike'),
     matches = require('./matches');

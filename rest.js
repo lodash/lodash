@@ -1,4 +1,4 @@
-var apply = require('./internal/apply'),
+var apply = require('./_apply'),
     toInteger = require('./toInteger');
 
 /** Used as the `TypeError` message for "Functions" methods. */

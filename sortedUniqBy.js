@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    baseSortedUniqBy = require('./internal/baseSortedUniqBy');
+var baseIteratee = require('./_baseIteratee'),
+    baseSortedUniqBy = require('./_baseSortedUniqBy');
 
 /**
  * This method is like `_.uniqBy` except that it's designed and optimized

@@ -1,4 +1,4 @@
-var baseSortedIndex = require('./internal/baseSortedIndex'),
+var baseSortedIndex = require('./_baseSortedIndex'),
     eq = require('./eq');
 
 /**

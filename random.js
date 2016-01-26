@@ -1,5 +1,5 @@
-var baseRandom = require('./internal/baseRandom'),
-    isIterateeCall = require('./internal/isIterateeCall'),
+var baseRandom = require('./_baseRandom'),
+    isIterateeCall = require('./_isIterateeCall'),
     toNumber = require('./toNumber');
 
 /** Built-in method references without a dependency on `global`. */

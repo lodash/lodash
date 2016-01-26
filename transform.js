@@ -1,7 +1,7 @@
-var arrayEach = require('./internal/arrayEach'),
-    baseCreate = require('./internal/baseCreate'),
-    baseForOwn = require('./internal/baseForOwn'),
-    baseIteratee = require('./internal/baseIteratee'),
+var arrayEach = require('./_arrayEach'),
+    baseCreate = require('./_baseCreate'),
+    baseForOwn = require('./_baseForOwn'),
+    baseIteratee = require('./_baseIteratee'),
     isArray = require('./isArray'),
     isFunction = require('./isFunction'),
     isObject = require('./isObject'),
@@ -27,12 +27,12 @@ var arrayEach = require('./internal/arrayEach'),
  * _.transform([2, 3, 4], function(result, n) {
  *   result.push(n *= n);
  *   return n % 2 == 0;
- * });
+ * }, []);
  * // => [4, 9]
  *
  * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
  *   (result[value] || (result[value] = [])).push(key);
- * });
+ * }, {});
  * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function transform(object, iteratee, accumulator) {

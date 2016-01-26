@@ -1,4 +1,4 @@
-var isHostObject = require('./internal/isHostObject'),
+var isHostObject = require('./_isHostObject'),
     isObjectLike = require('./isObjectLike');
 
 /** `Object#toString` result references. */

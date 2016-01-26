@@ -1,9 +1,9 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseIntersection = require('./internal/baseIntersection'),
-    baseIteratee = require('./internal/baseIteratee'),
+var arrayMap = require('./_arrayMap'),
+    baseIntersection = require('./_baseIntersection'),
+    baseIteratee = require('./_baseIteratee'),
     last = require('./last'),
     rest = require('./rest'),
-    toArrayLikeObject = require('./internal/toArrayLikeObject');
+    toArrayLikeObject = require('./_toArrayLikeObject');
 
 /**
  * This method is like `_.intersection` except that it accepts `iteratee`

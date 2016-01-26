@@ -1,4 +1,4 @@
-var baseSortedIndex = require('./internal/baseSortedIndex');
+var baseSortedIndex = require('./_baseSortedIndex');
 
 /**
  * Uses a binary search to determine the lowest index at which `value` should

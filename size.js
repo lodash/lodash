@@ -1,7 +1,7 @@
 var isArrayLike = require('./isArrayLike'),
     isString = require('./isString'),
     keys = require('./keys'),
-    stringSize = require('./internal/stringSize');
+    stringSize = require('./_stringSize');
 
 /**
  * Gets the size of `collection` by returning its length for array-like

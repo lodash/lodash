@@ -1,7 +1,14 @@
-var isFunction = require('./isFunction'),
-    isObjectLike = require('./isObjectLike'),
-    keys = require('./keys'),
-    size = require('./size');
+var isArguments = require('./isArguments'),
+    isArray = require('./isArray'),
+    isArrayLike = require('./isArrayLike'),
+    isFunction = require('./isFunction'),
+    isString = require('./isString');
+
+/** Used for built-in method references. */
+var objectProto = global.Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Checks if `value` is empty. A value is considered empty unless it's an
@@ -31,9 +38,16 @@ var isFunction = require('./isFunction'),
  * // => false
  */
 function isEmpty(value) {
-  return (!isObjectLike(value) || isFunction(value.splice))
-    ? !size(value)
-    : !keys(value).length;
+  if (isArrayLike(value) &&
+      (isArray(value) || isString(value) || isFunction(value.splice) || isArguments(value))) {
+    return !value.length;
+  }
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 module.exports = isEmpty;

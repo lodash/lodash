@@ -1,5 +1,5 @@
-var baseIsMatch = require('./internal/baseIsMatch'),
-    getMatchData = require('./internal/getMatchData');
+var baseIsMatch = require('./_baseIsMatch'),
+    getMatchData = require('./_getMatchData');
 
 /**
  * This method is like `_.isMatch` except that it accepts `customizer` which

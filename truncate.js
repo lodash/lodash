@@ -1,7 +1,7 @@
 var isObject = require('./isObject'),
     isRegExp = require('./isRegExp'),
-    stringSize = require('./internal/stringSize'),
-    stringToArray = require('./internal/stringToArray'),
+    stringSize = require('./_stringSize'),
+    stringToArray = require('./_stringToArray'),
     toInteger = require('./toInteger'),
     toString = require('./toString');
 

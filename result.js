@@ -1,8 +1,8 @@
-var baseToPath = require('./internal/baseToPath'),
+var baseToPath = require('./_baseToPath'),
     get = require('./get'),
     isFunction = require('./isFunction'),
-    isKey = require('./internal/isKey'),
-    parent = require('./internal/parent');
+    isKey = require('./_isKey'),
+    parent = require('./_parent');
 
 /**
  * This method is like `_.get` except that if the resolved value is a function

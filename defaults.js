@@ -1,5 +1,5 @@
-var apply = require('./internal/apply'),
-    assignInDefaults = require('./internal/assignInDefaults'),
+var apply = require('./_apply'),
+    assignInDefaults = require('./_assignInDefaults'),
     assignInWith = require('./assignInWith'),
     rest = require('./rest');
 

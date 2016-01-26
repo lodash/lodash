@@ -1,4 +1,4 @@
-var createFlow = require('./internal/createFlow');
+var createFlow = require('./_createFlow');
 
 /**
  * Creates a function that returns the result of invoking the provided

@@ -1,5 +1,5 @@
-var createPadding = require('./internal/createPadding'),
-    stringSize = require('./internal/stringSize'),
+var createPadding = require('./_createPadding'),
+    stringSize = require('./_stringSize'),
     toInteger = require('./toInteger'),
     toString = require('./toString');
 

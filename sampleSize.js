@@ -1,5 +1,5 @@
-var baseClamp = require('./internal/baseClamp'),
-    baseRandom = require('./internal/baseRandom'),
+var baseClamp = require('./_baseClamp'),
+    baseRandom = require('./_baseRandom'),
     toArray = require('./toArray'),
     toInteger = require('./toInteger');
 

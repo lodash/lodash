@@ -1,7 +1,7 @@
-var arrayEach = require('./internal/arrayEach'),
-    arrayPush = require('./internal/arrayPush'),
-    baseFunctions = require('./internal/baseFunctions'),
-    copyArray = require('./internal/copyArray'),
+var arrayEach = require('./_arrayEach'),
+    arrayPush = require('./_arrayPush'),
+    baseFunctions = require('./_baseFunctions'),
+    copyArray = require('./_copyArray'),
     isFunction = require('./isFunction'),
     isObject = require('./isObject'),
     keys = require('./keys');

@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    baseSortedIndexBy = require('./internal/baseSortedIndexBy');
+var baseIteratee = require('./_baseIteratee'),
+    baseSortedIndexBy = require('./_baseSortedIndexBy');
 
 /**
  * This method is like `_.sortedLastIndex` except that it accepts `iteratee`

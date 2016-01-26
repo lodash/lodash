@@ -1,5 +1,5 @@
-var baseFlatten = require('./internal/baseFlatten'),
-    baseUniq = require('./internal/baseUniq'),
+var baseFlatten = require('./_baseFlatten'),
+    baseUniq = require('./_baseUniq'),
     rest = require('./rest');
 
 /**

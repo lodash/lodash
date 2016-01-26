@@ -1,7 +1,7 @@
 var escape = require('./escape'),
-    reEscape = require('./internal/reEscape'),
-    reEvaluate = require('./internal/reEvaluate'),
-    reInterpolate = require('./internal/reInterpolate');
+    reEscape = require('./_reEscape'),
+    reEvaluate = require('./_reEvaluate'),
+    reInterpolate = require('./_reInterpolate');
 
 /**
  * By default, the template delimiters used by lodash are like those in

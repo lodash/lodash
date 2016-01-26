@@ -1,4 +1,4 @@
-var baseIndexOf = require('./internal/baseIndexOf'),
+var baseIndexOf = require('./_baseIndexOf'),
     isArrayLike = require('./isArrayLike'),
     isString = require('./isString'),
     toInteger = require('./toInteger'),

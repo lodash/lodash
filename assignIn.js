@@ -1,5 +1,5 @@
-var copyObject = require('./internal/copyObject'),
-    createAssigner = require('./internal/createAssigner'),
+var copyObject = require('./_copyObject'),
+    createAssigner = require('./_createAssigner'),
     keysIn = require('./keysIn');
 
 /**

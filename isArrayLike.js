@@ -1,4 +1,4 @@
-var getLength = require('./internal/getLength'),
+var getLength = require('./_getLength'),
     isFunction = require('./isFunction'),
     isLength = require('./isLength');
 

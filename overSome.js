@@ -1,5 +1,5 @@
-var arraySome = require('./internal/arraySome'),
-    createOver = require('./internal/createOver');
+var arraySome = require('./_arraySome'),
+    createOver = require('./_createOver');
 
 /**
  * Creates a function that checks if **any** of the `predicates` return

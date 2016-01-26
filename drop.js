@@ -1,4 +1,4 @@
-var baseSlice = require('./internal/baseSlice'),
+var baseSlice = require('./_baseSlice'),
     toInteger = require('./toInteger');
 
 /**

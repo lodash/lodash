@@ -1,5 +1,5 @@
-var baseSlice = require('./internal/baseSlice'),
-    isIterateeCall = require('./internal/isIterateeCall'),
+var baseSlice = require('./_baseSlice'),
+    isIterateeCall = require('./_isIterateeCall'),
     toInteger = require('./toInteger');
 
 /**

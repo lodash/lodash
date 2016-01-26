@@ -20,6 +20,7 @@ module.exports = {
   'has': require('./has'),
   'hasIn': require('./hasIn'),
   'invert': require('./invert'),
+  'invertBy': require('./invertBy'),
   'invoke': require('./invoke'),
   'keys': require('./keys'),
   'keysIn': require('./keysIn'),

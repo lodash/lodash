@@ -1,5 +1,5 @@
-var baseExtremum = require('./internal/baseExtremum'),
-    baseIteratee = require('./internal/baseIteratee'),
+var baseExtremum = require('./_baseExtremum'),
+    baseIteratee = require('./_baseIteratee'),
     lt = require('./lt');
 
 /**

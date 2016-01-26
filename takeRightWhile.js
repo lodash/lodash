@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    baseWhile = require('./internal/baseWhile');
+var baseIteratee = require('./_baseIteratee'),
+    baseWhile = require('./_baseWhile');
 
 /**
  * Creates a slice of `array` with elements taken from the end. Elements are

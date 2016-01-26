@@ -1,4 +1,4 @@
-var LodashWrapper = require('./internal/LodashWrapper');
+var LodashWrapper = require('./_LodashWrapper');
 
 /**
  * Executes the chained sequence and returns the wrapped result.

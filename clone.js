@@ -1,4 +1,4 @@
-var baseClone = require('./internal/baseClone');
+var baseClone = require('./_baseClone');
 
 /**
  * Creates a shallow clone of `value`.

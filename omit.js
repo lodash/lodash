@@ -1,7 +1,7 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseDifference = require('./internal/baseDifference'),
-    baseFlatten = require('./internal/baseFlatten'),
-    basePick = require('./internal/basePick'),
+var arrayMap = require('./_arrayMap'),
+    baseDifference = require('./_baseDifference'),
+    baseFlatten = require('./_baseFlatten'),
+    basePick = require('./_basePick'),
     keysIn = require('./keysIn'),
     rest = require('./rest');
 

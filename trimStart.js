@@ -1,5 +1,5 @@
-var charsStartIndex = require('./internal/charsStartIndex'),
-    stringToArray = require('./internal/stringToArray'),
+var charsStartIndex = require('./_charsStartIndex'),
+    stringToArray = require('./_stringToArray'),
     toString = require('./toString');
 
 /** Used to match leading and trailing whitespace. */

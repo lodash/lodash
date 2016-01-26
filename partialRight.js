@@ -1,5 +1,5 @@
-var createWrapper = require('./internal/createWrapper'),
-    replaceHolders = require('./internal/replaceHolders'),
+var createWrapper = require('./_createWrapper'),
+    replaceHolders = require('./_replaceHolders'),
     rest = require('./rest');
 
 /** Used to compose bitmasks for wrapper metadata. */

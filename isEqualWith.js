@@ -1,4 +1,4 @@
-var baseIsEqual = require('./internal/baseIsEqual');
+var baseIsEqual = require('./_baseIsEqual');
 
 /**
  * This method is like `_.isEqual` except that it accepts `customizer` which is

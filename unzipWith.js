@@ -1,5 +1,5 @@
-var apply = require('./internal/apply'),
-    arrayMap = require('./internal/arrayMap'),
+var apply = require('./_apply'),
+    arrayMap = require('./_arrayMap'),
     unzip = require('./unzip');
 
 /**

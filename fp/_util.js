@@ -2,9 +2,9 @@ module.exports = {
   'ary': require('../ary'),
   'cloneDeep': require('../cloneDeep'),
   'curry': require('../curry'),
-  'forEach': require('../internal/arrayEach'),
+  'forEach': require('../_arrayEach'),
   'isFunction': require('../isFunction'),
   'iteratee': require('../iteratee'),
-  'keys': require('../internal/baseKeys'),
+  'keys': require('../_baseKeys'),
   'rearg': require('../rearg')
 };

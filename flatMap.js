@@ -1,6 +1,6 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseFlatten = require('./internal/baseFlatten'),
-    baseIteratee = require('./internal/baseIteratee');
+var arrayMap = require('./_arrayMap'),
+    baseFlatten = require('./_baseFlatten'),
+    baseIteratee = require('./_baseIteratee');
 
 /**
  * Creates an array of flattened values by running each element in `array`

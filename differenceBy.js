@@ -1,6 +1,6 @@
-var baseDifference = require('./internal/baseDifference'),
-    baseFlatten = require('./internal/baseFlatten'),
-    baseIteratee = require('./internal/baseIteratee'),
+var baseDifference = require('./_baseDifference'),
+    baseFlatten = require('./_baseFlatten'),
+    baseIteratee = require('./_baseIteratee'),
     isArrayLikeObject = require('./isArrayLikeObject'),
     last = require('./last'),
     rest = require('./rest');

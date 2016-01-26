@@ -1,7 +1,7 @@
-var arrayReduce = require('./internal/arrayReduce'),
-    baseEach = require('./internal/baseEach'),
-    baseIteratee = require('./internal/baseIteratee'),
-    baseReduce = require('./internal/baseReduce'),
+var arrayReduce = require('./_arrayReduce'),
+    baseEach = require('./_baseEach'),
+    baseIteratee = require('./_baseIteratee'),
+    baseReduce = require('./_baseReduce'),
     isArray = require('./isArray');
 
 /**
@@ -30,7 +30,7 @@ var arrayReduce = require('./internal/arrayReduce'),
  *
  * _.reduce([1, 2], function(sum, n) {
  *   return sum + n;
- * });
+ * }, 0);
  * // => 3
  *
  * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {

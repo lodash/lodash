@@ -1,6 +1,6 @@
-var arrayFilter = require('./internal/arrayFilter'),
-    baseFilter = require('./internal/baseFilter'),
-    baseIteratee = require('./internal/baseIteratee'),
+var arrayFilter = require('./_arrayFilter'),
+    baseFilter = require('./_baseFilter'),
+    baseIteratee = require('./_baseIteratee'),
     isArray = require('./isArray');
 
 /**

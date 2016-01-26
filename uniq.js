@@ -1,4 +1,4 @@
-var baseUniq = require('./internal/baseUniq');
+var baseUniq = require('./_baseUniq');
 
 /**
  * Creates a duplicate-free version of an array, using

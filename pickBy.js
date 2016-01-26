@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    basePickBy = require('./internal/basePickBy');
+var baseIteratee = require('./_baseIteratee'),
+    basePickBy = require('./_basePickBy');
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns

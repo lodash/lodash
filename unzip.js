@@ -1,7 +1,7 @@
-var arrayFilter = require('./internal/arrayFilter'),
-    arrayMap = require('./internal/arrayMap'),
-    baseProperty = require('./internal/baseProperty'),
-    baseTimes = require('./internal/baseTimes'),
+var arrayFilter = require('./_arrayFilter'),
+    arrayMap = require('./_arrayMap'),
+    baseProperty = require('./_baseProperty'),
+    baseTimes = require('./_baseTimes'),
     isArrayLikeObject = require('./isArrayLikeObject');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

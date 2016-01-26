@@ -1,4 +1,4 @@
-var baseClone = require('./internal/baseClone');
+var baseClone = require('./_baseClone');
 
 /**
  * This method is like `_.cloneWith` except that it recursively clones `value`.

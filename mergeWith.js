@@ -1,5 +1,5 @@
-var baseMerge = require('./internal/baseMerge'),
-    createAssigner = require('./internal/createAssigner');
+var baseMerge = require('./_baseMerge'),
+    createAssigner = require('./_createAssigner');
 
 /**
  * This method is like `_.merge` except that it accepts `customizer` which

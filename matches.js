@@ -1,5 +1,5 @@
-var baseClone = require('./internal/baseClone'),
-    baseMatches = require('./internal/baseMatches');
+var baseClone = require('./_baseClone'),
+    baseMatches = require('./_baseMatches');
 
 /**
  * Creates a function that performs a deep partial comparison between a given

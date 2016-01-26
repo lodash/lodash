@@ -1,4 +1,4 @@
-var basePullAll = require('./internal/basePullAll');
+var basePullAll = require('./_basePullAll');
 
 /**
  * This method is like `_.pull` except that it accepts an array of values to remove.

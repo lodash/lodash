@@ -1,4 +1,4 @@
-var baseToPairs = require('./internal/baseToPairs'),
+var baseToPairs = require('./_baseToPairs'),
     keys = require('./keys');
 
 /**

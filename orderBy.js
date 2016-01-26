@@ -1,4 +1,4 @@
-var baseOrderBy = require('./internal/baseOrderBy'),
+var baseOrderBy = require('./_baseOrderBy'),
     isArray = require('./isArray');
 
 /**

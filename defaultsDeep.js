@@ -1,5 +1,5 @@
-var apply = require('./internal/apply'),
-    mergeDefaults = require('./internal/mergeDefaults'),
+var apply = require('./_apply'),
+    mergeDefaults = require('./_mergeDefaults'),
     mergeWith = require('./mergeWith'),
     rest = require('./rest');
 

@@ -1,5 +1,5 @@
-var baseClone = require('./internal/baseClone'),
-    baseMatchesProperty = require('./internal/baseMatchesProperty');
+var baseClone = require('./_baseClone'),
+    baseMatchesProperty = require('./_baseMatchesProperty');
 
 /**
  * Creates a function that performs a deep partial comparison between the

@@ -1,4 +1,4 @@
-var baseSet = require('./internal/baseSet');
+var baseSet = require('./_baseSet');
 
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist

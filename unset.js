@@ -1,4 +1,4 @@
-var baseUnset = require('./internal/baseUnset');
+var baseUnset = require('./_baseUnset');
 
 /**
  * Removes the property at `path` of `object`.

@@ -1,5 +1,5 @@
-var baseFlatten = require('./internal/baseFlatten'),
-    createWrapper = require('./internal/createWrapper'),
+var baseFlatten = require('./_baseFlatten'),
+    createWrapper = require('./_createWrapper'),
     rest = require('./rest');
 
 /** Used to compose bitmasks for wrapper metadata. */

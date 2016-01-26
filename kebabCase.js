@@ -1,4 +1,4 @@
-var createCompounder = require('./internal/createCompounder');
+var createCompounder = require('./_createCompounder');
 
 /**
  * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).

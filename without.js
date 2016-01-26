@@ -1,4 +1,4 @@
-var baseDifference = require('./internal/baseDifference'),
+var baseDifference = require('./_baseDifference'),
     isArrayLikeObject = require('./isArrayLikeObject'),
     rest = require('./rest');
 

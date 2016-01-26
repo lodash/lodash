@@ -1,5 +1,5 @@
 var capitalize = require('./capitalize'),
-    createCompounder = require('./internal/createCompounder');
+    createCompounder = require('./_createCompounder');
 
 /**
  * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).

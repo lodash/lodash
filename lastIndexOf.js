@@ -1,4 +1,4 @@
-var indexOfNaN = require('./internal/indexOfNaN'),
+var indexOfNaN = require('./_indexOfNaN'),
     toInteger = require('./toInteger');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

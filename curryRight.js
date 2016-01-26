@@ -1,4 +1,4 @@
-var createWrapper = require('./internal/createWrapper');
+var createWrapper = require('./_createWrapper');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var CURRY_RIGHT_FLAG = 16;

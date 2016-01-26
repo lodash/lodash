@@ -1,4 +1,4 @@
-var baseFlatten = require('./internal/baseFlatten');
+var baseFlatten = require('./_baseFlatten');
 
 /**
  * This method is like `_.flatten` except that it recursively flattens `array`.

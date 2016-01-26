@@ -1,8 +1,8 @@
-var arraySome = require('./internal/arraySome'),
-    baseIteratee = require('./internal/baseIteratee'),
-    baseSome = require('./internal/baseSome'),
+var arraySome = require('./_arraySome'),
+    baseIteratee = require('./_baseIteratee'),
+    baseSome = require('./_baseSome'),
     isArray = require('./isArray'),
-    isIterateeCall = require('./internal/isIterateeCall');
+    isIterateeCall = require('./_isIterateeCall');
 
 /**
  * Checks if `predicate` returns truthy for **any** element of `collection`.

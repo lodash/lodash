@@ -1,4 +1,4 @@
-var baseFlatten = require('./internal/baseFlatten');
+var baseFlatten = require('./_baseFlatten');
 
 /**
  * Flattens `array` a single level.

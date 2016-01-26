@@ -1,5 +1,5 @@
-var baseForOwn = require('./internal/baseForOwn'),
-    baseIteratee = require('./internal/baseIteratee');
+var baseForOwn = require('./_baseForOwn'),
+    baseIteratee = require('./_baseIteratee');
 
 /**
  * The opposite of `_.mapValues`; this method creates an object with the

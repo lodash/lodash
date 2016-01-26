@@ -1,7 +1,7 @@
-var apply = require('./internal/apply'),
-    arrayMap = require('./internal/arrayMap'),
-    baseFlatten = require('./internal/baseFlatten'),
-    baseIteratee = require('./internal/baseIteratee'),
+var apply = require('./_apply'),
+    arrayMap = require('./_arrayMap'),
+    baseFlatten = require('./_baseFlatten'),
+    baseIteratee = require('./_baseIteratee'),
     rest = require('./rest');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

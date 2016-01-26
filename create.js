@@ -1,5 +1,5 @@
-var baseAssign = require('./internal/baseAssign'),
-    baseCreate = require('./internal/baseCreate');
+var baseAssign = require('./_baseAssign'),
+    baseCreate = require('./_baseCreate');
 
 /**
  * Creates an object that inherits from the `prototype` object. If a `properties`

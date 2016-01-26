@@ -1,4 +1,4 @@
-var baseGet = require('./internal/baseGet');
+var baseGet = require('./_baseGet');
 
 /**
  * The opposite of `_.property`; this method creates a function that returns

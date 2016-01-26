@@ -1,4 +1,4 @@
-var createAggregator = require('./internal/createAggregator');
+var createAggregator = require('./_createAggregator');
 
 /** Used for built-in method references. */
 var objectProto = global.Object.prototype;

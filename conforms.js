@@ -1,5 +1,5 @@
-var baseClone = require('./internal/baseClone'),
-    baseConforms = require('./internal/baseConforms');
+var baseClone = require('./_baseClone'),
+    baseConforms = require('./_baseConforms');
 
 /**
  * Creates a function that invokes the predicate properties of `source` with

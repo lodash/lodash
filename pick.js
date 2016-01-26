@@ -1,5 +1,5 @@
-var baseFlatten = require('./internal/baseFlatten'),
-    basePick = require('./internal/basePick'),
+var baseFlatten = require('./_baseFlatten'),
+    basePick = require('./_basePick'),
     rest = require('./rest');
 
 /**

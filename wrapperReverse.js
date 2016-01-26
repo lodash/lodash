@@ -1,5 +1,5 @@
-var LazyWrapper = require('./internal/LazyWrapper'),
-    LodashWrapper = require('./internal/LodashWrapper'),
+var LazyWrapper = require('./_LazyWrapper'),
+    LodashWrapper = require('./_LodashWrapper'),
     reverse = require('./reverse'),
     thru = require('./thru');
 

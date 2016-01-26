@@ -1,4 +1,4 @@
-var baseSum = require('./internal/baseSum'),
+var baseSum = require('./_baseSum'),
     identity = require('./identity');
 
 /**
@@ -17,7 +17,7 @@ var baseSum = require('./internal/baseSum'),
 function sum(array) {
   return (array && array.length)
     ? baseSum(array, identity)
-    : undefined;
+    : 0;
 }
 
 module.exports = sum;

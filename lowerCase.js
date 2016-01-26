@@ -1,4 +1,4 @@
-var createCompounder = require('./internal/createCompounder');
+var createCompounder = require('./_createCompounder');
 
 /**
  * Converts `string`, as space separated words, to lower case.

@@ -1,4 +1,4 @@
-var apply = require('./internal/apply');
+var apply = require('./_apply');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

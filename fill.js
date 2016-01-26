@@ -1,5 +1,5 @@
-var baseFill = require('./internal/baseFill'),
-    isIterateeCall = require('./internal/isIterateeCall');
+var baseFill = require('./_baseFill'),
+    isIterateeCall = require('./_isIterateeCall');
 
 /**
  * Fills elements of `array` with `value` from `start` up to, but not

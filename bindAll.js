@@ -1,5 +1,5 @@
-var arrayEach = require('./internal/arrayEach'),
-    baseFlatten = require('./internal/baseFlatten'),
+var arrayEach = require('./_arrayEach'),
+    baseFlatten = require('./_baseFlatten'),
     bind = require('./bind'),
     rest = require('./rest');
 

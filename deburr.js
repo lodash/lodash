@@ -1,4 +1,4 @@
-var deburrLetter = require('./internal/deburrLetter'),
+var deburrLetter = require('./_deburrLetter'),
     toString = require('./toString');
 
 /** Used to match latin-1 supplementary letters (excluding mathematical operators). */

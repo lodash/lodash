@@ -1,5 +1,5 @@
-var baseForOwn = require('./internal/baseForOwn'),
-    toFunction = require('./internal/toFunction');
+var baseForOwn = require('./_baseForOwn'),
+    toFunction = require('./_toFunction');
 
 /**
  * Iterates over own enumerable properties of an object invoking `iteratee`

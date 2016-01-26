@@ -1,5 +1,5 @@
-var baseTimes = require('./internal/baseTimes'),
-    toFunction = require('./internal/toFunction'),
+var baseTimes = require('./_baseTimes'),
+    toFunction = require('./_toFunction'),
     toInteger = require('./toInteger');
 
 /** Used as references for various `Number` constants. */

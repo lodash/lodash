@@ -1,4 +1,4 @@
-var baseSortedIndex = require('./internal/baseSortedIndex');
+var baseSortedIndex = require('./_baseSortedIndex');
 
 /**
  * This method is like `_.sortedIndex` except that it returns the highest

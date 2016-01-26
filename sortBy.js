@@ -1,6 +1,6 @@
-var baseFlatten = require('./internal/baseFlatten'),
-    baseOrderBy = require('./internal/baseOrderBy'),
-    isIterateeCall = require('./internal/isIterateeCall'),
+var baseFlatten = require('./_baseFlatten'),
+    baseOrderBy = require('./_baseOrderBy'),
+    isIterateeCall = require('./_isIterateeCall'),
     rest = require('./rest');
 
 /**

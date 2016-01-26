@@ -1,7 +1,7 @@
-var arrayReduceRight = require('./internal/arrayReduceRight'),
-    baseEachRight = require('./internal/baseEachRight'),
-    baseIteratee = require('./internal/baseIteratee'),
-    baseReduce = require('./internal/baseReduce'),
+var arrayReduceRight = require('./_arrayReduceRight'),
+    baseEachRight = require('./_baseEachRight'),
+    baseIteratee = require('./_baseIteratee'),
+    baseReduce = require('./_baseReduce'),
     isArray = require('./isArray');
 
 /**

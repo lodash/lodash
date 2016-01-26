@@ -59,5 +59,6 @@ module.exports = {
   'xorWith': require('./xorWith'),
   'zip': require('./zip'),
   'zipObject': require('./zipObject'),
+  'zipObjectDeep': require('./zipObjectDeep'),
   'zipWith': require('./zipWith')
 };

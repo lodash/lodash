@@ -1,6 +1,6 @@
-var baseFor = require('./internal/baseFor'),
+var baseFor = require('./_baseFor'),
     keysIn = require('./keysIn'),
-    toFunction = require('./internal/toFunction');
+    toFunction = require('./_toFunction');
 
 /**
  * Iterates over own and inherited enumerable properties of an object invoking

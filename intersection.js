@@ -1,7 +1,7 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseIntersection = require('./internal/baseIntersection'),
+var arrayMap = require('./_arrayMap'),
+    baseIntersection = require('./_baseIntersection'),
     rest = require('./rest'),
-    toArrayLikeObject = require('./internal/toArrayLikeObject');
+    toArrayLikeObject = require('./_toArrayLikeObject');
 
 /**
  * Creates an array of unique values that are included in all of the provided

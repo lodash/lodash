@@ -1,8 +1,8 @@
-var LazyWrapper = require('./internal/LazyWrapper'),
-    LodashWrapper = require('./internal/LodashWrapper'),
-    baseAt = require('./internal/baseAt'),
-    baseFlatten = require('./internal/baseFlatten'),
-    isIndex = require('./internal/isIndex'),
+var LazyWrapper = require('./_LazyWrapper'),
+    LodashWrapper = require('./_LodashWrapper'),
+    baseAt = require('./_baseAt'),
+    baseFlatten = require('./_baseFlatten'),
+    isIndex = require('./_isIndex'),
     rest = require('./rest'),
     thru = require('./thru');
 

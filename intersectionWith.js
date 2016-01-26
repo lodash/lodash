@@ -1,8 +1,8 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseIntersection = require('./internal/baseIntersection'),
+var arrayMap = require('./_arrayMap'),
+    baseIntersection = require('./_baseIntersection'),
     last = require('./last'),
     rest = require('./rest'),
-    toArrayLikeObject = require('./internal/toArrayLikeObject');
+    toArrayLikeObject = require('./_toArrayLikeObject');
 
 /**
  * This method is like `_.intersection` except that it accepts `comparator`

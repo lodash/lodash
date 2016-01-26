@@ -1,4 +1,4 @@
-var baseFunctions = require('./internal/baseFunctions'),
+var baseFunctions = require('./_baseFunctions'),
     keysIn = require('./keysIn');
 
 /**

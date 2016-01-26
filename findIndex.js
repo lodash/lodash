@@ -1,5 +1,5 @@
-var baseFindIndex = require('./internal/baseFindIndex'),
-    baseIteratee = require('./internal/baseIteratee');
+var baseFindIndex = require('./_baseFindIndex'),
+    baseIteratee = require('./_baseIteratee');
 
 /**
  * This method is like `_.find` except that it returns the index of the first

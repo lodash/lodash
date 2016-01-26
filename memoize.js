@@ -1,4 +1,4 @@
-var MapCache = require('./internal/MapCache');
+var MapCache = require('./_MapCache');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

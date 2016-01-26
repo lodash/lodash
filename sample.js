@@ -1,4 +1,4 @@
-var baseRandom = require('./internal/baseRandom'),
+var baseRandom = require('./_baseRandom'),
     isArrayLike = require('./isArrayLike'),
     values = require('./values');
 

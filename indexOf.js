@@ -1,4 +1,4 @@
-var baseIndexOf = require('./internal/baseIndexOf'),
+var baseIndexOf = require('./_baseIndexOf'),
     toInteger = require('./toInteger');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

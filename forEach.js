@@ -1,7 +1,7 @@
-var arrayEach = require('./internal/arrayEach'),
-    baseEach = require('./internal/baseEach'),
+var arrayEach = require('./_arrayEach'),
+    baseEach = require('./_baseEach'),
     isArray = require('./isArray'),
-    toFunction = require('./internal/toFunction');
+    toFunction = require('./_toFunction');
 
 /**
  * Iterates over elements of `collection` invoking `iteratee` for each element.

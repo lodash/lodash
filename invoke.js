@@ -1,4 +1,4 @@
-var baseInvoke = require('./internal/baseInvoke'),
+var baseInvoke = require('./_baseInvoke'),
     rest = require('./rest');
 
 /**

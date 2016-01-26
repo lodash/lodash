@@ -1,4 +1,4 @@
-var apply = require('./internal/apply'),
+var apply = require('./_apply'),
     isError = require('./isError'),
     rest = require('./rest');
 

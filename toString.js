@@ -1,4 +1,4 @@
-var Symbol = require('./internal/Symbol'),
+var Symbol = require('./_Symbol'),
     isSymbol = require('./isSymbol');
 
 /** Used as references for various `Number` constants. */

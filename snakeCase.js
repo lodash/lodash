@@ -1,4 +1,4 @@
-var createCompounder = require('./internal/createCompounder');
+var createCompounder = require('./_createCompounder');
 
 /**
  * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).

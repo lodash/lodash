@@ -1,4 +1,4 @@
-var baseExtremum = require('./internal/baseExtremum'),
+var baseExtremum = require('./_baseExtremum'),
     gt = require('./gt'),
     identity = require('./identity');
 

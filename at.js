@@ -1,5 +1,5 @@
-var baseAt = require('./internal/baseAt'),
-    baseFlatten = require('./internal/baseFlatten'),
+var baseAt = require('./_baseAt'),
+    baseFlatten = require('./_baseFlatten'),
     rest = require('./rest');
 
 /**

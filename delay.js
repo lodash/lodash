@@ -1,4 +1,4 @@
-var baseDelay = require('./internal/baseDelay'),
+var baseDelay = require('./_baseDelay'),
     rest = require('./rest'),
     toNumber = require('./toNumber');
 

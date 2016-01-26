@@ -1,4 +1,4 @@
-var baseUniq = require('./internal/baseUniq');
+var baseUniq = require('./_baseUniq');
 
 /**
  * This method is like `_.uniq` except that it accepts `comparator` which

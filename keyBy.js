@@ -1,4 +1,4 @@
-var createAggregator = require('./internal/createAggregator');
+var createAggregator = require('./_createAggregator');
 
 /**
  * Creates an object composed of keys generated from the results of running
@@ -14,17 +14,17 @@ var createAggregator = require('./internal/createAggregator');
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * var keyData = [
+ * var array = [
  *   { 'dir': 'left', 'code': 97 },
  *   { 'dir': 'right', 'code': 100 }
  * ];
  *
- * _.keyBy(keyData, function(o) {
+ * _.keyBy(array, function(o) {
  *   return String.fromCharCode(o.code);
  * });
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  *
- * _.keyBy(keyData, 'dir');
+ * _.keyBy(array, 'dir');
  * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
 var keyBy = createAggregator(function(result, value, key) {

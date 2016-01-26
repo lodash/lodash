@@ -1,4 +1,4 @@
-var baseSlice = require('./internal/baseSlice'),
+var baseSlice = require('./_baseSlice'),
     toInteger = require('./toInteger');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

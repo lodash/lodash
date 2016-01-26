@@ -1,4 +1,4 @@
-var createAggregator = require('./internal/createAggregator');
+var createAggregator = require('./_createAggregator');
 
 /**
  * Creates an array of elements split into two groups, the first of which

@@ -1,4 +1,4 @@
-var createPadding = require('./internal/createPadding'),
+var createPadding = require('./_createPadding'),
     toString = require('./toString');
 
 /**

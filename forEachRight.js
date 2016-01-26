@@ -1,7 +1,7 @@
-var arrayEachRight = require('./internal/arrayEachRight'),
-    baseEachRight = require('./internal/baseEachRight'),
+var arrayEachRight = require('./_arrayEachRight'),
+    baseEachRight = require('./_baseEachRight'),
     isArray = require('./isArray'),
-    toFunction = require('./internal/toFunction');
+    toFunction = require('./_toFunction');
 
 /**
  * This method is like `_.forEach` except that it iterates over elements of

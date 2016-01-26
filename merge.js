@@ -1,5 +1,5 @@
-var baseMerge = require('./internal/baseMerge'),
-    createAssigner = require('./internal/createAssigner');
+var baseMerge = require('./_baseMerge'),
+    createAssigner = require('./_createAssigner');
 
 /**
  * Recursively merges own and inherited enumerable properties of source

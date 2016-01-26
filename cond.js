@@ -1,6 +1,6 @@
-var apply = require('./internal/apply'),
-    arrayMap = require('./internal/arrayMap'),
-    baseIteratee = require('./internal/baseIteratee'),
+var apply = require('./_apply'),
+    arrayMap = require('./_arrayMap'),
+    baseIteratee = require('./_baseIteratee'),
     rest = require('./rest');
 
 /** Used as the `TypeError` message for "Functions" methods. */

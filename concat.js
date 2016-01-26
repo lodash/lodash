@@ -1,5 +1,5 @@
-var arrayConcat = require('./internal/arrayConcat'),
-    baseFlatten = require('./internal/baseFlatten'),
+var arrayConcat = require('./_arrayConcat'),
+    baseFlatten = require('./_baseFlatten'),
     isArray = require('./isArray'),
     rest = require('./rest');
 

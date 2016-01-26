@@ -1,12 +1,12 @@
-var assignInDefaults = require('./internal/assignInDefaults'),
+var assignInDefaults = require('./_assignInDefaults'),
     assignInWith = require('./assignInWith'),
     attempt = require('./attempt'),
-    baseValues = require('./internal/baseValues'),
-    escapeStringChar = require('./internal/escapeStringChar'),
+    baseValues = require('./_baseValues'),
+    escapeStringChar = require('./_escapeStringChar'),
     isError = require('./isError'),
-    isIterateeCall = require('./internal/isIterateeCall'),
+    isIterateeCall = require('./_isIterateeCall'),
     keys = require('./keys'),
-    reInterpolate = require('./internal/reInterpolate'),
+    reInterpolate = require('./_reInterpolate'),
     templateSettings = require('./templateSettings'),
     toString = require('./toString');
 

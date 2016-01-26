@@ -1,8 +1,8 @@
-var arrayMap = require('./internal/arrayMap'),
-    baseAt = require('./internal/baseAt'),
-    baseFlatten = require('./internal/baseFlatten'),
-    basePullAt = require('./internal/basePullAt'),
-    compareAscending = require('./internal/compareAscending'),
+var arrayMap = require('./_arrayMap'),
+    baseAt = require('./_baseAt'),
+    baseFlatten = require('./_baseFlatten'),
+    basePullAt = require('./_basePullAt'),
+    compareAscending = require('./_compareAscending'),
     rest = require('./rest');
 
 /**

@@ -1,5 +1,5 @@
-var baseIteratee = require('./internal/baseIteratee'),
-    basePullAt = require('./internal/basePullAt');
+var baseIteratee = require('./_baseIteratee'),
+    basePullAt = require('./_basePullAt');
 
 /**
  * Removes all elements from `array` that `predicate` returns truthy for

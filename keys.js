@@ -1,9 +1,9 @@
-var baseHas = require('./internal/baseHas'),
-    baseKeys = require('./internal/baseKeys'),
-    indexKeys = require('./internal/indexKeys'),
+var baseHas = require('./_baseHas'),
+    baseKeys = require('./_baseKeys'),
+    indexKeys = require('./_indexKeys'),
     isArrayLike = require('./isArrayLike'),
-    isIndex = require('./internal/isIndex'),
-    isPrototype = require('./internal/isPrototype');
+    isIndex = require('./_isIndex'),
+    isPrototype = require('./_isPrototype');
 
 /**
  * Creates an array of the own enumerable property names of `object`.

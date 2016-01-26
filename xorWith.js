@@ -1,5 +1,5 @@
-var arrayFilter = require('./internal/arrayFilter'),
-    baseXor = require('./internal/baseXor'),
+var arrayFilter = require('./_arrayFilter'),
+    baseXor = require('./_baseXor'),
     isArrayLikeObject = require('./isArrayLikeObject'),
     last = require('./last'),
     rest = require('./rest');

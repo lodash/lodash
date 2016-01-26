@@ -1,4 +1,4 @@
-var baseSet = require('./internal/baseSet');
+var baseSet = require('./_baseSet');
 
 /**
  * This method is like `_.set` except that it accepts `customizer` which is

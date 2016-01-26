@@ -1,4 +1,4 @@
-var createRound = require('./internal/createRound');
+var createRound = require('./_createRound');
 
 /**
  * Computes `number` rounded to `precision`.

@@ -1,4 +1,4 @@
-var baseValues = require('./internal/baseValues'),
+var baseValues = require('./_baseValues'),
     keysIn = require('./keysIn');
 
 /**

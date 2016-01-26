@@ -1,4 +1,4 @@
-var escapeHtmlChar = require('./internal/escapeHtmlChar'),
+var escapeHtmlChar = require('./_escapeHtmlChar'),
     toString = require('./toString');
 
 /** Used to match HTML entities and HTML characters. */

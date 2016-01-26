@@ -1,8 +1,8 @@
-var apply = require('./internal/apply'),
-    baseEach = require('./internal/baseEach'),
-    baseInvoke = require('./internal/baseInvoke'),
+var apply = require('./_apply'),
+    baseEach = require('./_baseEach'),
+    baseInvoke = require('./_baseInvoke'),
     isArrayLike = require('./isArrayLike'),
-    isKey = require('./internal/isKey'),
+    isKey = require('./_isKey'),
     rest = require('./rest');
 
 /**

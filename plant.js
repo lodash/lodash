@@ -1,5 +1,5 @@
-var baseLodash = require('./internal/baseLodash'),
-    wrapperClone = require('./internal/wrapperClone');
+var baseLodash = require('./_baseLodash'),
+    wrapperClone = require('./_wrapperClone');
 
 /**
  * Creates a clone of the chained sequence planting `value` as the wrapped value.

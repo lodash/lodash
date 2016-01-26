@@ -1,6 +1,6 @@
-var baseFind = require('./internal/baseFind'),
-    baseForOwnRight = require('./internal/baseForOwnRight'),
-    baseIteratee = require('./internal/baseIteratee');
+var baseFind = require('./_baseFind'),
+    baseForOwnRight = require('./_baseForOwnRight'),
+    baseIteratee = require('./_baseIteratee');
 
 /**
  * This method is like `_.findKey` except that it iterates over elements of

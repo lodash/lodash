@@ -1,5 +1,5 @@
 var toString = require('./toString'),
-    unescapeHtmlChar = require('./internal/unescapeHtmlChar');
+    unescapeHtmlChar = require('./_unescapeHtmlChar');
 
 /** Used to match HTML entities and HTML characters. */
 var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,

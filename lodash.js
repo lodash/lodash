@@ -841,7 +841,7 @@
         result = result === undefined ? current : (result + current);
       }
     }
-    return result;
+    return length ? result : 0;
   }
 
   /**
@@ -13917,7 +13917,7 @@
     function sum(array) {
       return (array && array.length)
         ? baseSum(array, identity)
-        : undefined;
+        : 0;
     }
 
     /**
@@ -13945,7 +13945,7 @@
     function sumBy(array, iteratee) {
       return (array && array.length)
         ? baseSum(array, getIteratee(iteratee))
-        : undefined;
+        : 0;
     }
 
     /*------------------------------------------------------------------------*/

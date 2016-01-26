@@ -12878,6 +12878,15 @@
       var array = [4, 2, 8, 6];
       assert.strictEqual(_.mean(array), 5);
     });
+
+    QUnit.test('should return `NaN` when passing empty `array` values', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(empties, alwaysNaN),
+          actual = lodashStable.map(empties, _.mean);
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -18713,10 +18722,10 @@
       assert.strictEqual(_.sum(array), 12);
     });
 
-    QUnit.test('should return `undefined` when passing empty `array` values', function(assert) {
+    QUnit.test('should return `0` when passing empty `array` values', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(empties, alwaysUndefined),
+      var expected = lodashStable.map(empties, alwaysZero),
           actual = lodashStable.map(empties, _.sum);
 
       assert.deepEqual(actual, expected);

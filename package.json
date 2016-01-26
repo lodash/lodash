@@ -28,11 +28,11 @@
     "webpack": "^1.12.12"
   },
   "scripts": {
-    "build": "npm run build:main && npm run build:fp",
+    "build": "npm run build:main & npm run build:fp",
     "build:fp": "node lib/fp/build-dist.js",
     "build:fp-modules": "node lib/fp/build-modules.js",
     "build:main": "node lib/main/build-dist.js",
-    "style": "npm run style:main && npm run style:fp && npm run style:perf && npm run style:test",
+    "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",
     "style:fp": "jscs fp/*.js lib/**/*.js",
     "style:main": "jscs lodash.js",
     "style:perf": "jscs perf/*.js perf/**/*.js",

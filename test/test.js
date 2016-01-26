@@ -543,11 +543,11 @@
       '  };',
       '',
       "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
-      "    var Ctor = root[type]",
+      '    var Ctor = root[type]',
       '    if (Ctor) {',
-      "      object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+      '      object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
       '    }',
-      "  });",
+      '  });',
       '',
       '  return object;',
       '}())'
@@ -593,7 +593,7 @@
       "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
       '  if (Ctor) {',
-      "    object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));",
+      '    object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
       '  }',
       '});',
       '',
@@ -2367,7 +2367,7 @@
       'undefined values': undefined
     };
 
-    objects['arrays'].length = 3;
+    objects.arrays.length = 3;
 
     var uncloneable = {
       'DOM elements': body,
@@ -2642,7 +2642,9 @@
         var props = [];
 
         var objects = lodashStable.transform(_, function(result, value, key) {
-          if (lodashStable.startsWith(key, '_') && lodashStable.isObject(value) && !lodashStable.isArguments(value) && !lodashStable.isElement(value) && !lodashStable.isFunction(value)) {
+          if (lodashStable.startsWith(key, '_') && lodashStable.isObject(value) &&
+              !lodashStable.isArguments(value) && !lodashStable.isElement(value) &&
+              !lodashStable.isFunction(value)) {
             props.push(lodashStable.capitalize(lodashStable.camelCase(key)));
             result.push(value);
           }
@@ -2664,7 +2666,7 @@
         assert.expect(2);
 
         if (!isNpm) {
-          var object = objects['objects'],
+          var object = objects.objects,
               actual = _(object)[methodName]();
 
           assert.deepEqual(actual, object);
@@ -9451,7 +9453,7 @@
 
       assert.deepEqual(actual, expected);
 
-      objects = [{ 'a': { 'b': 1 } }, { 'a':{ 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
       source = { 'a': { 'c': undefined } };
       actual = lodashStable.map(objects, predicate);
 
@@ -11618,7 +11620,7 @@
     });
   }());
 
-/*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.lowerCase');
 
@@ -11632,7 +11634,7 @@
     });
   }());
 
-/*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.lowerFirst');
 
@@ -20091,7 +20093,7 @@
     });
 
     lodashStable.times(2, function(index) {
-     QUnit.test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), function(assert) {
+      QUnit.test('should trigger a call when invoked repeatedly' + (index ? ' and `leading` is `false`' : ''), function(assert) {
         assert.expect(1);
 
         var done = assert.async();
@@ -21747,7 +21749,7 @@
 
   lodashStable.each(['uniq', 'uniqBy', 'uniqWith', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
-        isSorted = /^sorted/.test(methodName);
+        isSorted = /^sorted/.test(methodName),
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
     if (isSorted) {
@@ -22862,8 +22864,8 @@
   QUnit.module('lodash(...).push');
 
   (function() {
-      QUnit.test('should append elements to `array`', function(assert) {
-        assert.expect(2);
+    QUnit.test('should append elements to `array`', function(assert) {
+      assert.expect(2);
 
       if (!isNpm) {
         var array = [1],
@@ -23227,7 +23229,7 @@
 
   QUnit.module('"Arrays" category methods');
 
- (function() {
+  (function() {
     var args = (function() { return arguments; }(1, null, [3], null, 5)),
         sortedArgs = (function() { return arguments; }(1, [3], 5, null, null)),
         array = [1, 2, 3, 4, 5, 6];
@@ -23249,7 +23251,7 @@
       assert.deepEqual(_.drop(args, 3), [null, 5], message('drop'));
       assert.deepEqual(_.dropRight(args, 3), [1, null], message('dropRight'));
       assert.deepEqual(_.dropRightWhile(args,identity), [1, null, [3], null], message('dropRightWhile'));
-      assert.deepEqual(_.dropWhile(args,identity), [ null, [3], null, 5], message('dropWhile'));
+      assert.deepEqual(_.dropWhile(args,identity), [null, [3], null, 5], message('dropWhile'));
       assert.deepEqual(_.findIndex(args, identity), 0, message('findIndex'));
       assert.deepEqual(_.findLastIndex(args, identity), 4, message('findLastIndex'));
       assert.deepEqual(_.flatten(args), [1, null, 3, null, 5], message('flatten'));
@@ -23303,7 +23305,7 @@
 
   QUnit.module('"Strings" category methods');
 
- (function() {
+  (function() {
     var stringMethods = [
       'camelCase',
       'capitalize',
@@ -23486,8 +23488,8 @@
 
         switch (methodName) {
           case 'invokeMap':
-             actual = func(array, 'toFixed');
-             break;
+            actual = func(array, 'toFixed');
+            break;
           case 'sample':
             actual = func(array, 1);
             break;

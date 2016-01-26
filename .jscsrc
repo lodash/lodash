@@ -77,7 +77,6 @@
     "disallowKeywords": ["with"],
     "disallowMixedSpacesAndTabs": true,
     "disallowMultipleLineBreaks": true,
-    "disallowMultipleLineStrings": true,
     "disallowNewlineBeforeBlockStatements": true,
     "disallowSpaceAfterObjectKeys": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,

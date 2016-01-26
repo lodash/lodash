@@ -946,7 +946,7 @@
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
 
       var stack = { '__data__': { 'array': [], 'map': null } },
-          expected = [[1], [2, 3], 'a', { 'a': [ 1 ] }, { 'a': [2, 3] }, stack];
+          expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
 
       args = undefined;
       value = { 'a': [1] };

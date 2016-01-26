@@ -43,11 +43,11 @@
     if (!amd) {
       try {
         result = require('fs').realpathSync(result);
-      } catch(e) {}
+      } catch (e) {}
 
       try {
         result = require.resolve(result);
-      } catch(e) {}
+      } catch (e) {}
     }
     return result;
   }());

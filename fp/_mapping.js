@@ -42,13 +42,13 @@ module.exports = {
 
   /** Used to map ary to method names. */
   'aryMethod': {
-    1:[
+    1: [
         'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
         'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
         'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
         'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
       ],
-    2:[
+    2: [
         'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
         'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
         'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
@@ -69,14 +69,14 @@ module.exports = {
         'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
         'zipObjectDeep'
       ],
-    3:[
+    3: [
         'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
         'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
         'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce', 'reduceRight', 'replace',
         'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
         'unionWith', 'xorBy', 'xorWith', 'zipWith'
       ],
-    4:[
+    4: [
         'fill', 'setWith'
       ]
   },

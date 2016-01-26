@@ -1,0 +1,9 @@
+#!/bin/bash
+
+docdown \
+  ./lodash.js  \
+  ./doc/README.md  \
+  toc="categories"  \
+  url="https://github.com/lodash/lodash/blob/$npm_package_version/lodash.js"  \
+  title="<a href=\"https://lodash.com/\">lodash</a> <span>v$npm_package_version</span>"  \
+  hash="$1"

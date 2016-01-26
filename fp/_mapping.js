@@ -66,7 +66,8 @@ module.exports = {
         'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
         'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
         'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject'
+        'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
+        'zipObjectDeep'
       ],
     3:[
         'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',

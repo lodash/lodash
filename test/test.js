@@ -22391,55 +22391,57 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.zipObject');
+  QUnit.module('zipObject methods');
 
-  (function() {
-    var object = { 'barney': 36, 'fred': 40 },
-        array = [['barney', 36], ['fred', 40]];
+  lodashStable.each(['zipObject', 'zipObjectDeep'], function(methodName) {
+    var func = _[methodName],
+        array = [['barney', 36], ['fred', 40]],
+        object = { 'barney': 36, 'fred': 40 },
+        isDeep = methodName == 'zipObjectDeep';
 
-    QUnit.test('should zip together key/value arrays into an object', function(assert) {
+    QUnit.test('`_.' + methodName + '` should zip together key/value arrays into an object', function(assert) {
       assert.expect(1);
 
-      var actual = _.zipObject(['barney', 'fred'], [36, 40]);
+      var actual = func(['barney', 'fred'], [36, 40]);
       assert.deepEqual(actual, object);
     });
 
-    QUnit.test('should ignore extra `values`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ignore extra `values`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.zipObject(['a'], [1, 2]), { 'a': 1 });
+      assert.deepEqual(func(['a'], [1, 2]), { 'a': 1 });
     });
 
-    QUnit.test('should assign `undefined` values for extra `keys`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should assign `undefined` values for extra `keys`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.zipObject(['a', 'b'], [1]), { 'a': 1, 'b': undefined });
+      assert.deepEqual(func(['a', 'b'], [1]), { 'a': 1, 'b': undefined });
     });
 
-    QUnit.test('should support deep paths', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isDeep ? '' : 'not ') + 'support deep paths', function(assert) {
       assert.expect(2);
 
-      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        var actual = _.zipObject([path], [1]);
-        assert.deepEqual(actual, { 'a': { 'b': { 'c': 1 } } });
+      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path, index) {
+        var expected = isDeep ? ({ 'a': { 'b': { 'c': 1 } } }) : (index ? { 'a,b,c': 1 } : { 'a.b.c': 1 });
+        assert.deepEqual(func([path], [1]), expected);
       });
     });
 
-    QUnit.test('should work in a lazy sequence', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work in a lazy sequence', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
         var values = lodashStable.range(LARGE_ARRAY_SIZE),
             props = lodashStable.map(values, function(value) { return 'key' + value; }),
-            actual = _(props).zipObject(values).map(square).filter(isEven).take().value();
+            actual = _(props)[methodName](values).map(square).filter(isEven).take().value();
 
-        assert.deepEqual(actual, _.take(_.filter(_.map(_.zipObject(props, values), square), isEven)));
+        assert.deepEqual(actual, _.take(_.filter(_.map(func(props, values), square), isEven)));
       }
       else {
         skipTest(assert);
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -23376,7 +23378,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(287);
+      assert.expect(288);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

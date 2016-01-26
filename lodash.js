@@ -1391,7 +1391,8 @@
      * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
      * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
      * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
+     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, `zipObjectDeep`,
+     * and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -3624,6 +3625,27 @@
           : arrays[index];
       }
       return (result && result.length) ? baseUniq(result, iteratee, comparator) : [];
+    }
+
+    /**
+     * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
+     *
+     * @private
+     * @param {Array} props The property names.
+     * @param {Array} values The property values.
+     * @param {Function} assignFunc The function to assign values.
+     * @returns {Object} Returns the new object.
+     */
+    function baseZipObject(props, values, assignFunc) {
+      var index = -1,
+          length = props.length,
+          valsLength = values.length,
+          result = {};
+
+      while (++index < length) {
+        assignFunc(result, props[index], index < valsLength ? values[index] : undefined);
+      }
+      return result;
     }
 
     /**
@@ -6908,19 +6930,29 @@
      * @returns {Object} Returns the new object.
      * @example
      *
-     * _.zipObject(['fred', 'barney'], [30, 40]);
-     * // => { 'fred': 30, 'barney': 40 }
+     * _.zipObject(['a', 'b'], [1, 2]);
+     * // => { 'a': 1, 'b': 2 }
      */
     function zipObject(props, values) {
-      var index = -1,
-          length = props ? props.length : 0,
-          valsLength = values ? values.length : 0,
-          result = {};
+      return baseZipObject(props || [], values || [], assignValue);
+    }
 
-      while (++index < length) {
-        baseSet(result, props[index], index < valsLength ? values[index] : undefined);
-      }
-      return result;
+    /**
+     * This method is like `_.zipObject` except that it supports property paths.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} [props=[]] The property names.
+     * @param {Array} [values=[]] The property values.
+     * @returns {Object} Returns the new object.
+     * @example
+     *
+     * _.zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);
+     * // => { 'a': { 'b': [{ 'c': 1 }, { 'd': 2 }] } }
+     */
+    function zipObjectDeep(props, values) {
+      return baseZipObject(props || [], values || [], baseSet);
     }
 
     /**
@@ -14016,6 +14048,7 @@
     lodash.xorWith = xorWith;
     lodash.zip = zip;
     lodash.zipObject = zipObject;
+    lodash.zipObjectDeep = zipObjectDeep;
     lodash.zipWith = zipWith;
 
     // Add aliases.

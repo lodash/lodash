@@ -3057,7 +3057,7 @@
     function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
       var objValue = object[key],
           srcValue = source[key],
-          stacked = stack.get(srcValue) || stack.get(objValue);
+          stacked = stack.get(srcValue);
 
       if (stacked) {
         assignMergeValue(object, key, stacked);
@@ -3076,6 +3076,7 @@
             newValue = copyArray(objValue);
           }
           else {
+            isCommon = false;
             newValue = baseClone(srcValue);
           }
         }
@@ -3084,6 +3085,7 @@
             newValue = toPlainObject(objValue);
           }
           else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+            isCommon = false;
             newValue = baseClone(srcValue);
           }
           else {

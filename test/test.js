@@ -13528,6 +13528,16 @@
 
       assert.deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
     });
+
+    QUnit.test('should overwrite primitives with source object clones', function(assert) {
+      assert.expect(1);
+
+      var actual = _.mergeWith({ 'a': 0 }, { 'a': { 'b': ['c'] } }, function(a, b) {
+        return lodashStable.isArray(a) ? a.concat(b) : undefined;
+      });
+
+      assert.deepEqual(actual, { 'a': { 'b': ['c'] } });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -1,3 +1,37 @@
+/** Used to map aliases to their real names. */
+exports.aliasToReal = {
+  'all': 'some',
+  'allPass': 'overEvery',
+  'apply': 'spread',
+  'compose': 'flowRight',
+  'contains': 'includes',
+  'dissoc': 'omit',
+  'each': 'forEach',
+  'eachRight': 'forEachRight',
+  'equals': 'isEqual',
+  'extend': 'assignIn',
+  'extendWith': 'assignInWith',
+  'first': 'head',
+  'init': 'initial',
+  'mapObj': 'mapValues',
+  'omitAll': 'omit',
+  'nAry': 'ary',
+  'path': 'get',
+  'pathEq': 'matchesProperty',
+  'pathOr': 'getOr',
+  'pickAll': 'pick',
+  'pipe': 'flow',
+  'prop': 'get',
+  'propOf': 'propertyOf',
+  'propOr': 'getOr',
+  'somePass': 'overSome',
+  'unapply': 'rest',
+  'unnest': 'flatten',
+  'useWith': 'overArgs',
+  'whereEq': 'filter',
+  'zipObj': 'zipObject'
+};
+
 /** Used to map method names to their iteratee ary. */
 exports.aryIteratee = {
   'assignWith': 2,
@@ -154,35 +188,21 @@ exports.placeholder = {
 };
 
 /** Used to map real names to their aliases. */
-exports.realToAlias = {
-  'ary': ['nAry'],
-  'assignIn': ['extend'],
-  'assignInWith': ['extendWith'],
-  'filter': ['whereEq'],
-  'flatten': ['unnest'],
-  'flow': ['pipe'],
-  'flowRight': ['compose'],
-  'forEach': ['each'],
-  'forEachRight': ['eachRight'],
-  'get': ['path', 'prop'],
-  'getOr': ['pathOr', 'propOr'],
-  'head': ['first'],
-  'includes': ['contains'],
-  'initial': ['init'],
-  'isEqual': ['equals'],
-  'mapValues': ['mapObj'],
-  'matchesProperty': ['pathEq'],
-  'omit': ['dissoc', 'omitAll'],
-  'overArgs': ['useWith'],
-  'overEvery': ['allPass'],
-  'overSome': ['somePass'],
-  'pick': ['pickAll'],
-  'propertyOf': ['propOf'],
-  'rest': ['unapply'],
-  'some': ['all'],
-  'spread': ['apply'],
-  'zipObject': ['zipObj']
-};
+exports.realToAlias = (function() {
+  var hasOwnProperty = Object.prototype.hasOwnProperty,
+      object = exports.aliasToReal,
+      result = {};
+
+  for (var key in object) {
+    var value = object[key];
+    if (hasOwnProperty.call(result, value)) {
+      result[value].push(key);
+    } else {
+      result[value] = [key];
+    }
+  }
+  return result;
+}());
 
 /** Used to track methods that skip `_.rearg`. */
 exports.skipRearg = {

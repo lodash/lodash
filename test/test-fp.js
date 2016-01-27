@@ -115,11 +115,8 @@
     QUnit.test('should have correct aliases', function(assert) {
       assert.expect(1);
 
-      var actual = _.transform(mapping.alias, function(result, aliases, methodName) {
-        var func = fp[methodName];
-        _.each(aliases, function(alias) {
-          result.push([alias, fp[alias] === func]);
-        });
+      var actual = _.transform(mapping.aliasToReal, function(result, realName, alias) {
+        result.push([alias, fp[alias] === fp[realName]]);
       }, []);
 
       assert.deepEqual(_.reject(actual, 1), []);
@@ -373,6 +370,273 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('key methods');
+
+  (function() {
+    var object = { 'a': 1 };
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(3);
+
+      _.each(['findKey', 'findLastKey', 'mapKeys'], function(methodName) {
+        var args;
+
+        var actual = fp[methodName](function() {
+          args || (args = slice.call(arguments));
+        }, object);
+
+        assert.deepEqual(args, ['a'], 'fp.' + methodName);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('mutation methods');
+
+  (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1 },
+        deepObject = { 'a': { 'b': 2, 'c': 3 } };
+
+    QUnit.test('should not mutate values', function(assert) {
+      assert.expect(36);
+
+      function Foo() {}
+      Foo.prototype = { 'b': 2 };
+
+      var value = _.clone(object),
+          actual = fp.assign(value, { 'b': 2 });
+
+      assert.deepEqual(value, object, 'fp.assign');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
+
+      value = _.clone(object);
+      actual = fp.assignWith(function(objValue, srcValue) {
+        return srcValue;
+      }, value, { 'b': 2 });
+
+      assert.deepEqual(value, object, 'fp.assignWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
+
+      value = _.clone(object);
+      actual = fp.assignIn(value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.assignIn');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignIn');
+
+      value = _.clone(object);
+      actual = fp.assignInWith(function(objValue, srcValue) {
+        return srcValue;
+      }, value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.assignInWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignInWith');
+
+      value = _.clone(object);
+      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
+
+      assert.deepEqual(value, object, 'fp.defaults');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
+
+      value = _.clone(object);
+      value.b = { 'c': 1 };
+      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
+
+      assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
+      assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
+
+      value = _.clone(object);
+      actual = fp.extend(value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.extend');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
+
+      value = _.clone(object);
+      actual = fp.extendWith(function(objValue, srcValue) {
+        return srcValue;
+      }, value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.extendWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
+
+      value = _.clone(array);
+      actual = fp.fill(1, 2, '*', value);
+
+      assert.deepEqual(value, array, 'fp.fill');
+      assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
+
+      value = { 'a': { 'b': 2 } };
+      actual = fp.merge(value, { 'a': { 'c': 3 } });
+
+      assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
+
+      value = { 'a': [1] };
+      actual = fp.mergeWith(function(objValue, srcValue) {
+        if (_.isArray(objValue)) {
+          return objValue.concat(srcValue);
+        }
+      }, value, { 'a': [2, 3] });
+
+      assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
+      assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
+
+      value = _.clone(array);
+      actual = fp.pull(2, value);
+
+      assert.deepEqual(value, array, 'fp.pull');
+      assert.deepEqual(actual, [1, 3], 'fp.pull');
+
+      value = _.clone(array);
+      actual = fp.pullAll([1, 3], value);
+
+      assert.deepEqual(value, array, 'fp.pullAll');
+      assert.deepEqual(actual, [2], 'fp.pullAll');
+
+      value = _.clone(array);
+      actual = fp.pullAt([0, 2], value);
+
+      assert.deepEqual(value, array, 'fp.pullAt');
+      assert.deepEqual(actual, [2], 'fp.pullAt');
+
+      value = _.clone(array);
+      actual = fp.remove(function(value) {
+        return value === 2;
+      }, value);
+
+      assert.deepEqual(value, array, 'fp.remove');
+      assert.deepEqual(actual, [1, 3], 'fp.remove');
+
+      value = _.clone(array);
+      actual = fp.reverse(value);
+
+      assert.deepEqual(value, array, 'fp.reverse');
+      assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.set('a.b', 3, value);
+
+      assert.deepEqual(value, deepObject, 'fp.set');
+      assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.set');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.setWith(Object, 'd.e', 4, value);
+
+      assert.deepEqual(value, deepObject, 'fp.setWith');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('placeholder methods');
+
+  _.forOwn(mapping.placeholder, function(truthy, methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
+      assert.expect(1);
+
+      assert.ok(_.isObject(func.placeholder));
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('reduce methods');
+
+  _.each(['reduce', 'reduceRight'], function(methodName) {
+    var func = fp[methodName],
+        isReduce = methodName == 'reduce';
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
+      assert.expect(1);
+
+      var args,
+          array = [1, 2, 3];
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, array);
+
+      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+      assert.expect(1);
+
+      var args,
+          object = { 'a': 1, 'b': 2 },
+          isFIFO = _.keys(object)[0] == 'a';
+
+      var expected = isFIFO
+        ? (isReduce ? [0, 1] : [0, 2])
+        : (isReduce ? [0, 2] : [0, 1]);
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, object);
+
+      assert.deepEqual(args, expected);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('with methods');
+
+  (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1 };
+
+    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
+      assert.expect(4);
+
+      var args,
+          value = _.clone(object);
+
+      fp.assignWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, value, { 'b': 2 });
+
+      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
+
+      args = undefined;
+      value = _.clone(object);
+
+      fp.extendWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, value, { 'b': 2 });
+
+      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
+
+      var stack = { '__data__': { 'array': [], 'map': null } },
+          expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
+
+      args = undefined;
+      value = { 'a': [1] };
+
+      fp.mergeWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, value, { 'a': [2, 3] });
+
+      args[5] = _.omitBy(args[5], _.isFunction);
+      assert.deepEqual(args, expected, 'fp.mergeWith');
+
+      args = undefined;
+      value = _.clone(object);
+
+      fp.setWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      }, 'b.c', 2, value);
+
+      assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.difference');
 
   (function() {
@@ -607,20 +871,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('placeholder methods');
-
-  _.forOwn(mapping.placeholder, function(truthy, methodName) {
-    var func = fp[methodName];
-
-    QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
-      assert.expect(1);
-
-      assert.ok(_.isObject(func.placeholder));
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('fp.random');
 
   (function() {
@@ -650,46 +900,6 @@
       assert.deepEqual(fp.range(1)(4), [1, 2, 3]);
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('reduce methods');
-
-  _.each(['reduce', 'reduceRight'], function(methodName) {
-    var func = fp[methodName],
-        isReduce = methodName == 'reduce';
-
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
-      assert.expect(1);
-
-      var args,
-          array = [1, 2, 3];
-
-      func(function() {
-        args || (args = slice.call(arguments));
-      })(0, array);
-
-      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
-      assert.expect(1);
-
-      var args,
-          object = { 'a': 1, 'b': 2 },
-          isFIFO = _.keys(object)[0] == 'a';
-
-      var expected = isFIFO
-        ? (isReduce ? [0, 1] : [0, 2])
-        : (isReduce ? [0, 2] : [0, 1]);
-
-      func(function() {
-        args || (args = slice.call(arguments));
-      })(0, object);
-
-      assert.deepEqual(args, expected);
-    });
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -768,219 +978,6 @@
       assert.expect(1);
 
       assert.deepEqual(fp.zipObject(['a', 'b'], [1, 2]), { 'a': 1, 'b': 2 });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('key methods');
-
-  (function() {
-    var object = { 'a': 1 };
-
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-      assert.expect(3);
-
-      _.each(['findKey', 'findLastKey', 'mapKeys'], function(methodName) {
-        var args;
-
-        var actual = fp[methodName](function() {
-          args || (args = slice.call(arguments));
-        }, object);
-
-        assert.deepEqual(args, ['a'], 'fp.' + methodName);
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('mutation methods');
-
-  (function() {
-    var array = [1, 2, 3],
-        object = { 'a': 1 },
-        deepObject = { 'a': { 'b': 2, 'c': 3 } };
-
-    QUnit.test('should not mutate values', function(assert) {
-      assert.expect(36);
-
-      function Foo() {}
-      Foo.prototype = { 'b': 2 };
-
-      var value = _.clone(object),
-          actual = fp.assign(value, { 'b': 2 });
-
-      assert.deepEqual(value, object, 'fp.assign');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
-
-      value = _.clone(object);
-      actual = fp.assignWith(function(objValue, srcValue) {
-        return srcValue;
-      }, value, { 'b': 2 });
-
-      assert.deepEqual(value, object, 'fp.assignWith');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
-
-      value = _.clone(object);
-      actual = fp.assignIn(value, new Foo);
-
-      assert.deepEqual(value, object, 'fp.assignIn');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignIn');
-
-      value = _.clone(object);
-      actual = fp.assignInWith(function(objValue, srcValue) {
-        return srcValue;
-      }, value, new Foo);
-
-      assert.deepEqual(value, object, 'fp.assignInWith');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignInWith');
-
-      value = _.clone(object);
-      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
-
-      assert.deepEqual(value, object, 'fp.defaults');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
-
-      value = _.clone(object);
-      value.b = { 'c': 1 };
-      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
-
-      assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
-      assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
-
-      value = _.clone(object);
-      actual = fp.extend(value, new Foo);
-
-      assert.deepEqual(value, object, 'fp.extend');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
-
-      value = _.clone(object);
-      actual = fp.extendWith(function(objValue, srcValue) {
-        return srcValue;
-      }, value, new Foo);
-
-      assert.deepEqual(value, object, 'fp.extendWith');
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
-
-      value = _.clone(array);
-      actual = fp.fill(1, 2, '*', value);
-
-      assert.deepEqual(value, array, 'fp.fill');
-      assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
-
-      value = { 'a': { 'b': 2 } };
-      actual = fp.merge(value, { 'a': { 'c': 3 } });
-
-      assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
-      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
-
-      value = { 'a': [1] };
-      actual = fp.mergeWith(function(objValue, srcValue) {
-        if (_.isArray(objValue)) {
-          return objValue.concat(srcValue);
-        }
-      }, value, { 'a': [2, 3] });
-
-      assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
-      assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
-
-      value = _.clone(array);
-      actual = fp.pull(2, value);
-
-      assert.deepEqual(value, array, 'fp.pull');
-      assert.deepEqual(actual, [1, 3], 'fp.pull');
-
-      value = _.clone(array);
-      actual = fp.pullAll([1, 3], value);
-
-      assert.deepEqual(value, array, 'fp.pullAll');
-      assert.deepEqual(actual, [2], 'fp.pullAll');
-
-      value = _.clone(array);
-      actual = fp.pullAt([0, 2], value);
-
-      assert.deepEqual(value, array, 'fp.pullAt');
-      assert.deepEqual(actual, [2], 'fp.pullAt');
-
-      value = _.clone(array);
-      actual = fp.remove(function(value) {
-        return value === 2;
-      }, value);
-
-      assert.deepEqual(value, array, 'fp.remove');
-      assert.deepEqual(actual, [1, 3], 'fp.remove');
-
-      value = _.clone(array);
-      actual = fp.reverse(value);
-
-      assert.deepEqual(value, array, 'fp.reverse');
-      assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
-
-      value = _.cloneDeep(deepObject);
-      actual = fp.set('a.b', 3, value);
-
-      assert.deepEqual(value, deepObject, 'fp.set');
-      assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.set');
-
-      value = _.cloneDeep(deepObject);
-      actual = fp.setWith(Object, 'd.e', 4, value);
-
-      assert.deepEqual(value, deepObject, 'fp.setWith');
-      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('with methods');
-
-  (function() {
-    var array = [1, 2, 3],
-        object = { 'a': 1 };
-
-    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
-      assert.expect(4);
-
-      var args,
-          value = _.clone(object);
-
-      fp.assignWith(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'b': 2 });
-
-      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
-
-      args = undefined;
-      value = _.clone(object);
-
-      fp.extendWith(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'b': 2 });
-
-      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
-
-      var stack = { '__data__': { 'array': [], 'map': null } },
-          expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
-
-      args = undefined;
-      value = { 'a': [1] };
-
-      fp.mergeWith(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'a': [2, 3] });
-
-      args[5] = _.omitBy(args[5], _.isFunction);
-      assert.deepEqual(args, expected, 'fp.mergeWith');
-
-      args = undefined;
-      value = _.clone(object);
-
-      fp.setWith(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      }, 'b.c', 2, value);
-
-      assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
     });
   }());
 

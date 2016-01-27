@@ -32,6 +32,7 @@
     "build:fp": "node lib/fp/build-dist.js",
     "build:fp-modules": "node lib/fp/build-modules.js",
     "build:main": "node lib/main/build-dist.js",
+    "build:main-modules": "node lib/main/build-modules.js",
     "doc": "node lib/doc/build github",
     "doc:site": "node lib/doc/build site",
     "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",

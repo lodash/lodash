@@ -649,6 +649,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.extend');
+
+  (function() {
+    QUnit.test('should convert by name', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype = { 'b': 2 };
+
+      var object = { 'a': 1 };
+
+      if (!document) {
+        var extend = convert('extend', _.extend),
+            value = _.clone(object),
+            actual = extend(value, new Foo);
+
+        assert.deepEqual(value, object);
+        assert.deepEqual(actual, { 'a': 1, 'b': 2 });
+      }
+      else {
+        skipTest(assert, 2);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.fill');
 
   (function() {

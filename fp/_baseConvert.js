@@ -149,6 +149,7 @@ function baseConvert(util, name, func) {
   };
 
   var wrap = function(name, func) {
+    name = mapping.aliasToReal[name] || name;
     var wrapper = wrappers[name];
     if (wrapper) {
       return wrapper(func);

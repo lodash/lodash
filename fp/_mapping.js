@@ -49,7 +49,7 @@ module.exports = {
         'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
       ],
     2: [
-        'add', 'after', 'ary', 'assign', 'at', 'before', 'bind', 'bindKey',
+        'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindKey',
         'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
         'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
         'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith', 'eq',
@@ -97,7 +97,10 @@ module.exports = {
 
   /** Used to map method names to rearg configs. */
   'methodRearg': {
+    'assignInWith': [1, 2, 0],
+    'assignWith': [1, 2, 0],
     'clamp': [2, 0, 1],
+    'mergeWith': [1, 2, 0],
     'reduce': [2, 0, 1],
     'reduceRight': [2, 0, 1],
     'set': [2, 0, 1],
@@ -189,8 +192,6 @@ module.exports = {
     'assign': true,
     'assignIn': true,
     'concat': true,
-    'defaults': true,
-    'defaultsDeep': true,
     'difference': true,
     'matchesProperty': true,
     'merge': true,

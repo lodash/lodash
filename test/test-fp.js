@@ -803,13 +803,13 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should not mutate values', function(assert) {
-      assert.expect(32);
+      assert.expect(36);
 
       function Foo() {}
       Foo.prototype = { 'b': 2 };
 
       var value = _.clone(object),
-          actual = fp.assign({ 'b': 2 }, value);
+          actual = fp.assign(value, { 'b': 2 });
 
       assert.deepEqual(value, object, 'fp.assign');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
@@ -817,26 +817,40 @@
       value = _.clone(object);
       actual = fp.assignWith(function(objValue, srcValue) {
         return srcValue;
-      }, { 'b': 2 }, value);
+      }, value, { 'b': 2 });
 
       assert.deepEqual(value, object, 'fp.assignWith');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
 
       value = _.clone(object);
-      actual = fp.defaults(value, { 'a': 2, 'b': 2 });
+      actual = fp.assignIn(value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.assignIn');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignIn');
+
+      value = _.clone(object);
+      actual = fp.assignInWith(function(objValue, srcValue) {
+        return srcValue;
+      }, value, new Foo);
+
+      assert.deepEqual(value, object, 'fp.assignInWith');
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignInWith');
+
+      value = _.clone(object);
+      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
 
       assert.deepEqual(value, object, 'fp.defaults');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
 
       value = _.clone(object);
       value.b = { 'c': 1 };
-      actual = fp.defaultsDeep(value, { 'b': { 'c': 2, 'd': 2 } });
+      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
 
       assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
       assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
 
       value = _.clone(object);
-      actual = fp.extend(new Foo, value);
+      actual = fp.extend(value, new Foo);
 
       assert.deepEqual(value, object, 'fp.extend');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
@@ -844,7 +858,7 @@
       value = _.clone(object);
       actual = fp.extendWith(function(objValue, srcValue) {
         return srcValue;
-      }, new Foo, value);
+      }, value, new Foo);
 
       assert.deepEqual(value, object, 'fp.extendWith');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
@@ -856,7 +870,7 @@
       assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
 
       value = { 'a': { 'b': 2 } };
-      actual = fp.merge({ 'a': { 'c': 3 } }, value);
+      actual = fp.merge(value, { 'a': { 'c': 3 } });
 
       assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
@@ -866,7 +880,7 @@
         if (_.isArray(objValue)) {
           return objValue.concat(srcValue);
         }
-      }, { 'a': [2, 3] }, value);
+      }, value, { 'a': [2, 3] });
 
       assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
       assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
@@ -931,17 +945,18 @@
       var args,
           value = _.clone(object);
 
-      var actual = fp.assignWith(function() {
+      fp.assignWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, { 'b': 2 }, value);
+      }, value, { 'b': 2 });
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
 
       args = undefined;
       value = _.clone(object);
-      actual = fp.extendWith(function() {
+
+      fp.extendWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, { 'b': 2 }, value);
+      }, value, { 'b': 2 });
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
 
@@ -950,16 +965,18 @@
 
       args = undefined;
       value = { 'a': [1] };
-      actual = fp.mergeWith(function() {
+
+      fp.mergeWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, { 'a': [2, 3] }, value);
+      }, value, { 'a': [2, 3] });
 
       args[5] = _.omitBy(args[5], _.isFunction);
       assert.deepEqual(args, expected, 'fp.mergeWith');
 
       args = undefined;
       value = _.clone(object);
-      actual = fp.setWith(function() {
+
+      fp.setWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
       }, 'b.c', 2, value);
 

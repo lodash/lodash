@@ -9523,6 +9523,23 @@
     }
 
     /**
+     * Checks if `value` is empty.
+     *
+     * @private
+     * @param {Object} value The value to check.
+     * @returns {Boolean} Returns `true` if value has keys, `false` otherwise.
+     */
+    function isObjectEmpty(value) {
+      for (var key in value) {
+        if (hasOwnProperty.call(value, key)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    /**
      * Checks if `value` is empty. A value is considered empty unless it's an
      * `arguments` object, array, string, or jQuery-like collection with a length
      * greater than `0` or an object with own enumerable properties.
@@ -9552,7 +9569,7 @@
     function isEmpty(value) {
       return (!isObjectLike(value) || isFunction(value.splice))
         ? !size(value)
-        : !keys(value).length;
+        : isObjectEmpty(value);
     }
 
     /**

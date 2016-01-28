@@ -1,4 +1,4 @@
-import Symbol from './internal/Symbol';
+import Symbol from './_Symbol';
 import isSymbol from './isSymbol';
 
 /** Used as references for various `Number` constants. */

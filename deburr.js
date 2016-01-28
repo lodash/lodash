@@ -1,4 +1,4 @@
-import deburrLetter from './internal/deburrLetter';
+import deburrLetter from './_deburrLetter';
 import toString from './toString';
 
 /** Used to match latin-1 supplementary letters (excluding mathematical operators). */

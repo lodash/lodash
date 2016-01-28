@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import basePullAllBy from './internal/basePullAllBy';
+import baseIteratee from './_baseIteratee';
+import basePullAllBy from './_basePullAllBy';
 
 /**
  * This method is like `_.pullAll` except that it accepts `iteratee` which is

@@ -1,4 +1,4 @@
-import baseUniq from './internal/baseUniq';
+import baseUniq from './_baseUniq';
 
 /**
  * This method is like `_.uniq` except that it accepts `comparator` which

@@ -1,4 +1,4 @@
-import baseSet from './internal/baseSet';
+import baseSet from './_baseSet';
 
 /**
  * This method is like `_.set` except that it accepts `customizer` which is

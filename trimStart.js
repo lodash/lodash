@@ -1,5 +1,5 @@
-import charsStartIndex from './internal/charsStartIndex';
-import stringToArray from './internal/stringToArray';
+import charsStartIndex from './_charsStartIndex';
+import stringToArray from './_stringToArray';
 import toString from './toString';
 
 /** Used to match leading and trailing whitespace. */

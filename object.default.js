@@ -19,6 +19,7 @@ import get from './get';
 import has from './has';
 import hasIn from './hasIn';
 import invert from './invert';
+import invertBy from './invertBy';
 import invoke from './invoke';
 import keys from './keys';
 import keysIn from './keysIn';
@@ -45,9 +46,9 @@ export default {
   defaults, defaultsDeep, extend, extendWith, findKey,
   findLastKey, forIn, forInRight, forOwn, forOwnRight,
   functions, functionsIn, get, has, hasIn,
-  invert, invoke, keys, keysIn, mapKeys,
-  mapValues, merge, mergeWith, omit, omitBy,
-  pick, pickBy, result, set, setWith,
-  toPairs, toPairsIn, transform, unset, values,
-  valuesIn
+  invert, invertBy, invoke, keys, keysIn,
+  mapKeys, mapValues, merge, mergeWith, omit,
+  omitBy, pick, pickBy, result, set,
+  setWith, toPairs, toPairsIn, transform, unset,
+  values, valuesIn
 };

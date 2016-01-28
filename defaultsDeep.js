@@ -1,5 +1,5 @@
-import apply from './internal/apply';
-import mergeDefaults from './internal/mergeDefaults';
+import apply from './_apply';
+import mergeDefaults from './_mergeDefaults';
 import mergeWith from './mergeWith';
 import rest from './rest';
 

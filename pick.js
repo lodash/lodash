@@ -1,5 +1,5 @@
-import baseFlatten from './internal/baseFlatten';
-import basePick from './internal/basePick';
+import baseFlatten from './_baseFlatten';
+import basePick from './_basePick';
 import rest from './rest';
 
 /**

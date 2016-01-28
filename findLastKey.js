@@ -1,6 +1,6 @@
-import baseFind from './internal/baseFind';
-import baseForOwnRight from './internal/baseForOwnRight';
-import baseIteratee from './internal/baseIteratee';
+import baseFind from './_baseFind';
+import baseForOwnRight from './_baseForOwnRight';
+import baseIteratee from './_baseIteratee';
 
 /**
  * This method is like `_.findKey` except that it iterates over elements of

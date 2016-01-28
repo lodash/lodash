@@ -1,8 +1,8 @@
-import arrayMap from './internal/arrayMap';
-import baseAt from './internal/baseAt';
-import baseFlatten from './internal/baseFlatten';
-import basePullAt from './internal/basePullAt';
-import compareAscending from './internal/compareAscending';
+import arrayMap from './_arrayMap';
+import baseAt from './_baseAt';
+import baseFlatten from './_baseFlatten';
+import basePullAt from './_basePullAt';
+import compareAscending from './_compareAscending';
 import rest from './rest';
 
 /**

@@ -58,6 +58,7 @@ import xorBy from './xorBy';
 import xorWith from './xorWith';
 import zip from './zip';
 import zipObject from './zipObject';
+import zipObjectDeep from './zipObjectDeep';
 import zipWith from './zipWith';
 
 export default {
@@ -73,5 +74,5 @@ export default {
   takeWhile, union, unionBy, unionWith, uniq,
   uniqBy, uniqWith, unzip, unzipWith, without,
   xor, xorBy, xorWith, zip, zipObject,
-  zipWith
+  zipObjectDeep, zipWith
 };

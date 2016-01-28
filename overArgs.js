@@ -1,7 +1,7 @@
-import apply from './internal/apply';
-import arrayMap from './internal/arrayMap';
-import baseFlatten from './internal/baseFlatten';
-import baseIteratee from './internal/baseIteratee';
+import apply from './_apply';
+import arrayMap from './_arrayMap';
+import baseFlatten from './_baseFlatten';
+import baseIteratee from './_baseIteratee';
 import rest from './rest';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

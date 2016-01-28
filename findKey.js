@@ -1,6 +1,6 @@
-import baseFind from './internal/baseFind';
-import baseForOwn from './internal/baseForOwn';
-import baseIteratee from './internal/baseIteratee';
+import baseFind from './_baseFind';
+import baseForOwn from './_baseForOwn';
+import baseIteratee from './_baseIteratee';
 
 /**
  * This method is like `_.find` except that it returns the key of the first

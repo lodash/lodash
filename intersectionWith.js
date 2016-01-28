@@ -1,8 +1,8 @@
-import arrayMap from './internal/arrayMap';
-import baseIntersection from './internal/baseIntersection';
+import arrayMap from './_arrayMap';
+import baseIntersection from './_baseIntersection';
 import last from './last';
 import rest from './rest';
-import toArrayLikeObject from './internal/toArrayLikeObject';
+import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * This method is like `_.intersection` except that it accepts `comparator`

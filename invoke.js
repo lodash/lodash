@@ -1,4 +1,4 @@
-import baseInvoke from './internal/baseInvoke';
+import baseInvoke from './_baseInvoke';
 import rest from './rest';
 
 /**

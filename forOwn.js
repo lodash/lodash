@@ -1,5 +1,5 @@
-import baseForOwn from './internal/baseForOwn';
-import toFunction from './internal/toFunction';
+import baseForOwn from './_baseForOwn';
+import toFunction from './_toFunction';
 
 /**
  * Iterates over own enumerable properties of an object invoking `iteratee`

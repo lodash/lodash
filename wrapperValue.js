@@ -1,4 +1,4 @@
-import baseWrapperValue from './internal/baseWrapperValue';
+import baseWrapperValue from './_baseWrapperValue';
 
 /**
  * Executes the chained sequence to extract the unwrapped value.

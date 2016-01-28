@@ -1,4 +1,4 @@
-import createWrapper from './internal/createWrapper';
+import createWrapper from './_createWrapper';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var ARY_FLAG = 128;

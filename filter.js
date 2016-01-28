@@ -1,6 +1,6 @@
-import arrayFilter from './internal/arrayFilter';
-import baseFilter from './internal/baseFilter';
-import baseIteratee from './internal/baseIteratee';
+import arrayFilter from './_arrayFilter';
+import baseFilter from './_baseFilter';
+import baseIteratee from './_baseIteratee';
 import isArray from './isArray';
 
 /**

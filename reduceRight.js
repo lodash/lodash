@@ -1,7 +1,7 @@
-import arrayReduceRight from './internal/arrayReduceRight';
-import baseEachRight from './internal/baseEachRight';
-import baseIteratee from './internal/baseIteratee';
-import baseReduce from './internal/baseReduce';
+import arrayReduceRight from './_arrayReduceRight';
+import baseEachRight from './_baseEachRight';
+import baseIteratee from './_baseIteratee';
+import baseReduce from './_baseReduce';
 import isArray from './isArray';
 
 /**

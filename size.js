@@ -1,7 +1,7 @@
 import isArrayLike from './isArrayLike';
 import isString from './isString';
 import keys from './keys';
-import stringSize from './internal/stringSize';
+import stringSize from './_stringSize';
 
 /**
  * Gets the size of `collection` by returning its length for array-like

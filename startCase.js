@@ -1,5 +1,5 @@
 import capitalize from './capitalize';
-import createCompounder from './internal/createCompounder';
+import createCompounder from './_createCompounder';
 
 /**
  * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).

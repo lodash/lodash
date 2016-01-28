@@ -1,4 +1,4 @@
-import root from './internal/root';
+import root from './_root';
 import toString from './toString';
 
 /** Used to match leading and trailing whitespace. */

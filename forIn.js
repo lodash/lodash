@@ -1,6 +1,6 @@
-import baseFor from './internal/baseFor';
+import baseFor from './_baseFor';
 import keysIn from './keysIn';
-import toFunction from './internal/toFunction';
+import toFunction from './_toFunction';
 
 /**
  * Iterates over own and inherited enumerable properties of an object invoking

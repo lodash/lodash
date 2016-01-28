@@ -1,4 +1,4 @@
-import baseDifference from './internal/baseDifference';
+import baseDifference from './_baseDifference';
 import isArrayLikeObject from './isArrayLikeObject';
 import rest from './rest';
 

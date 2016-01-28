@@ -1,8 +1,8 @@
-import baseToPath from './internal/baseToPath';
+import baseToPath from './_baseToPath';
 import get from './get';
 import isFunction from './isFunction';
-import isKey from './internal/isKey';
-import parent from './internal/parent';
+import isKey from './_isKey';
+import parent from './_parent';
 
 /**
  * This method is like `_.get` except that if the resolved value is a function

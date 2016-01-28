@@ -1,5 +1,5 @@
-import arraySome from './internal/arraySome';
-import createOver from './internal/createOver';
+import arraySome from './_arraySome';
+import createOver from './_createOver';
 
 /**
  * Creates a function that checks if **any** of the `predicates` return

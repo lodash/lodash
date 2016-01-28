@@ -1,5 +1,5 @@
-import baseTimes from './internal/baseTimes';
-import toFunction from './internal/toFunction';
+import baseTimes from './_baseTimes';
+import toFunction from './_toFunction';
 import toInteger from './toInteger';
 
 /** Used as references for various `Number` constants. */

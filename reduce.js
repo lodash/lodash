@@ -1,7 +1,7 @@
-import arrayReduce from './internal/arrayReduce';
-import baseEach from './internal/baseEach';
-import baseIteratee from './internal/baseIteratee';
-import baseReduce from './internal/baseReduce';
+import arrayReduce from './_arrayReduce';
+import baseEach from './_baseEach';
+import baseIteratee from './_baseIteratee';
+import baseReduce from './_baseReduce';
 import isArray from './isArray';
 
 /**
@@ -30,7 +30,7 @@ import isArray from './isArray';
  *
  * _.reduce([1, 2], function(sum, n) {
  *   return sum + n;
- * });
+ * }, 0);
  * // => 3
  *
  * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {

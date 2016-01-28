@@ -1,5 +1,5 @@
-import baseExtremum from './internal/baseExtremum';
-import baseIteratee from './internal/baseIteratee';
+import baseExtremum from './_baseExtremum';
+import baseIteratee from './_baseIteratee';
 import lt from './lt';
 
 /**

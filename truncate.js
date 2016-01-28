@@ -1,7 +1,7 @@
 import isObject from './isObject';
 import isRegExp from './isRegExp';
-import stringSize from './internal/stringSize';
-import stringToArray from './internal/stringToArray';
+import stringSize from './_stringSize';
+import stringToArray from './_stringToArray';
 import toInteger from './toInteger';
 import toString from './toString';
 

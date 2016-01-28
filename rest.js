@@ -1,4 +1,4 @@
-import apply from './internal/apply';
+import apply from './_apply';
 import toInteger from './toInteger';
 
 /** Used as the `TypeError` message for "Functions" methods. */

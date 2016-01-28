@@ -1,4 +1,4 @@
-import createRange from './internal/createRange';
+import createRange from './_createRange';
 
 /**
  * This method is like `_.range` except that it populates values in

@@ -1,6 +1,6 @@
-import baseFlatten from './internal/baseFlatten';
-import baseOrderBy from './internal/baseOrderBy';
-import isIterateeCall from './internal/isIterateeCall';
+import baseFlatten from './_baseFlatten';
+import baseOrderBy from './_baseOrderBy';
+import isIterateeCall from './_isIterateeCall';
 import rest from './rest';
 
 /**

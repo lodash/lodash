@@ -1,4 +1,4 @@
-import baseClone from './internal/baseClone';
+import baseClone from './_baseClone';
 
 /**
  * Creates a shallow clone of `value`.

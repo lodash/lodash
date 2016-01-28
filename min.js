@@ -1,4 +1,4 @@
-import baseExtremum from './internal/baseExtremum';
+import baseExtremum from './_baseExtremum';
 import identity from './identity';
 import lt from './lt';
 

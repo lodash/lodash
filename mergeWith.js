@@ -1,5 +1,5 @@
-import baseMerge from './internal/baseMerge';
-import createAssigner from './internal/createAssigner';
+import baseMerge from './_baseMerge';
+import createAssigner from './_createAssigner';
 
 /**
  * This method is like `_.merge` except that it accepts `customizer` which

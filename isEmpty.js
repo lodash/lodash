@@ -1,7 +1,14 @@
+import isArguments from './isArguments';
+import isArray from './isArray';
+import isArrayLike from './isArrayLike';
 import isFunction from './isFunction';
-import isObjectLike from './isObjectLike';
-import keys from './keys';
-import size from './size';
+import isString from './isString';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Checks if `value` is empty. A value is considered empty unless it's an
@@ -31,9 +38,16 @@ import size from './size';
  * // => false
  */
 function isEmpty(value) {
-  return (!isObjectLike(value) || isFunction(value.splice))
-    ? !size(value)
-    : !keys(value).length;
+  if (isArrayLike(value) &&
+      (isArray(value) || isString(value) || isFunction(value.splice) || isArguments(value))) {
+    return !value.length;
+  }
+  for (var key in value) {
+    if (hasOwnProperty.call(value, key)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export default isEmpty;

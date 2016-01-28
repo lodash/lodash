@@ -1,4 +1,4 @@
-import createCompounder from './internal/createCompounder';
+import createCompounder from './_createCompounder';
 
 /**
  * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).

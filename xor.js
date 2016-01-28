@@ -1,5 +1,5 @@
-import arrayFilter from './internal/arrayFilter';
-import baseXor from './internal/baseXor';
+import arrayFilter from './_arrayFilter';
+import baseXor from './_baseXor';
 import isArrayLikeObject from './isArrayLikeObject';
 import rest from './rest';
 

@@ -1,8 +1,8 @@
-import arraySome from './internal/arraySome';
-import baseIteratee from './internal/baseIteratee';
-import baseSome from './internal/baseSome';
+import arraySome from './_arraySome';
+import baseIteratee from './_baseIteratee';
+import baseSome from './_baseSome';
 import isArray from './isArray';
-import isIterateeCall from './internal/isIterateeCall';
+import isIterateeCall from './_isIterateeCall';
 
 /**
  * Checks if `predicate` returns truthy for **any** element of `collection`.

@@ -1,7 +1,7 @@
-import arrayEach from './internal/arrayEach';
-import baseCreate from './internal/baseCreate';
-import baseForOwn from './internal/baseForOwn';
-import baseIteratee from './internal/baseIteratee';
+import arrayEach from './_arrayEach';
+import baseCreate from './_baseCreate';
+import baseForOwn from './_baseForOwn';
+import baseIteratee from './_baseIteratee';
 import isArray from './isArray';
 import isFunction from './isFunction';
 import isObject from './isObject';
@@ -27,12 +27,12 @@ import isTypedArray from './isTypedArray';
  * _.transform([2, 3, 4], function(result, n) {
  *   result.push(n *= n);
  *   return n % 2 == 0;
- * });
+ * }, []);
  * // => [4, 9]
  *
  * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
  *   (result[value] || (result[value] = [])).push(key);
- * });
+ * }, {});
  * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function transform(object, iteratee, accumulator) {

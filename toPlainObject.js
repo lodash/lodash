@@ -1,4 +1,4 @@
-import copyObject from './internal/copyObject';
+import copyObject from './_copyObject';
 import keysIn from './keysIn';
 
 /**

@@ -1,6 +1,6 @@
-import baseForRight from './internal/baseForRight';
+import baseForRight from './_baseForRight';
 import keysIn from './keysIn';
-import toFunction from './internal/toFunction';
+import toFunction from './_toFunction';
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of

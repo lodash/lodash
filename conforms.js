@@ -1,5 +1,5 @@
-import baseClone from './internal/baseClone';
-import baseConforms from './internal/baseConforms';
+import baseClone from './_baseClone';
+import baseConforms from './_baseConforms';
 
 /**
  * Creates a function that invokes the predicate properties of `source` with

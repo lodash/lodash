@@ -1,4 +1,4 @@
-import baseFlatten from './internal/baseFlatten';
+import baseFlatten from './_baseFlatten';
 
 /**
  * Flattens `array` a single level.

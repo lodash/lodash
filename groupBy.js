@@ -1,4 +1,4 @@
-import createAggregator from './internal/createAggregator';
+import createAggregator from './_createAggregator';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

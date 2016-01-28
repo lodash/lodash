@@ -1,5 +1,5 @@
-import baseClamp from './internal/baseClamp';
-import baseRandom from './internal/baseRandom';
+import baseClamp from './_baseClamp';
+import baseRandom from './_baseRandom';
 import toArray from './toArray';
 import toInteger from './toInteger';
 

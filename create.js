@@ -1,5 +1,5 @@
-import baseAssign from './internal/baseAssign';
-import baseCreate from './internal/baseCreate';
+import baseAssign from './_baseAssign';
+import baseCreate from './_baseCreate';
 
 /**
  * Creates an object that inherits from the `prototype` object. If a `properties`

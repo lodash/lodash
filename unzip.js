@@ -1,7 +1,7 @@
-import arrayFilter from './internal/arrayFilter';
-import arrayMap from './internal/arrayMap';
-import baseProperty from './internal/baseProperty';
-import baseTimes from './internal/baseTimes';
+import arrayFilter from './_arrayFilter';
+import arrayMap from './_arrayMap';
+import baseProperty from './_baseProperty';
+import baseTimes from './_baseTimes';
 import isArrayLikeObject from './isArrayLikeObject';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

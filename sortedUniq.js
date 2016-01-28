@@ -1,4 +1,4 @@
-import baseSortedUniq from './internal/baseSortedUniq';
+import baseSortedUniq from './_baseSortedUniq';
 
 /**
  * This method is like `_.uniq` except that it's designed and optimized

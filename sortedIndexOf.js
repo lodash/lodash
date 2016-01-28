@@ -1,4 +1,4 @@
-import baseSortedIndex from './internal/baseSortedIndex';
+import baseSortedIndex from './_baseSortedIndex';
 import eq from './eq';
 
 /**

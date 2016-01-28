@@ -1,5 +1,5 @@
-import LazyWrapper from './internal/LazyWrapper';
-import LodashWrapper from './internal/LodashWrapper';
+import LazyWrapper from './_LazyWrapper';
+import LodashWrapper from './_LodashWrapper';
 import reverse from './reverse';
 import thru from './thru';
 

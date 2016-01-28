@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import baseSortedIndexBy from './internal/baseSortedIndexBy';
+import baseIteratee from './_baseIteratee';
+import baseSortedIndexBy from './_baseSortedIndexBy';
 
 /**
  * This method is like `_.sortedLastIndex` except that it accepts `iteratee`

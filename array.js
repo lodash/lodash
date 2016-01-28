@@ -58,5 +58,6 @@ export { default as xorBy } from './xorBy';
 export { default as xorWith } from './xorWith';
 export { default as zip } from './zip';
 export { default as zipObject } from './zipObject';
+export { default as zipObjectDeep } from './zipObjectDeep';
 export { default as zipWith } from './zipWith';
 export { default as default } from './array.default';

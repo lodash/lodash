@@ -1,5 +1,5 @@
-import baseFill from './internal/baseFill';
-import isIterateeCall from './internal/isIterateeCall';
+import baseFill from './_baseFill';
+import isIterateeCall from './_isIterateeCall';
 
 /**
  * Fills elements of `array` with `value` from `start` up to, but not

@@ -1,5 +1,5 @@
-import baseMerge from './internal/baseMerge';
-import createAssigner from './internal/createAssigner';
+import baseMerge from './_baseMerge';
+import createAssigner from './_createAssigner';
 
 /**
  * Recursively merges own and inherited enumerable properties of source

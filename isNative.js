@@ -1,5 +1,5 @@
 import isFunction from './isFunction';
-import isHostObject from './internal/isHostObject';
+import isHostObject from './_isHostObject';
 import isObjectLike from './isObjectLike';
 
 /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */

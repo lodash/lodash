@@ -1,4 +1,4 @@
-import baseInRange from './internal/baseInRange';
+import baseInRange from './_baseInRange';
 import toNumber from './toNumber';
 
 /**

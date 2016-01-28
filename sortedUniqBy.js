@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import baseSortedUniqBy from './internal/baseSortedUniqBy';
+import baseIteratee from './_baseIteratee';
+import baseSortedUniqBy from './_baseSortedUniqBy';
 
 /**
  * This method is like `_.uniqBy` except that it's designed and optimized

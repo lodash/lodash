@@ -1,5 +1,5 @@
-import baseSlice from './internal/baseSlice';
-import isIterateeCall from './internal/isIterateeCall';
+import baseSlice from './_baseSlice';
+import isIterateeCall from './_isIterateeCall';
 import toInteger from './toInteger';
 
 /**

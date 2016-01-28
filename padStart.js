@@ -1,4 +1,4 @@
-import createPadding from './internal/createPadding';
+import createPadding from './_createPadding';
 import toString from './toString';
 
 /**

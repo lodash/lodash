@@ -1,5 +1,5 @@
-import baseForOwn from './internal/baseForOwn';
-import baseIteratee from './internal/baseIteratee';
+import baseForOwn from './_baseForOwn';
+import baseIteratee from './_baseIteratee';
 
 /**
  * The opposite of `_.mapValues`; this method creates an object with the

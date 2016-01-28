@@ -1,4 +1,4 @@
-import baseGet from './internal/baseGet';
+import baseGet from './_baseGet';
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is

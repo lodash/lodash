@@ -1,4 +1,4 @@
-import createFlow from './internal/createFlow';
+import createFlow from './_createFlow';
 
 /**
  * This method is like `_.flow` except that it creates a function that

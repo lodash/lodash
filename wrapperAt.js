@@ -1,8 +1,8 @@
-import LazyWrapper from './internal/LazyWrapper';
-import LodashWrapper from './internal/LodashWrapper';
-import baseAt from './internal/baseAt';
-import baseFlatten from './internal/baseFlatten';
-import isIndex from './internal/isIndex';
+import LazyWrapper from './_LazyWrapper';
+import LodashWrapper from './_LodashWrapper';
+import baseAt from './_baseAt';
+import baseFlatten from './_baseFlatten';
+import isIndex from './_isIndex';
 import rest from './rest';
 import thru from './thru';
 

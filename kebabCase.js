@@ -1,4 +1,4 @@
-import createCompounder from './internal/createCompounder';
+import createCompounder from './_createCompounder';
 
 /**
  * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).

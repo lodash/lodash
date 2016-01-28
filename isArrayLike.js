@@ -1,4 +1,4 @@
-import getLength from './internal/getLength';
+import getLength from './_getLength';
 import isFunction from './isFunction';
 import isLength from './isLength';
 

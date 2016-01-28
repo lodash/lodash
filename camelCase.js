@@ -1,5 +1,5 @@
 import capitalize from './capitalize';
-import createCompounder from './internal/createCompounder';
+import createCompounder from './_createCompounder';
 
 /**
  * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).

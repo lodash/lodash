@@ -1,12 +1,12 @@
-import assignInDefaults from './internal/assignInDefaults';
+import assignInDefaults from './_assignInDefaults';
 import assignInWith from './assignInWith';
 import attempt from './attempt';
-import baseValues from './internal/baseValues';
-import escapeStringChar from './internal/escapeStringChar';
+import baseValues from './_baseValues';
+import escapeStringChar from './_escapeStringChar';
 import isError from './isError';
-import isIterateeCall from './internal/isIterateeCall';
+import isIterateeCall from './_isIterateeCall';
 import keys from './keys';
-import reInterpolate from './internal/reInterpolate';
+import reInterpolate from './_reInterpolate';
 import templateSettings from './templateSettings';
 import toString from './toString';
 

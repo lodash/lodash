@@ -1,4 +1,4 @@
-import baseClamp from './internal/baseClamp';
+import baseClamp from './_baseClamp';
 import toInteger from './toInteger';
 
 /** Used as references for various `Number` constants. */

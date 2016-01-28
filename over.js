@@ -1,5 +1,5 @@
-import arrayMap from './internal/arrayMap';
-import createOver from './internal/createOver';
+import arrayMap from './_arrayMap';
+import createOver from './_createOver';
 
 /**
  * Creates a function that invokes `iteratees` with the arguments provided

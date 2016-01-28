@@ -1,5 +1,5 @@
-import baseAt from './internal/baseAt';
-import baseFlatten from './internal/baseFlatten';
+import baseAt from './_baseAt';
+import baseFlatten from './_baseFlatten';
 import rest from './rest';
 
 /**

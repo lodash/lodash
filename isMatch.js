@@ -1,5 +1,5 @@
-import baseIsMatch from './internal/baseIsMatch';
-import getMatchData from './internal/getMatchData';
+import baseIsMatch from './_baseIsMatch';
+import getMatchData from './_getMatchData';
 
 /**
  * Performs a deep comparison between `object` and `source` to determine if

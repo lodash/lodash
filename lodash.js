@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -102,6 +102,7 @@ export { default as intersection } from './intersection';
 export { default as intersectionBy } from './intersectionBy';
 export { default as intersectionWith } from './intersectionWith';
 export { default as invert } from './invert';
+export { default as invertBy } from './invertBy';
 export { default as invoke } from './invoke';
 export { default as invokeMap } from './invokeMap';
 export { default as isArguments } from './isArguments';
@@ -298,5 +299,6 @@ export { default as xorBy } from './xorBy';
 export { default as xorWith } from './xorWith';
 export { default as zip } from './zip';
 export { default as zipObject } from './zipObject';
+export { default as zipObjectDeep } from './zipObjectDeep';
 export { default as zipWith } from './zipWith';
 export { default as default } from './lodash.default';

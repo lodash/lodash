@@ -1,4 +1,4 @@
-import baseIndexOf from './internal/baseIndexOf';
+import baseIndexOf from './_baseIndexOf';
 import isArrayLike from './isArrayLike';
 import isString from './isString';
 import toInteger from './toInteger';

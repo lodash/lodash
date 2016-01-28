@@ -1,12 +1,12 @@
-import Symbol from './internal/Symbol';
-import copyArray from './internal/copyArray';
-import getTag from './internal/getTag';
+import Symbol from './_Symbol';
+import copyArray from './_copyArray';
+import getTag from './_getTag';
 import isArrayLike from './isArrayLike';
 import isString from './isString';
-import iteratorToArray from './internal/iteratorToArray';
-import mapToArray from './internal/mapToArray';
-import setToArray from './internal/setToArray';
-import stringToArray from './internal/stringToArray';
+import iteratorToArray from './_iteratorToArray';
+import mapToArray from './_mapToArray';
+import setToArray from './_setToArray';
+import stringToArray from './_stringToArray';
 import values from './values';
 
 /** `Object#toString` result references. */

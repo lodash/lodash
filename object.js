@@ -19,6 +19,7 @@ export { default as get } from './get';
 export { default as has } from './has';
 export { default as hasIn } from './hasIn';
 export { default as invert } from './invert';
+export { default as invertBy } from './invertBy';
 export { default as invoke } from './invoke';
 export { default as keys } from './keys';
 export { default as keysIn } from './keysIn';

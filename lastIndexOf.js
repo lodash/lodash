@@ -1,4 +1,4 @@
-import indexOfNaN from './internal/indexOfNaN';
+import indexOfNaN from './_indexOfNaN';
 import toInteger from './toInteger';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

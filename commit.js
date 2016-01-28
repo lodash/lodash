@@ -1,4 +1,4 @@
-import LodashWrapper from './internal/LodashWrapper';
+import LodashWrapper from './_LodashWrapper';
 
 /**
  * Executes the chained sequence and returns the wrapped result.

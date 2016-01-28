@@ -1,5 +1,5 @@
-import arrayConcat from './internal/arrayConcat';
-import baseFlatten from './internal/baseFlatten';
+import arrayConcat from './_arrayConcat';
+import baseFlatten from './_baseFlatten';
 import isArray from './isArray';
 import rest from './rest';
 

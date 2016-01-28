@@ -1,7 +1,7 @@
-import arrayMap from './internal/arrayMap';
-import baseDifference from './internal/baseDifference';
-import baseFlatten from './internal/baseFlatten';
-import basePick from './internal/basePick';
+import arrayMap from './_arrayMap';
+import baseDifference from './_baseDifference';
+import baseFlatten from './_baseFlatten';
+import basePick from './_basePick';
 import keysIn from './keysIn';
 import rest from './rest';
 

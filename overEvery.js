@@ -1,5 +1,5 @@
-import arrayEvery from './internal/arrayEvery';
-import createOver from './internal/createOver';
+import arrayEvery from './_arrayEvery';
+import createOver from './_createOver';
 
 /**
  * Creates a function that checks if **all** of the `predicates` return

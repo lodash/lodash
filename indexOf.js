@@ -1,4 +1,4 @@
-import baseIndexOf from './internal/baseIndexOf';
+import baseIndexOf from './_baseIndexOf';
 import toInteger from './toInteger';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

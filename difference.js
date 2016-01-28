@@ -1,5 +1,5 @@
-import baseDifference from './internal/baseDifference';
-import baseFlatten from './internal/baseFlatten';
+import baseDifference from './_baseDifference';
+import baseFlatten from './_baseFlatten';
 import isArrayLikeObject from './isArrayLikeObject';
 import rest from './rest';
 

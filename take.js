@@ -1,4 +1,4 @@
-import baseSlice from './internal/baseSlice';
+import baseSlice from './_baseSlice';
 import toInteger from './toInteger';
 
 /**

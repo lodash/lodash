@@ -1,4 +1,4 @@
-import baseFlatten from './internal/baseFlatten';
+import baseFlatten from './_baseFlatten';
 
 /**
  * This method is like `_.flatten` except that it recursively flattens `array`.

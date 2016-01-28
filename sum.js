@@ -1,4 +1,4 @@
-import baseSum from './internal/baseSum';
+import baseSum from './_baseSum';
 import identity from './identity';
 
 /**
@@ -17,7 +17,7 @@ import identity from './identity';
 function sum(array) {
   return (array && array.length)
     ? baseSum(array, identity)
-    : undefined;
+    : 0;
 }
 
 export default sum;

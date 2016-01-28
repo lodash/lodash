@@ -1,5 +1,5 @@
-import baseFlatten from './internal/baseFlatten';
-import baseUniq from './internal/baseUniq';
+import baseFlatten from './_baseFlatten';
+import baseUniq from './_baseUniq';
 import isArrayLikeObject from './isArrayLikeObject';
 import last from './last';
 import rest from './rest';

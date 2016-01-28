@@ -1,4 +1,4 @@
-import createCompounder from './internal/createCompounder';
+import createCompounder from './_createCompounder';
 
 /**
  * Converts `string`, as space separated words, to lower case.

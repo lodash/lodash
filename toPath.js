@@ -1,6 +1,6 @@
-import arrayMap from './internal/arrayMap';
+import arrayMap from './_arrayMap';
 import isArray from './isArray';
-import stringToPath from './internal/stringToPath';
+import stringToPath from './_stringToPath';
 
 /**
  * Converts `value` to a property path array.

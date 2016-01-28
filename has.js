@@ -1,5 +1,5 @@
-import baseHas from './internal/baseHas';
-import hasPath from './internal/hasPath';
+import baseHas from './_baseHas';
+import hasPath from './_hasPath';
 
 /**
  * Checks if `path` is a direct property of `object`.

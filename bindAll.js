@@ -1,5 +1,5 @@
-import arrayEach from './internal/arrayEach';
-import baseFlatten from './internal/baseFlatten';
+import arrayEach from './_arrayEach';
+import baseFlatten from './_baseFlatten';
 import bind from './bind';
 import rest from './rest';
 

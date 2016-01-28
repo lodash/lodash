@@ -1,4 +1,4 @@
-import createAggregator from './internal/createAggregator';
+import createAggregator from './_createAggregator';
 
 /**
  * Creates an array of elements split into two groups, the first of which

@@ -1,5 +1,5 @@
-import createPadding from './internal/createPadding';
-import stringSize from './internal/stringSize';
+import createPadding from './_createPadding';
+import stringSize from './_stringSize';
 import toInteger from './toInteger';
 import toString from './toString';
 

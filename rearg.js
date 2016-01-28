@@ -1,5 +1,5 @@
-import baseFlatten from './internal/baseFlatten';
-import createWrapper from './internal/createWrapper';
+import baseFlatten from './_baseFlatten';
+import createWrapper from './_createWrapper';
 import rest from './rest';
 
 /** Used to compose bitmasks for wrapper metadata. */

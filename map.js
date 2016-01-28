@@ -1,6 +1,6 @@
-import arrayMap from './internal/arrayMap';
-import baseIteratee from './internal/baseIteratee';
-import baseMap from './internal/baseMap';
+import arrayMap from './_arrayMap';
+import baseIteratee from './_baseIteratee';
+import baseMap from './_baseMap';
 import isArray from './isArray';
 
 /**

@@ -1,5 +1,5 @@
-import baseClone from './internal/baseClone';
-import baseMatchesProperty from './internal/baseMatchesProperty';
+import baseClone from './_baseClone';
+import baseMatchesProperty from './_baseMatchesProperty';
 
 /**
  * Creates a function that performs a deep partial comparison between the

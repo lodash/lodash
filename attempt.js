@@ -1,4 +1,4 @@
-import apply from './internal/apply';
+import apply from './_apply';
 import isError from './isError';
 import rest from './rest';
 

@@ -1,6 +1,6 @@
-import arrayMap from './internal/arrayMap';
-import baseFlatten from './internal/baseFlatten';
-import baseIteratee from './internal/baseIteratee';
+import arrayMap from './_arrayMap';
+import baseFlatten from './_baseFlatten';
+import baseIteratee from './_baseIteratee';
 
 /**
  * Creates an array of flattened values by running each element in `array`

@@ -1,6 +1,6 @@
-import apply from './internal/apply';
-import arrayMap from './internal/arrayMap';
-import baseIteratee from './internal/baseIteratee';
+import apply from './_apply';
+import arrayMap from './_arrayMap';
+import baseIteratee from './_baseIteratee';
 import rest from './rest';
 
 /** Used as the `TypeError` message for "Functions" methods. */

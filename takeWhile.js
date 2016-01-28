@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import baseWhile from './internal/baseWhile';
+import baseIteratee from './_baseIteratee';
+import baseWhile from './_baseWhile';
 
 /**
  * Creates a slice of `array` with elements taken from the beginning. Elements

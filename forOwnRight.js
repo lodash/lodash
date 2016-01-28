@@ -1,5 +1,5 @@
-import baseForOwnRight from './internal/baseForOwnRight';
-import toFunction from './internal/toFunction';
+import baseForOwnRight from './_baseForOwnRight';
+import toFunction from './_toFunction';
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of

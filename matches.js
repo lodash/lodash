@@ -1,5 +1,5 @@
-import baseClone from './internal/baseClone';
-import baseMatches from './internal/baseMatches';
+import baseClone from './_baseClone';
+import baseMatches from './_baseMatches';
 
 /**
  * Creates a function that performs a deep partial comparison between a given

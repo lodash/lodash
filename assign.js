@@ -1,5 +1,5 @@
-import copyObject from './internal/copyObject';
-import createAssigner from './internal/createAssigner';
+import copyObject from './_copyObject';
+import createAssigner from './_createAssigner';
 import keys from './keys';
 
 /**

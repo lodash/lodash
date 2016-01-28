@@ -1,5 +1,5 @@
-import baseRandom from './internal/baseRandom';
-import isIterateeCall from './internal/isIterateeCall';
+import baseRandom from './_baseRandom';
+import isIterateeCall from './_isIterateeCall';
 import toNumber from './toNumber';
 
 /** Built-in method references without a dependency on `root`. */

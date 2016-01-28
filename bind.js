@@ -1,5 +1,5 @@
-import createWrapper from './internal/createWrapper';
-import replaceHolders from './internal/replaceHolders';
+import createWrapper from './_createWrapper';
+import replaceHolders from './_replaceHolders';
 import rest from './rest';
 
 /** Used to compose bitmasks for wrapper metadata. */

@@ -1,4 +1,4 @@
-import baseOrderBy from './internal/baseOrderBy';
+import baseOrderBy from './_baseOrderBy';
 import isArray from './isArray';
 
 /**

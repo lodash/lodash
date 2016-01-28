@@ -1,4 +1,4 @@
-import baseToPairs from './internal/baseToPairs';
+import baseToPairs from './_baseToPairs';
 import keys from './keys';
 
 /**

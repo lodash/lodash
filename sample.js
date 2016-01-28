@@ -1,4 +1,4 @@
-import baseRandom from './internal/baseRandom';
+import baseRandom from './_baseRandom';
 import isArrayLike from './isArrayLike';
 import values from './values';
 

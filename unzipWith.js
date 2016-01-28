@@ -1,5 +1,5 @@
-import apply from './internal/apply';
-import arrayMap from './internal/arrayMap';
+import apply from './_apply';
+import arrayMap from './_arrayMap';
 import unzip from './unzip';
 
 /**

@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import basePickBy from './internal/basePickBy';
+import baseIteratee from './_baseIteratee';
+import basePickBy from './_basePickBy';
 
 /**
  * The opposite of `_.pickBy`; this method creates an object composed of the

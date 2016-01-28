@@ -1,4 +1,4 @@
-import basePullAll from './internal/basePullAll';
+import basePullAll from './_basePullAll';
 
 /**
  * This method is like `_.pull` except that it accepts an array of values to remove.

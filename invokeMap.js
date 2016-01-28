@@ -1,8 +1,8 @@
-import apply from './internal/apply';
-import baseEach from './internal/baseEach';
-import baseInvoke from './internal/baseInvoke';
+import apply from './_apply';
+import baseEach from './_baseEach';
+import baseInvoke from './_baseInvoke';
 import isArrayLike from './isArrayLike';
-import isKey from './internal/isKey';
+import isKey from './_isKey';
 import rest from './rest';
 
 /**

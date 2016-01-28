@@ -1,4 +1,4 @@
-import isHostObject from './internal/isHostObject';
+import isHostObject from './_isHostObject';
 import isObjectLike from './isObjectLike';
 
 /** `Object#toString` result references. */

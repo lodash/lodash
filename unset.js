@@ -1,4 +1,4 @@
-import baseUnset from './internal/baseUnset';
+import baseUnset from './_baseUnset';
 
 /**
  * Removes the property at `path` of `object`.

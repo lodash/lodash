@@ -1,7 +1,7 @@
-import arrayEachRight from './internal/arrayEachRight';
-import baseEachRight from './internal/baseEachRight';
+import arrayEachRight from './_arrayEachRight';
+import baseEachRight from './_baseEachRight';
 import isArray from './isArray';
-import toFunction from './internal/toFunction';
+import toFunction from './_toFunction';
 
 /**
  * This method is like `_.forEach` except that it iterates over elements of

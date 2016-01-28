@@ -1,9 +1,9 @@
-import arrayMap from './internal/arrayMap';
-import baseIntersection from './internal/baseIntersection';
-import baseIteratee from './internal/baseIteratee';
+import arrayMap from './_arrayMap';
+import baseIntersection from './_baseIntersection';
+import baseIteratee from './_baseIteratee';
 import last from './last';
 import rest from './rest';
-import toArrayLikeObject from './internal/toArrayLikeObject';
+import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * This method is like `_.intersection` except that it accepts `iteratee`

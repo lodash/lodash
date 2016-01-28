@@ -1,5 +1,5 @@
 import toString from './toString';
-import unescapeHtmlChar from './internal/unescapeHtmlChar';
+import unescapeHtmlChar from './_unescapeHtmlChar';
 
 /** Used to match HTML entities and HTML characters. */
 var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,

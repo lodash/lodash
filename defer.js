@@ -1,4 +1,4 @@
-import baseDelay from './internal/baseDelay';
+import baseDelay from './_baseDelay';
 import rest from './rest';
 
 /**

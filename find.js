@@ -1,7 +1,7 @@
-import baseEach from './internal/baseEach';
-import baseFind from './internal/baseFind';
-import baseFindIndex from './internal/baseFindIndex';
-import baseIteratee from './internal/baseIteratee';
+import baseEach from './_baseEach';
+import baseFind from './_baseFind';
+import baseFindIndex from './_baseFindIndex';
+import baseIteratee from './_baseIteratee';
 import isArray from './isArray';
 
 /**

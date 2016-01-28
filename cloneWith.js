@@ -1,4 +1,4 @@
-import baseClone from './internal/baseClone';
+import baseClone from './_baseClone';
 
 /**
  * This method is like `_.clone` except that it accepts `customizer` which

@@ -1,4 +1,4 @@
-import baseClamp from './internal/baseClamp';
+import baseClamp from './_baseClamp';
 import toNumber from './toNumber';
 
 /**

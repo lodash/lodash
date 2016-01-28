@@ -1,5 +1,5 @@
-import apply from './internal/apply';
-import assignInDefaults from './internal/assignInDefaults';
+import apply from './_apply';
+import assignInDefaults from './_assignInDefaults';
 import assignInWith from './assignInWith';
 import rest from './rest';
 

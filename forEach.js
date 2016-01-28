@@ -1,7 +1,7 @@
-import arrayEach from './internal/arrayEach';
-import baseEach from './internal/baseEach';
+import arrayEach from './_arrayEach';
+import baseEach from './_baseEach';
 import isArray from './isArray';
-import toFunction from './internal/toFunction';
+import toFunction from './_toFunction';
 
 /**
  * Iterates over elements of `collection` invoking `iteratee` for each element.

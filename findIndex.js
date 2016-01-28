@@ -1,5 +1,5 @@
-import baseFindIndex from './internal/baseFindIndex';
-import baseIteratee from './internal/baseIteratee';
+import baseFindIndex from './_baseFindIndex';
+import baseIteratee from './_baseIteratee';
 
 /**
  * This method is like `_.find` except that it returns the index of the first

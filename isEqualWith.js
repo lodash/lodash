@@ -1,4 +1,4 @@
-import baseIsEqual from './internal/baseIsEqual';
+import baseIsEqual from './_baseIsEqual';
 
 /**
  * This method is like `_.isEqual` except that it accepts `customizer` which is

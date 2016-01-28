@@ -1,4 +1,4 @@
-import baseIteratee from './internal/baseIteratee';
+import baseIteratee from './_baseIteratee';
 import isArray from './isArray';
 import isObjectLike from './isObjectLike';
 import matches from './matches';

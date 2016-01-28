@@ -1,4 +1,4 @@
-import baseValues from './internal/baseValues';
+import baseValues from './_baseValues';
 import keysIn from './keysIn';
 
 /**

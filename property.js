@@ -1,6 +1,6 @@
-import baseProperty from './internal/baseProperty';
-import basePropertyDeep from './internal/basePropertyDeep';
-import isKey from './internal/isKey';
+import baseProperty from './_baseProperty';
+import basePropertyDeep from './_basePropertyDeep';
+import isKey from './_isKey';
 
 /**
  * Creates a function that returns the value at `path` of a given object.

@@ -1,9 +1,9 @@
-import baseHas from './internal/baseHas';
-import baseKeys from './internal/baseKeys';
-import indexKeys from './internal/indexKeys';
+import baseHas from './_baseHas';
+import baseKeys from './_baseKeys';
+import indexKeys from './_indexKeys';
 import isArrayLike from './isArrayLike';
-import isIndex from './internal/isIndex';
-import isPrototype from './internal/isPrototype';
+import isIndex from './_isIndex';
+import isPrototype from './_isPrototype';
 
 /**
  * Creates an array of the own enumerable property names of `object`.

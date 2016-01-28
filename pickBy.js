@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import basePickBy from './internal/basePickBy';
+import baseIteratee from './_baseIteratee';
+import basePickBy from './_basePickBy';
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns

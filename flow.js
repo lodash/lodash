@@ -1,4 +1,4 @@
-import createFlow from './internal/createFlow';
+import createFlow from './_createFlow';
 
 /**
  * Creates a function that returns the result of invoking the provided

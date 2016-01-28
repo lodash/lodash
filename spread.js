@@ -1,4 +1,4 @@
-import apply from './internal/apply';
+import apply from './_apply';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

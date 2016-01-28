@@ -1,5 +1,5 @@
-import baseIteratee from './internal/baseIteratee';
-import baseUniq from './internal/baseUniq';
+import baseIteratee from './_baseIteratee';
+import baseUniq from './_baseUniq';
 
 /**
  * This method is like `_.uniq` except that it accepts `iteratee` which is

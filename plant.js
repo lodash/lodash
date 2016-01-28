@@ -1,5 +1,5 @@
-import baseLodash from './internal/baseLodash';
-import wrapperClone from './internal/wrapperClone';
+import baseLodash from './_baseLodash';
+import wrapperClone from './_wrapperClone';
 
 /**
  * Creates a clone of the chained sequence planting `value` as the wrapped value.

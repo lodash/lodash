@@ -1,4 +1,4 @@
-import baseFunctions from './internal/baseFunctions';
+import baseFunctions from './_baseFunctions';
 import keysIn from './keysIn';
 
 /**

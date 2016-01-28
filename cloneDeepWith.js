@@ -1,4 +1,4 @@
-import baseClone from './internal/baseClone';
+import baseClone from './_baseClone';
 
 /**
  * This method is like `_.cloneWith` except that it recursively clones `value`.

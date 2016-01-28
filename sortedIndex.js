@@ -1,4 +1,4 @@
-import baseSortedIndex from './internal/baseSortedIndex';
+import baseSortedIndex from './_baseSortedIndex';
 
 /**
  * Uses a binary search to determine the lowest index at which `value` should

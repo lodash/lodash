@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -18,33 +18,33 @@ import object from './object';
 import seq from './seq';
 import string from './string';
 import util from './util';
-import LazyWrapper from './internal/LazyWrapper';
-import LodashWrapper from './internal/LodashWrapper';
-import Symbol from './internal/Symbol';
-import arrayEach from './internal/arrayEach';
-import arrayPush from './internal/arrayPush';
-import baseForOwn from './internal/baseForOwn';
-import baseFunctions from './internal/baseFunctions';
-import baseInvoke from './internal/baseInvoke';
-import baseIteratee from './internal/baseIteratee';
-import createHybridWrapper from './internal/createHybridWrapper';
+import LazyWrapper from './_LazyWrapper';
+import LodashWrapper from './_LodashWrapper';
+import Symbol from './_Symbol';
+import arrayEach from './_arrayEach';
+import arrayPush from './_arrayPush';
+import baseForOwn from './_baseForOwn';
+import baseFunctions from './_baseFunctions';
+import baseInvoke from './_baseInvoke';
+import baseIteratee from './_baseIteratee';
+import createHybridWrapper from './_createHybridWrapper';
 import identity from './identity';
 import isArray from './isArray';
 import isObject from './isObject';
 import keys from './keys';
 import last from './last';
-import lazyClone from './internal/lazyClone';
-import lazyReverse from './internal/lazyReverse';
-import lazyValue from './internal/lazyValue';
+import lazyClone from './_lazyClone';
+import lazyReverse from './_lazyReverse';
+import lazyValue from './_lazyValue';
 import _mixin from './mixin';
-import realNames from './internal/realNames';
+import realNames from './_realNames';
 import rest from './rest';
 import thru from './thru';
 import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.0.1';
+var VERSION = '4.1.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -140,6 +140,7 @@ lodash.intersection = array.intersection;
 lodash.intersectionBy = array.intersectionBy;
 lodash.intersectionWith = array.intersectionWith;
 lodash.invert = object.invert;
+lodash.invertBy = object.invertBy;
 lodash.invokeMap = collection.invokeMap;
 lodash.iteratee = util.iteratee;
 lodash.keyBy = collection.keyBy;
@@ -228,6 +229,7 @@ lodash.xorBy = array.xorBy;
 lodash.xorWith = array.xorWith;
 lodash.zip = array.zip;
 lodash.zipObject = array.zipObject;
+lodash.zipObjectDeep = array.zipObjectDeep;
 lodash.zipWith = array.zipWith;
 
 // Add aliases.

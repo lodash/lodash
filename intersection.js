@@ -1,7 +1,7 @@
-import arrayMap from './internal/arrayMap';
-import baseIntersection from './internal/baseIntersection';
+import arrayMap from './_arrayMap';
+import baseIntersection from './_baseIntersection';
 import rest from './rest';
-import toArrayLikeObject from './internal/toArrayLikeObject';
+import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * Creates an array of unique values that are included in all of the provided

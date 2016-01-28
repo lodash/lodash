@@ -142,7 +142,7 @@
   QUnit.test('urlError', function(assert) {
     assert.expect(2);
     var model = new Backbone.Model();
-    assert.throws(function() {
+    assert.raises(function() {
       model.fetch();
     });
     model.fetch({url: '/one/two'});

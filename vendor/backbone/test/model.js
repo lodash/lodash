@@ -89,7 +89,7 @@
     doc.collection.url = '/collection/';
     assert.equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    assert.throws(function() { doc.url(); });
+    assert.raises(function() { doc.url(); });
     doc.collection = collection;
   });
 
@@ -251,12 +251,12 @@
     var changeCount = 0;
     a.on('change:foo', function() { changeCount += 1; });
     a.set({foo: 2});
-    assert.ok(a.get('foo') == 2, 'Foo should have changed.');
-    assert.ok(changeCount == 1, 'Change count should have incremented.');
+    assert.equal(a.get('foo'), 2, 'Foo should have changed.');
+    assert.equal(changeCount, 1, 'Change count should have incremented.');
     // set with value that is not new shouldn't fire change event
     a.set({foo: 2});
-    assert.ok(a.get('foo') == 2, 'Foo should NOT have changed, still 2');
-    assert.ok(changeCount == 1, 'Change count should NOT have incremented.');
+    assert.equal(a.get('foo'), 2, 'Foo should NOT have changed, still 2');
+    assert.equal(changeCount, 1, 'Change count should NOT have incremented.');
 
     a.validate = function(attrs) {
       assert.equal(attrs.foo, void 0, 'validate:true passed while unsetting');
@@ -264,7 +264,7 @@
     a.unset('foo', {validate: true});
     assert.equal(a.get('foo'), void 0, 'Foo should have changed');
     delete a.validate;
-    assert.ok(changeCount == 2, 'Change count should have incremented for unset.');
+    assert.equal(changeCount, 2, 'Change count should have incremented for unset.');
 
     a.unset('id');
     assert.equal(a.id, undefined, 'Unsetting the id should remove the id property.');
@@ -746,7 +746,7 @@
     var lastError;
     var model = new Backbone.Model();
     model.validate = function(attrs) {
-      if (attrs.admin != this.get('admin')) return "Can't change admin status.";
+      if (attrs.admin !== this.get('admin')) return "Can't change admin status.";
     };
     model.on('invalid', function(model, error) {
       lastError = error;

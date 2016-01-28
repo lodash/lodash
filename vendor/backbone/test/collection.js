@@ -429,7 +429,7 @@
     });
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([f]);
-    assert.ok(e != f);
+    assert.notEqual(e, f);
     assert.ok(colE.length === 1);
     assert.ok(colF.length === 1);
     colE.remove(e);
@@ -857,7 +857,7 @@
     assert.expect(2);
     var Model = Backbone.Model.extend({
       validate: function(attrs) {
-        if (attrs.id == 3) return "id can't be 3";
+        if (attrs.id === 3) return "id can't be 3";
       }
     });
 
@@ -1324,7 +1324,7 @@
     var col = new Backbone.Collection;
     var model1 = col.push({id: 101});
     var model2 = col.push({id: 101});
-    assert.ok(model2.cid == model1.cid);
+    assert.ok(model2.cid === model1.cid);
   });
 
   QUnit.test('`set` with non-normal id', function(assert) {

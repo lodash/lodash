@@ -1,9 +1,9 @@
 /*!
- * Benchmark.js v2.0.0-pre <http://benchmarkjs.com/>
- * Copyright 2010-2015 Mathias Bynens <http://mths.be/>
+ * Benchmark.js v2.1.0 <https://benchmarkjs.com/>
+ * Copyright 2010-2016 Mathias Bynens <https://mths.be/>
  * Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
  * Modified by John-David Dalton <http://allyoucanleet.com/>
- * Available under MIT license <http://mths.be/mit>
+ * Available under MIT license <https://mths.be/mit>
  */
 ;(function() {
   'use strict';
@@ -124,7 +124,7 @@
    */
   function runInContext(context) {
     // Exit early if unable to acquire lodash.
-    var _ = context && context._ || req('lodash-compat') || req('lodash') || root._;
+    var _ = context && context._ || req('lodash') || root._;
     if (!_) {
       Benchmark.runInContext = runInContext;
       return Benchmark;
@@ -277,8 +277,7 @@
      * methods are:
      * [`each/forEach`](https://lodash.com/docs#forEach), [`forOwn`](https://lodash.com/docs#forOwn),
      * [`has`](https://lodash.com/docs#has), [`indexOf`](https://lodash.com/docs#indexOf),
-     * [`map`](https://lodash.com/docs#map), [`pluck`](https://lodash.com/docs#pluck),
-     * and [`reduce`](https://lodash.com/docs#reduce)
+     * [`map`](https://lodash.com/docs#map), and [`reduce`](https://lodash.com/docs#reduce)
      *
      * @constructor
      * @param {string} name A name to identify the benchmark.
@@ -355,7 +354,7 @@
       var bench = this;
 
       // Allow instance creation without the `new` operator.
-      if (bench == null || bench.constructor != Benchmark) {
+      if (!(bench instanceof Benchmark)) {
         return new Benchmark(name, fn, options);
       }
       // Juggle arguments.
@@ -396,7 +395,7 @@
      */
     function Deferred(clone) {
       var deferred = this;
-      if (deferred == null || deferred.constructor != Deferred) {
+      if (!(deferred instanceof Deferred)) {
         return new Deferred(clone);
       }
       deferred.benchmark = clone;
@@ -415,9 +414,9 @@
       if (type instanceof Event) {
         return type;
       }
-      return (event == null || event.constructor != Event)
-        ? new Event(type)
-        : _.assign(event, { 'timeStamp': _.now() }, typeof type == 'string' ? { 'type': type } : type);
+      return (event instanceof Event)
+        ? _.assign(event, { 'timeStamp': _.now() }, typeof type == 'string' ? { 'type': type } : type)
+        : new Event(type);
     }
 
     /**
@@ -426,8 +425,7 @@
      * Note: Each Suite instance has a handful of wrapped lodash methods to
      * make working with Suites easier. The wrapped lodash methods are:
      * [`each/forEach`](https://lodash.com/docs#forEach), [`indexOf`](https://lodash.com/docs#indexOf),
-     * [`map`](https://lodash.com/docs#map), [`pluck`](https://lodash.com/docs#pluck),
-     * and [`reduce`](https://lodash.com/docs#reduce)
+     * [`map`](https://lodash.com/docs#map), and [`reduce`](https://lodash.com/docs#reduce)
      *
      * @constructor
      * @memberOf Benchmark
@@ -467,7 +465,7 @@
       var suite = this;
 
       // Allow instance creation without the `new` operator.
-      if (suite == null || suite.constructor != Suite) {
+      if (!(suite instanceof Suite)) {
         return new Suite(name, options);
       }
       // Juggle arguments.
@@ -491,7 +489,7 @@
      * @param {*} value The value to clone.
      * @returns {*} The cloned value.
      */
-    var cloneDeep = _.partial(_.cloneDeepWith || _.cloneDeep, _, function(value) {
+    var cloneDeep = _.partial(_.cloneDeepWith, _, function(value) {
       // Only clone primitives, arrays, and plain objects.
       return (_.isObject(value) && !_.isArray(value) && !_.isPlainObject(value))
         ? value
@@ -763,7 +761,7 @@
       if (callback === 'successful') {
         // Callback to exclude those that are errored, unrun, or have hz of Infinity.
         callback = function(bench) {
-          return bench.cycles && _.isFinite(bench.hz);
+          return bench.cycles && _.isFinite(bench.hz) && !bench.error;
         };
       }
       else if (callback === 'fastest' || callback === 'slowest') {
@@ -914,7 +912,7 @@
       function isAsync(object) {
         // Avoid using `instanceof` here because of IE memory leak issues with host objects.
         var async = args[0] && args[0].async;
-        return Object(object).constructor == Benchmark && name == 'run' &&
+        return name == 'run' && (object instanceof Benchmark) &&
           ((async == null ? object.options.async : async) && support.timeout || object.defer);
       }
 
@@ -933,7 +931,6 @@
           ? index
           : (index = false);
       }
-
       // Juggle arguments.
       if (_.isString(name)) {
         // 2 arguments (array, name).
@@ -945,7 +942,6 @@
         args = _.isArray(args = 'args' in options ? options.args : []) ? args : [args];
         queued = options.queued;
       }
-
       // Start iterating over the array.
       if (raiseIndex() !== false) {
         // Emit "start" event.
@@ -955,7 +951,7 @@
         options.onStart.call(benches, Event(eventProps));
 
         // End early if the suite was aborted in an "onStart" listener.
-        if (benches.aborted && benches.constructor == Suite && name == 'run') {
+        if (name == 'run' && (benches instanceof Suite) && benches.aborted) {
           // Emit "cycle" event.
           eventProps.type = 'cycle';
           options.onCycle.call(benches, Event(eventProps));
@@ -1794,7 +1790,7 @@
         timers.push({ 'ns': timer.ns,  'res': getRes('us'), 'unit': 'us' });
       }
       // Pick timer with highest resolution.
-      timer = (_.minBy || _.min)(timers, 'res');
+      timer = _.minBy(timers, 'res');
 
       // Error if there are no working timers.
       if (timer.res == Infinity) {
@@ -1977,7 +1973,6 @@
         deferred = clone;
         clone = clone.benchmark;
       }
-
       var clocked,
           cycles,
           divisor,
@@ -2008,7 +2003,6 @@
           }
         }
       }
-
       // Continue, if not errored.
       if (clone.running) {
         // Compute the time taken to complete last test cycle.
@@ -2257,7 +2251,7 @@
 
       /**
        * Platform object with properties describing things like browser name,
-       * version, and operating system. See [`platform.js`](http://mths.be/platform).
+       * version, and operating system. See [`platform.js`](https://mths.be/platform).
        *
        * @static
        * @memberOf Benchmark
@@ -2284,7 +2278,7 @@
        * @memberOf Benchmark
        * @type string
        */
-      'version': '2.0.0-pre'
+      'version': '2.1.0'
     });
 
     _.assign(Benchmark, {
@@ -2297,7 +2291,7 @@
     });
 
     // Add lodash methods to Benchmark.
-    _.each(['each', 'forEach', 'forOwn', 'has', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
+    _.each(['each', 'forEach', 'forOwn', 'has', 'indexOf', 'map', 'reduce'], function(methodName) {
       Benchmark[methodName] = _[methodName];
     });
 
@@ -2745,7 +2739,7 @@
     /*------------------------------------------------------------------------*/
 
     // Add lodash methods as Suite methods.
-    _.each(['each', 'forEach', 'indexOf', 'map', 'pluck', 'reduce'], function(methodName) {
+    _.each(['each', 'forEach', 'indexOf', 'map', 'reduce'], function(methodName) {
       var func = _[methodName];
       Suite.prototype[methodName] = function() {
         var args = [this];
@@ -2799,17 +2793,15 @@
 
     // Check for `exports` after `define` in case a build optimizer adds an `exports` object.
     if (freeExports && freeModule) {
-      // Export for Node.js or RingoJS.
+      // Export for Node.js.
       if (moduleExports) {
         (freeModule.exports = Benchmark).Benchmark = Benchmark;
       }
-      // Export for Rhino with CommonJS support.
-      else {
-        freeExports.Benchmark = Benchmark;
-      }
+      // Export for CommonJS support.
+      freeExports.Benchmark = Benchmark;
     }
     else {
-      // Export for a browser or Rhino.
+      // Export to the global object.
       root.Benchmark = Benchmark;
     }
   }

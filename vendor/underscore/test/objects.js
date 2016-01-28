@@ -639,6 +639,17 @@
     assert.strictEqual(_.isString(1), false);
   });
 
+  QUnit.test('isSymbol', function(assert) {
+    assert.ok(!_.isSymbol(0), 'numbers are not symbols');
+    assert.ok(!_.isSymbol(''), 'strings are not symbols');
+    assert.ok(!_.isSymbol(_.isSymbol), 'functions are not symbols');
+    if (typeof Symbol === 'function') {
+      assert.ok(_.isSymbol(Symbol()), 'symbols are symbols');
+      assert.ok(_.isSymbol(Symbol('description')), 'described symbols are symbols');
+      assert.ok(_.isSymbol(Object(Symbol())), 'boxed symbols are symbols');
+    }
+  });
+
   QUnit.test('isNumber', function(assert) {
     assert.ok(!_.isNumber('string'), 'a string is not a number');
     assert.ok(!_.isNumber(arguments), 'the arguments object is not a number');

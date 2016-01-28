@@ -352,8 +352,8 @@
     _.extend(obj, Backbone.Events);
     obj.on('all', function(event) {
       obj.counter++;
-      if (event == 'a') a = true;
-      if (event == 'b') b = true;
+      if (event === 'a') a = true;
+      if (event === 'b') b = true;
     })
     .trigger('a b');
     assert.ok(a);
@@ -477,7 +477,7 @@
   QUnit.test('if callback is truthy but not a function, `on` should throw an error just like jQuery', function(assert) {
     assert.expect(1);
     var view = _.extend({}, Backbone.Events).on('test', 'noop');
-    assert.throws(function() {
+    assert.raises(function() {
       view.trigger('test');
     });
   });

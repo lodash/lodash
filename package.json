@@ -35,12 +35,13 @@
     "build:main-modules": "node lib/main/build-modules.js",
     "doc": "node lib/doc/build github",
     "doc:site": "node lib/doc/build site",
+    "pretest": "npm run build",
     "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",
     "style:fp": "jscs fp/*.js lib/**/*.js",
     "style:main": "jscs lodash.js",
     "style:perf": "jscs perf/*.js perf/**/*.js",
     "style:test": "jscs test/*.js test/**/*.js",
-    "test": "npm run build && npm run test:main && npm run test:fp",
+    "test": "npm run test:main && npm run test:fp",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test"
   }

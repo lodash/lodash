@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/baseSortedUniqBy'], function(baseIteratee, baseSortedUniqBy) {
+define(['./_baseIteratee', './_baseSortedUniqBy'], function(baseIteratee, baseSortedUniqBy) {
 
   /**
    * This method is like `_.uniqBy` except that it's designed and optimized

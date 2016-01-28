@@ -1,4 +1,4 @@
-define(['./internal/baseLodash', './internal/wrapperClone'], function(baseLodash, wrapperClone) {
+define(['./_baseLodash', './_wrapperClone'], function(baseLodash, wrapperClone) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

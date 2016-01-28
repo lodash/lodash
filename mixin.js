@@ -1,4 +1,4 @@
-define(['./internal/arrayEach', './internal/arrayPush', './internal/baseFunctions', './internal/copyArray', './isFunction', './isObject', './keys'], function(arrayEach, arrayPush, baseFunctions, copyArray, isFunction, isObject, keys) {
+define(['./_arrayEach', './_arrayPush', './_baseFunctions', './_copyArray', './isFunction', './isObject', './keys'], function(arrayEach, arrayPush, baseFunctions, copyArray, isFunction, isObject, keys) {
 
   /**
    * Adds all own enumerable function properties of a source object to the

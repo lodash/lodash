@@ -1,4 +1,4 @@
-define(['./internal/basePullAll'], function(basePullAll) {
+define(['./_basePullAll'], function(basePullAll) {
 
   /**
    * This method is like `_.pull` except that it accepts an array of values to remove.

@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/arrayMap', './unzip'], function(apply, arrayMap, unzip) {
+define(['./_apply', './_arrayMap', './unzip'], function(apply, arrayMap, unzip) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

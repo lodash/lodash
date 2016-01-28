@@ -1,4 +1,4 @@
-define(['./internal/baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
+define(['./_baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;

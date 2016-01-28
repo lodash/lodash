@@ -1,4 +1,4 @@
-define(['./internal/createPadding', './internal/stringSize', './toInteger', './toString'], function(createPadding, stringSize, toInteger, toString) {
+define(['./_createPadding', './_stringSize', './toInteger', './toString'], function(createPadding, stringSize, toInteger, toString) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeCeil = Math.ceil,

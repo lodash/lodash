@@ -1,4 +1,4 @@
-define(['./internal/baseUniq'], function(baseUniq) {
+define(['./_baseUniq'], function(baseUniq) {
 
   /**
    * Creates a duplicate-free version of an array, using

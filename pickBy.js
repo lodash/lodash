@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/basePickBy'], function(baseIteratee, basePickBy) {
+define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) {
 
   /**
    * Creates an object composed of the `object` properties `predicate` returns

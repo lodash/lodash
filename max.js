@@ -1,4 +1,4 @@
-define(['./internal/baseExtremum', './gt', './identity'], function(baseExtremum, gt, identity) {
+define(['./_baseExtremum', './gt', './identity'], function(baseExtremum, gt, identity) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

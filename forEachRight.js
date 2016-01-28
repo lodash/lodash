@@ -1,4 +1,4 @@
-define(['./internal/arrayEachRight', './internal/baseEachRight', './isArray', './internal/toFunction'], function(arrayEachRight, baseEachRight, isArray, toFunction) {
+define(['./_arrayEachRight', './_baseEachRight', './isArray', './_toFunction'], function(arrayEachRight, baseEachRight, isArray, toFunction) {
 
   /**
    * This method is like `_.forEach` except that it iterates over elements of

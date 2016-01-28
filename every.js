@@ -1,4 +1,4 @@
-define(['./internal/arrayEvery', './internal/baseEvery', './internal/baseIteratee', './isArray', './internal/isIterateeCall'], function(arrayEvery, baseEvery, baseIteratee, isArray, isIterateeCall) {
+define(['./_arrayEvery', './_baseEvery', './_baseIteratee', './isArray', './_isIterateeCall'], function(arrayEvery, baseEvery, baseIteratee, isArray, isIterateeCall) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

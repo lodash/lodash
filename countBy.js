@@ -1,4 +1,4 @@
-define(['./internal/createAggregator'], function(createAggregator) {
+define(['./_createAggregator'], function(createAggregator) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;

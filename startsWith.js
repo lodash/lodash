@@ -1,4 +1,4 @@
-define(['./internal/baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
+define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
 
   /**
    * Checks if `string` starts with the given target string.

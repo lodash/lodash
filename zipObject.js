@@ -1,7 +1,4 @@
-define(['./internal/baseSet'], function(baseSet) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_assignValue', './_baseZipObject'], function(assignValue, baseZipObject) {
 
   /**
    * This method is like `_.fromPairs` except that it accepts two arrays,
@@ -15,19 +12,11 @@ define(['./internal/baseSet'], function(baseSet) {
    * @returns {Object} Returns the new object.
    * @example
    *
-   * _.zipObject(['fred', 'barney'], [30, 40]);
-   * // => { 'fred': 30, 'barney': 40 }
+   * _.zipObject(['a', 'b'], [1, 2]);
+   * // => { 'a': 1, 'b': 2 }
    */
   function zipObject(props, values) {
-    var index = -1,
-        length = props ? props.length : 0,
-        valsLength = values ? values.length : 0,
-        result = {};
-
-    while (++index < length) {
-      baseSet(result, props[index], index < valsLength ? values[index] : undefined);
-    }
-    return result;
+    return baseZipObject(props || [], values || [], assignValue);
   }
 
   return zipObject;

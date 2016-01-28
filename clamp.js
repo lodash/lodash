@@ -1,4 +1,4 @@
-define(['./internal/baseClamp', './toNumber'], function(baseClamp, toNumber) {
+define(['./_baseClamp', './toNumber'], function(baseClamp, toNumber) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

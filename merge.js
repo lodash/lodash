@@ -1,4 +1,4 @@
-define(['./internal/baseMerge', './internal/createAssigner'], function(baseMerge, createAssigner) {
+define(['./_baseMerge', './_createAssigner'], function(baseMerge, createAssigner) {
 
   /**
    * Recursively merges own and inherited enumerable properties of source

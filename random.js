@@ -1,4 +1,4 @@
-define(['./internal/baseRandom', './internal/isIterateeCall', './toNumber'], function(baseRandom, isIterateeCall, toNumber) {
+define(['./_baseRandom', './_isIterateeCall', './toNumber'], function(baseRandom, isIterateeCall, toNumber) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

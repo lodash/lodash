@@ -1,4 +1,4 @@
-define(['./internal/baseFlatten', './internal/baseUniq', './rest'], function(baseFlatten, baseUniq, rest) {
+define(['./_baseFlatten', './_baseUniq', './rest'], function(baseFlatten, baseUniq, rest) {
 
   /**
    * Creates an array of unique values, in order, from all of the provided arrays

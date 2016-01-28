@@ -1,4 +1,4 @@
-define(['./internal/baseToPairs', './keysIn'], function(baseToPairs, keysIn) {
+define(['./_baseToPairs', './keysIn'], function(baseToPairs, keysIn) {
 
   /**
    * Creates an array of own and inherited enumerable key-value pairs for `object`.

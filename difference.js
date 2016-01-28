@@ -1,4 +1,4 @@
-define(['./internal/baseDifference', './internal/baseFlatten', './isArrayLikeObject', './rest'], function(baseDifference, baseFlatten, isArrayLikeObject, rest) {
+define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './rest'], function(baseDifference, baseFlatten, isArrayLikeObject, rest) {
 
   /**
    * Creates an array of unique `array` values not included in the other

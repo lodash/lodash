@@ -1,4 +1,4 @@
-define(['./internal/copyObject', './internal/createAssigner', './keysIn'], function(copyObject, createAssigner, keysIn) {
+define(['./_copyObject', './_createAssigner', './keysIn'], function(copyObject, createAssigner, keysIn) {
 
   /**
    * This method is like `_.assign` except that it iterates over own and

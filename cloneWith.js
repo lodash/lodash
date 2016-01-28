@@ -1,4 +1,4 @@
-define(['./internal/baseClone'], function(baseClone) {
+define(['./_baseClone'], function(baseClone) {
 
   /**
    * This method is like `_.clone` except that it accepts `customizer` which

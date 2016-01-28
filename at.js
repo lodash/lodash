@@ -1,4 +1,4 @@
-define(['./internal/baseAt', './internal/baseFlatten', './rest'], function(baseAt, baseFlatten, rest) {
+define(['./_baseAt', './_baseFlatten', './rest'], function(baseAt, baseFlatten, rest) {
 
   /**
    * Creates an array of values corresponding to `paths` of `object`.

@@ -1,4 +1,4 @@
-define(['./internal/MapCache'], function(MapCache) {
+define(['./_MapCache'], function(MapCache) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';

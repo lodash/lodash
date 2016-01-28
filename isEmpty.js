@@ -1,4 +1,10 @@
-define(['./isFunction', './isObjectLike', './keys', './size'], function(isFunction, isObjectLike, keys, size) {
+define(['./isArguments', './isArray', './isArrayLike', './isFunction', './isString'], function(isArguments, isArray, isArrayLike, isFunction, isString) {
+
+  /** Used for built-in method references. */
+  var objectProto = Object.prototype;
+
+  /** Used to check objects for own properties. */
+  var hasOwnProperty = objectProto.hasOwnProperty;
 
   /**
    * Checks if `value` is empty. A value is considered empty unless it's an
@@ -28,9 +34,16 @@ define(['./isFunction', './isObjectLike', './keys', './size'], function(isFuncti
    * // => false
    */
   function isEmpty(value) {
-    return (!isObjectLike(value) || isFunction(value.splice))
-      ? !size(value)
-      : !keys(value).length;
+    if (isArrayLike(value) &&
+        (isArray(value) || isString(value) || isFunction(value.splice) || isArguments(value))) {
+      return !value.length;
+    }
+    for (var key in value) {
+      if (hasOwnProperty.call(value, key)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   return isEmpty;

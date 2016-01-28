@@ -1,4 +1,4 @@
-define(['./isFunction', './internal/isHostObject', './isObjectLike'], function(isFunction, isHostObject, isObjectLike) {
+define(['./isFunction', './_isHostObject', './isObjectLike'], function(isFunction, isHostObject, isObjectLike) {
 
   /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;

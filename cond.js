@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/arrayMap', './internal/baseIteratee', './rest'], function(apply, arrayMap, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply, arrayMap, baseIteratee, rest) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';

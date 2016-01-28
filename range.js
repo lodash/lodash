@@ -1,4 +1,4 @@
-define(['./internal/createRange'], function(createRange) {
+define(['./_createRange'], function(createRange) {
 
   /**
    * Creates an array of numbers (positive and/or negative) progressing from

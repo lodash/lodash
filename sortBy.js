@@ -1,4 +1,4 @@
-define(['./internal/baseFlatten', './internal/baseOrderBy', './internal/isIterateeCall', './rest'], function(baseFlatten, baseOrderBy, isIterateeCall, rest) {
+define(['./_baseFlatten', './_baseOrderBy', './_isIterateeCall', './rest'], function(baseFlatten, baseOrderBy, isIterateeCall, rest) {
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of

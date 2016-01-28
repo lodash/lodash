@@ -1,4 +1,4 @@
-define(['./internal/charsEndIndex', './internal/charsStartIndex', './internal/stringToArray', './toString'], function(charsEndIndex, charsStartIndex, stringToArray, toString) {
+define(['./_charsEndIndex', './_charsStartIndex', './_stringToArray', './toString'], function(charsEndIndex, charsStartIndex, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

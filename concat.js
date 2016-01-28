@@ -1,4 +1,4 @@
-define(['./internal/arrayConcat', './internal/baseFlatten', './isArray', './rest'], function(arrayConcat, baseFlatten, isArray, rest) {
+define(['./_arrayConcat', './_baseFlatten', './isArray', './rest'], function(arrayConcat, baseFlatten, isArray, rest) {
 
   /**
    * Creates a new array concatenating `array` with any additional arrays

@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseAt', './internal/baseFlatten', './internal/basePullAt', './internal/compareAscending', './rest'], function(arrayMap, baseAt, baseFlatten, basePullAt, compareAscending, rest) {
+define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compareAscending', './rest'], function(arrayMap, baseAt, baseFlatten, basePullAt, compareAscending, rest) {
 
   /**
    * Removes elements from `array` corresponding to `indexes` and returns an

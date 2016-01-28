@@ -1,4 +1,4 @@
-define(['./internal/apply', './isError', './rest'], function(apply, isError, rest) {
+define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

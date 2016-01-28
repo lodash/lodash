@@ -1,4 +1,4 @@
-define(['./internal/baseFlatten', './internal/basePick', './rest'], function(baseFlatten, basePick, rest) {
+define(['./_baseFlatten', './_basePick', './rest'], function(baseFlatten, basePick, rest) {
 
   /**
    * Creates an object composed of the picked `object` properties.

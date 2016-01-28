@@ -1,4 +1,4 @@
-define(['./internal/baseRandom', './isArrayLike', './values'], function(baseRandom, isArrayLike, values) {
+define(['./_baseRandom', './isArrayLike', './values'], function(baseRandom, isArrayLike, values) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

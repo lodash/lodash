@@ -1,4 +1,4 @@
-define(['./internal/arrayEach', './internal/baseEach', './isArray', './internal/toFunction'], function(arrayEach, baseEach, isArray, toFunction) {
+define(['./_arrayEach', './_baseEach', './isArray', './_toFunction'], function(arrayEach, baseEach, isArray, toFunction) {
 
   /**
    * Iterates over elements of `collection` invoking `iteratee` for each element.

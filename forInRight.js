@@ -1,4 +1,4 @@
-define(['./internal/baseForRight', './keysIn', './internal/toFunction'], function(baseForRight, keysIn, toFunction) {
+define(['./_baseForRight', './keysIn', './_toFunction'], function(baseForRight, keysIn, toFunction) {
 
   /**
    * This method is like `_.forIn` except that it iterates over properties of

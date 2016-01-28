@@ -1,4 +1,4 @@
-define(['./internal/baseFindIndex', './internal/baseIteratee'], function(baseFindIndex, baseIteratee) {
+define(['./_baseFindIndex', './_baseIteratee'], function(baseFindIndex, baseIteratee) {
 
   /**
    * This method is like `_.find` except that it returns the index of the first

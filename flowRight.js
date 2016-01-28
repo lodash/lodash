@@ -1,4 +1,4 @@
-define(['./internal/createFlow'], function(createFlow) {
+define(['./_createFlow'], function(createFlow) {
 
   /**
    * This method is like `_.flow` except that it creates a function that

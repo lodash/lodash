@@ -1,4 +1,4 @@
-define(['./internal/baseSortedIndex', './eq'], function(baseSortedIndex, eq) {
+define(['./_baseSortedIndex', './eq'], function(baseSortedIndex, eq) {
 
   /**
    * This method is like `_.lastIndexOf` except that it performs a binary

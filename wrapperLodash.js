@@ -1,4 +1,4 @@
-define(['./internal/LazyWrapper', './internal/LodashWrapper', './internal/baseLodash', './isArray', './isObjectLike', './internal/wrapperClone'], function(LazyWrapper, LodashWrapper, baseLodash, isArray, isObjectLike, wrapperClone) {
+define(['./_LazyWrapper', './_LodashWrapper', './_baseLodash', './isArray', './isObjectLike', './_wrapperClone'], function(LazyWrapper, LodashWrapper, baseLodash, isArray, isObjectLike, wrapperClone) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -52,20 +52,21 @@ define(['./internal/LazyWrapper', './internal/LodashWrapper', './internal/baseLo
    * `differenceBy`, `differenceWith`, `drop`, `dropRight`, `dropRightWhile`,
    * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flip`, `flow`,
    * `flowRight`, `fromPairs`, `functions`, `functionsIn`, `groupBy`, `initial`,
-   * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invokeMap`,
-   * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
-   * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
-   * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
-   * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
-   * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
-   * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
-   * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
-   * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`,
-   * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-   * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
-   * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
-   * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-   * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, and `zipWith`
+   * `intersection`, `intersectionBy`, `intersectionWith`, `invert`, `invertBy`,
+   * `invokeMap`, `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`,
+   * `mapValues`, `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`,
+   * `method`, `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`,
+   * `orderBy`, `over`, `overArgs`, `overEvery`, `overSome`, `partial`,
+   * `partialRight`, `partition`, `pick`, `pickBy`, `plant`, `property`,
+   * `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`,
+   * `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`,
+   * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`,
+   * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+   * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+   * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+   * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+   * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
+   * `zipObjectDeep`, and `zipWith`
    *
    * The wrapper methods that are **not** chainable by default are:
    * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,

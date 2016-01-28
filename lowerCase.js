@@ -1,4 +1,4 @@
-define(['./internal/createCompounder'], function(createCompounder) {
+define(['./_createCompounder'], function(createCompounder) {
 
   /**
    * Converts `string`, as space separated words, to lower case.

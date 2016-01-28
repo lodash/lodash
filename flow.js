@@ -1,4 +1,4 @@
-define(['./internal/createFlow'], function(createFlow) {
+define(['./_createFlow'], function(createFlow) {
 
   /**
    * Creates a function that returns the result of invoking the provided

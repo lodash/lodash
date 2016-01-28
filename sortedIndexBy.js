@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/baseSortedIndexBy'], function(baseIteratee, baseSortedIndexBy) {
+define(['./_baseIteratee', './_baseSortedIndexBy'], function(baseIteratee, baseSortedIndexBy) {
 
   /**
    * This method is like `_.sortedIndex` except that it accepts `iteratee`

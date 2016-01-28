@@ -1,4 +1,4 @@
-define(['./internal/baseFlatten'], function(baseFlatten) {
+define(['./_baseFlatten'], function(baseFlatten) {
 
   /**
    * Flattens `array` a single level.

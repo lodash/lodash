@@ -1,4 +1,4 @@
-define(['./internal/baseFunctions', './keysIn'], function(baseFunctions, keysIn) {
+define(['./_baseFunctions', './keysIn'], function(baseFunctions, keysIn) {
 
   /**
    * Creates an array of function property names from own and inherited

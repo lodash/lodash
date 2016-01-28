@@ -1,7 +1,4 @@
-define(['./internal/baseSum', './identity'], function(baseSum, identity) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_baseSum', './identity'], function(baseSum, identity) {
 
   /**
    * Computes the sum of the values in `array`.
@@ -19,7 +16,7 @@ define(['./internal/baseSum', './identity'], function(baseSum, identity) {
   function sum(array) {
     return (array && array.length)
       ? baseSum(array, identity)
-      : undefined;
+      : 0;
   }
 
   return sum;

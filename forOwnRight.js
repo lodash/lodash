@@ -1,4 +1,4 @@
-define(['./internal/baseForOwnRight', './internal/toFunction'], function(baseForOwnRight, toFunction) {
+define(['./_baseForOwnRight', './_toFunction'], function(baseForOwnRight, toFunction) {
 
   /**
    * This method is like `_.forOwn` except that it iterates over properties of

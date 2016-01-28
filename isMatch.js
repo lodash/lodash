@@ -1,4 +1,4 @@
-define(['./internal/baseIsMatch', './internal/getMatchData'], function(baseIsMatch, getMatchData) {
+define(['./_baseIsMatch', './_getMatchData'], function(baseIsMatch, getMatchData) {
 
   /**
    * Performs a deep comparison between `object` and `source` to determine if

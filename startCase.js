@@ -1,4 +1,4 @@
-define(['./capitalize', './internal/createCompounder'], function(capitalize, createCompounder) {
+define(['./capitalize', './_createCompounder'], function(capitalize, createCompounder) {
 
   /**
    * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).

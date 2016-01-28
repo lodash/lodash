@@ -1,4 +1,4 @@
-define(['./internal/baseWrapperValue'], function(baseWrapperValue) {
+define(['./_baseWrapperValue'], function(baseWrapperValue) {
 
   /**
    * Executes the chained sequence to extract the unwrapped value.

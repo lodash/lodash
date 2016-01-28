@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/basePullAllBy'], function(baseIteratee, basePullAllBy) {
+define(['./_baseIteratee', './_basePullAllBy'], function(baseIteratee, basePullAllBy) {
 
   /**
    * This method is like `_.pullAll` except that it accepts `iteratee` which is

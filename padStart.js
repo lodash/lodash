@@ -1,4 +1,4 @@
-define(['./internal/createPadding', './toString'], function(createPadding, toString) {
+define(['./_createPadding', './toString'], function(createPadding, toString) {
 
   /**
    * Pads `string` on the left side if it's shorter than `length`. Padding

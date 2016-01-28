@@ -1,4 +1,4 @@
-define(['./internal/LazyWrapper', './internal/LodashWrapper', './internal/baseAt', './internal/baseFlatten', './internal/isIndex', './rest', './thru'], function(LazyWrapper, LodashWrapper, baseAt, baseFlatten, isIndex, rest, thru) {
+define(['./_LazyWrapper', './_LodashWrapper', './_baseAt', './_baseFlatten', './_isIndex', './rest', './thru'], function(LazyWrapper, LodashWrapper, baseAt, baseFlatten, isIndex, rest, thru) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

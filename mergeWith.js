@@ -1,4 +1,4 @@
-define(['./internal/baseMerge', './internal/createAssigner'], function(baseMerge, createAssigner) {
+define(['./_baseMerge', './_createAssigner'], function(baseMerge, createAssigner) {
 
   /**
    * This method is like `_.merge` except that it accepts `customizer` which

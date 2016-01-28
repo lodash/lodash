@@ -1,4 +1,4 @@
-define(['./internal/baseSet'], function(baseSet) {
+define(['./_baseSet'], function(baseSet) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

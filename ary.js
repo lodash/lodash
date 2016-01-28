@@ -1,4 +1,4 @@
-define(['./internal/createWrapper'], function(createWrapper) {
+define(['./_createWrapper'], function(createWrapper) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

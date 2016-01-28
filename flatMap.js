@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseFlatten', './internal/baseIteratee'], function(arrayMap, baseFlatten, baseIteratee) {
+define(['./_arrayMap', './_baseFlatten', './_baseIteratee'], function(arrayMap, baseFlatten, baseIteratee) {
 
   /**
    * Creates an array of flattened values by running each element in `array`

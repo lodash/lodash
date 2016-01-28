@@ -1,4 +1,4 @@
-define(['./internal/createRange'], function(createRange) {
+define(['./_createRange'], function(createRange) {
 
   /**
    * This method is like `_.range` except that it populates values in

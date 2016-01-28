@@ -1,4 +1,4 @@
-define(['./internal/baseToPath', './get', './isFunction', './internal/isKey', './internal/parent'], function(baseToPath, get, isFunction, isKey, parent) {
+define(['./_baseToPath', './get', './isFunction', './_isKey', './_parent'], function(baseToPath, get, isFunction, isKey, parent) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

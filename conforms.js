@@ -1,4 +1,4 @@
-define(['./internal/baseClone', './internal/baseConforms'], function(baseClone, baseConforms) {
+define(['./_baseClone', './_baseConforms'], function(baseClone, baseConforms) {
 
   /**
    * Creates a function that invokes the predicate properties of `source` with

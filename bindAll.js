@@ -1,4 +1,4 @@
-define(['./internal/arrayEach', './internal/baseFlatten', './bind', './rest'], function(arrayEach, baseFlatten, bind, rest) {
+define(['./_arrayEach', './_baseFlatten', './bind', './rest'], function(arrayEach, baseFlatten, bind, rest) {
 
   /**
    * Binds methods of an object to the object itself, overwriting the existing

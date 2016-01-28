@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './isArray', './internal/stringToPath'], function(arrayMap, isArray, stringToPath) {
+define(['./_arrayMap', './isArray', './_stringToPath'], function(arrayMap, isArray, stringToPath) {
 
   /**
    * Converts `value` to a property path array.

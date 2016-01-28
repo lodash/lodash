@@ -1,4 +1,4 @@
-define(['./internal/apply'], function(apply) {
+define(['./_apply'], function(apply) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';

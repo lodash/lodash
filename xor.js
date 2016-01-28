@@ -1,4 +1,4 @@
-define(['./internal/arrayFilter', './internal/baseXor', './isArrayLikeObject', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, rest) {
+define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, rest) {
 
   /**
    * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)

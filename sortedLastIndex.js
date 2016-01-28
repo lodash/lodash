@@ -1,4 +1,4 @@
-define(['./internal/baseSortedIndex'], function(baseSortedIndex) {
+define(['./_baseSortedIndex'], function(baseSortedIndex) {
 
   /**
    * This method is like `_.sortedIndex` except that it returns the highest

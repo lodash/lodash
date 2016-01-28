@@ -1,4 +1,4 @@
-define(['./internal/createRound'], function(createRound) {
+define(['./_createRound'], function(createRound) {
 
   /**
    * Computes `number` rounded to `precision`.

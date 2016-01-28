@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseIteratee', './internal/baseMap', './isArray'], function(arrayMap, baseIteratee, baseMap, isArray) {
+define(['./_arrayMap', './_baseIteratee', './_baseMap', './isArray'], function(arrayMap, baseIteratee, baseMap, isArray) {
 
   /**
    * Creates an array of values by running each element in `collection` through

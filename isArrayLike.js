@@ -1,4 +1,4 @@
-define(['./internal/getLength', './isFunction', './isLength'], function(getLength, isFunction, isLength) {
+define(['./_getLength', './isFunction', './isLength'], function(getLength, isFunction, isLength) {
 
   /**
    * Checks if `value` is array-like. A value is considered array-like if it's

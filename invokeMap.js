@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/baseEach', './internal/baseInvoke', './isArrayLike', './internal/isKey', './rest'], function(apply, baseEach, baseInvoke, isArrayLike, isKey, rest) {
+define(['./_apply', './_baseEach', './_baseInvoke', './isArrayLike', './_isKey', './rest'], function(apply, baseEach, baseInvoke, isArrayLike, isKey, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

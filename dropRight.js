@@ -1,4 +1,4 @@
-define(['./internal/baseSlice', './toInteger'], function(baseSlice, toInteger) {
+define(['./_baseSlice', './toInteger'], function(baseSlice, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

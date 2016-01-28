@@ -1,4 +1,4 @@
-define(['./internal/baseGet'], function(baseGet) {
+define(['./_baseGet'], function(baseGet) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

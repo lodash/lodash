@@ -1,4 +1,4 @@
-define(['./capitalize', './internal/createCompounder'], function(capitalize, createCompounder) {
+define(['./capitalize', './_createCompounder'], function(capitalize, createCompounder) {
 
   /**
    * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).

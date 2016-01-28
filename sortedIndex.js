@@ -1,4 +1,4 @@
-define(['./internal/baseSortedIndex'], function(baseSortedIndex) {
+define(['./_baseSortedIndex'], function(baseSortedIndex) {
 
   /**
    * Uses a binary search to determine the lowest index at which `value` should

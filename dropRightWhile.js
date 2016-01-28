@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/baseWhile'], function(baseIteratee, baseWhile) {
+define(['./_baseIteratee', './_baseWhile'], function(baseIteratee, baseWhile) {
 
   /**
    * Creates a slice of `array` excluding elements dropped from the end.

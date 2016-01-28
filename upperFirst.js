@@ -1,4 +1,4 @@
-define(['./internal/createCaseFirst'], function(createCaseFirst) {
+define(['./_createCaseFirst'], function(createCaseFirst) {
 
   /**
    * Converts the first character of `string` to upper case.

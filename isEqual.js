@@ -1,4 +1,4 @@
-define(['./internal/baseIsEqual'], function(baseIsEqual) {
+define(['./_baseIsEqual'], function(baseIsEqual) {
 
   /**
    * Performs a deep comparison between two values to determine if they are

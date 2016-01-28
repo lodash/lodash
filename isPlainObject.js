@@ -1,4 +1,4 @@
-define(['./internal/isHostObject', './isObjectLike'], function(isHostObject, isObjectLike) {
+define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLike) {
 
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';

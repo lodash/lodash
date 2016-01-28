@@ -1,4 +1,4 @@
-define(['./isArrayLike', './isString', './keys', './internal/stringSize'], function(isArrayLike, isString, keys, stringSize) {
+define(['./isArrayLike', './isString', './keys', './_stringSize'], function(isArrayLike, isString, keys, stringSize) {
 
   /**
    * Gets the size of `collection` by returning its length for array-like

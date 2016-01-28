@@ -1,4 +1,4 @@
-define(['./internal/baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
+define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

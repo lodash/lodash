@@ -1,4 +1,4 @@
-define(['./isObject', './isRegExp', './internal/stringSize', './internal/stringToArray', './toInteger', './toString'], function(isObject, isRegExp, stringSize, stringToArray, toInteger, toString) {
+define(['./isObject', './isRegExp', './_stringSize', './_stringToArray', './toInteger', './toString'], function(isObject, isRegExp, stringSize, stringToArray, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

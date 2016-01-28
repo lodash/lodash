@@ -1,4 +1,4 @@
-define(['./internal/baseFor', './keysIn', './internal/toFunction'], function(baseFor, keysIn, toFunction) {
+define(['./_baseFor', './keysIn', './_toFunction'], function(baseFor, keysIn, toFunction) {
 
   /**
    * Iterates over own and inherited enumerable properties of an object invoking

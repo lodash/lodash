@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './isArray', './isObjectLike', './matches'], function(baseIteratee, isArray, isObjectLike, matches) {
+define(['./_baseIteratee', './isArray', './isObjectLike', './matches'], function(baseIteratee, isArray, isObjectLike, matches) {
 
   /**
    * Creates a function that invokes `func` with the arguments of the created

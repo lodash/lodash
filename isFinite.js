@@ -1,4 +1,4 @@
-define(['./internal/root'], function(root) {
+define(['./_root'], function(root) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeIsFinite = root.isFinite;

@@ -1,4 +1,4 @@
-define(['./internal/baseDelay', './rest'], function(baseDelay, rest) {
+define(['./_baseDelay', './rest'], function(baseDelay, rest) {
 
   /**
    * Defers invoking the `func` until the current call stack has cleared. Any

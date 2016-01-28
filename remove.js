@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/basePullAt'], function(baseIteratee, basePullAt) {
+define(['./_baseIteratee', './_basePullAt'], function(baseIteratee, basePullAt) {
 
   /**
    * Removes all elements from `array` that `predicate` returns truthy for

@@ -1,4 +1,4 @@
-define(['./internal/createWrapper'], function(createWrapper) {
+define(['./_createWrapper'], function(createWrapper) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var FLIP_FLAG = 512;

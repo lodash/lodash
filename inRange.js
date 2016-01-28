@@ -1,4 +1,4 @@
-define(['./internal/baseInRange', './toNumber'], function(baseInRange, toNumber) {
+define(['./_baseInRange', './toNumber'], function(baseInRange, toNumber) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

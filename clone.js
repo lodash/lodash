@@ -1,4 +1,4 @@
-define(['./internal/baseClone'], function(baseClone) {
+define(['./_baseClone'], function(baseClone) {
 
   /**
    * Creates a shallow clone of `value`.

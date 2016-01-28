@@ -1,4 +1,4 @@
-define(['./internal/baseIsMatch', './internal/getMatchData'], function(baseIsMatch, getMatchData) {
+define(['./_baseIsMatch', './_getMatchData'], function(baseIsMatch, getMatchData) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

@@ -1,4 +1,4 @@
-define(['./internal/baseSlice', './toInteger'], function(baseSlice, toInteger) {
+define(['./_baseSlice', './toInteger'], function(baseSlice, toInteger) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeCeil = Math.ceil,

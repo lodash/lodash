@@ -1,4 +1,4 @@
-define(['./internal/baseFind', './internal/baseForOwnRight', './internal/baseIteratee'], function(baseFind, baseForOwnRight, baseIteratee) {
+define(['./_baseFind', './_baseForOwnRight', './_baseIteratee'], function(baseFind, baseForOwnRight, baseIteratee) {
 
   /**
    * This method is like `_.findKey` except that it iterates over elements of

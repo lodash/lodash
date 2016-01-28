@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/mergeDefaults', './mergeWith', './rest'], function(apply, mergeDefaults, mergeWith, rest) {
+define(['./_apply', './_mergeDefaults', './mergeWith', './rest'], function(apply, mergeDefaults, mergeWith, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

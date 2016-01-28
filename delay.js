@@ -1,4 +1,4 @@
-define(['./internal/baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNumber) {
+define(['./_baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNumber) {
 
   /**
    * Invokes `func` after `wait` milliseconds. Any additional arguments are

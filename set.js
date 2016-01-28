@@ -1,4 +1,4 @@
-define(['./internal/baseSet'], function(baseSet) {
+define(['./_baseSet'], function(baseSet) {
 
   /**
    * Sets the value at `path` of `object`. If a portion of `path` doesn't exist

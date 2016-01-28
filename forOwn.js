@@ -1,4 +1,4 @@
-define(['./internal/baseForOwn', './internal/toFunction'], function(baseForOwn, toFunction) {
+define(['./_baseForOwn', './_toFunction'], function(baseForOwn, toFunction) {
 
   /**
    * Iterates over own enumerable properties of an object invoking `iteratee`

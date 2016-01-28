@@ -1,4 +1,4 @@
-define(['./internal/copyObject', './internal/createAssigner', './keys'], function(copyObject, createAssigner, keys) {
+define(['./_copyObject', './_createAssigner', './keys'], function(copyObject, createAssigner, keys) {
 
   /**
    * Assigns own enumerable properties of source objects to the destination

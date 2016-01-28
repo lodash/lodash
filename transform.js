@@ -1,4 +1,4 @@
-define(['./internal/arrayEach', './internal/baseCreate', './internal/baseForOwn', './internal/baseIteratee', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, isArray, isFunction, isObject, isTypedArray) {
+define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, isArray, isFunction, isObject, isTypedArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,12 +23,12 @@ define(['./internal/arrayEach', './internal/baseCreate', './internal/baseForOwn'
    * _.transform([2, 3, 4], function(result, n) {
    *   result.push(n *= n);
    *   return n % 2 == 0;
-   * });
+   * }, []);
    * // => [4, 9]
    *
    * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
    *   (result[value] || (result[value] = [])).push(key);
-   * });
+   * }, {});
    * // => { '1': ['a', 'c'], '2': ['b'] }
    */
   function transform(object, iteratee, accumulator) {

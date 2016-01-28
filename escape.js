@@ -1,4 +1,4 @@
-define(['./internal/escapeHtmlChar', './toString'], function(escapeHtmlChar, toString) {
+define(['./_escapeHtmlChar', './toString'], function(escapeHtmlChar, toString) {
 
   /** Used to match HTML entities and HTML characters. */
   var reUnescapedHtml = /[&<>"'`]/g,

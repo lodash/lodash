@@ -1,4 +1,4 @@
-define(['./internal/baseOrderBy', './isArray'], function(baseOrderBy, isArray) {
+define(['./_baseOrderBy', './isArray'], function(baseOrderBy, isArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

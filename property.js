@@ -1,4 +1,4 @@
-define(['./internal/baseProperty', './internal/basePropertyDeep', './internal/isKey'], function(baseProperty, basePropertyDeep, isKey) {
+define(['./_baseProperty', './_basePropertyDeep', './_isKey'], function(baseProperty, basePropertyDeep, isKey) {
 
   /**
    * Creates a function that returns the value at `path` of a given object.

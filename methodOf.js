@@ -1,4 +1,4 @@
-define(['./internal/baseInvoke', './rest'], function(baseInvoke, rest) {
+define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
 
   /**
    * The opposite of `_.method`; this method creates a function that invokes

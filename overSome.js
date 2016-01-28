@@ -1,4 +1,4 @@
-define(['./internal/arraySome', './internal/createOver'], function(arraySome, createOver) {
+define(['./_arraySome', './_createOver'], function(arraySome, createOver) {
 
   /**
    * Creates a function that checks if **any** of the `predicates` return

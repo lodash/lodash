@@ -1,4 +1,4 @@
-define(['./internal/copyObject', './keysIn'], function(copyObject, keysIn) {
+define(['./_copyObject', './keysIn'], function(copyObject, keysIn) {
 
   /**
    * Converts `value` to a plain object flattening inherited enumerable

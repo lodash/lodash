@@ -1,4 +1,4 @@
-define(['./internal/Symbol', './isSymbol'], function(Symbol, isSymbol) {
+define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

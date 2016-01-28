@@ -1,4 +1,4 @@
-define(['./internal/arrayFilter', './internal/baseFilter', './internal/baseIteratee', './isArray'], function(arrayFilter, baseFilter, baseIteratee, isArray) {
+define(['./_arrayFilter', './_baseFilter', './_baseIteratee', './isArray'], function(arrayFilter, baseFilter, baseIteratee, isArray) {
 
   /**
    * Iterates over elements of `collection`, returning an array of all elements

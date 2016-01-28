@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseDifference', './internal/baseFlatten', './internal/basePick', './keysIn', './rest'], function(arrayMap, baseDifference, baseFlatten, basePick, keysIn, rest) {
+define(['./_arrayMap', './_baseDifference', './_baseFlatten', './_basePick', './keysIn', './rest'], function(arrayMap, baseDifference, baseFlatten, basePick, keysIn, rest) {
 
   /**
    * The opposite of `_.pick`; this method creates an object composed of the

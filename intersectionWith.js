@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseIntersection', './last', './rest', './internal/toArrayLikeObject'], function(arrayMap, baseIntersection, last, rest, toArrayLikeObject) {
+define(['./_arrayMap', './_baseIntersection', './last', './rest', './_toArrayLikeObject'], function(arrayMap, baseIntersection, last, rest, toArrayLikeObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

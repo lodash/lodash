@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/basePickBy'], function(baseIteratee, basePickBy) {
+define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) {
 
   /**
    * The opposite of `_.pickBy`; this method creates an object composed of the

@@ -1,4 +1,4 @@
-define(['./internal/arrayReduceRight', './internal/baseEachRight', './internal/baseIteratee', './internal/baseReduce', './isArray'], function(arrayReduceRight, baseEachRight, baseIteratee, baseReduce, isArray) {
+define(['./_arrayReduceRight', './_baseEachRight', './_baseIteratee', './_baseReduce', './isArray'], function(arrayReduceRight, baseEachRight, baseIteratee, baseReduce, isArray) {
 
   /**
    * This method is like `_.reduce` except that it iterates over elements of

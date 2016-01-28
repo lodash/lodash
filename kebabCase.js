@@ -1,4 +1,4 @@
-define(['./internal/createCompounder'], function(createCompounder) {
+define(['./_createCompounder'], function(createCompounder) {
 
   /**
    * Converts `string` to [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).

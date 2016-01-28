@@ -1,4 +1,4 @@
-define(['./internal/createWrapper', './internal/replaceHolders', './rest'], function(createWrapper, replaceHolders, rest) {
+define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapper, replaceHolders, rest) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,

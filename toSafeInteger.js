@@ -1,4 +1,4 @@
-define(['./internal/baseClamp', './toInteger'], function(baseClamp, toInteger) {
+define(['./_baseClamp', './toInteger'], function(baseClamp, toInteger) {
 
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991;

@@ -1,4 +1,4 @@
-define(['./internal/root', './toString'], function(root, toString) {
+define(['./_root', './toString'], function(root, toString) {
 
   /** Used to match leading and trailing whitespace. */
   var reTrim = /^\s+|\s+$/g;

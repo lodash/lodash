@@ -1,4 +1,4 @@
-define(['./internal/baseInvoke', './rest'], function(baseInvoke, rest) {
+define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
 
   /**
    * Creates a function that invokes the method at `path` of a given object.

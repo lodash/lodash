@@ -1,4 +1,4 @@
-define(['./internal/baseClamp', './internal/baseRandom', './toArray', './toInteger'], function(baseClamp, baseRandom, toArray, toInteger) {
+define(['./_baseClamp', './_baseRandom', './toArray', './toInteger'], function(baseClamp, baseRandom, toArray, toInteger) {
 
   /**
    * Gets `n` random elements at unique keys from `collection` up to the

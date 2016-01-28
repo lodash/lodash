@@ -1,4 +1,4 @@
-define(['./internal/apply', './toInteger'], function(apply, toInteger) {
+define(['./_apply', './toInteger'], function(apply, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

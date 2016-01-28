@@ -1,4 +1,4 @@
-define(['./internal/baseIteratee', './internal/baseUniq'], function(baseIteratee, baseUniq) {
+define(['./_baseIteratee', './_baseUniq'], function(baseIteratee, baseUniq) {
 
   /**
    * This method is like `_.uniq` except that it accepts `iteratee` which is

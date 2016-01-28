@@ -1,4 +1,4 @@
-define(['./internal/baseFind', './internal/baseForOwn', './internal/baseIteratee'], function(baseFind, baseForOwn, baseIteratee) {
+define(['./_baseFind', './_baseForOwn', './_baseIteratee'], function(baseFind, baseForOwn, baseIteratee) {
 
   /**
    * This method is like `_.find` except that it returns the key of the first

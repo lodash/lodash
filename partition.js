@@ -1,4 +1,4 @@
-define(['./internal/createAggregator'], function(createAggregator) {
+define(['./_createAggregator'], function(createAggregator) {
 
   /**
    * Creates an array of elements split into two groups, the first of which

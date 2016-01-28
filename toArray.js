@@ -1,4 +1,4 @@
-define(['./internal/Symbol', './internal/copyArray', './internal/getTag', './isArrayLike', './isString', './internal/iteratorToArray', './internal/mapToArray', './internal/setToArray', './internal/stringToArray', './values'], function(Symbol, copyArray, getTag, isArrayLike, isString, iteratorToArray, mapToArray, setToArray, stringToArray, values) {
+define(['./_Symbol', './_copyArray', './_getTag', './isArrayLike', './isString', './_iteratorToArray', './_mapToArray', './_setToArray', './_stringToArray', './values'], function(Symbol, copyArray, getTag, isArrayLike, isString, iteratorToArray, mapToArray, setToArray, stringToArray, values) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

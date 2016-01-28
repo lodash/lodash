@@ -1,4 +1,4 @@
-define(['./internal/baseHasIn', './internal/hasPath'], function(baseHasIn, hasPath) {
+define(['./_baseHasIn', './_hasPath'], function(baseHasIn, hasPath) {
 
   /**
    * Checks if `path` is a direct or inherited property of `object`.

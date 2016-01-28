@@ -1,4 +1,4 @@
-define(['./internal/LodashWrapper'], function(LodashWrapper) {
+define(['./_LodashWrapper'], function(LodashWrapper) {
 
   /**
    * Executes the chained sequence and returns the wrapped result.

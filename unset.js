@@ -1,4 +1,4 @@
-define(['./internal/baseUnset'], function(baseUnset) {
+define(['./_baseUnset'], function(baseUnset) {
 
   /**
    * Removes the property at `path` of `object`.

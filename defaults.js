@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/assignInDefaults', './assignInWith', './rest'], function(apply, assignInDefaults, assignInWith, rest) {
+define(['./_apply', './_assignInDefaults', './assignInWith', './rest'], function(apply, assignInDefaults, assignInWith, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

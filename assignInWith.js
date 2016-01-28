@@ -1,4 +1,4 @@
-define(['./internal/copyObjectWith', './internal/createAssigner', './keysIn'], function(copyObjectWith, createAssigner, keysIn) {
+define(['./_copyObjectWith', './_createAssigner', './keysIn'], function(copyObjectWith, createAssigner, keysIn) {
 
   /**
    * This method is like `_.assignIn` except that it accepts `customizer` which

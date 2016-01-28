@@ -1,4 +1,4 @@
-define(['./internal/arrayFilter', './internal/baseXor', './isArrayLikeObject', './last', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, last, rest) {
+define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './last', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, last, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

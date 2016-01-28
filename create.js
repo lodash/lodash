@@ -1,4 +1,4 @@
-define(['./internal/baseAssign', './internal/baseCreate'], function(baseAssign, baseCreate) {
+define(['./_baseAssign', './_baseCreate'], function(baseAssign, baseCreate) {
 
   /**
    * Creates an object that inherits from the `prototype` object. If a `properties`

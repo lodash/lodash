@@ -1,4 +1,4 @@
-define(['./internal/baseSortedUniq'], function(baseSortedUniq) {
+define(['./_baseSortedUniq'], function(baseSortedUniq) {
 
   /**
    * This method is like `_.uniq` except that it's designed and optimized

@@ -1,4 +1,4 @@
-define(['./internal/baseDifference', './isArrayLikeObject', './rest'], function(baseDifference, isArrayLikeObject, rest) {
+define(['./_baseDifference', './isArrayLikeObject', './rest'], function(baseDifference, isArrayLikeObject, rest) {
 
   /**
    * Creates an array excluding all provided values using

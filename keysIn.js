@@ -1,4 +1,4 @@
-define(['./internal/baseKeysIn', './internal/indexKeys', './internal/isIndex', './internal/isPrototype'], function(baseKeysIn, indexKeys, isIndex, isPrototype) {
+define(['./_baseKeysIn', './_indexKeys', './_isIndex', './_isPrototype'], function(baseKeysIn, indexKeys, isIndex, isPrototype) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;

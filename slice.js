@@ -1,4 +1,4 @@
-define(['./internal/baseSlice', './internal/isIterateeCall', './toInteger'], function(baseSlice, isIterateeCall, toInteger) {
+define(['./_baseSlice', './_isIterateeCall', './toInteger'], function(baseSlice, isIterateeCall, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/baseIntersection', './rest', './internal/toArrayLikeObject'], function(arrayMap, baseIntersection, rest, toArrayLikeObject) {
+define(['./_arrayMap', './_baseIntersection', './rest', './_toArrayLikeObject'], function(arrayMap, baseIntersection, rest, toArrayLikeObject) {
 
   /**
    * Creates an array of unique values that are included in all of the provided

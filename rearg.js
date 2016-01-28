@@ -1,4 +1,4 @@
-define(['./internal/baseFlatten', './internal/createWrapper', './rest'], function(baseFlatten, createWrapper, rest) {
+define(['./_baseFlatten', './_createWrapper', './rest'], function(baseFlatten, createWrapper, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

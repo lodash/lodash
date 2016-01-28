@@ -1,4 +1,4 @@
-define(['./internal/baseUniq'], function(baseUniq) {
+define(['./_baseUniq'], function(baseUniq) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

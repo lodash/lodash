@@ -1,4 +1,4 @@
-define(['./internal/baseValues', './keys'], function(baseValues, keys) {
+define(['./_baseValues', './keys'], function(baseValues, keys) {
 
   /**
    * Creates an array of the own enumerable property values of `object`.

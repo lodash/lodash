@@ -1,4 +1,4 @@
-define(['./escape', './internal/reEscape', './internal/reEvaluate', './internal/reInterpolate'], function(escape, reEscape, reEvaluate, reInterpolate) {
+define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], function(escape, reEscape, reEvaluate, reInterpolate) {
 
   /**
    * By default, the template delimiters used by lodash are like those in

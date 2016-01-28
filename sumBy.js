@@ -1,7 +1,4 @@
-define(['./internal/baseIteratee', './internal/baseSum'], function(baseIteratee, baseSum) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_baseIteratee', './_baseSum'], function(baseIteratee, baseSum) {
 
   /**
    * This method is like `_.sum` except that it accepts `iteratee` which is
@@ -28,7 +25,7 @@ define(['./internal/baseIteratee', './internal/baseSum'], function(baseIteratee,
   function sumBy(array, iteratee) {
     return (array && array.length)
       ? baseSum(array, baseIteratee(iteratee))
-      : undefined;
+      : 0;
   }
 
   return sumBy;

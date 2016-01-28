@@ -1,4 +1,4 @@
-define(['./internal/baseDifference', './internal/baseFlatten', './internal/baseIteratee', './isArrayLikeObject', './last', './rest'], function(baseDifference, baseFlatten, baseIteratee, isArrayLikeObject, last, rest) {
+define(['./_baseDifference', './_baseFlatten', './_baseIteratee', './isArrayLikeObject', './last', './rest'], function(baseDifference, baseFlatten, baseIteratee, isArrayLikeObject, last, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

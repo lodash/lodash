@@ -1,4 +1,4 @@
-define(['./internal/baseFill', './internal/isIterateeCall'], function(baseFill, isIterateeCall) {
+define(['./_baseFill', './_isIterateeCall'], function(baseFill, isIterateeCall) {
 
   /**
    * Fills elements of `array` with `value` from `start` up to, but not

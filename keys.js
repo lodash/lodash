@@ -1,4 +1,4 @@
-define(['./internal/baseHas', './internal/baseKeys', './internal/indexKeys', './isArrayLike', './internal/isIndex', './internal/isPrototype'], function(baseHas, baseKeys, indexKeys, isArrayLike, isIndex, isPrototype) {
+define(['./_baseHas', './_baseKeys', './_indexKeys', './isArrayLike', './_isIndex', './_isPrototype'], function(baseHas, baseKeys, indexKeys, isArrayLike, isIndex, isPrototype) {
 
   /**
    * Creates an array of the own enumerable property names of `object`.

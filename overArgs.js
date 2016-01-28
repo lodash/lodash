@@ -1,4 +1,4 @@
-define(['./internal/apply', './internal/arrayMap', './internal/baseFlatten', './internal/baseIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, rest) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;

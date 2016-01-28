@@ -1,4 +1,4 @@
-define(['./internal/baseClone', './internal/baseMatches'], function(baseClone, baseMatches) {
+define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
 
   /**
    * Creates a function that performs a deep partial comparison between a given

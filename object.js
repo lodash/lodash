@@ -1,4 +1,4 @@
-define(['./assign', './assignIn', './assignInWith', './assignWith', './create', './defaults', './defaultsDeep', './extend', './extendWith', './findKey', './findLastKey', './forIn', './forInRight', './forOwn', './forOwnRight', './functions', './functionsIn', './get', './has', './hasIn', './invert', './invoke', './keys', './keysIn', './mapKeys', './mapValues', './merge', './mergeWith', './omit', './omitBy', './pick', './pickBy', './result', './set', './setWith', './toPairs', './toPairsIn', './transform', './unset', './values', './valuesIn'], function(assign, assignIn, assignInWith, assignWith, create, defaults, defaultsDeep, extend, extendWith, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, functionsIn, get, has, hasIn, invert, invoke, keys, keysIn, mapKeys, mapValues, merge, mergeWith, omit, omitBy, pick, pickBy, result, set, setWith, toPairs, toPairsIn, transform, unset, values, valuesIn) {
+define(['./assign', './assignIn', './assignInWith', './assignWith', './create', './defaults', './defaultsDeep', './extend', './extendWith', './findKey', './findLastKey', './forIn', './forInRight', './forOwn', './forOwnRight', './functions', './functionsIn', './get', './has', './hasIn', './invert', './invertBy', './invoke', './keys', './keysIn', './mapKeys', './mapValues', './merge', './mergeWith', './omit', './omitBy', './pick', './pickBy', './result', './set', './setWith', './toPairs', './toPairsIn', './transform', './unset', './values', './valuesIn'], function(assign, assignIn, assignInWith, assignWith, create, defaults, defaultsDeep, extend, extendWith, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, functionsIn, get, has, hasIn, invert, invertBy, invoke, keys, keysIn, mapKeys, mapValues, merge, mergeWith, omit, omitBy, pick, pickBy, result, set, setWith, toPairs, toPairsIn, transform, unset, values, valuesIn) {
   return {
     'assign': assign,
     'assignIn': assignIn,
@@ -21,6 +21,7 @@ define(['./assign', './assignIn', './assignInWith', './assignWith', './create', 
     'has': has,
     'hasIn': hasIn,
     'invert': invert,
+    'invertBy': invertBy,
     'invoke': invoke,
     'keys': keys,
     'keysIn': keysIn,

@@ -1,4 +1,4 @@
-define(['./internal/baseEach', './internal/baseFind', './internal/baseFindIndex', './internal/baseIteratee', './isArray'], function(baseEach, baseFind, baseFindIndex, baseIteratee, isArray) {
+define(['./_baseEach', './_baseFind', './_baseFindIndex', './_baseIteratee', './isArray'], function(baseEach, baseFind, baseFindIndex, baseIteratee, isArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

@@ -1,4 +1,4 @@
-define(['./internal/arrayMap', './internal/createOver'], function(arrayMap, createOver) {
+define(['./_arrayMap', './_createOver'], function(arrayMap, createOver) {
 
   /**
    * Creates a function that invokes `iteratees` with the arguments provided

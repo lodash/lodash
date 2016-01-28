@@ -1,4 +1,4 @@
-define(['./internal/arrayFilter', './internal/arrayMap', './internal/baseProperty', './internal/baseTimes', './isArrayLikeObject'], function(arrayFilter, arrayMap, baseProperty, baseTimes, isArrayLikeObject) {
+define(['./_arrayFilter', './_arrayMap', './_baseProperty', './_baseTimes', './isArrayLikeObject'], function(arrayFilter, arrayMap, baseProperty, baseTimes, isArrayLikeObject) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;

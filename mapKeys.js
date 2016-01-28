@@ -1,4 +1,4 @@
-define(['./internal/baseForOwn', './internal/baseIteratee'], function(baseForOwn, baseIteratee) {
+define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) {
 
   /**
    * The opposite of `_.mapValues`; this method creates an object with the

@@ -2520,13 +2520,22 @@
         assert.strictEqual(actual.lastIndex, 3);
       });
 
+      QUnit.test('`_.' + methodName + '` should clone prototype objects', function(assert) {
+        assert.expect(2);
+
+        var actual = func(Foo.prototype);
+
+        assert.notOk(actual instanceof Foo);
+        assert.deepEqual(actual, { 'b': 1 });
+      });
+
       QUnit.test('`_.' + methodName + '` should create clone with the same `[[Prototype]]` as `value`', function(assert) {
         assert.expect(1);
 
         assert.ok(func(new Foo) instanceof Foo);
       });
 
-      QUnit.test('should ensure `value` constructor is a function before using its `[[Prototype]]`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should ensure `value` constructor is a function before using its `[[Prototype]]`', function(assert) {
         assert.expect(1);
 
         Foo.prototype.constructor = null;

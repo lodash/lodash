@@ -33,8 +33,8 @@ notifications:
     on_failure: always
 before_install:
   - "nvm use $TRAVIS_NODE_VERSION"
-  - "npm config set loglevel error"
-  - "npm config set progress false"
+  - "npm set loglevel error"
+  - "npm set progress false"
   - "npm i -g npm@\"^2.0.0\""
   - |
       PATTERN[0]="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"

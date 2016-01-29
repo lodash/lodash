@@ -439,12 +439,11 @@
       assert.deepEqual(value, object, 'fp.defaults');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
 
-      value = _.clone(object);
-      value.b = { 'c': 1 };
-      actual = fp.defaultsDeep({ 'b': { 'c': 2, 'd': 2 } }, value);
+      value = _.cloneDeep(deepObject);
+      actual = fp.defaultsDeep({ 'a': { 'c': 4, 'd': 4 } }, deepObject);
 
-      assert.deepEqual(value, { 'a': 1, 'b': { 'c': 1 } } , 'fp.defaultsDeep');
-      assert.deepEqual(actual, { 'a': 1, 'b': { 'c': 1, 'd': 2 } }, 'fp.defaultsDeep');
+      assert.deepEqual(value, { 'a': { 'b': 2, 'c': 3 } }, 'fp.defaultsDeep');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3, 'd': 4 } }, 'fp.defaultsDeep');
 
       value = _.clone(object);
       actual = fp.extend(value, new Foo);
@@ -466,21 +465,23 @@
       assert.deepEqual(value, array, 'fp.fill');
       assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
 
-      value = { 'a': { 'b': 2 } };
-      actual = fp.merge(value, { 'a': { 'c': 3 } });
+      value = _.cloneDeep(deepObject);
+      actual = fp.merge(value, { 'a': { 'd': 4 } });
 
-      assert.deepEqual(value, { 'a': { 'b': 2 } }, 'fp.merge');
-      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
+      assert.deepEqual(value, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3, 'd': 4 } }, 'fp.merge');
 
-      value = { 'a': [1] };
+      value = _.cloneDeep(deepObject);
+      value.a.b = [1];
+
       actual = fp.mergeWith(function(objValue, srcValue) {
         if (_.isArray(objValue)) {
           return objValue.concat(srcValue);
         }
-      }, value, { 'a': [2, 3] });
+      }, value, { 'a': { 'b': [2, 3] } });
 
-      assert.deepEqual(value, { 'a': [1] }, 'fp.mergeWith');
-      assert.deepEqual(actual, { 'a': [1, 2, 3] }, 'fp.mergeWith');
+      assert.deepEqual(value, { 'a': { 'b': [1], 'c': 3 } }, 'fp.mergeWith');
+      assert.deepEqual(actual, { 'a': { 'b': [1, 2, 3], 'c': 3 } }, 'fp.mergeWith');
 
       value = _.clone(array);
       actual = fp.pull(2, value);

@@ -1482,6 +1482,20 @@
       assert.ok(lodashStable.isEqual(actual, Error('x')));
     });
 
+    QUnit.test('should preserve custom errors', function(assert) {
+      assert.expect(1);
+
+      function CustomError(message) {
+        this.name = 'CustomError';
+        this.message = message;
+      }
+      CustomError.prototype = Object.create(Error.prototype);
+      CustomError.prototype.constructor = CustomError;
+
+      var actual = _.attempt(function() { throw new CustomError('x'); });
+      assert.ok(lodashStable.isEqual(actual, new CustomError('x')));
+    });
+
     QUnit.test('should work with an error object from another realm', function(assert) {
       assert.expect(1);
 

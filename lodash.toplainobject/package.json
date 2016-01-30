@@ -1,6 +1,6 @@
 {
   "name": "lodash.toplainobject",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "The lodash method `_.toPlainObject` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

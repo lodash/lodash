@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -437,7 +437,7 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
 function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
   var objValue = object[key],
       srcValue = source[key],
-      stacked = stack.get(srcValue) || stack.get(objValue);
+      stacked = stack.get(srcValue);
 
   if (stacked) {
     assignMergeValue(object, key, stacked);
@@ -456,6 +456,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
         newValue = copyArray(objValue);
       }
       else {
+        isCommon = false;
         newValue = baseClone(srcValue);
       }
     }
@@ -464,6 +465,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
         newValue = toPlainObject(objValue);
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+        isCommon = false;
         newValue = baseClone(srcValue);
       }
       else {
@@ -770,6 +772,9 @@ function initCloneArray(array) {
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
+  if (isPrototype(object)) {
+    return {};
+  }
   var Ctor = object.constructor;
   return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
 }
@@ -839,6 +844,20 @@ function isIterateeCall(value, index, object) {
     return eq(object[index], value);
   }
   return false;
+}
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
 }
 
 /**
@@ -1056,8 +1075,6 @@ function isLength(value) {
  * // => false
  */
 function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
 }

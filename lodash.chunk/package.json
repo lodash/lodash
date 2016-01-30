@@ -1,6 +1,6 @@
 {
   "name": "lodash.chunk",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "The lodash method `_.chunk` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,6 +15,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._baseslice": "^4.0.0"
+    "lodash._baseslice": "~4.0.0"
   }
 }

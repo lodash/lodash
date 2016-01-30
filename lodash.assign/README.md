@@ -1,4 +1,4 @@
-# lodash.assign v4.0.2
+# lodash.assign v4.0.3
 
 The [lodash](https://lodash.com/) method `_.assign` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var assign = require('lodash.assign');
 ```
 
-See the [documentation](https://lodash.com/docs#assign) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.assign) for more details.
+See the [documentation](https://lodash.com/docs#assign) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.assign) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash._createwrapper",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "The internal lodash function `createWrapper` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

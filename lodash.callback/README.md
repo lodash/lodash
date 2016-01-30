@@ -1,4 +1,4 @@
-# lodash.callback v3.3.2
+# lodash.callback v3.3.3
 
 The [lodash](https://lodash.com/) method `_.callback` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -21,4 +21,4 @@ In Node.js/io.js:
 var callback = require('lodash.callback');
 ```
 
-See the [documentation](https://lodash.com/docs#callback) or [package source](https://github.com/lodash/lodash/blob/3.3.2-npm-packages/lodash.callback) for more details.
+See the [documentation](https://lodash.com/docs#callback) or [package source](https://github.com/lodash/lodash/blob/3.3.3-npm-packages/lodash.callback) for more details.

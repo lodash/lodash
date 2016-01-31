@@ -3,6 +3,7 @@ exports.aliasToReal = {
   'all': 'some',
   'allPass': 'overEvery',
   'apply': 'spread',
+  'assoc': 'set',
   'compose': 'flowRight',
   'contains': 'includes',
   'dissoc': 'omit',

@@ -28,6 +28,7 @@ exports.aliasToReal = {
   'somePass': 'overSome',
   'unapply': 'rest',
   'unnest': 'flatten',
+  'unset': 'omit',
   'useWith': 'overArgs',
   'whereEq': 'filter',
   'zipObj': 'zipObject'

@@ -174,7 +174,8 @@ exports.mutate = {
   },
   'set': {
     'set': true,
-    'setWith': true
+    'setWith': true,
+    'unset': true
   }
 };
 

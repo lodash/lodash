@@ -400,7 +400,7 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should not mutate values', function(assert) {
-      assert.expect(36);
+      assert.expect(38);
 
       function Foo() {}
       Foo.prototype = { 'b': 2 };
@@ -526,6 +526,12 @@
 
       assert.deepEqual(value, deepObject, 'fp.setWith');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.unset('a.b', value);
+
+      assert.deepEqual(value, deepObject, 'fp.unset');
+      assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.set');
     });
   }());
 

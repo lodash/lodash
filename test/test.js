@@ -10623,7 +10623,7 @@
       assert.strictEqual(matches({ 'b': 2 }), false);
     });
 
-    QUnit.test('should not change behavior if `source` is modified', function(assert) {
+    QUnit.test('should not change `_.matches` behavior if `source` is modified', function(assert) {
       assert.expect(9);
 
       var sources = [
@@ -10652,7 +10652,7 @@
       });
     });
 
-    QUnit.test('should return an iteratee created by `_.matchesProperty` when `func` is a number or string and a value is provided', function(assert) {
+    QUnit.test('should return an iteratee created by `_.matchesProperty` when `func` is an array', function(assert) {
       assert.expect(3);
 
       var array = ['a', undefined],
@@ -10674,6 +10674,35 @@
           matches = _.iteratee(['a.b.c', { 'e': 2 }]);
 
       assert.strictEqual(matches(object), true);
+    });
+
+    QUnit.test('should not change `_.matchesProperty` behavior if `source` is modified', function(assert) {
+      assert.expect(9);
+
+      var sources = [
+        { 'a': { 'b': 2, 'c': 3 } },
+        { 'a': 1, 'b': 2 },
+        { 'a': 1 }
+      ];
+
+      lodashStable.each(sources, function(source, index) {
+        var object = { 'a': lodashStable.cloneDeep(source) },
+            matches = _.iteratee(['a', source]);
+
+        assert.strictEqual(matches(object), true);
+
+        if (index) {
+          source.a = 2;
+          source.b = 1;
+          source.c = 3;
+        } else {
+          source.a.b = 1;
+          source.a.c = 2;
+          source.a.d = 3;
+        }
+        assert.strictEqual(matches(object), true);
+        assert.strictEqual(matches({ 'a': source }), false);
+      });
     });
 
     QUnit.test('should return an iteratee created by `_.property` when `func` is a number or string', function(assert) {

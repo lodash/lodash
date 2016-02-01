@@ -7320,8 +7320,9 @@ var youngest = _
 
 This method invokes `interceptor` and returns `value`. The interceptor is
 invoked with one argument; (value). The purpose of this method is to "tap into"
-a method chain in order to perform operations on intermediate results within
-the chain.
+a method chain in order to perform operations based on intermediate results
+within the chain. To mutate, alter, or replace intermediate results, use
+`_.thru`.
 
 #### Arguments
 1. `value` *(&#42;)*: The value to provide to `interceptor`.
@@ -7334,11 +7335,11 @@ the chain.
 ```js
 _([1, 2, 3])
  .tap(function(array) {
-   array.pop();
+   someSideEffect(array);
  })
  .reverse()
  .value();
-// => [2, 1]
+// => [3, 2, 1]
 ```
 * * *
 
@@ -7350,6 +7351,7 @@ _([1, 2, 3])
 <a href="#_thruvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.1.0/lodash.js#L7134 "View in source") [&#x24C9;][1]
 
 This method is like `_.tap` except that it returns the result of `interceptor`.
+The purpose of this method is to mutate, alter, or replace intermediate results.
 
 #### Arguments
 1. `value` *(&#42;)*: The value to provide to `interceptor`.

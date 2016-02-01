@@ -167,17 +167,17 @@ function baseConvert(util, name, func) {
     each(mapping.caps, function(cap) {
       each(mapping.aryMethod[cap], function(otherName) {
         if (name == otherName) {
-          var indexes = mapping.iterateeRearg[name],
-              n = !isLib && mapping.aryIteratee[name];
+          var aryN = !isLib && mapping.iterateeAry[name],
+              reargIndexes = mapping.iterateeRearg[name];
 
           result = ary(func, cap);
           if (cap > 1 && !mapping.skipRearg[name]) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
           }
-          if (indexes) {
-            result = iterateeRearg(result, indexes);
-          } else if (n) {
-            result = iterateeAry(result, n);
+          if (reargIndexes) {
+            result = iterateeRearg(result, reargIndexes);
+          } else if (aryN) {
+            result = iterateeAry(result, aryN);
           }
           if (cap > 1) {
             result = curry(result, cap);
@@ -202,7 +202,7 @@ function baseConvert(util, name, func) {
   var pairs = [];
   each(mapping.caps, function(cap) {
     each(mapping.aryMethod[cap], function(key) {
-      var func = _[mapping.key[key] || key];
+      var func = _[mapping.rekey[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }

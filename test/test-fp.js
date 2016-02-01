@@ -96,7 +96,7 @@
         var aryCap = index + 1;
 
         var methodNames = _.filter(mapping.aryMethod[aryCap], function(methodName) {
-          var key = _.result(mapping.key, methodName, methodName),
+          var key = _.result(mapping.rekey, methodName, methodName),
               arity = _[key].length;
 
           return arity != 0 && arity < aryCap;
@@ -160,8 +160,8 @@
       assert.expect(1);
 
       var funcMethods = [
-        'after', 'ary', 'before', 'bind', 'bindKey', 'cloneDeepWith', 'cloneWith',
-        'curryN', 'debounce', 'delay', 'overArgs', 'rearg', 'throttle', 'wrap'
+        'after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay',
+        'overArgs', 'rearg', 'throttle', 'wrap'
       ];
 
       var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
@@ -338,35 +338,6 @@
       }
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('curry methods');
-
-  _.each(['curry', 'curryRight'], function(methodName) {
-    var func = fp[methodName];
-
-    QUnit.test('`_.' + methodName + '` should only accept a `func` param', function(assert) {
-      assert.expect(1);
-
-      assert.raises(function() { func(1, _.noop); }, TypeError);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('curryN methods');
-
-  _.each(['curryN', 'curryRightN'], function(methodName) {
-    var func = fp[methodName];
-
-    QUnit.test('`_.' + methodName + '` accept an `arity` param', function(assert) {
-      assert.expect(1);
-
-      var actual = func(1, function(a, b) { return [a, b]; })('a');
-      assert.deepEqual(actual, ['a', undefined]);
-    });
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -551,46 +522,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('reduce methods');
-
-  _.each(['reduce', 'reduceRight'], function(methodName) {
-    var func = fp[methodName],
-        isReduce = methodName == 'reduce';
-
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
-      assert.expect(1);
-
-      var args,
-          array = [1, 2, 3];
-
-      func(function() {
-        args || (args = slice.call(arguments));
-      })(0, array);
-
-      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
-      assert.expect(1);
-
-      var args,
-          object = { 'a': 1, 'b': 2 },
-          isFIFO = _.keys(object)[0] == 'a';
-
-      var expected = isFIFO
-        ? (isReduce ? [0, 1] : [0, 2])
-        : (isReduce ? [0, 2] : [0, 1]);
-
-      func(function() {
-        args || (args = slice.call(arguments));
-      })(0, object);
-
-      assert.deepEqual(args, expected);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('with methods');
 
   (function() {
@@ -641,6 +572,35 @@
       assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.curry and fp.curryRight');
+
+  _.each(['curry', 'curryRight'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` should only accept a `func` param', function(assert) {
+      assert.expect(1);
+
+      assert.raises(function() { func(1, _.noop); }, TypeError);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.curryN and fp.curryRightN');
+
+  _.each(['curryN', 'curryRightN'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`_.' + methodName + '` accept an `arity` param', function(assert) {
+      assert.expect(1);
+
+      var actual = func(1, function(a, b) { return [a, b]; })('a');
+      assert.deepEqual(actual, ['a', undefined]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -934,6 +894,46 @@
       assert.deepEqual(fp.range(1)(4), [1, 2, 3]);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.reduce and fp.reduceRight');
+
+  _.each(['reduce', 'reduceRight'], function(methodName) {
+    var func = fp[methodName],
+        isReduce = methodName == 'reduce';
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
+      assert.expect(1);
+
+      var args,
+          array = [1, 2, 3];
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, array);
+
+      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+      assert.expect(1);
+
+      var args,
+          object = { 'a': 1, 'b': 2 },
+          isFIFO = _.keys(object)[0] == 'a';
+
+      var expected = isFIFO
+        ? (isReduce ? [0, 1] : [0, 2])
+        : (isReduce ? [0, 2] : [0, 1]);
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(0, object);
+
+      assert.deepEqual(args, expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

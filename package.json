@@ -9,7 +9,7 @@
     "codecov.io": "~0.1.6",
     "coveralls": "^2.11.6",
     "curl-amd": "~0.8.12",
-    "docdown": "~0.4.0",
+    "docdown": "~0.4.1",
     "dojo": "^1.10.4",
     "ecstatic": "^1.4.0",
     "fs-extra": "~0.26.5",

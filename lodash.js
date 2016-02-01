@@ -9039,6 +9039,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to spread arguments over.
+     * @param {number} [start=0] The start position of the spread.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -9059,13 +9060,20 @@
      * }));
      * // => a Promise of 76
      */
-    function spread(func) {
+    function spread(func, start) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return function(array) {
-        return apply(func, this, array);
-      };
+      start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+      return rest(function(args) {
+        var array = args[start],
+            spreadArgs = args.slice(0, start);
+
+        if (array) {
+          arrayPush(spreadArgs, array);
+        }
+        return apply(func, this, spreadArgs);
+      });
     }
 
     /**

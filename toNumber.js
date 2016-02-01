@@ -16,7 +16,7 @@ var reIsBinary = /^0b[01]+$/i;
 /** Used to detect octal string values. */
 var reIsOctal = /^0o[0-7]+$/i;
 
-/** Built-in method references without a dependency on `global`. */
+/** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
 /**

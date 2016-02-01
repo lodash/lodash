@@ -1,7 +1,7 @@
 var createAggregator = require('./_createAggregator');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -23,7 +23,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * _.groupBy([6.1, 4.2, 6.3], Math.floor);
  * // => { '4': [4.2], '6': [6.1, 6.3] }
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.groupBy(['one', 'two', 'three'], 'length');
  * // => { '3': ['one', 'two'], '5': ['three'] }
  */

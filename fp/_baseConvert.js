@@ -29,7 +29,8 @@ function baseConvert(util, name, func) {
     'isFunction': util.isFunction,
     'iteratee': util.iteratee,
     'keys': util.keys,
-    'rearg': util.rearg
+    'rearg': util.rearg,
+    'rest': util.rest
   };
 
   var ary = _.ary,
@@ -38,7 +39,8 @@ function baseConvert(util, name, func) {
       each = _.forEach,
       isFunction = _.isFunction,
       keys = _.keys,
-      rearg = _.rearg;
+      rearg = _.rearg,
+      spread = _.spread;
 
   var baseArity = function(func, n) {
     return n == 2
@@ -167,17 +169,21 @@ function baseConvert(util, name, func) {
     each(mapping.caps, function(cap) {
       each(mapping.aryMethod[cap], function(otherName) {
         if (name == otherName) {
-          var indexes = mapping.iterateeRearg[name],
-              n = !isLib && mapping.aryIteratee[name];
+          var aryN = !isLib && mapping.iterateeAry[name],
+              reargIndexes = mapping.iterateeRearg[name],
+              spreadStart = mapping.methodSpread[name];
 
-          result = ary(func, cap);
+          result = spreadStart === undefined
+            ? ary(func, cap)
+            : spread(func, spreadStart);
+
           if (cap > 1 && !mapping.skipRearg[name]) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
           }
-          if (indexes) {
-            result = iterateeRearg(result, indexes);
-          } else if (n) {
-            result = iterateeAry(result, n);
+          if (reargIndexes) {
+            result = iterateeRearg(result, reargIndexes);
+          } else if (aryN) {
+            result = iterateeAry(result, aryN);
           }
           if (cap > 1) {
             result = curry(result, cap);
@@ -198,11 +204,14 @@ function baseConvert(util, name, func) {
   if (!isLib) {
     return wrap(name, func);
   }
+  // Add placeholder alias.
+  _.__ = placeholder;
+
   // Iterate over methods for the current ary cap.
   var pairs = [];
   each(mapping.caps, function(cap) {
     each(mapping.aryMethod[cap], function(key) {
-      var func = _[mapping.key[key] || key];
+      var func = _[mapping.rename[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }

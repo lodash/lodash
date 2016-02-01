@@ -23,15 +23,15 @@ var baseFind = require('./_baseFind'),
  * _.findLastKey(users, function(o) { return o.age < 40; });
  * // => returns 'pebbles' assuming `_.findKey` returns 'barney'
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.findLastKey(users, { 'age': 36, 'active': true });
  * // => 'barney'
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.findLastKey(users, ['active', false]);
  * // => 'fred'
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.findLastKey(users, 'active');
  * // => 'pebbles'
  */

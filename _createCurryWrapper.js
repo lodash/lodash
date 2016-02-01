@@ -2,7 +2,8 @@ var apply = require('./_apply'),
     createCtorWrapper = require('./_createCtorWrapper'),
     createHybridWrapper = require('./_createHybridWrapper'),
     createRecurryWrapper = require('./_createRecurryWrapper'),
-    replaceHolders = require('./_replaceHolders');
+    replaceHolders = require('./_replaceHolders'),
+    root = require('./_root');
 
 /**
  * Creates a function that wraps `func` to enable currying.
@@ -20,7 +21,7 @@ function createCurryWrapper(func, bitmask, arity) {
     var length = arguments.length,
         index = length,
         args = Array(length),
-        fn = (this && this !== global && this instanceof wrapper) ? Ctor : func,
+        fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
         placeholder = wrapper.placeholder;
 
     while (index--) {

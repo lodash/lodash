@@ -1,5 +1,5 @@
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Checks if `value` is likely a prototype object.

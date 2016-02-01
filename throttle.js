@@ -34,14 +34,14 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @returns {Function} Returns the new throttled function.
  * @example
  *
- * // avoid excessively updating the position while scrolling
+ * // Avoid excessively updating the position while scrolling.
  * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
  *
- * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
+ * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
  * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
  * jQuery(element).on('click', throttled);
  *
- * // cancel a trailing throttled invocation
+ * // Cancel the trailing throttled invocation.
  * jQuery(window).on('popstate', throttled.cancel);
  */
 function throttle(func, wait, options) {

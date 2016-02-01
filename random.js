@@ -2,7 +2,7 @@ var baseRandom = require('./_baseRandom'),
     isIterateeCall = require('./_isIterateeCall'),
     toNumber = require('./toNumber');
 
-/** Built-in method references without a dependency on `global`. */
+/** Built-in method references without a dependency on `root`. */
 var freeParseFloat = parseFloat;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

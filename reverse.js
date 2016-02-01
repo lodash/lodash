@@ -1,5 +1,5 @@
 /** Used for built-in method references. */
-var arrayProto = global.Array.prototype;
+var arrayProto = Array.prototype;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeReverse = arrayProto.reverse;

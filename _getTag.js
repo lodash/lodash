@@ -7,10 +7,10 @@ var mapTag = '[object Map]',
     setTag = '[object Set]';
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = global.Function.prototype.toString;
+var funcToString = Function.prototype.toString;
 
 /**
  * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)

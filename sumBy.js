@@ -19,7 +19,7 @@ var baseIteratee = require('./_baseIteratee'),
  * _.sumBy(objects, function(o) { return o.n; });
  * // => 20
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.sumBy(objects, 'n');
  * // => 20
  */

@@ -1,4 +1,5 @@
-var createCtorWrapper = require('./_createCtorWrapper');
+var createCtorWrapper = require('./_createCtorWrapper'),
+    root = require('./_root');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1;
@@ -18,7 +19,7 @@ function createBaseWrapper(func, bitmask, thisArg) {
       Ctor = createCtorWrapper(func);
 
   function wrapper() {
-    var fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
     return fn.apply(isBind ? thisArg : this, arguments);
   }
   return wrapper;

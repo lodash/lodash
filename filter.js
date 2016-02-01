@@ -24,15 +24,15 @@ var arrayFilter = require('./_arrayFilter'),
  * _.filter(users, function(o) { return !o.active; });
  * // => objects for ['fred']
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.filter(users, { 'age': 36, 'active': true });
  * // => objects for ['barney']
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.filter(users, ['active', false]);
  * // => objects for ['fred']
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.filter(users, 'active');
  * // => objects for ['barney']
  */

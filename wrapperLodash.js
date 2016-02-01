@@ -6,7 +6,7 @@ var LazyWrapper = require('./_LazyWrapper'),
     wrapperClone = require('./_wrapperClone');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -109,11 +109,11 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  *
  * var wrapped = _([1, 2, 3]);
  *
- * // returns an unwrapped value
+ * // Returns an unwrapped value.
  * wrapped.reduce(_.add);
  * // => 6
  *
- * // returns a wrapped value
+ * // Returns a wrapped value.
  * var squares = wrapped.map(square);
  *
  * _.isArray(squares);

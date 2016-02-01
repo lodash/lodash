@@ -5,10 +5,10 @@ var isHostObject = require('./_isHostObject'),
 var objectTag = '[object Object]';
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = global.Function.prototype.toString;
+var funcToString = Function.prototype.toString;
 
 /** Used to infer the `Object` constructor. */
 var objectCtorString = funcToString.call(Object);

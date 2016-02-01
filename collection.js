@@ -7,6 +7,7 @@ module.exports = {
   'filter': require('./filter'),
   'find': require('./find'),
   'findLast': require('./findLast'),
+  'flatMap': require('./flatMap'),
   'forEach': require('./forEach'),
   'forEachRight': require('./forEachRight'),
   'groupBy': require('./groupBy'),

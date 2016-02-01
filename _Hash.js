@@ -1,7 +1,7 @@
 var nativeCreate = require('./_nativeCreate');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Creates an hash object.

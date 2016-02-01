@@ -20,7 +20,7 @@ var baseExtremum = require('./_baseExtremum'),
  * _.minBy(objects, function(o) { return o.n; });
  * // => { 'n': 1 }
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.minBy(objects, 'n');
  * // => { 'n': 1 }
  */

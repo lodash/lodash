@@ -1,7 +1,7 @@
 var assocIndexOf = require('./_assocIndexOf');
 
 /** Used for built-in method references. */
-var arrayProto = global.Array.prototype;
+var arrayProto = Array.prototype;
 
 /** Built-in value references. */
 var splice = arrayProto.splice;

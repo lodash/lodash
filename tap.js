@@ -1,8 +1,7 @@
 /**
- * This method invokes `interceptor` and returns `value`. The interceptor is
- * invoked with one argument; (value). The purpose of this method is to "tap into"
- * a method chain in order to perform operations on intermediate results within
- * the chain.
+ * This method invokes `interceptor` and returns `value`. The interceptor
+ * is invoked with one argument; (value). The purpose of this method is to
+ * "tap into" a method chain in order to modify intermediate results.
  *
  * @static
  * @memberOf _
@@ -14,6 +13,7 @@
  *
  * _([1, 2, 3])
  *  .tap(function(array) {
+ *    // Mutate input array.
  *    array.pop();
  *  })
  *  .reverse()

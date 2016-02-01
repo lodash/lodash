@@ -26,15 +26,15 @@ var baseEach = require('./_baseEach'),
  * _.find(users, function(o) { return o.age < 40; });
  * // => object for 'barney'
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.find(users, { 'age': 1, 'active': true });
  * // => object for 'pebbles'
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.find(users, ['active', false]);
  * // => object for 'fred'
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.find(users, 'active');
  * // => object for 'barney'
  */

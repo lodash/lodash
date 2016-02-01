@@ -3,7 +3,8 @@ var composeArgs = require('./_composeArgs'),
     createCtorWrapper = require('./_createCtorWrapper'),
     createRecurryWrapper = require('./_createRecurryWrapper'),
     reorder = require('./_reorder'),
-    replaceHolders = require('./_replaceHolders');
+    replaceHolders = require('./_replaceHolders'),
+    root = require('./_root');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -73,7 +74,7 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
     if (isAry && ary < args.length) {
       args.length = ary;
     }
-    if (this && this !== global && this instanceof wrapper) {
+    if (this && this !== root && this instanceof wrapper) {
       fn = Ctor || createCtorWrapper(fn);
     }
     return fn.apply(thisBinding, args);

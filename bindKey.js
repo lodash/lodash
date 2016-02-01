@@ -46,7 +46,7 @@ var BIND_FLAG = 1,
  * bound('!');
  * // => 'hiya fred!'
  *
- * // using placeholders
+ * // Bound with placeholders.
  * var bound = _.bindKey(object, 'greet', _, '!');
  * bound('hi');
  * // => 'hiya fred!'

@@ -6,6 +6,8 @@ var baseSet = require('./_baseSet');
  * path creation is handled by the method instead. The `customizer` is invoked
  * with three arguments: (nsValue, key, nsObject).
  *
+ * **Note:** This method mutates `object`.
+ *
  * @static
  * @memberOf _
  * @category Object

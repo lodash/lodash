@@ -1,5 +1,6 @@
 var apply = require('./_apply'),
-    createCtorWrapper = require('./_createCtorWrapper');
+    createCtorWrapper = require('./_createCtorWrapper'),
+    root = require('./_root');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1;
@@ -26,7 +27,7 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
         leftIndex = -1,
         leftLength = partials.length,
         args = Array(leftLength + argsLength),
-        fn = (this && this !== global && this instanceof wrapper) ? Ctor : func;
+        fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
 
     while (++leftIndex < leftLength) {
       args[leftIndex] = partials[leftIndex];

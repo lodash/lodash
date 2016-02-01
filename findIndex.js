@@ -22,15 +22,15 @@ var baseFindIndex = require('./_baseFindIndex'),
  * _.findIndex(users, function(o) { return o.user == 'barney'; });
  * // => 0
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.findIndex(users, { 'user': 'fred', 'active': false });
  * // => 1
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.findIndex(users, ['active', false]);
  * // => 0
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.findIndex(users, 'active');
  * // => 2
  */

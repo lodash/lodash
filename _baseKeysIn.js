@@ -2,7 +2,7 @@ var Reflect = require('./_Reflect'),
     iteratorToArray = require('./_iteratorToArray');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Built-in value references. */
 var enumerate = Reflect ? Reflect.enumerate : undefined,

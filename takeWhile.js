@@ -23,15 +23,15 @@ var baseIteratee = require('./_baseIteratee'),
  * _.takeWhile(users, function(o) { return !o.active; });
  * // => objects for ['barney', 'fred']
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.takeWhile(users, { 'user': 'barney', 'active': false });
  * // => objects for ['barney']
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.takeWhile(users, ['active', false]);
  * // => objects for ['barney', 'fred']
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.takeWhile(users, 'active');
  * // => []
  */

@@ -1,4 +1,5 @@
-var toString = require('./toString');
+var root = require('./_root'),
+    toString = require('./toString');
 
 /** Used to match leading and trailing whitespace. */
 var reTrim = /^\s+|\s+$/g;
@@ -7,7 +8,7 @@ var reTrim = /^\s+|\s+$/g;
 var reHasHexPrefix = /^0x/i;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeParseInt = global.parseInt;
+var nativeParseInt = root.parseInt;
 
 /**
  * Converts `string` to an integer of the specified radix. If `radix` is

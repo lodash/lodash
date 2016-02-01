@@ -4,7 +4,7 @@ var baseKeysIn = require('./_baseKeysIn'),
     isPrototype = require('./_isPrototype');
 
 /** Used for built-in method references. */
-var objectProto = global.Object.prototype;
+var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;

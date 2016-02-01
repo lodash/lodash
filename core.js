@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.1.0';
+  var VERSION = '4.2.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -472,11 +472,11 @@
    *
    * var wrapped = _([1, 2, 3]);
    *
-   * // returns an unwrapped value
+   * // Returns an unwrapped value.
    * wrapped.reduce(_.add);
    * // => 6
    *
-   * // returns a wrapped value
+   * // Returns a wrapped value.
    * var squares = wrapped.map(square);
    *
    * _.isArray(squares);
@@ -1516,8 +1516,7 @@
    * Gets the index at which the first occurrence of `value` is found in `array`
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons. If `fromIndex` is negative, it's used as the offset
-   * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
-   * performs a faster binary search.
+   * from the end of `array`.
    *
    * @static
    * @memberOf _
@@ -1531,7 +1530,7 @@
    * _.indexOf([1, 2, 1, 2], 2);
    * // => 1
    *
-   * // using `fromIndex`
+   * // Search from the `fromIndex`.
    * _.indexOf([1, 2, 1, 2], 2, 2);
    * // => 3
    */
@@ -1629,10 +1628,9 @@
   }
 
   /**
-   * This method invokes `interceptor` and returns `value`. The interceptor is
-   * invoked with one argument; (value). The purpose of this method is to "tap into"
-   * a method chain in order to perform operations on intermediate results within
-   * the chain.
+   * This method invokes `interceptor` and returns `value`. The interceptor
+   * is invoked with one argument; (value). The purpose of this method is to
+   * "tap into" a method chain in order to modify intermediate results.
    *
    * @static
    * @memberOf _
@@ -1644,6 +1642,7 @@
    *
    * _([1, 2, 3])
    *  .tap(function(array) {
+   *    // Mutate input array.
    *    array.pop();
    *  })
    *  .reverse()
@@ -1657,6 +1656,8 @@
 
   /**
    * This method is like `_.tap` except that it returns the result of `interceptor`.
+   * The purpose of this method is to "pass thru" values replacing intermediate
+   * results in a method chain.
    *
    * @static
    * @memberOf _
@@ -1693,11 +1694,11 @@
    *   { 'user': 'fred',   'age': 40 }
    * ];
    *
-   * // without explicit chaining
+   * // A sequence without explicit chaining.
    * _(users).head();
    * // => { 'user': 'barney', 'age': 36 }
    *
-   * // with explicit chaining
+   * // A sequence with explicit chaining.
    * _(users)
    *   .chain()
    *   .head()
@@ -1750,15 +1751,15 @@
    *   { 'user': 'fred',   'active': false }
    * ];
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.every(users, { 'user': 'barney', 'active': false });
    * // => false
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.every(users, ['active', false]);
    * // => true
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.every(users, 'active');
    * // => false
    */
@@ -1788,15 +1789,15 @@
    * _.filter(users, function(o) { return !o.active; });
    * // => objects for ['fred']
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.filter(users, { 'age': 36, 'active': true });
    * // => objects for ['barney']
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.filter(users, ['active', false]);
    * // => objects for ['fred']
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.filter(users, 'active');
    * // => objects for ['barney']
    */
@@ -1826,15 +1827,15 @@
    * _.find(users, function(o) { return o.age < 40; });
    * // => object for 'barney'
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.find(users, { 'age': 1, 'active': true });
    * // => object for 'pebbles'
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.find(users, ['active', false]);
    * // => object for 'fred'
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.find(users, 'active');
    * // => object for 'barney'
    */
@@ -1911,7 +1912,7 @@
    *   { 'user': 'fred' }
    * ];
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.map(users, 'user');
    * // => ['barney', 'fred']
    */
@@ -2008,15 +2009,15 @@
    *   { 'user': 'fred',   'active': false }
    * ];
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.some(users, { 'user': 'barney', 'active': false });
    * // => false
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.some(users, ['active', false]);
    * // => true
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.some(users, 'active');
    * // => true
    */
@@ -2134,7 +2135,7 @@
    * bound('!');
    * // => 'hi fred!'
    *
-   * // using placeholders
+   * // Bound with placeholders.
    * var bound = _.bind(greet, object, _, '!');
    * bound('hi');
    * // => 'hi fred!'
@@ -2158,7 +2159,7 @@
    * _.defer(function(text) {
    *   console.log(text);
    * }, 'deferred');
-   * // logs 'deferred' after one or more milliseconds
+   * // => logs 'deferred' after one or more milliseconds
    */
   var defer = rest(function(func, args) {
     return baseDelay(func, 1, args);
@@ -3442,7 +3443,7 @@
    *   { 'user': 'fred',   'age': 40 }
    * ];
    *
-   * // create custom iteratee shorthands
+   * // Create custom iteratee shorthands.
    * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
    *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
    *   return !p ? callback(func) : function(object) {

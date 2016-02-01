@@ -24,7 +24,7 @@ var baseOrderBy = require('./_baseOrderBy'),
  *   { 'user': 'barney', 'age': 36 }
  * ];
  *
- * // sort by `user` in ascending order and by `age` in descending order
+ * // Sort by `user` in ascending order and by `age` in descending order.
  * _.orderBy(users, ['user', 'age'], ['asc', 'desc']);
  * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
  */

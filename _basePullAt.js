@@ -5,7 +5,7 @@ var baseToPath = require('./_baseToPath'),
     parent = require('./_parent');
 
 /** Used for built-in method references. */
-var arrayProto = global.Array.prototype;
+var arrayProto = Array.prototype;
 
 /** Built-in value references. */
 var splice = arrayProto.splice;

@@ -23,15 +23,15 @@ var baseIteratee = require('./_baseIteratee'),
  * _.dropWhile(users, function(o) { return !o.active; });
  * // => objects for ['pebbles']
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.dropWhile(users, { 'user': 'barney', 'active': false });
  * // => objects for ['fred', 'pebbles']
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.dropWhile(users, ['active', false]);
  * // => objects for ['pebbles']
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.dropWhile(users, 'active');
  * // => objects for ['barney', 'fred', 'pebbles']
  */

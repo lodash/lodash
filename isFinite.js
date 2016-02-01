@@ -1,5 +1,7 @@
+var root = require('./_root');
+
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeIsFinite = global.isFinite;
+var nativeIsFinite = root.isFinite;
 
 /**
  * Checks if `value` is a finite primitive number.

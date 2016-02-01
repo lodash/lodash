@@ -23,15 +23,15 @@ var createAggregator = require('./_createAggregator');
  * _.partition(users, function(o) { return o.active; });
  * // => objects for [['fred'], ['barney', 'pebbles']]
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.partition(users, { 'age': 1, 'active': false });
  * // => objects for [['pebbles'], ['barney', 'fred']]
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.partition(users, ['active', false]);
  * // => objects for [['barney', 'pebbles'], ['fred']]
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.partition(users, 'active');
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */

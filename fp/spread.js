@@ -1,1 +1,2 @@
-module.exports = require('../spread');
+var convert = require('./convert');
+module.exports = convert('spread', require('../spread'));

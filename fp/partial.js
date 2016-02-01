@@ -1,1 +1,2 @@
-module.exports = require('../partial');
+var convert = require('./convert');
+module.exports = convert('partial', require('../partial'));

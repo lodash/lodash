@@ -1,7 +1,13 @@
-var apply = require('./_apply');
+var apply = require('./_apply'),
+    arrayPush = require('./_arrayPush'),
+    rest = require('./rest'),
+    toInteger = require('./toInteger');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
 
 /**
  * Creates a function that invokes `func` with the `this` binding of the created
@@ -13,6 +19,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @memberOf _
  * @category Function
  * @param {Function} func The function to spread arguments over.
+ * @param {number} [start=0] The start position of the spread.
  * @returns {Function} Returns the new function.
  * @example
  *
@@ -23,7 +30,6 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * say(['fred', 'hello']);
  * // => 'fred says hello'
  *
- * // with a Promise
  * var numbers = Promise.all([
  *   Promise.resolve(40),
  *   Promise.resolve(36)
@@ -34,13 +40,20 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * }));
  * // => a Promise of 76
  */
-function spread(func) {
+function spread(func, start) {
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  return function(array) {
-    return apply(func, this, array);
-  };
+  start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+  return rest(function(args) {
+    var array = args[start],
+        otherArgs = args.slice(0, start);
+
+    if (array) {
+      arrayPush(otherArgs, array);
+    }
+    return apply(func, this, otherArgs);
+  });
 }
 
 module.exports = spread;

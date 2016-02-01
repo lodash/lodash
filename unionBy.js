@@ -21,7 +21,7 @@ var baseFlatten = require('./_baseFlatten'),
  * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
  * // => [2.1, 1.2, 4.3]
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
  * // => [{ 'x': 1 }, { 'x': 2 }]
  */

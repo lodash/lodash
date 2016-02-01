@@ -16,7 +16,7 @@ var baseDelay = require('./_baseDelay'),
  * _.defer(function(text) {
  *   console.log(text);
  * }, 'deferred');
- * // logs 'deferred' after one or more milliseconds
+ * // => logs 'deferred' after one or more milliseconds
  */
 var defer = rest(function(func, args) {
   return baseDelay(func, 1, args);

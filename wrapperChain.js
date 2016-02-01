@@ -14,11 +14,11 @@ var chain = require('./chain');
  *   { 'user': 'fred',   'age': 40 }
  * ];
  *
- * // without explicit chaining
+ * // A sequence without explicit chaining.
  * _(users).head();
  * // => { 'user': 'barney', 'age': 36 }
  *
- * // with explicit chaining
+ * // A sequence with explicit chaining.
  * _(users)
  *   .chain()
  *   .head()

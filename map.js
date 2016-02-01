@@ -40,7 +40,7 @@ var arrayMap = require('./_arrayMap'),
  *   { 'user': 'fred' }
  * ];
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.map(users, 'user');
  * // => ['barney', 'fred']
  */

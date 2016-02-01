@@ -26,15 +26,15 @@ var arraySome = require('./_arraySome'),
  *   { 'user': 'fred',   'active': false }
  * ];
  *
- * // using the `_.matches` iteratee shorthand
+ * // The `_.matches` iteratee shorthand.
  * _.some(users, { 'user': 'barney', 'active': false });
  * // => false
  *
- * // using the `_.matchesProperty` iteratee shorthand
+ * // The `_.matchesProperty` iteratee shorthand.
  * _.some(users, ['active', false]);
  * // => true
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.some(users, 'active');
  * // => true
  */

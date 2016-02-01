@@ -2,7 +2,7 @@ var arrayMap = require('./_arrayMap'),
     baseIndexOf = require('./_baseIndexOf');
 
 /** Used for built-in method references. */
-var arrayProto = global.Array.prototype;
+var arrayProto = Array.prototype;
 
 /** Built-in value references. */
 var splice = arrayProto.splice;

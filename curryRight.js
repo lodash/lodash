@@ -36,7 +36,7 @@ var CURRY_RIGHT_FLAG = 16;
  * curried(1, 2, 3);
  * // => [1, 2, 3]
  *
- * // using placeholders
+ * // Curried with placeholders.
  * curried(3)(1, _)(2);
  * // => [1, 2, 3]
  */

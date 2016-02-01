@@ -161,7 +161,7 @@
 
       var funcMethods = [
         'after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay',
-        'overArgs', 'rearg', 'throttle', 'wrap'
+        'overArgs', 'partial', 'partialRight', 'rearg', 'throttle', 'wrap'
       ];
 
       var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
@@ -514,9 +514,10 @@
     var func = fp[methodName];
 
     QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       assert.ok(_.isObject(func.placeholder));
+      assert.strictEqual(func.placeholder, fp.__);
     });
   });
 
@@ -862,6 +863,27 @@
       }
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.partial and fp.partialRight');
+
+  _.each(['partial', 'partialRight'], function(methodName) {
+    var func = fp[methodName],
+        isPartial = methodName == 'partial';
+
+    QUnit.test('`_.' + methodName + '` should accept an `args` param', function(assert) {
+      assert.expect(1);
+
+      var expected = isPartial ? [1, 2, 3] : [0, 1, 2];
+
+      var actual = func(function(a, b, c) {
+        return [a, b, c];
+      })([1, 2])(isPartial ? 3 : 0);
+
+      assert.deepEqual(actual, expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

@@ -1431,16 +1431,20 @@
     });
 
     QUnit.test('work with an object for `object` when chaining', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       if (!isNpm) {
         var paths = ['a[0].b.c', 'a[1]'],
-            wrapped = _(object).map(identity).at(paths);
+            actual = _(object).map(identity).at(paths).value();
 
-        assert.deepEqual(wrapped.value(), _.at(_.map(object, identity), paths));
+        assert.deepEqual(actual, _.at(_.map(object, identity), paths));
+
+        var indexObject = { '0': 1 };
+        actual = _(indexObject).at(0).value();
+        assert.deepEqual(actual, _.at(indexObject, 0));
       }
       else {
-        skipTest(assert);
+        skipTest(assert, 2);
       }
     });
   }(1, 2, 3));

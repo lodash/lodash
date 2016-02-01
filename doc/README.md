@@ -6827,7 +6827,7 @@ _.pick(object, ['a', 'c']);
 <a href="#_pickbyobject-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.1.0/lodash.js#L11423 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pickby "See the npm package")
 
 Creates an object composed of the `object` properties `predicate` returns
-truthy for. The predicate is invoked with one argument: (value).
+truthy for. The predicate is invoked with two arguments: (value, key).
 
 #### Arguments
 1. `object` *(Object)*: The source object.

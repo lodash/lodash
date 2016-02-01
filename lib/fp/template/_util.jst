@@ -6,5 +6,6 @@ module.exports = {
   'isFunction': require('../isFunction'),
   'iteratee': require('../iteratee'),
   'keys': require('../_baseKeys'),
-  'rearg': require('../rearg')
+  'rearg': require('../rearg'),
+  'spread': require('../spread')
 };

@@ -41,7 +41,7 @@ exports.aryMethod = {
       'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
       'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
       'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
-      'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
+      'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
     ],
   2: [
       'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindKey',
@@ -145,6 +145,12 @@ exports.methodRearg = {
   'setWith': [3, 1, 2, 0],
   'slice': [2, 0, 1],
   'transform': [2, 0, 1]
+};
+
+/** Used to map method names to spread configs. */
+exports.methodSpread = {
+  'partial': 1,
+  'partialRight': 1
 };
 
 /** Used to identify methods which mutate arrays or objects. */

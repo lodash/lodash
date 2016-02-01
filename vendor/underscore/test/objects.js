@@ -728,6 +728,11 @@
     assert.ok(_.isFinite(0), '0 is finite');
     assert.ok(_.isFinite(123), 'Ints are finite');
     assert.ok(_.isFinite(-12.44), 'Floats are finite');
+    if (typeof Symbol === 'function') {
+      assert.ok(!_.isFinite(Symbol()), 'symbols are not numbers');
+      assert.ok(!_.isFinite(Symbol('description')), 'described symbols are not numbers');
+      assert.ok(!_.isFinite(Object(Symbol())), 'boxed symbols are not numbers');
+    }
   });
 
   QUnit.test('isNaN', function(assert) {

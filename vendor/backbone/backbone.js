@@ -1,6 +1,6 @@
 //     Backbone.js 1.2.3
 
-//     (c) 2010-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
@@ -146,7 +146,7 @@
         events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
       }
     } else if (name && eventSplitter.test(name)) {
-      // Handle space separated event names by delegating them individually.
+      // Handle space-separated event names by delegating them individually.
       for (names = name.split(eventSplitter); i < names.length; i++) {
         events = iteratee(events, names[i], callback, opts);
       }
@@ -348,7 +348,7 @@
   };
 
   // Handles triggering the appropriate event callbacks.
-  var triggerApi = function(objEvents, name, cb, args) {
+  var triggerApi = function(objEvents, name, callback, args) {
     if (objEvents) {
       var events = objEvents[name];
       var allEvents = objEvents.all;
@@ -810,7 +810,10 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : models.slice();
       var removed = this._removeModels(models, options);
-      if (!options.silent && removed.length) this.trigger('update', this, options);
+      if (!options.silent && removed.length) {
+        options.changes = {added: [], merged: [], removed: removed};
+        this.trigger('update', this, options);
+      }
       return singular ? removed[0] : removed;
     },
 
@@ -835,6 +838,7 @@
 
       var set = [];
       var toAdd = [];
+      var toMerge = [];
       var toRemove = [];
       var modelMap = {};
 
@@ -860,6 +864,7 @@
             var attrs = this._isModel(model) ? model.attributes : model;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
+            toMerge.push(existing);
             if (sortable && !sort) sort = existing.hasChanged(sortAttr);
           }
           if (!modelMap[existing.cid]) {
@@ -893,8 +898,8 @@
       var orderChanged = false;
       var replace = !sortable && add && remove;
       if (set.length && replace) {
-        orderChanged = this.length !== set.length || _.some(this.models, function(model, index) {
-          return model !== set[index];
+        orderChanged = this.length !== set.length || _.some(this.models, function(m, index) {
+          return m !== set[index];
         });
         this.models.length = 0;
         splice(this.models, set, 0);
@@ -908,7 +913,7 @@
       // Silently sort the collection if appropriate.
       if (sort) this.sort({silent: true});
 
-      // Unless silenced, it's time to fire all appropriate add/sort events.
+      // Unless silenced, it's time to fire all appropriate add/sort/update events.
       if (!options.silent) {
         for (i = 0; i < toAdd.length; i++) {
           if (at != null) options.index = at + i;
@@ -916,7 +921,14 @@
           model.trigger('add', model, this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
-        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
+        if (toAdd.length || toRemove.length || toMerge.length) {
+          options.changes = {
+            added: toAdd,
+            removed: toRemove,
+            merged: toMerge
+          };
+          this.trigger('update', this, options);
+        }
       }
 
       // Return the added (or merged) model (or models).
@@ -971,6 +983,11 @@
       if (obj == null) return void 0;
       var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
       return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+    },
+
+    // Returns `true` if the model is in the collection.
+    has: function(obj) {
+      return this.get(obj) != null;
     },
 
     // Get the model at the given index.
@@ -1045,9 +1062,9 @@
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp, callbackOpts) {
-        if (wait) collection.add(model, callbackOpts);
-        if (success) success.call(callbackOpts.context, model, resp, callbackOpts);
+      options.success = function(m, resp, callbackOpts) {
+        if (wait) collection.add(m, callbackOpts);
+        if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
       model.save(null, options);
       return model;
@@ -1587,8 +1604,8 @@
     // Does the pathname match the root?
     matchRoot: function() {
       var path = this.decodeFragment(this.location.pathname);
-      var root = path.slice(0, this.root.length - 1) + '/';
-      return root === this.root;
+      var rootPath = path.slice(0, this.root.length - 1) + '/';
+      return rootPath === this.root;
     },
 
     // Unicode characters in `location.pathname` are percent encoded so they're
@@ -1660,8 +1677,8 @@
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          var root = this.root.slice(0, -1) || '/';
-          this.location.replace(root + '#' + this.getPath());
+          var rootPath = this.root.slice(0, -1) || '/';
+          this.location.replace(rootPath + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
@@ -1785,11 +1802,11 @@
       fragment = this.getFragment(fragment || '');
 
       // Don't include a trailing slash on the root.
-      var root = this.root;
+      var rootPath = this.root;
       if (fragment === '' || fragment.charAt(0) === '?') {
-        root = root.slice(0, -1) || '/';
+        rootPath = rootPath.slice(0, -1) || '/';
       }
-      var url = root + fragment;
+      var url = rootPath + fragment;
 
       // Strip the hash and decode for matching.
       fragment = this.decodeFragment(fragment.replace(pathStripper, ''));

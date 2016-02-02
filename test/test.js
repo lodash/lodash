@@ -5424,6 +5424,71 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should work with a "_.property" style `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var objects = [{ 'a': [1, 2] }, { 'a': [3, 4] }];
+      assert.deepEqual(_.flatMap(objects, 'a'), array);
+    });
+
+    QUnit.test('should iterate over own properties of objects', function(assert) {
+      assert.expect(1);
+
+      function Foo() { this.a = [1, 2]; }
+      Foo.prototype.b = [3, 4];
+
+      var actual = _.flatMap(new Foo, identity);
+      assert.deepEqual(actual, [1, 2]);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
+
+      var array = [[1, 2], [3, 4]],
+          values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant([1, 2, 3, 4]));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.flatMap(array, value) : _.flatMap(array);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should work on an object with no `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var actual = _.flatMap({ 'a': [1, 2], 'b': [3, 4] });
+      assert.deepEqual(actual, array);
+    });
+
+    QUnit.test('should handle object arguments with non-number length properties', function(assert) {
+      assert.expect(1);
+
+      var object = { 'length': [1, 2] };
+      assert.deepEqual(_.flatMap(object, identity), [1, 2]);
+    });
+
+    QUnit.test('should accept a falsey `collection` argument', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysEmptyArray);
+
+      var actual = lodashStable.map(falsey, function(collection, index) {
+        try {
+          return index ? _.flatMap(collection) : _.flatMap();
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should treat number values for `collection` as empty', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.flatMap(1), []);
+    });
+
     QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(2);
 

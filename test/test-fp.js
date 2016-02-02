@@ -595,7 +595,7 @@
   _.each(['curryN', 'curryRightN'], function(methodName) {
     var func = fp[methodName];
 
-    QUnit.test('`_.' + methodName + '` accept an `arity` param', function(assert) {
+    QUnit.test('`_.' + methodName + '` should accept an `arity` param', function(assert) {
       assert.expect(1);
 
       var actual = func(1, function(a, b) { return [a, b]; })('a');

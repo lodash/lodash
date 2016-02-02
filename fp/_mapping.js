@@ -208,8 +208,8 @@ exports.realToAlias = (function() {
   return result;
 }());
 
-/** Used to map keys to other keys. */
-exports.rekey = {
+/** Used to map method names to other names. */
+exports.rename = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
   'getOr': 'get'

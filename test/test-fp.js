@@ -96,7 +96,7 @@
         var aryCap = index + 1;
 
         var methodNames = _.filter(mapping.aryMethod[aryCap], function(methodName) {
-          var key = _.result(mapping.rekey, methodName, methodName),
+          var key = _.result(mapping.rename, methodName, methodName),
               arity = _[key].length;
 
           return arity != 0 && arity < aryCap;

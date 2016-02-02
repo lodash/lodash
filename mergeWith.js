@@ -7,6 +7,8 @@ define(['./_baseMerge', './_createAssigner'], function(baseMerge, createAssigner
    * method instead. The `customizer` is invoked with seven arguments:
    * (objValue, srcValue, key, object, source, stack).
    *
+   * **Note:** This method mutates `object`.
+   *
    * @static
    * @memberOf _
    * @category Object

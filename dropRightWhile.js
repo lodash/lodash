@@ -22,15 +22,15 @@ define(['./_baseIteratee', './_baseWhile'], function(baseIteratee, baseWhile) {
    * _.dropRightWhile(users, function(o) { return !o.active; });
    * // => objects for ['barney']
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.dropRightWhile(users, { 'user': 'pebbles', 'active': false });
    * // => objects for ['barney', 'fred']
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.dropRightWhile(users, ['active', false]);
    * // => objects for ['barney']
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.dropRightWhile(users, 'active');
    * // => objects for ['barney', 'fred', 'pebbles']
    */

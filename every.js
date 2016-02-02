@@ -25,15 +25,15 @@ define(['./_arrayEvery', './_baseEvery', './_baseIteratee', './isArray', './_isI
    *   { 'user': 'fred',   'active': false }
    * ];
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.every(users, { 'user': 'barney', 'active': false });
    * // => false
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.every(users, ['active', false]);
    * // => true
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.every(users, 'active');
    * // => false
    */

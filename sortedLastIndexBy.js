@@ -14,7 +14,7 @@ define(['./_baseIteratee', './_baseSortedIndexBy'], function(baseIteratee, baseS
    * @returns {number} Returns the index at which `value` should be inserted into `array`.
    * @example
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
    * // => 1
    */

@@ -22,15 +22,15 @@ define(['./_baseIteratee', './_baseWhile'], function(baseIteratee, baseWhile) {
    * _.takeRightWhile(users, function(o) { return !o.active; });
    * // => objects for ['fred', 'pebbles']
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.takeRightWhile(users, { 'user': 'pebbles', 'active': false });
    * // => objects for ['pebbles']
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.takeRightWhile(users, ['active', false]);
    * // => objects for ['fred', 'pebbles']
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.takeRightWhile(users, 'active');
    * // => []
    */

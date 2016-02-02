@@ -1,4 +1,4 @@
-define(['./_baseIteratee', './isArray', './isObjectLike', './matches'], function(baseIteratee, isArray, isObjectLike, matches) {
+define(['./_baseClone', './_baseIteratee'], function(baseClone, baseIteratee) {
 
   /**
    * Creates a function that invokes `func` with the arguments of the created
@@ -18,7 +18,7 @@ define(['./_baseIteratee', './isArray', './isObjectLike', './matches'], function
    *   { 'user': 'fred',   'age': 40 }
    * ];
    *
-   * // create custom iteratee shorthands
+   * // Create custom iteratee shorthands.
    * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
    *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
    *   return !p ? callback(func) : function(object) {
@@ -30,9 +30,7 @@ define(['./_baseIteratee', './isArray', './isObjectLike', './matches'], function
    * // => [{ 'user': 'fred', 'age': 40 }]
    */
   function iteratee(func) {
-    return (isObjectLike(func) && !isArray(func))
-      ? matches(func)
-      : baseIteratee(func);
+    return baseIteratee(typeof func == 'function' ? func : baseClone(func, true));
   }
 
   return iteratee;

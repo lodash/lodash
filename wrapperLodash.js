@@ -104,11 +104,11 @@ define(['./_LazyWrapper', './_LodashWrapper', './_baseLodash', './isArray', './i
    *
    * var wrapped = _([1, 2, 3]);
    *
-   * // returns an unwrapped value
+   * // Returns an unwrapped value.
    * wrapped.reduce(_.add);
    * // => 6
    *
-   * // returns a wrapped value
+   * // Returns a wrapped value.
    * var squares = wrapped.map(square);
    *
    * _.isArray(squares);

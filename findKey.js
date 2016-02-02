@@ -21,15 +21,15 @@ define(['./_baseFind', './_baseForOwn', './_baseIteratee'], function(baseFind, b
    * _.findKey(users, function(o) { return o.age < 40; });
    * // => 'barney' (iteration order is not guaranteed)
    *
-   * // using the `_.matches` iteratee shorthand
+   * // The `_.matches` iteratee shorthand.
    * _.findKey(users, { 'age': 1, 'active': true });
    * // => 'pebbles'
    *
-   * // using the `_.matchesProperty` iteratee shorthand
+   * // The `_.matchesProperty` iteratee shorthand.
    * _.findKey(users, ['active', false]);
    * // => 'fred'
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.findKey(users, 'active');
    * // => 'barney'
    */

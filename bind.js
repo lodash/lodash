@@ -34,7 +34,7 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
    * bound('!');
    * // => 'hi fred!'
    *
-   * // using placeholders
+   * // Bound with placeholders.
    * var bound = _.bind(greet, object, _, '!');
    * bound('hi');
    * // => 'hi fred!'

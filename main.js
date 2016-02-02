@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash exports="amd" -d -o ./main.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.1.0';
+  var VERSION = '4.2.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -394,11 +394,11 @@
    * @private
    * @param {Function} func The function to invoke.
    * @param {*} thisArg The `this` binding of `func`.
-   * @param {...*} [args] The arguments to invoke `func` with.
+   * @param {...*} args The arguments to invoke `func` with.
    * @returns {*} Returns the result of `func`.
    */
   function apply(func, thisArg, args) {
-    var length = args ? args.length : 0;
+    var length = args.length;
     switch (length) {
       case 0: return func.call(thisArg);
       case 1: return func.call(thisArg, args[0]);
@@ -838,7 +838,7 @@
         result = result === undefined ? current : (result + current);
       }
     }
-    return length ? result : 0;
+    return result;
   }
 
   /**
@@ -1251,14 +1251,14 @@
    * lodash.isFunction(lodash.bar);
    * // => true
    *
-   * // using `context` to mock `Date#getTime` use in `_.now`
+   * // Use `context` to mock `Date#getTime` use in `_.now`.
    * var mock = _.runInContext({
    *   'Date': function() {
    *     return { 'getTime': getTimeMock };
    *   }
    * });
    *
-   * // or creating a suped-up `defer` in Node.js
+   * // Create a suped-up `defer` in Node.js.
    * var defer = _.runInContext({ 'setTimeout': setImmediate }).defer;
    */
   function runInContext(context) {
@@ -1448,11 +1448,11 @@
      *
      * var wrapped = _([1, 2, 3]);
      *
-     * // returns an unwrapped value
+     * // Returns an unwrapped value.
      * wrapped.reduce(_.add);
      * // => 6
      *
-     * // returns a wrapped value
+     * // Returns a wrapped value.
      * var squares = wrapped.map(square);
      *
      * _.isArray(squares);
@@ -5468,7 +5468,7 @@
      * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
      * // => [3.1, 1.3]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
@@ -5600,15 +5600,15 @@
      * _.dropRightWhile(users, function(o) { return !o.active; });
      * // => objects for ['barney']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.dropRightWhile(users, { 'user': 'pebbles', 'active': false });
      * // => objects for ['barney', 'fred']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.dropRightWhile(users, ['active', false]);
      * // => objects for ['barney']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.dropRightWhile(users, 'active');
      * // => objects for ['barney', 'fred', 'pebbles']
      */
@@ -5640,15 +5640,15 @@
      * _.dropWhile(users, function(o) { return !o.active; });
      * // => objects for ['pebbles']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.dropWhile(users, { 'user': 'barney', 'active': false });
      * // => objects for ['fred', 'pebbles']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.dropWhile(users, ['active', false]);
      * // => objects for ['pebbles']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.dropWhile(users, 'active');
      * // => objects for ['barney', 'fred', 'pebbles']
      */
@@ -5719,15 +5719,15 @@
      * _.findIndex(users, function(o) { return o.user == 'barney'; });
      * // => 0
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.findIndex(users, { 'user': 'fred', 'active': false });
      * // => 1
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.findIndex(users, ['active', false]);
      * // => 0
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.findIndex(users, 'active');
      * // => 2
      */
@@ -5758,15 +5758,15 @@
      * _.findLastIndex(users, function(o) { return o.user == 'pebbles'; });
      * // => 2
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.findLastIndex(users, { 'user': 'barney', 'active': true });
      * // => 0
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.findLastIndex(users, ['active', false]);
      * // => 2
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.findLastIndex(users, 'active');
      * // => 0
      */
@@ -5774,31 +5774,6 @@
       return (array && array.length)
         ? baseFindIndex(array, getIteratee(predicate, 3), true)
         : -1;
-    }
-
-    /**
-     * Creates an array of flattened values by running each element in `array`
-     * through `iteratee` and concating its result to the other mapped values.
-     * The iteratee is invoked with three arguments: (value, index|key, array).
-     *
-     * @static
-     * @memberOf _
-     * @category Array
-     * @param {Array} array The array to iterate over.
-     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new array.
-     * @example
-     *
-     * function duplicate(n) {
-     *   return [n, n];
-     * }
-     *
-     * _.flatMap([1, 2], duplicate);
-     * // => [1, 1, 2, 2]
-     */
-    function flatMap(array, iteratee) {
-      var length = array ? array.length : 0;
-      return length ? baseFlatten(arrayMap(array, getIteratee(iteratee, 3))) : [];
     }
 
     /**
@@ -5888,8 +5863,7 @@
      * Gets the index at which the first occurrence of `value` is found in `array`
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons. If `fromIndex` is negative, it's used as the offset
-     * from the end of `array`. If `array` is sorted providing `true` for `fromIndex`
-     * performs a faster binary search.
+     * from the end of `array`.
      *
      * @static
      * @memberOf _
@@ -5903,7 +5877,7 @@
      * _.indexOf([1, 2, 1, 2], 2);
      * // => 1
      *
-     * // using `fromIndex`
+     * // Search from the `fromIndex`.
      * _.indexOf([1, 2, 1, 2], 2, 2);
      * // => 3
      */
@@ -5974,7 +5948,7 @@
      * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [2.1]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }]
      */
@@ -6077,7 +6051,7 @@
      * _.lastIndexOf([1, 2, 1, 2], 2);
      * // => 3
      *
-     * // using `fromIndex`
+     * // Search from the `fromIndex`.
      * _.lastIndexOf([1, 2, 1, 2], 2, 2);
      * // => 1
      */
@@ -6353,7 +6327,7 @@
      * _.sortedIndexBy(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
      * // => 1
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
      * // => 0
      */
@@ -6421,7 +6395,7 @@
      * @returns {number} Returns the index at which `value` should be inserted into `array`.
      * @example
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
      * // => 1
      */
@@ -6488,7 +6462,7 @@
      * @example
      *
      * _.sortedUniqBy([1.1, 1.2, 2.3, 2.4], Math.floor);
-     * // => [1.1, 2.2]
+     * // => [1.1, 2.3]
      */
     function sortedUniqBy(array, iteratee) {
       return (array && array.length)
@@ -6601,15 +6575,15 @@
      * _.takeRightWhile(users, function(o) { return !o.active; });
      * // => objects for ['fred', 'pebbles']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.takeRightWhile(users, { 'user': 'pebbles', 'active': false });
      * // => objects for ['pebbles']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.takeRightWhile(users, ['active', false]);
      * // => objects for ['fred', 'pebbles']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.takeRightWhile(users, 'active');
      * // => []
      */
@@ -6641,15 +6615,15 @@
      * _.takeWhile(users, function(o) { return !o.active; });
      * // => objects for ['barney', 'fred']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.takeWhile(users, { 'user': 'barney', 'active': false });
      * // => objects for ['barney']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.takeWhile(users, ['active', false]);
      * // => objects for ['barney', 'fred']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.takeWhile(users, 'active');
      * // => []
      */
@@ -6694,7 +6668,7 @@
      * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [2.1, 1.2, 4.3]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
@@ -6771,7 +6745,7 @@
      * _.uniqBy([2.1, 1.2, 2.3], Math.floor);
      * // => [2.1, 1.2]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }, { 'x': 2 }]
      */
@@ -6927,7 +6901,7 @@
      * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
      * // => [1.2, 4.3]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 2 }]
      */
@@ -7082,10 +7056,9 @@
     }
 
     /**
-     * This method invokes `interceptor` and returns `value`. The interceptor is
-     * invoked with one argument; (value). The purpose of this method is to "tap into"
-     * a method chain in order to perform operations on intermediate results within
-     * the chain.
+     * This method invokes `interceptor` and returns `value`. The interceptor
+     * is invoked with one argument; (value). The purpose of this method is to
+     * "tap into" a method chain in order to modify intermediate results.
      *
      * @static
      * @memberOf _
@@ -7097,6 +7070,7 @@
      *
      * _([1, 2, 3])
      *  .tap(function(array) {
+     *    // Mutate input array.
      *    array.pop();
      *  })
      *  .reverse()
@@ -7110,6 +7084,8 @@
 
     /**
      * This method is like `_.tap` except that it returns the result of `interceptor`.
+     * The purpose of this method is to "pass thru" values replacing intermediate
+     * results in a method chain.
      *
      * @static
      * @memberOf _
@@ -7185,11 +7161,11 @@
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * // without explicit chaining
+     * // A sequence without explicit chaining.
      * _(users).head();
      * // => { 'user': 'barney', 'age': 36 }
      *
-     * // with explicit chaining
+     * // A sequence with explicit chaining.
      * _(users)
      *   .chain()
      *   .head()
@@ -7444,15 +7420,15 @@
      *   { 'user': 'fred',   'active': false }
      * ];
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.every(users, { 'user': 'barney', 'active': false });
      * // => false
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.every(users, ['active', false]);
      * // => true
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.every(users, 'active');
      * // => false
      */
@@ -7485,15 +7461,15 @@
      * _.filter(users, function(o) { return !o.active; });
      * // => objects for ['fred']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.filter(users, { 'age': 36, 'active': true });
      * // => objects for ['barney']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.filter(users, ['active', false]);
      * // => objects for ['fred']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.filter(users, 'active');
      * // => objects for ['barney']
      */
@@ -7524,15 +7500,15 @@
      * _.find(users, function(o) { return o.age < 40; });
      * // => object for 'barney'
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.find(users, { 'age': 1, 'active': true });
      * // => object for 'pebbles'
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.find(users, ['active', false]);
      * // => object for 'fred'
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.find(users, 'active');
      * // => object for 'barney'
      */
@@ -7569,6 +7545,30 @@
         return index > -1 ? collection[index] : undefined;
       }
       return baseFind(collection, predicate, baseEachRight);
+    }
+
+    /**
+     * Creates an array of flattened values by running each element in `collection`
+     * through `iteratee` and concating its result to the other mapped values.
+     * The iteratee is invoked with three arguments: (value, index|key, collection).
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+     * @returns {Array} Returns the new flattened array.
+     * @example
+     *
+     * function duplicate(n) {
+     *   return [n, n];
+     * }
+     *
+     * _.flatMap([1, 2], duplicate);
+     * // => [1, 1, 2, 2]
+     */
+    function flatMap(collection, iteratee) {
+      return baseFlatten(map(collection, iteratee));
     }
 
     /**
@@ -7646,7 +7646,7 @@
      * _.groupBy([6.1, 4.2, 6.3], Math.floor);
      * // => { '4': [4.2], '6': [6.1, 6.3] }
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.groupBy(['one', 'two', 'three'], 'length');
      * // => { '3': ['one', 'two'], '5': ['three'] }
      */
@@ -7802,7 +7802,7 @@
      *   { 'user': 'fred' }
      * ];
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.map(users, 'user');
      * // => ['barney', 'fred']
      */
@@ -7834,7 +7834,7 @@
      *   { 'user': 'barney', 'age': 36 }
      * ];
      *
-     * // sort by `user` in ascending order and by `age` in descending order
+     * // Sort by `user` in ascending order and by `age` in descending order.
      * _.orderBy(users, ['user', 'age'], ['asc', 'desc']);
      * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
      */
@@ -7875,15 +7875,15 @@
      * _.partition(users, function(o) { return o.active; });
      * // => objects for [['fred'], ['barney', 'pebbles']]
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.partition(users, { 'age': 1, 'active': false });
      * // => objects for [['pebbles'], ['barney', 'fred']]
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.partition(users, ['active', false]);
      * // => objects for [['barney', 'pebbles'], ['fred']]
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.partition(users, 'active');
      * // => objects for [['fred'], ['barney', 'pebbles']]
      */
@@ -7980,15 +7980,15 @@
      * _.reject(users, function(o) { return !o.active; });
      * // => objects for ['fred']
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.reject(users, { 'age': 40, 'active': true });
      * // => objects for ['barney']
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.reject(users, ['active', false]);
      * // => objects for ['fred']
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.reject(users, 'active');
      * // => objects for ['barney']
      */
@@ -8127,15 +8127,15 @@
      *   { 'user': 'fred',   'active': false }
      * ];
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.some(users, { 'user': 'barney', 'active': false });
      * // => false
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.some(users, ['active', false]);
      * // => true
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.some(users, 'active');
      * // => true
      */
@@ -8335,7 +8335,7 @@
      * bound('!');
      * // => 'hi fred!'
      *
-     * // using placeholders
+     * // Bound with placeholders.
      * var bound = _.bind(greet, object, _, '!');
      * bound('hi');
      * // => 'hi fred!'
@@ -8388,7 +8388,7 @@
      * bound('!');
      * // => 'hiya fred!'
      *
-     * // using placeholders
+     * // Bound with placeholders.
      * var bound = _.bindKey(object, 'greet', _, '!');
      * bound('hi');
      * // => 'hiya fred!'
@@ -8438,7 +8438,7 @@
      * curried(1, 2, 3);
      * // => [1, 2, 3]
      *
-     * // using placeholders
+     * // Curried with placeholders.
      * curried(1)(_, 3)(2);
      * // => [1, 2, 3]
      */
@@ -8482,7 +8482,7 @@
      * curried(1, 2, 3);
      * // => [1, 2, 3]
      *
-     * // using placeholders
+     * // Curried with placeholders.
      * curried(3)(1, _)(2);
      * // => [1, 2, 3]
      */
@@ -8525,21 +8525,21 @@
      * @returns {Function} Returns the new debounced function.
      * @example
      *
-     * // avoid costly calculations while the window size is in flux
+     * // Avoid costly calculations while the window size is in flux.
      * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
      *
-     * // invoke `sendMail` when clicked, debouncing subsequent calls
+     * // Invoke `sendMail` when clicked, debouncing subsequent calls.
      * jQuery(element).on('click', _.debounce(sendMail, 300, {
      *   'leading': true,
      *   'trailing': false
      * }));
      *
-     * // ensure `batchLog` is invoked once after 1 second of debounced calls
+     * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
      * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
      * var source = new EventSource('/stream');
      * jQuery(source).on('message', debounced);
      *
-     * // cancel a trailing debounced invocation
+     * // Cancel the trailing debounced invocation.
      * jQuery(window).on('popstate', debounced.cancel);
      */
     function debounce(func, wait, options) {
@@ -8672,7 +8672,7 @@
      * _.defer(function(text) {
      *   console.log(text);
      * }, 'deferred');
-     * // logs 'deferred' after one or more milliseconds
+     * // => logs 'deferred' after one or more milliseconds
      */
     var defer = rest(function(func, args) {
       return baseDelay(func, 1, args);
@@ -8755,12 +8755,12 @@
      * values(object);
      * // => [1, 2]
      *
-     * // modifying the result cache
+     * // Modify the result cache.
      * values.cache.set(object, ['a', 'b']);
      * values(object);
      * // => ['a', 'b']
      *
-     * // replacing `_.memoize.Cache`
+     * // Replace `_.memoize.Cache`.
      * _.memoize.Cache = WeakMap;
      */
     function memoize(func, resolver) {
@@ -8905,7 +8905,7 @@
      * sayHelloTo('fred');
      * // => 'hello fred'
      *
-     * // using placeholders
+     * // Partially applied with placeholders.
      * var greetFred = _.partial(greet, _, 'fred');
      * greetFred('hi');
      * // => 'hi fred'
@@ -8941,7 +8941,7 @@
      * greetFred('hi');
      * // => 'hi fred'
      *
-     * // using placeholders
+     * // Partially applied with placeholders.
      * var sayHelloTo = _.partialRight(greet, 'hello', _);
      * sayHelloTo('fred');
      * // => 'hello fred'
@@ -9038,6 +9038,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to spread arguments over.
+     * @param {number} [start=0] The start position of the spread.
      * @returns {Function} Returns the new function.
      * @example
      *
@@ -9048,7 +9049,6 @@
      * say(['fred', 'hello']);
      * // => 'fred says hello'
      *
-     * // with a Promise
      * var numbers = Promise.all([
      *   Promise.resolve(40),
      *   Promise.resolve(36)
@@ -9059,13 +9059,20 @@
      * }));
      * // => a Promise of 76
      */
-    function spread(func) {
+    function spread(func, start) {
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return function(array) {
-        return apply(func, this, array);
-      };
+      start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+      return rest(function(args) {
+        var array = args[start],
+            otherArgs = args.slice(0, start);
+
+        if (array) {
+          arrayPush(otherArgs, array);
+        }
+        return apply(func, this, otherArgs);
+      });
     }
 
     /**
@@ -9098,14 +9105,14 @@
      * @returns {Function} Returns the new throttled function.
      * @example
      *
-     * // avoid excessively updating the position while scrolling
+     * // Avoid excessively updating the position while scrolling.
      * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
      *
-     * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
+     * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
      * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
      * jQuery(element).on('click', throttled);
      *
-     * // cancel a trailing throttled invocation
+     * // Cancel the trailing throttled invocation.
      * jQuery(window).on('popstate', throttled.cancel);
      */
     function throttle(func, wait, options) {
@@ -10724,15 +10731,15 @@
      * _.findKey(users, function(o) { return o.age < 40; });
      * // => 'barney' (iteration order is not guaranteed)
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.findKey(users, { 'age': 1, 'active': true });
      * // => 'pebbles'
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.findKey(users, ['active', false]);
      * // => 'fred'
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.findKey(users, 'active');
      * // => 'barney'
      */
@@ -10761,15 +10768,15 @@
      * _.findLastKey(users, function(o) { return o.age < 40; });
      * // => returns 'pebbles' assuming `_.findKey` returns 'barney'
      *
-     * // using the `_.matches` iteratee shorthand
+     * // The `_.matches` iteratee shorthand.
      * _.findLastKey(users, { 'age': 36, 'active': true });
      * // => 'barney'
      *
-     * // using the `_.matchesProperty` iteratee shorthand
+     * // The `_.matchesProperty` iteratee shorthand.
      * _.findLastKey(users, ['active', false]);
      * // => 'fred'
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.findLastKey(users, 'active');
      * // => 'pebbles'
      */
@@ -11242,7 +11249,7 @@
      * _.mapValues(users, function(o) { return o.age; });
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.mapValues(users, 'age');
      * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
      */
@@ -11295,6 +11302,8 @@
      * properties. If `customizer` returns `undefined` merging is handled by the
      * method instead. The `customizer` is invoked with seven arguments:
      * (objValue, srcValue, key, object, source, stack).
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _
@@ -11402,7 +11411,7 @@
 
     /**
      * Creates an object composed of the `object` properties `predicate` returns
-     * truthy for. The predicate is invoked with one argument: (value).
+     * truthy for. The predicate is invoked with two arguments: (value, key).
      *
      * @static
      * @memberOf _
@@ -11469,6 +11478,8 @@
      * are created for all other missing properties. Use `_.setWith` to customize
      * `path` creation.
      *
+     * **Note:** This method mutates `object`.
+     *
      * @static
      * @memberOf _
      * @category Object
@@ -11497,6 +11508,8 @@
      * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
      * path creation is handled by the method instead. The `customizer` is invoked
      * with three arguments: (nsValue, key, nsObject).
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _
@@ -11616,6 +11629,8 @@
 
     /**
      * Removes the property at `path` of `object`.
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _
@@ -12406,54 +12421,54 @@
      * @returns {Function} Returns the compiled template function.
      * @example
      *
-     * // using the "interpolate" delimiter to create a compiled template
+     * // Use the "interpolate" delimiter to create a compiled template.
      * var compiled = _.template('hello <%= user %>!');
      * compiled({ 'user': 'fred' });
      * // => 'hello fred!'
      *
-     * // using the HTML "escape" delimiter to escape data property values
+     * // Use the HTML "escape" delimiter to escape data property values.
      * var compiled = _.template('<b><%- value %></b>');
      * compiled({ 'value': '<script>' });
      * // => '<b>&lt;script&gt;</b>'
      *
-     * // using the "evaluate" delimiter to execute JavaScript and generate HTML
+     * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
      * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
      * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the internal `print` function in "evaluate" delimiters
+     * // Use the internal `print` function in "evaluate" delimiters.
      * var compiled = _.template('<% print("hello " + user); %>!');
      * compiled({ 'user': 'barney' });
      * // => 'hello barney!'
      *
-     * // using the ES delimiter as an alternative to the default "interpolate" delimiter
+     * // Use the ES delimiter as an alternative to the default "interpolate" delimiter.
      * var compiled = _.template('hello ${ user }!');
      * compiled({ 'user': 'pebbles' });
      * // => 'hello pebbles!'
      *
-     * // using custom template delimiters
+     * // Use custom template delimiters.
      * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
      * var compiled = _.template('hello {{ user }}!');
      * compiled({ 'user': 'mustache' });
      * // => 'hello mustache!'
      *
-     * // using backslashes to treat delimiters as plain text
+     * // Use backslashes to treat delimiters as plain text.
      * var compiled = _.template('<%= "\\<%- value %\\>" %>');
      * compiled({ 'value': 'ignored' });
      * // => '<%- value %>'
      *
-     * // using the `imports` option to import `jQuery` as `jq`
+     * // Use the `imports` option to import `jQuery` as `jq`.
      * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
      * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
      * compiled({ 'users': ['fred', 'barney'] });
      * // => '<li>fred</li><li>barney</li>'
      *
-     * // using the `sourceURL` option to specify a custom sourceURL for the template
+     * // Use the `sourceURL` option to specify a custom sourceURL for the template.
      * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
      * compiled(data);
      * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
      *
-     * // using the `variable` option to ensure a with-statement isn't used in the compiled template
+     * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
      * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
@@ -12462,8 +12477,8 @@
      * //   return __p;
      * // }
      *
-     * // using the `source` property to inline compiled templates for meaningful
-     * // line numbers in error messages and a stack trace
+     * // Use the `source` property to inline compiled templates for meaningful
+     * // line numbers in error messages and stack traces.
      * fs.writeFileSync(path.join(cwd, 'jst.js'), '\
      *   var JST = {\
      *     "main": ' + _.template(mainText).source + '\
@@ -12910,7 +12925,7 @@
      * @returns {*} Returns the `func` result or error object.
      * @example
      *
-     * // avoid throwing errors for invalid selectors
+     * // Avoid throwing errors for invalid selectors.
      * var elements = _.attempt(function(selector) {
      *   return document.querySelectorAll(selector);
      * }, '>_>');
@@ -12923,7 +12938,7 @@
       try {
         return apply(func, undefined, args);
       } catch (e) {
-        return isError(e) ? e : new Error(e);
+        return isObject(e) ? e : new Error(e);
       }
     });
 
@@ -13136,7 +13151,7 @@
      *   { 'user': 'fred',   'age': 40 }
      * ];
      *
-     * // create custom iteratee shorthands
+     * // Create custom iteratee shorthands.
      * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
      *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
      *   return !p ? callback(func) : function(object) {
@@ -13148,9 +13163,7 @@
      * // => [{ 'user': 'fred', 'age': 40 }]
      */
     function iteratee(func) {
-      return (isObjectLike(func) && !isArray(func))
-        ? matches(func)
-        : baseIteratee(func);
+      return baseIteratee(typeof func == 'function' ? func : baseClone(func, true));
     }
 
     /**
@@ -13786,7 +13799,7 @@
      * _.maxBy(objects, function(o) { return o.n; });
      * // => { 'n': 2 }
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.maxBy(objects, 'n');
      * // => { 'n': 2 }
      */
@@ -13854,7 +13867,7 @@
      * _.minBy(objects, function(o) { return o.n; });
      * // => { 'n': 1 }
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.minBy(objects, 'n');
      * // => { 'n': 1 }
      */
@@ -13948,7 +13961,7 @@
      * _.sumBy(objects, function(o) { return o.n; });
      * // => 20
      *
-     * // using the `_.property` iteratee shorthand
+     * // The `_.property` iteratee shorthand.
      * _.sumBy(objects, 'n');
      * // => 20
      */

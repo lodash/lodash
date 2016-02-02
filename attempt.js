@@ -1,4 +1,4 @@
-define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
+define(['./_apply', './isObject', './rest'], function(apply, isObject, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,7 +14,7 @@ define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
    * @returns {*} Returns the `func` result or error object.
    * @example
    *
-   * // avoid throwing errors for invalid selectors
+   * // Avoid throwing errors for invalid selectors.
    * var elements = _.attempt(function(selector) {
    *   return document.querySelectorAll(selector);
    * }, '>_>');
@@ -27,7 +27,7 @@ define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
     try {
       return apply(func, undefined, args);
     } catch (e) {
-      return isError(e) ? e : new Error(e);
+      return isObject(e) ? e : new Error(e);
     }
   });
 

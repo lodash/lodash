@@ -21,7 +21,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
    * _.mapValues(users, function(o) { return o.age; });
    * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.mapValues(users, 'age');
    * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
    */

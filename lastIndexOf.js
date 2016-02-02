@@ -23,7 +23,7 @@ define(['./_indexOfNaN', './toInteger'], function(indexOfNaN, toInteger) {
    * _.lastIndexOf([1, 2, 1, 2], 2);
    * // => 3
    *
-   * // using `fromIndex`
+   * // Search from the `fromIndex`.
    * _.lastIndexOf([1, 2, 1, 2], 2, 2);
    * // => 1
    */

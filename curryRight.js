@@ -39,7 +39,7 @@ define(['./_createWrapper'], function(createWrapper) {
    * curried(1, 2, 3);
    * // => [1, 2, 3]
    *
-   * // using placeholders
+   * // Curried with placeholders.
    * curried(3)(1, _)(2);
    * // => [1, 2, 3]
    */

@@ -1,16 +1,16 @@
-define(['./_arrayMap', './_baseFlatten', './_baseIteratee'], function(arrayMap, baseFlatten, baseIteratee) {
+define(['./_baseFlatten', './map'], function(baseFlatten, map) {
 
   /**
-   * Creates an array of flattened values by running each element in `array`
+   * Creates an array of flattened values by running each element in `collection`
    * through `iteratee` and concating its result to the other mapped values.
-   * The iteratee is invoked with three arguments: (value, index|key, array).
+   * The iteratee is invoked with three arguments: (value, index|key, collection).
    *
    * @static
    * @memberOf _
-   * @category Array
-   * @param {Array} array The array to iterate over.
+   * @category Collection
+   * @param {Array|Object} collection The collection to iterate over.
    * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
-   * @returns {Array} Returns the new array.
+   * @returns {Array} Returns the new flattened array.
    * @example
    *
    * function duplicate(n) {
@@ -20,9 +20,8 @@ define(['./_arrayMap', './_baseFlatten', './_baseIteratee'], function(arrayMap, 
    * _.flatMap([1, 2], duplicate);
    * // => [1, 1, 2, 2]
    */
-  function flatMap(array, iteratee) {
-    var length = array ? array.length : 0;
-    return length ? baseFlatten(arrayMap(array, baseIteratee(iteratee, 3))) : [];
+  function flatMap(collection, iteratee) {
+    return baseFlatten(map(collection, iteratee));
   }
 
   return flatMap;

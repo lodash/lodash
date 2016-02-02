@@ -21,7 +21,7 @@ define(['./_baseExtremum', './_baseIteratee', './gt'], function(baseExtremum, ba
    * _.maxBy(objects, function(o) { return o.n; });
    * // => { 'n': 2 }
    *
-   * // using the `_.property` iteratee shorthand
+   * // The `_.property` iteratee shorthand.
    * _.maxBy(objects, 'n');
    * // => { 'n': 2 }
    */

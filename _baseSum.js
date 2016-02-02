@@ -22,7 +22,7 @@ define([], function() {
         result = result === undefined ? current : (result + current);
       }
     }
-    return length ? result : 0;
+    return result;
   }
 
   return baseSum;

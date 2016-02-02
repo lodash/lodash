@@ -32,7 +32,7 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
    * greetFred('hi');
    * // => 'hi fred'
    *
-   * // using placeholders
+   * // Partially applied with placeholders.
    * var sayHelloTo = _.partialRight(greet, 'hello', _);
    * sayHelloTo('fred');
    * // => 'hello fred'

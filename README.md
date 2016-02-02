@@ -1,4 +1,4 @@
-# lodash v4.1.0
+# lodash v4.2.0
 
 The [lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 

@@ -993,6 +993,32 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.trimChars');
+
+  _.each(['trimChars', 'trimCharsStart', 'trimCharsEnd'], function(methodName, index) {
+    var func = fp[methodName],
+        parts = [];
+
+    if (index != 2) {
+      parts.push('leading');
+    }
+    if (index != 1) {
+      parts.push('trailing');
+    }
+    parts = parts.join(' and ');
+
+    QUnit.test('`_.' + methodName + '` should remove ' + parts + ' `chars`', function(assert) {
+      assert.expect(1);
+
+      var string = '-_-a-b-c-_-',
+          expected = (index == 2 ? '-_-' : '') + 'a-b-c' + (index == 1 ? '-_-' : '');
+
+      assert.strictEqual(func('_-')(string), expected);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.uniqBy');
 
   (function() {

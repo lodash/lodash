@@ -11,13 +11,13 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Community
 
-[![Join the chat at https://gitter.im/lodash/lodash](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lodash/lodash)
+[![Gitter](https://badges.gitter.im/lodash/lodash.svg)](https://gitter.im/lodash/lodash)
 
 ## Module formats
 
-Lodash is also available in a variety of other builds & module formats.
+Lodash is available in a variety of other builds & module formats.
 
- * [lodash](https://www.npmjs.com/package/lodash) & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) packages
+ * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
 

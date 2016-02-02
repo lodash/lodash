@@ -11968,13 +11968,13 @@
   QUnit.module('lodash.map');
 
   (function() {
-    var array = [1, 2, 3];
+    var array = [1, 2];
 
     QUnit.test('should map values in `collection` to a new array', function(assert) {
       assert.expect(2);
 
-      var object = { 'a': 1, 'b': 2, 'c': 3 },
-          expected = ['1', '2', '3'];
+      var object = { 'a': 1, 'b': 2 },
+          expected = ['1', '2'];
 
       assert.deepEqual(_.map(array, String), expected);
       assert.deepEqual(_.map(object, String), expected);
@@ -11993,14 +11993,27 @@
       function Foo() { this.a = 1; }
       Foo.prototype.b = 2;
 
-      var actual = _.map(new Foo, function(value, key) { return key; });
-      assert.deepEqual(actual, ['a']);
+      var actual = _.map(new Foo, identity);
+      assert.deepEqual(actual, [1]);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant([1, 2]));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.map(array, value) : _.map(array);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should work on an object with no `iteratee`', function(assert) {
       assert.expect(1);
 
-      var actual = _.map({ 'a': 1, 'b': 2, 'c': 3 });
+      var actual = _.map({ 'a': 1, 'b': 2 });
       assert.deepEqual(actual, array);
     });
 
@@ -12113,13 +12126,13 @@
 
   (function() {
     var array = [1, 2],
-        object = { 'a': 1, 'b': 2, 'c': 3 };
+        object = { 'a': 1, 'b': 2 };
 
     QUnit.test('should map keys in `object` to a new object', function(assert) {
       assert.expect(1);
 
       var actual = _.mapKeys(object, String);
-      assert.deepEqual(actual, { '1': 1, '2': 2, '3': 3 });
+      assert.deepEqual(actual, { '1': 1, '2': 2 });
     });
 
     QUnit.test('should treat arrays like objects', function(assert) {
@@ -12139,8 +12152,8 @@
     QUnit.test('should work on an object with no `iteratee`', function(assert) {
       assert.expect(1);
 
-      var actual = _.mapKeys({ 'a': 1, 'b': 2, 'c': 3 });
-      assert.deepEqual(actual, { '1': 1, '2': 2, '3': 3 });
+      var actual = _.mapKeys({ 'a': 1, 'b': 2 });
+      assert.deepEqual(actual, { '1': 1, '2': 2 });
     });
   }());
 
@@ -12150,13 +12163,13 @@
 
   (function() {
     var array = [1, 2],
-        object = { 'a': 1, 'b': 2, 'c': 3 };
+        object = { 'a': 1, 'b': 2 };
 
     QUnit.test('should map values in `object` to a new object', function(assert) {
       assert.expect(1);
 
       var actual = _.mapValues(object, String);
-      assert.deepEqual(actual, { 'a': '1', 'b': '2', 'c': '3' });
+      assert.deepEqual(actual, { 'a': '1', 'b': '2' });
     });
 
     QUnit.test('should treat arrays like objects', function(assert) {
@@ -12176,7 +12189,7 @@
     QUnit.test('should work on an object with no `iteratee`', function(assert) {
       assert.expect(2);
 
-      var actual = _.mapValues({ 'a': 1, 'b': 2, 'c': 3 });
+      var actual = _.mapValues({ 'a': 1, 'b': 2 });
       assert.deepEqual(actual, object);
       assert.notStrictEqual(actual, object);
     });
@@ -12189,7 +12202,7 @@
   lodashStable.each(['mapKeys', 'mapValues'], function(methodName) {
     var array = [1, 2],
         func = _[methodName],
-        object = { 'a': 1, 'b': 2, 'c': 3 };
+        object = { 'a': 1, 'b': 2 };
 
     QUnit.test('should iterate over own properties of objects', function(assert) {
       assert.expect(1);

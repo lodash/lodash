@@ -6,6 +6,7 @@ export { default as every } from './every';
 export { default as filter } from './filter';
 export { default as find } from './find';
 export { default as findLast } from './findLast';
+export { default as flatMap } from './flatMap';
 export { default as forEach } from './forEach';
 export { default as forEachRight } from './forEachRight';
 export { default as groupBy } from './groupBy';

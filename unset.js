@@ -3,6 +3,8 @@ import baseUnset from './_baseUnset';
 /**
  * Removes the property at `path` of `object`.
  *
+ * **Note:** This method mutates `object`.
+ *
  * @static
  * @memberOf _
  * @category Object

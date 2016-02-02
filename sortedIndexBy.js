@@ -20,7 +20,7 @@ import baseSortedIndexBy from './_baseSortedIndexBy';
  * _.sortedIndexBy(['thirty', 'fifty'], 'forty', _.propertyOf(dict));
  * // => 1
  *
- * // using the `_.property` iteratee shorthand
+ * // The `_.property` iteratee shorthand.
  * _.sortedIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
  * // => 0
  */

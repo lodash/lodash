@@ -3,7 +3,7 @@ import basePickBy from './_basePickBy';
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns
- * truthy for. The predicate is invoked with one argument: (value).
+ * truthy for. The predicate is invoked with two arguments: (value, key).
  *
  * @static
  * @memberOf _

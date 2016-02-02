@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.1.0';
+var VERSION = '4.2.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -125,7 +125,7 @@ lodash.dropRightWhile = array.dropRightWhile;
 lodash.dropWhile = array.dropWhile;
 lodash.fill = array.fill;
 lodash.filter = collection.filter;
-lodash.flatMap = array.flatMap;
+lodash.flatMap = collection.flatMap;
 lodash.flatten = array.flatten;
 lodash.flattenDeep = array.flattenDeep;
 lodash.flip = func.flip;

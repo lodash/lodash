@@ -1,7 +1,5 @@
+import baseClone from './_baseClone';
 import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
-import isObjectLike from './isObjectLike';
-import matches from './matches';
 
 /**
  * Creates a function that invokes `func` with the arguments of the created
@@ -21,7 +19,7 @@ import matches from './matches';
  *   { 'user': 'fred',   'age': 40 }
  * ];
  *
- * // create custom iteratee shorthands
+ * // Create custom iteratee shorthands.
  * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
  *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
  *   return !p ? callback(func) : function(object) {
@@ -33,9 +31,7 @@ import matches from './matches';
  * // => [{ 'user': 'fred', 'age': 40 }]
  */
 function iteratee(func) {
-  return (isObjectLike(func) && !isArray(func))
-    ? matches(func)
-    : baseIteratee(func);
+  return baseIteratee(typeof func == 'function' ? func : baseClone(func, true));
 }
 
 export default iteratee;

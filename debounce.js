@@ -40,21 +40,21 @@ var nativeMax = Math.max;
  * @returns {Function} Returns the new debounced function.
  * @example
  *
- * // avoid costly calculations while the window size is in flux
+ * // Avoid costly calculations while the window size is in flux.
  * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
  *
- * // invoke `sendMail` when clicked, debouncing subsequent calls
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
  * jQuery(element).on('click', _.debounce(sendMail, 300, {
  *   'leading': true,
  *   'trailing': false
  * }));
  *
- * // ensure `batchLog` is invoked once after 1 second of debounced calls
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
  * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
  * var source = new EventSource('/stream');
  * jQuery(source).on('message', debounced);
  *
- * // cancel a trailing debounced invocation
+ * // Cancel the trailing debounced invocation.
  * jQuery(window).on('popstate', debounced.cancel);
  */
 function debounce(func, wait, options) {

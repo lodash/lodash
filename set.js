@@ -6,6 +6,8 @@ import baseSet from './_baseSet';
  * are created for all other missing properties. Use `_.setWith` to customize
  * `path` creation.
  *
+ * **Note:** This method mutates `object`.
+ *
  * @static
  * @memberOf _
  * @category Object

@@ -31,7 +31,7 @@ var PARTIAL_RIGHT_FLAG = 64;
  * greetFred('hi');
  * // => 'hi fred'
  *
- * // using placeholders
+ * // Partially applied with placeholders.
  * var sayHelloTo = _.partialRight(greet, 'hello', _);
  * sayHelloTo('fred');
  * // => 'hello fred'

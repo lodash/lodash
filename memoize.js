@@ -37,12 +37,12 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * values(object);
  * // => [1, 2]
  *
- * // modifying the result cache
+ * // Modify the result cache.
  * values.cache.set(object, ['a', 'b']);
  * values(object);
  * // => ['a', 'b']
  *
- * // replacing `_.memoize.Cache`
+ * // Replace `_.memoize.Cache`.
  * _.memoize.Cache = WeakMap;
  */
 function memoize(func, resolver) {

@@ -32,7 +32,7 @@ var PARTIAL_FLAG = 32;
  * sayHelloTo('fred');
  * // => 'hello fred'
  *
- * // using placeholders
+ * // Partially applied with placeholders.
  * var greetFred = _.partial(greet, _, 'fred');
  * greetFred('hi');
  * // => 'hi fred'

@@ -1,5 +1,5 @@
 import apply from './_apply';
-import isError from './isError';
+import isObject from './isObject';
 import rest from './rest';
 
 /**
@@ -13,7 +13,7 @@ import rest from './rest';
  * @returns {*} Returns the `func` result or error object.
  * @example
  *
- * // avoid throwing errors for invalid selectors
+ * // Avoid throwing errors for invalid selectors.
  * var elements = _.attempt(function(selector) {
  *   return document.querySelectorAll(selector);
  * }, '>_>');
@@ -26,7 +26,7 @@ var attempt = rest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
-    return isError(e) ? e : new Error(e);
+    return isObject(e) ? e : new Error(e);
   }
 });
 

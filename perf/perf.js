@@ -109,7 +109,7 @@
 
   /** Load Benchmark.js. */
   var Benchmark = root.Benchmark || (root.Benchmark = (
-    Benchmark = load('../vendor/benchmark.js/benchmark.js') || root.Benchmark,
+    Benchmark = load('../node_modules/benchmark/benchmark.js') || root.Benchmark,
     Benchmark = Benchmark.Benchmark || Benchmark,
     Benchmark.runInContext(lodash.extend({}, root, { '_': lodash }))
   ));

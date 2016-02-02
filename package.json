@@ -5,6 +5,7 @@
   "private": true,
   "devDependencies": {
     "async": "^1.5.2",
+    "benchmark": "^2.1.0",
     "chalk": "^1.1.1",
     "codecov.io": "~0.1.6",
     "coveralls": "^2.11.6",

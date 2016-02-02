@@ -21457,9 +21457,9 @@
   QUnit.module('trim methods');
 
   lodashStable.each(['trim', 'trimStart', 'trimEnd'], function(methodName, index) {
-    var func = _[methodName];
+    var func = _[methodName],
+        parts = [];
 
-    var parts = [];
     if (index != 2) {
       parts.push('leading');
     }

@@ -6465,7 +6465,7 @@
      * @example
      *
      * _.sortedUniqBy([1.1, 1.2, 2.3, 2.4], Math.floor);
-     * // => [1.1, 2.2]
+     * // => [1.1, 2.3]
      */
     function sortedUniqBy(array, iteratee) {
       return (array && array.length)

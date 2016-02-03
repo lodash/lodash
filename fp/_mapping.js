@@ -221,6 +221,7 @@ exports.rename = {
 
 /** Used to track methods that skip `_.rearg`. */
 exports.skipRearg = {
+  'add': true,
   'assign': true,
   'assignIn': true,
   'concat': true,
@@ -232,6 +233,7 @@ exports.skipRearg = {
   'random': true,
   'range': true,
   'rangeRight': true,
+  'subtract': true,
   'zip': true,
   'zipObject': true
 };

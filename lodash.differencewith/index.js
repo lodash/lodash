@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -53,8 +53,9 @@ var getLength = baseProperty('length');
 
 /**
  * This method is like `_.difference` except that it accepts `comparator`
- * which is invoked to compare elements of `array` to `values`. The comparator
- * is invoked with two arguments: (arrVal, othVal).
+ * which is invoked to compare elements of `array` to `values`. Result values
+ * are chosen from the first array. The comparator is invoked with two arguments:
+ * (arrVal, othVal).
  *
  * @static
  * @memberOf _
@@ -123,8 +124,7 @@ function last(array) {
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -172,8 +172,8 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

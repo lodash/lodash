@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -19,7 +19,8 @@ var funcTag = '[object Function]',
     mapTag = '[object Map]',
     objectTag = '[object Object]',
     setTag = '[object Set]',
-    stringTag = '[object String]';
+    stringTag = '[object String]',
+    weakMapTag = '[object WeakMap]';
 
 /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
@@ -177,11 +178,13 @@ var Symbol = root.Symbol,
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map'),
-    Set = getNative(root, 'Set');
+    Set = getNative(root, 'Set'),
+    WeakMap = getNative(root, 'WeakMap');
 
-/** Used to detect maps and sets. */
+/** Used to detect maps, sets, and weakmaps. */
 var mapCtorString = Map ? funcToString.call(Map) : '',
-    setCtorString = Set ? funcToString.call(Set) : '';
+    setCtorString = Set ? funcToString.call(Set) : '',
+    weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
 
 /**
  * The base implementation of `_.property` without support for deep paths.
@@ -251,19 +254,20 @@ function getTag(value) {
   return objectToString.call(value);
 }
 
-// Fallback for IE 11 providing `toStringTag` values for maps and sets.
-if ((Map && getTag(new Map) != mapTag) || (Set && getTag(new Set) != setTag)) {
+// Fallback for IE 11 providing `toStringTag` values for maps, sets, and weakmaps.
+if ((Map && getTag(new Map) != mapTag) ||
+    (Set && getTag(new Set) != setTag) ||
+    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
   getTag = function(value) {
     var result = objectToString.call(value),
         Ctor = result == objectTag ? value.constructor : null,
         ctorString = typeof Ctor == 'function' ? funcToString.call(Ctor) : '';
 
     if (ctorString) {
-      if (ctorString == mapCtorString) {
-        return mapTag;
-      }
-      if (ctorString == setCtorString) {
-        return setTag;
+      switch (ctorString) {
+        case mapCtorString: return mapTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
       }
     }
     return result;

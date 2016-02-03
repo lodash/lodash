@@ -1,4 +1,4 @@
-# lodash.reduceright v4.1.0
+# lodash.reduceright v4.1.1
 
 The [lodash](https://lodash.com/) method `_.reduceRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var reduceRight = require('lodash.reduceright');
 ```
 
-See the [documentation](https://lodash.com/docs#reduceRight) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.reduceright) for more details.
+See the [documentation](https://lodash.com/docs#reduceRight) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.reduceright) for more details.

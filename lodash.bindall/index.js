@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -38,6 +38,7 @@ function arrayEach(array, iteratee) {
  * **Note:** This method doesn't set the "length" property of bound functions.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {Object} object The object to bind and assign the bound methods to.
@@ -55,7 +56,7 @@ function arrayEach(array, iteratee) {
  *
  * _.bindAll(view, 'onClick');
  * jQuery(element).on('click', view.onClick);
- * // => logs 'clicked docs' when clicked
+ * // => Logs 'clicked docs' when clicked.
  */
 var bindAll = rest(function(object, methodNames) {
   arrayEach(baseFlatten(methodNames, 1), function(key) {

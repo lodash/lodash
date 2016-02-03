@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -55,11 +55,12 @@ function createInverter(setter, toIteratee) {
 
 /**
  * Creates an object composed of the inverted keys and values of `object`.
- * If `object` contains duplicate values, subsequent values overwrite property
- * assignments of previous values.
+ * If `object` contains duplicate values, subsequent values overwrite
+ * property assignments of previous values.
  *
  * @static
  * @memberOf _
+ * @since 0.7.0
  * @category Object
  * @param {Object} object The object to invert.
  * @returns {Object} Returns the new inverted object.
@@ -79,9 +80,10 @@ var invert = createInverter(function(result, value, key) {
  *
  * @static
  * @memberOf _
+ * @since 2.4.0
  * @category Util
  * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new constant function.
  * @example
  *
  * var object = { 'user': 'fred' };
@@ -100,6 +102,7 @@ function constant(value) {
  * This method returns the first argument given to it.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {*} value Any value.

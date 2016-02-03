@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -41,6 +41,7 @@ function arrayEachRight(array, iteratee) {
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
+ * @see _.forEach
  * @example
  *
  * _.forEachRight([1, 2], function(value) {
@@ -49,9 +50,8 @@ function arrayEachRight(array, iteratee) {
  * // => Logs `2` then `1`.
  */
 function forEachRight(collection, iteratee) {
-  return (typeof iteratee == 'function' && isArray(collection))
-    ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, baseIteratee(iteratee));
+  var func = isArray(collection) ? arrayEachRight : baseEachRight;
+  return func(collection, baseIteratee(iteratee, 3));
 }
 
 /**

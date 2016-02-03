@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -33,12 +33,25 @@ function replaceHolders(array, placeholder) {
       result = [];
 
   while (++index < length) {
-    if (array[index] === placeholder) {
+    var value = array[index];
+    if (value === placeholder || value === PLACEHOLDER) {
       array[index] = PLACEHOLDER;
       result[++resIndex] = index;
     }
   }
   return result;
+}
+
+/**
+ * Gets the argument placeholder value for `func`.
+ *
+ * @private
+ * @param {Function} func The function to inspect.
+ * @returns {*} Returns the placeholder value.
+ */
+function getPlaceholder(func) {
+  var object = func;
+  return object.placeholder;
 }
 
 /**
@@ -88,9 +101,7 @@ function replaceHolders(array, placeholder) {
 var bindKey = rest(function(object, key, partials) {
   var bitmask = BIND_FLAG | BIND_KEY_FLAG;
   if (partials.length) {
-    var placeholder = bindKey.placeholder,
-        holders = replaceHolders(partials, placeholder);
-
+    var holders = replaceHolders(partials, getPlaceholder(bindKey));
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(key, bitmask, object, partials, holders);

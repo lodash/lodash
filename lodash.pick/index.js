@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,7 +17,8 @@ var baseFlatten = require('lodash._baseflatten'),
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as
+ *  the initial value.
  * @returns {*} Returns the accumulated value.
  */
 function arrayReduce(array, iteratee, accumulator, initAccum) {
@@ -35,11 +36,11 @@ function arrayReduce(array, iteratee, accumulator, initAccum) {
 
 /**
  * The base implementation of `_.pick` without support for individual
- * property names.
+ * property identifiers.
  *
  * @private
  * @param {Object} object The source object.
- * @param {string[]} props The property names to pick.
+ * @param {string[]} props The property identifiers to pick.
  * @returns {Object} Returns the new object.
  */
 function basePick(object, props) {
@@ -56,11 +57,12 @@ function basePick(object, props) {
  * Creates an object composed of the picked `object` properties.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The source object.
- * @param {...(string|string[])} [props] The property names to pick, specified
- *  individually or in arrays.
+ * @param {...(string|string[])} [props] The property identifiers to pick,
+ *  specified individually or in arrays.
  * @returns {Object} Returns the new object.
  * @example
  *

@@ -1,6 +1,6 @@
 {
   "name": "lodash.xorby",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "The lodash method `_.xorBy` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -27,6 +27,7 @@
     "lodash.get": "^4.0.0",
     "lodash.hasin": "^4.0.0",
     "lodash.rest": "^4.0.0",
-    "lodash.topairs": "^4.0.0"
+    "lodash.topairs": "^4.0.0",
+    "lodash.tostring": "^4.0.0"
   }
 }

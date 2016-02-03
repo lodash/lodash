@@ -1,4 +1,4 @@
-# lodash.isequalwith v4.1.0
+# lodash.isequalwith v4.1.1
 
 The [lodash](https://lodash.com/) method `_.isEqualWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isEqualWith = require('lodash.isequalwith');
 ```
 
-See the [documentation](https://lodash.com/docs#isEqualWith) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.isequalwith) for more details.
+See the [documentation](https://lodash.com/docs#isEqualWith) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.isequalwith) for more details.

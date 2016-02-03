@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,16 +13,15 @@ var Stack = require('lodash._stack'),
     baseIsMatch = require('lodash._baseismatch'),
     get = require('lodash.get'),
     hasIn = require('lodash.hasin'),
+    isBuffer = require('lodash.isbuffer'),
     keys = require('lodash.keys'),
     root = require('lodash._root'),
-    toPairs = require('lodash.topairs');
+    toPairs = require('lodash.topairs'),
+    toString = require('lodash.tostring');
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,
     PARTIAL_COMPARE_FLAG = 2;
-
-/** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -216,16 +215,17 @@ var Symbol = root.Symbol,
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map'),
-    Set = getNative(root, 'Set');
+    Set = getNative(root, 'Set'),
+    WeakMap = getNative(root, 'WeakMap');
 
-/** Used to detect maps and sets. */
+/** Used to detect maps, sets, and weakmaps. */
 var mapCtorString = Map ? funcToString.call(Map) : '',
-    setCtorString = Set ? funcToString.call(Set) : '';
+    setCtorString = Set ? funcToString.call(Set) : '',
+    weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,
-    symbolValueOf = Symbol ? symbolProto.valueOf : undefined,
-    symbolToString = Symbol ? symbolProto.toString : undefined;
+    symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
 
 /**
  * Assigns `value` to `key` of `object` if the existing value is not equivalent
@@ -293,6 +293,9 @@ function baseClone(value, isDeep, customizer, key, object, stack) {
     var tag = getTag(value),
         isFunc = tag == funcTag || tag == genTag;
 
+    if (isBuffer(value)) {
+      return cloneBuffer(value, isDeep);
+    }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
       if (isHostObject(value)) {
         return object ? value : {};
@@ -479,18 +482,37 @@ function baseToPath(value) {
 }
 
 /**
- * Creates a clone of `buffer`.
+ * Creates a clone of  `buffer`.
  *
  * @private
- * @param {ArrayBuffer} buffer The array buffer to clone.
+ * @param {Buffer} buffer The buffer to clone.
+ * @param {boolean} [isDeep] Specify a deep clone.
+ * @returns {Buffer} Returns the cloned buffer.
+ */
+function cloneBuffer(buffer, isDeep) {
+  if (isDeep) {
+    return buffer.slice();
+  }
+  var Ctor = buffer.constructor,
+      result = new Ctor(buffer.length);
+
+  buffer.copy(result);
+  return result;
+}
+
+/**
+ * Creates a clone of `arrayBuffer`.
+ *
+ * @private
+ * @param {ArrayBuffer} arrayBuffer The array buffer to clone.
  * @returns {ArrayBuffer} Returns the cloned array buffer.
  */
-function cloneBuffer(buffer) {
-  var Ctor = buffer.constructor,
-      result = new Ctor(buffer.byteLength),
+function cloneArrayBuffer(arrayBuffer) {
+  var Ctor = arrayBuffer.constructor,
+      result = new Ctor(arrayBuffer.byteLength),
       view = new Uint8Array(result);
 
-  view.set(new Uint8Array(buffer));
+  view.set(new Uint8Array(arrayBuffer));
   return result;
 }
 
@@ -556,7 +578,7 @@ function cloneTypedArray(typedArray, isDeep) {
   var buffer = typedArray.buffer,
       Ctor = typedArray.constructor;
 
-  return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
+  return new Ctor(isDeep ? cloneArrayBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
 }
 
 /**
@@ -681,19 +703,20 @@ function getTag(value) {
   return objectToString.call(value);
 }
 
-// Fallback for IE 11 providing `toStringTag` values for maps and sets.
-if ((Map && getTag(new Map) != mapTag) || (Set && getTag(new Set) != setTag)) {
+// Fallback for IE 11 providing `toStringTag` values for maps, sets, and weakmaps.
+if ((Map && getTag(new Map) != mapTag) ||
+    (Set && getTag(new Set) != setTag) ||
+    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
   getTag = function(value) {
     var result = objectToString.call(value),
         Ctor = result == objectTag ? value.constructor : null,
         ctorString = typeof Ctor == 'function' ? funcToString.call(Ctor) : '';
 
     if (ctorString) {
-      if (ctorString == mapCtorString) {
-        return mapTag;
-      }
-      if (ctorString == setCtorString) {
-        return setTag;
+      switch (ctorString) {
+        case mapCtorString: return mapTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
       }
     }
     return result;
@@ -750,7 +773,7 @@ function initCloneByTag(object, tag, isDeep) {
   var Ctor = object.constructor;
   switch (tag) {
     case arrayBufferTag:
-      return cloneBuffer(object);
+      return cloneArrayBuffer(object);
 
     case boolTag:
     case dateTag:
@@ -1003,63 +1026,7 @@ function isNative(value) {
 }
 
 /**
- * Checks if `value` is classified as a `Symbol` primitive or object.
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
- * @example
- *
- * _.isSymbol(Symbol.iterator);
- * // => true
- *
- * _.isSymbol('abc');
- * // => false
- */
-function isSymbol(value) {
-  return typeof value == 'symbol' ||
-    (isObjectLike(value) && objectToString.call(value) == symbolTag);
-}
-
-/**
- * Converts `value` to a string if it's not one. An empty string is returned
- * for `null` and `undefined` values. The sign of `-0` is preserved.
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to process.
- * @returns {string} Returns the string.
- * @example
- *
- * _.toString(null);
- * // => ''
- *
- * _.toString(-0);
- * // => '-0'
- *
- * _.toString([1, 2, 3]);
- * // => '1,2,3'
- */
-function toString(value) {
-  // Exit early for strings to avoid a performance hit in some environments.
-  if (typeof value == 'string') {
-    return value;
-  }
-  if (value == null) {
-    return '';
-  }
-  if (isSymbol(value)) {
-    return Symbol ? symbolToString.call(value) : '';
-  }
-  var result = (value + '');
-  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
-}
-
-/**
- * This method returns the first argument provided to it.
+ * This method returns the first argument given to it.
  *
  * @static
  * @memberOf _

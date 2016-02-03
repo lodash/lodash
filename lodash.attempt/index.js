@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -18,7 +18,7 @@ var errorTag = '[object Error]';
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} args The arguments to invoke `func` with.
+ * @param {Array} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
@@ -36,7 +36,8 @@ function apply(func, thisArg, args) {
 var objectProto = Object.prototype;
 
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -47,9 +48,11 @@ var objectToString = objectProto.toString;
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
+ * @returns {boolean} Returns `true` if `value` is an error object,
+ *  else `false`.
  * @example
  *
  * _.isError(new Error);
@@ -62,9 +65,8 @@ function isError(value) {
   if (!isObjectLike(value)) {
     return false;
   }
-  var Ctor = value.constructor;
   return (objectToString.call(value) == errorTag) ||
-    (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
+    (typeof value.message == 'string' && typeof value.name == 'string');
 }
 
 /**
@@ -73,6 +75,7 @@ function isError(value) {
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
@@ -100,8 +103,10 @@ function isObjectLike(value) {
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Util
  * @param {Function} func The function to attempt.
+ * @param {...*} [args] The arguments to invoke `func` with.
  * @returns {*} Returns the `func` result or error object.
  * @example
  *

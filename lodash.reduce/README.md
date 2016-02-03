@@ -1,4 +1,4 @@
-# lodash.reduce v4.1.0
+# lodash.reduce v4.1.1
 
 The [lodash](https://lodash.com/) method `_.reduce` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var reduce = require('lodash.reduce');
 ```
 
-See the [documentation](https://lodash.com/docs#reduce) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.reduce) for more details.
+See the [documentation](https://lodash.com/docs#reduce) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.reduce) for more details.

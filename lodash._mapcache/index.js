@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -73,6 +73,7 @@ var Map = getNative(root, 'Map'),
  * Creates an hash object.
  *
  * @private
+ * @constructor
  * @returns {Object} Returns the new hash object.
  */
 function Hash() {}
@@ -133,6 +134,7 @@ function hashSet(hash, key, value) {
  * Creates a map cache object to store key-value pairs.
  *
  * @private
+ * @constructor
  * @param {Array} [values] The values to cache.
  */
 function MapCache(values) {
@@ -154,7 +156,11 @@ function MapCache(values) {
  * @memberOf MapCache
  */
 function mapClear() {
-  this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+  this.__data__ = {
+    'hash': new Hash,
+    'map': Map ? new Map : [],
+    'string': new Hash
+  };
 }
 
 /**
@@ -336,7 +342,7 @@ function getNative(object, key) {
 function isKeyable(value) {
   var type = typeof value;
   return type == 'number' || type == 'boolean' ||
-    (type == 'string' && value !== '__proto__') || value == null;
+    (type == 'string' && value != '__proto__') || value == null;
 }
 
 /**

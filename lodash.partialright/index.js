@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -31,12 +31,25 @@ function replaceHolders(array, placeholder) {
       result = [];
 
   while (++index < length) {
-    if (array[index] === placeholder) {
+    var value = array[index];
+    if (value === placeholder || value === PLACEHOLDER) {
       array[index] = PLACEHOLDER;
       result[++resIndex] = index;
     }
   }
   return result;
+}
+
+/**
+ * Gets the argument placeholder value for `func`.
+ *
+ * @private
+ * @param {Function} func The function to inspect.
+ * @returns {*} Returns the placeholder value.
+ */
+function getPlaceholder(func) {
+  var object = func;
+  return object.placeholder;
 }
 
 /**
@@ -71,9 +84,7 @@ function replaceHolders(array, placeholder) {
  * // => 'hello fred'
  */
 var partialRight = rest(function(func, partials) {
-  var placeholder = partialRight.placeholder,
-      holders = replaceHolders(partials, placeholder);
-
+  var holders = replaceHolders(partials, getPlaceholder(partialRight));
   return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
 });
 

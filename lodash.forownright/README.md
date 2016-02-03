@@ -1,4 +1,4 @@
-# lodash.forownright v4.1.0
+# lodash.forownright v4.1.1
 
 The [lodash](https://lodash.com/) method `_.forOwnRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var forOwnRight = require('lodash.forownright');
 ```
 
-See the [documentation](https://lodash.com/docs#forOwnRight) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.forownright) for more details.
+See the [documentation](https://lodash.com/docs#forOwnRight) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.forownright) for more details.

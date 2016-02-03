@@ -44,7 +44,9 @@ var BIND_FLAG = 1,
 var bind = rest(function(func, thisArg, partials) {
   var bitmask = BIND_FLAG;
   if (partials.length) {
-    var holders = replaceHolders(partials, bind.placeholder);
+    var placeholder = bind.placeholder,
+        holders = replaceHolders(partials, placeholder);
+
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(func, bitmask, thisArg, partials, holders);

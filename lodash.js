@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash -d -o ./foo/lodash.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.2.0';
+  var VERSION = '4.2.1';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -4123,7 +4123,7 @@
             index = length,
             args = Array(length),
             fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
-            placeholder = wrapper.placeholder;
+            placeholder = lodash.placeholder || wrapper.placeholder;
 
         while (index--) {
           args[index] = arguments[index];
@@ -4239,7 +4239,7 @@
           args = composeArgsRight(args, partialsRight, holdersRight);
         }
         if (isCurry || isCurryRight) {
-          var placeholder = wrapper.placeholder,
+          var placeholder = lodash.placeholder || wrapper.placeholder,
               argsHolders = replaceHolders(args, placeholder);
 
           length -= argsHolders.length;
@@ -6129,7 +6129,7 @@
 
     /**
      * This method is like `_.pullAll` except that it accepts `iteratee` which is
-     * invoked for each element of `array` and `values` to to generate the criterion
+     * invoked for each element of `array` and `values` to generate the criterion
      * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
      *
      * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
@@ -8346,7 +8346,9 @@
     var bind = rest(function(func, thisArg, partials) {
       var bitmask = BIND_FLAG;
       if (partials.length) {
-        var holders = replaceHolders(partials, bind.placeholder);
+        var placeholder = lodash.placeholder || bind.placeholder,
+            holders = replaceHolders(partials, placeholder);
+
         bitmask |= PARTIAL_FLAG;
       }
       return createWrapper(func, bitmask, thisArg, partials, holders);
@@ -8399,7 +8401,9 @@
     var bindKey = rest(function(object, key, partials) {
       var bitmask = BIND_FLAG | BIND_KEY_FLAG;
       if (partials.length) {
-        var holders = replaceHolders(partials, bindKey.placeholder);
+        var placeholder = lodash.placeholder || bindKey.placeholder,
+            holders = replaceHolders(partials, placeholder);
+
         bitmask |= PARTIAL_FLAG;
       }
       return createWrapper(key, bitmask, object, partials, holders);
@@ -8448,7 +8452,7 @@
     function curry(func, arity, guard) {
       arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = curry.placeholder;
+      result.placeholder = lodash.placeholder || curry.placeholder;
       return result;
     }
 
@@ -8492,7 +8496,7 @@
     function curryRight(func, arity, guard) {
       arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = curryRight.placeholder;
+      result.placeholder = lodash.placeholder || curryRight.placeholder;
       return result;
     }
 
@@ -8507,7 +8511,7 @@
      * to the debounced function return the result of the last `func` invocation.
      *
      * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-     * on the trailing edge of the timeout only if the the debounced function is
+     * on the trailing edge of the timeout only if the debounced function is
      * invoked more than once during the `wait` timeout.
      *
      * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
@@ -8914,7 +8918,9 @@
      * // => 'hi fred'
      */
     var partial = rest(function(func, partials) {
-      var holders = replaceHolders(partials, partial.placeholder);
+      var placeholder = lodash.placeholder || partial.placeholder,
+          holders = replaceHolders(partials, placeholder);
+
       return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
     });
 
@@ -8950,7 +8956,9 @@
      * // => 'hello fred'
      */
     var partialRight = rest(function(func, partials) {
-      var holders = replaceHolders(partials, partialRight.placeholder);
+      var placeholder = lodash.placeholder || partialRight.placeholder,
+          holders = replaceHolders(partials, placeholder);
+
       return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
     });
 
@@ -9089,7 +9097,7 @@
      * result of the last `func` invocation.
      *
      * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
-     * on the trailing edge of the timeout only if the the throttled function is
+     * on the trailing edge of the timeout only if the throttled function is
      * invoked more than once during the `wait` timeout.
      *
      * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)

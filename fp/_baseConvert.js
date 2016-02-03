@@ -30,7 +30,7 @@ function baseConvert(util, name, func) {
     'iteratee': util.iteratee,
     'keys': util.keys,
     'rearg': util.rearg,
-    'rest': util.rest
+    'spread': util.spread
   };
 
   var ary = _.ary,
@@ -156,14 +156,15 @@ function baseConvert(util, name, func) {
     if (wrapper) {
       return wrapper(func);
     }
+    var wrapped = func;
     if (mutateMap.array[name]) {
-      func = immutWrap(func, cloneArray);
+      wrapped = immutWrap(func, cloneArray);
     }
     else if (mutateMap.object[name]) {
-      func = immutWrap(func, createCloner(func));
+      wrapped = immutWrap(func, createCloner(func));
     }
     else if (mutateMap.set[name]) {
-      func = immutWrap(func, cloneDeep);
+      wrapped = immutWrap(func, cloneDeep);
     }
     var result;
     each(mapping.caps, function(cap) {
@@ -174,8 +175,8 @@ function baseConvert(util, name, func) {
               spreadStart = mapping.methodSpread[name];
 
           result = spreadStart === undefined
-            ? ary(func, cap)
-            : spread(func, spreadStart);
+            ? ary(wrapped, cap)
+            : spread(wrapped, spreadStart);
 
           if (cap > 1 && !mapping.skipRearg[name]) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
@@ -196,7 +197,7 @@ function baseConvert(util, name, func) {
 
     result || (result = func);
     if (mapping.placeholder[name]) {
-      result.placeholder = placeholder;
+      func.placeholder = result.placeholder = placeholder;
     }
     return result;
   };
@@ -204,8 +205,8 @@ function baseConvert(util, name, func) {
   if (!isLib) {
     return wrap(name, func);
   }
-  // Add placeholder alias.
-  _.__ = placeholder;
+  // Add placeholder.
+  _.placeholder = placeholder;
 
   // Iterate over methods for the current ary cap.
   var pairs = [];

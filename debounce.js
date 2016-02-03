@@ -19,7 +19,7 @@ var nativeMax = Math.max;
  * to the debounced function return the result of the last `func` invocation.
  *
  * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
- * on the trailing edge of the timeout only if the the debounced function is
+ * on the trailing edge of the timeout only if the debounced function is
  * invoked more than once during the `wait` timeout.
  *
  * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)

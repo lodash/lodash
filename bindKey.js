@@ -54,7 +54,9 @@ var BIND_FLAG = 1,
 var bindKey = rest(function(object, key, partials) {
   var bitmask = BIND_FLAG | BIND_KEY_FLAG;
   if (partials.length) {
-    var holders = replaceHolders(partials, bindKey.placeholder);
+    var placeholder = bindKey.placeholder,
+        holders = replaceHolders(partials, placeholder);
+
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(key, bitmask, object, partials, holders);

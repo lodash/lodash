@@ -1,5 +1,6 @@
 /** Used to map aliases to their real names. */
 exports.aliasToReal = {
+  '__': 'placeholder',
   'all': 'some',
   'allPass': 'overEvery',
   'apply': 'spread',
@@ -60,9 +61,9 @@ exports.aryMethod = {
       'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
       'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
       'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
-      'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-      'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
-      'zipObjectDeep'
+      'takeWhile', 'tap', 'throttle', 'thru', 'times', 'trimChars', 'trimCharsEnd',
+      'trimCharsStart', 'truncate', 'union', 'uniqBy', 'uniqWith', 'unset',
+      'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
     ],
   3: [
       'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
@@ -212,11 +213,15 @@ exports.realToAlias = (function() {
 exports.rename = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
-  'getOr': 'get'
+  'getOr': 'get',
+  'trimChars': 'trim',
+  'trimCharsEnd': 'trimEnd',
+  'trimCharsStart': 'trimStart'
 };
 
 /** Used to track methods that skip `_.rearg`. */
 exports.skipRearg = {
+  'add': true,
   'assign': true,
   'assignIn': true,
   'concat': true,
@@ -228,6 +233,7 @@ exports.skipRearg = {
   'random': true,
   'range': true,
   'rangeRight': true,
+  'subtract': true,
   'zip': true,
   'zipObject': true
 };

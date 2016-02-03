@@ -30,7 +30,7 @@ function baseConvert(util, name, func) {
     'iteratee': util.iteratee,
     'keys': util.keys,
     'rearg': util.rearg,
-    'rest': util.rest
+    'spread': util.spread
   };
 
   var ary = _.ary,

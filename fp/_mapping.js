@@ -1,5 +1,6 @@
 /** Used to map aliases to their real names. */
 exports.aliasToReal = {
+  '__': 'placeholder',
   'all': 'some',
   'allPass': 'overEvery',
   'apply': 'spread',

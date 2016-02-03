@@ -105,7 +105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'iteratee': util.iteratee,
 	    'keys': util.keys,
 	    'rearg': util.rearg,
-	    'rest': util.rest
+	    'spread': util.spread
 	  };
 
 	  var ary = _.ary,
@@ -231,14 +231,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (wrapper) {
 	      return wrapper(func);
 	    }
+	    var wrapped = func;
 	    if (mutateMap.array[name]) {
-	      func = immutWrap(func, cloneArray);
+	      wrapped = immutWrap(func, cloneArray);
 	    }
 	    else if (mutateMap.object[name]) {
-	      func = immutWrap(func, createCloner(func));
+	      wrapped = immutWrap(func, createCloner(func));
 	    }
 	    else if (mutateMap.set[name]) {
-	      func = immutWrap(func, cloneDeep);
+	      wrapped = immutWrap(func, cloneDeep);
 	    }
 	    var result;
 	    each(mapping.caps, function(cap) {
@@ -249,8 +250,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	              spreadStart = mapping.methodSpread[name];
 
 	          result = spreadStart === undefined
-	            ? ary(func, cap)
-	            : spread(func, spreadStart);
+	            ? ary(wrapped, cap)
+	            : spread(wrapped, spreadStart);
 
 	          if (cap > 1 && !mapping.skipRearg[name]) {
 	            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
@@ -271,7 +272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    result || (result = func);
 	    if (mapping.placeholder[name]) {
-	      result.placeholder = placeholder;
+	      func.placeholder = result.placeholder = placeholder;
 	    }
 	    return result;
 	  };
@@ -279,8 +280,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (!isLib) {
 	    return wrap(name, func);
 	  }
-	  // Add placeholder alias.
-	  _.__ = placeholder;
+	  // Add placeholder.
+	  _.placeholder = placeholder;
 
 	  // Iterate over methods for the current ary cap.
 	  var pairs = [];
@@ -317,6 +318,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map aliases to their real names. */
 	exports.aliasToReal = {
+	  '__': 'placeholder',
 	  'all': 'some',
 	  'allPass': 'overEvery',
 	  'apply': 'spread',
@@ -377,9 +379,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
 	      'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
 	      'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
-	      'takeWhile', 'tap', 'throttle', 'thru', 'times', 'truncate', 'union', 'uniqBy',
-	      'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
-	      'zipObjectDeep'
+	      'takeWhile', 'tap', 'throttle', 'thru', 'times', 'trimChars', 'trimCharsEnd',
+	      'trimCharsStart', 'truncate', 'union', 'uniqBy', 'uniqWith', 'unset',
+	      'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
 	    ],
 	  3: [
 	      'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
@@ -529,11 +531,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.rename = {
 	  'curryN': 'curry',
 	  'curryRightN': 'curryRight',
-	  'getOr': 'get'
+	  'getOr': 'get',
+	  'trimChars': 'trim',
+	  'trimCharsEnd': 'trimEnd',
+	  'trimCharsStart': 'trimStart'
 	};
 
 	/** Used to track methods that skip `_.rearg`. */
 	exports.skipRearg = {
+	  'add': true,
 	  'assign': true,
 	  'assignIn': true,
 	  'concat': true,
@@ -545,6 +551,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'random': true,
 	  'range': true,
 	  'rangeRight': true,
+	  'subtract': true,
 	  'zip': true,
 	  'zipObject': true
 	};

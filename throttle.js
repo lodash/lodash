@@ -15,7 +15,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * result of the last `func` invocation.
  *
  * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
- * on the trailing edge of the timeout only if the the throttled function is
+ * on the trailing edge of the timeout only if the throttled function is
  * invoked more than once during the `wait` timeout.
  *
  * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)

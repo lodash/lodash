@@ -39,7 +39,9 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
    * // => 'hi fred'
    */
   var partial = rest(function(func, partials) {
-    var holders = replaceHolders(partials, partial.placeholder);
+    var placeholder = partial.placeholder,
+        holders = replaceHolders(partials, placeholder);
+
     return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
   });
 

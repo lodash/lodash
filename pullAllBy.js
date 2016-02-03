@@ -2,7 +2,7 @@ define(['./_baseIteratee', './_basePullAllBy'], function(baseIteratee, basePullA
 
   /**
    * This method is like `_.pullAll` except that it accepts `iteratee` which is
-   * invoked for each element of `array` and `values` to to generate the criterion
+   * invoked for each element of `array` and `values` to generate the criterion
    * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
    *
    * **Note:** Unlike `_.differenceBy`, this method mutates `array`.

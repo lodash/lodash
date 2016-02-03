@@ -1,10 +1,10 @@
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
 /** Used as references for various `Number` constants. */
@@ -13,16 +13,6 @@ var MAX_SAFE_INTEGER = 9007199254740991;
 /** `Object#toString` result references. */
 var funcTag = '[object Function]',
     genTag = '[object GeneratorFunction]';
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objectToString = objectProto.toString;
 
 /**
  * The base implementation of `_.property` without support for deep paths.
@@ -36,6 +26,16 @@ function baseProperty(key) {
     return object == null ? undefined : object[key];
   };
 }
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
 
 /**
  * Gets the "length" property value of `object`.
@@ -116,8 +116,7 @@ function isArrayLikeObject(value) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);

@@ -1,4 +1,4 @@
-# lodash.toplainobject v4.0.3
+# lodash.toplainobject v4.0.4
 
 The [lodash](https://lodash.com/) method `_.toPlainObject` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var toPlainObject = require('lodash.toplainobject');
 ```
 
-See the [documentation](https://lodash.com/docs#toPlainObject) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.toplainobject) for more details.
+See the [documentation](https://lodash.com/docs#toPlainObject) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.toplainobject) for more details.

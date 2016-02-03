@@ -46,8 +46,7 @@ var freeParseInt = parseInt;
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
-  var length = args.length;
-  switch (length) {
+  switch (args.length) {
     case 0: return func.call(thisArg);
     case 1: return func.call(thisArg, args[0]);
     case 2: return func.call(thisArg, args[0], args[1]);
@@ -68,6 +67,35 @@ var objectToString = objectProto.toString;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = array;
+    return apply(func, this, otherArgs);
+  };
+}
 
 /**
  * Creates a function that invokes `func` with the `this` binding of the
@@ -98,29 +126,8 @@ function rest(func, start) {
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  start = nativeMax(start === undefined ? (func.length - 1) : toInteger(start), 0);
-  return function() {
-    var args = arguments,
-        index = -1,
-        length = nativeMax(args.length - start, 0),
-        array = Array(length);
-
-    while (++index < length) {
-      array[index] = args[start + index];
-    }
-    switch (start) {
-      case 0: return func.call(this, array);
-      case 1: return func.call(this, args[0], array);
-      case 2: return func.call(this, args[0], args[1], array);
-    }
-    var otherArgs = Array(start + 1);
-    index = -1;
-    while (++index < start) {
-      otherArgs[index] = args[index];
-    }
-    otherArgs[start] = array;
-    return apply(func, this, otherArgs);
-  };
+  start = start === undefined ? start : toInteger(start);
+  return baseRest(func, start);
 }
 
 /**
@@ -131,8 +138,7 @@ function rest(func, start) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -215,8 +221,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -268,7 +273,7 @@ function toFinite(value) {
 /**
  * Converts `value` to an integer.
  *
- * **Note:** This function is loosely based on
+ * **Note:** This method is loosely based on
  * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
  *
  * @static

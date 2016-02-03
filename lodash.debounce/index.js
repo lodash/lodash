@@ -1,10 +1,10 @@
 /**
- * lodash 4.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
 /** Used as the `TypeError` message for "Functions" methods. */
@@ -15,7 +15,8 @@ var NAN = 0 / 0;
 
 /** `Object#toString` result references. */
 var funcTag = '[object Function]',
-    genTag = '[object GeneratorFunction]';
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
 
 /** Used to match leading and trailing whitespace. */
 var reTrim = /^\s+|\s+$/g;
@@ -36,13 +37,15 @@ var freeParseInt = parseInt;
 var objectProto = Object.prototype;
 
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+var nativeMax = Math.max,
+    nativeMin = Math.min;
 
 /**
  * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -50,6 +53,7 @@ var nativeMax = Math.max;
  *
  * @static
  * @memberOf _
+ * @since 2.4.0
  * @type {Function}
  * @category Date
  * @returns {number} Returns the timestamp.
@@ -58,7 +62,7 @@ var nativeMax = Math.max;
  * _.defer(function(stamp) {
  *   console.log(_.now() - stamp);
  * }, _.now());
- * // => logs the number of milliseconds it took for the deferred function to be invoked
+ * // => Logs the number of milliseconds it took for the deferred function to be invoked.
  */
 var now = Date.now;
 
@@ -76,21 +80,22 @@ var now = Date.now;
  * on the trailing edge of the timeout only if the debounced function is
  * invoked more than once during the `wait` timeout.
  *
- * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `_.debounce` and `_.throttle`.
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Function
  * @param {Function} func The function to debounce.
  * @param {number} [wait=0] The number of milliseconds to delay.
- * @param {Object} [options] The options object.
- * @param {boolean} [options.leading=false] Specify invoking on the leading
- *  edge of the timeout.
- * @param {number} [options.maxWait] The maximum time `func` is allowed to be
- *  delayed before it's invoked.
- * @param {boolean} [options.trailing=true] Specify invoking on the trailing
- *  edge of the timeout.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
  * @returns {Function} Returns the new debounced function.
  * @example
  *
@@ -112,14 +117,12 @@ var now = Date.now;
  * jQuery(window).on('popstate', debounced.cancel);
  */
 function debounce(func, wait, options) {
-  var args,
-      maxTimeoutId,
+  var lastArgs,
+      lastThis,
       result,
-      stamp,
-      thisArg,
-      timeoutId,
-      trailingCall,
-      lastCalled = 0,
+      timerId,
+      lastCallTime = 0,
+      lastInvokeTime = 0,
       leading = false,
       maxWait = false,
       trailing = true;
@@ -134,92 +137,94 @@ function debounce(func, wait, options) {
     trailing = 'trailing' in options ? !!options.trailing : trailing;
   }
 
-  function cancel() {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    if (maxTimeoutId) {
-      clearTimeout(maxTimeoutId);
-    }
-    lastCalled = 0;
-    args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
-  }
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
 
-  function complete(isCalled, id) {
-    if (id) {
-      clearTimeout(id);
-    }
-    maxTimeoutId = timeoutId = trailingCall = undefined;
-    if (isCalled) {
-      lastCalled = now();
-      result = func.apply(thisArg, args);
-      if (!timeoutId && !maxTimeoutId) {
-        args = thisArg = undefined;
-      }
-    }
-  }
-
-  function delayed() {
-    var remaining = wait - (now() - stamp);
-    if (remaining <= 0 || remaining > wait) {
-      complete(trailingCall, maxTimeoutId);
-    } else {
-      timeoutId = setTimeout(delayed, remaining);
-    }
-  }
-
-  function flush() {
-    if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
-      result = func.apply(thisArg, args);
-    }
-    cancel();
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
     return result;
   }
 
-  function maxDelayed() {
-    complete(trailing, timeoutId);
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time;
+    // Start the timer for the trailing edge.
+    timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        result = wait - timeSinceLastCall;
+
+    return maxWait === false ? result : nativeMin(result, maxWait - timeSinceLastInvoke);
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime;
+
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (!lastCallTime || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxWait !== false && timeSinceLastInvoke >= maxWait));
+  }
+
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    // Restart the timer.
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    clearTimeout(timerId);
+    timerId = undefined;
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+    lastCallTime = lastInvokeTime = 0;
+    lastArgs = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
   }
 
   function debounced() {
-    args = arguments;
-    stamp = now();
-    thisArg = this;
-    trailingCall = trailing && (timeoutId || !leading);
+    var time = now(),
+        isInvoking = shouldInvoke(time);
 
-    if (maxWait === false) {
-      var leadingCall = leading && !timeoutId;
-    } else {
-      if (!lastCalled && !maxTimeoutId && !leading) {
-        lastCalled = stamp;
-      }
-      var remaining = maxWait - (stamp - lastCalled);
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
 
-      var isCalled = (remaining <= 0 || remaining > maxWait) &&
-        (leading || maxTimeoutId);
-
-      if (isCalled) {
-        if (maxTimeoutId) {
-          maxTimeoutId = clearTimeout(maxTimeoutId);
-        }
-        lastCalled = stamp;
-        result = func.apply(thisArg, args);
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
       }
-      else if (!maxTimeoutId) {
-        maxTimeoutId = setTimeout(maxDelayed, remaining);
-      }
-    }
-    if (isCalled && timeoutId) {
-      timeoutId = clearTimeout(timeoutId);
-    }
-    else if (!timeoutId && wait !== maxWait) {
-      timeoutId = setTimeout(delayed, wait);
-    }
-    if (leadingCall) {
-      isCalled = true;
-      result = func.apply(thisArg, args);
-    }
-    if (isCalled && !timeoutId && !maxTimeoutId) {
-      args = thisArg = undefined;
+      // Handle invocations in a tight loop.
+      clearTimeout(timerId);
+      timerId = setTimeout(timerExpired, wait);
+      return invokeFunc(lastCallTime);
     }
     return result;
   }
@@ -233,9 +238,11 @@ function debounce(func, wait, options) {
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -253,11 +260,13 @@ function isFunction(value) {
 }
 
 /**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is an object, else `false`.
@@ -281,10 +290,62 @@ function isObject(value) {
 }
 
 /**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
  * Converts `value` to a number.
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to process.
  * @returns {number} Returns the number.
@@ -303,6 +364,12 @@ function isObject(value) {
  * // => 3
  */
 function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
   if (isObject(value)) {
     var other = isFunction(value.valueOf) ? value.valueOf() : value;
     value = isObject(other) ? (other + '') : other;

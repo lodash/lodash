@@ -33,6 +33,29 @@ var reIsOctal = /^0o[0-7]+$/i;
 var freeParseInt = parseInt;
 
 /**
+ * The base implementation of `_.findIndex` and `_.findLastIndex` without
+ * support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {number} fromIndex The index to search from.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseFindIndex(array, predicate, fromIndex, fromRight) {
+  var length = array.length,
+      index = fromIndex + (fromRight ? 1 : -1);
+
+  while ((fromRight ? index-- : ++index < length)) {
+    if (predicate(array[index], index, array)) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+/**
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
  *
  * @private
@@ -43,7 +66,7 @@ var freeParseInt = parseInt;
  */
 function baseIndexOf(array, value, fromIndex) {
   if (value !== value) {
-    return indexOfNaN(array, fromIndex);
+    return baseFindIndex(array, baseIsNaN, fromIndex);
   }
   var index = fromIndex - 1,
       length = array.length;
@@ -57,25 +80,14 @@ function baseIndexOf(array, value, fromIndex) {
 }
 
 /**
- * Gets the index at which the first occurrence of `NaN` is found in `array`.
+ * The base implementation of `_.isNaN` without support for number objects.
  *
  * @private
- * @param {Array} array The array to search.
- * @param {number} fromIndex The index to search from.
- * @param {boolean} [fromRight] Specify iterating from right to left.
- * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
  */
-function indexOfNaN(array, fromIndex, fromRight) {
-  var length = array.length,
-      index = fromIndex + (fromRight ? 0 : -1);
-
-  while ((fromRight ? index-- : ++index < length)) {
-    var other = array[index];
-    if (other !== other) {
-      return index;
-    }
-  }
-  return -1;
+function baseIsNaN(value) {
+  return value !== value;
 }
 
 /** Used for built-in method references. */
@@ -119,11 +131,11 @@ function indexOf(array, value, fromIndex) {
   if (!length) {
     return -1;
   }
-  fromIndex = toInteger(fromIndex);
-  if (fromIndex < 0) {
-    fromIndex = nativeMax(length + fromIndex, 0);
+  var index = fromIndex == null ? 0 : toInteger(fromIndex);
+  if (index < 0) {
+    index = nativeMax(length + index, 0);
   }
-  return baseIndexOf(array, value, fromIndex);
+  return baseIndexOf(array, value, index);
 }
 
 /**
@@ -134,8 +146,7 @@ function indexOf(array, value, fromIndex) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -218,8 +229,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -271,7 +281,7 @@ function toFinite(value) {
 /**
  * Converts `value` to an integer.
  *
- * **Note:** This function is loosely based on
+ * **Note:** This method is loosely based on
  * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
  *
  * @static

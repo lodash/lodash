@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.3 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -186,6 +186,41 @@ function isSymbol(value) {
 }
 
 /**
+ * Converts `value` to a finite number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * _.toFinite(3.2);
+ * // => 3.2
+ *
+ * _.toFinite(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toFinite(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toFinite('3.2');
+ * // => 3.2
+ */
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0;
+  }
+  value = toNumber(value);
+  if (value === INFINITY || value === -INFINITY) {
+    var sign = (value < 0 ? -1 : 1);
+    return sign * MAX_INTEGER;
+  }
+  return value === value ? value : 0;
+}
+
+/**
  * Converts `value` to an integer.
  *
  * **Note:** This function is loosely based on
@@ -199,7 +234,7 @@ function isSymbol(value) {
  * @returns {number} Returns the converted integer.
  * @example
  *
- * _.toInteger(3);
+ * _.toInteger(3.2);
  * // => 3
  *
  * _.toInteger(Number.MIN_VALUE);
@@ -208,20 +243,14 @@ function isSymbol(value) {
  * _.toInteger(Infinity);
  * // => 1.7976931348623157e+308
  *
- * _.toInteger('3');
+ * _.toInteger('3.2');
  * // => 3
  */
 function toInteger(value) {
-  if (!value) {
-    return value === 0 ? value : 0;
-  }
-  value = toNumber(value);
-  if (value === INFINITY || value === -INFINITY) {
-    var sign = (value < 0 ? -1 : 1);
-    return sign * MAX_INTEGER;
-  }
-  var remainder = value % 1;
-  return value === value ? (remainder ? value - remainder : value) : 0;
+  var result = toFinite(value),
+      remainder = result % 1;
+
+  return result === result ? (remainder ? result - remainder : result) : 0;
 }
 
 /**
@@ -235,8 +264,8 @@ function toInteger(value) {
  * @returns {number} Returns the number.
  * @example
  *
- * _.toNumber(3);
- * // => 3
+ * _.toNumber(3.2);
+ * // => 3.2
  *
  * _.toNumber(Number.MIN_VALUE);
  * // => 5e-324
@@ -244,8 +273,8 @@ function toInteger(value) {
  * _.toNumber(Infinity);
  * // => Infinity
  *
- * _.toNumber('3');
- * // => 3
+ * _.toNumber('3.2');
+ * // => 3.2
  */
 function toNumber(value) {
   if (typeof value == 'number') {

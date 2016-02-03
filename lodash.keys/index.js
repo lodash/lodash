@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -150,7 +150,7 @@ function indexKeys(object) {
  */
 function isPrototype(value) {
   var Ctor = value && value.constructor,
-      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+      proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
 
   return value === proto;
 }

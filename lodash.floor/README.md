@@ -1,4 +1,4 @@
-# lodash.floor v4.0.3
+# lodash.floor v4.0.4
 
 The [lodash](https://lodash.com/) method `_.floor` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var floor = require('lodash.floor');
 ```
 
-See the [documentation](https://lodash.com/docs#floor) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.floor) for more details.
+See the [documentation](https://lodash.com/docs#floor) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.floor) for more details.

@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.3 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -525,7 +525,6 @@ function createPartialWrapper(func, bitmask, thisArg, partials) {
  */
 function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
   var isCurry = bitmask & CURRY_FLAG,
-      newArgPos = argPos ? copyArray(argPos) : undefined,
       newHolders = isCurry ? holders : undefined,
       newHoldersRight = isCurry ? undefined : holders,
       newPartials = isCurry ? partials : undefined,
@@ -538,7 +537,7 @@ function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, par
     bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
   }
 
-  var result = wrapFunc(func, bitmask, thisArg, newPartials, newHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity);
+  var result = wrapFunc(func, bitmask, thisArg, newPartials, newHolders, newPartialsRight, newHoldersRight, argPos, ary, arity);
   result.placeholder = placeholder;
   return result;
 }

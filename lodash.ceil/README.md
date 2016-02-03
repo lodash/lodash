@@ -1,4 +1,4 @@
-# lodash.ceil v4.0.3
+# lodash.ceil v4.0.4
 
 The [lodash](https://lodash.com/) method `_.ceil` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var ceil = require('lodash.ceil');
 ```
 
-See the [documentation](https://lodash.com/docs#ceil) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.ceil) for more details.
+See the [documentation](https://lodash.com/docs#ceil) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.ceil) for more details.

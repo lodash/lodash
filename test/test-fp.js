@@ -510,16 +510,35 @@
 
   QUnit.module('placeholder methods');
 
-  _.forOwn(mapping.placeholder, function(truthy, methodName) {
-    var func = fp[methodName];
+  (function() {
+    QUnit.test('should support placeholders', function(assert) {
+      assert.expect(6);
 
-    QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
-      assert.expect(2);
+      _.each([[], fp.__], function(ph) {
+        fp.placeholder = ph;
 
-      assert.ok(_.isObject(func.placeholder));
-      assert.strictEqual(func.placeholder, fp.__);
+        var actual = fp.add(ph, 'b')('a');
+        assert.strictEqual(actual, 'ab');
+
+        actual = fp.slice(ph, 2)(1)(['a', 'b', 'c']);
+        assert.deepEqual(actual, ['b']);
+
+        actual = fp.fill(ph, 2)(1, '*')([1, 2, 3]);
+        assert.deepEqual(actual, [1, '*', 3]);
+      });
     });
-  });
+
+    _.forOwn(mapping.placeholder, function(truthy, methodName) {
+      var func = fp[methodName];
+
+      QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
+        assert.expect(2);
+
+        assert.ok(_.isObject(func.placeholder));
+        assert.strictEqual(func.placeholder, fp.__);
+      });
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

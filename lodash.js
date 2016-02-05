@@ -9445,6 +9445,27 @@
     var isArray = Array.isArray;
 
     /**
+     * Checks if `value` is classified as an `ArrayBuffer` object.
+     *
+     * @static
+     * @memberOf _
+     * @type Function
+     * @category Lang
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+     * @example
+     *
+     * _.isArrayBuffer(new ArrayBuffer(2));
+     * // => true
+     *
+     * _.isArrayBuffer(new Array(2));
+     * // => false
+     */
+    function isArrayBuffer(value) {
+      return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
+    }
+
+    /**
      * Checks if `value` is array-like. A value is considered array-like if it's
      * not a function and has a `value.length` that's an integer greater than or
      * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
@@ -14250,9 +14271,11 @@
     lodash.invoke = invoke;
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
+    lodash.isArrayBuffer = isArrayBuffer;
     lodash.isArrayLike = isArrayLike;
     lodash.isArrayLikeObject = isArrayLikeObject;
     lodash.isBoolean = isBoolean;
+    lodash.isBuffer = isBuffer;
     lodash.isDate = isDate;
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;

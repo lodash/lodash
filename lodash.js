@@ -3719,7 +3719,7 @@
      */
     function cloneBuffer(buffer) {
       var Ctor = buffer.constructor,
-          result = new Ctor(buffer.byteLength);
+          result = new Ctor(buffer.length);
 
       buffer.copy(result);
       return result;

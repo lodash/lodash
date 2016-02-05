@@ -2543,7 +2543,7 @@
         assert.expect(3);
 
         if (Buffer) {
-          var buffer = new Buffer([1, 2, 3]),
+          var buffer = new Buffer([1, 2]),
               actual = func(buffer);
 
           assert.strictEqual(actual.byteLength, buffer.byteLength);

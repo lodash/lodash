@@ -16,7 +16,7 @@ $ lodash core -o ./dist/lodash.core.js
 ## Documentation
 
   * [API Documentation](https://lodash.com/docs)
-  * [DevDocs – *a searchable interface for our documentation*](https://lodash.com/docs)
+  * [DevDocs – *a searchable interface for our documentation*](https://devdocs.io/lodash/)
 
 ## Download
 

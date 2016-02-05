@@ -44,6 +44,7 @@
       amd = root.define && define.amd,
       argv = root.process && process.argv,
       ArrayBuffer = root.ArrayBuffer,
+      Buffer = root.Buffer,
       defineProperty = Object.defineProperty,
       document = !phantom && root.document,
       body = root.document && root.document.body,
@@ -2536,6 +2537,22 @@
 
         var actual = func(regexp);
         assert.strictEqual(actual.lastIndex, 3);
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone buffers', function(assert) {
+        assert.expect(3);
+
+        if (Buffer) {
+          var buffer = new Buffer([1, 2, 3]),
+              actual = func(buffer);
+
+          assert.strictEqual(actual.byteLength, buffer.byteLength);
+          assert.strictEqual(actual.inspect(), buffer.inspect());
+          assert.notStrictEqual(actual, buffer);
+        }
+        else {
+          skipTest(assert, 3);
+        }
       });
 
       QUnit.test('`_.' + methodName + '` should clone prototype objects', function(assert) {

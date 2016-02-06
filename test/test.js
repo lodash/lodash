@@ -2540,7 +2540,7 @@
       });
 
       QUnit.test('`_.' + methodName + '` should clone buffers', function(assert) {
-        assert.expect(3);
+        assert.expect(4);
 
         if (Buffer) {
           var buffer = new Buffer([1, 2]),
@@ -2549,9 +2549,12 @@
           assert.strictEqual(actual.byteLength, buffer.byteLength);
           assert.strictEqual(actual.inspect(), buffer.inspect());
           assert.notStrictEqual(actual, buffer);
+
+          buffer[0] = 2;
+          assert.strictEqual(actual[0], isDeep ? 2 : 1);
         }
         else {
-          skipTest(assert, 3);
+          skipTest(assert, 4);
         }
       });
 

@@ -8004,6 +8004,50 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isBuffer');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for buffers', function(assert) {
+      assert.expect(1);
+
+      if (Buffer) {
+        assert.strictEqual(_.isBuffer(new Buffer(2)), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non buffers', function(assert) {
+      assert.expect(13);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isBuffer(value) : _.isBuffer();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isBuffer(args), false);
+      assert.strictEqual(_.isBuffer([1, 2, 3]), false);
+      assert.strictEqual(_.isBuffer(true), false);
+      assert.strictEqual(_.isBuffer(new Date), false);
+      assert.strictEqual(_.isBuffer(new Error), false);
+      assert.strictEqual(_.isBuffer(_), false);
+      assert.strictEqual(_.isBuffer(slice), false);
+      assert.strictEqual(_.isBuffer({ 'a': 1 }), false);
+      assert.strictEqual(_.isBuffer(1), false);
+      assert.strictEqual(_.isBuffer(/x/), false);
+      assert.strictEqual(_.isBuffer('a'), false);
+      assert.strictEqual(_.isBuffer(symbol), false);
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isDate');
 
   (function() {

@@ -525,29 +525,27 @@
       '',
       '  var object = {',
       "    'arguments': (function() { return arguments; }(1, 2, 3)),",
-      "    'array': [1, 2, 3],",
-      "    'arrayBuffer': new (root.ArrayBuffer || noop),",
+      "    'array': [1],",
+      "    'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
       "    'boolean': Object(false),",
       "    'date': new Date,",
       "    'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
       "    'function': noop,",
-      "    'map': new (root.Map || noop),",
+      "    'map': root.Map ? new root.Map : undefined,",
       "    'nan': NaN,",
       "    'null': null,",
       "    'number': Object(0),",
-      "    'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "    'object': { 'a': 1 },",
       "    'regexp': /x/,",
-      "    'set': new (root.Set || noop),",
+      "    'set': root.Set ? new root.Set : undefined,",
       "    'string': Object('a'),",
-      "    'symbol': Object((root.Symbol || noop)()),",
+      "    'symbol': root.Symbol ? root.Symbol() : undefined,",
       "    'undefined': undefined",
       '  };',
       '',
       "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
       '    var Ctor = root[type]',
-      '    if (Ctor) {',
-      '      object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
-      '    }',
+      '    object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '  });',
       '',
       '  return object;',
@@ -573,29 +571,27 @@
       '',
       'var object = {',
       "  'arguments': (function() { return arguments; }(1, 2, 3)),",
-      "  'array': [1, 2, 3],",
-      "  'arrayBuffer': new (root.ArrayBuffer || noop),",
+      "  'array': [1],",
+      "  'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
       "  'boolean': Object(false),",
       "  'date': new Date,",
       "  'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
       "  'function': noop,",
-      "  'map': new (root.Map || noop),",
+      "  'map': root.Map ? new root.Map : undefined,",
       "  'nan': NaN,",
       "  'null': null,",
       "  'number': Object(0),",
-      "  'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "  'object': { 'a': 1 },",
       "  'regexp': /x/,",
-      "  'set': new (root.Set || noop),",
+      "  'set': root.Set ? new root.Set : undefined,",
       "  'string': Object('a'),",
-      "  'symbol': Object((root.Symbol || noop)()),",
+      "  'symbol': root.Symbol ? root.Symbol() : undefined,",
       "  'undefined': undefined",
       '};',
       '',
       "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
-      '  if (Ctor) {',
-      '    object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
-      '  }',
+      '  object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '});',
       '',
       '_.assign(_._realm, object);',
@@ -2540,7 +2536,7 @@
       });
 
       QUnit.test('`_.' + methodName + '` should clone buffers', function(assert) {
-        assert.expect(3);
+        assert.expect(4);
 
         if (Buffer) {
           var buffer = new Buffer([1, 2]),
@@ -2549,9 +2545,12 @@
           assert.strictEqual(actual.byteLength, buffer.byteLength);
           assert.strictEqual(actual.inspect(), buffer.inspect());
           assert.notStrictEqual(actual, buffer);
+
+          buffer[0] = 2;
+          assert.strictEqual(actual[0], isDeep ? 2 : 1);
         }
         else {
-          skipTest(assert, 3);
+          skipTest(assert, 4);
         }
       });
 
@@ -7892,6 +7891,61 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isArrayBuffer');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for buffers', function(assert) {
+      assert.expect(1);
+
+      if (Buffer) {
+        assert.strictEqual(_.isArrayBuffer(new ArrayBuffer(2)), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non buffers', function(assert) {
+      assert.expect(13);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isArrayBuffer(value) : _.isArrayBuffer();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isArrayBuffer(args), false);
+      assert.strictEqual(_.isArrayBuffer([1, 2, 3]), false);
+      assert.strictEqual(_.isArrayBuffer(true), false);
+      assert.strictEqual(_.isArrayBuffer(new Date), false);
+      assert.strictEqual(_.isArrayBuffer(new Error), false);
+      assert.strictEqual(_.isArrayBuffer(_), false);
+      assert.strictEqual(_.isArrayBuffer(slice), false);
+      assert.strictEqual(_.isArrayBuffer({ 'a': 1 }), false);
+      assert.strictEqual(_.isArrayBuffer(1), false);
+      assert.strictEqual(_.isArrayBuffer(/x/), false);
+      assert.strictEqual(_.isArrayBuffer('a'), false);
+      assert.strictEqual(_.isArrayBuffer(symbol), false);
+    });
+
+    QUnit.test('should work with array buffers from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.arrayBuffer) {
+        assert.strictEqual(_.isArrayBuffer(realm.arrayBuffer), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isArrayLike');
 
   (function() {
@@ -7999,6 +8053,50 @@
       else {
         skipTest(assert);
       }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isBuffer');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for buffers', function(assert) {
+      assert.expect(1);
+
+      if (Buffer) {
+        assert.strictEqual(_.isBuffer(new Buffer(2)), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non buffers', function(assert) {
+      assert.expect(13);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isBuffer(value) : _.isBuffer();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isBuffer(args), false);
+      assert.strictEqual(_.isBuffer([1, 2, 3]), false);
+      assert.strictEqual(_.isBuffer(true), false);
+      assert.strictEqual(_.isBuffer(new Date), false);
+      assert.strictEqual(_.isBuffer(new Error), false);
+      assert.strictEqual(_.isBuffer(_), false);
+      assert.strictEqual(_.isBuffer(slice), false);
+      assert.strictEqual(_.isBuffer({ 'a': 1 }), false);
+      assert.strictEqual(_.isBuffer(1), false);
+      assert.strictEqual(_.isBuffer(/x/), false);
+      assert.strictEqual(_.isBuffer('a'), false);
+      assert.strictEqual(_.isBuffer(symbol), false);
     });
   }(1, 2, 3));
 
@@ -8779,10 +8877,10 @@
       assert.expect(4);
 
       if (realm.object) {
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, realm.object), true);
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, realm.object), false);
-        assert.strictEqual(_.isEqual([1, 2, 3], realm.array), true);
-        assert.strictEqual(_.isEqual([1, 2, 2], realm.array), false);
+        assert.strictEqual(_.isEqual([1], realm.array), true);
+        assert.strictEqual(_.isEqual([2], realm.array), false);
+        assert.strictEqual(_.isEqual({ 'a': 1 }, realm.object), true);
+        assert.strictEqual(_.isEqual({ 'a': 2 }, realm.object), false);
       }
       else {
         skipTest(assert, 4);
@@ -9921,58 +10019,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.isNull');
-
-  (function() {
-    var args = arguments;
-
-    QUnit.test('should return `true` for `null` values', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.isNull(null), true);
-    });
-
-    QUnit.test('should return `false` for non `null` values', function(assert) {
-      assert.expect(13);
-
-      var expected = lodashStable.map(falsey, function(value) {
-        return value === null;
-      });
-
-      var actual = lodashStable.map(falsey, function(value, index) {
-        return index ? _.isNull(value) : _.isNull();
-      });
-
-      assert.deepEqual(actual, expected);
-
-      assert.strictEqual(_.isNull(args), false);
-      assert.strictEqual(_.isNull([1, 2, 3]), false);
-      assert.strictEqual(_.isNull(true), false);
-      assert.strictEqual(_.isNull(new Date), false);
-      assert.strictEqual(_.isNull(new Error), false);
-      assert.strictEqual(_.isNull(_), false);
-      assert.strictEqual(_.isNull(slice), false);
-      assert.strictEqual(_.isNull({ 'a': 1 }), false);
-      assert.strictEqual(_.isNull(1), false);
-      assert.strictEqual(_.isNull(/x/), false);
-      assert.strictEqual(_.isNull('a'), false);
-      assert.strictEqual(_.isNull(symbol), false);
-    });
-
-    QUnit.test('should work with nulls from another realm', function(assert) {
-      assert.expect(1);
-
-      if (realm.object) {
-        assert.strictEqual(_.isNull(realm.null), true);
-      }
-      else {
-        skipTest(assert);
-      }
-    });
-  }(1, 2, 3));
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('lodash.isNil');
 
   (function() {
@@ -10028,6 +10074,58 @@
       }
       else {
         skipTest(assert, 2);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isNull');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for `null` values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isNull(null), true);
+    });
+
+    QUnit.test('should return `false` for non `null` values', function(assert) {
+      assert.expect(13);
+
+      var expected = lodashStable.map(falsey, function(value) {
+        return value === null;
+      });
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isNull(value) : _.isNull();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isNull(args), false);
+      assert.strictEqual(_.isNull([1, 2, 3]), false);
+      assert.strictEqual(_.isNull(true), false);
+      assert.strictEqual(_.isNull(new Date), false);
+      assert.strictEqual(_.isNull(new Error), false);
+      assert.strictEqual(_.isNull(_), false);
+      assert.strictEqual(_.isNull(slice), false);
+      assert.strictEqual(_.isNull({ 'a': 1 }), false);
+      assert.strictEqual(_.isNull(1), false);
+      assert.strictEqual(_.isNull(/x/), false);
+      assert.strictEqual(_.isNull('a'), false);
+      assert.strictEqual(_.isNull(symbol), false);
+    });
+
+    QUnit.test('should work with nulls from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.object) {
+        assert.strictEqual(_.isNull(realm.null), true);
+      }
+      else {
+        skipTest(assert);
       }
     });
   }(1, 2, 3));
@@ -10542,7 +10640,7 @@
             props = invoke(typedArrays, 'toLowerCase');
 
         var expected = lodashStable.map(props, function(key) {
-          return key in realm;
+          return realm[key] !== undefined;
         });
 
         var actual = lodashStable.map(props, function(key) {

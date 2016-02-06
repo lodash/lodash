@@ -2252,7 +2252,7 @@
             isFunc = tag == funcTag || tag == genTag;
 
         if (isBuffer(value)) {
-          return cloneBuffer(value);
+          return cloneBuffer(value, isDeep);
         }
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
           if (isHostObject(value)) {
@@ -3719,7 +3719,7 @@
      * @returns {Buffer} Returns the cloned buffer.
      */
     function cloneBuffer(buffer, isDeep) {
-      if (!isDeep) {
+      if (isDeep) {
         return buffer.slice();
       }
       var Ctor = buffer.constructor,

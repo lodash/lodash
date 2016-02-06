@@ -20399,6 +20399,28 @@
         }, 1);
       });
     });
+    
+    QUnit.test('should trigger a second throttled call as early as possible when invoked repeatedly', function(assert) {
+      assert.expect();
+
+      var done = assert.async();
+
+      var callCount = 0,
+          throttled = _.throttle(function() { callCount++; }, 32, {leading:false});
+
+      throttled();
+      setTimeout(function() {
+          throttled();
+      }, 40);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount,1);
+      }, 38);
+      setTimeout(function() {
+        assert.strictEqual(callCount,2);
+        done();
+      }, 70);
+    });
 
     QUnit.test('should apply default options', function(assert) {
       assert.expect(3);

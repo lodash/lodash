@@ -8881,10 +8881,10 @@
       assert.expect(4);
 
       if (realm.object) {
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, realm.object), true);
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, realm.object), false);
         assert.strictEqual(_.isEqual([1, 2, 3], realm.array), true);
         assert.strictEqual(_.isEqual([1, 2, 2], realm.array), false);
+        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, realm.object), true);
+        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, realm.object), false);
       }
       else {
         skipTest(assert, 4);

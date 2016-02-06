@@ -525,29 +525,27 @@
       '',
       '  var object = {',
       "    'arguments': (function() { return arguments; }(1, 2, 3)),",
-      "    'array': [1, 2, 3],",
-      "    'arrayBuffer': new (root.ArrayBuffer || noop),",
+      "    'array': [1],",
+      "    'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
       "    'boolean': Object(false),",
       "    'date': new Date,",
       "    'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
       "    'function': noop,",
-      "    'map': new (root.Map || noop),",
+      "    'map': root.Map ? new root.Map : undefined,",
       "    'nan': NaN,",
       "    'null': null,",
       "    'number': Object(0),",
-      "    'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "    'object': { 'a': 1 },",
       "    'regexp': /x/,",
-      "    'set': new (root.Set || noop),",
+      "    'set': root.Set ? new root.Set : undefined,",
       "    'string': Object('a'),",
-      "    'symbol': Object((root.Symbol || noop)()),",
+      "    'symbol': root.Symbol ? root.Symbol() : undefined,",
       "    'undefined': undefined",
       '  };',
       '',
       "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
       '    var Ctor = root[type]',
-      '    if (Ctor) {',
-      '      object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
-      '    }',
+      '    object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '  });',
       '',
       '  return object;',
@@ -573,29 +571,27 @@
       '',
       'var object = {',
       "  'arguments': (function() { return arguments; }(1, 2, 3)),",
-      "  'array': [1, 2, 3],",
-      "  'arrayBuffer': new (root.ArrayBuffer || noop),",
+      "  'array': [1],",
+      "  'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
       "  'boolean': Object(false),",
       "  'date': new Date,",
       "  'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
       "  'function': noop,",
-      "  'map': new (root.Map || noop),",
+      "  'map': root.Map ? new root.Map : undefined,",
       "  'nan': NaN,",
       "  'null': null,",
       "  'number': Object(0),",
-      "  'object': { 'a': 1, 'b': 2, 'c': 3 },",
+      "  'object': { 'a': 1 },",
       "  'regexp': /x/,",
-      "  'set': new (root.Set || noop),",
+      "  'set': root.Set ? new root.Set : undefined,",
       "  'string': Object('a'),",
-      "  'symbol': Object((root.Symbol || noop)()),",
+      "  'symbol': root.Symbol ? root.Symbol() : undefined,",
       "  'undefined': undefined",
       '};',
       '',
       "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
-      '  if (Ctor) {',
-      '    object[type.toLowerCase()] = new Ctor(new ArrayBuffer(24));',
-      '  }',
+      '  object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '});',
       '',
       '_.assign(_._realm, object);',
@@ -8881,10 +8877,10 @@
       assert.expect(4);
 
       if (realm.object) {
-        assert.strictEqual(_.isEqual([1, 2, 3], realm.array), true);
-        assert.strictEqual(_.isEqual([1, 2, 2], realm.array), false);
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 3 }, realm.object), true);
-        assert.strictEqual(_.isEqual({ 'a': 1, 'b': 2, 'c': 2 }, realm.object), false);
+        assert.strictEqual(_.isEqual([1], realm.array), true);
+        assert.strictEqual(_.isEqual([2], realm.array), false);
+        assert.strictEqual(_.isEqual({ 'a': 1 }, realm.object), true);
+        assert.strictEqual(_.isEqual({ 'a': 2 }, realm.object), false);
       }
       else {
         skipTest(assert, 4);
@@ -10644,7 +10640,7 @@
             props = invoke(typedArrays, 'toLowerCase');
 
         var expected = lodashStable.map(props, function(key) {
-          return key in realm;
+          return realm[key] !== undefined;
         });
 
         var actual = lodashStable.map(props, function(key) {

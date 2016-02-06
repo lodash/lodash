@@ -8649,7 +8649,7 @@
         if (maxWait === false) {
           var leadingCall = leading && !timeoutId;
         } else {
-          if (!maxTimeoutId && !leading) {
+          if (!lastCalled && !maxTimeoutId && !leading) {
             lastCalled = stamp;
           }
           var remaining = maxWait - (stamp - lastCalled),

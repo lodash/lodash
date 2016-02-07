@@ -35,7 +35,20 @@ Lodash is available in a variety of other builds & module formats.
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
 
 CDN copies are available on [cdnjs](https://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/).<br>
-Create [custom builds](https://lodash.com/custom-builds) with only the features you need.
+Create [custom builds](https://lodash.com/custom-builds) with only the features you need.  
+
+## What to Use lodash for and When to Use It  
+
+Lodash's thoroughly-tested methods cover gaps that exist in the JavaScript language itself and can be used for:
+
+* manipulating and iterating over arrays, strings, objects and collections;
+* testing and manipulating values;
+* creating composite functions that perform many common and less common programming tasks using syntax that is easily understandable;
+* and [much more](https://lodash.com/docs).
+
+An important feature of lodash is that it is **customizable with regard to build**. You can mix and match individual functions to create a build to suit your exact needs.  
+Loadash allows computations such as **producing unique arrays, intersections of collections, and many others**, to be performed with minimal effort.  
+Lodash can be used when **high-performance** is a consideration - it is made to be performant using sensible performance-achieving principles. The criteria for overall optimal performance is not simply speed-based, but balanced with other considerations in mind - result correctness, use context, common case use, and **extreme cross-browser consistency**. Yet due to successful efforts to optimize component methods, including case-use-control of code execution, the speed performance of lodash often exceeds functionally-similar native JavaScript utility options - if they exist.
 
 ## Further Reading
 

@@ -9,6 +9,15 @@ $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
 
+## What is Lodash
+
+Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
+numbers, objects, strings, etc. Lodash’s modular methods can be used for:
+
+* Iterating arrays, objects, & strings
+* Manipulating & testing values
+* Creating composite functions
+
 ## Community
 
 [![Gitter](https://badges.gitter.im/lodash/lodash.svg)](https://gitter.im/lodash/lodash)

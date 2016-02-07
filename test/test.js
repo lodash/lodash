@@ -43,8 +43,6 @@
   var phantom = root.phantom,
       amd = root.define && define.amd,
       argv = root.process && process.argv,
-      ArrayBuffer = root.ArrayBuffer,
-      Buffer = root.Buffer,
       defineProperty = Object.defineProperty,
       document = !phantom && root.document,
       body = root.document && root.document.body,
@@ -53,18 +51,28 @@
       freeze = Object.freeze,
       identity = function(value) { return value; },
       JSON = root.JSON,
-      Map = root.Map,
       noop = function() {},
       objToString = objectProto.toString,
       params = argv,
       push = arrayProto.push,
       realm = {},
+      slice = arrayProto.slice;
+
+  var ArrayBuffer = root.ArrayBuffer,
+      Buffer = root.Buffer,
+      Map = root.Map,
       Set = root.Set,
-      slice = arrayProto.slice,
       Symbol = root.Symbol,
-      symbol = Symbol ? Symbol('a') : undefined,
       Uint8Array = root.Uint8Array,
-      WeakMap = root.WeakMap;
+      WeakMap = root.WeakMap,
+      WeakSet = root.WeakSet;
+
+  var arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined,
+      map = Map ? new Map : undefined,
+      set = Set ? new Set : undefined,
+      symbol = Symbol ? Symbol('a') : undefined,
+      weakMap = WeakMap ? new WeakMap : undefined,
+      weakSet = WeakSet ? new WeakSet : undefined;
 
   /** Math helpers. */
   var add = function(x, y) { return x + y; },
@@ -540,7 +548,9 @@
       "    'set': root.Set ? new root.Set : undefined,",
       "    'string': Object('a'),",
       "    'symbol': root.Symbol ? root.Symbol() : undefined,",
-      "    'undefined': undefined",
+      "    'undefined': undefined,",
+      "    'weakMap': root.WeakMap ? new root.WeakMap : undefined,",
+      "    'weakSet': root.WeakSet ? new root.WeakSet : undefined",
       '  };',
       '',
       "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
@@ -586,7 +596,9 @@
       "  'set': root.Set ? new root.Set : undefined,",
       "  'string': Object('a'),",
       "  'symbol': root.Symbol ? root.Symbol() : undefined,",
-      "  'undefined': undefined",
+      "  'undefined': undefined,",
+      "  'weakMap': root.WeakMap ? new root.WeakMap : undefined,",
+      "  'weakSet': root.WeakSet ? new root.WeakSet : undefined",
       '};',
       '',
       "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
@@ -2503,11 +2515,9 @@
         assert.expect(2);
 
         if (ArrayBuffer) {
-          var buffer = new ArrayBuffer(10),
-              actual = func(buffer);
-
-          assert.strictEqual(actual.byteLength, buffer.byteLength);
-          assert.notStrictEqual(actual, buffer);
+          var actual = func(arrayBuffer);
+          assert.strictEqual(actual.byteLength, arrayBuffer.byteLength);
+          assert.notStrictEqual(actual, arrayBuffer);
         }
         else {
           skipTest(assert, 2);
@@ -7896,18 +7906,18 @@
   (function() {
     var args = arguments;
 
-    QUnit.test('should return `true` for buffers', function(assert) {
+    QUnit.test('should return `true` for array buffers', function(assert) {
       assert.expect(1);
 
-      if (Buffer) {
-        assert.strictEqual(_.isArrayBuffer(new ArrayBuffer(2)), true);
+      if (ArrayBuffer) {
+        assert.strictEqual(_.isArrayBuffer(arrayBuffer), true);
       }
       else {
         skipTest(assert);
       }
     });
 
-    QUnit.test('should return `false` for non buffers', function(assert) {
+    QUnit.test('should return `false` for non array buffers', function(assert) {
       assert.expect(13);
 
       var expected = lodashStable.map(falsey, alwaysFalse);
@@ -9432,6 +9442,62 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isMap');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for maps', function(assert) {
+      assert.expect(1);
+
+      if (Map) {
+        assert.strictEqual(_.isMap(map), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non maps', function(assert) {
+      assert.expect(14);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isMap(value) : _.isMap();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isMap(args), false);
+      assert.strictEqual(_.isMap([1, 2, 3]), false);
+      assert.strictEqual(_.isMap(true), false);
+      assert.strictEqual(_.isMap(new Date), false);
+      assert.strictEqual(_.isMap(new Error), false);
+      assert.strictEqual(_.isMap(_), false);
+      assert.strictEqual(_.isMap(slice), false);
+      assert.strictEqual(_.isMap({ 'a': 1 }), false);
+      assert.strictEqual(_.isMap(1), false);
+      assert.strictEqual(_.isMap(/x/), false);
+      assert.strictEqual(_.isMap('a'), false);
+      assert.strictEqual(_.isMap(symbol), false);
+      assert.strictEqual(_.isMap(weakMap), false);
+    });
+
+    QUnit.test('should work with maps from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.map) {
+        assert.strictEqual(_.isMap(realm.map), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isMatch');
 
   (function() {
@@ -10480,6 +10546,62 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isSet');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for sets', function(assert) {
+      assert.expect(1);
+
+      if (Set) {
+        assert.strictEqual(_.isSet(set), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non sets', function(assert) {
+      assert.expect(14);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isSet(value) : _.isSet();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isSet(args), false);
+      assert.strictEqual(_.isSet([1, 2, 3]), false);
+      assert.strictEqual(_.isSet(true), false);
+      assert.strictEqual(_.isSet(new Date), false);
+      assert.strictEqual(_.isSet(new Error), false);
+      assert.strictEqual(_.isSet(_), false);
+      assert.strictEqual(_.isSet(slice), false);
+      assert.strictEqual(_.isSet({ 'a': 1 }), false);
+      assert.strictEqual(_.isSet(1), false);
+      assert.strictEqual(_.isSet(/x/), false);
+      assert.strictEqual(_.isSet('a'), false);
+      assert.strictEqual(_.isSet(symbol), false);
+      assert.strictEqual(_.isSet(weakSet), false);
+    });
+
+    QUnit.test('should work with weak sets from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.set) {
+        assert.strictEqual(_.isSet(realm.set), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isString');
 
   (function() {
@@ -10717,6 +10839,118 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isWeakMap');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for weak maps', function(assert) {
+      assert.expect(1);
+
+      if (WeakMap) {
+        assert.strictEqual(_.isWeakMap(weakMap), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non weak maps', function(assert) {
+      assert.expect(14);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isWeakMap(value) : _.isWeakMap();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isWeakMap(args), false);
+      assert.strictEqual(_.isWeakMap([1, 2, 3]), false);
+      assert.strictEqual(_.isWeakMap(true), false);
+      assert.strictEqual(_.isWeakMap(new Date), false);
+      assert.strictEqual(_.isWeakMap(new Error), false);
+      assert.strictEqual(_.isWeakMap(_), false);
+      assert.strictEqual(_.isWeakMap(slice), false);
+      assert.strictEqual(_.isWeakMap({ 'a': 1 }), false);
+      assert.strictEqual(_.isWeakMap(map), false);
+      assert.strictEqual(_.isWeakMap(1), false);
+      assert.strictEqual(_.isWeakMap(/x/), false);
+      assert.strictEqual(_.isWeakMap('a'), false);
+      assert.strictEqual(_.isWeakMap(symbol), false);
+    });
+
+    QUnit.test('should work with weak maps from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.weakMap) {
+        assert.strictEqual(_.isWeakMap(realm.weakMap), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.isWeakSet');
+
+  (function() {
+    var args = arguments;
+
+    QUnit.test('should return `true` for weak sets', function(assert) {
+      assert.expect(1);
+
+      if (WeakSet) {
+        assert.strictEqual(_.isWeakSet(weakSet), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should return `false` for non weak sets', function(assert) {
+      assert.expect(14);
+
+      var expected = lodashStable.map(falsey, alwaysFalse);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        return index ? _.isWeakSet(value) : _.isWeakSet();
+      });
+
+      assert.deepEqual(actual, expected);
+
+      assert.strictEqual(_.isWeakSet(args), false);
+      assert.strictEqual(_.isWeakSet([1, 2, 3]), false);
+      assert.strictEqual(_.isWeakSet(true), false);
+      assert.strictEqual(_.isWeakSet(new Date), false);
+      assert.strictEqual(_.isWeakSet(new Error), false);
+      assert.strictEqual(_.isWeakSet(_), false);
+      assert.strictEqual(_.isWeakSet(slice), false);
+      assert.strictEqual(_.isWeakSet({ 'a': 1 }), false);
+      assert.strictEqual(_.isWeakSet(1), false);
+      assert.strictEqual(_.isWeakSet(/x/), false);
+      assert.strictEqual(_.isWeakSet('a'), false);
+      assert.strictEqual(_.isWeakSet(set), false);
+      assert.strictEqual(_.isWeakSet(symbol), false);
+    });
+
+    QUnit.test('should work with weak sets from another realm', function(assert) {
+      assert.expect(1);
+
+      if (realm.weakSet) {
+        assert.strictEqual(_.isWeakSet(realm.weakSet), true);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+  }(1, 2, 3));
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('isType checks');
 
   (function() {
@@ -10742,13 +10976,14 @@
     });
 
     QUnit.test('should not error on host objects (test in IE)', function(assert) {
-      assert.expect(20);
+      assert.expect(26);
 
       var funcs = [
-        'isArguments', 'isArray', 'isArrayLike', 'isBoolean', 'isDate',
-        'isElement', 'isError', 'isFinite', 'isFunction', 'isInteger', 'isNaN',
-        'isNil', 'isNull', 'isNumber', 'isObject', 'isObjectLike', 'isRegExp',
-        'isSafeInteger', 'isString', 'isUndefined'
+        'isArguments', 'isArray', 'isArrayBuffer', 'isArrayLike', 'isBoolean',
+        'isBuffer', 'isDate', 'isElement', 'isError', 'isFinite', 'isFunction',
+        'isInteger', 'isMap', 'isNaN', 'isNil', 'isNull', 'isNumber', 'isObject',
+        'isObjectLike', 'isRegExp', 'isSet', 'isSafeInteger', 'isString',
+        'isUndefined', 'isWeakMap', 'isWeakSet'
       ];
 
       lodashStable.each(funcs, function(methodName) {
@@ -23410,8 +23645,10 @@
       'includes',
       'isArguments',
       'isArray',
+      'isArrayBuffer',
       'isArrayLike',
       'isBoolean',
+      'isBuffer',
       'isDate',
       'isElement',
       'isEmpty',
@@ -23420,6 +23657,7 @@
       'isFinite',
       'isFunction',
       'isInteger',
+      'isMap',
       'isNaN',
       'isNative',
       'isNil',
@@ -23430,8 +23668,11 @@
       'isPlainObject',
       'isRegExp',
       'isSafeInteger',
+      'isSet',
       'isString',
       'isUndefined',
+      'isWeakMap',
+      'isWeakSet',
       'join',
       'kebabCase',
       'last',
@@ -23721,7 +23962,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(291);
+      assert.expect(295);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

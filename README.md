@@ -9,6 +9,13 @@ $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
 
+## What is lodash?
+
+Lodash is a collection, or library, of task-specific methods (helper functions) which facilitate functional programming in JavaScript.  
+Why is that needed? Many common tasks in programming require a lot of code to be written and can sometimes appear very unreadable, making the code harder to reason about and therefore more prone to errors. Lodash breaks many common tasks down into reuseable methods which can be used individually, or as building blocks to assemble more complex solutions. The Lodash library makes working on those common tasks much easier with its simplified and straightforward syntax. For developers who work on a large and complex project, using these tested and pre-built methods can reduce coding time and effort while yielding more modular and readable code. This frees developers to work on other unique problems in a project.  
+
+The name "Lodash", or "Lo-Dash" is a short for "lower dash", a character "_" used by this library to bind its methods to.
+
 ## Community
 
 [![Gitter](https://badges.gitter.im/lodash/lodash.svg)](https://gitter.im/lodash/lodash)

@@ -997,6 +997,12 @@
       assert.strictEqual(_.add(-6, -4), -10);
     });
 
+    QUnit.test('should return `0` when no arguments are given', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.add(), 0);
+    });
+
     QUnit.test('should not coerce arguments to numbers', function(assert) {
       assert.expect(2);
 
@@ -19194,6 +19200,12 @@
       assert.strictEqual(_.subtract(6, 4), 2);
       assert.strictEqual(_.subtract(-6, 4), -10);
       assert.strictEqual(_.subtract(-6, -4), -2);
+    });
+
+    QUnit.test('should return `0` when no arguments are given', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.subtract(), 0);
     });
 
     QUnit.test('should coerce arguments only numbers', function(assert) {

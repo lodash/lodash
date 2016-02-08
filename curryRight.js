@@ -47,4 +47,7 @@ function curryRight(func, arity, guard) {
   return result;
 }
 
+// Assign default placeholders.
+curryRight.placeholder = {};
+
 export default curryRight;

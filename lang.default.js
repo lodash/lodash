@@ -7,9 +7,11 @@ import gt from './gt';
 import gte from './gte';
 import isArguments from './isArguments';
 import isArray from './isArray';
+import isArrayBuffer from './isArrayBuffer';
 import isArrayLike from './isArrayLike';
 import isArrayLikeObject from './isArrayLikeObject';
 import isBoolean from './isBoolean';
+import isBuffer from './isBuffer';
 import isDate from './isDate';
 import isElement from './isElement';
 import isEmpty from './isEmpty';
@@ -20,6 +22,7 @@ import isFinite from './isFinite';
 import isFunction from './isFunction';
 import isInteger from './isInteger';
 import isLength from './isLength';
+import isMap from './isMap';
 import isMatch from './isMatch';
 import isMatchWith from './isMatchWith';
 import isNaN from './isNaN';
@@ -32,10 +35,13 @@ import isObjectLike from './isObjectLike';
 import isPlainObject from './isPlainObject';
 import isRegExp from './isRegExp';
 import isSafeInteger from './isSafeInteger';
+import isSet from './isSet';
 import isString from './isString';
 import isSymbol from './isSymbol';
 import isTypedArray from './isTypedArray';
 import isUndefined from './isUndefined';
+import isWeakMap from './isWeakMap';
+import isWeakSet from './isWeakSet';
 import lt from './lt';
 import lte from './lte';
 import toArray from './toArray';
@@ -48,13 +54,14 @@ import toString from './toString';
 
 export default {
   clone, cloneDeep, cloneDeepWith, cloneWith, eq,
-  gt, gte, isArguments, isArray, isArrayLike,
-  isArrayLikeObject, isBoolean, isDate, isElement, isEmpty,
-  isEqual, isEqualWith, isError, isFinite, isFunction,
-  isInteger, isLength, isMatch, isMatchWith, isNaN,
-  isNative, isNil, isNull, isNumber, isObject,
-  isObjectLike, isPlainObject, isRegExp, isSafeInteger, isString,
-  isSymbol, isTypedArray, isUndefined, lt, lte,
-  toArray, toInteger, toLength, toNumber, toPlainObject,
-  toSafeInteger, toString
+  gt, gte, isArguments, isArray, isArrayBuffer,
+  isArrayLike, isArrayLikeObject, isBoolean, isBuffer, isDate,
+  isElement, isEmpty, isEqual, isEqualWith, isError,
+  isFinite, isFunction, isInteger, isLength, isMap,
+  isMatch, isMatchWith, isNaN, isNative, isNil,
+  isNull, isNumber, isObject, isObjectLike, isPlainObject,
+  isRegExp, isSafeInteger, isSet, isString, isSymbol,
+  isTypedArray, isUndefined, isWeakMap, isWeakSet, lt,
+  lte, toArray, toInteger, toLength, toNumber,
+  toPlainObject, toSafeInteger, toString
 };

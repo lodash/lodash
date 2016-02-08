@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -107,9 +107,11 @@ export { default as invoke } from './invoke';
 export { default as invokeMap } from './invokeMap';
 export { default as isArguments } from './isArguments';
 export { default as isArray } from './isArray';
+export { default as isArrayBuffer } from './isArrayBuffer';
 export { default as isArrayLike } from './isArrayLike';
 export { default as isArrayLikeObject } from './isArrayLikeObject';
 export { default as isBoolean } from './isBoolean';
+export { default as isBuffer } from './isBuffer';
 export { default as isDate } from './isDate';
 export { default as isElement } from './isElement';
 export { default as isEmpty } from './isEmpty';
@@ -120,6 +122,7 @@ export { default as isFinite } from './isFinite';
 export { default as isFunction } from './isFunction';
 export { default as isInteger } from './isInteger';
 export { default as isLength } from './isLength';
+export { default as isMap } from './isMap';
 export { default as isMatch } from './isMatch';
 export { default as isMatchWith } from './isMatchWith';
 export { default as isNaN } from './isNaN';
@@ -132,10 +135,13 @@ export { default as isObjectLike } from './isObjectLike';
 export { default as isPlainObject } from './isPlainObject';
 export { default as isRegExp } from './isRegExp';
 export { default as isSafeInteger } from './isSafeInteger';
+export { default as isSet } from './isSet';
 export { default as isString } from './isString';
 export { default as isSymbol } from './isSymbol';
 export { default as isTypedArray } from './isTypedArray';
 export { default as isUndefined } from './isUndefined';
+export { default as isWeakMap } from './isWeakMap';
+export { default as isWeakSet } from './isWeakSet';
 export { default as iteratee } from './iteratee';
 export { default as join } from './join';
 export { default as kebabCase } from './kebabCase';

@@ -4,7 +4,7 @@ import isIndex from './_isIndex';
 import isObject from './isObject';
 
 /**
- * Checks if the provided arguments are from an iteratee call.
+ * Checks if the given arguments are from an iteratee call.
  *
  * @private
  * @param {*} value The potential iteratee value argument.

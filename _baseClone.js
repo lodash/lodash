@@ -3,6 +3,7 @@ import arrayEach from './_arrayEach';
 import assignValue from './_assignValue';
 import baseAssign from './_baseAssign';
 import baseForOwn from './_baseForOwn';
+import cloneBuffer from './_cloneBuffer';
 import copyArray from './_copyArray';
 import copySymbols from './_copySymbols';
 import getTag from './_getTag';
@@ -10,6 +11,7 @@ import initCloneArray from './_initCloneArray';
 import initCloneByTag from './_initCloneByTag';
 import initCloneObject from './_initCloneObject';
 import isArray from './isArray';
+import isBuffer from './isBuffer';
 import isHostObject from './_isHostObject';
 import isObject from './isObject';
 
@@ -91,6 +93,9 @@ function baseClone(value, isDeep, customizer, key, object, stack) {
     var tag = getTag(value),
         isFunc = tag == funcTag || tag == genTag;
 
+    if (isBuffer(value)) {
+      return cloneBuffer(value, isDeep);
+    }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
       if (isHostObject(value)) {
         return object ? value : {};

@@ -3,7 +3,7 @@ import baseCreate from './_baseCreate';
 
 /**
  * Creates an object that inherits from the `prototype` object. If a `properties`
- * object is provided its own enumerable properties are assigned to the created object.
+ * object is given its own enumerable properties are assigned to the created object.
  *
  * @static
  * @memberOf _

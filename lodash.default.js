@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.2.1';
+var VERSION = '4.3.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -282,9 +282,11 @@ lodash.inRange = number.inRange;
 lodash.invoke = object.invoke;
 lodash.isArguments = lang.isArguments;
 lodash.isArray = isArray;
+lodash.isArrayBuffer = lang.isArrayBuffer;
 lodash.isArrayLike = lang.isArrayLike;
 lodash.isArrayLikeObject = lang.isArrayLikeObject;
 lodash.isBoolean = lang.isBoolean;
+lodash.isBuffer = lang.isBuffer;
 lodash.isDate = lang.isDate;
 lodash.isElement = lang.isElement;
 lodash.isEmpty = lang.isEmpty;
@@ -295,6 +297,7 @@ lodash.isFinite = lang.isFinite;
 lodash.isFunction = lang.isFunction;
 lodash.isInteger = lang.isInteger;
 lodash.isLength = lang.isLength;
+lodash.isMap = lang.isMap;
 lodash.isMatch = lang.isMatch;
 lodash.isMatchWith = lang.isMatchWith;
 lodash.isNaN = lang.isNaN;
@@ -307,10 +310,13 @@ lodash.isObjectLike = lang.isObjectLike;
 lodash.isPlainObject = lang.isPlainObject;
 lodash.isRegExp = lang.isRegExp;
 lodash.isSafeInteger = lang.isSafeInteger;
+lodash.isSet = lang.isSet;
 lodash.isString = lang.isString;
 lodash.isSymbol = lang.isSymbol;
 lodash.isTypedArray = lang.isTypedArray;
 lodash.isUndefined = lang.isUndefined;
+lodash.isWeakMap = lang.isWeakMap;
+lodash.isWeakSet = lang.isWeakSet;
 lodash.join = array.join;
 lodash.kebabCase = string.kebabCase;
 lodash.last = last;

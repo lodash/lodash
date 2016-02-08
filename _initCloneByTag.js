@@ -1,4 +1,4 @@
-import cloneBuffer from './_cloneBuffer';
+import cloneArrayBuffer from './_cloneArrayBuffer';
 import cloneMap from './_cloneMap';
 import cloneRegExp from './_cloneRegExp';
 import cloneSet from './_cloneSet';
@@ -42,7 +42,7 @@ function initCloneByTag(object, tag, isDeep) {
   var Ctor = object.constructor;
   switch (tag) {
     case arrayBufferTag:
-      return cloneBuffer(object);
+      return cloneArrayBuffer(object);
 
     case boolTag:
     case dateTag:

@@ -948,7 +948,7 @@
       }
     });
 
-    QUnit.test('should return provided `lodash` instances', function(assert) {
+    QUnit.test('should return the given `lodash` instances', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -1092,7 +1092,7 @@
       assert.deepEqual(capped('a', 'b', 'c', 'd'), ['a', 'b']);
     });
 
-    QUnit.test('should use `func.length` if `n` is not provided', function(assert) {
+    QUnit.test('should use `func.length` if `n` is not given', function(assert) {
       assert.expect(1);
 
       var capped = _.ary(fn);
@@ -1125,7 +1125,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
+    QUnit.test('should work when given less than the capped number of arguments', function(assert) {
       assert.expect(1);
 
       var capped = _.ary(fn, 3);
@@ -1334,7 +1334,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return an empty array when no keys are provided', function(assert) {
+    QUnit.test('should return an empty array when no keys are given', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(_.at(array), []);
@@ -1348,7 +1348,7 @@
       assert.deepEqual(actual, ['d', 'a', 'c']);
     });
 
-    QUnit.test('should work with a falsey `object` argument when keys are provided', function(assert) {
+    QUnit.test('should work with a falsey `object` argument when keys are given', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(falsey, lodashStable.constant(Array(4)));
@@ -3433,7 +3433,7 @@
       return slice.call(arguments);
     }
 
-    QUnit.test('should curry based on the number of arguments provided', function(assert) {
+    QUnit.test('should curry based on the number of arguments given', function(assert) {
       assert.expect(3);
 
       var curried = _.curry(fn),
@@ -3565,7 +3565,7 @@
       return slice.call(arguments);
     }
 
-    QUnit.test('should curry based on the number of arguments provided', function(assert) {
+    QUnit.test('should curry based on the number of arguments given', function(assert) {
       assert.expect(3);
 
       var curried = _.curryRight(fn),
@@ -5037,7 +5037,7 @@
       assert.deepEqual(_.fill(array, 'a'), ['a', 'a', 'a']);
     });
 
-    QUnit.test('should use `undefined` for `value` if not provided', function(assert) {
+    QUnit.test('should use `undefined` for `value` if not given', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3],
@@ -5666,7 +5666,7 @@
       assert.notStrictEqual(func(noop), noop);
     });
 
-    QUnit.test('`_.' + methodName + '` should return an identity function when no arguments are provided', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return an identity function when no arguments are given', function(assert) {
       assert.expect(3);
 
       var combined = func();
@@ -6968,7 +6968,7 @@
   QUnit.module('lodash.identity');
 
   (function() {
-    QUnit.test('should return the first argument provided', function(assert) {
+    QUnit.test('should return the first argument given', function(assert) {
       assert.expect(1);
 
       var object = { 'name': 'fred' };
@@ -13377,7 +13377,7 @@
   QUnit.module('lodash.memoize');
 
   (function() {
-    QUnit.test('should memoize results based on the first argument provided', function(assert) {
+    QUnit.test('should memoize results based on the first argument given', function(assert) {
       assert.expect(2);
 
       var memoized = _.memoize(function(a, b, c) {
@@ -14587,7 +14587,7 @@
       assert.expect(8);
 
       function message(func, chain) {
-        return (func === _ ? 'lodash' : 'provided') + ' function should ' + (chain ? '' : 'not ') + 'chain';
+        return (func === _ ? 'lodash' : 'given') + ' function should ' + (chain ? '' : 'not ') + 'chain';
       }
 
       lodashStable.each([_, Wrapper], function(func) {
@@ -14620,7 +14620,7 @@
       });
     });
 
-    QUnit.test('should not extend lodash when an `object` is provided with an empty `options` object', function(assert) {
+    QUnit.test('should not extend lodash when an `object` is given with an empty `options` object', function(assert) {
       assert.expect(1);
 
       _.mixin({ 'a': noop }, {});
@@ -14785,7 +14785,7 @@
       assert.deepEqual(over(5, 10, 18), [10, 100, 18]);
     });
 
-    QUnit.test('should not transform any arguments if no transforms are provided', function(assert) {
+    QUnit.test('should not transform any arguments if no transforms are given', function(assert) {
       assert.expect(1);
 
       var over = _.overArgs(fn);
@@ -16521,7 +16521,7 @@
       assert.deepEqual(array, ['b']);
     });
 
-    QUnit.test('should return an empty array when no indexes are provided', function(assert) {
+    QUnit.test('should return an empty array when no indexes are given', function(assert) {
       assert.expect(4);
 
       var array = ['a', 'b', 'c'],
@@ -16576,7 +16576,7 @@
       assert.deepEqual(actual, [undefined]);
     });
 
-    QUnit.test('should work with a falsey `array` argument when keys are provided', function(assert) {
+    QUnit.test('should work with a falsey `array` argument when keys are given', function(assert) {
       assert.expect(1);
 
       var values = falsey.slice(),
@@ -16599,7 +16599,7 @@
   (function() {
     var array = Array(1000);
 
-    QUnit.test('should return `0` or `1` when arguments are not provided', function(assert) {
+    QUnit.test('should return `0` or `1` when no arguments are given', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(array, function() {
@@ -16721,14 +16721,14 @@
       return isRange ? range : range.reverse();
     }
 
-    QUnit.test('`_.' + methodName + '` should infer the sign of `step` when provided only an `end` argument', function(assert) {
+    QUnit.test('`_.' + methodName + '` should infer the sign of `step` when only `end` is given', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(func(4), resolve([0, 1, 2, 3]));
       assert.deepEqual(func(-4), resolve([0, -1, -2, -3]));
     });
 
-    QUnit.test('`_.' + methodName + '` should infer the sign of `step` when provided only a `start` and `end` argument', function(assert) {
+    QUnit.test('`_.' + methodName + '` should infer the sign of `step` when only `start` and `end` are given', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(func(1, 5), resolve([1, 2, 3, 4]));
@@ -16850,7 +16850,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should not rearrange arguments when no indexes are provided', function(assert) {
+    QUnit.test('should not rearrange arguments when no indexes are given', function(assert) {
       assert.expect(2);
 
       var rearged = _.rearg(fn);
@@ -17070,7 +17070,7 @@
       assert.strictEqual(actual, undefined);
     });
 
-    QUnit.test('`_.' + methodName + '` should return `undefined` for empty collections when no `accumulator` is provided (test in IE > 9 and modern browsers)', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `undefined` for empty collections when no `accumulator` is given (test in IE > 9 and modern browsers)', function(assert) {
       assert.expect(2);
 
       var array = [],
@@ -20336,7 +20336,7 @@
       assert.deepEqual(options, {});
     });
 
-    QUnit.test('should not modify `_.templateSettings` when `options` are provided', function(assert) {
+    QUnit.test('should not modify `_.templateSettings` when `options` are given', function(assert) {
       assert.expect(2);
 
       var data = { 'a': 1 };
@@ -21770,7 +21770,7 @@
       Foo.prototype.constructor = Foo;
     });
 
-    QUnit.test('should create an empty object when provided a falsey `object` argument', function(assert) {
+    QUnit.test('should create an empty object when given a falsey `object` argument', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(falsey, alwaysEmptyObject);
@@ -22899,7 +22899,7 @@
       assert.deepEqual(actual, [1]);
     });
 
-    QUnit.test('`_.' + methodName + '` should return a new array when a single array is provided', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a new array when a single array is given', function(assert) {
       assert.expect(1);
 
       var array = [1];
@@ -24052,7 +24052,7 @@
         assert.ok(lodashStable.isArray(actual), '_.' + methodName + ' returns an array');
 
         var isPull = methodName == 'pull' || methodName == 'pullAll';
-        assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the provided array');
+        assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the given array');
       });
     });
 

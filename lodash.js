@@ -2341,7 +2341,7 @@
      * @private
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
-     * @param {Object} args The arguments provide to `func`.
+     * @param {Object} args The arguments to provide to `func`.
      * @returns {number} Returns the timer id.
      */
     function baseDelay(func, wait, args) {
@@ -2586,7 +2586,7 @@
 
     /**
      * The base implementation of `_.functions` which creates an array of
-     * `object` function property names filtered from those provided.
+     * `object` function property names filtered from `props`.
      *
      * @private
      * @param {Object} object The object to inspect.
@@ -5051,7 +5051,7 @@
     }
 
     /**
-     * Checks if the provided arguments are from an iteratee call.
+     * Checks if the given arguments are from an iteratee call.
      *
      * @private
      * @param {*} value The potential iteratee value argument.
@@ -5459,7 +5459,7 @@
 
     /**
      * Creates an array of unique `array` values not included in the other
-     * provided arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * given arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * @static
@@ -5939,8 +5939,8 @@
     }
 
     /**
-     * Creates an array of unique values that are included in all of the provided
-     * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * Creates an array of unique values that are included in all given arrays
+     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * @static
@@ -6105,7 +6105,7 @@
     }
 
     /**
-     * Removes all provided values from `array` using
+     * Removes all given values from `array` using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
@@ -6662,8 +6662,8 @@
     }
 
     /**
-     * Creates an array of unique values, in order, from all of the provided arrays
-     * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+     * Creates an array of unique values, in order, from all given arrays using
+     * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
      * @static
@@ -6874,7 +6874,7 @@
     }
 
     /**
-     * Creates an array excluding all provided values using
+     * Creates an array excluding all given values using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
      *
@@ -6897,7 +6897,7 @@
 
     /**
      * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
-     * of the provided arrays.
+     * of the given arrays.
      *
      * @static
      * @memberOf _
@@ -7923,7 +7923,7 @@
      * Reduces `collection` to a value which is the accumulated result of running
      * each element in `collection` through `iteratee`, where each successive
      * invocation is supplied the return value of the previous. If `accumulator`
-     * is not provided the first element of `collection` is used as the initial
+     * is not given the first element of `collection` is used as the initial
      * value. The iteratee is invoked with four arguments:
      * (accumulator, value, index|key, collection).
      *
@@ -10785,7 +10785,7 @@
 
     /**
      * Creates an object that inherits from the `prototype` object. If a `properties`
-     * object is provided its own enumerable properties are assigned to the created object.
+     * object is given its own enumerable properties are assigned to the created object.
      *
      * @static
      * @memberOf _
@@ -12551,7 +12551,7 @@
      * in "interpolate" delimiters, HTML-escape interpolated data properties in
      * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
      * properties may be accessed as free variables in the template. If a setting
-     * object is provided it takes precedence over `_.templateSettings` values.
+     * object is given it takes precedence over `_.templateSettings` values.
      *
      * **Note:** In the development build `_.template` utilizes
      * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
@@ -13229,9 +13229,9 @@
     }
 
     /**
-     * Creates a function that returns the result of invoking the provided
-     * functions with the `this` binding of the created function, where each
-     * successive invocation is supplied the return value of the previous.
+     * Creates a function that returns the result of invoking the given functions
+     * with the `this` binding of the created function, where each successive
+     * invocation is supplied the return value of the previous.
      *
      * @static
      * @memberOf _
@@ -13252,7 +13252,7 @@
 
     /**
      * This method is like `_.flow` except that it creates a function that
-     * invokes the provided functions from right to left.
+     * invokes the given functions from right to left.
      *
      * @static
      * @memberOf _
@@ -13272,7 +13272,7 @@
     var flowRight = createFlow(true);
 
     /**
-     * This method returns the first argument provided to it.
+     * This method returns the first argument given to it.
      *
      * @static
      * @memberOf _
@@ -13824,7 +13824,7 @@
     }
 
     /**
-     * Generates a unique ID. If `prefix` is provided the ID is appended to it.
+     * Generates a unique ID. If `prefix` is given the ID is appended to it.
      *
      * @static
      * @memberOf _

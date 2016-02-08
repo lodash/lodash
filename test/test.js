@@ -3285,8 +3285,8 @@
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.countBy(array, function(num) {
-        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      var actual = _.countBy(array, function(n) {
+        return Math.floor(n) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
       assert.deepEqual(actual.constructor, 1);
@@ -3309,10 +3309,7 @@
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 
-      var actual = _.countBy({ 'a': 6.1, 'b': 4.2, 'c': 6.3 }, function(num) {
-        return Math.floor(num);
-      });
-
+      var actual = _.countBy({ 'a': 6.1, 'b': 4.2, 'c': 6.3 }, Math.floor);
       assert.deepEqual(actual, { '4': 1, '6': 2 });
     });
 
@@ -4599,8 +4596,8 @@
     QUnit.test('should drop elements while `predicate` returns truthy', function(assert) {
       assert.expect(1);
 
-      var actual = _.dropRightWhile(array, function(num) {
-        return num > 2;
+      var actual = _.dropRightWhile(array, function(n) {
+        return n > 2;
       });
 
       assert.deepEqual(actual, [1, 2]);
@@ -4640,8 +4637,8 @@
       assert.expect(2);
 
       if (!isNpm) {
-        var wrapped = _(array).dropRightWhile(function(num) {
-          return num > 2;
+        var wrapped = _(array).dropRightWhile(function(n) {
+          return n > 2;
         });
 
         assert.ok(wrapped instanceof _);
@@ -4669,8 +4666,8 @@
     QUnit.test('should drop elements while `predicate` returns truthy', function(assert) {
       assert.expect(1);
 
-      var actual = _.dropWhile(array, function(num) {
-        return num < 3;
+      var actual = _.dropWhile(array, function(n) {
+        return n < 3;
       });
 
       assert.deepEqual(actual, [3, 4]);
@@ -4711,7 +4708,7 @@
 
       if (!isNpm) {
         var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3),
-            predicate = function(num) { return num < 3; },
+            predicate = function(n) { return n < 3; },
             expected = _.dropWhile(array, predicate),
             wrapped = _(array).dropWhile(predicate);
 
@@ -4731,9 +4728,9 @@
         var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3);
 
         var actual = _(array)
-          .dropWhile(function(num) { return num == 1; })
+          .dropWhile(function(n) { return n == 1; })
           .drop()
-          .dropWhile(function(num) { return num == 3; })
+          .dropWhile(function(n) { return n == 3; })
           .value();
 
         assert.deepEqual(actual, array.slice(3));
@@ -5375,8 +5372,8 @@
         QUnit.test('should work with an object for `collection`', function(assert) {
           assert.expect(1);
 
-          var actual = func({ 'a': 1, 'b': 2, 'c': 3 }, function(num) {
-            return num < 3;
+          var actual = func({ 'a': 1, 'b': 2, 'c': 3 }, function(n) {
+            return n < 3;
           });
 
           assert.strictEqual(actual, expected);
@@ -6616,8 +6613,8 @@
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.groupBy(array, function(num) {
-        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      var actual = _.groupBy(array, function(n) {
+        return Math.floor(n) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
       assert.deepEqual(actual.constructor, [4.2]);
@@ -11799,8 +11796,8 @@
     QUnit.test('should only add values to own, not inherited, properties', function(assert) {
       assert.expect(2);
 
-      var actual = _.keyBy([6.1, 4.2, 6.3], function(num) {
-        return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor';
+      var actual = _.keyBy([6.1, 4.2, 6.3], function(n) {
+        return Math.floor(n) > 4 ? 'hasOwnProperty' : 'constructor';
       });
 
       assert.deepEqual(actual.constructor, 4.2);
@@ -14423,8 +14420,8 @@
     QUnit.test('`_.' + methodName + '` should work with an `iteratee` argument', function(assert) {
       assert.expect(1);
 
-      var actual = func(array, function(num) {
-        return -num;
+      var actual = func(array, function(n) {
+        return -n;
       });
 
       assert.strictEqual(actual, isMax ? 1 : 3);
@@ -15039,8 +15036,8 @@
 
       var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
-      var actual = _.omitBy(object, function(num) {
-        return num != 2 && num != 4;
+      var actual = _.omitBy(object, function(n) {
+        return n != 2 && n != 4;
       });
 
       assert.deepEqual(actual, { 'b': 2, 'd': 4 });
@@ -16073,8 +16070,8 @@
 
       var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
-      var actual = _.pickBy(object, function(num) {
-        return num == 1 || num == 3;
+      var actual = _.pickBy(object, function(n) {
+        return n == 1 || n == 3;
       });
 
       assert.deepEqual(actual, { 'a': 1, 'c': 3 });
@@ -17139,7 +17136,7 @@
     QUnit.test('`_.' + methodName + '` should not modify the resulting value from within `predicate`', function(assert) {
       assert.expect(1);
 
-      var actual = func([0], function(num, index, array) {
+      var actual = func([0], function(value, index, array) {
         array[index] = 1;
         return isFilter;
       });
@@ -17165,14 +17162,14 @@
       if (!isNpm) {
         var wrapped = _(array);
 
-        var actual = wrapped[methodName](function(num) {
-          return num < 3;
+        var actual = wrapped[methodName](function(n) {
+          return n < 3;
         });
 
         assert.deepEqual(actual.value(), isFilter ? [1, 2] : [3, 4]);
 
-        actual = wrapped[methodName](function(num) {
-          return num > 2;
+        actual = wrapped[methodName](function(n) {
+          return n > 2;
         });
 
         assert.deepEqual(actual.value(), isFilter ? [3, 4] : [1, 2]);
@@ -17260,14 +17257,14 @@
     QUnit.test('should modify the array and return removed elements', function(assert) {
       assert.expect(2);
 
-      var array = [1, 2, 3];
+      var array = [1, 2, 3, 4];
 
-      var actual = _.remove(array, function(num) {
-        return num < 3;
+      var actual = _.remove(array, function(n) {
+        return n % 2 == 0;
       });
 
-      assert.deepEqual(array, [3]);
-      assert.deepEqual(actual, [1, 2]);
+      assert.deepEqual(array, [1, 3]);
+      assert.deepEqual(actual, [2, 4]);
     });
 
     QUnit.test('should provide the correct `predicate` arguments', function(assert) {
@@ -17277,7 +17274,7 @@
           array = [1, 2, 3],
           clone = array.slice();
 
-      _.remove(array, function(value, index) {
+      _.remove(array, function(n, index) {
         var args = slice.call(arguments);
         args[2] = args[2].slice();
         argsList.push(args);
@@ -17318,7 +17315,10 @@
       delete array[1];
       delete array[3];
 
-      _.remove(array, function(num) { return num === 1; });
+      _.remove(array, function(n) {
+        return n === 1;
+      });
+
       assert.notOk('0' in array);
       assert.notOk('2' in array);
     });
@@ -17329,7 +17329,10 @@
       var array = [1, 2, 3];
       delete array[1];
 
-      _.remove(array, function(num) { return num == null; });
+      _.remove(array, function(n) {
+        return n == null;
+      });
+
       assert.deepEqual(array, [1, 3]);
     });
 
@@ -17337,7 +17340,11 @@
       assert.expect(1);
 
       var array = [1, 2, 3];
-      _.remove(array, function(num, index) { return isEven(index); });
+
+      _.remove(array, function(n, index) {
+        return isEven(index);
+      });
+
       assert.deepEqual(array, [2]);
     });
   }());
@@ -19586,8 +19593,8 @@
     QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
       assert.expect(1);
 
-      var actual = _.takeRightWhile(array, function(num) {
-        return num > 2;
+      var actual = _.takeRightWhile(array, function(n) {
+        return n > 2;
       });
 
       assert.deepEqual(actual, [3, 4]);
@@ -19628,7 +19635,7 @@
 
       if (!isNpm) {
         var array = lodashStable.range(LARGE_ARRAY_SIZE),
-            predicate = function(num) { return num > 2; },
+            predicate = function(n) { return n > 2; },
             expected = _.takeRightWhile(array, predicate),
             wrapped = _(array).takeRightWhile(predicate);
 
@@ -19701,8 +19708,8 @@
     QUnit.test('should take elements while `predicate` returns truthy', function(assert) {
       assert.expect(1);
 
-      var actual = _.takeWhile(array, function(num) {
-        return num < 3;
+      var actual = _.takeWhile(array, function(n) {
+        return n < 3;
       });
 
       assert.deepEqual(actual, [1, 2]);
@@ -19742,7 +19749,7 @@
 
       if (!isNpm) {
         var array = lodashStable.range(LARGE_ARRAY_SIZE),
-            predicate = function(num) { return num < 3; },
+            predicate = function(n) { return n < 3; },
             expected = _.takeWhile(array, predicate),
             wrapped = _(array).takeWhile(predicate);
 
@@ -19762,9 +19769,9 @@
         var array = lodashStable.range(LARGE_ARRAY_SIZE);
 
         var actual = _(array)
-          .takeWhile(function(num) { return num < 4; })
+          .takeWhile(function(n) { return n < 4; })
           .take(2)
-          .takeWhile(function(num) { return num == 0; })
+          .takeWhile(function(n) { return n == 0; })
           .value();
 
         assert.deepEqual(actual, [0]);

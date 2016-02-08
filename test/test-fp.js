@@ -690,6 +690,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.add and fp.subtract');
+
+  _.each(['add', 'subtract'], function(methodName) {
+    var func = fp[methodName],
+        isAdd = methodName == 'add';
+
+    QUnit.test('`fp.' + methodName + '` should have `rearg` applied', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func('1')('2'), isAdd ? '12' : -1);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.curry and fp.curryRight');
 
   _.each(['curry', 'curryRight'], function(methodName) {
@@ -773,7 +788,7 @@
 
   QUnit.module('fp.flow and fp.flowRight');
 
-  _.each(['flow', 'flowRight'], function(methodName, index) {
+  _.each(['flow', 'flowRight'], function(methodName) {
     var func = fp[methodName],
         isFlow = methodName == 'flow';
 
@@ -829,6 +844,20 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.gt and fp.gte');
+
+  _.each(['gt', 'gte'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should have `rearg` applied', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func(2)(1), true);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.inRange');
 
   (function() {
@@ -868,12 +897,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.lt and fp.lte');
+
+  _.each(['lt', 'lte'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should have `rearg` applied', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func(1)(2), true);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.maxBy and fp.minBy');
 
-  _.each(['maxBy', 'minBy'], function(methodName, index) {
+  _.each(['maxBy', 'minBy'], function(methodName) {
     var array = [1, 2, 3],
         func = fp[methodName],
-        isMax = !index;
+        isMax = methodName == 'maxBy';
 
     QUnit.test('`fp.' + methodName + '` should work with an `iteratee` argument', function(assert) {
       assert.expect(1);

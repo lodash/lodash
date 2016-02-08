@@ -46,8 +46,8 @@
 
   var convert = root.fp || (function() {
     var baseConvert = load('../fp/_baseConvert.js');
-    return function(name, func) {
-      return baseConvert(_, name, func);
+    return function(name, func, options) {
+      return baseConvert(_, name, func, options);
     };
   }());
 
@@ -75,6 +75,101 @@
   if (argv) {
     console.log('Running lodash/fp tests.');
   }
+
+  QUnit.module('convert');
+
+  (function() {
+    QUnit.test('should accept an `options` argument', function(assert) {
+      assert.expect(3);
+
+      if (!document) {
+        var remove = convert('remove', _.remove, {
+          'cap': false,
+          'curry': false,
+          'fixed': false,
+          'immutable': false,
+          'rearg': false
+        });
+
+        var array = [1, 2, 3, 4];
+
+        var actual = remove(array, function(n) {
+          return n % 2 == 0;
+        });
+
+        assert.deepEqual(array, [1, 3]);
+        assert.deepEqual(actual, [2, 4]);
+        assert.deepEqual(remove(), []);
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+
+    QUnit.test('should respect the `cap` option', function(assert) {
+      assert.expect(1);
+
+      if (!document) {
+        var iteratee = convert('iteratee', _.iteratee, {
+          'cap': false
+        });
+
+        var func = iteratee(function(a, b, c) {
+          return [a, b, c];
+        }, 3);
+
+        assert.deepEqual(func(1, 2, 3), [1, 2, 3]);
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should respect the `rearg` option', function(assert) {
+      assert.expect(1);
+
+      if (!document) {
+        var add = convert('add', _.add, {
+          'rearg': true
+        });
+
+        assert.strictEqual(add('2')('1'), '12');
+      }
+      else {
+        skipTest(assert);
+      }
+    });
+
+    QUnit.test('should use `options` in `runInContext`', function(assert) {
+      assert.expect(3);
+
+      if (!document) {
+        var runInContext = convert('runInContext', _.runInContext, {
+          'cap': false,
+          'curry': false,
+          'fixed': false,
+          'immutable': false,
+          'rearg': false
+        });
+
+        var array = [1, 2, 3, 4],
+            lodash = runInContext();
+
+        var actual = lodash.remove(array, function(n) {
+          return n % 2 == 0;
+        });
+
+        assert.deepEqual(array, [1, 3]);
+        assert.deepEqual(actual, [2, 4]);
+        assert.deepEqual(lodash.remove(), []);
+      }
+      else {
+        skipTest(assert, 3);
+      }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
 
   QUnit.module('method arity checks');
 

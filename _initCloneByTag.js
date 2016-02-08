@@ -1,4 +1,4 @@
-define(['./_cloneBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', './_cloneSymbol', './_cloneTypedArray'], function(cloneBuffer, cloneMap, cloneRegExp, cloneSet, cloneSymbol, cloneTypedArray) {
+define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', './_cloneSymbol', './_cloneTypedArray'], function(cloneArrayBuffer, cloneMap, cloneRegExp, cloneSet, cloneSymbol, cloneTypedArray) {
 
   /** `Object#toString` result references. */
   var boolTag = '[object Boolean]',
@@ -37,7 +37,7 @@ define(['./_cloneBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', './_cl
     var Ctor = object.constructor;
     switch (tag) {
       case arrayBufferTag:
-        return cloneBuffer(object);
+        return cloneArrayBuffer(object);
 
       case boolTag:
       case dateTag:

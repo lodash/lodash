@@ -19,6 +19,9 @@ define([], function() {
    */
   function subtract(minuend, subtrahend) {
     var result;
+    if (minuend === undefined && subtrahend === undefined) {
+      return 0;
+    }
     if (minuend !== undefined) {
       result = minuend;
     }

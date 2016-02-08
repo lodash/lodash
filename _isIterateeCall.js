@@ -1,7 +1,7 @@
 define(['./eq', './isArrayLike', './_isIndex', './isObject'], function(eq, isArrayLike, isIndex, isObject) {
 
   /**
-   * Checks if the provided arguments are from an iteratee call.
+   * Checks if the given arguments are from an iteratee call.
    *
    * @private
    * @param {*} value The potential iteratee value argument.

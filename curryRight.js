@@ -50,5 +50,8 @@ define(['./_createWrapper'], function(createWrapper) {
     return result;
   }
 
+  // Assign default placeholders.
+  curryRight.placeholder = {};
+
   return curryRight;
 });

@@ -1,8 +1,8 @@
 define(['./_baseFlatten', './_baseUniq', './rest'], function(baseFlatten, baseUniq, rest) {
 
   /**
-   * Creates an array of unique values, in order, from all of the provided arrays
-   * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * Creates an array of unique values, in order, from all given arrays using
+   * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons.
    *
    * @static

@@ -45,5 +45,8 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
     return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
   });
 
+  // Assign default placeholders.
+  partial.placeholder = {};
+
   return partial;
 });

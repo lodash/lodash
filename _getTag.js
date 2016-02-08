@@ -1,9 +1,10 @@
-define(['./_Map', './_Set'], function(Map, Set) {
+define(['./_Map', './_Set', './_WeakMap'], function(Map, Set, WeakMap) {
 
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
       objectTag = '[object Object]',
-      setTag = '[object Set]';
+      setTag = '[object Set]',
+      weakMapTag = '[object WeakMap]';
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -17,9 +18,10 @@ define(['./_Map', './_Set'], function(Map, Set) {
    */
   var objectToString = objectProto.toString;
 
-  /** Used to detect maps and sets. */
+  /** Used to detect maps, sets, and weakmaps. */
   var mapCtorString = Map ? funcToString.call(Map) : '',
-      setCtorString = Set ? funcToString.call(Set) : '';
+      setCtorString = Set ? funcToString.call(Set) : '',
+      weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
 
   /**
    * Gets the `toStringTag` of `value`.
@@ -32,19 +34,20 @@ define(['./_Map', './_Set'], function(Map, Set) {
     return objectToString.call(value);
   }
 
-  // Fallback for IE 11 providing `toStringTag` values for maps and sets.
-  if ((Map && getTag(new Map) != mapTag) || (Set && getTag(new Set) != setTag)) {
+  // Fallback for IE 11 providing `toStringTag` values for maps, sets, and weakmaps.
+  if ((Map && getTag(new Map) != mapTag) ||
+      (Set && getTag(new Set) != setTag) ||
+      (WeakMap && getTag(new WeakMap) != weakMapTag)) {
     getTag = function(value) {
       var result = objectToString.call(value),
           Ctor = result == objectTag ? value.constructor : null,
           ctorString = typeof Ctor == 'function' ? funcToString.call(Ctor) : '';
 
       if (ctorString) {
-        if (ctorString == mapCtorString) {
-          return mapTag;
-        }
-        if (ctorString == setCtorString) {
-          return setTag;
+        switch (ctorString) {
+          case mapCtorString: return mapTag;
+          case setCtorString: return setTag;
+          case weakMapCtorString: return weakMapTag;
         }
       }
       return result;

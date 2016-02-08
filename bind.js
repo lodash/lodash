@@ -50,5 +50,8 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
     return createWrapper(func, bitmask, thisArg, partials, holders);
   });
 
+  // Assign default placeholders.
+  bind.placeholder = {};
+
   return bind;
 });

@@ -60,5 +60,8 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
     return createWrapper(key, bitmask, object, partials, holders);
   });
 
+  // Assign default placeholders.
+  bindKey.placeholder = {};
+
   return bindKey;
 });

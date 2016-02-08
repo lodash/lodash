@@ -1,4 +1,4 @@
-define(['./_cloneBuffer'], function(cloneBuffer) {
+define(['./_cloneArrayBuffer'], function(cloneArrayBuffer) {
 
   /**
    * Creates a clone of `typedArray`.
@@ -12,7 +12,7 @@ define(['./_cloneBuffer'], function(cloneBuffer) {
     var buffer = typedArray.buffer,
         Ctor = typedArray.constructor;
 
-    return new Ctor(isDeep ? cloneBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
+    return new Ctor(isDeep ? cloneArrayBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
   }
 
   return cloneTypedArray;

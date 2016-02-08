@@ -4,7 +4,7 @@ define(['./toString'], function(toString) {
   var idCounter = 0;
 
   /**
-   * Generates a unique ID. If `prefix` is provided the ID is appended to it.
+   * Generates a unique ID. If `prefix` is given the ID is appended to it.
    *
    * @static
    * @memberOf _

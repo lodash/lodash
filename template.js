@@ -22,7 +22,7 @@ define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', '
    * in "interpolate" delimiters, HTML-escape interpolated data properties in
    * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
    * properties may be accessed as free variables in the template. If a setting
-   * object is provided it takes precedence over `_.templateSettings` values.
+   * object is given it takes precedence over `_.templateSettings` values.
    *
    * **Note:** In the development build `_.template` utilizes
    * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)

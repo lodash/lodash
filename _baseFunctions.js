@@ -2,7 +2,7 @@ define(['./_arrayFilter', './isFunction'], function(arrayFilter, isFunction) {
 
   /**
    * The base implementation of `_.functions` which creates an array of
-   * `object` function property names filtered from those provided.
+   * `object` function property names filtered from `props`.
    *
    * @private
    * @param {Object} object The object to inspect.

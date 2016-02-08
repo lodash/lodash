@@ -1,4 +1,4 @@
-# lodash v4.2.1
+# lodash v4.3.0
 
 The [lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
@@ -29,11 +29,11 @@ numbers, objects, strings, etc. Lodash’s modular methods can be used for:
 
 ## Download
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.2.1/LICENSE) & supports [modern environments](#support).<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.3.0/LICENSE) & supports [modern environments](#support).<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the one that’s right for you.
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.2.1/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.2.1/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.2.1/dist/lodash.js) ([~20 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.2.1/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.3.0/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.3.0/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.3.0/dist/lodash.js) ([~20 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.3.0/dist/lodash.min.js))
 
 ## Module Formats
 

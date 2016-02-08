@@ -14,6 +14,9 @@
  */
 function add(augend, addend) {
   var result;
+  if (augend === undefined && addend === undefined) {
+    return 0;
+  }
   if (augend !== undefined) {
     result = augend;
   }

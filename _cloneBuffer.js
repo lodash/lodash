@@ -1,18 +1,19 @@
-var Uint8Array = require('./_Uint8Array');
-
 /**
- * Creates a clone of `buffer`.
+ * Creates a clone of  `buffer`.
  *
  * @private
- * @param {ArrayBuffer} buffer The array buffer to clone.
- * @returns {ArrayBuffer} Returns the cloned array buffer.
+ * @param {Buffer} buffer The buffer to clone.
+ * @param {boolean} [isDeep] Specify a deep clone.
+ * @returns {Buffer} Returns the cloned buffer.
  */
-function cloneBuffer(buffer) {
+function cloneBuffer(buffer, isDeep) {
+  if (isDeep) {
+    return buffer.slice();
+  }
   var Ctor = buffer.constructor,
-      result = new Ctor(buffer.byteLength),
-      view = new Uint8Array(result);
+      result = new Ctor(buffer.length);
 
-  view.set(new Uint8Array(buffer));
+  buffer.copy(result);
   return result;
 }
 

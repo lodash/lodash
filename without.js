@@ -3,7 +3,7 @@ var baseDifference = require('./_baseDifference'),
     rest = require('./rest');
 
 /**
- * Creates an array excluding all provided values using
+ * Creates an array excluding all given values using
  * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *

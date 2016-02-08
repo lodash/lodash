@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.2.1';
+  var VERSION = '4.3.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -576,7 +576,7 @@
    * @private
    * @param {Function} func The function to delay.
    * @param {number} wait The number of milliseconds to delay invocation.
-   * @param {Object} args The arguments provide to `func`.
+   * @param {Object} args The arguments to provide to `func`.
    * @returns {number} Returns the timer id.
    */
   function baseDelay(func, wait, args) {
@@ -692,7 +692,7 @@
 
   /**
    * The base implementation of `_.functions` which creates an array of
-   * `object` function property names filtered from those provided.
+   * `object` function property names filtered from `props`.
    *
    * @private
    * @param {Object} object The object to inspect.
@@ -1924,7 +1924,7 @@
    * Reduces `collection` to a value which is the accumulated result of running
    * each element in `collection` through `iteratee`, where each successive
    * invocation is supplied the return value of the previous. If `accumulator`
-   * is not provided the first element of `collection` is used as the initial
+   * is not given the first element of `collection` is used as the initial
    * value. The iteratee is invoked with four arguments:
    * (accumulator, value, index|key, collection).
    *
@@ -3099,7 +3099,7 @@
 
   /**
    * Creates an object that inherits from the `prototype` object. If a `properties`
-   * object is provided its own enumerable properties are assigned to the created object.
+   * object is given its own enumerable properties are assigned to the created object.
    *
    * @static
    * @memberOf _
@@ -3407,7 +3407,7 @@
   /*------------------------------------------------------------------------*/
 
   /**
-   * This method returns the first argument provided to it.
+   * This method returns the first argument given to it.
    *
    * @static
    * @memberOf _
@@ -3592,7 +3592,7 @@
   }
 
   /**
-   * Generates a unique ID. If `prefix` is provided the ID is appended to it.
+   * Generates a unique ID. If `prefix` is given the ID is appended to it.
    *
    * @static
    * @memberOf _

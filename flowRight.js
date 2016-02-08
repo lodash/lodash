@@ -2,7 +2,7 @@ var createFlow = require('./_createFlow');
 
 /**
  * This method is like `_.flow` except that it creates a function that
- * invokes the provided functions from right to left.
+ * invokes the given functions from right to left.
  *
  * @static
  * @memberOf _

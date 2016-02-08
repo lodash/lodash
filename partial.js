@@ -44,4 +44,7 @@ var partial = rest(function(func, partials) {
   return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
 });
 
+// Assign default placeholders.
+partial.placeholder = {};
+
 module.exports = partial;

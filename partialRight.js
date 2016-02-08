@@ -43,4 +43,7 @@ var partialRight = rest(function(func, partials) {
   return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
 });
 
+// Assign default placeholders.
+partialRight.placeholder = {};
+
 module.exports = partialRight;

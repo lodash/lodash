@@ -47,4 +47,7 @@ function curryRight(func, arity, guard) {
   return result;
 }
 
+// Assign default placeholders.
+curryRight.placeholder = {};
+
 module.exports = curryRight;

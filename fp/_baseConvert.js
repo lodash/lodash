@@ -9,9 +9,17 @@ var mapping = require('./_mapping'),
  * @param {Object} util The util object.
  * @param {string} name The name of the function to wrap.
  * @param {Function} func The function to wrap.
+ * @param {Object} [options] The options object.
+ * @param {boolean} [options.cap=true] Specify capping iteratee arguments.
+ * @param {boolean} [options.curry=true] Specify currying.
+ * @param {boolean} [options.fixed=true] Specify fixed arity.
+ * @param {boolean} [options.immutable=true] Specify immutable operations.
+ * @param {boolean} [options.rearg=true] Specify rearranging arguments.
  * @returns {Function|Object} Returns the converted function or object.
  */
-function baseConvert(util, name, func) {
+function baseConvert(util, name, func, options) {
+  options || (options = {});
+
   if (typeof func != 'function') {
     func = name;
     name = undefined;
@@ -19,6 +27,16 @@ function baseConvert(util, name, func) {
   if (func == null) {
     throw new TypeError;
   }
+  var config = {
+    'cap': 'cap' in options ? options.cap : true,
+    'curry': 'curry' in options ? options.curry : true,
+    'fixed': 'fixed' in options ? options.fixed : true,
+    'immutable': 'immutable' in options ? options.immutable : true,
+    'rearg': 'rearg' in options ? options.rearg : true
+  };
+
+  var forceRearg = ('rearg' in options) && options.rearg;
+
   var isLib = name === undefined && typeof func.VERSION == 'string';
 
   var _ = isLib ? func : {
@@ -107,6 +125,9 @@ function baseConvert(util, name, func) {
         var func = arguments[0],
             arity = arguments[1];
 
+        if (!config.cap) {
+          return iteratee(func, arity);
+        }
         arity = arity > 2 ? (arity - 2) : 1;
         func = iteratee(func);
         var length = func.length;
@@ -145,7 +166,7 @@ function baseConvert(util, name, func) {
     },
     'runInContext': function(runInContext) {
       return function(context) {
-        return baseConvert(util, runInContext(context));
+        return baseConvert(util, runInContext(context), undefined, options);
       };
     }
   };
@@ -157,14 +178,16 @@ function baseConvert(util, name, func) {
       return wrapper(func);
     }
     var wrapped = func;
-    if (mutateMap.array[name]) {
-      wrapped = immutWrap(func, cloneArray);
-    }
-    else if (mutateMap.object[name]) {
-      wrapped = immutWrap(func, createCloner(func));
-    }
-    else if (mutateMap.set[name]) {
-      wrapped = immutWrap(func, cloneDeep);
+    if (config.immutable) {
+      if (mutateMap.array[name]) {
+        wrapped = immutWrap(func, cloneArray);
+      }
+      else if (mutateMap.object[name]) {
+        wrapped = immutWrap(func, createCloner(func));
+      }
+      else if (mutateMap.set[name]) {
+        wrapped = immutWrap(func, cloneDeep);
+      }
     }
     var result;
     each(mapping.caps, function(cap) {
@@ -174,19 +197,22 @@ function baseConvert(util, name, func) {
               reargIndexes = mapping.iterateeRearg[name],
               spreadStart = mapping.methodSpread[name];
 
-          result = spreadStart === undefined
-            ? ary(wrapped, cap)
-            : spread(wrapped, spreadStart);
-
-          if (cap > 1 && !mapping.skipRearg[name]) {
+          if (config.fixed) {
+            result = spreadStart === undefined
+              ? ary(wrapped, cap)
+              : spread(wrapped, spreadStart);
+          }
+          if (config.rearg && cap > 1 && (forceRearg || !mapping.skipRearg[name])) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
           }
-          if (reargIndexes) {
-            result = iterateeRearg(result, reargIndexes);
-          } else if (aryN) {
-            result = iterateeAry(result, aryN);
+          if (config.cap) {
+            if (reargIndexes) {
+              result = iterateeRearg(result, reargIndexes);
+            } else if (aryN) {
+              result = iterateeAry(result, aryN);
+            }
           }
-          if (cap > 1) {
+          if (config.curry && cap > 1) {
             result = curry(result, cap);
           }
           return false;

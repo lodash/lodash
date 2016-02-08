@@ -52,4 +52,7 @@ var bind = rest(function(func, thisArg, partials) {
   return createWrapper(func, bitmask, thisArg, partials, holders);
 });
 
+// Assign default placeholders.
+bind.placeholder = {};
+
 module.exports = bind;

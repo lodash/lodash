@@ -3,6 +3,7 @@ var Stack = require('./_Stack'),
     assignValue = require('./_assignValue'),
     baseAssign = require('./_baseAssign'),
     baseForOwn = require('./_baseForOwn'),
+    cloneBuffer = require('./_cloneBuffer'),
     copyArray = require('./_copyArray'),
     copySymbols = require('./_copySymbols'),
     getTag = require('./_getTag'),
@@ -10,6 +11,7 @@ var Stack = require('./_Stack'),
     initCloneByTag = require('./_initCloneByTag'),
     initCloneObject = require('./_initCloneObject'),
     isArray = require('./isArray'),
+    isBuffer = require('./isBuffer'),
     isHostObject = require('./_isHostObject'),
     isObject = require('./isObject');
 
@@ -91,6 +93,9 @@ function baseClone(value, isDeep, customizer, key, object, stack) {
     var tag = getTag(value),
         isFunc = tag == funcTag || tag == genTag;
 
+    if (isBuffer(value)) {
+      return cloneBuffer(value, isDeep);
+    }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
       if (isHostObject(value)) {
         return object ? value : {};

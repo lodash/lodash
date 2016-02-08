@@ -1,4 +1,4 @@
-var cloneBuffer = require('./_cloneBuffer'),
+var cloneArrayBuffer = require('./_cloneArrayBuffer'),
     cloneMap = require('./_cloneMap'),
     cloneRegExp = require('./_cloneRegExp'),
     cloneSet = require('./_cloneSet'),
@@ -42,7 +42,7 @@ function initCloneByTag(object, tag, isDeep) {
   var Ctor = object.constructor;
   switch (tag) {
     case arrayBufferTag:
-      return cloneBuffer(object);
+      return cloneArrayBuffer(object);
 
     case boolTag:
     case dateTag:

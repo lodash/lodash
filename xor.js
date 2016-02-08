@@ -5,7 +5,7 @@ var arrayFilter = require('./_arrayFilter'),
 
 /**
  * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
- * of the provided arrays.
+ * of the given arrays.
  *
  * @static
  * @memberOf _

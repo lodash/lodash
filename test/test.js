@@ -477,7 +477,22 @@
 
       setProperty(root.Map, 'toString', createToString('Map'));
     }
-    setProperty(root, 'Buffer', undefined);
+    defineProperty(root, 'Buffer', (function() {
+      var count = 0,
+          limit = /^0\.12\.\d+$/.test(process.versions.node) ? 2 : 0;
+
+      return {
+        'configurable': true,
+        'enumerable':  true,
+        'get': function() {
+          if (++count <= limit) {
+            return Buffer;
+          }
+          setProperty(root, 'Buffer', undefined);
+        }
+      };
+    }()));
+
     setProperty(root, 'Set', noop);
     setProperty(root, 'Symbol', undefined);
     setProperty(root, 'WeakMap', noop);

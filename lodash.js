@@ -12364,7 +12364,7 @@
      * @memberOf _
      * @category String
      * @param {string} string The string to convert.
-     * @param {number} [radix] The radix to interpret `value` by.
+     * @param {number} [radix=10] The radix to interpret `value` by.
      * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
      * @returns {number} Returns the converted integer.
      * @example
@@ -12910,7 +12910,7 @@
      * @memberOf _
      * @category String
      * @param {string} [string=''] The string to truncate.
-     * @param {Object} [options] The options object.
+     * @param {Object} [options=({})] The options object.
      * @param {number} [options.length=30] The maximum string length.
      * @param {string} [options.omission='...'] The string to indicate text is omitted.
      * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
@@ -13829,7 +13829,7 @@
      * @static
      * @memberOf _
      * @category Util
-     * @param {string} [prefix] The value to prefix the ID with.
+     * @param {string} [prefix=''] The value to prefix the ID with.
      * @returns {string} Returns the unique ID.
      * @example
      *

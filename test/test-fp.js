@@ -1053,14 +1053,21 @@
     });
 
     QUnit.test('`_.' + methodName + '` should convert by name', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var expected = isPartial ? [1, 2, 3] : [0, 1, 2],
-          par = convert(methodName, _[methodName]);
+          par = convert(methodName, _[methodName]),
+          ph = par.placeholder;
 
       var actual = par(function(a, b, c) {
         return [a, b, c];
       })([1, 2])(isPartial ? 3 : 0);
+
+      assert.deepEqual(actual, expected);
+
+      actual = par(function(a, b, c) {
+        return [a, b, c];
+      })([ph, 2])(isPartial ? 1 : 0, isPartial ? 3 : 1);
 
       assert.deepEqual(actual, expected);
     });

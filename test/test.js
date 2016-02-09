@@ -41,8 +41,9 @@
 
   /** Method and object shortcuts. */
   var phantom = root.phantom,
+      process = root.process,
       amd = root.define && define.amd,
-      argv = root.process && process.argv,
+      argv = process && process.argv,
       defineProperty = Object.defineProperty,
       document = !phantom && root.document,
       body = root.document && root.document.body,
@@ -479,7 +480,8 @@
     }
     defineProperty(root, 'Buffer', (function() {
       var count = 0,
-          limit = /^0\.12\.\d+$/.test(process.versions.node) ? 2 : 0;
+          version = lodashStable.get(process, 'versions.node'),
+          limit = /^0\.12\b/.test(version) ? 2 : 0;
 
       return {
         'configurable': true,

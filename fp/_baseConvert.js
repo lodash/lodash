@@ -89,7 +89,19 @@ function baseConvert(util, name, func, options) {
   };
 
   var immutWrap = function(func, cloner) {
-    return overArg(func, cloner, true);
+    return function() {
+      var length = arguments.length;
+      if (!length) {
+        return result;
+      }
+      var args = Array(length);
+      while (length--) {
+        args[length] = arguments[length];
+      }
+      var result = args[0] = cloner(args[0]);
+      func.apply(undefined, args);
+      return result;
+    };
   };
 
   var iterateeAry = function(func, n) {
@@ -107,15 +119,17 @@ function baseConvert(util, name, func, options) {
 
   var overArg = function(func, iteratee, retArg) {
     return function() {
-      var length = arguments.length,
-          args = Array(length);
-
+      var length = arguments.length;
+      if (!length) {
+        return func();
+      }
+      var args = Array(length);
       while (length--) {
         args[length] = arguments[length];
       }
-      args[0] = iteratee(args[0]);
-      var result = func.apply(undefined, args);
-      return retArg ? args[0] : result;
+      var index = config.rearg ? 0 : (length - 1);
+      args[index] = iteratee(args[index]);
+      return func.apply(undefined, args);
     };
   };
 
@@ -197,10 +211,11 @@ function baseConvert(util, name, func, options) {
               reargIndexes = mapping.iterateeRearg[name],
               spreadStart = mapping.methodSpread[name];
 
+          result = wrapped;
           if (config.fixed) {
             result = spreadStart === undefined
-              ? ary(wrapped, cap)
-              : spread(wrapped, spreadStart);
+              ? ary(result, cap)
+              : spread(result, spreadStart);
           }
           if (config.rearg && cap > 1 && (forceRearg || !mapping.skipRearg[name])) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
@@ -221,7 +236,7 @@ function baseConvert(util, name, func, options) {
       return !result;
     });
 
-    result || (result = func);
+    result || (result = wrapped);
     if (mapping.placeholder[name]) {
       func.placeholder = result.placeholder = placeholder;
     }

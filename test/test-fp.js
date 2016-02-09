@@ -112,6 +112,41 @@
       assert.deepEqual(remove(), []);
     });
 
+    QUnit.test('should accept a variety of options', function(assert) {
+      assert.expect(8);
+
+      var array = [1, 2, 3, 4],
+          predicate = function(n) { return n % 2 == 0; },
+          value = _.clone(array),
+          remove = convert('remove', _.remove, { 'cap': false }),
+          actual = remove(function(n, index) { return index % 2 == 0; })(value);
+
+      assert.deepEqual(value, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [2, 4]);
+
+      remove = convert('remove', _.remove, { 'curry': false });
+      actual = remove(predicate);
+
+      assert.deepEqual(actual, []);
+
+      var trim = convert('trim', _.trim, { 'fixed': false });
+      assert.strictEqual(trim('_-abc-_', '_-'), 'abc');
+
+      value = _.clone(array);
+      remove = convert('remove', _.remove, { 'immutable': false });
+      actual = remove(predicate)(value);
+
+      assert.deepEqual(value, [1, 3]);
+      assert.deepEqual(actual, [2, 4]);
+
+      value = _.clone(array);
+      remove = convert('remove', _.remove, { 'rearg': false });
+      actual = remove(value, predicate);
+
+      assert.deepEqual(value, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [1, 3]);
+    });
+
     QUnit.test('should respect the `cap` option', function(assert) {
       assert.expect(1);
 

@@ -452,6 +452,11 @@
     funcProto._method = noop;
 
     // Set bad shims.
+    setProperty(Object, 'create', noop);
+
+    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    setProperty(Object, 'getOwnPropertySymbols', undefined);
+
     var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
     setProperty(objectProto, 'propertyIsEnumerable', function(key) {
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
@@ -472,11 +477,7 @@
 
       setProperty(root.Map, 'toString', createToString('Map'));
     }
-    setProperty(Object, 'create', noop);
-
-    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
-    setProperty(Object, 'getOwnPropertySymbols', undefined);
-
+    setProperty(root, 'Buffer', undefined);
     setProperty(root, 'Set', noop);
     setProperty(root, 'Symbol', undefined);
     setProperty(root, 'WeakMap', noop);
@@ -492,6 +493,10 @@
     root._ = oldDash;
 
     // Restore built-in methods.
+    setProperty(Object, 'create', create);
+    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
+    setProperty(root, 'Buffer', Buffer);
+
     if (_getOwnPropertySymbols) {
       Object.getOwnPropertySymbols = _getOwnPropertySymbols;
     } else {
@@ -517,9 +522,6 @@
     } else {
       delete root.WeakMap;
     }
-    setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
-    setProperty(Object, 'create', create);
-
     delete root.WinRTError;
     delete funcProto._method;
   }());
@@ -723,7 +725,7 @@
       }
     });
 
-    QUnit.test('should avoid overwritten native methods', function(assert) {
+    QUnit.test('should avoid non-native built-ins', function(assert) {
       assert.expect(6);
 
       function message(lodashMethod, nativeMethod) {
@@ -8110,6 +8112,17 @@
       assert.strictEqual(_.isBuffer(/x/), false);
       assert.strictEqual(_.isBuffer('a'), false);
       assert.strictEqual(_.isBuffer(symbol), false);
+    });
+
+    QUnit.test('should return `false` if `Buffer` is not defined', function(assert) {
+      assert.expect(1);
+
+      if (Buffer && lodashBizarro) {
+        assert.strictEqual(lodashBizarro.isBuffer(new Buffer(2)), false);
+      }
+      else {
+        skipTest(assert);
+      }
     });
   }(1, 2, 3));
 

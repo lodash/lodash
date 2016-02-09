@@ -82,6 +82,12 @@
         funcProto._method = noop;
 
         // Set bad shims.
+        setProperty(Object, '_create', Object.create);
+        setProperty(Object, 'create', noop);
+
+        setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
+        setProperty(Object, 'getOwnPropertySymbols', undefined);
+
         setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
         setProperty(objectProto, 'propertyIsEnumerable', function(key) {
           return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
@@ -103,12 +109,6 @@
 
           setProperty(Map, 'toString', createToString('Map'));
         }
-        setProperty(Object, '_create', Object.create);
-        setProperty(Object, 'create', noop);
-
-        setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
-        setProperty(Object, 'getOwnPropertySymbols', undefined);
-
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
 
@@ -130,6 +130,8 @@
       function removeBizarroMethods() {
         var funcProto = Function.prototype,
             objectProto = Object.prototype;
+
+        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
         if (Object._create) {
           Object.create = Object._create;
@@ -159,8 +161,6 @@
         } else {
           setProperty(window, 'WeakMap', undefined);
         }
-        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
-
         setProperty(window, '_Map', undefined);
         setProperty(window, '_Set', undefined);
         setProperty(window, '_Symbol', undefined);

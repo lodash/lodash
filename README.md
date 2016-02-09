@@ -9,10 +9,10 @@ $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
 
-## What is Lodash
+## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
-numbers, objects, strings, etc. Lodash’s modular methods can be used for:
+numbers, objects, strings, etc. Lodash’s modular methods are great for:
 
 * Iterating arrays, objects, & strings
 * Manipulating & testing values

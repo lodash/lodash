@@ -80,7 +80,7 @@ exports.aryMethod = {
 /** Used to map ary to rearg configs. */
 exports.aryRearg = {
   2: [1, 0],
-  3: [2, 1, 0],
+  3: [2, 0, 1],
   4: [3, 2, 0, 1]
 };
 
@@ -138,14 +138,13 @@ exports.iterateeRearg = {
 exports.methodRearg = {
   'assignInWith': [1, 2, 0],
   'assignWith': [1, 2, 0],
-  'clamp': [2, 0, 1],
+  'getOr': [2, 1, 0],
+  'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
-  'reduce': [2, 0, 1],
-  'reduceRight': [2, 0, 1],
-  'set': [2, 0, 1],
+  'pullAllBy': [2, 1, 0],
   'setWith': [3, 1, 2, 0],
-  'slice': [2, 0, 1],
-  'transform': [2, 0, 1]
+  'sortedIndexBy': [2, 1, 0],
+  'sortedLastIndexBy': [2, 1, 0]
 };
 
 /** Used to map method names to spread configs. */

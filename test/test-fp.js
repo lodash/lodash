@@ -52,7 +52,8 @@
       };
     }
     return function(name, func, options) {
-      if (typeof func != 'function') {
+      if (typeof name == 'function') {
+        options = func;
         func = name;
         name = undefined;
       }
@@ -90,18 +91,19 @@
   QUnit.module('convert');
 
   (function() {
+    var allFalseOptions = {
+      'cap': false,
+      'curry': false,
+      'fixed': false,
+      'immutable': false,
+      'rearg': false
+    };
+
     QUnit.test('should accept an `options` argument', function(assert) {
       assert.expect(3);
 
-      var array = [1, 2, 3, 4];
-
-      var remove = convert('remove', _.remove, {
-        'cap': false,
-        'curry': false,
-        'fixed': false,
-        'immutable': false,
-        'rearg': false
-      });
+      var array = [1, 2, 3, 4],
+          remove = convert('remove', _.remove, allFalseOptions);
 
       var actual = remove(array, function(n, index) {
         return index % 2 == 0;
@@ -150,9 +152,7 @@
     QUnit.test('should respect the `cap` option', function(assert) {
       assert.expect(1);
 
-      var iteratee = convert('iteratee', _.iteratee, {
-        'cap': false
-      });
+      var iteratee = convert('iteratee', _.iteratee, { 'cap': false });
 
       var func = iteratee(function(a, b, c) {
         return [a, b, c];
@@ -164,9 +164,7 @@
     QUnit.test('should respect the `rearg` option', function(assert) {
       assert.expect(1);
 
-      var add = convert('add', _.add, {
-        'rearg': true
-      });
+      var add = convert('add', _.add, { 'rearg': true });
 
       assert.strictEqual(add('2')('1'), '12');
     });
@@ -174,23 +172,31 @@
     QUnit.test('should use `options` in `runInContext`', function(assert) {
       assert.expect(3);
 
-      var runInContext = convert('runInContext', _.runInContext, {
-        'cap': false,
-        'curry': false,
-        'fixed': false,
-        'immutable': false,
-        'rearg': false
-      });
-
       var array = [1, 2, 3, 4],
+          runInContext = convert('runInContext', _.runInContext, allFalseOptions),
           lodash = runInContext();
 
-      var actual = lodash.remove(array, function(n) {
-        return n % 2 == 0;
+      var actual = lodash.remove(array, function(n, index) {
+        return index % 2 == 0;
       });
 
-      assert.deepEqual(array, [1, 3]);
-      assert.deepEqual(actual, [2, 4]);
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(lodash.remove(), []);
+    });
+
+    QUnit.test('should work when given lodash and `options`', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          lodash = convert(_.runInContext(), allFalseOptions);
+
+      var actual = lodash.remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
       assert.deepEqual(lodash.remove(), []);
     });
   }());

@@ -8,7 +8,7 @@ var baseConvert = require('./_baseConvert');
  * @returns {Function} Returns the converted `lodash`.
  */
 function browserConvert(lodash, options) {
-  return baseConvert(lodash, lodash, undefined, options);
+  return baseConvert(lodash, lodash, options);
 }
 
 module.exports = browserConvert;

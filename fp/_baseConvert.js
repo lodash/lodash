@@ -18,12 +18,13 @@ var mapping = require('./_mapping'),
  * @returns {Function|Object} Returns the converted function or object.
  */
 function baseConvert(util, name, func, options) {
-  options || (options = {});
-
-  if (typeof func != 'function') {
+  var isLib = typeof name == 'function';
+  if (isLib) {
+    options = func;
     func = name;
     name = undefined;
   }
+  options || (options = {});
   if (func == null) {
     throw new TypeError;
   }
@@ -36,8 +37,6 @@ function baseConvert(util, name, func, options) {
   };
 
   var forceRearg = ('rearg' in options) && options.rearg;
-
-  var isLib = name === undefined && typeof func.VERSION == 'string';
 
   var _ = isLib ? func : {
     'ary': util.ary,
@@ -180,7 +179,7 @@ function baseConvert(util, name, func, options) {
     },
     'runInContext': function(runInContext) {
       return function(context) {
-        return baseConvert(util, runInContext(context), undefined, options);
+        return baseConvert(util, runInContext(context), options);
       };
     }
   };

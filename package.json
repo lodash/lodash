@@ -14,7 +14,7 @@
     "dojo": "^1.10.4",
     "ecstatic": "^1.4.0",
     "fs-extra": "~0.26.5",
-    "glob": "^6.0.4",
+    "glob": "^7.0.0",
     "istanbul": "0.4.2",
     "jquery": "^2.2.0",
     "jscodeshift": "^0.3.13",

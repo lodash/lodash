@@ -1509,7 +1509,7 @@
      *
      * @static
      * @memberOf _
-     * @type Object
+     * @type {Object}
      */
     lodash.templateSettings = {
 
@@ -1517,7 +1517,7 @@
        * Used to detect `data` property values to be HTML-escaped.
        *
        * @memberOf _.templateSettings
-       * @type RegExp
+       * @type {RegExp}
        */
       'escape': reEscape,
 
@@ -1525,7 +1525,7 @@
        * Used to detect code to be evaluated.
        *
        * @memberOf _.templateSettings
-       * @type RegExp
+       * @type {RegExp}
        */
       'evaluate': reEvaluate,
 
@@ -1533,7 +1533,7 @@
        * Used to detect `data` property values to inject.
        *
        * @memberOf _.templateSettings
-       * @type RegExp
+       * @type {RegExp}
        */
       'interpolate': reInterpolate,
 
@@ -1541,7 +1541,7 @@
        * Used to reference the data object in the template text.
        *
        * @memberOf _.templateSettings
-       * @type string
+       * @type {string}
        */
       'variable': '',
 
@@ -1549,7 +1549,7 @@
        * Used to import variables into the compiled template.
        *
        * @memberOf _.templateSettings
-       * @type Object
+       * @type {Object}
        */
       'imports': {
 
@@ -1557,7 +1557,7 @@
          * A reference to the `lodash` function.
          *
          * @memberOf _.templateSettings.imports
-         * @type Function
+         * @type {Function}
          */
         '_': lodash
       }
@@ -2917,7 +2917,6 @@
      * property of prototypes or treat sparse arrays as dense.
      *
      * @private
-     * @type Function
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property names.
      */
@@ -8257,7 +8256,7 @@
      *
      * @static
      * @memberOf _
-     * @type Function
+     * @type {Function}
      * @category Date
      * @returns {number} Returns the timestamp.
      * @example
@@ -9459,7 +9458,7 @@
      *
      * @static
      * @memberOf _
-     * @type Function
+     * @type {Function}
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
@@ -9484,7 +9483,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
@@ -9507,7 +9505,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -9536,7 +9533,6 @@
      *
      * @static
      * @memberOf _
-     * @type Function
      * @category Lang
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
@@ -14511,7 +14507,7 @@
      *
      * @static
      * @memberOf _
-     * @type string
+     * @type {string}
      */
     lodash.VERSION = VERSION;
 

@@ -458,28 +458,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('key methods');
-
-  (function() {
-    var object = { 'a': 1 };
-
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
-      assert.expect(3);
-
-      _.each(['findKey', 'findLastKey', 'mapKeys'], function(methodName) {
-        var args;
-
-        var actual = fp[methodName](function() {
-          args || (args = slice.call(arguments));
-        }, object);
-
-        assert.deepEqual(args, ['a'], 'fp.' + methodName);
-      });
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('mutation methods');
 
   (function() {

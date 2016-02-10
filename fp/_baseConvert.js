@@ -109,13 +109,6 @@ function baseConvert(util, name, func, options) {
     });
   };
 
-  var iterateeRearg = function(func, indexes) {
-    return overArg(func, function(func) {
-      var n = indexes.length;
-      return baseArity(rearg(baseAry(func, n), indexes), n);
-    });
-  };
-
   var overArg = function(func, iteratee, retArg) {
     return function() {
       var length = arguments.length;
@@ -207,7 +200,6 @@ function baseConvert(util, name, func, options) {
       each(mapping.aryMethod[cap], function(otherName) {
         if (name == otherName) {
           var aryN = !isLib && mapping.iterateeAry[name],
-              reargIndexes = mapping.iterateeRearg[name],
               spreadStart = mapping.methodSpread[name];
 
           result = wrapped;
@@ -219,12 +211,8 @@ function baseConvert(util, name, func, options) {
           if (config.rearg && cap > 1 && (forceRearg || !mapping.skipRearg[name])) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
           }
-          if (config.cap) {
-            if (reargIndexes) {
-              result = iterateeRearg(result, reargIndexes);
-            } else if (aryN) {
-              result = iterateeAry(result, aryN);
-            }
+          if (config.cap && aryN) {
+            result = iterateeAry(result, aryN);
           }
           if (config.curry && cap > 1) {
             result = curry(result, cap);

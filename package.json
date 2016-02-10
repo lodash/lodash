@@ -40,6 +40,7 @@
     "doc:fp": "node lib/doc/build --fp github",
     "doc:fp:site": "node lib/doc/build --fp site",
     "doc:site": "node lib/doc/build site",
+    "prepublish": "npm run style",
     "pretest": "npm run build",
     "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",
     "style:fp": "jscs fp/*.js lib/**/*.js",

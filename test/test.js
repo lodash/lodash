@@ -6722,7 +6722,7 @@
       assert.strictEqual(_.gt('def', 'abc'), true);
     });
 
-    QUnit.test('should return `false` if `value` is less than or equal to `other`', function(assert) {
+    QUnit.test('should return `false` if `value` is <= `other`', function(assert) {
       assert.expect(4);
 
       assert.strictEqual(_.gt(1, 3), false);
@@ -12202,7 +12202,7 @@
   QUnit.module('lodash.lte');
 
   (function() {
-    QUnit.test('should return `true` if `value` is less than or equal to `other`', function(assert) {
+    QUnit.test('should return `true` if `value` is <= `other`', function(assert) {
       assert.expect(4);
 
       assert.strictEqual(_.lte(1, 3), true);

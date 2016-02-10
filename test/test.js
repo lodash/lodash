@@ -5626,7 +5626,7 @@
 
       assert.deepEqual(_.flatten(array), [[], [], [[[]]]]);
       assert.deepEqual(_.flattenDeep(array), []);
-      assert.deepEqual(_.flattenDepth(array, 2), [[[]]])
+      assert.deepEqual(_.flattenDepth(array, 2), [[[]]]);
     });
 
     QUnit.test('should support flattening of nested arrays', function(assert) {

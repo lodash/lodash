@@ -11528,7 +11528,7 @@
      * @category Object
      * @param {Object} object The source object.
      * @param {...(string|string[])} [props] The property names to omit, specified
-     *  individually or in arrays..
+     *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example
      *

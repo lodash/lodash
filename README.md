@@ -51,5 +51,6 @@ Create [custom builds](https://lodash.com/custom-builds) with only the features 
   * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
   * [Build Differences](https://github.com/lodash/lodash/wiki/Build-Differences)
   * [Changelog](https://github.com/lodash/lodash/wiki/Changelog)
+  * [lodash-fp in-browser usage example] (https://github.com/lodash/lodash/wiki/lodash-fp-in-browser-usage-example)
   * [Roadmap](https://github.com/lodash/lodash/wiki/Roadmap)
   * [More Resources](https://github.com/lodash/lodash/wiki/Resources)

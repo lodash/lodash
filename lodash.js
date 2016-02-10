@@ -2494,14 +2494,12 @@
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {number} [depth=1] The maximum recursion depth.
+     * @param {number} depth The maximum recursion depth.
      * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
      * @param {Array} [result=[]] The initial result value.
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, depth, isStrict, result) {
-      depth = depth === undefined ? 1 : depth;
-
       result || (result = []);
 
       var index = -1,
@@ -5807,7 +5805,7 @@
     }
 
     /**
-     * Flattens `array` a single level.
+     * Flattens `array` a single level deep.
      *
      * @static
      * @memberOf _
@@ -5816,8 +5814,8 @@
      * @returns {Array} Returns the new flattened array.
      * @example
      *
-     * _.flatten([1, 2, [3, [4]]]);
-     * // => [1, 2, 3, [4]]
+     * _.flatten([1, [2, [3, [4]], 5]]);
+     * // => [1, 2, [3, [4]], 5]
      */
     function flatten(array) {
       var length = array ? array.length : 0;
@@ -5825,16 +5823,16 @@
     }
 
     /**
-     * This method is like `_.flatten` except that it recursively flattens `array`.
+     * Recursively flattens `array`.
      *
      * @static
      * @memberOf _
      * @category Array
-     * @param {Array} array The array to recursively flatten.
+     * @param {Array} array The array to flatten.
      * @returns {Array} Returns the new flattened array.
      * @example
      *
-     * _.flattenDeep([1, [2, [3, [[4]]], 5]]);
+     * _.flattenDeep([1, [2, [3, [4]], 5]]);
      * // => [1, 2, 3, 4, 5]
      */
     function flattenDeep(array) {
@@ -5849,20 +5847,25 @@
      * @memberOf _
      * @category Array
      * @param {Array} array The array to flatten.
-     * @param {number} depth The maximum recursion depth.
+     * @param {number} [depth=1] The maximum recursion depth.
      * @returns {Array} Returns the new flattened array.
      * @example
      *
-     * _.flattenDepth([1, [2, [3, [4]], 5]], 1);
+     * var array = [1, [2, [3, [4]], 5]];
+     *
+     * _.flattenDepth(array, 1);
      * // => [1, 2, [3, [4]], 5]
      *
-     * _.flattenDepth([1, [2, [3, [4]], 5]], 2);
+     * _.flattenDepth(array, 2);
      * // => [1, 2, 3, [4], 5]
      */
     function flattenDepth(array, depth) {
-      depth = toInteger(depth);
       var length = array ? array.length : 0;
-      return length ? (depth >= 1 ? baseFlatten(array, depth) : copyArray(array)) : [];
+      if (!length) {
+        return [];
+      }
+      depth = depth === undefined ? 1 : toInteger(depth);
+      return depth < 1 ? copyArray(array) : baseFlatten(array, depth);
     }
 
     /**

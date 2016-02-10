@@ -5559,25 +5559,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.flattenDepth');
+
+  (function() {
+    var array = [1, [2, [3, [4]], 5]];
+
+    QUnit.test('should use a default `depth` of `1`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.flattenDepth(array), [1, 2, [3, [4]], 5]);
+    });
+
+    QUnit.test('should treat a `depth` of < `1` as a shallow clone', function(assert) {
+      assert.expect(2);
+
+      lodashStable.each([-1, 0], function(depth) {
+        assert.deepEqual(_.flattenDepth(array, depth), [1, [2, [3, [4]], 5]]);
+      });
+    });
+
+    QUnit.test('should coerce `depth` to an integer', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.flattenDepth(array, 2.2), [1, 2, 3, [4], 5]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('flatten methods');
 
   (function() {
-    var args = arguments;
-
-    QUnit.test('should perform a shallow flatten', function(assert) {
-      assert.expect(1);
-
-      var array = [[['a']], [['b']]];
-      assert.deepEqual(_.flatten(array), [['a'], ['b']]);
-    });
+    var args = arguments,
+        array = [1, [2, [3, [4]], 5]];
 
     QUnit.test('should flatten `arguments` objects', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       var array = [args, [args]];
 
       assert.deepEqual(_.flatten(array), [1, 2, 3, args]);
       assert.deepEqual(_.flattenDeep(array), [1, 2, 3, 1, 2, 3]);
+      assert.deepEqual(_.flattenDepth(array, 2), [1, 2, 3, 1, 2, 3]);
     });
 
     QUnit.test('should treat sparse arrays as dense', function(assert) {
@@ -5588,7 +5611,7 @@
 
       expected.push(undefined, undefined, undefined);
 
-      lodashStable.each([_.flatten(array), _.flatten(array, true), _.flattenDeep(array)], function(actual) {
+      lodashStable.each([_.flatten(array), _.flattenDeep(array), _.flattenDepth(array)], function(actual) {
         assert.deepEqual(actual, expected);
         assert.ok('4' in actual);
       });
@@ -5597,24 +5620,18 @@
     QUnit.test('should work with extremely large arrays', function(assert) {
       assert.expect(3);
 
-      // Test in modern browsers only to avoid browser hangs.
       lodashStable.times(3, function(index) {
-        if (freeze) {
-          var expected = Array(5e5);
-
-          try {
-            if (index) {
-              var actual = actual == 1 ? _.flatten([expected], true) : _.flattenDeep([expected]);
-            } else {
-              actual = _.flatten(expected);
-            }
-            assert.deepEqual(actual, expected);
-          } catch (e) {
-            assert.ok(false, e.message);
+        var expected = Array(5e5);
+        try {
+          var func = _.flatten;
+          if (index == 1) {
+            func = _.flattenDeep;
+          } else if (index == 2) {
+            func = _.flattenDepth;
           }
-        }
-        else {
-          skipTest(assert);
+          assert.deepEqual(func([expected]), expected);
+        } catch (e) {
+          assert.ok(false, e.message);
         }
       });
     });
@@ -5630,46 +5647,46 @@
     });
 
     QUnit.test('should support flattening of nested arrays', function(assert) {
-      assert.expect(4);
+      assert.expect(3);
 
-      var array = [1, [[2, 3], 4, [[[5]]]]];
-
-      assert.deepEqual(_.flatten(array), [1, [2, 3], 4, [[[5]]]]);
+      assert.deepEqual(_.flatten(array), [1, 2, [3, [4]], 5]);
       assert.deepEqual(_.flattenDeep(array), [1, 2, 3, 4, 5]);
-      assert.deepEqual(_.flattenDepth(array, 2), [1, 2, 3, 4, [[5]]]);
-      assert.deepEqual(_.flattenDepth(array, 3), [1, 2, 3, 4, [5]]);
+      assert.deepEqual(_.flattenDepth(array, 2), [1, 2, 3, [4], 5]);
     });
 
     QUnit.test('should return an empty array for non array-like objects', function(assert) {
-      assert.expect(5);
+      assert.expect(3);
 
-      var nonArray = { 'a': 1 };
-      var expected = [];
+      var expected = [],
+          nonArray = { 'a': 1 };
 
       assert.deepEqual(_.flatten(nonArray), expected);
-      assert.deepEqual(_.flatten(nonArray, true), expected);
       assert.deepEqual(_.flattenDeep(nonArray), expected);
       assert.deepEqual(_.flattenDepth(nonArray, 2), expected);
-      assert.deepEqual(_.flattenDepth(nonArray, 0), expected);
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       if (!isNpm) {
-        var wrapped = _([1, [2], [3, [4]]]),
+        var wrapped = _(array),
             actual = wrapped.flatten();
 
         assert.ok(actual instanceof _);
-        assert.deepEqual(actual.value(), [1, 2, 3, [4]]);
+        assert.deepEqual(actual.value(), [1, 2, [3, [4]], 5]);
 
         actual = wrapped.flattenDeep();
 
         assert.ok(actual instanceof _);
-        assert.deepEqual(actual.value(), [1, 2, 3, 4]);
+        assert.deepEqual(actual.value(), [1, 2, 3, 4, 5]);
+
+        actual = wrapped.flattenDepth(2);
+
+        assert.ok(actual instanceof _);
+        assert.deepEqual(actual.value(), [1, 2, 3, [4], 5]);
       }
       else {
-        skipTest(assert, 4);
+        skipTest(assert, 6);
       }
     });
   }(1, 2, 3));

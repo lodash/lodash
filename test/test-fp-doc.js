@@ -38,6 +38,10 @@
 
   /*--------------------------------------------------------------------------*/
 
+  function toCommentLine(line) {
+    return ' * ' + line;
+  }
+
   function toEntry(name, paramLines, exampleLines, attachedToPrototype) {
     var start = [
       '/**',
@@ -55,9 +59,7 @@
     var params = paramLines.map(function(line) {
       return ' * @param ' + line;
     });
-    var example = (exampleLines || []).map(function(line) {
-      return ' * ' + line;
-    });
+    var example = (exampleLines || []).map(toCommentLine);
 
     return [].concat(start, staticLine, params, [' * @example'], example, end).join('\n');
   }
@@ -495,6 +497,76 @@
       assert.deepEqual(actual, [
         ['string', 'string', 'The string to trim. ']
       ]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('getDesc');
+
+  (function() {
+    function toSourceWithDescription(name, description) {
+      var start = [
+        '/**',
+        ' * '
+      ];
+
+      var end = [
+        ' * @static',
+        ' * ',
+        ' */',
+        'function ' + name + '(a, b, c) {',
+        '',
+        '}'
+      ];
+
+      var descriptionLines = description.map(toCommentLine);
+      return [].concat(start, descriptionLines, end).join('\n');
+    }
+
+    QUnit.test('should remove notes about mutators arguments and remove default values', function(assert) {
+      assert.expect(1);
+
+      var example = toSourceWithDescription('pullAt', [
+        'Removes elements from `array` corresponding to `indexes` and returns an',
+        'array of removed elements.',
+        '',
+        '**Note:** Unlike `_.at`, this method mutates `array`.',
+        ''
+      ]);
+
+      var entry = new Entry(example, example);
+
+      var actual = entry.getDesc();
+
+      assert.equal(actual, [
+        'Removes elements from `array` corresponding to `indexes` and returns an',
+        'array of removed elements.'
+      ].join('\n'));
+    });
+
+    QUnit.test('should remove following related lines', function(assert) {
+      assert.expect(1);
+
+      var example = toSourceWithDescription('assign', [
+        'Assigns own enumerable properties of source objects to the destination',
+        'object. Source objects are applied from left to right. Subsequent sources',
+        'overwrite property assignments of previous sources.',
+        '',
+        '**Note:** This method mutates `object` and is loosely based on',
+        '[`Object.assign`](https://mdn.io/Object/assign).',
+        ''
+      ]);
+
+      var entry = new Entry(example, example);
+
+      var actual = entry.getDesc();
+
+      assert.equal(actual, [
+        'Assigns own enumerable properties of source objects to the destination',
+        'object. Source objects are applied from left to right. Subsequent sources',
+        'overwrite property assignments of previous sources.',
+      ].join('\n'));
     });
   }());
 

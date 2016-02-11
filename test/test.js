@@ -463,6 +463,20 @@
       return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
     });
 
+    if (Buffer) {
+      defineProperty(root, 'Buffer', {
+        'configurable': true,
+        'enumerable': true,
+        'get': function get() {
+          var caller = get.caller,
+              name = caller.name;
+
+          if (!(name == 'runInContext' || name.length == 1 || /\b_\.isBuffer\b/.test(caller))) {
+            return Buffer;
+          }
+        }
+      });
+    }
     if (Map) {
       setProperty(root, 'Map', (function() {
         var count = 0;
@@ -470,31 +484,13 @@
           if (count++) {
             return new Map;
           }
-          var result = {};
           setProperty(root, 'Map', Map);
-          return result;
+          return {};
         };
       }()));
 
       setProperty(root.Map, 'toString', createToString('Map'));
     }
-    defineProperty(root, 'Buffer', (function() {
-      var count = 0,
-          version = lodashStable.get(process, 'versions.node'),
-          limit = /^0\.12\b/.test(version) ? 2 : 0;
-
-      return {
-        'configurable': true,
-        'enumerable':  true,
-        'get': function() {
-          if (++count <= limit) {
-            return Buffer;
-          }
-          setProperty(root, 'Buffer', undefined);
-        }
-      };
-    }()));
-
     setProperty(root, 'Set', noop);
     setProperty(root, 'Symbol', undefined);
     setProperty(root, 'WeakMap', noop);

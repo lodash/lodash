@@ -3945,7 +3945,7 @@
     });
 
     QUnit.test('should cancel `maxDelayed` when `delayed` is invoked', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var done = assert.async();
 
@@ -3958,9 +3958,14 @@
       debounced();
 
       setTimeout(function() {
+        debounced();
         assert.strictEqual(callCount, 1);
-        done();
       }, 128);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 192);
     });
 
     QUnit.test('should invoke the `trailing` call with the correct arguments and `this` binding', function(assert) {
@@ -20707,7 +20712,7 @@
       });
     });
 
-    QUnit.test('should trigger a second throttled call as early as possible when invoked repeatedly', function(assert) {
+    QUnit.test('should trigger a second throttled call as soon as possible', function(assert) {
       assert.expect(2);
 
       var done = assert.async();

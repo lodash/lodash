@@ -8683,7 +8683,7 @@
             lastCalled = stamp;
           }
           var remaining = maxWait - (stamp - lastCalled),
-              isCalled = remaining <= 0 || remaining > maxWait;
+              isCalled = (remaining <= 0 || remaining > maxWait) && (leading || maxTimeoutId);
 
           if (isCalled) {
             if (maxTimeoutId) {

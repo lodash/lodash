@@ -35,10 +35,11 @@
   ));
 
   /** Load stable Lodash and QUnit Extras. */
-  var _ = root._ || load('../lodash.js');
-  if (_) {
-    _ = _.runInContext(root);
-  }
+  var _ = root._ || (root._ = (
+    _ = load('../lodash.js'),
+    _.runInContext(root)
+  ));
+
   var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
   if (QUnitExtras) {
     QUnitExtras.runInContext(root);
@@ -63,8 +64,11 @@
     };
   }());
 
-  var mapping = root.mapping || load('../fp/_mapping.js'),
-      fp = convert(_.runInContext());
+  var fp = root.fp
+    ? (fp = _.noConflict(), _ = root._, fp)
+    : convert(_.runInContext());
+
+  var mapping = root.mapping || load('../fp/_mapping.js');
 
   /*--------------------------------------------------------------------------*/
 

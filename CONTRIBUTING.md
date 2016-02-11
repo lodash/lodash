@@ -1,7 +1,11 @@
-# Contributing to lodash
+# Contributing to Lodash
 
 Contributions are always welcome. Before contributing, please read the [code of conduct](https://github.com/lodash/lodash/blob/master/CODE_OF_CONDUCT.md) & [search the issue tracker](https://github.com/lodash/lodash/issues);
-your issue may have already been discussed or fixed in `master`. To contribute, [fork](https://help.github.com/articles/fork-a-repo/) lodash, commit your changes, & [send a pull request](https://help.github.com/articles/using-pull-requests/).
+your issue may have already been discussed or fixed in `master`. To contribute, [fork](https://help.github.com/articles/fork-a-repo/) Lodash, commit your changes, & [send a pull request](https://help.github.com/articles/using-pull-requests/).
+
+## Feature requests
+
+Feature requests such as adding new methods to Lodash are always welcome. They should be submitted in the [issue tracker](https://github.com/lodash/lodash/issues), ideally with a description of the expected behavior and use cases, where they'll remain as closed issues until sufficient interest has been shown by the community. Before you do submit, please search for similar requests in the [closed issues](https://github.com/lodash/lodash/issues?q=is%3Aissue+is%3Aclosed) and leave a comment there if you could find one.
 
 ## Pull Requests
 
@@ -15,7 +19,7 @@ The [Backbone](http://backbonejs.org/) & [Underscore](http://underscorejs.org/) 
 
 ## Contributor License Agreement
 
-lodash is a member of the [Dojo Foundation](http://dojofoundation.org/).
+Lodash is a member of the [Dojo Foundation](http://dojofoundation.org/).
 As such, we request that all contributors sign the Dojo Foundation [contributor license agreement](http://dojofoundation.org/about/claForm).
 
 For more information about CLAs, please check out Alex Russell’s excellent post, [“Why Do I Need to Sign This?”](http://infrequently.org/2008/06/why-do-i-need-to-sign-this/).

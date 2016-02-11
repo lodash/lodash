@@ -42,15 +42,17 @@ Lodash is available in a variety of other builds & module formats.
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
+ * [lodash/fp](https://github.com/lodash/lodash/wiki/FP-Guide)
 
 CDN copies are available on [cdnjs](https://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/).<br>
 Create [custom builds](https://lodash.com/custom-builds) with only the features you need.
 
 ## Further Reading
 
-  * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
   * [Build Differences](https://github.com/lodash/lodash/wiki/Build-Differences)
   * [Changelog](https://github.com/lodash/lodash/wiki/Changelog)
-  * [lodash-fp in-browser usage example] (https://github.com/lodash/lodash/wiki/lodash-fp-in-browser-usage-example)
+  * [Contributing & Feature Requests](https://github.com/lodash/lodash/blob/master/CONTRIBUTING.md)
+  * [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide)
+  * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
   * [Roadmap](https://github.com/lodash/lodash/wiki/Roadmap)
   * [More Resources](https://github.com/lodash/lodash/wiki/Resources)

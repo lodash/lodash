@@ -49,10 +49,6 @@ Create [custom builds](https://lodash.com/custom-builds) with only the features 
 
 ## Further Reading
 
-  * [Build Differences](https://github.com/lodash/lodash/wiki/Build-Differences)
-  * [Changelog](https://github.com/lodash/lodash/wiki/Changelog)
-  * [Contributing & Feature Requests](https://github.com/lodash/lodash/blob/master/CONTRIBUTING.md)
-  * [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide)
+  * [Contributing](https://github.com/lodash/lodash/blob/master/CONTRIBUTING.md)
   * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
-  * [Roadmap](https://github.com/lodash/lodash/wiki/Roadmap)
-  * [More Resources](https://github.com/lodash/lodash/wiki/Resources)
+  * [Wiki](https://github.com/lodash/lodash/wiki)

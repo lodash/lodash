@@ -353,11 +353,11 @@
   .join('');
 
   /**
-   * The custom error constructor.
+   * Creates a custom error object.
    *
    * @private
+   * @constructor
    * @param {string} message The error message.
-   * @returns {Object} Returns the new error object instance.
    */
   function CustomError(message) {
     this.name = 'CustomError';

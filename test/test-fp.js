@@ -147,7 +147,7 @@
 
       value = _.clone(array);
       remove = convert('remove', _.remove, { 'rearg': false });
-      actual = remove(value, predicate);
+      actual = remove(value)(predicate);
 
       assert.deepEqual(value, [1, 2, 3, 4]);
       assert.deepEqual(actual, [1, 3]);
@@ -351,20 +351,20 @@
       var array = ['a', 'b', 'c'],
           other = ['b', 'b', 'd'],
           object = { 'a': 1, 'b': 2, 'c': 2 },
-          actual = fp.difference(array, other);
+          actual = fp.difference(array)(other);
 
       assert.deepEqual(actual, ['a', 'c'], 'fp.difference');
 
-      actual = fp.includes('b', array);
+      actual = fp.includes('b')(array);
       assert.strictEqual(actual, true, 'fp.includes');
 
-      actual = fp.intersection(other, array);
+      actual = fp.intersection(other)(array);
       assert.deepEqual(actual, ['b'], 'fp.intersection');
 
-      actual = fp.omit(other, object);
+      actual = fp.omit(other)(object);
       assert.deepEqual(actual, { 'a': 1, 'c': 2 }, 'fp.omit');
 
-      actual = fp.union(other, array);
+      actual = fp.union(other)(array);
       assert.deepEqual(actual, ['a', 'b', 'c', 'd'], 'fp.union');
 
       actual = fp.uniq(other);
@@ -373,13 +373,13 @@
       actual = fp.uniqBy(_.identity, other);
       assert.deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
 
-      actual = fp.without('b', array);
+      actual = fp.without('b')(array);
       assert.deepEqual(actual, ['a', 'c'], 'fp.without');
 
-      actual = fp.xor(other, array);
+      actual = fp.xor(other)(array);
       assert.deepEqual(actual, ['a', 'c', 'd'], 'fp.xor');
 
-      actual = fp.pull('b', array);
+      actual = fp.pull('b')(array);
       assert.deepEqual(actual, ['a', 'c'], 'fp.pull');
     });
   }());
@@ -415,14 +415,14 @@
       args = undefined;
       reduce(function() {
         args || (args = slice.call(arguments));
-      })(0, array);
+      })(0)(array);
 
       assert.deepEqual(args, [0, 1]);
 
       args = undefined;
       reduce(function() {
         args || (args = slice.call(arguments));
-      })(0, object);
+      })(0)(object);
 
       assert.deepEqual(args, isFIFO ? [0, 1] : [0, 2]);
     });
@@ -476,7 +476,7 @@
       Foo.prototype = { 'b': 2 };
 
       var value = _.clone(object),
-          actual = fp.assign(value, { 'b': 2 });
+          actual = fp.assign(value)({ 'b': 2 });
 
       assert.deepEqual(value, object, 'fp.assign');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assign');
@@ -484,13 +484,13 @@
       value = _.clone(object);
       actual = fp.assignWith(function(objValue, srcValue) {
         return srcValue;
-      }, value, { 'b': 2 });
+      })(value)({ 'b': 2 });
 
       assert.deepEqual(value, object, 'fp.assignWith');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignWith');
 
       value = _.clone(object);
-      actual = fp.assignIn(value, new Foo);
+      actual = fp.assignIn(value)(new Foo);
 
       assert.deepEqual(value, object, 'fp.assignIn');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignIn');
@@ -498,25 +498,25 @@
       value = _.clone(object);
       actual = fp.assignInWith(function(objValue, srcValue) {
         return srcValue;
-      }, value, new Foo);
+      })(value)(new Foo);
 
       assert.deepEqual(value, object, 'fp.assignInWith');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.assignInWith');
 
       value = _.clone(object);
-      actual = fp.defaults({ 'a': 2, 'b': 2 }, value);
+      actual = fp.defaults({ 'a': 2, 'b': 2 })(value);
 
       assert.deepEqual(value, object, 'fp.defaults');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.defaults');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.defaultsDeep({ 'a': { 'c': 4, 'd': 4 } }, deepObject);
+      actual = fp.defaultsDeep({ 'a': { 'c': 4, 'd': 4 } })(deepObject);
 
       assert.deepEqual(value, { 'a': { 'b': 2, 'c': 3 } }, 'fp.defaultsDeep');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3, 'd': 4 } }, 'fp.defaultsDeep');
 
       value = _.clone(object);
-      actual = fp.extend(value, new Foo);
+      actual = fp.extend(value)(new Foo);
 
       assert.deepEqual(value, object, 'fp.extend');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extend');
@@ -524,19 +524,19 @@
       value = _.clone(object);
       actual = fp.extendWith(function(objValue, srcValue) {
         return srcValue;
-      }, value, new Foo);
+      })(value)(new Foo);
 
       assert.deepEqual(value, object, 'fp.extendWith');
       assert.deepEqual(actual, { 'a': 1, 'b': 2 }, 'fp.extendWith');
 
       value = _.clone(array);
-      actual = fp.fill(1, 2, '*', value);
+      actual = fp.fill(1)(2)('*')(value);
 
       assert.deepEqual(value, array, 'fp.fill');
       assert.deepEqual(actual, [1, '*', 3], 'fp.fill');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.merge(value, { 'a': { 'd': 4 } });
+      actual = fp.merge(value)({ 'a': { 'd': 4 } });
 
       assert.deepEqual(value, { 'a': { 'b': 2, 'c': 3 } }, 'fp.merge');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3, 'd': 4 } }, 'fp.merge');
@@ -554,19 +554,19 @@
       assert.deepEqual(actual, { 'a': { 'b': [1, 2, 3], 'c': 3 } }, 'fp.mergeWith');
 
       value = _.clone(array);
-      actual = fp.pull(2, value);
+      actual = fp.pull(2)(value);
 
       assert.deepEqual(value, array, 'fp.pull');
       assert.deepEqual(actual, [1, 3], 'fp.pull');
 
       value = _.clone(array);
-      actual = fp.pullAll([1, 3], value);
+      actual = fp.pullAll([1, 3])(value);
 
       assert.deepEqual(value, array, 'fp.pullAll');
       assert.deepEqual(actual, [2], 'fp.pullAll');
 
       value = _.clone(array);
-      actual = fp.pullAt([0, 2], value);
+      actual = fp.pullAt([0, 2])(value);
 
       assert.deepEqual(value, array, 'fp.pullAt');
       assert.deepEqual(actual, [2], 'fp.pullAt');
@@ -574,7 +574,7 @@
       value = _.clone(array);
       actual = fp.remove(function(value) {
         return value === 2;
-      }, value);
+      })(value);
 
       assert.deepEqual(value, array, 'fp.remove');
       assert.deepEqual(actual, [1, 3], 'fp.remove');
@@ -586,19 +586,19 @@
       assert.deepEqual(actual, [3, 2, 1], 'fp.reverse');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.set('a.b', 3, value);
+      actual = fp.set('a.b')(3)(value);
 
       assert.deepEqual(value, deepObject, 'fp.set');
       assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.set');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.setWith(Object, 'd.e', 4, value);
+      actual = fp.setWith(Object)('d.e')(4)(value);
 
       assert.deepEqual(value, deepObject, 'fp.setWith');
       assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.setWith');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.unset('a.b', value);
+      actual = fp.unset('a.b')(value);
 
       assert.deepEqual(value, deepObject, 'fp.unset');
       assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.set');
@@ -655,7 +655,7 @@
 
       fp.assignWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'b': 2 });
+      })(value)({ 'b': 2 });
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.assignWith');
 
@@ -664,7 +664,7 @@
 
       fp.extendWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'b': 2 });
+      })(value)({ 'b': 2 });
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
 
@@ -676,7 +676,7 @@
 
       fp.mergeWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, value, { 'a': [2, 3] });
+      })(value)({ 'a': [2, 3] });
 
       args[5] = _.omitBy(args[5], _.isFunction);
       assert.deepEqual(args, expected, 'fp.mergeWith');
@@ -686,7 +686,7 @@
 
       fp.setWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      }, 'b.c', 2, value);
+      })('b.c')(2)(value);
 
       assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
     });
@@ -731,7 +731,7 @@
     QUnit.test('`_.' + methodName + '` should accept an `arity` param', function(assert) {
       assert.expect(1);
 
-      var actual = func(1, function(a, b) { return [a, b]; })('a');
+      var actual = func(1)(function(a, b) { return [a, b]; })('a');
       assert.deepEqual(actual, ['a', undefined]);
     });
   });
@@ -763,7 +763,7 @@
 
       var extend = convert('extend', _.extend),
           value = _.clone(object),
-          actual = extend(value, new Foo);
+          actual = extend(value)(new Foo);
 
       assert.deepEqual(value, object);
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
@@ -876,7 +876,7 @@
     QUnit.test('should return a iteratee with capped params', function(assert) {
       assert.expect(1);
 
-      var func = fp.iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+      var func = fp.iteratee(function(a, b, c) { return [a, b, c]; }, 3);
       assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
     });
 
@@ -884,7 +884,7 @@
       assert.expect(1);
 
       var iteratee = convert('iteratee', _.iteratee),
-          func = iteratee(function(a, b, c) { return [a, b, c]; }, undefined, 3);
+          func = iteratee(function(a, b, c) { return [a, b, c]; }, 3);
 
       assert.deepEqual(func(1, 2, 3), [1, undefined, undefined]);
     });
@@ -1110,7 +1110,7 @@
 
       func(function() {
         args || (args = slice.call(arguments));
-      })(0, array);
+      })(0)(array);
 
       assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
     });
@@ -1128,7 +1128,7 @@
 
       func(function() {
         args || (args = slice.call(arguments));
-      })(0, object);
+      })(0)(object);
 
       assert.deepEqual(args, expected);
     });
@@ -1219,7 +1219,7 @@
     QUnit.test('should zip together two arrays', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(fp.zip([1, 2], [3, 4]), [[1, 3], [2, 4]]);
+      assert.deepEqual(fp.zip([1, 2])([3, 4]), [[1, 3], [2, 4]]);
     });
   }());
 
@@ -1231,7 +1231,7 @@
     QUnit.test('should zip together key/value arrays into an object', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(fp.zipObject(['a', 'b'], [1, 2]), { 'a': 1, 'b': 2 });
+      assert.deepEqual(fp.zipObject(['a', 'b'])([1, 2]), { 'a': 1, 'b': 2 });
     });
   }());
 

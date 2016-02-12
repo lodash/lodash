@@ -21185,6 +21185,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.asArray');
+
+  (function() {
+    var wrapCases = [null, void 0, 1, '', 'ab', 0, {a: 1}, Object('xyz')];
+
+    QUnit.test('should wrap non array items in an array', function(assert) {
+      assert.expect(wrapCases.length * 2);
+
+      _.each(wrapCases, function(val) {
+        var result = _.asArray(val);
+        assert.deepEqual(result, [val], 'for value ' + val);
+        assert.strictEqual(result[0], val, 'should not copy the value');
+      });
+    });
+
+    QUnit.test('should an array copy if provided array', function(assert) {
+      assert.expect(2);
+
+      var arr = [1, 2, '3'];
+      assert.deepEqual(_.asArray(arr), arr);
+      assert.notStrictEqual(_.asArray(arr), arr);
+    });
+
+    QUnit.test('should convert iterables to arrays', function(assert) {
+      assert.expect(1);
+
+      if (!isNpm && Symbol && Symbol.iterator) {
+        var object = { '0': 'a', 'length': 1 };
+        object[Symbol.iterator] = arrayProto[Symbol.iterator];
+
+        assert.deepEqual(_.asArray(object), ['a']);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toLower');
 
   (function() {
@@ -24084,7 +24125,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(296);
+      assert.expect(297);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

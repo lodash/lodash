@@ -10433,6 +10433,41 @@
     }
 
     /**
+     * Converts a `value` to an array.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {Array} Returns the converted array.
+     * @example
+     *
+     * _.toArray({ 'a': 1, 'b': 2 });
+     * // => [{ 'a': 1, 'b': 2 }]
+     *
+     * _.toArray([1, 2, 3]);
+     * // => [1, 2, 3]
+     *
+     * _.toArray('abc');
+     * // => ['abc']
+     *
+     * _.toArray(1);
+     * // => [1]
+     *
+     * _.toArray(null);
+     * // => [null]
+     */
+    function asArray(value) {
+      if (isArray(value)) {
+        return copyArray(value);
+      }
+      if (iteratorSymbol && value && value[iteratorSymbol] && !isString(value)) {
+        return iteratorToArray(value[iteratorSymbol]());
+      }
+      return [value];
+    }
+
+    /**
      * Converts `value` to an array.
      *
      * @static
@@ -14206,6 +14241,7 @@
     // Add functions that return wrapped values when chaining.
     lodash.after = after;
     lodash.ary = ary;
+    lodash.asArray = asArray;
     lodash.assign = assign;
     lodash.assignIn = assignIn;
     lodash.assignInWith = assignInWith;

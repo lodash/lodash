@@ -861,9 +861,10 @@
 
   (function() {
     QUnit.test('should have an argument order of `start`, `end`, then `value`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       assert.strictEqual(fp.inRange(2)(4)(3), true);
+      assert.strictEqual(fp.inRange(-2)(-6)(-3), true);
     });
   }());
 

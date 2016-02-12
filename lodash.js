@@ -9761,8 +9761,11 @@
      * // => false
      */
     function isError(value) {
-      return isObjectLike(value) &&
-        typeof value.message == 'string' && objectToString.call(value) == errorTag;
+      if (!isObjectLike(value)) {
+        return false;
+      }
+      var Ctor = value.constructor;
+      return typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag;
     }
 
     /**
@@ -13121,7 +13124,7 @@
       try {
         return apply(func, undefined, args);
       } catch (e) {
-        return isObject(e) ? e : new Error(e);
+        return isError(e) ? e : new Error(e);
       }
     });
 

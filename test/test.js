@@ -353,6 +353,32 @@
   .join('');
 
   /**
+   * The custom error constructor.
+   *
+   * @private
+   * @param {string} message The error message.
+   * @returns {Object} Returns the new error object instance.
+   */
+  function CustomError(message) {
+    this.name = 'CustomError';
+    this.message = message;
+  }
+
+  CustomError.prototype = lodashStable.create(Error.prototype);
+
+  /**
+   * Removes all own enumerable properties from a given object.
+   *
+   * @private
+   * @param {Object} object The object to empty.
+   */
+  function emptyObject(object) {
+    lodashStable.forOwn(object, function(value, key, object) {
+      delete object[key];
+    });
+  }
+
+  /**
    * Extracts the unwrapped value from its wrapper.
    *
    * @private
@@ -373,18 +399,6 @@
       result = action.func.apply(action.thisArg, args);
     }
     return result;
-  }
-
-  /**
-   * Removes all own enumerable properties from a given object.
-   *
-   * @private
-   * @param {Object} object The object to empty.
-   */
-  function emptyObject(object) {
-    lodashStable.forOwn(object, function(value, key, object) {
-      delete object[key];
-    });
   }
 
   /**
@@ -1518,13 +1532,6 @@
 
     QUnit.test('should preserve custom errors', function(assert) {
       assert.expect(1);
-
-      function CustomError(message) {
-        this.name = 'CustomError';
-        this.message = message;
-      }
-
-      CustomError.prototype = lodashStable.create(Error.prototype);
 
       var actual = _.attempt(function() { throw new CustomError('x'); });
       assert.ok(actual instanceof CustomError);
@@ -9219,6 +9226,12 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should return `true` for subclassed values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isError(new CustomError('x')), true);
+    });
+
     QUnit.test('should return `false` for non error objects', function(assert) {
       assert.expect(12);
 
@@ -11012,11 +11025,11 @@
 
   (function() {
     QUnit.test('should return `false` for subclassed values', function(assert) {
-      assert.expect(8);
+      assert.expect(7);
 
       var funcs = [
-        'isArray', 'isBoolean', 'isDate', 'isError',
-        'isFunction', 'isNumber', 'isRegExp', 'isString'
+        'isArray', 'isBoolean', 'isDate', 'isFunction',
+        'isNumber', 'isRegExp', 'isString'
       ];
 
       lodashStable.each(funcs, function(methodName) {

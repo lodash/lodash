@@ -13937,15 +13937,27 @@
       assert.deepEqual(actual.a, [[3, 4, 3]]);
     });
 
-    QUnit.test('should shallow clone array/typed-array/plain-object sources', function(assert) {
+    QUnit.test('should deep clone array/typed-array/plain-object sources', function(assert) {
       assert.expect(1);
 
-      var values = [[], new (Uint8Array || Object), {}],
+      var typedArray = Uint8Array
+        ? new Uint8Array(new ArrayBuffer(2))
+        : { 'buffer': [0, 0] };
+
+      var props = ['0', 'a', 'buffer'],
+          values = [[{ 'a': 1 }], { 'a': [1] }, typedArray],
           expected = lodashStable.map(values, alwaysTrue);
 
-      var actual = lodashStable.map(values, function(value) {
-        var object = _.merge({}, { 'value': value });
-        return object.value !== value && lodashStable.isEqual(object.value, value);
+      var actual = lodashStable.map(values, function(value, index) {
+        var key = props[index],
+            object = _.merge({}, { 'value': value }),
+            newValue = object.value;
+
+        return (
+          newValue !== value &&
+          newValue[key] !== value[key] &&
+          lodashStable.isEqual(newValue, value)
+        );
       });
 
       assert.deepEqual(actual, expected);

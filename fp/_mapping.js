@@ -137,7 +137,8 @@ exports.methodRearg = {
   'pullAllBy': [2, 1, 0],
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
-  'sortedLastIndexBy': [2, 1, 0]
+  'sortedLastIndexBy': [2, 1, 0],
+  'zipWith': [1, 2, 0]
 };
 
 /** Used to map method names to spread configs. */

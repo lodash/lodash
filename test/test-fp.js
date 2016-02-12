@@ -1237,6 +1237,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.zipWith');
+
+  (function() {
+    QUnit.test('should zip arrays combining grouped elements with `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var array1 = [1, 2, 3],
+          array2 = [4, 5, 6];
+
+      var actual = fp.zipWith(function(a, b) {
+        return a + b;
+      })(array1)(array2);
+
+      assert.deepEqual(actual, [5, 7, 9]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.config.asyncRetries = 10;
   QUnit.config.hidepassed = true;
 

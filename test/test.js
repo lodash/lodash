@@ -483,7 +483,7 @@
         'enumerable': true,
         'get': function get() {
           var caller = get.caller,
-              name = caller.name;
+              name = caller ? caller.name : '';
 
           if (!(name == 'runInContext' || name.length == 1 || /\b_\.isBuffer\b/.test(caller))) {
             return Buffer;

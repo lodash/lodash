@@ -18,16 +18,20 @@ var mapping = require('./_mapping'),
  * @returns {Function|Object} Returns the converted function or object.
  */
 function baseConvert(util, name, func, options) {
-  var isLib = typeof name == 'function';
-  if (isLib) {
+  var setPlaceholder,
+      isLib = typeof name == 'function',
+      isObj = name === Object(name);
+
+  if (isObj) {
     options = func;
     func = name;
     name = undefined;
   }
-  options || (options = {});
   if (func == null) {
     throw new TypeError;
   }
+  options || (options = {});
+
   var config = {
     'cap': 'cap' in options ? options.cap : true,
     'curry': 'curry' in options ? options.curry : true,
@@ -38,7 +42,7 @@ function baseConvert(util, name, func, options) {
 
   var forceRearg = ('rearg' in options) && options.rearg;
 
-  var _ = isLib ? func : {
+  var helpers = isLib ? func : {
     'ary': util.ary,
     'cloneDeep': util.cloneDeep,
     'curry': util.curry,
@@ -50,14 +54,14 @@ function baseConvert(util, name, func, options) {
     'spread': util.spread
   };
 
-  var ary = _.ary,
-      cloneDeep = _.cloneDeep,
-      curry = _.curry,
-      each = _.forEach,
-      isFunction = _.isFunction,
-      keys = _.keys,
-      rearg = _.rearg,
-      spread = _.spread;
+  var ary = helpers.ary,
+      cloneDeep = helpers.cloneDeep,
+      curry = helpers.curry,
+      each = helpers.forEach,
+      isFunction = helpers.isFunction,
+      keys = helpers.keys,
+      rearg = helpers.rearg,
+      spread = helpers.spread;
 
   var baseArity = function(func, n) {
     return n == 2
@@ -225,16 +229,16 @@ function baseConvert(util, name, func, options) {
 
     result || (result = wrapped);
     if (mapping.placeholder[name]) {
+      setPlaceholder = true;
       func.placeholder = result.placeholder = placeholder;
     }
     return result;
   };
 
-  if (!isLib) {
+  if (!isObj) {
     return wrap(name, func);
   }
-  // Add placeholder.
-  _.placeholder = placeholder;
+  var _ = func;
 
   // Iterate over methods for the current ary cap.
   var pairs = [];
@@ -252,6 +256,9 @@ function baseConvert(util, name, func, options) {
     _[pair[0]] = pair[1];
   });
 
+  if (setPlaceholder) {
+    _.placeholder = placeholder;
+  }
   // Wrap the lodash method and its aliases.
   each(keys(_), function(key) {
     each(mapping.realToAlias[key] || [], function(alias) {

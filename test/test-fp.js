@@ -103,6 +103,40 @@
       'rearg': false
     };
 
+    QUnit.test('should work when given an object', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3, 4],
+          lodash = convert({ 'remove': _.remove });
+
+      var actual = lodash.remove(function(n) {
+        return n % 2 == 0;
+      })(array);
+
+      assert.deepEqual(array, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [1, 3]);
+    });
+
+    QUnit.test('should only add a `placeholder` property if needed', function(assert) {
+      assert.expect(2);
+
+      var methodNames = _.keys(mapping.placeholder),
+          expected = _.map(methodNames, _.constant(true));
+
+      var actual = _.map(methodNames, function(methodName) {
+        var object = {};
+        object[methodName] = _[methodName];
+
+        var lodash = convert(object);
+        return methodName in lodash;
+      });
+
+      assert.deepEqual(actual, expected);
+
+      var lodash = convert({ 'add': _.add });
+      assert.notOk('placeholder' in lodash);
+    });
+
     QUnit.test('should accept an `options` argument', function(assert) {
       assert.expect(3);
 
@@ -194,6 +228,21 @@
 
       var array = [1, 2, 3, 4],
           lodash = convert(_.runInContext(), allFalseOptions);
+
+      var actual = lodash.remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(lodash.remove(), []);
+    });
+
+    QUnit.test('should work when given an object and `options`', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          lodash = convert({ 'remove': _.remove }, allFalseOptions);
 
       var actual = lodash.remove(array, function(n, index) {
         return index % 2 == 0;

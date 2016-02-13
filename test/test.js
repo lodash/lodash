@@ -131,8 +131,8 @@
   var ui = root.ui || (root.ui = {
     'buildPath': filePath,
     'loaderPath': '',
-    'isModularize': /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test(filePath),
-    'isStrict': /\bes6?\b/.test(filePath),
+    'isModularize': /\b(?:amd|commonjs|es|node|npm|(index|main)\.js)\b/.test(filePath),
+    'isStrict': /\bes\b/.test(filePath),
     'urlParams': {}
   });
 
@@ -8165,7 +8165,7 @@
     QUnit.test('should return `false` if `Buffer` is not defined', function(assert) {
       assert.expect(1);
 
-      if (Buffer && lodashBizarro) {
+      if (!isStrict && Buffer && lodashBizarro) {
         assert.strictEqual(lodashBizarro.isBuffer(new Buffer(2)), false);
       }
       else {

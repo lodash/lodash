@@ -154,13 +154,13 @@
   ui.isForeign = RegExp('^(\\w+:)?//').test(build);
 
   // Used to indicate testing a modularized build.
-  ui.isModularize = /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
+  ui.isModularize = /\b(?:amd|commonjs|es|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
 
   // Used to indicate testing in Sauce Labs' automated test cloud.
   ui.isSauceLabs = location.port == '9001';
 
   // Used to indicate that lodash is in strict mode.
-  ui.isStrict = /\bes6?\b/.test([location.pathname, location.search]);
+  ui.isStrict = /\bes\b/.test([location.pathname, location.search]);
 
   ui.urlParams = { 'build': build, 'loader': loader };
   ui.timing = { 'loadEventEnd': 0 };

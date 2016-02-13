@@ -9770,7 +9770,8 @@
         return false;
       }
       var Ctor = value.constructor;
-      return typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag;
+      return (objectToString.call(value) == errorTag) ||
+        (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
     }
 
     /**

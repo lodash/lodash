@@ -79,7 +79,7 @@
    * @param {Object} assert The QUnit assert object.
    * @param {number} [count=1] The number of tests to skip.
    */
-  function skipTest(assert, count) {
+  function skipAssert(assert, count) {
     count || (count = 1);
     while (count--) {
       assert.ok(true, 'test skipped');
@@ -118,7 +118,7 @@
         assert.deepEqual(actual, [1, 3]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -143,7 +143,7 @@
         assert.notOk('placeholder' in lodash);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -264,7 +264,7 @@
         assert.deepEqual(lodash.remove(), []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   }());
@@ -889,7 +889,7 @@
           assert.strictEqual(mapCount, 5, 'mapCount');
         }
         else {
-          skipTest(assert, 3);
+          skipAssert(assert, 3);
         }
       });
     });

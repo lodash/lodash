@@ -434,7 +434,7 @@
    * @param {Object} assert The QUnit assert object.
    * @param {number} [count=1] The number of tests to skip.
    */
-  function skipTest(assert, count) {
+  function skipAssert(assert, count) {
     count || (count = 1);
     while (count--) {
       assert.ok(true, 'test skipped');
@@ -689,7 +689,7 @@
         assert.strictEqual((lodashModule || {}).moduleName, 'lodash');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -699,7 +699,7 @@
       if (amd && lodashStable.includes(ui.loaderPath, 'requirejs')) {
         assert.strictEqual((shimmedModule || {}).moduleName, 'shimmed');
       } else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -710,7 +710,7 @@
         assert.strictEqual((underscoreModule || {}).moduleName, 'underscore');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -736,7 +736,7 @@
         attempt();
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
         done();
       }
     });
@@ -748,7 +748,7 @@
         assert.notOk('_method' in lodashBizarro);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -837,7 +837,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -863,7 +863,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -881,7 +881,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -907,7 +907,7 @@
         assert.strictEqual(func(1, 'a', new Foo), true);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -921,7 +921,7 @@
         assert.strictEqual(func(1, 'b', object), false);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -933,7 +933,7 @@
         assert.strictEqual(func(NaN, 'a', { 'a': NaN }), true);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -949,7 +949,7 @@
         assert.strictEqual(actual, false, message || '');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -973,7 +973,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -989,7 +989,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -1008,7 +1008,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -1054,7 +1054,7 @@
         assert.strictEqual(_(1).add(2), 3);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -1065,7 +1065,7 @@
         assert.ok(_(1).chain().add(2) instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -1196,7 +1196,7 @@
         assert.strictEqual(includes('b')(array, 2), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -1445,7 +1445,7 @@
         });
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
 
@@ -1470,7 +1470,7 @@
         });
       }
       else {
-        skipTest(assert, 8);
+        skipAssert(assert, 8);
       }
     });
 
@@ -1488,7 +1488,7 @@
         assert.deepEqual(actual, _.at(indexObject, 0));
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }(1, 2, 3));
@@ -1550,7 +1550,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -1561,7 +1561,7 @@
         assert.strictEqual(_(lodashStable.constant('x')).attempt(), 'x');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -1572,7 +1572,7 @@
         assert.ok(_(lodashStable.constant('x')).chain().attempt() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -1849,7 +1849,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -1866,7 +1866,7 @@
         assert.deepEqual(actual, [object, 'a', 'b', 'c']);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -2079,7 +2079,7 @@
         assert.strictEqual(_('foo bar')[methodName](), converted);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -2090,7 +2090,7 @@
         assert.ok(_('foo bar').chain()[methodName]() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -2169,7 +2169,7 @@
         assert.ok(actual instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -2182,7 +2182,7 @@
         assert.strictEqual(wrapped.chain(), wrapped);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -2202,7 +2202,7 @@
         assert.ok(_(array).chain().sortBy().head() instanceof _);
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
 
@@ -2253,7 +2253,7 @@
         });
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -2548,7 +2548,7 @@
           assert.notStrictEqual(actual, arrayBuffer);
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
 
@@ -2588,7 +2588,7 @@
           assert.strictEqual(actual[0], isDeep ? 2 : 1);
         }
         else {
-          skipTest(assert, 4);
+          skipAssert(assert, 4);
         }
       });
 
@@ -2648,11 +2648,11 @@
             assert.strictEqual(func(object).a.b[symbol], object.a.b[symbol]);
           }
           else {
-            skipTest(assert);
+            skipAssert(assert);
           }
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
 
@@ -2670,7 +2670,7 @@
           assert.notStrictEqual(actual, object);
         }
         else {
-          skipTest(assert, 4);
+          skipAssert(assert, 4);
         }
       });
 
@@ -2681,7 +2681,7 @@
           assert.strictEqual(func(symbol), symbol);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -2698,7 +2698,7 @@
           }
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -2754,7 +2754,7 @@
           assert.notStrictEqual(actual, object);
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
 
@@ -2777,7 +2777,7 @@
               assert.strictEqual(actual.length, array.length);
             }
             else {
-              skipTest(assert, 5);
+              skipAssert(assert, 5);
             }
           });
         });
@@ -2797,7 +2797,7 @@
             assert.deepEqual(func(value), expected);
           }
           else {
-            skipTest(assert, 3);
+            skipAssert(assert, 3);
           }
         });
       });
@@ -2876,7 +2876,7 @@
         assert.deepEqual(actual, [true, 1, 'a']);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -2890,7 +2890,7 @@
         assert.deepEqual(actual, _.take(_.compact(_.slice(array, 1)).reverse()));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -2965,7 +2965,7 @@
         assert.deepEqual(actual, [1, 2, 3]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -3270,7 +3270,7 @@
         assert.ok(wrapped instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -3355,7 +3355,7 @@
         assert.deepEqual(actual, _.take(_.filter(_.map(_.countBy(array), square), isEven)));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -4520,7 +4520,7 @@
         assert.deepEqual(actual, _.dropRight(_.drop(_.dropRight(_.drop(_.filter(_.drop(array), predicate), 2))), 2));
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -4608,7 +4608,7 @@
         assert.deepEqual(actual, _.drop(_.dropRight(_.drop(_.dropRight(_.filter(_.dropRight(array), predicate), 2))), 2));
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -4678,7 +4678,7 @@
         assert.deepEqual(wrapped.value(), [1, 2]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -4750,7 +4750,7 @@
         assert.strictEqual(wrapped.last(), _.last(expected));
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -4769,7 +4769,7 @@
         assert.deepEqual(actual, array.slice(3));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -5053,7 +5053,7 @@
         assert.ok(pass);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -5218,7 +5218,7 @@
         assert.strictEqual(actual, array);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   }());
@@ -5346,7 +5346,7 @@
           assert.strictEqual(_(array)[methodName](), expected);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -5357,7 +5357,7 @@
           assert.ok(_(array).chain()[methodName]() instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -5369,7 +5369,7 @@
           assert.strictEqual(wrapped.__wrapped__, array);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -5388,7 +5388,7 @@
           });
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
     }());
@@ -5438,7 +5438,7 @@
         assert.strictEqual(actual, isFind ? 4 : square(LARGE_ARRAY_SIZE));
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   });
@@ -5560,7 +5560,7 @@
         });
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -5694,7 +5694,7 @@
         assert.deepEqual(actual.value(), [1, 2, 3, [4], 5]);
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }(1, 2, 3));
@@ -5782,7 +5782,7 @@
           assert.strictEqual(mapCount, 5, 'mapCount');
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
         _.filter = filter1;
         _.map = map1;
@@ -5812,7 +5812,7 @@
         assert.ok(wrapped instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -6034,7 +6034,7 @@
           assert.deepEqual(args, expected);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -6072,7 +6072,7 @@
           assert.deepEqual(argsList, expected);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6097,7 +6097,7 @@
           assert.notOk(lodashStable.includes(keys, 'a'));
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6115,7 +6115,7 @@
           assert.ok(wrapped instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6132,7 +6132,7 @@
           assert.notOk(actual instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -6147,7 +6147,7 @@
           assert.notStrictEqual(actual, wrapped);
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
     });
@@ -6168,7 +6168,7 @@
           assert.deepEqual(values, [1]);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6184,7 +6184,7 @@
           assert.strictEqual(func(array, Boolean), array);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6217,7 +6217,7 @@
           assert.notOk(isIteratedAsObject({ 'length': 0 }));
         }
         else {
-          skipTest(assert, 3);
+          skipAssert(assert, 3);
         }
       });
     });
@@ -6246,7 +6246,7 @@
           assert.strictEqual(count, 1);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6274,7 +6274,7 @@
           assert.strictEqual(count, 1);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6369,7 +6369,7 @@
         assert.notStrictEqual(actual, wrapped);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -6410,7 +6410,7 @@
           assert.ok(pass);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -6499,7 +6499,7 @@
         assert.deepEqual(values, [lodashStable.endsWith(methodName, 'Right') ? 3 : 1]);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -6518,7 +6518,7 @@
         assert.strictEqual(values.length, 1);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -6602,7 +6602,7 @@
         assert.deepEqual(actual, _.take(_.filter(_.map(_.fromPairs(array), square), isEven)));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -6713,7 +6713,7 @@
         assert.deepEqual(actual, _.take(_.filter(lodashStable.map(_.groupBy(array), iteratee), predicate)));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -6844,7 +6844,7 @@
         assert.strictEqual(func(object, 1), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -6966,7 +6966,7 @@
         assert.strictEqual(_(array).head(), 1);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -6977,7 +6977,7 @@
         assert.ok(_(array).chain().head() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -6989,7 +6989,7 @@
         assert.strictEqual(wrapped.__wrapped__, array);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -7008,7 +7008,7 @@
         });
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -7125,7 +7125,7 @@
           assert.strictEqual(_(collection).includes(3), true);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -7136,7 +7136,7 @@
           assert.ok(_(collection).chain().includes(3) instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -7336,7 +7336,7 @@
         assert.deepEqual(values, array);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
   }());
@@ -7483,7 +7483,7 @@
         assert.deepEqual(wrapped.value(), [1, 2]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   });
@@ -7573,7 +7573,7 @@
         assert.deepEqual(wrapped.value(), { '1': 'a', '2': 'b' });
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -7700,7 +7700,7 @@
         assert.strictEqual(_(object).invoke('a'), 1);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -7712,7 +7712,7 @@
         assert.ok(_(object).chain().invoke('a') instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -7826,7 +7826,7 @@
         assert.deepEqual(actual.valueOf(), ['(A)', '(B)', '(C)']);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -7847,7 +7847,7 @@
         assert.deepEqual(actual, [0]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -7898,7 +7898,7 @@
         assert.strictEqual(_.isArguments(realm.arguments), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -7947,7 +7947,7 @@
         assert.strictEqual(_.isArray(realm.array), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -7966,7 +7966,7 @@
         assert.strictEqual(_.isArrayBuffer(arrayBuffer), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -8002,7 +8002,7 @@
         assert.strictEqual(_.isArrayBuffer(realm.arrayBuffer), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8060,7 +8060,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8114,7 +8114,7 @@
         assert.strictEqual(_.isBoolean(realm.boolean), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8133,7 +8133,7 @@
         assert.strictEqual(_.isBuffer(new Buffer(2)), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -8169,7 +8169,7 @@
         assert.strictEqual(lodashBizarro.isBuffer(new Buffer(2)), false);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8218,7 +8218,7 @@
         assert.strictEqual(_.isDate(realm.date), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8280,7 +8280,7 @@
         assert.strictEqual(_.isElement(realm.element), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8369,7 +8369,7 @@
         assert.strictEqual(_({}).isEmpty(), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -8380,7 +8380,7 @@
         assert.ok(_({}).chain().isEmpty() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -8726,7 +8726,7 @@
         assert.strictEqual(_.isEqual(object1, object2), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -8802,7 +8802,7 @@
         assert.strictEqual(_.isEqual(buffer1, buffer2), true);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -8876,7 +8876,7 @@
         assert.strictEqual(_.isEqual(map1, map2), false);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -8913,7 +8913,7 @@
         assert.strictEqual(_.isEqual(set1, set2), false);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -8957,7 +8957,7 @@
         assert.strictEqual(_.isEqual({ 'a': 2 }, realm.object), false);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -8975,7 +8975,7 @@
         }
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -9012,7 +9012,7 @@
           assert.strictEqual(_.isEqual(_(actual), _(false)), true);
         }
         else {
-          skipTest(assert, 4);
+          skipAssert(assert, 4);
         }
       });
     });
@@ -9034,7 +9034,7 @@
         assert.strictEqual(_.isEqual(object1, object2), false);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -9045,7 +9045,7 @@
         assert.strictEqual(_('a').isEqual('a'), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -9056,7 +9056,7 @@
         assert.ok(_('a').chain().isEqual('a') instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -9201,7 +9201,7 @@
           assert.deepEqual(argsList, expected, index ? 'Set' : 'Map');
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -9269,7 +9269,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -9391,7 +9391,7 @@
       if (document) {
         assert.strictEqual(_.isFunction(document.getElementsByTagName('body')), false);
       } else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -9406,7 +9406,7 @@
           assert.strictEqual(_.isFunction(object), false);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -9418,7 +9418,7 @@
         assert.strictEqual(_.isFunction(realm.function), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -9524,7 +9524,7 @@
         assert.strictEqual(_.isMap(map), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -9561,7 +9561,7 @@
         assert.strictEqual(_.isMap(realm.map), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -9743,7 +9743,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -9776,7 +9776,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -10024,7 +10024,7 @@
           assert.deepEqual(argsList, expected, index ? 'Set' : 'Map');
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -10079,7 +10079,7 @@
         assert.strictEqual(_.isNaN(realm.nan), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10099,7 +10099,7 @@
           assert.strictEqual(_.isNative(func), true);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -10107,7 +10107,7 @@
         assert.strictEqual(_.isNative(body.cloneNode), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10142,13 +10142,13 @@
         assert.strictEqual(_.isNative(realm.element.cloneNode), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
       if (realm.object) {
         assert.strictEqual(_.isNative(realm.object.valueOf), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10197,7 +10197,7 @@
         assert.strictEqual(_.isNil(symbol), false);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10209,7 +10209,7 @@
         assert.strictEqual(_.isNil(realm.undefined), true);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }(1, 2, 3));
@@ -10261,7 +10261,7 @@
         assert.strictEqual(_.isNull(realm.null), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10314,7 +10314,7 @@
         assert.strictEqual(_.isNumber(realm.number), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10351,13 +10351,13 @@
         assert.strictEqual(_.isObject(body), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
       if (Symbol) {
         assert.strictEqual(_.isObject(Object(symbol)), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10381,7 +10381,7 @@
         assert.strictEqual(_.isObject(realm.element), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
       if (realm.object) {
         assert.strictEqual(_.isObject(realm.boolean), true);
@@ -10393,7 +10393,7 @@
         assert.strictEqual(_.isObject(realm.string), true);
       }
       else {
-        skipTest(assert, 7);
+        skipAssert(assert, 7);
       }
     });
 
@@ -10460,7 +10460,7 @@
         assert.strictEqual(_.isObjectLike(realm.string), true);
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }(1, 2, 3));
@@ -10497,7 +10497,7 @@
         assert.strictEqual(_.isPlainObject(object), true);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -10514,7 +10514,7 @@
         element.valueOf = valueOf;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10524,7 +10524,7 @@
       if (element) {
         assert.strictEqual(_.isPlainObject(element), false);
       } else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10559,7 +10559,7 @@
         assert.strictEqual(_.isPlainObject(realm.object), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -10609,7 +10609,7 @@
         assert.strictEqual(_.isRegExp(realm.regexp), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10628,7 +10628,7 @@
         assert.strictEqual(_.isSet(set), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10665,7 +10665,7 @@
         assert.strictEqual(_.isSet(realm.set), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10717,7 +10717,7 @@
         assert.strictEqual(_.isString(realm.string), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10737,7 +10737,7 @@
         assert.strictEqual(_.isSymbol(Object(symbol)), true);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -10772,7 +10772,7 @@
         assert.strictEqual(_.isSymbol(realm.symbol), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10843,7 +10843,7 @@
         assert.deepEqual(actual, expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10891,7 +10891,7 @@
         assert.strictEqual(_.isUndefined(symbol), false);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10902,7 +10902,7 @@
         assert.strictEqual(_.isUndefined(realm.undefined), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10921,7 +10921,7 @@
         assert.strictEqual(_.isWeakMap(weakMap), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -10958,7 +10958,7 @@
         assert.strictEqual(_.isWeakMap(realm.weakMap), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -10977,7 +10977,7 @@
         assert.strictEqual(_.isWeakSet(weakSet), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11014,7 +11014,7 @@
         assert.strictEqual(_.isWeakSet(realm.weakSet), true);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }(1, 2, 3));
@@ -11040,7 +11040,7 @@
         if (objToString.call(object) == objectTag) {
           assert.strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
         } else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -11068,7 +11068,7 @@
           assert.ok(pass, '`_.' + methodName + '` should not error');
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -11292,7 +11292,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11305,7 +11305,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11318,7 +11318,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11331,7 +11331,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11344,7 +11344,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11359,7 +11359,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11372,7 +11372,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11385,7 +11385,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11398,7 +11398,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11411,7 +11411,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11424,7 +11424,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11437,7 +11437,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11450,7 +11450,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11463,7 +11463,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11476,7 +11476,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11489,7 +11489,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11502,7 +11502,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11515,7 +11515,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11528,7 +11528,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11541,7 +11541,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11556,7 +11556,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11569,7 +11569,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11582,7 +11582,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11595,7 +11595,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11610,7 +11610,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11626,7 +11626,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11639,7 +11639,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11652,7 +11652,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11667,7 +11667,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11682,7 +11682,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11695,7 +11695,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11708,7 +11708,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11721,7 +11721,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11739,7 +11739,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11752,7 +11752,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11765,7 +11765,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -11778,7 +11778,7 @@
         _.iteratee = iteratee;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -11805,7 +11805,7 @@
         assert.strictEqual(wrapped.value(), array);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -11816,7 +11816,7 @@
         assert.ok(_(array).chain().join('~') instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -11911,7 +11911,7 @@
         assert.deepEqual(actual, _.take(_.filter(_.map(_.keyBy(array), square), isEven)));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -12114,7 +12114,7 @@
         assert.strictEqual(_(array).last(), 4);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12125,7 +12125,7 @@
         assert.ok(_(array).chain().last() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12137,7 +12137,7 @@
         assert.strictEqual(wrapped.__wrapped__, array);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12156,7 +12156,7 @@
         });
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -12365,13 +12365,13 @@
 
       if (isSorted) {
         assert.strictEqual(func(array, NaN, true), isIndexOf ? 2 : 3);
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
       else {
         assert.strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
         assert.strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
         assert.strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12457,7 +12457,7 @@
         assert.deepEqual(actual, ['body']);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12488,7 +12488,7 @@
         assert.ok(_(array).map(noop) instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -12535,7 +12535,7 @@
         assert.deepEqual(args, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -12655,7 +12655,7 @@
         assert.ok(_(object)[methodName](noop) instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -12840,7 +12840,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -12870,7 +12870,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -13262,7 +13262,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -13292,7 +13292,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -13675,7 +13675,7 @@
             assert.strictEqual(cache.has(key), true);
           }
           else {
-            skipTest(assert, 8);
+            skipAssert(assert, 8);
           }
         });
 
@@ -13686,7 +13686,7 @@
           }));
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
     });
@@ -14038,7 +14038,7 @@
         assert.ok(pass);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -14492,7 +14492,7 @@
         assert.strictEqual(actual, 40);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -14586,7 +14586,7 @@
         delete _.prototype.b;
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -14604,7 +14604,7 @@
         delete _.prototype.a;
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -14699,7 +14699,7 @@
             delete func.prototype.b;
           }
           else {
-            skipTest(assert, 2);
+            skipAssert(assert, 2);
           }
         });
       });
@@ -14762,7 +14762,7 @@
           delete func.prototype.b;
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -14784,7 +14784,7 @@
         delete _.prototype.b;
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -14957,7 +14957,7 @@
         root._ = oldDash;
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -14971,7 +14971,7 @@
         root._ = oldDash;
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -14991,7 +14991,7 @@
         assert.ok(context.lodash);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -15671,7 +15671,7 @@
           assert.deepEqual(actual, expected);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -17166,7 +17166,7 @@
         assert.strictEqual(func(array, noop), undefined);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
       assert.strictEqual(func(object, noop), undefined);
     });
@@ -17178,7 +17178,7 @@
         assert.strictEqual(_(array)[methodName](add), 6);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -17189,7 +17189,7 @@
         assert.ok(_(array).chain()[methodName](add) instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -17260,7 +17260,7 @@
         assert.deepEqual(actual.value(), isFilter ? [3, 4] : [1, 2]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -17282,7 +17282,7 @@
         assert.deepEqual(actual, _[methodName](lodashStable.mapValues(object, square), predicate));
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -17329,7 +17329,7 @@
         assert.deepEqual(args, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   });
@@ -17782,7 +17782,7 @@
         });
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
 
@@ -17800,7 +17800,7 @@
         });
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -17827,7 +17827,7 @@
         assert.deepEqual(array, expected);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -17853,7 +17853,7 @@
         });
       }
       else {
-        skipTest(assert, 8);
+        skipAssert(assert, 8);
       }
     });
 
@@ -17872,7 +17872,7 @@
         });
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -17979,7 +17979,7 @@
         assert.ok(pass);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -17999,7 +17999,7 @@
         assert.ok(id < oldId);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   }());
@@ -18348,7 +18348,7 @@
           assert.ok(pass);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -18625,7 +18625,7 @@
         });
       }
       else {
-        skipTest(assert, 38);
+        skipAssert(assert, 38);
       }
     });
   }());
@@ -19026,7 +19026,7 @@
             assert.strictEqual(actual, expected);
           }
           else {
-            skipTest(assert, 2);
+            skipAssert(assert, 2);
           }
         });
       });
@@ -19087,7 +19087,7 @@
         assert.strictEqual(wrapped.split('b').join(','), 'a,c');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -19309,7 +19309,7 @@
         assert.strictEqual(_(1).subtract(2), -1);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -19320,7 +19320,7 @@
         assert.ok(_(1).chain().subtract(2) instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -19476,7 +19476,7 @@
         assert.deepEqual(values, array);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -19499,7 +19499,7 @@
         assert.deepEqual(actual, []);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
   }());
@@ -19581,7 +19581,7 @@
         assert.deepEqual(actual, _.takeRight(_.take(_.takeRight(_.take(_.filter(_.take(array, array.length - 1), predicate), 6), 4), 2)));
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -19663,7 +19663,7 @@
         assert.deepEqual(actual, _.take(_.takeRight(_.take(_.takeRight(_.filter(array, predicate), 6), 4), 2)));
       }
       else {
-        skipTest(assert, 6);
+        skipAssert(assert, 6);
       }
     });
   }());
@@ -19735,7 +19735,7 @@
         assert.strictEqual(wrapped.last(), _.last(expected));
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -19778,7 +19778,7 @@
         assert.deepEqual(args, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -19849,7 +19849,7 @@
         assert.strictEqual(wrapped.last(), _.last(expected));
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -19868,7 +19868,7 @@
         assert.deepEqual(actual, [0]);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -19911,7 +19911,7 @@
         assert.deepEqual(args, expected);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -19936,7 +19936,7 @@
         assert.strictEqual(intercepted, array);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -19958,7 +19958,7 @@
         assert.strictEqual(intercepted, array);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -20684,7 +20684,7 @@
         }, 64);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
         done();
       }
     });
@@ -20973,7 +20973,7 @@
         }, 64);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
         done();
       }
     });
@@ -21112,7 +21112,7 @@
         assert.deepEqual(_(3).times(), [0, 1, 2]);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -21123,7 +21123,7 @@
         assert.ok(_(3).chain().times() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -21157,7 +21157,7 @@
         assert.deepEqual(_.toArray(object), ['a']);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -21178,7 +21178,7 @@
         assert.deepEqual(actual, _.map(_.toArray(object).slice(1), String));
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -21260,7 +21260,7 @@
         assert.deepEqual(actual, [body]);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -21694,7 +21694,7 @@
         }
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -21706,7 +21706,7 @@
         assert.strictEqual(wrapped.toString(), '1,2,3');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -22017,7 +22017,7 @@
         assert.strictEqual(_(string)[methodName](), expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -22029,7 +22029,7 @@
         assert.ok(_(string).chain()[methodName]() instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -22460,7 +22460,7 @@
         assert.deepEqual(func(largeArray), largeArray);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -22491,7 +22491,7 @@
         assert.deepEqual(func(largeArray), expected);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -22750,7 +22750,7 @@
         assert.strictEqual(_.unset(object, 'a'), false);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   }());
@@ -23021,7 +23021,7 @@
         assert.ok(wrapped instanceof _);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -23039,7 +23039,7 @@
         assert.deepEqual(actual, [1, LARGE_ARRAY_SIZE + 1]);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -23138,7 +23138,7 @@
         assert.deepEqual(actual, _.take(_.filter(_.map(func(props, values), square), isEven)));
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
   });
@@ -23297,7 +23297,7 @@
         assert.deepEqual(wrapped.value(), [1, 2, 3, 2, 3]);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -23310,7 +23310,7 @@
         assert.strictEqual(wrapped.value(), 1);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -23337,7 +23337,7 @@
         assert.deepEqual(wrapped.next(), { 'done': true,  'value': undefined });
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -23352,7 +23352,7 @@
         assert.deepEqual(_.toArray(wrapped), array);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -23369,7 +23369,7 @@
         });
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
 
@@ -23388,7 +23388,7 @@
         assert.deepEqual(_.toArray(wrapped), [], 'iterator is still exhausted');
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -23408,7 +23408,7 @@
         assert.deepEqual(values, array, 'memoizes iterator values');
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   });
@@ -23431,7 +23431,7 @@
         assert.deepEqual(wrapped1.value(), [1, 9]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
 
@@ -23447,7 +23447,7 @@
         assert.deepEqual(wrapped2.head().value(), 36);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -23466,7 +23466,7 @@
         assert.deepEqual(_.toArray(wrapped2), [36, 64]);
       }
       else {
-        skipTest(assert, 3);
+        skipAssert(assert, 3);
       }
     });
   }());
@@ -23492,7 +23492,7 @@
         assert.strictEqual(actual, array);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -23514,7 +23514,7 @@
         assert.deepEqual(actual, [1, 2, 3]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -23540,7 +23540,7 @@
         assert.strictEqual(actual, array);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -23562,7 +23562,7 @@
         assert.deepEqual(actual, [1, 2, 3]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -23588,7 +23588,7 @@
         assert.strictEqual(actual, array);
       }
       else {
-        skipTest(assert, 5);
+        skipAssert(assert, 5);
       }
     });
   }());
@@ -23610,7 +23610,7 @@
         assert.deepEqual(actual, [1, 2, 3]);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -23633,7 +23633,7 @@
         assert.deepEqual(array, [1, 2, 3, 2, 3]);
       }
       else {
-        skipTest(assert, 4);
+        skipAssert(assert, 4);
       }
     });
 
@@ -23645,7 +23645,7 @@
         assert.strictEqual(Number(wrapped), 123);
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -23657,7 +23657,7 @@
         assert.strictEqual(JSON.stringify(wrapped), '[1,2,3]');
       }
       else {
-        skipTest(assert);
+        skipAssert(assert);
       }
     });
 
@@ -23670,7 +23670,7 @@
         assert.strictEqual(_.prototype.valueOf, expected);
       }
       else {
-        skipTest(assert, 2);
+        skipAssert(assert, 2);
       }
     });
   }());
@@ -23700,7 +23700,7 @@
           assert.notStrictEqual(actual, wrapped);
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
     });
@@ -23738,7 +23738,7 @@
           assert.notStrictEqual(actual, wrapped);
         }
         else {
-          skipTest(assert, 2);
+          skipAssert(assert, 2);
         }
       });
     });
@@ -23849,7 +23849,7 @@
           assert.notOk(actual instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
 
@@ -23863,7 +23863,7 @@
           assert.ok(actual instanceof _);
         }
         else {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });
@@ -24116,7 +24116,7 @@
       // Skip tests for missing methods of modularized builds.
       lodashStable.each(['chain', 'noConflict', 'runInContext'], function(methodName) {
         if (!_[methodName]) {
-          skipTest(assert);
+          skipAssert(assert);
         }
       });
     });

@@ -51,4 +51,4 @@ Create [custom builds](https://lodash.com/custom-builds) with only the features 
 
   * [Contributing](https://github.com/lodash/lodash/blob/master/CONTRIBUTING.md)
   * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
-  * [Wiki](https://github.com/lodash/lodash/wiki)
+  * [Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki)

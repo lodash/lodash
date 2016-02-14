@@ -2215,6 +2215,28 @@
     }
 
     /**
+     * Casts `value` to `identity` if it's not a function.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {Array} Returns the array-like object.
+     */
+    function baseCastFunction(value) {
+      return typeof value == 'function' ? value : identity;
+    }
+
+    /**
+     * Casts `value` to a path array if it's not one.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {Array} Returns the cast property path array.
+     */
+    function baseCastPath(value) {
+      return isArray(value) ? value : stringToPath(value);
+    }
+
+    /**
      * The base implementation of `_.clamp` which doesn't coerce arguments to numbers.
      *
      * @private
@@ -2624,7 +2646,7 @@
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path) {
-      path = isKey(path, object) ? [path + ''] : castPath(path);
+      path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
       var index = 0,
           length = path.length;
@@ -2760,7 +2782,7 @@
      */
     function baseInvoke(object, path, args) {
       if (!isKey(path, object)) {
-        path = castPath(path);
+        path = baseCastPath(path);
         object = parent(object, path);
         path = last(path);
       }
@@ -3283,7 +3305,7 @@
             splice.call(array, index, 1);
           }
           else if (!isKey(index, array)) {
-            var path = castPath(index),
+            var path = baseCastPath(index),
                 object = parent(array, path);
 
             if (object != null) {
@@ -3345,7 +3367,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseSet(object, path, value, customizer) {
-      path = isKey(path, object) ? [path + ''] : castPath(path);
+      path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
       var index = -1,
           length = path.length,
@@ -3620,7 +3642,7 @@
      * @returns {boolean} Returns `true` if the property is deleted, else `false`.
      */
     function baseUnset(object, path) {
-      path = isKey(path, object) ? [path + ''] : castPath(path);
+      path = isKey(path, object) ? [path + ''] : baseCastPath(path);
       object = parent(object, path);
       var key = last(path);
       return (object != null && has(object, key)) ? delete object[key] : true;
@@ -4943,7 +4965,7 @@
       }
       var result = hasFunc(object, path);
       if (!result && !isKey(path)) {
-        path = castPath(path);
+        path = baseCastPath(path);
         object = parent(object, path);
         if (object != null) {
           path = last(path);
@@ -7639,7 +7661,7 @@
     function forEach(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayEach(collection, iteratee)
-        : baseEach(collection, castFunction(iteratee));
+        : baseEach(collection, baseCastFunction(iteratee));
     }
 
     /**
@@ -7663,7 +7685,7 @@
     function forEachRight(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayEachRight(collection, iteratee)
-        : baseEachRight(collection, castFunction(iteratee));
+        : baseEachRight(collection, baseCastFunction(iteratee));
     }
 
     /**
@@ -9258,36 +9280,6 @@
       }
       var value = arguments[0];
       return isArray(value) ? value : [value];
-    }
-
-    /**
-     * Casts `value` to a function if it's not one.
-     *
-     * @static
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to inspect.
-     * @returns {Function} Returns the cast function.
-     */
-    function castFunction(value) {
-      return isFunction(value) ? value : identity;
-    }
-
-    /**
-     * Casts `value` to a path if it's not one.
-     *
-     * @static
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to inspect.
-     * @returns {Array} Returns the cast property path array.
-     */
-    function castPath() {
-      if (!arguments.length) {
-        return [];
-      }
-      var value = arguments[0];
-      return isArray(value) ? value : stringToPath(value);
     }
 
     /**
@@ -11048,7 +11040,7 @@
      * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
      */
     function forIn(object, iteratee) {
-      return object == null ? object : baseFor(object, castFunction(iteratee), keysIn);
+      return object == null ? object : baseFor(object, baseCastFunction(iteratee), keysIn);
     }
 
     /**
@@ -11076,7 +11068,7 @@
      * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
      */
     function forInRight(object, iteratee) {
-      return object == null ? object : baseForRight(object, castFunction(iteratee), keysIn);
+      return object == null ? object : baseForRight(object, baseCastFunction(iteratee), keysIn);
     }
 
     /**
@@ -11106,7 +11098,7 @@
      * // => logs 'a' then 'b' (iteration order is not guaranteed)
      */
     function forOwn(object, iteratee) {
-      return object && baseForOwn(object, castFunction(iteratee));
+      return object && baseForOwn(object, baseCastFunction(iteratee));
     }
 
     /**
@@ -11134,7 +11126,7 @@
      * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
      */
     function forOwnRight(object, iteratee) {
-      return object && baseForOwnRight(object, castFunction(iteratee));
+      return object && baseForOwnRight(object, baseCastFunction(iteratee));
     }
 
     /**
@@ -11697,7 +11689,7 @@
      */
     function result(object, path, defaultValue) {
       if (!isKey(path, object)) {
-        path = castPath(path);
+        path = baseCastPath(path);
         var result = get(object, path);
         object = parent(object, path);
       } else {
@@ -13866,7 +13858,7 @@
       var index = MAX_ARRAY_LENGTH,
           length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-      iteratee = castFunction(iteratee);
+      iteratee = baseCastFunction(iteratee);
       n -= MAX_ARRAY_LENGTH;
 
       var result = baseTimes(length, iteratee);
@@ -14263,8 +14255,6 @@
     lodash.bindAll = bindAll;
     lodash.bindKey = bindKey;
     lodash.castArray = castArray;
-    lodash.castFunction = castFunction;
-    lodash.castPath = castPath;
     lodash.chain = chain;
     lodash.chunk = chunk;
     lodash.compact = compact;

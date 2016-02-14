@@ -24135,7 +24135,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(299);
+      assert.expect(297);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

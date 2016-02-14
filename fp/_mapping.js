@@ -39,9 +39,9 @@ exports.aliasToReal = {
 /** Used to map ary to method names. */
 exports.aryMethod = {
   1: [
-      'attempt', 'ceil', 'create', 'curry', 'curryRight', 'floor', 'fromPairs',
-      'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin', 'over',
-      'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
+      'attempt', 'castArray', 'ceil', 'create', 'curry', 'curryRight', 'floor',
+      'fromPairs', 'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin',
+      'over', 'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
       'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
     ],
   2: [

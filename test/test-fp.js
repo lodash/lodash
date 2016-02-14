@@ -773,6 +773,48 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.castArray');
+
+  (function() {
+    QUnit.test('should shallow clone array values', function(assert) {
+      assert.expect(2);
+
+      var array = [1],
+          actual = fp.castArray(array);
+
+      assert.deepEqual(actual, array);
+      assert.notStrictEqual(actual, array);
+    });
+
+    QUnit.test('should not shallow clone non-array values', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1 },
+          actual = fp.castArray(object);
+
+      assert.deepEqual(actual, [object]);
+      assert.strictEqual(actual[0], object);
+    });
+
+    QUnit.test('should convert by name', function(assert) {
+      assert.expect(4);
+
+      var array = [1],
+          object = { 'a': 1 },
+          castArray = convert('castArray', _.castArray),
+          actual = castArray(array);
+
+      assert.deepEqual(actual, array);
+      assert.notStrictEqual(actual, array);
+
+      actual = castArray(object);
+      assert.deepEqual(actual, [object]);
+      assert.strictEqual(actual[0], object);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.curry and fp.curryRight');
 
   _.each(['curry', 'curryRight'], function(methodName) {
@@ -823,9 +865,8 @@
       function Foo() {}
       Foo.prototype = { 'b': 2 };
 
-      var object = { 'a': 1 };
-
-      var extend = convert('extend', _.extend),
+      var object = { 'a': 1 },
+          extend = convert('extend', _.extend),
           value = _.clone(object),
           actual = extend(value)(new Foo);
 

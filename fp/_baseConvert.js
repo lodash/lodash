@@ -47,6 +47,7 @@ function baseConvert(util, name, func, options) {
     'cloneDeep': util.cloneDeep,
     'curry': util.curry,
     'forEach': util.forEach,
+    'isArray': util.isArray,
     'isFunction': util.isFunction,
     'iteratee': util.iteratee,
     'keys': util.keys,
@@ -58,6 +59,7 @@ function baseConvert(util, name, func, options) {
       cloneDeep = helpers.cloneDeep,
       curry = helpers.curry,
       each = helpers.forEach,
+      isArray = helpers.isArray,
       isFunction = helpers.isFunction,
       keys = helpers.keys,
       rearg = helpers.rearg,
@@ -130,6 +132,14 @@ function baseConvert(util, name, func, options) {
   };
 
   var wrappers = {
+    'castArray': function(castArray) {
+      return function() {
+        var value = arguments[0];
+        return isArray(value)
+          ? castArray(cloneArray(value))
+          : castArray.apply(undefined, arguments);
+      };
+    },
     'iteratee': function(iteratee) {
       return function() {
         var func = arguments[0],

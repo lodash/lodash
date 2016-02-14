@@ -2887,6 +2887,8 @@
   QUnit.module('lodash.compact');
 
   (function() {
+    var largeArray = lodashStable.range(LARGE_ARRAY_SIZE).concat(null);
+
     QUnit.test('should filter falsey values', function(assert) {
       assert.expect(1);
 
@@ -2913,10 +2915,30 @@
       assert.expect(1);
 
       if (!isNpm) {
-        var array = lodashStable.range(LARGE_ARRAY_SIZE).concat(null),
-            actual = _(array).slice(1).compact().reverse().take().value();
+        var actual = _(largeArray).slice(1).compact().reverse().take().value();
+        assert.deepEqual(actual, _.take(_.compact(_.slice(largeArray, 1)).reverse()));
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
 
-        assert.deepEqual(actual, _.take(_.compact(_.slice(array, 1)).reverse()));
+    QUnit.test('should work in a lazy sequence with a custom `_.iteratee`', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var iteratee = _.iteratee,
+            pass = false;
+
+        _.iteratee = identity;
+
+        try {
+          var actual = _(largeArray).slice(1).compact().value();
+          pass = lodashStable.isEqual(actual, _.compact(_.slice(largeArray, 1)));
+        } catch (e) {console.log(e);}
+
+        assert.ok(pass);
+        _.iteratee = iteratee;
       }
       else {
         skipAssert(assert);

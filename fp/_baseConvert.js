@@ -254,7 +254,7 @@ function baseConvert(util, name, func, options) {
   var pairs = [];
   each(mapping.caps, function(cap) {
     each(mapping.aryMethod[cap], function(key) {
-      var func = _[mapping.rename[key] || key];
+      var func = _[mapping.remap[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }

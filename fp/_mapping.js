@@ -203,7 +203,7 @@ exports.realToAlias = (function() {
 }());
 
 /** Used to map method names to other names. */
-exports.rename = {
+exports.remap = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
   'getOr': 'get',

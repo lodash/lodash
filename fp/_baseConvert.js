@@ -65,6 +65,8 @@ function baseConvert(util, name, func, options) {
       rearg = helpers.rearg,
       spread = helpers.spread;
 
+  var aryMethodKeys = keys(mapping.aryMethod);
+
   var baseArity = function(func, n) {
     return n == 2
       ? function(a, b) { return func.apply(undefined, arguments); }
@@ -210,8 +212,8 @@ function baseConvert(util, name, func, options) {
       }
     }
     var result;
-    each(mapping.caps, function(cap) {
-      each(mapping.aryMethod[cap], function(otherName) {
+    each(aryMethodKeys, function(aryKey) {
+      each(mapping.aryMethod[aryKey], function(otherName) {
         if (name == otherName) {
           var aryN = !isLib && mapping.iterateeAry[name],
               spreadStart = mapping.methodSpread[name];
@@ -219,17 +221,17 @@ function baseConvert(util, name, func, options) {
           result = wrapped;
           if (config.fixed) {
             result = spreadStart === undefined
-              ? ary(result, cap)
+              ? ary(result, aryKey)
               : spread(result, spreadStart);
           }
-          if (config.rearg && cap > 1 && (forceRearg || !mapping.skipRearg[name])) {
-            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
+          if (config.rearg && aryKey > 1 && (forceRearg || !mapping.skipRearg[name])) {
+            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[aryKey]);
           }
           if (config.cap && aryN) {
             result = iterateeAry(result, aryN);
           }
-          if (config.curry && cap > 1) {
-            result = curry(result, cap);
+          if (config.curry && aryKey > 1) {
+            result = curry(result, aryKey);
           }
           return false;
         }
@@ -252,8 +254,8 @@ function baseConvert(util, name, func, options) {
 
   // Iterate over methods for the current ary cap.
   var pairs = [];
-  each(mapping.caps, function(cap) {
-    each(mapping.aryMethod[cap], function(key) {
+  each(aryMethodKeys, function(aryKey) {
+    each(mapping.aryMethod[aryKey], function(key) {
       var func = _[mapping.remap[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);

@@ -8860,9 +8860,11 @@
     QUnit.test('should compare date objects', function(assert) {
       assert.expect(4);
 
-      assert.strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2012, 4, 23)), true);
-      assert.strictEqual(_.isEqual(new Date(2012, 4, 23), new Date(2013, 3, 25)), false);
-      assert.strictEqual(_.isEqual(new Date(2012, 4, 23), { 'getTime': lodashStable.constant(1337756400000) }), false);
+      var date = new Date(2012, 4, 23);
+
+      assert.strictEqual(_.isEqual(date, new Date(2012, 4, 23)), true);
+      assert.strictEqual(_.isEqual(date, new Date(2013, 3, 25)), false);
+      assert.strictEqual(_.isEqual(date, { 'getTime': lodashStable.constant(+date) }), false);
       assert.strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
     });
 
@@ -20710,7 +20712,9 @@
             dateCount = 0;
 
         var getTime = function() {
-          return ++dateCount == 5 ? Infinity : +new Date;
+          return ++dateCount == 5
+            ? Infinity
+            : +new Date;
         };
 
         var lodash = _.runInContext(lodashStable.assign({}, root, {
@@ -21000,7 +21004,9 @@
             dateCount = 0;
 
         var getTime = function() {
-          return ++dateCount === 4 ? +new Date(2012, 3, 23, 23, 27, 18) : +new Date;
+          return ++dateCount === 4
+            ? +new Date(2012, 3, 23, 23, 27, 18)
+            : +new Date;
         };
 
         var lodash = _.runInContext(lodashStable.assign({}, root, {

@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -21,13 +21,13 @@ var baseFilter = require('lodash._basefilter'),
 function arrayFilter(array, predicate) {
   var index = -1,
       length = array.length,
-      resIndex = -1,
+      resIndex = 0,
       result = [];
 
   while (++index < length) {
     var value = array[index];
     if (predicate(value, index, array)) {
-      result[++resIndex] = value;
+      result[resIndex++] = value;
     }
   }
   return result;

@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -86,7 +86,8 @@ var objectProto = Object.prototype;
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
-var objectCreate = Object.create;
+var getPrototypeOf = Object.getPrototypeOf,
+    objectCreate = Object.create;
 
 /**
  * The base implementation of `_.create` without support for assigning
@@ -155,8 +156,8 @@ var isArray = Array.isArray;
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }
@@ -304,7 +305,7 @@ function transform(object, iteratee, accumulator) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+        accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
       }
     } else {
       accumulator = {};

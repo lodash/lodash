@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -41,9 +41,10 @@ function basePickBy(object, predicate) {
 }
 
 /**
- * The opposite of `_.pickBy`; this method creates an object composed of the
- * own and inherited enumerable properties of `object` that `predicate`
- * doesn't return truthy for.
+ * The opposite of `_.pickBy`; this method creates an object composed of
+ * the own and inherited enumerable properties of `object` that `predicate`
+ * doesn't return truthy for. The predicate is invoked with two arguments:
+ * (value, key).
  *
  * @static
  * @memberOf _
@@ -59,7 +60,7 @@ function basePickBy(object, predicate) {
  * // => { 'b': '2' }
  */
 function omitBy(object, predicate) {
-  predicate = baseIteratee(predicate, 2);
+  predicate = baseIteratee(predicate);
   return basePickBy(object, function(value, key) {
     return !predicate(value, key);
   });

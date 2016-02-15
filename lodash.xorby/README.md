@@ -1,4 +1,4 @@
-# lodash.xorby v4.2.0
+# lodash.xorby v4.2.1
 
 The [lodash](https://lodash.com/) method `_.xorBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var xorBy = require('lodash.xorby');
 ```
 
-See the [documentation](https://lodash.com/docs#xorBy) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.xorby) for more details.
+See the [documentation](https://lodash.com/docs#xorBy) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.xorby) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash.some",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "The lodash method `_.some` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -9,7 +9,7 @@
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
+    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",

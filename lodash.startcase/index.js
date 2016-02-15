@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -9,6 +9,12 @@
 var deburr = require('lodash.deburr'),
     upperFirst = require('lodash.upperfirst'),
     words = require('lodash.words');
+
+/** Used to compose unicode capture groups. */
+var rsApos = "['\u2019]";
+
+/** Used to match apostrophes. */
+var reApos = RegExp(rsApos, 'g');
 
 /**
  * A specialized version of `_.reduce` for arrays without support for
@@ -44,7 +50,7 @@ function arrayReduce(array, iteratee, accumulator, initAccum) {
  */
 function createCompounder(callback) {
   return function(string) {
-    return arrayReduce(words(deburr(string)), callback, '');
+    return arrayReduce(words(deburr(string).replace(reApos, '')), callback, '');
   };
 }
 

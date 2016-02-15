@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -67,17 +67,6 @@ function assignValue(object, key, value) {
 }
 
 /**
- * Casts `value` to a path array if it's not one.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the cast property path array.
- */
-function baseCastPath(value) {
-  return isArray(value) ? value : stringToPath(value);
-}
-
-/**
  * The base implementation of `_.set`.
  *
  * @private
@@ -88,7 +77,7 @@ function baseCastPath(value) {
  * @returns {Object} Returns `object`.
  */
 function baseSet(object, path, value, customizer) {
-  path = isKey(path, object) ? [path] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var index = -1,
       length = path.length,
@@ -113,6 +102,17 @@ function baseSet(object, path, value, customizer) {
     nested = nested[key];
   }
   return object;
+}
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value) {
+  return isArray(value) ? value : stringToPath(value);
 }
 
 /**

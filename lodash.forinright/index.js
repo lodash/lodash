@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -21,6 +21,7 @@ var baseForRight = require('lodash._baseforright'),
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
  * @returns {Object} Returns `object`.
+ * @see _.forIn
  * @example
  *
  * function Foo() {
@@ -38,7 +39,7 @@ var baseForRight = require('lodash._baseforright'),
 function forInRight(object, iteratee) {
   return object == null
     ? object
-    : baseForRight(object, baseIteratee(iteratee), keysIn);
+    : baseForRight(object, baseIteratee(iteratee, 3), keysIn);
 }
 
 module.exports = forInRight;

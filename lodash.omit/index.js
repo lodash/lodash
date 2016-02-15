@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -93,17 +93,6 @@ var getOwnPropertySymbols = Object.getOwnPropertySymbols;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeGetPrototype = Object.getPrototypeOf;
-
-/**
- * Casts `value` to a string if it's not a string or symbol.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {string|symbol} Returns the cast key.
- */
-function baseCastKey(key) {
-  return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
-}
 
 /**
  * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
@@ -203,6 +192,17 @@ var getSymbolsIn = !getOwnPropertySymbols ? getSymbols : function(object) {
 };
 
 /**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(key) {
+  return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
+}
+
+/**
  * Checks if `value` is classified as an `Array` object.
  *
  * @static
@@ -290,8 +290,7 @@ function isSymbol(value) {
  * @memberOf _
  * @category Object
  * @param {Object} object The source object.
- * @param {...(string|string[])} [props] The property identifiers to omit,
- *  specified individually or in arrays.
+ * @param {...(string|string[])} [props] The property identifiers to omit.
  * @returns {Object} Returns the new object.
  * @example
  *
@@ -304,7 +303,7 @@ var omit = rest(function(object, props) {
   if (object == null) {
     return {};
   }
-  props = arrayMap(baseFlatten(props, 1), baseCastKey);
+  props = arrayMap(baseFlatten(props, 1), toKey);
   return basePick(object, baseDifference(getAllKeysIn(object), props));
 });
 

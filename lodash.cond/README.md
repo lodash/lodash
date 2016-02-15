@@ -1,4 +1,4 @@
-# lodash.cond v4.2.0
+# lodash.cond v4.2.1
 
 The [lodash](https://lodash.com/) method `_.cond` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var cond = require('lodash.cond');
 ```
 
-See the [documentation](https://lodash.com/docs#cond) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.cond) for more details.
+See the [documentation](https://lodash.com/docs#cond) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.cond) for more details.

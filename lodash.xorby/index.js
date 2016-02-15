@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -29,13 +29,13 @@ var funcTag = '[object Function]',
 function arrayFilter(array, predicate) {
   var index = -1,
       length = array.length,
-      resIndex = -1,
+      resIndex = 0,
       result = [];
 
   while (++index < length) {
     var value = array[index];
     if (predicate(value, index, array)) {
-      result[++resIndex] = value;
+      result[resIndex++] = value;
     }
   }
   return result;
@@ -96,7 +96,7 @@ function last(array) {
 /**
  * This method is like `_.xor` except that it accepts `iteratee` which is
  * invoked for each element of each `arrays` to generate the criterion by which
- * uniqueness is computed. The iteratee is invoked with one argument: (value).
+ * by which they're compared. The iteratee is invoked with one argument: (value).
  *
  * @static
  * @memberOf _
@@ -146,8 +146,7 @@ var xorBy = rest(function(arrays) {
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -195,8 +194,8 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

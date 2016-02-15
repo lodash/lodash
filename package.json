@@ -35,6 +35,7 @@
     "build:main": "node lib/main/build-dist.js",
     "build:main-modules": "node lib/main/build-modules.js",
     "doc": "node lib/main/build-doc github",
+    "doc:fp": "node lib/fp/build-doc",
     "doc:site": "node lib/main/build-doc site",
     "prepublish": "npm run style",
     "pretest": "npm run build",

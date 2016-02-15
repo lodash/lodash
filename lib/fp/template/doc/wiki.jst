@@ -1,1 +1,65 @@
+## lodash/fp
 
+The lodash/fp module is an instance of lodash with its methods wrapped to produce
+immutable auto-curried iteratee-first data-last methods.
+
+## Installation
+
+In a browser:
+```html
+<script src='path/to/lodash.js'></script>
+<script src='path/to/lodash.fp.js'></script>
+```
+
+In Node.js:
+```js
+// load the fp build
+var _ = require('lodash/fp');
+
+// or a method category
+var array = require('lodash/fp/object');
+
+// or method for smaller builds with browserify/rollup/webpack
+var extend = require('lodash/fp/extend');
+```
+
+## Notes
+
+#### Arity
+
+Methods with arity capped to one argument:<br>
+<%= toFuncList(mapping.aryMethod[1]) %>
+
+Methods with arity capped to two arguments:<br>
+<%= toFuncList(mapping.aryMethod[2]) %>
+
+Methods with arity capped to three arguments:<br>
+<%= toFuncList(mapping.aryMethod[3]) %>
+
+Methods with arity capped to four arguments:<br>
+<%= toFuncList(mapping.aryMethod[4]) %>
+
+#### Iteratees
+
+Methods which provide iteratees one argument:<br>
+<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
+
+Methods which provide iteratees two argument:<br>
+<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
+
+#### New Methods
+
+Methods created to accommodate Lodash’s variadic methods:<br>
+<%= toFuncList(_.keys(mapping.remap)) %>
+
+#### Exceptions
+
+Methods which have argument order unchanged:<br>
+<%= toFuncList(_.keys(mapping.skipRearg)) %>
+
+#### Aliases
+
+There are <%= _.size(mapping.aliasToReal) %> method aliases:<br>
+<%= _.map(mapping.aliasToReal, function(realName, alias) {
+  return ' - Added `_.' + alias + '` as an alias of `_.' + realName + '`';
+}).join('\n') %>

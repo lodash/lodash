@@ -1,4 +1,4 @@
-# lodash.over v4.2.0
+# lodash.over v4.2.1
 
 The [lodash](https://lodash.com/) method `_.over` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var over = require('lodash.over');
 ```
 
-See the [documentation](https://lodash.com/docs#over) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.over) for more details.
+See the [documentation](https://lodash.com/docs#over) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.over) for more details.

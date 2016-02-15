@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,15 +10,17 @@ var baseFlatten = require('lodash._baseflatten'),
     map = require('lodash.map');
 
 /**
- * Creates an array of flattened values by running each element in `collection`
- * through `iteratee` and concating its result to the other mapped values.
- * The iteratee is invoked with three arguments: (value, index|key, collection).
+ * Creates a flattened array of values by running each element in `collection`
+ * through `iteratee` and flattening the mapped results. The iteratee is
+ * invoked with three arguments: (value, index|key, collection).
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function|Object|string} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Array|Function|Object|string} [iteratee=_.identity]
+ *  The function invoked per iteration.
  * @returns {Array} Returns the new flattened array.
  * @example
  *

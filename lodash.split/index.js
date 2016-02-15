@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -78,7 +78,8 @@ function stringToArray(string) {
 }
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+var objectProto = Object.prototype,
+    stringProto = String.prototype;
 
 /**
  * Used to resolve the
@@ -86,6 +87,9 @@ var objectProto = Object.prototype;
  * of values.
  */
 var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeSplit = stringProto.split;
 
 /**
  * The base implementation of `_.property` without support for deep paths.
@@ -364,7 +368,7 @@ function split(string, separator, limit) {
       return castSlice(stringToArray(string), 0, limit);
     }
   }
-  return string.split(separator, limit);
+  return nativeSplit.call(string, separator, limit);
 }
 
 module.exports = split;

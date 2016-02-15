@@ -1,4 +1,4 @@
-# lodash.mapkeys v4.2.0
+# lodash.mapkeys v4.2.1
 
 The [lodash](https://lodash.com/) method `_.mapKeys` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var mapKeys = require('lodash.mapkeys');
 ```
 
-See the [documentation](https://lodash.com/docs#mapKeys) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.mapkeys) for more details.
+See the [documentation](https://lodash.com/docs#mapKeys) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.mapkeys) for more details.

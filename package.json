@@ -17,7 +17,7 @@
     "glob": "^7.0.0",
     "istanbul": "0.4.2",
     "jquery": "^2.2.0",
-    "jscs": "^2.9.0",
+    "jscs": "^2.10.1",
     "lodash": "^3.10.1",
     "platform": "^1.3.1",
     "qunit-extras": "^1.4.5",

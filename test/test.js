@@ -12024,7 +12024,7 @@
       assert.deepEqual(func(array).sort(), ['0', 'a']);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of arrays', function(assert) {
       assert.expect(1);
 
       var expected = isKeys ? ['0'] : ['0', 'a'];
@@ -12060,7 +12060,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of `arguments` objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of `arguments` objects', function(assert) {
       assert.expect(1);
 
       var values = [args, strictArgs],
@@ -12091,7 +12091,7 @@
       assert.deepEqual(func(object).sort(), ['0', 'a']);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties of string objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of string objects', function(assert) {
       assert.expect(1);
 
       var expected = isKeys ? ['0'] : ['0', 'a'];
@@ -12118,7 +12118,7 @@
       assert.deepEqual(func(Fake.prototype), ['constructor']);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not' : '') + ' include inherited properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }
@@ -22858,23 +22858,37 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.values');
+  QUnit.module('values methods');
 
-  (function() {
-    QUnit.test('should get the values of an object', function(assert) {
+  lodashStable.each(['values', 'valuesIn'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName],
+        isValues = methodName == 'values';
+
+    QUnit.test('`_.' + methodName + '` should get the values of an object', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1, 'b': 2 };
-      assert.deepEqual(_.values(object), [1, 2]);
+      assert.deepEqual(func(object), [1, 2]);
     });
 
-    QUnit.test('should work with an object that has a `length` property', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
       var object = { '0': 'a', '1': 'b', 'length': 2 };
-      assert.deepEqual(_.values(object), ['a', 'b', 2]);
+      assert.deepEqual(func(object), ['a', 'b', 2]);
     });
-  }());
+
+    QUnit.test('`_.' + methodName + '` should ' + (isValues ? 'not ' : '') + ' include inherited property values', function(assert) {
+      assert.expect(1);
+
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var expected = isValues ? [1] : [1, 2];
+      assert.deepEqual(func(new Foo).sort(), expected);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

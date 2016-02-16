@@ -1,4 +1,4 @@
-define(['./_assignValue', './_baseToPath', './_isIndex', './_isKey', './isObject'], function(assignValue, baseToPath, isIndex, isKey, isObject) {
+define(['./_assignValue', './_baseCastPath', './_isIndex', './_isKey', './isObject'], function(assignValue, baseCastPath, isIndex, isKey, isObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,7 +14,7 @@ define(['./_assignValue', './_baseToPath', './_isIndex', './_isKey', './isObject
    * @returns {Object} Returns `object`.
    */
   function baseSet(object, path, value, customizer) {
-    path = isKey(path, object) ? [path + ''] : baseToPath(path);
+    path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
     var index = -1,
         length = path.length,
@@ -29,7 +29,9 @@ define(['./_assignValue', './_baseToPath', './_isIndex', './_isKey', './isObject
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
           if (newValue === undefined) {
-            newValue = objValue == null ? (isIndex(path[index + 1]) ? [] : {}) : objValue;
+            newValue = objValue == null
+              ? (isIndex(path[index + 1]) ? [] : {})
+              : objValue;
           }
         }
         assignValue(nested, key, newValue);

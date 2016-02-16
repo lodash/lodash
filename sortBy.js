@@ -43,7 +43,7 @@ define(['./_baseFlatten', './_baseOrderBy', './_isIterateeCall', './rest'], func
     } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
       iteratees.length = 1;
     }
-    return baseOrderBy(collection, baseFlatten(iteratees), []);
+    return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
   });
 
   return sortBy;

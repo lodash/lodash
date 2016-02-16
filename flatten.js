@@ -1,7 +1,7 @@
 define(['./_baseFlatten'], function(baseFlatten) {
 
   /**
-   * Flattens `array` a single level.
+   * Flattens `array` a single level deep.
    *
    * @static
    * @memberOf _
@@ -10,12 +10,12 @@ define(['./_baseFlatten'], function(baseFlatten) {
    * @returns {Array} Returns the new flattened array.
    * @example
    *
-   * _.flatten([1, [2, 3, [4]]]);
-   * // => [1, 2, 3, [4]]
+   * _.flatten([1, [2, [3, [4]], 5]]);
+   * // => [1, 2, [3, [4]], 5]
    */
   function flatten(array) {
     var length = array ? array.length : 0;
-    return length ? baseFlatten(array) : [];
+    return length ? baseFlatten(array, 1) : [];
   }
 
   return flatten;

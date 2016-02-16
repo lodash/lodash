@@ -23,7 +23,7 @@ define(['./_baseValues', './keysIn'], function(baseValues, keysIn) {
    * // => [1, 2, 3] (iteration order is not guaranteed)
    */
   function valuesIn(object) {
-    return object == null ? baseValues(object, keysIn(object)) : [];
+    return object == null ? [] : baseValues(object, keysIn(object));
   }
 
   return valuesIn;

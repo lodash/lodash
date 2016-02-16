@@ -30,8 +30,12 @@ define(['./isObjectLike'], function(isObjectLike) {
    * // => false
    */
   function isError(value) {
-    return isObjectLike(value) &&
-      typeof value.message == 'string' && objectToString.call(value) == errorTag;
+    if (!isObjectLike(value)) {
+      return false;
+    }
+    var Ctor = value.constructor;
+    return (objectToString.call(value) == errorTag) ||
+      (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
   }
 
   return isError;

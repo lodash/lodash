@@ -1,5 +1,8 @@
 define(['./_checkGlobal'], function(checkGlobal) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** Used to determine if values are of the language type `Object`. */
   var objectTypes = {
     'function': true,
@@ -7,10 +10,14 @@ define(['./_checkGlobal'], function(checkGlobal) {
   };
 
   /** Detect free variable `exports`. */
-  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType) ? exports : null;
+  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+    ? exports
+    : undefined;
 
   /** Detect free variable `module`. */
-  var freeModule = (objectTypes[typeof module] && module && !module.nodeType) ? module : null;
+  var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+    ? module
+    : undefined;
 
   /** Detect free variable `global` from Node.js. */
   var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
@@ -30,7 +37,9 @@ define(['./_checkGlobal'], function(checkGlobal) {
    * The `this` value is used if it's the global object to avoid Greasemonkey's
    * restricted `window` object, otherwise the `window` object is used.
    */
-  var root = freeGlobal || ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) || freeSelf || thisGlobal || Function('return this')();
+  var root = freeGlobal ||
+    ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+      freeSelf || thisGlobal || Function('return this')();
 
   return root;
 });

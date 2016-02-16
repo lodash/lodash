@@ -1,4 +1,4 @@
-define(['./_baseToPath', './get', './isFunction', './_isKey', './_parent'], function(baseToPath, get, isFunction, isKey, parent) {
+define(['./_baseCastPath', './get', './isFunction', './_isKey', './_parent'], function(baseCastPath, get, isFunction, isKey, parent) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -33,7 +33,7 @@ define(['./_baseToPath', './get', './isFunction', './_isKey', './_parent'], func
    */
   function result(object, path, defaultValue) {
     if (!isKey(path, object)) {
-      path = baseToPath(path);
+      path = baseCastPath(path);
       var result = get(object, path);
       object = parent(object, path);
     } else {

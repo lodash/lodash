@@ -7,6 +7,7 @@ define(['./_baseCreate', './_baseLodash'], function(baseCreate, baseLodash) {
    * Creates a lazy wrapper object which wraps `value` to enable lazy evaluation.
    *
    * @private
+   * @constructor
    * @param {*} value The value to wrap.
    */
   function LazyWrapper(value) {

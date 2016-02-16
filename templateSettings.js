@@ -7,7 +7,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
    *
    * @static
    * @memberOf _
-   * @type Object
+   * @type {Object}
    */
   var templateSettings = {
 
@@ -15,7 +15,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
      * Used to detect `data` property values to be HTML-escaped.
      *
      * @memberOf _.templateSettings
-     * @type RegExp
+     * @type {RegExp}
      */
     'escape': reEscape,
 
@@ -23,7 +23,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
      * Used to detect code to be evaluated.
      *
      * @memberOf _.templateSettings
-     * @type RegExp
+     * @type {RegExp}
      */
     'evaluate': reEvaluate,
 
@@ -31,7 +31,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
      * Used to detect `data` property values to inject.
      *
      * @memberOf _.templateSettings
-     * @type RegExp
+     * @type {RegExp}
      */
     'interpolate': reInterpolate,
 
@@ -39,7 +39,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
      * Used to reference the data object in the template text.
      *
      * @memberOf _.templateSettings
-     * @type string
+     * @type {string}
      */
     'variable': '',
 
@@ -47,7 +47,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
      * Used to import variables into the compiled template.
      *
      * @memberOf _.templateSettings
-     * @type Object
+     * @type {Object}
      */
     'imports': {
 
@@ -55,7 +55,7 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
        * A reference to the `lodash` function.
        *
        * @memberOf _.templateSettings.imports
-       * @type Function
+       * @type {Function}
        */
       '_': { 'escape': escape }
     }

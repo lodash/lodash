@@ -21,7 +21,7 @@ define(['./_root', './toString'], function(root, toString) {
    * @memberOf _
    * @category String
    * @param {string} string The string to convert.
-   * @param {number} [radix] The radix to interpret `value` by.
+   * @param {number} [radix=10] The radix to interpret `value` by.
    * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
    * @returns {number} Returns the converted integer.
    * @example

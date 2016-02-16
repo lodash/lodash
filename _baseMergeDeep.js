@@ -26,21 +26,24 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
       assignMergeValue(object, key, stacked);
       return;
     }
-    var newValue = customizer ? customizer(objValue, srcValue, (key + ''), object, source, stack) : undefined,
-        isCommon = newValue === undefined;
+    var newValue = customizer
+      ? customizer(objValue, srcValue, (key + ''), object, source, stack)
+      : undefined;
+
+    var isCommon = newValue === undefined;
 
     if (isCommon) {
       newValue = srcValue;
       if (isArray(srcValue) || isTypedArray(srcValue)) {
         if (isArray(objValue)) {
-          newValue = srcIndex ? copyArray(objValue) : objValue;
+          newValue = objValue;
         }
         else if (isArrayLikeObject(objValue)) {
           newValue = copyArray(objValue);
         }
         else {
           isCommon = false;
-          newValue = baseClone(srcValue);
+          newValue = baseClone(srcValue, true);
         }
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -49,10 +52,10 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         }
         else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
           isCommon = false;
-          newValue = baseClone(srcValue);
+          newValue = baseClone(srcValue, true);
         }
         else {
-          newValue = srcIndex ? baseClone(objValue) : objValue;
+          newValue = objValue;
         }
       }
       else {

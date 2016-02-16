@@ -1,4 +1,4 @@
-define(['./_baseForRight', './keysIn', './_toFunction'], function(baseForRight, keysIn, toFunction) {
+define(['./_baseCastFunction', './_baseForRight', './keysIn'], function(baseCastFunction, baseForRight, keysIn) {
 
   /**
    * This method is like `_.forIn` except that it iterates over properties of
@@ -25,7 +25,9 @@ define(['./_baseForRight', './keysIn', './_toFunction'], function(baseForRight, 
    * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
    */
   function forInRight(object, iteratee) {
-    return object == null ? object : baseForRight(object, toFunction(iteratee), keysIn);
+    return object == null
+      ? object
+      : baseForRight(object, baseCastFunction(iteratee), keysIn);
   }
 
   return forInRight;

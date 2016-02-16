@@ -139,8 +139,10 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
         if (!lastCalled && !maxTimeoutId && !leading) {
           lastCalled = stamp;
         }
-        var remaining = maxWait - (stamp - lastCalled),
-            isCalled = remaining <= 0 || remaining > maxWait;
+        var remaining = maxWait - (stamp - lastCalled);
+
+        var isCalled = (remaining <= 0 || remaining > maxWait) &&
+          (leading || maxTimeoutId);
 
         if (isCalled) {
           if (maxTimeoutId) {

@@ -1,4 +1,4 @@
-define(['./_baseForOwn', './_toFunction'], function(baseForOwn, toFunction) {
+define(['./_baseCastFunction', './_baseForOwn'], function(baseCastFunction, baseForOwn) {
 
   /**
    * Iterates over own enumerable properties of an object invoking `iteratee`
@@ -27,7 +27,7 @@ define(['./_baseForOwn', './_toFunction'], function(baseForOwn, toFunction) {
    * // => logs 'a' then 'b' (iteration order is not guaranteed)
    */
   function forOwn(object, iteratee) {
-    return object && baseForOwn(object, toFunction(iteratee));
+    return object && baseForOwn(object, baseCastFunction(iteratee));
   }
 
   return forOwn;

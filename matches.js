@@ -1,9 +1,10 @@
 define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
 
   /**
-   * Creates a function that performs a deep partial comparison between a given
+   * Creates a function that performs a partial deep comparison between a given
    * object and `source`, returning `true` if the given object has equivalent
-   * property values, else `false`.
+   * property values, else `false`. The created function is equivalent to
+   * `_.isMatch` with a `source` partially applied.
    *
    * **Note:** This method supports comparing the same values as `_.isEqual`.
    *

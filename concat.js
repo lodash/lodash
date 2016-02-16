@@ -25,7 +25,7 @@ define(['./_arrayConcat', './_baseFlatten', './isArray', './rest'], function(arr
     if (!isArray(array)) {
       array = array == null ? [] : [Object(array)];
     }
-    values = baseFlatten(values);
+    values = baseFlatten(values, 1);
     return arrayConcat(array, values);
   });
 

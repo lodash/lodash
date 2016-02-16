@@ -28,7 +28,7 @@ define(['./_baseFlatten', './_baseIteratee', './_baseUniq', './isArrayLikeObject
     if (isArrayLikeObject(iteratee)) {
       iteratee = undefined;
     }
-    return baseUniq(baseFlatten(arrays, false, true), baseIteratee(iteratee));
+    return baseUniq(baseFlatten(arrays, 1, true), baseIteratee(iteratee));
   });
 
   return unionBy;

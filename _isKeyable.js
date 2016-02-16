@@ -10,7 +10,7 @@ define([], function() {
   function isKeyable(value) {
     var type = typeof value;
     return type == 'number' || type == 'boolean' ||
-      (type == 'string' && value !== '__proto__') || value == null;
+      (type == 'string' && value != '__proto__') || value == null;
   }
 
   return isKeyable;

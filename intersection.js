@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseIntersection', './rest', './_toArrayLikeObject'], function(arrayMap, baseIntersection, rest, toArrayLikeObject) {
+define(['./_arrayMap', './_baseCastArrayLikeObject', './_baseIntersection', './rest'], function(arrayMap, baseCastArrayLikeObject, baseIntersection, rest) {
 
   /**
    * Creates an array of unique values that are included in all given arrays
@@ -16,7 +16,7 @@ define(['./_arrayMap', './_baseIntersection', './rest', './_toArrayLikeObject'],
    * // => [2]
    */
   var intersection = rest(function(arrays) {
-    var mapped = arrayMap(arrays, toArrayLikeObject);
+    var mapped = arrayMap(arrays, baseCastArrayLikeObject);
     return (mapped.length && mapped[0] === arrays[0])
       ? baseIntersection(mapped)
       : [];

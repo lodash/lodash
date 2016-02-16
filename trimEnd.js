@@ -37,7 +37,9 @@ define(['./_charsEndIndex', './_stringToArray', './toString'], function(charsEnd
       return string;
     }
     var strSymbols = stringToArray(string);
-    return strSymbols.slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1).join('');
+    return strSymbols
+      .slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1)
+      .join('');
   }
 
   return trimEnd;

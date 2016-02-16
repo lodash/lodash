@@ -25,7 +25,7 @@ define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compa
    * // => [10, 20]
    */
   var pullAt = rest(function(array, indexes) {
-    indexes = arrayMap(baseFlatten(indexes), String);
+    indexes = arrayMap(baseFlatten(indexes, 1), String);
 
     var result = baseAt(array, indexes);
     basePullAt(array, indexes.sort(compareAscending));

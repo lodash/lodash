@@ -30,7 +30,11 @@ define(['./_LazyWrapper', './_LodashWrapper', './reverse', './thru'], function(L
         wrapped = new LazyWrapper(this);
       }
       wrapped = wrapped.reverse();
-      wrapped.__actions__.push({ 'func': thru, 'args': [reverse], 'thisArg': undefined });
+      wrapped.__actions__.push({
+        'func': thru,
+        'args': [reverse],
+        'thisArg': undefined
+      });
       return new LodashWrapper(wrapped, this.__chain__);
     }
     return this.thru(reverse);

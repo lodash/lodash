@@ -1,4 +1,4 @@
-define(['./_baseFor', './keysIn', './_toFunction'], function(baseFor, keysIn, toFunction) {
+define(['./_baseCastFunction', './_baseFor', './keysIn'], function(baseCastFunction, baseFor, keysIn) {
 
   /**
    * Iterates over own and inherited enumerable properties of an object invoking
@@ -27,7 +27,9 @@ define(['./_baseFor', './keysIn', './_toFunction'], function(baseFor, keysIn, to
    * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
    */
   function forIn(object, iteratee) {
-    return object == null ? object : baseFor(object, toFunction(iteratee), keysIn);
+    return object == null
+      ? object
+      : baseFor(object, baseCastFunction(iteratee), keysIn);
   }
 
   return forIn;

@@ -9,7 +9,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'
    */
   function createOver(arrayFunc) {
     return rest(function(iteratees) {
-      iteratees = arrayMap(baseFlatten(iteratees), baseIteratee);
+      iteratees = arrayMap(baseFlatten(iteratees, 1), baseIteratee);
       return rest(function(args) {
         var thisArg = this;
         return arrayFunc(iteratees, function(iteratee) {

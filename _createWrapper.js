@@ -62,8 +62,12 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
 
       partials = holders = undefined;
     }
-    var data = isBindKey ? undefined : getData(func),
-        newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
+    var data = isBindKey ? undefined : getData(func);
+
+    var newData = [
+      func, bitmask, thisArg, partials, holders, partialsRight, holdersRight,
+      argPos, ary, arity
+    ];
 
     if (data) {
       mergeData(newData, data);

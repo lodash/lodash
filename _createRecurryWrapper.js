@@ -41,9 +41,12 @@ define(['./_copyArray', './_isLaziable', './_setData'], function(copyArray, isLa
     if (!(bitmask & CURRY_BOUND_FLAG)) {
       bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
     }
-    var newData = [func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity],
-        result = wrapFunc.apply(undefined, newData);
+    var newData = [
+      func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight,
+      newHoldersRight, newArgPos, ary, arity
+    ];
 
+    var result = wrapFunc.apply(undefined, newData);
     if (isLaziable(func)) {
       setData(result, newData);
     }

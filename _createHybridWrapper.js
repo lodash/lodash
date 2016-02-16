@@ -57,7 +57,10 @@ define(['./_composeArgs', './_composeArgsRight', './_createCtorWrapper', './_cre
 
         length -= argsHolders.length;
         if (length < arity) {
-          return createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, thisArg, args, argsHolders, argPos, ary, arity - length);
+          return createRecurryWrapper(
+            func, bitmask, createHybridWrapper, placeholder, thisArg, args,
+            argsHolders, argPos, ary, arity - length
+          );
         }
       }
       var thisBinding = isBind ? thisArg : this,

@@ -42,7 +42,9 @@ define(['./_charsEndIndex', './_charsStartIndex', './_stringToArray', './toStrin
     var strSymbols = stringToArray(string),
         chrSymbols = stringToArray(chars);
 
-    return strSymbols.slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1).join('');
+    return strSymbols
+      .slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1)
+      .join('');
   }
 
   return trim;

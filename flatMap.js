@@ -21,7 +21,7 @@ define(['./_baseFlatten', './map'], function(baseFlatten, map) {
    * // => [1, 1, 2, 2]
    */
   function flatMap(collection, iteratee) {
-    return baseFlatten(map(collection, iteratee));
+    return baseFlatten(map(collection, iteratee), 1);
   }
 
   return flatMap;

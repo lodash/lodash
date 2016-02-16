@@ -1,4 +1,4 @@
-define(['./_apply', './isObject', './rest'], function(apply, isObject, rest) {
+define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -27,7 +27,7 @@ define(['./_apply', './isObject', './rest'], function(apply, isObject, rest) {
     try {
       return apply(func, undefined, args);
     } catch (e) {
-      return isObject(e) ? e : new Error(e);
+      return isError(e) ? e : new Error(e);
     }
   });
 

@@ -29,7 +29,7 @@ define(['./_baseFlatten', './_createWrapper', './rest'], function(baseFlatten, c
    * // => ['a', 'b', 'c']
    */
   var rearg = rest(function(func, indexes) {
-    return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
+    return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes, 1));
   });
 
   return rearg;

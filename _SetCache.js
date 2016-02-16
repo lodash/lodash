@@ -5,6 +5,7 @@ define(['./_MapCache', './_cachePush'], function(MapCache, cachePush) {
    * Creates a set cache object to store unique values.
    *
    * @private
+   * @constructor
    * @param {Array} [values] The values to cache.
    */
   function SetCache(values) {

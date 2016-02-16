@@ -4,10 +4,10 @@ define(['./_baseIsEqual'], function(baseIsEqual) {
   var undefined;
 
   /**
-   * This method is like `_.isEqual` except that it accepts `customizer` which is
-   * invoked to compare values. If `customizer` returns `undefined` comparisons are
-   * handled by the method instead. The `customizer` is invoked with up to six arguments:
-   * (objValue, othValue [, index|key, object, other, stack]).
+   * This method is like `_.isEqual` except that it accepts `customizer` which
+   * is invoked to compare values. If `customizer` returns `undefined` comparisons
+   * are handled by the method instead. The `customizer` is invoked with up to
+   * six arguments: (objValue, othValue [, index|key, object, other, stack]).
    *
    * @static
    * @memberOf _

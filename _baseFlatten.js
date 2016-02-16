@@ -5,12 +5,12 @@ define(['./_arrayPush', './isArguments', './isArray', './isArrayLikeObject'], fu
    *
    * @private
    * @param {Array} array The array to flatten.
-   * @param {boolean} [isDeep] Specify a deep flatten.
+   * @param {number} depth The maximum recursion depth.
    * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
    * @param {Array} [result=[]] The initial result value.
    * @returns {Array} Returns the new flattened array.
    */
-  function baseFlatten(array, isDeep, isStrict, result) {
+  function baseFlatten(array, depth, isStrict, result) {
     result || (result = []);
 
     var index = -1,
@@ -18,11 +18,11 @@ define(['./_arrayPush', './isArguments', './isArray', './isArrayLikeObject'], fu
 
     while (++index < length) {
       var value = array[index];
-      if (isArrayLikeObject(value) &&
+      if (depth > 0 && isArrayLikeObject(value) &&
           (isStrict || isArray(value) || isArguments(value))) {
-        if (isDeep) {
+        if (depth > 1) {
           // Recursively flatten arrays (susceptible to call stack limits).
-          baseFlatten(value, isDeep, isStrict, result);
+          baseFlatten(value, depth - 1, isStrict, result);
         } else {
           arrayPush(result, value);
         }

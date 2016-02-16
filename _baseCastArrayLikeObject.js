@@ -1,15 +1,15 @@
 define(['./isArrayLikeObject'], function(isArrayLikeObject) {
 
   /**
-   * Converts `value` to an array-like object if it's not one.
+   * Casts `value` to an empty array if it's not an array like object.
    *
    * @private
-   * @param {*} value The value to process.
+   * @param {*} value The value to inspect.
    * @returns {Array} Returns the array-like object.
    */
-  function toArrayLikeObject(value) {
+  function baseCastArrayLikeObject(value) {
     return isArrayLikeObject(value) ? value : [];
   }
 
-  return toArrayLikeObject;
+  return baseCastArrayLikeObject;
 });

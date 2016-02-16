@@ -37,7 +37,9 @@ define(['./_charsStartIndex', './_stringToArray', './toString'], function(charsS
       return string;
     }
     var strSymbols = stringToArray(string);
-    return strSymbols.slice(charsStartIndex(strSymbols, stringToArray(chars))).join('');
+    return strSymbols
+      .slice(charsStartIndex(strSymbols, stringToArray(chars)))
+      .join('');
   }
 
   return trimStart;

@@ -1,4 +1,4 @@
-define(['./_baseTimes', './_toFunction', './toInteger'], function(baseTimes, toFunction, toInteger) {
+define(['./_baseCastFunction', './_baseTimes', './toInteger'], function(baseCastFunction, baseTimes, toInteger) {
 
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991;
@@ -35,7 +35,7 @@ define(['./_baseTimes', './_toFunction', './toInteger'], function(baseTimes, toF
     var index = MAX_ARRAY_LENGTH,
         length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-    iteratee = toFunction(iteratee);
+    iteratee = baseCastFunction(iteratee);
     n -= MAX_ARRAY_LENGTH;
 
     var result = baseTimes(length, iteratee);

@@ -4,6 +4,7 @@ define(['./_stackClear', './_stackDelete', './_stackGet', './_stackHas', './_sta
    * Creates a stack cache object to store key-value pairs.
    *
    * @private
+   * @constructor
    * @param {Array} [values] The values to cache.
    */
   function Stack(values) {

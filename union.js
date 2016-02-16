@@ -16,7 +16,7 @@ define(['./_baseFlatten', './_baseUniq', './rest'], function(baseFlatten, baseUn
    * // => [2, 1, 4]
    */
   var union = rest(function(arrays) {
-    return baseUniq(baseFlatten(arrays, false, true));
+    return baseUniq(baseFlatten(arrays, 1, true));
   });
 
   return union;

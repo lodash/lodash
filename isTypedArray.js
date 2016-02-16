@@ -67,7 +67,8 @@ define(['./isLength', './isObjectLike'], function(isLength, isObjectLike) {
    * // => false
    */
   function isTypedArray(value) {
-    return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
+    return isObjectLike(value) &&
+      isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
   }
 
   return isTypedArray;

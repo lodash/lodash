@@ -31,7 +31,7 @@ define(['./isObject', './isRegExp', './_stringSize', './_stringToArray', './toIn
    * @memberOf _
    * @category String
    * @param {string} [string=''] The string to truncate.
-   * @param {Object} [options] The options object.
+   * @param {Object} [options=({})] The options object.
    * @param {number} [options.length=30] The maximum string length.
    * @param {string} [options.omission='...'] The string to indicate text is omitted.
    * @param {RegExp|string} [options.separator] The separator pattern to truncate to.

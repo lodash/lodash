@@ -8,7 +8,11 @@ define(['./_Hash', './_Map'], function(Hash, Map) {
    * @memberOf MapCache
    */
   function mapClear() {
-    this.__data__ = { 'hash': new Hash, 'map': Map ? new Map : [], 'string': new Hash };
+    this.__data__ = {
+      'hash': new Hash,
+      'map': Map ? new Map : [],
+      'string': new Hash
+    };
   }
 
   return mapClear;

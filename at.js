@@ -21,7 +21,7 @@ define(['./_baseAt', './_baseFlatten', './rest'], function(baseAt, baseFlatten, 
    * // => ['a', 'c']
    */
   var at = rest(function(object, paths) {
-    return baseAt(object, baseFlatten(paths));
+    return baseAt(object, baseFlatten(paths, 1));
   });
 
   return at;

@@ -5,7 +5,7 @@ define([], function() {
    *
    * @static
    * @memberOf _
-   * @type Function
+   * @type {Function}
    * @category Lang
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

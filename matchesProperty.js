@@ -1,7 +1,7 @@
 define(['./_baseClone', './_baseMatchesProperty'], function(baseClone, baseMatchesProperty) {
 
   /**
-   * Creates a function that performs a deep partial comparison between the
+   * Creates a function that performs a partial deep comparison between the
    * value at `path` of a given object to `srcValue`, returning `true` if the
    * object value is equivalent, else `false`.
    *

@@ -27,7 +27,7 @@ define(['./_baseFlatten', './_baseUniq', './isArrayLikeObject', './last', './res
     if (isArrayLikeObject(comparator)) {
       comparator = undefined;
     }
-    return baseUniq(baseFlatten(arrays, false, true), undefined, comparator);
+    return baseUniq(baseFlatten(arrays, 1, true), undefined, comparator);
   });
 
   return unionWith;

@@ -17,7 +17,10 @@ define(['./_Stack', './_arrayEach', './_assignMergeValue', './_baseMergeDeep', '
     if (object === source) {
       return;
     }
-    var props = (isArray(source) || isTypedArray(source)) ? undefined : keysIn(source);
+    var props = (isArray(source) || isTypedArray(source))
+      ? undefined
+      : keysIn(source);
+
     arrayEach(props || source, function(srcValue, key) {
       if (props) {
         key = srcValue;
@@ -28,7 +31,10 @@ define(['./_Stack', './_arrayEach', './_assignMergeValue', './_baseMergeDeep', '
         baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
       }
       else {
-        var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stack) : undefined;
+        var newValue = customizer
+          ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+          : undefined;
+
         if (newValue === undefined) {
           newValue = srcValue;
         }

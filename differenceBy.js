@@ -30,7 +30,7 @@ define(['./_baseDifference', './_baseFlatten', './_baseIteratee', './isArrayLike
       iteratee = undefined;
     }
     return isArrayLikeObject(array)
-      ? baseDifference(array, baseFlatten(values, false, true), baseIteratee(iteratee))
+      ? baseDifference(array, baseFlatten(values, 1, true), baseIteratee(iteratee))
       : [];
   });
 

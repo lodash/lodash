@@ -113,7 +113,7 @@ function baseConvert(util, name, func, options) {
 
   var iterateeAry = function(func, n) {
     return overArg(func, function(func) {
-      return baseAry(func, n);
+      return typeof func == 'function' ? baseAry(func, n) : func;
     });
   };
 

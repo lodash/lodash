@@ -1,7 +1,7 @@
 ## lodash/fp
 
-The lodash/fp module is an instance of lodash with its methods wrapped to produce
-immutable auto-curried iteratee-first data-last methods.
+The `lodash/fp` module is an instance of `lodash` with its methods wrapped to
+produce immutable auto-curried iteratee-first data-last methods.
 
 ## Installation
 
@@ -13,30 +13,74 @@ In a browser:
 
 In Node.js:
 ```js
-// load the fp build
+// Load the fp build.
 var _ = require('lodash/fp');
 
-// or a method category
-var array = require('lodash/fp/object');
+// Load a method category.
+var object = require('lodash/fp/object');
 
-// or method for smaller builds with browserify/rollup/webpack
+// Load a single method for smaller builds with browserify/rollup/webpack.
 var extend = require('lodash/fp/extend');
+```
+
+## Convert
+
+This module is used to convert Lodash methods into their `fp` counterparts.
+```js
+var convert = require('lodash/fp/convert');
+
+// Convert by name.
+var assign = convert('assign', require('lodash.assign'));
+
+// Convert by object.
+var fp = convert({
+  'assign': require('lodash.assign'),
+  'chunk': require('lodash.chunk')
+});
+
+// Convert by `lodash` instance.
+var fp = convert(lodash.runInContext());
+```
+
+It’s customizable to create the `fp` wrapper that’s right for you.
+```js
+// Every option is `true` by default.
+var filter = convert('filter', _.filter, {
+  // Specify capping iteratee arguments.
+  'cap': true,
+  // Specify currying.
+  'curry': true,
+  // Specify fixed arity.
+  'fixed': true,
+  // Specify immutable operations.
+  'immutable': true,
+  // Specify rearranging arguments.
+  'rearg': true
+});
+
+// Set `cap` to `false` to create a wrapper that doesn’t cap iteratee arguments.
+var filter = convert('filter', _.filter, { 'cap': false });
+
+filter(function(value, index) {
+  return index % 2 == 0;
+})(['a', 'b', 'c']);
+// => ['a', 'c']
 ```
 
 ## Notes
 
 #### Arity
 
-Methods with arity capped to one argument:<br>
+Methods with arity fixed to one argument:<br>
 <%= toFuncList(mapping.aryMethod[1]) %>
 
-Methods with arity capped to two arguments:<br>
+Methods with arity fixed to two arguments:<br>
 <%= toFuncList(mapping.aryMethod[2]) %>
 
-Methods with arity capped to three arguments:<br>
+Methods with arity fixed to three arguments:<br>
 <%= toFuncList(mapping.aryMethod[3]) %>
 
-Methods with arity capped to four arguments:<br>
+Methods with arity fixed to four arguments:<br>
 <%= toFuncList(mapping.aryMethod[4]) %>
 
 #### Iteratees
@@ -52,14 +96,28 @@ Methods which provide iteratees two argument:<br>
 Methods created to accommodate Lodash’s variadic methods:<br>
 <%= toFuncList(_.keys(mapping.remap)) %>
 
-#### Exceptions
+#### Argument Orders
 
-Methods which have argument order unchanged:<br>
+Methods fixed to two arguments have an argument order of<br>
+<%= toArgOrder(mapping.aryRearg[2]) %>
+
+Methods fixed to three arguments have an argument order of<br>
+<%= toArgOrder(mapping.aryRearg[3]) %>
+
+Methods fixed to four arguments have an argument order of<br>
+<%= toArgOrder(mapping.aryRearg[4]) %>
+
+Methods with custom argument orders:<br>
+<%= _.map(mapping.methodRearg, function(orders, methodName) {
+  return ' * `_.' + methodName + '` has an order of ' + toArgOrder(orders);
+}).join('\n') %>
+
+Methods with unchanged argument orders:<br>
 <%= toFuncList(_.keys(mapping.skipRearg)) %>
 
 #### Aliases
 
 There are <%= _.size(mapping.aliasToReal) %> method aliases:<br>
 <%= _.map(mapping.aliasToReal, function(realName, alias) {
-  return ' - Added `_.' + alias + '` as an alias of `_.' + realName + '`';
+  return ' * Added `_.' + alias + '` as an alias of `_.' + realName + '`';
 }).join('\n') %>

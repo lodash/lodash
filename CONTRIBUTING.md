@@ -1,6 +1,6 @@
 # Contributing to Lodash
 
-Contributions are always welcome. Before contributing, please read the
+Contributions are always welcome. Before contributing please read the
 [code of conduct](https://github.com/lodash/lodash/blob/master/CODE_OF_CONDUCT.md)
 & [search the issue tracker](https://github.com/lodash/lodash/issues); your issue
 may have already been discussed or fixed in `master`. To contribute,

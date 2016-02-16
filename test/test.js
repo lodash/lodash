@@ -467,7 +467,6 @@
     funcProto._method = noop;
 
     // Set bad shims.
-    setProperty(Object, 'create', noop);
 
     var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
     setProperty(Object, 'getOwnPropertySymbols', undefined);
@@ -520,7 +519,6 @@
     root._ = oldDash;
 
     // Restore built-in methods.
-    setProperty(Object, 'create', create);
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
     setProperty(root, 'Buffer', Buffer);
 

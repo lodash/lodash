@@ -82,9 +82,6 @@
         funcProto._method = noop;
 
         // Set bad shims.
-        setProperty(Object, '_create', Object.create);
-        setProperty(Object, 'create', noop);
-
         setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
         setProperty(Object, 'getOwnPropertySymbols', undefined);
 
@@ -133,11 +130,6 @@
 
         setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
-        if (Object._create) {
-          Object.create = Object._create;
-        } else {
-          delete Object.create;
-        }
         if (Object._getOwnPropertySymbols) {
           Object.getOwnPropertySymbols = Object._getOwnPropertySymbols;
         } else {
@@ -174,7 +166,6 @@
 
         delete funcProto._method;
         delete objectProto._propertyIsEnumerable;
-        delete Object._create;
         delete Object._getOwnPropertySymbols;
       }
 

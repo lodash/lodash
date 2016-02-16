@@ -18,15 +18,20 @@ var mapping = require('./_mapping'),
  * @returns {Function|Object} Returns the converted function or object.
  */
 function baseConvert(util, name, func, options) {
-  options || (options = {});
+  var setPlaceholder,
+      isLib = typeof name == 'function',
+      isObj = name === Object(name);
 
-  if (typeof func != 'function') {
+  if (isObj) {
+    options = func;
     func = name;
     name = undefined;
   }
   if (func == null) {
     throw new TypeError;
   }
+  options || (options = {});
+
   var config = {
     'cap': 'cap' in options ? options.cap : true,
     'curry': 'curry' in options ? options.curry : true,
@@ -37,13 +42,12 @@ function baseConvert(util, name, func, options) {
 
   var forceRearg = ('rearg' in options) && options.rearg;
 
-  var isLib = name === undefined && typeof func.VERSION == 'string';
-
-  var _ = isLib ? func : {
+  var helpers = isLib ? func : {
     'ary': util.ary,
     'cloneDeep': util.cloneDeep,
     'curry': util.curry,
     'forEach': util.forEach,
+    'isArray': util.isArray,
     'isFunction': util.isFunction,
     'iteratee': util.iteratee,
     'keys': util.keys,
@@ -51,14 +55,17 @@ function baseConvert(util, name, func, options) {
     'spread': util.spread
   };
 
-  var ary = _.ary,
-      cloneDeep = _.cloneDeep,
-      curry = _.curry,
-      each = _.forEach,
-      isFunction = _.isFunction,
-      keys = _.keys,
-      rearg = _.rearg,
-      spread = _.spread;
+  var ary = helpers.ary,
+      cloneDeep = helpers.cloneDeep,
+      curry = helpers.curry,
+      each = helpers.forEach,
+      isArray = helpers.isArray,
+      isFunction = helpers.isFunction,
+      keys = helpers.keys,
+      rearg = helpers.rearg,
+      spread = helpers.spread;
+
+  var aryMethodKeys = keys(mapping.aryMethod);
 
   var baseArity = function(func, n) {
     return n == 2
@@ -89,7 +96,19 @@ function baseConvert(util, name, func, options) {
   };
 
   var immutWrap = function(func, cloner) {
-    return overArg(func, cloner, true);
+    return function() {
+      var length = arguments.length;
+      if (!length) {
+        return result;
+      }
+      var args = Array(length);
+      while (length--) {
+        args[length] = arguments[length];
+      }
+      var result = args[0] = cloner(args[0]);
+      func.apply(undefined, args);
+      return result;
+    };
   };
 
   var iterateeAry = function(func, n) {
@@ -98,28 +117,31 @@ function baseConvert(util, name, func, options) {
     });
   };
 
-  var iterateeRearg = function(func, indexes) {
-    return overArg(func, function(func) {
-      var n = indexes.length;
-      return baseArity(rearg(baseAry(func, n), indexes), n);
-    });
-  };
-
   var overArg = function(func, iteratee, retArg) {
     return function() {
-      var length = arguments.length,
-          args = Array(length);
-
+      var length = arguments.length;
+      if (!length) {
+        return func();
+      }
+      var args = Array(length);
       while (length--) {
         args[length] = arguments[length];
       }
-      args[0] = iteratee(args[0]);
-      var result = func.apply(undefined, args);
-      return retArg ? args[0] : result;
+      var index = config.rearg ? 0 : (length - 1);
+      args[index] = iteratee(args[index]);
+      return func.apply(undefined, args);
     };
   };
 
   var wrappers = {
+    'castArray': function(castArray) {
+      return function() {
+        var value = arguments[0];
+        return isArray(value)
+          ? castArray(cloneArray(value))
+          : castArray.apply(undefined, arguments);
+      };
+    },
     'iteratee': function(iteratee) {
       return function() {
         var func = arguments[0],
@@ -166,7 +188,7 @@ function baseConvert(util, name, func, options) {
     },
     'runInContext': function(runInContext) {
       return function(context) {
-        return baseConvert(util, runInContext(context), undefined, options);
+        return baseConvert(util, runInContext(context), options);
       };
     }
   };
@@ -190,30 +212,26 @@ function baseConvert(util, name, func, options) {
       }
     }
     var result;
-    each(mapping.caps, function(cap) {
-      each(mapping.aryMethod[cap], function(otherName) {
+    each(aryMethodKeys, function(aryKey) {
+      each(mapping.aryMethod[aryKey], function(otherName) {
         if (name == otherName) {
           var aryN = !isLib && mapping.iterateeAry[name],
-              reargIndexes = mapping.iterateeRearg[name],
               spreadStart = mapping.methodSpread[name];
 
+          result = wrapped;
           if (config.fixed) {
             result = spreadStart === undefined
-              ? ary(wrapped, cap)
-              : spread(wrapped, spreadStart);
+              ? ary(result, aryKey)
+              : spread(result, spreadStart);
           }
-          if (config.rearg && cap > 1 && (forceRearg || !mapping.skipRearg[name])) {
-            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[cap]);
+          if (config.rearg && aryKey > 1 && (forceRearg || !mapping.skipRearg[name])) {
+            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[aryKey]);
           }
-          if (config.cap) {
-            if (reargIndexes) {
-              result = iterateeRearg(result, reargIndexes);
-            } else if (aryN) {
-              result = iterateeAry(result, aryN);
-            }
+          if (config.cap && aryN) {
+            result = iterateeAry(result, aryN);
           }
-          if (config.curry && cap > 1) {
-            result = curry(result, cap);
+          if (config.curry && aryKey > 1) {
+            result = curry(result, aryKey);
           }
           return false;
         }
@@ -221,24 +239,24 @@ function baseConvert(util, name, func, options) {
       return !result;
     });
 
-    result || (result = func);
+    result || (result = wrapped);
     if (mapping.placeholder[name]) {
+      setPlaceholder = true;
       func.placeholder = result.placeholder = placeholder;
     }
     return result;
   };
 
-  if (!isLib) {
+  if (!isObj) {
     return wrap(name, func);
   }
-  // Add placeholder.
-  _.placeholder = placeholder;
+  var _ = func;
 
   // Iterate over methods for the current ary cap.
   var pairs = [];
-  each(mapping.caps, function(cap) {
-    each(mapping.aryMethod[cap], function(key) {
-      var func = _[mapping.rename[key] || key];
+  each(aryMethodKeys, function(aryKey) {
+    each(mapping.aryMethod[aryKey], function(key) {
+      var func = _[mapping.remap[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }
@@ -250,6 +268,9 @@ function baseConvert(util, name, func, options) {
     _[pair[0]] = pair[1];
   });
 
+  if (setPlaceholder) {
+    _.placeholder = placeholder;
+  }
   // Wrap the lodash method and its aliases.
   each(keys(_), function(key) {
     each(mapping.realToAlias[key] || [], function(alias) {

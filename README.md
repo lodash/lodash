@@ -45,7 +45,7 @@ Lodash is available in a variety of other builds & module formats.
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
  * [lodash/fp](https://github.com/lodash/lodash/tree/4.4.0-npm/fp)
 
-CDN copies are available on [cdnjs](https://cdnjs.com/) & [jsDelivr](http://www.jsdelivr.com/).<br>
+CDN copies are available on [jsDelivr](https://www.jsdelivr.com/projects/lodash) & [cdnjs](https://cdnjs.com/libraries/lodash.js).<br>
 Create [custom builds](https://lodash.com/custom-builds) with only the features you need.
 
 ## Further Reading

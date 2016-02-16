@@ -88,10 +88,10 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root = freeGlobal || freeSelf || Function('return this')();
 
 /** Detect free variable `exports`. */
-var freeExports = freeGlobal && typeof exports == 'object' && exports;
+var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module;
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
 /** Detect the popular CommonJS extension `module.exports`. */
 var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -1054,6 +1054,7 @@ function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](array);
+  stack['delete'](other);
   return result;
 }
 
@@ -1214,6 +1215,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](object);
+  stack['delete'](other);
   return result;
 }
 
@@ -1683,10 +1685,10 @@ function isObjectLike(value) {
 
 /**
  * Performs a partial deep comparison between `object` and `source` to
- * determine if `object` contains equivalent property values. This method is
- * equivalent to a `_.matches` function when `source` is partially applied.
+ * determine if `object` contains equivalent property values.
  *
- * **Note:** This method supports comparing the same values as `_.isEqual`.
+ * **Note:** This method supports comparing the same values as `_.isEqual`
+ * and is equivalent to `_.matches` when `source` is partially applied.
  *
  * @static
  * @memberOf _

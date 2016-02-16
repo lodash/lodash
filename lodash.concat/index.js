@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -9,27 +9,22 @@
 var baseFlatten = require('lodash._baseflatten');
 
 /**
- * Creates a new array concatenating `array` with `other`.
+ * Appends the elements of `values` to `array`.
  *
  * @private
- * @param {Array} array The first array to concatenate.
- * @param {Array} other The second array to concatenate.
- * @returns {Array} Returns the new concatenated array.
+ * @param {Array} array The array to modify.
+ * @param {Array} values The values to append.
+ * @returns {Array} Returns `array`.
  */
-function arrayConcat(array, other) {
+function arrayPush(array, values) {
   var index = -1,
-      length = array.length,
-      othIndex = -1,
-      othLength = other.length,
-      result = Array(length + othLength);
+      length = values.length,
+      offset = array.length;
 
   while (++index < length) {
-    result[index] = array[index];
+    array[offset + index] = values[index];
   }
-  while (++othIndex < othLength) {
-    result[index++] = other[othIndex];
-  }
-  return result;
+  return array;
 }
 
 /**
@@ -75,57 +70,16 @@ function copyArray(source, array) {
  */
 function concat() {
   var length = arguments.length,
-      array = castArray(arguments[0]);
+      args = Array(length ? length - 1 : 0),
+      array = arguments[0],
+      index = length;
 
-  if (length < 2) {
-    return length ? copyArray(array) : [];
+  while (index--) {
+    args[index - 1] = arguments[index];
   }
-  var args = Array(length - 1);
-  while (length--) {
-    args[length - 1] = arguments[length];
-  }
-  return arrayConcat(array, baseFlatten(args, 1));
-}
-
-/**
- * Casts `value` as an array if it's not one.
- *
- * @static
- * @memberOf _
- * @since 4.4.0
- * @category Lang
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the cast array.
- * @example
- *
- * _.castArray(1);
- * // => [1]
- *
- * _.castArray({ 'a': 1 });
- * // => [{ 'a': 1 }]
- *
- * _.castArray('abc');
- * // => ['abc']
- *
- * _.castArray(null);
- * // => [null]
- *
- * _.castArray(undefined);
- * // => [undefined]
- *
- * _.castArray();
- * // => []
- *
- * var array = [1, 2, 3];
- * console.log(_.castArray(array) === array);
- * // => true
- */
-function castArray() {
-  if (!arguments.length) {
-    return [];
-  }
-  var value = arguments[0];
-  return isArray(value) ? value : [value];
+  return length
+    ? arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1))
+    : [];
 }
 
 /**

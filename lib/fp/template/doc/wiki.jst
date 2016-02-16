@@ -75,35 +75,35 @@ convert each method.
 
 #### Capped Iteratee Arguments
 
-Methods which provide iteratees one argument:<br>
+Methods that cap iteratees to one argument:<br>
 <%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
 
-Methods which provide iteratees two arguments:<br>
+Methods that cap iteratees to two arguments:<br>
 <%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
 
 #### Fixed Arity
 
-Methods with arity fixed to one argument:<br>
+Methods with a fixed arity of one:<br>
 <%= toFuncList(mapping.aryMethod[1]) %>
 
-Methods with arity fixed to two arguments:<br>
+Methods with a fixed arity of two:<br>
 <%= toFuncList(mapping.aryMethod[2]) %>
 
-Methods with arity fixed to three arguments:<br>
+Methods with a fixed arity of three:<br>
 <%= toFuncList(mapping.aryMethod[3]) %>
 
-Methods with arity fixed to four arguments:<br>
+Methods with a fixed arity of four:<br>
 <%= toFuncList(mapping.aryMethod[4]) %>
 
 #### Rearranged Arguments
 
-Methods fixed to two arguments have an argument order of<br>
+Methods with a fixed arity of two have an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[2]) %>
 
-Methods fixed to three arguments have an argument order of<br>
+Methods with a fixed arity of three have an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[3]) %>
 
-Methods fixed to four arguments have an argument order of<br>
+Methods with a fixed arity of four have an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[4]) %>
 
 Methods with custom argument orders:<br>

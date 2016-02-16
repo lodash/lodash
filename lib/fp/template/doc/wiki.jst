@@ -25,7 +25,7 @@ var extend = require('lodash/fp/extend');
 
 ## Convert
 
-This module is used to convert Lodash methods into their `fp` counterparts.
+This module is used to convert Lodash methods to their `fp` counterparts.
 ```js
 var convert = require('lodash/fp/convert');
 
@@ -42,7 +42,7 @@ var fp = convert({
 var fp = convert(lodash.runInContext());
 ```
 
-It’s customizable to create the `fp` wrapper that’s right for you.
+It’s even customizable so you can create the `fp` function that’s right for you.
 ```js
 // Every option is `true` by default.
 var filter = convert('filter', _.filter, {
@@ -58,7 +58,7 @@ var filter = convert('filter', _.filter, {
   'rearg': true
 });
 
-// Set `cap` to `false` to create a wrapper that doesn’t cap iteratee arguments.
+// Specify `cap` of `false` to create a function that doesn’t cap iteratee arguments.
 var filter = convert('filter', _.filter, { 'cap': false });
 
 filter(function(value, index) {
@@ -67,9 +67,21 @@ filter(function(value, index) {
 // => ['a', 'c']
 ```
 
-## Notes
+## Mapping
 
-#### Arity
+Immutable auto-curried iteratee-first data-last methods sound great, but what’s
+that really mean for each method? Below is a breakdown of the mapping used to
+convert each method.
+
+#### Capped Iteratee Arguments
+
+Methods which provide iteratees one argument:<br>
+<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
+
+Methods which provide iteratees two arguments:<br>
+<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
+
+#### Fixed Arity
 
 Methods with arity fixed to one argument:<br>
 <%= toFuncList(mapping.aryMethod[1]) %>
@@ -83,20 +95,7 @@ Methods with arity fixed to three arguments:<br>
 Methods with arity fixed to four arguments:<br>
 <%= toFuncList(mapping.aryMethod[4]) %>
 
-#### Iteratees
-
-Methods which provide iteratees one argument:<br>
-<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
-
-Methods which provide iteratees two argument:<br>
-<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
-
-#### New Methods
-
-Methods created to accommodate Lodash’s variadic methods:<br>
-<%= toFuncList(_.keys(mapping.remap)) %>
-
-#### Argument Orders
+#### Rearranged Arguments
 
 Methods fixed to two arguments have an argument order of<br>
 <%= toArgOrder(mapping.aryRearg[2]) %>
@@ -114,6 +113,11 @@ Methods with custom argument orders:<br>
 
 Methods with unchanged argument orders:<br>
 <%= toFuncList(_.keys(mapping.skipRearg)) %>
+
+#### New Methods
+
+Methods created to accommodate Lodash’s variadic methods:<br>
+<%= toFuncList(_.keys(mapping.remap)) %>
 
 #### Aliases
 

@@ -82,6 +82,19 @@
         funcProto._method = noop;
 
         // Set bad shims.
+        setProperty(Object, '_create', Object.create);
+        setProperty(Object, 'create', (function() {
+          function object() {}
+          return function(prototype) {
+            if (prototype === Object(prototype)) {
+              object.prototype = prototype;
+              var result = new object;
+              object.prototype = undefined;
+            }
+            return result || {};
+          };
+        }()));
+
         setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
         setProperty(Object, 'getOwnPropertySymbols', undefined);
 
@@ -130,6 +143,11 @@
 
         setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
 
+        if (Object._create) {
+          Object.create = Object._create;
+        } else {
+          delete Object.create;
+        }
         if (Object._getOwnPropertySymbols) {
           Object.getOwnPropertySymbols = Object._getOwnPropertySymbols;
         } else {
@@ -165,8 +183,9 @@
         setProperty(window, 'module', document.getElementById('module'));
 
         delete funcProto._method;
-        delete objectProto._propertyIsEnumerable;
+        delete Object._create;
         delete Object._getOwnPropertySymbols;
+        delete objectProto._propertyIsEnumerable;
       }
 
       // Load lodash to expose it to the bad extensions/shims.

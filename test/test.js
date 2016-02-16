@@ -458,7 +458,7 @@
     // Allow bypassing native checks.
     setProperty(funcProto, 'toString', function wrapper() {
       setProperty(funcProto, 'toString', fnToString);
-      var result = _.has(this, 'toString') ? this.toString() : fnToString.call(this);
+      var result = lodashStable.has(this, 'toString') ? this.toString() : fnToString.call(this);
       setProperty(funcProto, 'toString', wrapper);
       return result;
     });
@@ -467,6 +467,17 @@
     funcProto._method = noop;
 
     // Set bad shims.
+    setProperty(Object, 'create', (function() {
+      function object() {}
+      return function(prototype) {
+        if (lodashStable.isObject(prototype)) {
+          object.prototype = prototype;
+          var result = new object;
+          object.prototype = undefined;
+        }
+        return result || {};
+      };
+    }()));
 
     var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
     setProperty(Object, 'getOwnPropertySymbols', undefined);
@@ -519,6 +530,7 @@
     root._ = oldDash;
 
     // Restore built-in methods.
+    setProperty(Object, 'create', create);
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
     setProperty(root, 'Buffer', Buffer);
 

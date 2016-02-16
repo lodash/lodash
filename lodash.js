@@ -1315,7 +1315,6 @@
 
     /** Built-in value references. */
     var Buffer = moduleExports ? context.Buffer : undefined,
-        objectCreate = Object.create,
         Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
@@ -1324,6 +1323,7 @@
         getPrototypeOf = Object.getPrototypeOf,
         getOwnPropertySymbols = Object.getOwnPropertySymbols,
         iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
+        objectCreate = Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         setTimeout = context.setTimeout,
         splice = arrayProto.splice;

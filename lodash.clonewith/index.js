@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -38,7 +38,7 @@ var baseClone = require('lodash._baseclone');
  * // => 0
  */
 function cloneWith(value, customizer) {
-  return baseClone(value, false, customizer);
+  return baseClone(value, false, true, customizer);
 }
 
 module.exports = cloneWith;

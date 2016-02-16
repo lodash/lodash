@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -7,6 +7,19 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseIteratee = require('lodash._baseiteratee');
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
 
 /**
  * The base implementation of methods like `_.max` and `_.min` which accepts a
@@ -27,7 +40,7 @@ function baseExtremum(array, iteratee, comparator) {
         current = iteratee(value);
 
     if (current != null && (computed === undefined
-          ? current === current
+          ? (current === current && !isSymbol(current))
           : comparator(current, computed)
         )) {
       var computed = current,
@@ -38,29 +51,67 @@ function baseExtremum(array, iteratee, comparator) {
 }
 
 /**
- * Checks if `value` is greater than `other`.
+ * The base implementation of `_.gt` which doesn't coerce arguments to numbers.
  *
- * @static
- * @memberOf _
- * @since 3.9.0
- * @category Lang
+ * @private
  * @param {*} value The value to compare.
  * @param {*} other The other value to compare.
  * @returns {boolean} Returns `true` if `value` is greater than `other`,
  *  else `false`.
+ */
+function baseGt(value, other) {
+  return value > other;
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
  *
- * _.gt(3, 1);
+ * _.isObjectLike({});
  * // => true
  *
- * _.gt(3, 3);
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
  * // => false
  *
- * _.gt(1, 3);
+ * _.isObjectLike(null);
  * // => false
  */
-function gt(value, other) {
-  return value > other;
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
 
 /**
@@ -89,7 +140,7 @@ function gt(value, other) {
  */
 function maxBy(array, iteratee) {
   return (array && array.length)
-    ? baseExtremum(array, baseIteratee(iteratee), gt)
+    ? baseExtremum(array, baseIteratee(iteratee), baseGt)
     : undefined;
 }
 

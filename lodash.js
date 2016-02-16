@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -22,6 +22,7 @@ export { default as bindAll } from './bindAll';
 export { default as bindKey } from './bindKey';
 export { default as camelCase } from './camelCase';
 export { default as capitalize } from './capitalize';
+export { default as castArray } from './castArray';
 export { default as ceil } from './ceil';
 export { default as chain } from './chain';
 export { default as chunk } from './chunk';
@@ -73,6 +74,7 @@ export { default as findLastKey } from './findLastKey';
 export { default as flatMap } from './flatMap';
 export { default as flatten } from './flatten';
 export { default as flattenDeep } from './flattenDeep';
+export { default as flattenDepth } from './flattenDepth';
 export { default as flip } from './flip';
 export { default as floor } from './floor';
 export { default as flow } from './flow';

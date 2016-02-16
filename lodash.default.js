@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.3.0';
+var VERSION = '4.4.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -100,6 +100,7 @@ lodash.before = func.before;
 lodash.bind = func.bind;
 lodash.bindAll = util.bindAll;
 lodash.bindKey = func.bindKey;
+lodash.castArray = lang.castArray;
 lodash.chain = seq.chain;
 lodash.chunk = array.chunk;
 lodash.compact = array.compact;
@@ -128,6 +129,7 @@ lodash.filter = collection.filter;
 lodash.flatMap = collection.flatMap;
 lodash.flatten = array.flatten;
 lodash.flattenDeep = array.flattenDeep;
+lodash.flattenDepth = array.flattenDepth;
 lodash.flip = func.flip;
 lodash.flow = util.flow;
 lodash.flowRight = util.flowRight;
@@ -396,7 +398,7 @@ mixin(lodash, (function() {
  *
  * @static
  * @memberOf _
- * @type string
+ * @type {string}
  */
 lodash.VERSION = VERSION;
 (lodash.templateSettings = string.templateSettings).imports._ = lodash;
@@ -419,7 +421,10 @@ arrayEach(['drop', 'take'], function(methodName, index) {
     if (filtered) {
       result.__takeCount__ = nativeMin(n, result.__takeCount__);
     } else {
-      result.__views__.push({ 'size': nativeMin(n, MAX_ARRAY_LENGTH), 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
+      result.__views__.push({
+        'size': nativeMin(n, MAX_ARRAY_LENGTH),
+        'type': methodName + (result.__dir__ < 0 ? 'Right' : '')
+      });
     }
     return result;
   };
@@ -436,7 +441,10 @@ arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
 
   LazyWrapper.prototype[methodName] = function(iteratee) {
     var result = this.clone();
-    result.__iteratees__.push({ 'iteratee': baseIteratee(iteratee, 3), 'type': type });
+    result.__iteratees__.push({
+      'iteratee': baseIteratee(iteratee, 3),
+      'type': type
+    });
     result.__filtered__ = result.__filtered__ || isFilter;
     return result;
   };
@@ -588,7 +596,10 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   }
 });
 
-realNames[createHybridWrapper(undefined, BIND_KEY_FLAG).name] = [{ 'name': 'wrapper', 'func': undefined }];
+realNames[createHybridWrapper(undefined, BIND_KEY_FLAG).name] = [{
+  'name': 'wrapper',
+  'func': undefined
+}];
 
 // Add functions to the lazy wrapper.
 LazyWrapper.prototype.clone = lazyClone;

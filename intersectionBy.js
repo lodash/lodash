@@ -1,9 +1,9 @@
 import arrayMap from './_arrayMap';
+import baseCastArrayLikeObject from './_baseCastArrayLikeObject';
 import baseIntersection from './_baseIntersection';
 import baseIteratee from './_baseIteratee';
 import last from './last';
 import rest from './rest';
-import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * This method is like `_.intersection` except that it accepts `iteratee`
@@ -27,7 +27,7 @@ import toArrayLikeObject from './_toArrayLikeObject';
  */
 var intersectionBy = rest(function(arrays) {
   var iteratee = last(arrays),
-      mapped = arrayMap(arrays, toArrayLikeObject);
+      mapped = arrayMap(arrays, baseCastArrayLikeObject);
 
   if (iteratee === last(mapped)) {
     iteratee = undefined;

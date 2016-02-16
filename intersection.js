@@ -1,7 +1,7 @@
 import arrayMap from './_arrayMap';
+import baseCastArrayLikeObject from './_baseCastArrayLikeObject';
 import baseIntersection from './_baseIntersection';
 import rest from './rest';
-import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * Creates an array of unique values that are included in all given arrays
@@ -19,7 +19,7 @@ import toArrayLikeObject from './_toArrayLikeObject';
  * // => [2]
  */
 var intersection = rest(function(arrays) {
-  var mapped = arrayMap(arrays, toArrayLikeObject);
+  var mapped = arrayMap(arrays, baseCastArrayLikeObject);
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped)
     : [];

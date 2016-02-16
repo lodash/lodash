@@ -1,4 +1,4 @@
-import baseToPath from './_baseToPath';
+import baseCastPath from './_baseCastPath';
 import isIndex from './_isIndex';
 import isKey from './_isKey';
 import last from './last';
@@ -31,7 +31,7 @@ function basePullAt(array, indexes) {
         splice.call(array, index, 1);
       }
       else if (!isKey(index, array)) {
-        var path = baseToPath(index),
+        var path = baseCastPath(index),
             object = parent(array, path);
 
         if (object != null) {

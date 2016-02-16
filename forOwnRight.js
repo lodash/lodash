@@ -1,5 +1,5 @@
+import baseCastFunction from './_baseCastFunction';
 import baseForOwnRight from './_baseForOwnRight';
-import toFunction from './_toFunction';
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -26,7 +26,7 @@ import toFunction from './_toFunction';
  * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, toFunction(iteratee));
+  return object && baseForOwnRight(object, baseCastFunction(iteratee));
 }
 
 export default forOwnRight;

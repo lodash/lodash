@@ -11,7 +11,7 @@ import partial from './partial';
  * @memberOf _
  * @category Function
  * @param {*} value The value to wrap.
- * @param {Function} wrapper The wrapper function.
+ * @param {Function} [wrapper=identity] The wrapper function.
  * @returns {Function} Returns the new function.
  * @example
  *

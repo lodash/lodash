@@ -2,7 +2,8 @@ import baseToPairs from './_baseToPairs';
 import keysIn from './keysIn';
 
 /**
- * Creates an array of own and inherited enumerable key-value pairs for `object`.
+ * Creates an array of own and inherited enumerable key-value pairs for
+ * `object` which can be consumed by `_.fromPairs`.
  *
  * @static
  * @memberOf _

@@ -1,4 +1,4 @@
-import baseToPath from './_baseToPath';
+import baseCastPath from './_baseCastPath';
 import isArguments from './isArguments';
 import isArray from './isArray';
 import isIndex from './_isIndex';
@@ -23,7 +23,7 @@ function hasPath(object, path, hasFunc) {
   }
   var result = hasFunc(object, path);
   if (!result && !isKey(path)) {
-    path = baseToPath(path);
+    path = baseCastPath(path);
     object = parent(object, path);
     if (object != null) {
       path = last(path);

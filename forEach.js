@@ -1,7 +1,7 @@
 import arrayEach from './_arrayEach';
+import baseCastFunction from './_baseCastFunction';
 import baseEach from './_baseEach';
 import isArray from './isArray';
-import toFunction from './_toFunction';
 
 /**
  * Iterates over elements of `collection` invoking `iteratee` for each element.
@@ -34,7 +34,7 @@ import toFunction from './_toFunction';
 function forEach(collection, iteratee) {
   return (typeof iteratee == 'function' && isArray(collection))
     ? arrayEach(collection, iteratee)
-    : baseEach(collection, toFunction(iteratee));
+    : baseEach(collection, baseCastFunction(iteratee));
 }
 
 export default forEach;

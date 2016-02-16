@@ -1,8 +1,8 @@
 import arrayMap from './_arrayMap';
+import baseCastArrayLikeObject from './_baseCastArrayLikeObject';
 import baseIntersection from './_baseIntersection';
 import last from './last';
 import rest from './rest';
-import toArrayLikeObject from './_toArrayLikeObject';
 
 /**
  * This method is like `_.intersection` except that it accepts `comparator`
@@ -25,7 +25,7 @@ import toArrayLikeObject from './_toArrayLikeObject';
  */
 var intersectionWith = rest(function(arrays) {
   var comparator = last(arrays),
-      mapped = arrayMap(arrays, toArrayLikeObject);
+      mapped = arrayMap(arrays, baseCastArrayLikeObject);
 
   if (comparator === last(mapped)) {
     comparator = undefined;

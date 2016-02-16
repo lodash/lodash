@@ -1,5 +1,5 @@
 import apply from './_apply';
-import isObject from './isObject';
+import isError from './isError';
 import rest from './rest';
 
 /**
@@ -26,7 +26,7 @@ var attempt = rest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
-    return isObject(e) ? e : new Error(e);
+    return isError(e) ? e : new Error(e);
   }
 });
 

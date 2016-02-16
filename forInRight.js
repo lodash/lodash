@@ -1,6 +1,6 @@
+import baseCastFunction from './_baseCastFunction';
 import baseForRight from './_baseForRight';
 import keysIn from './keysIn';
-import toFunction from './_toFunction';
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of
@@ -27,7 +27,9 @@ import toFunction from './_toFunction';
  * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
  */
 function forInRight(object, iteratee) {
-  return object == null ? object : baseForRight(object, toFunction(iteratee), keysIn);
+  return object == null
+    ? object
+    : baseForRight(object, baseCastFunction(iteratee), keysIn);
 }
 
 export default forInRight;

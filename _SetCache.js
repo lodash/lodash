@@ -6,6 +6,7 @@ import cachePush from './_cachePush';
  * Creates a set cache object to store unique values.
  *
  * @private
+ * @constructor
  * @param {Array} [values] The values to cache.
  */
 function SetCache(values) {

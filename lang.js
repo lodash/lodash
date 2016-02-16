@@ -1,3 +1,4 @@
+export { default as castArray } from './castArray';
 export { default as clone } from './clone';
 export { default as cloneDeep } from './cloneDeep';
 export { default as cloneDeepWith } from './cloneDeepWith';

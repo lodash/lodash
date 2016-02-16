@@ -13,6 +13,7 @@ export { default as findIndex } from './findIndex';
 export { default as findLastIndex } from './findLastIndex';
 export { default as flatten } from './flatten';
 export { default as flattenDeep } from './flattenDeep';
+export { default as flattenDepth } from './flattenDepth';
 export { default as fromPairs } from './fromPairs';
 export { default as head } from './head';
 export { default as indexOf } from './indexOf';

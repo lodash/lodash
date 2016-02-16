@@ -23,7 +23,7 @@ import rest from './rest';
  * // => ['a', 'c']
  */
 var at = rest(function(object, paths) {
-  return baseAt(object, baseFlatten(paths));
+  return baseAt(object, baseFlatten(paths, 1));
 });
 
 export default at;

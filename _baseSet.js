@@ -1,5 +1,5 @@
 import assignValue from './_assignValue';
-import baseToPath from './_baseToPath';
+import baseCastPath from './_baseCastPath';
 import isIndex from './_isIndex';
 import isKey from './_isKey';
 import isObject from './isObject';
@@ -15,7 +15,7 @@ import isObject from './isObject';
  * @returns {Object} Returns `object`.
  */
 function baseSet(object, path, value, customizer) {
-  path = isKey(path, object) ? [path + ''] : baseToPath(path);
+  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
   var index = -1,
       length = path.length,
@@ -30,7 +30,9 @@ function baseSet(object, path, value, customizer) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
         if (newValue === undefined) {
-          newValue = objValue == null ? (isIndex(path[index + 1]) ? [] : {}) : objValue;
+          newValue = objValue == null
+            ? (isIndex(path[index + 1]) ? [] : {})
+            : objValue;
         }
       }
       assignValue(nested, key, newValue);

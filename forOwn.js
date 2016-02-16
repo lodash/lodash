@@ -1,5 +1,5 @@
+import baseCastFunction from './_baseCastFunction';
 import baseForOwn from './_baseForOwn';
-import toFunction from './_toFunction';
 
 /**
  * Iterates over own enumerable properties of an object invoking `iteratee`
@@ -28,7 +28,7 @@ import toFunction from './_toFunction';
  * // => logs 'a' then 'b' (iteration order is not guaranteed)
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, toFunction(iteratee));
+  return object && baseForOwn(object, baseCastFunction(iteratee));
 }
 
 export default forOwn;

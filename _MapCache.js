@@ -8,6 +8,7 @@ import mapSet from './_mapSet';
  * Creates a map cache object to store key-value pairs.
  *
  * @private
+ * @constructor
  * @param {Array} [values] The values to cache.
  */
 function MapCache(values) {

@@ -1,6 +1,6 @@
+import baseCastFunction from './_baseCastFunction';
 import baseFor from './_baseFor';
 import keysIn from './keysIn';
-import toFunction from './_toFunction';
 
 /**
  * Iterates over own and inherited enumerable properties of an object invoking
@@ -29,7 +29,9 @@ import toFunction from './_toFunction';
  * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
  */
 function forIn(object, iteratee) {
-  return object == null ? object : baseFor(object, toFunction(iteratee), keysIn);
+  return object == null
+    ? object
+    : baseFor(object, baseCastFunction(iteratee), keysIn);
 }
 
 export default forIn;

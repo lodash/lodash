@@ -13,6 +13,7 @@ import findIndex from './findIndex';
 import findLastIndex from './findLastIndex';
 import flatten from './flatten';
 import flattenDeep from './flattenDeep';
+import flattenDepth from './flattenDepth';
 import fromPairs from './fromPairs';
 import head from './head';
 import indexOf from './indexOf';
@@ -64,14 +65,14 @@ export default {
   chunk, compact, concat, difference, differenceBy,
   differenceWith, drop, dropRight, dropRightWhile, dropWhile,
   fill, findIndex, findLastIndex, flatten, flattenDeep,
-  fromPairs, head, indexOf, initial, intersection,
-  intersectionBy, intersectionWith, join, last, lastIndexOf,
-  pull, pullAll, pullAllBy, pullAt, remove,
-  reverse, slice, sortedIndex, sortedIndexBy, sortedIndexOf,
-  sortedLastIndex, sortedLastIndexBy, sortedLastIndexOf, sortedUniq, sortedUniqBy,
-  tail, take, takeRight, takeRightWhile, takeWhile,
-  union, unionBy, unionWith, uniq, uniqBy,
-  uniqWith, unzip, unzipWith, without, xor,
-  xorBy, xorWith, zip, zipObject, zipObjectDeep,
-  zipWith
+  flattenDepth, fromPairs, head, indexOf, initial,
+  intersection, intersectionBy, intersectionWith, join, last,
+  lastIndexOf, pull, pullAll, pullAllBy, pullAt,
+  remove, reverse, slice, sortedIndex, sortedIndexBy,
+  sortedIndexOf, sortedLastIndex, sortedLastIndexBy, sortedLastIndexOf, sortedUniq,
+  sortedUniqBy, tail, take, takeRight, takeRightWhile,
+  takeWhile, union, unionBy, unionWith, uniq,
+  uniqBy, uniqWith, unzip, unzipWith, without,
+  xor, xorBy, xorWith, zip, zipObject,
+  zipObjectDeep, zipWith
 };

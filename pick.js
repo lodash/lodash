@@ -20,7 +20,7 @@ import rest from './rest';
  * // => { 'a': 1, 'c': 3 }
  */
 var pick = rest(function(object, props) {
-  return object == null ? {} : basePick(object, baseFlatten(props));
+  return object == null ? {} : basePick(object, baseFlatten(props, 1));
 });
 
 export default pick;

@@ -1,3 +1,4 @@
+import castArray from './castArray';
 import clone from './clone';
 import cloneDeep from './cloneDeep';
 import cloneDeepWith from './cloneDeepWith';
@@ -53,15 +54,15 @@ import toSafeInteger from './toSafeInteger';
 import toString from './toString';
 
 export default {
-  clone, cloneDeep, cloneDeepWith, cloneWith, eq,
-  gt, gte, isArguments, isArray, isArrayBuffer,
-  isArrayLike, isArrayLikeObject, isBoolean, isBuffer, isDate,
-  isElement, isEmpty, isEqual, isEqualWith, isError,
-  isFinite, isFunction, isInteger, isLength, isMap,
-  isMatch, isMatchWith, isNaN, isNative, isNil,
-  isNull, isNumber, isObject, isObjectLike, isPlainObject,
-  isRegExp, isSafeInteger, isSet, isString, isSymbol,
-  isTypedArray, isUndefined, isWeakMap, isWeakSet, lt,
-  lte, toArray, toInteger, toLength, toNumber,
-  toPlainObject, toSafeInteger, toString
+  castArray, clone, cloneDeep, cloneDeepWith, cloneWith,
+  eq, gt, gte, isArguments, isArray,
+  isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean, isBuffer,
+  isDate, isElement, isEmpty, isEqual, isEqualWith,
+  isError, isFinite, isFunction, isInteger, isLength,
+  isMap, isMatch, isMatchWith, isNaN, isNative,
+  isNil, isNull, isNumber, isObject, isObjectLike,
+  isPlainObject, isRegExp, isSafeInteger, isSet, isString,
+  isSymbol, isTypedArray, isUndefined, isWeakMap, isWeakSet,
+  lt, lte, toArray, toInteger, toLength,
+  toNumber, toPlainObject, toSafeInteger, toString
 };

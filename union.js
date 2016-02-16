@@ -18,7 +18,7 @@ import rest from './rest';
  * // => [2, 1, 4]
  */
 var union = rest(function(arrays) {
-  return baseUniq(baseFlatten(arrays, false, true));
+  return baseUniq(baseFlatten(arrays, 1, true));
 });
 
 export default union;

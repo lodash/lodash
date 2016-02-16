@@ -1,5 +1,5 @@
+import baseCastFunction from './_baseCastFunction';
 import baseTimes from './_baseTimes';
-import toFunction from './_toFunction';
 import toInteger from './toInteger';
 
 /** Used as references for various `Number` constants. */
@@ -37,7 +37,7 @@ function times(n, iteratee) {
   var index = MAX_ARRAY_LENGTH,
       length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-  iteratee = toFunction(iteratee);
+  iteratee = baseCastFunction(iteratee);
   n -= MAX_ARRAY_LENGTH;
 
   var result = baseTimes(length, iteratee);

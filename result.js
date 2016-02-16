@@ -1,4 +1,4 @@
-import baseToPath from './_baseToPath';
+import baseCastPath from './_baseCastPath';
 import get from './get';
 import isFunction from './isFunction';
 import isKey from './_isKey';
@@ -34,7 +34,7 @@ import parent from './_parent';
  */
 function result(object, path, defaultValue) {
   if (!isKey(path, object)) {
-    path = baseToPath(path);
+    path = baseCastPath(path);
     var result = get(object, path);
     object = parent(object, path);
   } else {

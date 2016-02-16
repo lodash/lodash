@@ -1,4 +1,4 @@
-# lodash.split v4.1.1
+# lodash.split v4.1.2
 
 The [lodash](https://lodash.com/) method `_.split` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var split = require('lodash.split');
 ```
 
-See the [documentation](https://lodash.com/docs#split) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.split) for more details.
+See the [documentation](https://lodash.com/docs#split) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.split) for more details.

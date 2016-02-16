@@ -1,12 +1,18 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var toString = require('lodash.tostring');
+
+/** Used for built-in method references. */
+var stringProto = String.prototype;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeReplace = stringProto.replace;
 
 /**
  * Replaces matches for `pattern` in `string` with `replacement`.
@@ -31,7 +37,7 @@ function replace() {
   var args = arguments,
       string = toString(args[0]);
 
-  return args.length < 3 ? string : string.replace(args[1], args[2]);
+  return args.length < 3 ? string : nativeReplace.call(string, args[1], args[2]);
 }
 
 module.exports = replace;

@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,6 +17,17 @@ var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
 var reEscapeChar = /\\(\\)?/g;
 
 /**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function baseCastPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
  * The base implementation of `_.get` without support for default values.
  *
  * @private
@@ -25,7 +36,7 @@ var reEscapeChar = /\\(\\)?/g;
  * @returns {*} Returns the resolved value.
  */
 function baseGet(object, path) {
-  path = isKey(path, object) ? [path + ''] : baseToPath(path);
+  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
   var index = 0,
       length = path.length;
@@ -60,18 +71,6 @@ function basePropertyDeep(path) {
   return function(object) {
     return baseGet(object, path);
   };
-}
-
-/**
- * The base implementation of `_.toPath` which only converts `value` to a
- * path if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Array} Returns the property path array.
- */
-function baseToPath(value) {
-  return isArray(value) ? value : stringToPath(value);
 }
 
 /**
@@ -111,7 +110,7 @@ function stringToPath(string) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

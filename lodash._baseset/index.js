@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -62,6 +62,17 @@ function assignValue(object, key, value) {
 }
 
 /**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function baseCastPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
  * The base implementation of `_.set`.
  *
  * @private
@@ -72,7 +83,7 @@ function assignValue(object, key, value) {
  * @returns {Object} Returns `object`.
  */
 function baseSet(object, path, value, customizer) {
-  path = isKey(path, object) ? [path + ''] : baseToPath(path);
+  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
 
   var index = -1,
       length = path.length,
@@ -87,7 +98,9 @@ function baseSet(object, path, value, customizer) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
         if (newValue === undefined) {
-          newValue = objValue == null ? (isIndex(path[index + 1]) ? [] : {}) : objValue;
+          newValue = objValue == null
+            ? (isIndex(path[index + 1]) ? [] : {})
+            : objValue;
         }
       }
       assignValue(nested, key, newValue);
@@ -95,18 +108,6 @@ function baseSet(object, path, value, customizer) {
     nested = nested[key];
   }
   return object;
-}
-
-/**
- * The base implementation of `_.toPath` which only converts `value` to a
- * path if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Array} Returns the property path array.
- */
-function baseToPath(value) {
-  return isArray(value) ? value : stringToPath(value);
 }
 
 /**
@@ -180,7 +181,7 @@ function eq(value, other) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

@@ -1,10 +1,10 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var keys = require('lodash.keys');
 
@@ -93,7 +93,7 @@ var objectToString = objectProto.toString;
  * @private
  * @param {Object} object The object to inspect.
  * @param {Array} props The property names to filter.
- * @returns {Array} Returns the new array of filtered property names.
+ * @returns {Array} Returns the function names.
  */
 function baseFunctions(object, props) {
   return arrayFilter(props, function(key) {
@@ -216,7 +216,7 @@ function mixin(object, source, options) {
   var props = keys(source),
       methodNames = baseFunctions(source, props);
 
-  var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
+  var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
       isFunc = isFunction(object);
 
   arrayEach(methodNames, function(methodName) {

@@ -1,4 +1,4 @@
-# lodash._baseeachright v4.1.1
+# lodash._baseeachright v4.1.2
 
 The internal [lodash](https://lodash.com/) function `baseEachRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseEachRight = require('lodash._baseeachright');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash._baseeachright) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash._baseeachright) for more details.

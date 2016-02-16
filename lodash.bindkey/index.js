@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -9,13 +9,13 @@
 var createWrapper = require('lodash._createwrapper'),
     rest = require('lodash.rest');
 
+/** Used as the internal argument placeholder. */
+var PLACEHOLDER = '__lodash_placeholder__';
+
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
     BIND_KEY_FLAG = 2,
     PARTIAL_FLAG = 32;
-
-/** Used as the internal argument placeholder. */
-var PLACEHOLDER = '__lodash_placeholder__';
 
 /**
  * Replaces all `placeholder` elements in `array` with an internal placeholder
@@ -29,14 +29,14 @@ var PLACEHOLDER = '__lodash_placeholder__';
 function replaceHolders(array, placeholder) {
   var index = -1,
       length = array.length,
-      resIndex = -1,
+      resIndex = 0,
       result = [];
 
   while (++index < length) {
     var value = array[index];
     if (value === placeholder || value === PLACEHOLDER) {
       array[index] = PLACEHOLDER;
-      result[++resIndex] = index;
+      result[resIndex++] = index;
     }
   }
   return result;

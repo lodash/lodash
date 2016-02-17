@@ -67,12 +67,6 @@ function baseConvert(util, name, func, options) {
 
   var aryMethodKeys = keys(mapping.aryMethod);
 
-  var baseArity = function(func, n) {
-    return n == 2
-      ? function(a, b) { return func.apply(undefined, arguments); }
-      : function(a) { return func.apply(undefined, arguments); };
-  };
-
   var baseAry = function(func, n) {
     return n == 2
       ? function(a, b) { return func(a, b); }
@@ -113,7 +107,9 @@ function baseConvert(util, name, func, options) {
 
   var iterateeAry = function(func, n) {
     return overArg(func, function(func) {
-      return typeof func == 'function' ? baseAry(func, n) : func;
+      return typeof func == 'function'
+        ? baseAry(func, n)
+        : func;
     });
   };
 

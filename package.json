@@ -44,7 +44,7 @@
     "style:main": "jscs lodash.js",
     "style:perf": "jscs perf/*.js perf/**/*.js",
     "style:test": "jscs test/*.js test/**/*.js",
-    "test": "npm run test:main && npm run test:fp && npm run test:docs",
+    "test": "npm run test:main && npm run test:fp",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test"
   }

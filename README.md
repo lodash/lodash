@@ -25,28 +25,25 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
 ## Documentation
 
   * [API Documentation](https://lodash.com/docs)
-  * [DevDocs – *a searchable interface for our documentation*](https://devdocs.io/lodash/)
   * [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide)
 
 ## Download
 
 Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.4.0/LICENSE) & supports [modern environments](#support).<br>
-Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick the one that’s right for you.
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
  * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.js) ([~20 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.min.js))
+ * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 ## Module Formats
 
-Lodash is available in a variety of other builds & module formats.
+Lodash is available in a [variety of builds](https://lodash.com/custom-builds) & module formats.
 
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
  * [lodash/fp](https://github.com/lodash/lodash/tree/4.4.0-npm/fp)
-
-CDN copies are available on [jsDelivr](https://www.jsdelivr.com/projects/lodash) & [cdnjs](https://cdnjs.com/libraries/lodash.js).<br>
-Create [custom builds](https://lodash.com/custom-builds) with only the features you need.
 
 ## Further Reading
 

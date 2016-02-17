@@ -146,12 +146,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var aryMethodKeys = keys(mapping.aryMethod);
 
-	  var baseArity = function(func, n) {
-	    return n == 2
-	      ? function(a, b) { return func.apply(undefined, arguments); }
-	      : function(a) { return func.apply(undefined, arguments); };
-	  };
-
 	  var baseAry = function(func, n) {
 	    return n == 2
 	      ? function(a, b) { return func(a, b); }
@@ -192,7 +186,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var iterateeAry = function(func, n) {
 	    return overArg(func, function(func) {
-	      return baseAry(func, n);
+	      return typeof func == 'function'
+	        ? baseAry(func, n)
+	        : func;
 	    });
 	  };
 

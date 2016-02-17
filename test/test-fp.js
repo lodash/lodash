@@ -526,6 +526,32 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('iteratee shorthands');
+
+  (function() {
+    var objects = [{ 'a': 1, 'b': 2 }, { 'a': 3, 'b': 4 }];
+
+    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.filter({ 'a': 3 })(objects), [objects[1]]);
+    });
+
+    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.filter(['a', 3])(objects), [objects[1]]);
+    });
+
+    QUnit.test('should work with "_.property" shorthands', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.map('a')(objects), [1, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('mutation methods');
 
   (function() {

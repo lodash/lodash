@@ -9,15 +9,6 @@ $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
 
-## Why Lodash?
-
-Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
-numbers, objects, strings, etc. Lodash’s modular methods are great for:
-
-* Iterating arrays, objects, & strings
-* Manipulating & testing values
-* Creating composite functions
-
 ## Community
 
 [![Gitter](https://badges.gitter.im/lodash/lodash.svg)](https://gitter.im/lodash/lodash)
@@ -35,6 +26,15 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
  * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.core.min.js))
  * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.4.0/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
+
+## Why Lodash?
+
+Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
+numbers, objects, strings, etc. Lodash’s modular methods are great for:
+
+* Iterating arrays, objects, & strings
+* Manipulating & testing values
+* Creating composite functions
 
 ## Module Formats
 

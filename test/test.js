@@ -2591,27 +2591,6 @@
         }
       });
 
-      QUnit.test('`_.' + methodName + '` should clone `index` and `input` array properties', function(assert) {
-        assert.expect(2);
-
-        var array = /x/.exec('vwxyz'),
-            actual = func(array);
-
-        assert.strictEqual(actual.index, 2);
-        assert.strictEqual(actual.input, 'vwxyz');
-      });
-
-      QUnit.test('`_.' + methodName + '` should clone `lastIndex` regexp property', function(assert) {
-        assert.expect(1);
-
-        // Avoid a regexp literal for older Opera and use `exec` for older Safari.
-        var regexp = RegExp('x', 'g');
-        regexp.exec('vwxyz');
-
-        var actual = func(regexp);
-        assert.strictEqual(actual.lastIndex, 3);
-      });
-
       QUnit.test('`_.' + methodName + '` should clone buffers', function(assert) {
         assert.expect(4);
 
@@ -2629,6 +2608,28 @@
         else {
           skipAssert(assert, 4);
         }
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone `index` and `input` array properties', function(assert) {
+        assert.expect(2);
+
+        var array = /c/.exec('abcde'),
+            actual = func(array);
+
+        assert.strictEqual(actual.index, 2);
+        assert.strictEqual(actual.input, 'abcde');
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone `lastIndex` regexp property', function(assert) {
+        assert.expect(1);
+
+        // Avoid a regexp literal for older Opera and use `exec` for older Safari.
+        var regexp = RegExp('c', 'g');
+
+        regexp.exec('abcde');
+
+        var actual = func(regexp);
+        assert.strictEqual(actual.lastIndex, 3);
       });
 
       QUnit.test('`_.' + methodName + '` should clone prototype objects', function(assert) {
@@ -8543,8 +8544,8 @@
 
       assert.strictEqual(_.isEqual(array1, array2), true);
 
-      array1 = /x/.exec('vwxyz');
-      array2 = ['x'];
+      array1 = /c/.exec('abcde');
+      array2 = ['c'];
 
       assert.strictEqual(_.isEqual(array1, array2), true);
     });
@@ -14121,7 +14122,7 @@
     QUnit.test('should not convert strings to arrays when merging arrays of `source`', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 'abcdef' },
+      var object = { 'a': 'abcde' },
           actual = _.merge(object, { 'a': ['x', 'y', 'z'] });
 
       assert.deepEqual(actual, { 'a': ['x', 'y', 'z'] });
@@ -17542,9 +17543,9 @@
     QUnit.test('should replace the matched pattern', function(assert) {
       assert.expect(2);
 
-      var string = 'abcdef';
-      assert.strictEqual(_.replace(string, 'def', '123'), 'abc123');
-      assert.strictEqual(_.replace(string, /[bdf]/g, '-'), 'a-c-e-');
+      var string = 'abcde';
+      assert.strictEqual(_.replace(string, 'de', '123'), 'abc123');
+      assert.strictEqual(_.replace(string, /[bd]/g, '-'), 'a-c-e');
     });
   }());
 

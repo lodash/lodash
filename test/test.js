@@ -7671,19 +7671,6 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
-      assert.expect(1);
-
-      var values = [, null, undefined],
-          expected = lodashStable.map(values, lodashStable.constant({ '1': ['a', 'c'], '2': ['b'] }));
-
-      var actual = lodashStable.map(values, function(value, index) {
-        return index ? _.invertBy(object, value) : _.invertBy(object);
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
     QUnit.test('should only add multiple values to own, not inherited, properties', function(assert) {
       assert.expect(1);
 

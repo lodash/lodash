@@ -813,9 +813,12 @@
 
         try {
           var symObject = Object(symbol);
+
+          // Avoid symbol detection in Babel's `typeof` helper.
           symObject.constructor = Object;
+
           actual = [
-            Symbol ? lodashBizarro.clone(symObject) : {},
+            Symbol ? lodashBizarro.clone(symObject) : { 'constructor': Object },
             Symbol ? lodashBizarro.isEqual(symObject, Object(symbol)) : false,
             Symbol ? lodashBizarro.toString(symObject) : ''
           ];
@@ -823,7 +826,7 @@
           actual = null;
         }
         label = message('_.clone`, `_.isEqual`, and `_.toString', 'Symbol');
-        assert.deepEqual(actual, [{}, false, ''], label);
+        assert.deepEqual(actual, [{ 'constructor': Object }, false, ''], label);
 
         try {
           var map = new lodashBizarro.memoize.Cache;
@@ -2630,6 +2633,24 @@
 
         var actual = func(regexp);
         assert.strictEqual(actual.lastIndex, 3);
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone expando properties', function(assert) {
+        assert.expect(1);
+
+        var values = lodashStable.map([true, false, 1, 'a'], function(value) {
+          var object = Object(value);
+          object.a = 1;
+          return object;
+        });
+
+        var expected = lodashStable.map(values, alwaysTrue);
+
+        var actual = lodashStable.map(values, function(value) {
+          return func(value).a === 1;
+        });
+
+        assert.deepEqual(actual, expected);
       });
 
       QUnit.test('`_.' + methodName + '` should clone prototype objects', function(assert) {

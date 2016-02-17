@@ -7674,10 +7674,24 @@
     QUnit.test('should only add multiple values to own, not inherited, properties', function(assert) {
       assert.expect(1);
 
-      var expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] },
-          object = { 'a': 'hasOwnProperty', 'b': 'constructor' };
+      var object = { 'a': 'hasOwnProperty', 'b': 'constructor' },
+          expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] };
 
       assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+    });
+
+    QUnit.test('should return a wrapped value when chaining', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var wrapped = _(object).invertBy();
+
+        assert.ok(wrapped instanceof _);
+        assert.deepEqual(wrapped.value(), { '1': ['a', 'c'], '2': ['b'] });
+      }
+      else {
+        skipAssert(assert, 2);
+      }
     });
   }());
 

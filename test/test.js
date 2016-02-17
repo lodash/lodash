@@ -23793,6 +23793,7 @@
 
   (function() {
     var funcs = [
+      'castArray',
       'concat',
       'pull',
       'pullAll',

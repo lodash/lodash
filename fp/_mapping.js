@@ -124,6 +124,11 @@ exports.iterateeAry = {
   'transform': 2
 };
 
+/** Used to map method names to iteratee rearg configs. */
+exports.iterateeRearg = {
+  'mapKeys': [1]
+};
+
 /** Used to map method names to rearg configs. */
 exports.methodRearg = {
   'assignInWith': [1, 2, 0],

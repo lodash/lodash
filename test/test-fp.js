@@ -1037,6 +1037,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.mapKeys');
+
+  (function() {
+    QUnit.test('should only provide `key` to `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var args,
+          object = { 'a': 1 };
+
+      var actual = fp.mapKeys(function() {
+        args || (args = slice.call(arguments));
+      }, object);
+
+      assert.deepEqual(args, ['a']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.maxBy and fp.minBy');
 
   _.each(['maxBy', 'minBy'], function(methodName) {

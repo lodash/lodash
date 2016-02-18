@@ -67,6 +67,12 @@ function baseConvert(util, name, func, options) {
 
   var aryMethodKeys = keys(mapping.aryMethod);
 
+  var baseArity = function(func, n) {
+    return n == 2
+      ? function(a, b) { return func.apply(undefined, arguments); }
+      : function(a) { return func.apply(undefined, arguments); };
+  };
+
   var baseAry = function(func, n) {
     return n == 2
       ? function(a, b) { return func(a, b); }
@@ -107,9 +113,14 @@ function baseConvert(util, name, func, options) {
 
   var iterateeAry = function(func, n) {
     return overArg(func, function(func) {
-      return typeof func == 'function'
-        ? baseAry(func, n)
-        : func;
+      return typeof func == 'function' ? baseAry(func, n) : func;
+    });
+  };
+
+  var iterateeRearg = function(func, indexes) {
+    return overArg(func, function(func) {
+      var n = indexes.length;
+      return baseArity(rearg(baseAry(func, n), indexes), n);
     });
   };
 
@@ -212,6 +223,7 @@ function baseConvert(util, name, func, options) {
       each(mapping.aryMethod[aryKey], function(otherName) {
         if (name == otherName) {
           var aryN = !isLib && mapping.iterateeAry[name],
+              reargIndexes = mapping.iterateeRearg[name],
               spreadStart = mapping.methodSpread[name];
 
           result = wrapped;
@@ -223,8 +235,12 @@ function baseConvert(util, name, func, options) {
           if (config.rearg && aryKey > 1 && (forceRearg || !mapping.skipRearg[name])) {
             result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[aryKey]);
           }
-          if (config.cap && aryN) {
-            result = iterateeAry(result, aryN);
+          if (config.cap) {
+            if (reargIndexes) {
+              result = iterateeRearg(result, reargIndexes);
+            } else if (aryN) {
+              result = iterateeAry(result, aryN);
+            }
           }
           if (config.curry && aryKey > 1) {
             result = curry(result, aryKey);

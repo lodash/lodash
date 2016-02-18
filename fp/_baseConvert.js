@@ -152,15 +152,15 @@ function baseConvert(util, name, func, options) {
     'iteratee': function(iteratee) {
       return function() {
         var func = arguments[0],
-            arity = arguments[1];
+            arity = arguments[1],
+            result = iteratee(func, arity),
+            length = result.length;
 
-        if (!config.cap) {
-          return iteratee(func, arity);
+        if (config.cap && typeof arity == 'number') {
+          arity = arity > 2 ? (arity - 2) : 1;
+          return (length && length <= arity) ? result : baseAry(result, arity);
         }
-        arity = arity > 2 ? (arity - 2) : 1;
-        func = iteratee(func);
-        var length = func.length;
-        return (length && length <= arity) ? func : baseAry(func, arity);
+        return result;
       };
     },
     'mixin': function(mixin) {

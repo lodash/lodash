@@ -1173,6 +1173,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.omitBy and fp.pickBy');
+
+  _.each(['omitBy', 'pickBy'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should provide `value` and `key` to `iteratee`', function(assert) {
+      assert.expect(1);
+
+      var args,
+          object = { 'a': 1 };
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(object);
+
+      assert.deepEqual(args, [1, 'a']);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.partial and fp.partialRight');
 
   _.each(['partial', 'partialRight'], function(methodName) {

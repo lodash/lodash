@@ -12,9 +12,11 @@ may have already been discussed or fixed in `master`. To contribute,
 Feature requests are always welcome. They should be submitted in the
 [issue tracker](https://github.com/lodash/lodash/issues), with a description of
 the expected behavior & use case, where they’ll remain closed until sufficient
-interest has been shown by the community. Before submitting a request,
-please search for similar ones in the
+interest has been shown by the community. Before submitting a request, please
+search for similar ones in the
 [closed issues](https://github.com/lodash/lodash/issues?q=is%3Aissue+is%3Aclosed+label%3Aenhancement).
+If you find a closed issue for your feature request you are encouraged to :+1:
+it to show your support.
 
 ## Pull Requests
 

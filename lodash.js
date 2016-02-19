@@ -6187,6 +6187,7 @@
      * for equality comparisons.
      *
      * **Note:** Unlike `_.without`, this method mutates `array`.
+     * **Note:** To remove elements from an array based on a predicate, see `_.remove`.
      *
      * @static
      * @memberOf _
@@ -6295,6 +6296,7 @@
      * three arguments: (value, index, array).
      *
      * **Note:** Unlike `_.filter`, this method mutates `array`.
+     * **Note:** To remove elements from an array based on their values, see `_.pull`.
      *
      * @static
      * @memberOf _

@@ -691,7 +691,7 @@
       actual = fp.unset('a.b')(value);
 
       assert.deepEqual(value, deepObject, 'fp.unset');
-      assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.set');
+      assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.unset');
     });
   }());
 
@@ -726,6 +726,42 @@
         assert.ok(_.isObject(func.placeholder));
         assert.strictEqual(func.placeholder, fp.__);
       });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('set methods');
+
+  (function() {
+    var array = [1, 2, 3],
+        object = { 'a': 1 },
+        deepObject = { 'a': { 'b': 2, 'c': 3 } };
+
+    QUnit.test('should only clone objects in `path`', function(assert) {
+      assert.expect(8);
+
+      var object = { 'a': { 'b': { 'c': 1 }, 'd': { 'e': 1 } } },
+          value = _.cloneDeep(object),
+          actual = fp.set('a.b.c.d.e', 3, value);
+
+      assert.ok(_.isObject(actual.a.b.c), 'fp.set');
+      assert.ok(_.isNumber(actual.a.b.c), 'fp.set');
+
+      assert.strictEqual(actual.a.b.c.d.e, 3, 'fp.set');
+      assert.strictEqual(actual.d, value.d, 'fp.set');
+
+      value = _.cloneDeep(object);
+      actual = fp.setWith(Object)('a.b.c')(2)(value);
+
+      assert.strictEqual(actual.a.b.c, 2, 'fp.setWith');
+      assert.strictEqual(actual.d, value.d, 'fp.setWith');
+
+      value = _.cloneDeep(object);
+      actual = fp.unset('a.b')(value);
+
+      assert.notOk('b' in actual, 'fp.unset');
+      assert.strictEqual(actual.d, value.d, 'fp.unset');
     });
   }());
 

@@ -44,7 +44,7 @@ function baseConvert(util, name, func, options) {
 
   var helpers = isLib ? func : {
     'ary': util.ary,
-    'cloneDeep': util.cloneDeep,
+    'clone': util.clone,
     'curry': util.curry,
     'forEach': util.forEach,
     'isArray': util.isArray,
@@ -52,18 +52,20 @@ function baseConvert(util, name, func, options) {
     'iteratee': util.iteratee,
     'keys': util.keys,
     'rearg': util.rearg,
-    'spread': util.spread
+    'spread': util.spread,
+    'toPath': util.toPath
   };
 
   var ary = helpers.ary,
-      cloneDeep = helpers.cloneDeep,
+      clone = helpers.clone,
       curry = helpers.curry,
       each = helpers.forEach,
       isArray = helpers.isArray,
       isFunction = helpers.isFunction,
       keys = helpers.keys,
       rearg = helpers.rearg,
-      spread = helpers.spread;
+      spread = helpers.spread,
+      toPath = helpers.toPath;
 
   var aryMethodKeys = keys(mapping.aryMethod);
 
@@ -89,6 +91,26 @@ function baseConvert(util, name, func, options) {
     return result;
   };
 
+  var cloneByPath = function(object, path) {
+    path = toPath(path);
+
+    var index = -1,
+        length = path.length,
+        result = clone(Object(object)),
+        nested = result;
+
+    while (nested != null && ++index < length) {
+      var key = path[index],
+          value = nested[key];
+
+      if (value != null) {
+        nested[key] = clone(Object(value));
+      }
+      nested = nested[key];
+    }
+    return result;
+  };
+
   var createCloner = function(func) {
     return function(object) {
       return func({}, object);
@@ -105,7 +127,7 @@ function baseConvert(util, name, func, options) {
       while (length--) {
         args[length] = arguments[length];
       }
-      var result = args[0] = cloner(args[0]);
+      var result = args[0] = cloner.apply(undefined, args);
       func.apply(undefined, args);
       return result;
     };
@@ -215,7 +237,7 @@ function baseConvert(util, name, func, options) {
         wrapped = immutWrap(func, createCloner(func));
       }
       else if (mutateMap.set[name]) {
-        wrapped = immutWrap(func, cloneDeep);
+        wrapped = immutWrap(func, cloneByPath);
       }
     }
     var result;

@@ -14028,26 +14028,6 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should not augment source objects', function(assert) {
-      assert.expect(6);
-
-      var source1 = { 'a': [{ 'a': 1 }] },
-          source2 = { 'a': [{ 'b': 2 }] },
-          actual = _.merge({}, source1, source2);
-
-      assert.deepEqual(source1.a, [{ 'a': 1 }]);
-      assert.deepEqual(source2.a, [{ 'b': 2 }]);
-      assert.deepEqual(actual.a, [{ 'a': 1, 'b': 2 }]);
-
-      var source1 = { 'a': [[1, 2, 3]] },
-          source2 = { 'a': [[3, 4]] },
-          actual = _.merge({}, source1, source2);
-
-      assert.deepEqual(source1.a, [[1, 2, 3]]);
-      assert.deepEqual(source2.a, [[3, 4]]);
-      assert.deepEqual(actual.a, [[3, 4, 3]]);
-    });
-
     QUnit.test('should deep clone array/typed-array/plain-object sources', function(assert) {
       assert.expect(1);
 
@@ -14072,6 +14052,26 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should not augment source objects', function(assert) {
+      assert.expect(6);
+
+      var source1 = { 'a': [{ 'a': 1 }] },
+          source2 = { 'a': [{ 'b': 2 }] },
+          actual = _.merge({}, source1, source2);
+
+      assert.deepEqual(source1.a, [{ 'a': 1 }]);
+      assert.deepEqual(source2.a, [{ 'b': 2 }]);
+      assert.deepEqual(actual.a, [{ 'a': 1, 'b': 2 }]);
+
+      var source1 = { 'a': [[1, 2, 3]] },
+          source2 = { 'a': [[3, 4]] },
+          actual = _.merge({}, source1, source2);
+
+      assert.deepEqual(source1.a, [[1, 2, 3]]);
+      assert.deepEqual(source2.a, [[3, 4]]);
+      assert.deepEqual(actual.a, [[3, 4, 3]]);
     });
 
     QUnit.test('should merge plain-objects onto non plain-objects', function(assert) {

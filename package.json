@@ -37,7 +37,6 @@
     "doc": "node lib/main/build-doc github",
     "doc:fp": "node lib/fp/build-doc",
     "doc:site": "node lib/main/build-doc site",
-    "prepublish": "npm run style",
     "pretest": "npm run build",
     "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",
     "style:fp": "jscs fp/*.js lib/**/*.js",

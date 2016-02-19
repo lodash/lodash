@@ -672,9 +672,9 @@
 
     if (isModularize && !(amd || isNpm)) {
       lodashStable.each([
-        'internal/baseEach',
-        'internal/isIndex',
-        'internal/isIterateeCall'
+        '_baseEach',
+        '_isIndex',
+        '_isIterateeCall'
       ], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);

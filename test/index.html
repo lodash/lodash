@@ -296,9 +296,9 @@
 
             if (ui.isModularize) {
               require(getConfig(), [
-                'lodash/internal/baseEach',
-                'lodash/internal/isIndex',
-                'lodash/internal/isIterateeCall'
+                'lodash/_baseEach',
+                'lodash/_isIndex',
+                'lodash/_isIterateeCall'
               ], function(baseEach, isIndex, isIterateeCall) {
                 lodash._baseEach = baseEach;
                 lodash._isIndex = isIndex;

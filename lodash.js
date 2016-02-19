@@ -5055,11 +5055,9 @@
      * @returns {Object} Returns the initialized clone.
      */
     function initCloneObject(object) {
-      if (isPrototype(object)) {
-        return {};
-      }
-      var Ctor = object.constructor;
-      return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+      return (isFunction(object.constructor) && !isPrototype(object))
+        ? baseCreate(getPrototypeOf(object))
+        : {};
     }
 
     /**
@@ -5206,7 +5204,7 @@
      */
     function isPrototype(value) {
       var Ctor = value && value.constructor,
-          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+          proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
 
       return value === proto;
     }
@@ -10288,10 +10286,7 @@
           objectToString.call(value) != objectTag || isHostObject(value)) {
         return false;
       }
-      var proto = objectProto;
-      if (typeof value.constructor == 'function') {
-        proto = getPrototypeOf(value);
-      }
+      var proto = getPrototypeOf(value);
       if (proto === null) {
         return true;
       }
@@ -11919,7 +11914,7 @@
           if (isArr) {
             accumulator = isArray(object) ? new Ctor : [];
           } else {
-            accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+            accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
           }
         } else {
           accumulator = {};

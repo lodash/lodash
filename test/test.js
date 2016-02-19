@@ -2664,10 +2664,18 @@
         assert.deepEqual(actual, { 'b': 1 });
       });
 
-      QUnit.test('`_.' + methodName + '` should create clone with the same `[[Prototype]]` as `value`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should set the `[[Prototype]]` of a clone', function(assert) {
         assert.expect(1);
 
         assert.ok(func(new Foo) instanceof Foo);
+      });
+
+      QUnit.test('`_.' + methodName + '` should set the `[[Prototype]]` of a clone even when the `constructor` is incorrect', function(assert) {
+        assert.expect(1);
+
+        Foo.prototype.constructor = Object;
+        assert.ok(func(new Foo) instanceof Foo);
+        Foo.prototype.constructor = Foo;
       });
 
       QUnit.test('`_.' + methodName + '` should ensure `value` constructor is a function before using its `[[Prototype]]`', function(assert) {

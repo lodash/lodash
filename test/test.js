@@ -3497,6 +3497,16 @@
       assert.deepEqual(_.create({}, new Foo), { 'a': 1, 'c': 3 });
     });
 
+    QUnit.test('should assign properties that shadow those of `prototype`', function(assert) {
+      assert.expect(1);
+
+      function Foo() {
+        this.a = 1;
+      }
+      var object = _.create(new Foo, { 'a': 1 });
+      assert.deepEqual(lodashStable.keys(object), ['a']);
+    });
+
     QUnit.test('should accept a falsey `prototype` argument', function(assert) {
       assert.expect(1);
 

@@ -11661,8 +11661,7 @@
     /**
      * The opposite of `_.pickBy`; this method creates an object composed of the
      * own and inherited enumerable properties of `object` that `predicate`
-     * doesn't return truthy for.
-     *
+     * doesn't return truthy for. The predicate is invoked with two arguments: (value, key).     *
      * @static
      * @memberOf _
      * @category Object

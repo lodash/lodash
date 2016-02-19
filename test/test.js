@@ -364,7 +364,9 @@
     this.message = message;
   }
 
-  CustomError.prototype = lodashStable.create(Error.prototype);
+  CustomError.prototype = lodashStable.create(Error.prototype, {
+    'constructor': CustomError
+  });
 
   /**
    * Removes all own enumerable properties from a given object.

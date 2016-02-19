@@ -25,7 +25,10 @@ var extend = require('lodash/fp/extend');
 
 ## Convert
 
-This module is used to convert Lodash methods to their `fp` counterparts.
+Although `lodash/fp` & its method modules come pre-converted there are times when
+you may want to convert another lodash package or create a customized conversion.
+That’s when the `convert` module comes in handy.
+
 ```js
 var convert = require('lodash/fp/convert');
 
@@ -42,7 +45,7 @@ var fp = convert({
 var fp = convert(lodash.runInContext());
 ```
 
-It’s even customizable so you can create the `fp` function that’s right for you.
+It’s even customizable.
 ```js
 // Every option is `true` by default.
 var filter = convert('filter', _.filter, {
@@ -81,6 +84,8 @@ Methods that cap iteratees to one argument:<br>
 Methods that cap iteratees to two arguments:<br>
 <%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
 
+The iteratee of `mapKeys` is invoked with one argument: (key)
+
 #### Fixed Arity
 
 Methods with a fixed arity of one:<br>
@@ -113,6 +118,9 @@ Methods with custom argument orders:<br>
 
 Methods with unchanged argument orders:<br>
 <%= toFuncList(_.keys(mapping.skipRearg)) %>
+
+The methods `partial` & `partialRight` accept an array of arguments to partially
+apply as their second parameter.
 
 #### New Methods
 

@@ -230,7 +230,7 @@
   var lodashStable = root.lodashStable;
   if (!lodashStable) {
     try {
-      lodashStable = load('../node_modules/lodash/index.js');
+      lodashStable = load('../node_modules/lodash/lodash.js');
     } catch (e) {
       console.log('Error: The stable lodash dev dependency should be at least a version behind master branch.');
       return;

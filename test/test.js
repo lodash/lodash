@@ -7533,11 +7533,24 @@
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` should return the intersection of the given arrays', function(assert) {
-      assert.expect(1);
+    QUnit.test('`_.' + methodName + '` should return the intersection of two arrays', function(assert) {
+      assert.expect(2);
+
+      var actual = func([1, 3, 2], [5, 2, 1, 4]);
+      assert.deepEqual(actual, [1, 2]);
+
+      actual = func([5, 2, 1, 4], [1, 3, 2]);
+      assert.deepEqual(actual, [2, 1]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return the intersection of multiple arrays', function(assert) {
+      assert.expect(2);
 
       var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
       assert.deepEqual(actual, [1, 2]);
+
+      actual = func([5, 2, 1, 4], [2, 1], [1, 3, 2]);
+      assert.deepEqual(actual, [2, 1]);
     });
 
     QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {

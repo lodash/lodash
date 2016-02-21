@@ -1715,6 +1715,23 @@
       assert.deepEqual(bound(), [object, undefined, 'b', undefined]);
     });
 
+    QUnit.test('should use `_.placeholder` when set', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var _ph = _.placeholder = {},
+            ph = _.bind.placeholder,
+            object = {},
+            bound = _.bind(fn, object, _ph, 'b', ph);
+
+        assert.deepEqual(bound('a', 'c'), [object, 'a', 'b', ph, 'c']);
+        delete _.placeholder;
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('should create a function with a `length` of `0`', function(assert) {
       assert.expect(2);
 
@@ -1993,6 +2010,28 @@
       assert.deepEqual(bound('a'), ['a', 'b', undefined]);
       assert.deepEqual(bound('a', 'c', 'd'), ['a', 'b', 'c', 'd']);
       assert.deepEqual(bound(), [undefined, 'b', undefined]);
+    });
+
+    QUnit.test('should use `_.placeholder` when set', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var object = {
+          'fn': function() {
+            return slice.call(arguments);
+          }
+        };
+
+        var _ph = _.placeholder = {},
+            ph = _.bindKey.placeholder,
+            bound = _.bindKey(object, 'fn', _ph, 'b', ph);
+
+        assert.deepEqual(bound('a', 'c'), ['a', 'b', ph, 'c']);
+        delete _.placeholder;
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('should ensure `new bound` is an instance of `object[key]`', function(assert) {
@@ -3622,6 +3661,22 @@
       assert.deepEqual(actual, ['a', 'b', 'c', 'd']);
     });
 
+    QUnit.test('should use `_.placeholder` when set', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var curried = _.curry(fn),
+            _ph = _.placeholder = {},
+            ph = curried.placeholder;
+
+        assert.deepEqual(curried(1)(_ph, 3)(ph, 4), [1, ph, 3, 4]);
+        delete _.placeholder;
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('should provide additional arguments after reaching the target arity', function(assert) {
       assert.expect(3);
 
@@ -3763,6 +3818,22 @@
           actual = curried('a', ph, ph, ph)('b')(ph)('c')('d');
 
       assert.deepEqual(actual, ['a', 'b', 'c', 'd']);
+    });
+
+    QUnit.test('should use `_.placeholder` when set', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var curried = _.curryRight(fn),
+            _ph = _.placeholder = {},
+            ph = curried.placeholder;
+
+        assert.deepEqual(curried(4)(2, _ph)(1, ph), [1, 2, ph, 4]);
+        delete _.placeholder;
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('should provide additional arguments after reaching the target arity', function(assert) {
@@ -15857,9 +15928,9 @@
 
       var fn = function(a, b) { return [a, b]; },
           par = func(fn, 'a'),
-          expected = ['a', 'b'];
+          expected = isPartial ? ['a', 'b'] : ['b', 'a'];
 
-      assert.deepEqual(par('b'), isPartial ? expected : expected.reverse());
+      assert.deepEqual(par('b'), expected);
     });
 
     QUnit.test('`_.' + methodName + '` works when there are no partially applied arguments and the created function is invoked without additional arguments', function(assert) {
@@ -15893,6 +15964,23 @@
       } else {
         par = func(fn, ph, 'c', ph);
         assert.deepEqual(par('a', 'b', 'd'), ['a', 'b', 'c', 'd']);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should use `_.placeholder` when set', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var _ph = _.placeholder = {},
+            fn = function() { return slice.call(arguments); },
+            par = func(fn, _ph, 'b', ph),
+            expected = isPartial ? ['a', 'b', ph, 'c'] : ['a', 'c', 'b', ph];
+
+        assert.deepEqual(par('a', 'c'), expected);
+        delete _.placeholder;
+      }
+      else {
+        skipAssert(assert);
       }
     });
 

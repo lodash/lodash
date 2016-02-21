@@ -4247,7 +4247,9 @@
 
         length -= holders.length;
         if (length < arity) {
-          return createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, undefined, args, holders, undefined, undefined, arity - length);
+          return createRecurryWrapper(
+            func, bitmask, createHybridWrapper, wrapper.placeholder, undefined,
+            args, holders, undefined, undefined, arity - length);
         }
         var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
         return apply(fn, this, args);
@@ -4364,8 +4366,8 @@
         if (isCurried && length < arity) {
           var newHolders = replaceHolders(args, placeholder);
           return createRecurryWrapper(
-            func, bitmask, createHybridWrapper, placeholder, thisArg, args,
-            newHolders, argPos, ary, arity - length
+            func, bitmask, createHybridWrapper, wrapper.placeholder, thisArg,
+            args, newHolders, argPos, ary, arity - length
           );
         }
         var thisBinding = isBind ? thisArg : this,
@@ -8605,7 +8607,7 @@
     function curry(func, arity, guard) {
       arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = getPlaceholder(curry);
+      result.placeholder = curry.placeholder;
       return result;
     }
 
@@ -8649,7 +8651,7 @@
     function curryRight(func, arity, guard) {
       arity = guard ? undefined : arity;
       var result = createWrapper(func, CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = getPlaceholder(curryRight);
+      result.placeholder = curryRight.placeholder;
       return result;
     }
 

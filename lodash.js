@@ -1033,6 +1033,26 @@
   }
 
   /**
+   * Gets the number of `placeholder` occurrences in `array`.
+   *
+   * @private
+   * @param {Array} array The array to inspect.
+   * @param {*} placeholder The placeholder to search for.
+   * @returns {number} Returns the placeholder count.
+   */
+  function countHolders(array, placeholder) {
+    var length = array.length,
+        result = 0;
+
+    while (length--) {
+      if (array[length] === placeholder) {
+        result++;
+      }
+    }
+    return result;
+  }
+
+  /**
    * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
    *
    * @private
@@ -1170,7 +1190,8 @@
         result = [];
 
     while (++index < length) {
-      if (array[index] === placeholder) {
+      var value = array[index];
+      if (value === placeholder || value === PLACEHOLDER) {
         array[index] = PLACEHOLDER;
         result[++resIndex] = index;
       }
@@ -3870,23 +3891,28 @@
      * @param {Array|Object} args The provided arguments.
      * @param {Array} partials The arguments to prepend to those provided.
      * @param {Array} holders The `partials` placeholder indexes.
+     * @params {boolean} [isCurried] Specify composing for a curried function.
      * @returns {Array} Returns the new array of composed arguments.
      */
-    function composeArgs(args, partials, holders) {
-      var holdersLength = holders.length,
-          argsIndex = -1,
-          argsLength = nativeMax(args.length - holdersLength, 0),
+    function composeArgs(args, partials, holders, isCurried) {
+      var argsIndex = -1,
+          argsLength = args.length,
+          holdersLength = holders.length,
           leftIndex = -1,
           leftLength = partials.length,
-          result = Array(leftLength + argsLength);
+          rangeLength = nativeMax(argsLength - holdersLength, 0),
+          result = Array(leftLength + rangeLength),
+          isUncurried = !isCurried;
 
       while (++leftIndex < leftLength) {
         result[leftIndex] = partials[leftIndex];
       }
       while (++argsIndex < holdersLength) {
-        result[holders[argsIndex]] = args[argsIndex];
+        if (isUncurried || argsIndex < argsLength) {
+          result[holders[argsIndex]] = args[argsIndex];
+        }
       }
-      while (argsLength--) {
+      while (rangeLength--) {
         result[leftIndex++] = args[argsIndex++];
       }
       return result;
@@ -3900,18 +3926,21 @@
      * @param {Array|Object} args The provided arguments.
      * @param {Array} partials The arguments to append to those provided.
      * @param {Array} holders The `partials` placeholder indexes.
+     * @params {boolean} [isCurried] Specify composing for a curried function.
      * @returns {Array} Returns the new array of composed arguments.
      */
-    function composeArgsRight(args, partials, holders) {
-      var holdersIndex = -1,
+    function composeArgsRight(args, partials, holders, isCurried) {
+      var argsIndex = -1,
+          argsLength = args.length,
+          holdersIndex = -1,
           holdersLength = holders.length,
-          argsIndex = -1,
-          argsLength = nativeMax(args.length - holdersLength, 0),
           rightIndex = -1,
           rightLength = partials.length,
-          result = Array(argsLength + rightLength);
+          rangeLength = nativeMax(argsLength - holdersLength, 0),
+          result = Array(rangeLength + rightLength),
+          isUncurried = !isCurried;
 
-      while (++argsIndex < argsLength) {
+      while (++argsIndex < rangeLength) {
         result[argsIndex] = args[argsIndex];
       }
       var offset = argsIndex;
@@ -3919,7 +3948,9 @@
         result[offset + rightIndex] = partials[rightIndex];
       }
       while (++holdersIndex < holdersLength) {
-        result[offset + holders[holdersIndex]] = args[argsIndex++];
+        if (isUncurried || argsIndex < argsLength) {
+          result[offset + holders[holdersIndex]] = args[argsIndex++];
+        }
       }
       return result;
     }
@@ -4306,8 +4337,7 @@
       var isAry = bitmask & ARY_FLAG,
           isBind = bitmask & BIND_FLAG,
           isBindKey = bitmask & BIND_KEY_FLAG,
-          isCurry = bitmask & CURRY_FLAG,
-          isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+          isCurried = bitmask & (CURRY_FLAG | CURRY_RIGHT_FLAG),
           isFlip = bitmask & FLIP_FLAG,
           Ctor = isBindKey ? undefined : createCtorWrapper(func);
 
@@ -4319,33 +4349,34 @@
         while (index--) {
           args[index] = arguments[index];
         }
+        if (isCurried) {
+          var placeholder = lodash.placeholder || wrapper.placeholder,
+              holdersCount = countHolders(args, placeholder);
+        }
         if (partials) {
-          args = composeArgs(args, partials, holders);
+          args = composeArgs(args, partials, holders, isCurried);
         }
         if (partialsRight) {
-          args = composeArgsRight(args, partialsRight, holdersRight);
+          args = composeArgsRight(args, partialsRight, holdersRight, isCurried);
         }
-        if (isCurry || isCurryRight) {
-          var placeholder = lodash.placeholder || wrapper.placeholder,
-              argsHolders = replaceHolders(args, placeholder);
-
-          length -= argsHolders.length;
-          if (length < arity) {
-            return createRecurryWrapper(
-              func, bitmask, createHybridWrapper, placeholder, thisArg, args,
-              argsHolders, argPos, ary, arity - length
-            );
-          }
+        length -= holdersCount;
+        if (isCurried && length < arity) {
+          var newHolders = replaceHolders(args, placeholder);
+          return createRecurryWrapper(
+            func, bitmask, createHybridWrapper, placeholder, thisArg, args,
+            newHolders, argPos, ary, arity - length
+          );
         }
         var thisBinding = isBind ? thisArg : this,
             fn = isBindKey ? thisBinding[func] : func;
 
+        length = args.length;
         if (argPos) {
           args = reorder(args, argPos);
-        } else if (isFlip && args.length > 1) {
+        } else if (isFlip && length > 1) {
           args.reverse();
         }
-        if (isAry && ary < args.length) {
+        if (isAry && ary < length) {
           args.length = ary;
         }
         if (this && this !== root && this instanceof wrapper) {

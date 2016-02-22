@@ -1,4 +1,5 @@
 import createWrapper from './_createWrapper';
+import getPlaceholder from './_getPlaceholder';
 import replaceHolders from './_replaceHolders';
 import rest from './rest';
 
@@ -37,9 +38,7 @@ var PARTIAL_RIGHT_FLAG = 64;
  * // => 'hello fred'
  */
 var partialRight = rest(function(func, partials) {
-  var placeholder = partialRight.placeholder,
-      holders = replaceHolders(partials, placeholder);
-
+  var holders = replaceHolders(partials, getPlaceholder(partialRight));
   return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
 });
 

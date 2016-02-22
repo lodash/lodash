@@ -2,6 +2,9 @@ import baseCreate from './_baseCreate';
 import isFunction from './isFunction';
 import isPrototype from './_isPrototype';
 
+/** Built-in value references. */
+var getPrototypeOf = Object.getPrototypeOf;
+
 /**
  * Initializes an object clone.
  *
@@ -10,11 +13,9 @@ import isPrototype from './_isPrototype';
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
-  if (isPrototype(object)) {
-    return {};
-  }
-  var Ctor = object.constructor;
-  return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+  return (isFunction(object.constructor) && !isPrototype(object))
+    ? baseCreate(getPrototypeOf(object))
+    : {};
 }
 
 export default initCloneObject;

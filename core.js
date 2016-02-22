@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.5.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.5.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.5.0';
+  var VERSION = '4.5.1';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -553,8 +553,7 @@
    */
   function assignValue(object, key, value) {
     var objValue = object[key];
-    if ((!eq(objValue, value) ||
-          (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
+    if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
         (value === undefined && !(key in object))) {
       object[key] = value;
     }
@@ -1396,7 +1395,7 @@
    */
   function isPrototype(value) {
     var Ctor = value && value.constructor,
-        proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+        proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
 
     return value === proto;
   }

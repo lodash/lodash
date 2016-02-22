@@ -17,7 +17,7 @@ var BIND_FLAG = 1,
  * @param {Function} func The function to wrap.
  * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
  * @param {Function} wrapFunc The function to create the `func` wrapper.
- * @param {*} placeholder The placeholder to replace.
+ * @param {*} placeholder The placeholder value.
  * @param {*} [thisArg] The `this` binding of `func`.
  * @param {Array} [partials] The arguments to prepend to those provided to the new function.
  * @param {Array} [holders] The `partials` placeholder indexes.
@@ -29,7 +29,7 @@ var BIND_FLAG = 1,
 function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
   var isCurry = bitmask & CURRY_FLAG,
       newArgPos = argPos ? copyArray(argPos) : undefined,
-      newsHolders = isCurry ? holders : undefined,
+      newHolders = isCurry ? holders : undefined,
       newHoldersRight = isCurry ? undefined : holders,
       newPartials = isCurry ? partials : undefined,
       newPartialsRight = isCurry ? undefined : partials;
@@ -41,7 +41,7 @@ function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, par
     bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
   }
   var newData = [
-    func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight,
+    func, bitmask, thisArg, newPartials, newHolders, newPartialsRight,
     newHoldersRight, newArgPos, ary, arity
   ];
 

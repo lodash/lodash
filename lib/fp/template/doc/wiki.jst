@@ -79,10 +79,10 @@ convert each method.
 #### Capped Iteratee Arguments
 
 Methods that cap iteratees to one argument:<br>
-<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
+<%= toFuncList(_.keys(_.pickBy(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
 
 Methods that cap iteratees to two arguments:<br>
-<%= toFuncList(_.keys(_.pick(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
+<%= toFuncList(_.keys(_.pickBy(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
 
 The iteratee of `mapKeys` is invoked with one argument: (key)
 

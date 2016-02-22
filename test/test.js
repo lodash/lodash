@@ -11038,8 +11038,7 @@
       assert.expect(1);
 
       if (realm.object) {
-        var invoke = lodashStable.invokeMap || lodashStable.invoke,
-            props = invoke(typedArrays, 'toLowerCase');
+        var props = lodashStable.invokeMap(typedArrays, 'toLowerCase');
 
         var expected = lodashStable.map(props, function(key) {
           return realm[key] !== undefined;
@@ -18605,13 +18604,11 @@
     QUnit.test('should shuffle small collections', function(assert) {
       assert.expect(1);
 
-      var uniqBy = lodashStable.uniqBy || lodashStable.uniq;
-
       var actual = lodashStable.times(1000, function(assert) {
         return _.shuffle([1, 2]);
       });
 
-      assert.deepEqual(lodashStable.sortBy(uniqBy(actual, String), '0'), [[1, 2], [2, 1]]);
+      assert.deepEqual(lodashStable.sortBy(lodashStable.uniqBy(actual, String), '0'), [[1, 2], [2, 1]]);
     });
 
     QUnit.test('should treat number values for `collection` as empty', function(assert) {

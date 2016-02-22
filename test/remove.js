@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 'use strict';
 
-var fs = require('fs'),
+var _ = require('../lodash'),
+    fs = require('fs'),
     path = require('path');
 
 var args = (args = process.argv)
   .slice((args[0] === process.execPath || args[0] === 'node') ? 2 : 0);
 
 var filePath = path.resolve(args[1]),
-    reLine = /.*/gm,
-    slice = Array.prototype.slice;
+    reLine = /.*/gm;
 
 var pattern = (function() {
   var result = args[0],
@@ -22,6 +22,6 @@ var pattern = (function() {
 /*----------------------------------------------------------------------------*/
 
 fs.writeFileSync(filePath, fs.readFileSync(filePath, 'utf8').replace(pattern, function(match) {
-  var snippet = slice.call(arguments, -3, -1)[0];
+  var snippet = _.slice(arguments, -3, -2)[0];
   return match.replace(snippet, snippet.replace(reLine, ''));
 }));

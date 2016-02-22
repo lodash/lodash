@@ -9788,7 +9788,7 @@
      * @static
      * @memberOf _
      * @category Lang
-     * @param {Array|Object|string} value The value to inspect.
+     * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `value` is empty, else `false`.
      * @example
      *

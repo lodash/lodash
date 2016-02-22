@@ -1,7 +1,7 @@
 define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, isArray, isFunction, isObject, isTypedArray) {
 
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+  /** Built-in value references. */
+  var getPrototypeOf = Object.getPrototypeOf;
 
   /**
    * An alternative to `_.reduce`; this method transforms `object` to a new
@@ -41,7 +41,7 @@ define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './
         if (isArr) {
           accumulator = isArray(object) ? new Ctor : [];
         } else {
-          accumulator = baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+          accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
         }
       } else {
         accumulator = {};

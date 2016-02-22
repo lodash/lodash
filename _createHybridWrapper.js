@@ -1,4 +1,4 @@
-define(['./_composeArgs', './_composeArgsRight', './_createCtorWrapper', './_createRecurryWrapper', './_reorder', './_replaceHolders', './_root'], function(composeArgs, composeArgsRight, createCtorWrapper, createRecurryWrapper, reorder, replaceHolders, root) {
+define(['./_composeArgs', './_composeArgsRight', './_countHolders', './_createCtorWrapper', './_createRecurryWrapper', './_getPlaceholder', './_reorder', './_replaceHolders', './_root'], function(composeArgs, composeArgsRight, countHolders, createCtorWrapper, createRecurryWrapper, getPlaceholder, reorder, replaceHolders, root) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -32,8 +32,7 @@ define(['./_composeArgs', './_composeArgsRight', './_createCtorWrapper', './_cre
     var isAry = bitmask & ARY_FLAG,
         isBind = bitmask & BIND_FLAG,
         isBindKey = bitmask & BIND_KEY_FLAG,
-        isCurry = bitmask & CURRY_FLAG,
-        isCurryRight = bitmask & CURRY_RIGHT_FLAG,
+        isCurried = bitmask & (CURRY_FLAG | CURRY_RIGHT_FLAG),
         isFlip = bitmask & FLIP_FLAG,
         Ctor = isBindKey ? undefined : createCtorWrapper(func);
 
@@ -45,33 +44,34 @@ define(['./_composeArgs', './_composeArgsRight', './_createCtorWrapper', './_cre
       while (index--) {
         args[index] = arguments[index];
       }
+      if (isCurried) {
+        var placeholder = getPlaceholder(wrapper),
+            holdersCount = countHolders(args, placeholder);
+      }
       if (partials) {
-        args = composeArgs(args, partials, holders);
+        args = composeArgs(args, partials, holders, isCurried);
       }
       if (partialsRight) {
-        args = composeArgsRight(args, partialsRight, holdersRight);
+        args = composeArgsRight(args, partialsRight, holdersRight, isCurried);
       }
-      if (isCurry || isCurryRight) {
-        var placeholder = wrapper.placeholder,
-            argsHolders = replaceHolders(args, placeholder);
-
-        length -= argsHolders.length;
-        if (length < arity) {
-          return createRecurryWrapper(
-            func, bitmask, createHybridWrapper, placeholder, thisArg, args,
-            argsHolders, argPos, ary, arity - length
-          );
-        }
+      length -= holdersCount;
+      if (isCurried && length < arity) {
+        var newHolders = replaceHolders(args, placeholder);
+        return createRecurryWrapper(
+          func, bitmask, createHybridWrapper, wrapper.placeholder, thisArg,
+          args, newHolders, argPos, ary, arity - length
+        );
       }
       var thisBinding = isBind ? thisArg : this,
           fn = isBindKey ? thisBinding[func] : func;
 
+      length = args.length;
       if (argPos) {
         args = reorder(args, argPos);
-      } else if (isFlip && args.length > 1) {
+      } else if (isFlip && length > 1) {
         args.reverse();
       }
-      if (isAry && ary < args.length) {
+      if (isAry && ary < length) {
         args.length = ary;
       }
       if (this && this !== root && this instanceof wrapper) {

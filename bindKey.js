@@ -1,4 +1,4 @@
-define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapper, replaceHolders, rest) {
+define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'], function(createWrapper, getPlaceholder, replaceHolders, rest) {
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -52,9 +52,7 @@ define(['./_createWrapper', './_replaceHolders', './rest'], function(createWrapp
   var bindKey = rest(function(object, key, partials) {
     var bitmask = BIND_FLAG | BIND_KEY_FLAG;
     if (partials.length) {
-      var placeholder = bindKey.placeholder,
-          holders = replaceHolders(partials, placeholder);
-
+      var holders = replaceHolders(partials, getPlaceholder(bindKey));
       bitmask |= PARTIAL_FLAG;
     }
     return createWrapper(key, bitmask, object, partials, holders);

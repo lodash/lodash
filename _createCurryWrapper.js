@@ -1,4 +1,4 @@
-define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_createRecurryWrapper', './_replaceHolders', './_root'], function(apply, createCtorWrapper, createHybridWrapper, createRecurryWrapper, replaceHolders, root) {
+define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_createRecurryWrapper', './_getPlaceholder', './_replaceHolders', './_root'], function(apply, createCtorWrapper, createHybridWrapper, createRecurryWrapper, getPlaceholder, replaceHolders, root) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -17,10 +17,9 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
 
     function wrapper() {
       var length = arguments.length,
-          index = length,
           args = Array(length),
-          fn = (this && this !== root && this instanceof wrapper) ? Ctor : func,
-          placeholder = wrapper.placeholder;
+          index = length,
+          placeholder = getPlaceholder(wrapper);
 
       while (index--) {
         args[index] = arguments[index];
@@ -30,9 +29,13 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
         : replaceHolders(args, placeholder);
 
       length -= holders.length;
-      return length < arity
-        ? createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, undefined, args, holders, undefined, undefined, arity - length)
-        : apply(fn, this, args);
+      if (length < arity) {
+        return createRecurryWrapper(
+          func, bitmask, createHybridWrapper, wrapper.placeholder, undefined,
+          args, holders, undefined, undefined, arity - length);
+      }
+      var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+      return apply(fn, this, args);
     }
     return wrapper;
   }

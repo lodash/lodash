@@ -1,4 +1,4 @@
-define([], function() {
+define(['./isFunction'], function(isFunction) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -12,7 +12,7 @@ define([], function() {
    */
   function isPrototype(value) {
     var Ctor = value && value.constructor,
-        proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+        proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
 
     return value === proto;
   }

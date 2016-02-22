@@ -10,8 +10,8 @@ define(['./_baseCastFunction', './_baseTimes', './toInteger'], function(baseCast
   var nativeMin = Math.min;
 
   /**
-   * Invokes the iteratee function `n` times, returning an array of the results
-   * of each invocation. The iteratee is invoked with one argument; (index).
+   * Invokes the iteratee `n` times, returning an array of the results of
+   * each invocation. The iteratee is invoked with one argument; (index).
    *
    * @static
    * @memberOf _

@@ -2,10 +2,11 @@ define(['./_baseIteratee', './_basePullAt'], function(baseIteratee, basePullAt) 
 
   /**
    * Removes all elements from `array` that `predicate` returns truthy for
-   * and returns an array of the removed elements. The predicate is invoked with
-   * three arguments: (value, index, array).
+   * and returns an array of the removed elements. The predicate is invoked
+   * with three arguments: (value, index, array).
    *
-   * **Note:** Unlike `_.filter`, this method mutates `array`.
+   * **Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`
+   * to pull elements from an array by value.
    *
    * @static
    * @memberOf _

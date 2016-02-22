@@ -1,9 +1,10 @@
 define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) {
 
   /**
-   * The opposite of `_.pickBy`; this method creates an object composed of the
-   * own and inherited enumerable properties of `object` that `predicate`
-   * doesn't return truthy for.
+   * The opposite of `_.pickBy`; this method creates an object composed of
+   * the own and inherited enumerable properties of `object` that `predicate`
+   * doesn't return truthy for. The predicate is invoked with two arguments:
+   * (value, key).
    *
    * @static
    * @memberOf _
@@ -19,7 +20,7 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    * // => { 'b': '2' }
    */
   function omitBy(object, predicate) {
-    predicate = baseIteratee(predicate, 2);
+    predicate = baseIteratee(predicate);
     return basePickBy(object, function(value, key) {
       return !predicate(value, key);
     });

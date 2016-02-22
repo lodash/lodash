@@ -53,10 +53,7 @@ define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLik
         objectToString.call(value) != objectTag || isHostObject(value)) {
       return false;
     }
-    var proto = objectProto;
-    if (typeof value.constructor == 'function') {
-      proto = getPrototypeOf(value);
-    }
+    var proto = getPrototypeOf(value);
     if (proto === null) {
       return true;
     }

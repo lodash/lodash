@@ -123,7 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var helpers = isLib ? func : {
 	    'ary': util.ary,
-	    'cloneDeep': util.cloneDeep,
+	    'clone': util.clone,
 	    'curry': util.curry,
 	    'forEach': util.forEach,
 	    'isArray': util.isArray,
@@ -131,20 +131,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'iteratee': util.iteratee,
 	    'keys': util.keys,
 	    'rearg': util.rearg,
-	    'spread': util.spread
+	    'spread': util.spread,
+	    'toPath': util.toPath
 	  };
 
 	  var ary = helpers.ary,
-	      cloneDeep = helpers.cloneDeep,
+	      clone = helpers.clone,
 	      curry = helpers.curry,
 	      each = helpers.forEach,
 	      isArray = helpers.isArray,
 	      isFunction = helpers.isFunction,
 	      keys = helpers.keys,
 	      rearg = helpers.rearg,
-	      spread = helpers.spread;
+	      spread = helpers.spread,
+	      toPath = helpers.toPath;
 
 	  var aryMethodKeys = keys(mapping.aryMethod);
+
+	  var baseArity = function(func, n) {
+	    return n == 2
+	      ? function(a, b) { return func.apply(undefined, arguments); }
+	      : function(a) { return func.apply(undefined, arguments); };
+	  };
 
 	  var baseAry = function(func, n) {
 	    return n == 2
@@ -158,6 +166,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    while (length--) {
 	      result[length] = array[length];
+	    }
+	    return result;
+	  };
+
+	  var cloneByPath = function(object, path) {
+	    path = toPath(path);
+
+	    var index = -1,
+	        length = path.length,
+	        result = clone(Object(object)),
+	        nested = result;
+
+	    while (nested != null && ++index < length) {
+	      var key = path[index],
+	          value = nested[key];
+
+	      if (value != null) {
+	        nested[key] = clone(Object(value));
+	      }
+	      nested = nested[key];
 	    }
 	    return result;
 	  };
@@ -178,7 +206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      while (length--) {
 	        args[length] = arguments[length];
 	      }
-	      var result = args[0] = cloner(args[0]);
+	      var result = args[0] = cloner.apply(undefined, args);
 	      func.apply(undefined, args);
 	      return result;
 	    };
@@ -186,9 +214,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  var iterateeAry = function(func, n) {
 	    return overArg(func, function(func) {
-	      return typeof func == 'function'
-	        ? baseAry(func, n)
-	        : func;
+	      return typeof func == 'function' ? baseAry(func, n) : func;
+	    });
+	  };
+
+	  var iterateeRearg = function(func, indexes) {
+	    return overArg(func, function(func) {
+	      var n = indexes.length;
+	      return baseArity(rearg(baseAry(func, n), indexes), n);
 	    });
 	  };
 
@@ -220,15 +253,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'iteratee': function(iteratee) {
 	      return function() {
 	        var func = arguments[0],
-	            arity = arguments[1];
+	            arity = arguments[1],
+	            result = iteratee(func, arity),
+	            length = result.length;
 
-	        if (!config.cap) {
-	          return iteratee(func, arity);
+	        if (config.cap && typeof arity == 'number') {
+	          arity = arity > 2 ? (arity - 2) : 1;
+	          return (length && length <= arity) ? result : baseAry(result, arity);
 	        }
-	        arity = arity > 2 ? (arity - 2) : 1;
-	        func = iteratee(func);
-	        var length = func.length;
-	        return (length && length <= arity) ? func : baseAry(func, arity);
+	        return result;
 	      };
 	    },
 	    'mixin': function(mixin) {
@@ -283,7 +316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        wrapped = immutWrap(func, createCloner(func));
 	      }
 	      else if (mutateMap.set[name]) {
-	        wrapped = immutWrap(func, cloneDeep);
+	        wrapped = immutWrap(func, cloneByPath);
 	      }
 	    }
 	    var result;
@@ -291,6 +324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      each(mapping.aryMethod[aryKey], function(otherName) {
 	        if (name == otherName) {
 	          var aryN = !isLib && mapping.iterateeAry[name],
+	              reargIndexes = mapping.iterateeRearg[name],
 	              spreadStart = mapping.methodSpread[name];
 
 	          result = wrapped;
@@ -302,8 +336,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          if (config.rearg && aryKey > 1 && (forceRearg || !mapping.skipRearg[name])) {
 	            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[aryKey]);
 	          }
-	          if (config.cap && aryN) {
-	            result = iterateeAry(result, aryN);
+	          if (config.cap) {
+	            if (reargIndexes) {
+	              result = iterateeRearg(result, reargIndexes);
+	            } else if (aryN) {
+	              result = iterateeAry(result, aryN);
+	            }
 	          }
 	          if (config.curry && aryKey > 1) {
 	            result = curry(result, aryKey);
@@ -420,7 +458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'hasIn', 'includes', 'indexOf', 'intersection', 'invertBy', 'invoke', 'invokeMap',
 	    'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map',
 	    'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy', 'omit',
-	    'omitBy', 'orderBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt',
+	    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt',
 	    'partial', 'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
 	    'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
 	    'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
@@ -433,9 +471,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  '3': [
 	    'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
 	    'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-	    'isMatchWith', 'mergeWith', 'pullAllBy', 'reduce', 'reduceRight', 'replace',
-	    'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
-	    'unionWith', 'xorBy', 'xorWith', 'zipWith'
+	    'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'reduce', 'reduceRight',
+	    'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform',
+	    'unionBy', 'unionWith', 'xorBy', 'xorWith', 'zipWith'
 	  ],
 	  '4': [
 	    'fill', 'setWith'
@@ -487,6 +525,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'takeWhile': 1,
 	  'times': 1,
 	  'transform': 2
+	};
+
+	/** Used to map method names to iteratee rearg configs. */
+	exports.iterateeRearg = {
+	  'mapKeys': [1]
 	};
 
 	/** Used to map method names to rearg configs. */

@@ -541,13 +541,13 @@
   function arrayFilter(array, predicate) {
     var index = -1,
         length = array.length,
-        resIndex = -1,
+        resIndex = 0,
         result = [];
 
     while (++index < length) {
       var value = array[index];
       if (predicate(value, index, array)) {
-        result[++resIndex] = value;
+        result[resIndex++] = value;
       }
     }
     return result;
@@ -1189,14 +1189,14 @@
   function replaceHolders(array, placeholder) {
     var index = -1,
         length = array.length,
-        resIndex = -1,
+        resIndex = 0,
         result = [];
 
     while (++index < length) {
       var value = array[index];
       if (value === placeholder || value === PLACEHOLDER) {
         array[index] = PLACEHOLDER;
-        result[++resIndex] = index;
+        result[resIndex++] = index;
       }
     }
     return result;
@@ -3630,7 +3630,7 @@
           value = array[0],
           computed = iteratee ? iteratee(value) : value,
           seen = computed,
-          resIndex = 0,
+          resIndex = 1,
           result = [value];
 
       while (++index < length) {
@@ -3639,7 +3639,7 @@
 
         if (!eq(computed, seen)) {
           seen = computed;
-          result[++resIndex] = value;
+          result[resIndex++] = value;
         }
       }
       return result;
@@ -5512,11 +5512,11 @@
         return [];
       }
       var index = 0,
-          resIndex = -1,
+          resIndex = 0,
           result = Array(nativeCeil(length / size));
 
       while (index < length) {
-        result[++resIndex] = baseSlice(array, index, (index += size));
+        result[resIndex++] = baseSlice(array, index, (index += size));
       }
       return result;
     }
@@ -5538,13 +5538,13 @@
     function compact(array) {
       var index = -1,
           length = array ? array.length : 0,
-          resIndex = -1,
+          resIndex = 0,
           result = [];
 
       while (++index < length) {
         var value = array[index];
         if (value) {
-          result[++resIndex] = value;
+          result[resIndex++] = value;
         }
       }
       return result;

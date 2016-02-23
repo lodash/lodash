@@ -47,6 +47,6 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
 
 ## Further Reading
 
-  * [Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md)
+  * [Contributing](https://github.com/lodash/lodash/blob/4.5.1/.github/CONTRIBUTING.md)
   * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
   * [Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki)

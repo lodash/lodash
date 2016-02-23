@@ -9969,8 +9969,8 @@
      */
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in Safari 8 which returns 'object' for typed array constructors, and
-      // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+      // in Safari 8 which returns 'object' for typed array and weak map constructors,
+      // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
       var tag = isObject(value) ? objectToString.call(value) : '';
       return tag == funcTag || tag == genTag;
     }
@@ -11977,7 +11977,7 @@
           if (isArr) {
             accumulator = isArray(object) ? new Ctor : [];
           } else {
-            accumulator = typeof Ctor == 'function' ? baseCreate(getPrototypeOf(object)) : {};
+            accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
           }
         } else {
           accumulator = {};

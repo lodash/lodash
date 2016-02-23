@@ -5127,7 +5127,7 @@
      * @returns {Object} Returns the initialized clone.
      */
     function initCloneObject(object) {
-      return (isFunction(object.constructor) && !isPrototype(object))
+      return (typeof object.constructor == 'function' && !isPrototype(object))
         ? baseCreate(getPrototypeOf(object))
         : {};
     }
@@ -5276,7 +5276,7 @@
      */
     function isPrototype(value) {
       var Ctor = value && value.constructor,
-          proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
+          proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
       return value === proto;
     }
@@ -12001,7 +12001,7 @@
           if (isArr) {
             accumulator = isArray(object) ? new Ctor : [];
           } else {
-            accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
+            accumulator = typeof Ctor == 'function' ? baseCreate(getPrototypeOf(object)) : {};
           }
         } else {
           accumulator = {};

@@ -26,9 +26,6 @@
   /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
 
-  /** Used as the size to enable small object optimizations. */
-  var SMALL_OBJECT_SIZE = 10;
-
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -2994,28 +2991,7 @@
      * @returns {Array} Returns the array of property names.
      */
     function baseKeys(object) {
-      object = Object(object);
-
-      var count = 0,
-          resIndex = 0,
-          result = [];
-
-      for (var key in object) {
-        if (++count > SMALL_OBJECT_SIZE) {
-          return nativeKeys(object);
-        }
-        if (hasOwnProperty.call(object, key)) {
-          result[resIndex++] = key;
-        }
-      }
-      return result;
-    }
-
-    // Slow path for IE < 9.
-    if (nonEnumShadows) {
-      baseKeys = function(object) {
-        return nativeKeys(Object(object));
-      };
+      return nativeKeys(Object(object));
     }
 
     /**

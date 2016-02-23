@@ -9,10 +9,10 @@ may have already been discussed or fixed in `master`. To contribute,
 
 ## Feature Requests
 
-Feature requests are always welcome. They should be submitted in the
+Feature requests should be submitted in the
 [issue tracker](https://github.com/lodash/lodash/issues), with a description of
 the expected behavior & use case, where they’ll remain closed until sufficient
-interest has been shown by the community. Before submitting a request,
+interest, e.g. :+1:’s, has been shown by the community. Before submitting a request,
 please search for similar ones in the
 [closed issues](https://github.com/lodash/lodash/issues?q=is%3Aissue+is%3Aclosed+label%3Aenhancement).
 

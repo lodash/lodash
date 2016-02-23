@@ -10843,19 +10843,16 @@
      * // => { 'a': 1, 'c': 3, 'e': 5 }
      */
     var assign = createAssigner(function(object, source) {
+      if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+        copyObject(source, keys(source), object);
+        return;
+      }
       for (var key in source) {
         if (hasOwnProperty.call(source, key)) {
           assignValue(object, key, source[key]);
         }
       }
     });
-
-    // Slow path for IE < 9.
-    if (nonEnumShadows) {
-      assign = createAssigner(function(object, source) {
-        copyObject(source, keys(source), object);
-      });
-    }
 
     /**
      * This method is like `_.assign` except that it iterates over own and
@@ -10887,17 +10884,14 @@
      * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
      */
     var assignIn = createAssigner(function(object, source) {
+      if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+        copyObject(source, keysIn(source), object);
+        return;
+      }
       for (var key in source) {
         assignValue(object, key, source[key]);
       }
     });
-
-    // Slow path for IE < 9.
-    if (nonEnumShadows) {
-      assignIn = createAssigner(function(object, source) {
-        copyObject(source, keysIn(source), object);
-      });
-    }
 
     /**
      * This method is like `_.assignIn` except that it accepts `customizer` which

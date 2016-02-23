@@ -9090,6 +9090,26 @@
       }
     });
 
+    QUnit.test('should compare maps with circular references', function(assert) {
+      assert.expect(2);
+
+      if (Map) {
+        var map1 = new Map,
+            map2 = new Map;
+
+        map1.set('a', map1);
+        map2.set('a', map2);
+        assert.strictEqual(_.isEqual(map1, map2), true);
+
+        map1.set('b', 1);
+        map2.set('b', 2);
+        assert.strictEqual(_.isEqual(map1, map2), false);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
     QUnit.test('should compare regexes', function(assert) {
       assert.expect(5);
 
@@ -9124,6 +9144,26 @@
       }
       else {
         skipAssert(assert, 4);
+      }
+    });
+
+    QUnit.test('should compare sets with circular references', function(assert) {
+      assert.expect(2);
+
+      if (Set) {
+        var set1 = new Set,
+            set2 = new Set;
+
+        set1.add(set1);
+        set2.add(set2);
+        assert.strictEqual(_.isEqual(set1, set2), true);
+
+        set1.add(1);
+        set2.add(2);
+        assert.strictEqual(_.isEqual(set1, set2), false);
+      }
+      else {
+        skipAssert(assert, 2);
       }
     });
 

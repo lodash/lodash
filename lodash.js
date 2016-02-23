@@ -14,6 +14,21 @@
   /** Used as the semantic version number. */
   var VERSION = '4.5.1';
 
+  /** Used as the size to enable large array optimizations. */
+  var LARGE_ARRAY_SIZE = 200;
+
+  /** Used as the `TypeError` message for "Functions" methods. */
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
+  /** Used to stand-in for `undefined` hash values. */
+  var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+  /** Used as the internal argument placeholder. */
+  var PLACEHOLDER = '__lodash_placeholder__';
+
+  /** Used as the size to enable small object optimizations. */
+  var SMALL_OBJECT_SIZE = 10;
+
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -38,19 +53,10 @@
   var HOT_COUNT = 150,
       HOT_SPAN = 16;
 
-  /** Used as the size to enable large array optimizations. */
-  var LARGE_ARRAY_SIZE = 200;
-
   /** Used to indicate the type of lazy iteratees. */
   var LAZY_FILTER_FLAG = 1,
       LAZY_MAP_FLAG = 2,
       LAZY_WHILE_FLAG = 3;
-
-  /** Used as the `TypeError` message for "Functions" methods. */
-  var FUNC_ERROR_TEXT = 'Expected a function';
-
-  /** Used to stand-in for `undefined` hash values. */
-  var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
@@ -62,9 +68,6 @@
   var MAX_ARRAY_LENGTH = 4294967295,
       MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
       HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
-
-  /** Used as the internal argument placeholder. */
-  var PLACEHOLDER = '__lodash_placeholder__';
 
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]',
@@ -1370,6 +1373,12 @@
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;
 
+    /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+    var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+
+    /** Used to lookup unminified function names. */
+    var realNames = {};
+
     /** Used to detect maps, sets, and weakmaps. */
     var mapCtorString = Map ? funcToString.call(Map) : '',
         setCtorString = Set ? funcToString.call(Set) : '',
@@ -1379,9 +1388,6 @@
     var symbolProto = Symbol ? Symbol.prototype : undefined,
         symbolValueOf = Symbol ? symbolProto.valueOf : undefined,
         symbolToString = Symbol ? symbolProto.toString : undefined;
-
-    /** Used to lookup unminified function names. */
-    var realNames = {};
 
     /*------------------------------------------------------------------------*/
 
@@ -2993,7 +2999,28 @@
      * @returns {Array} Returns the array of property names.
      */
     function baseKeys(object) {
-      return nativeKeys(Object(object));
+      object = Object(object);
+
+      var count = 0,
+          resIndex = 0,
+          result = [];
+
+      for (var key in object) {
+        if (++count > SMALL_OBJECT_SIZE) {
+          return nativeKeys(object);
+        }
+        if (hasOwnProperty.call(object, key)) {
+          result[resIndex++] = key;
+        }
+      }
+      return result;
+    }
+
+    // Slow path for IE < 9.
+    if (nonEnumShadows) {
+      baseKeys = function(object) {
+        return nativeKeys(Object(object));
+      };
     }
 
     /**
@@ -10836,8 +10863,19 @@
      * // => { 'a': 1, 'c': 3, 'e': 5 }
      */
     var assign = createAssigner(function(object, source) {
-      copyObject(source, keys(source), object);
+      for (var key in source) {
+        if (hasOwnProperty.call(source, key)) {
+          assignValue(object, key, source[key]);
+        }
+      }
     });
+
+    // Slow path for IE < 9.
+    if (nonEnumShadows) {
+      assign = createAssigner(function(object, source) {
+        copyObject(source, keys(source), object);
+      });
+    }
 
     /**
      * This method is like `_.assign` except that it iterates over own and
@@ -10869,8 +10907,17 @@
      * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
      */
     var assignIn = createAssigner(function(object, source) {
-      copyObject(source, keysIn(source), object);
+      for (var key in source) {
+        assignValue(object, key, source[key]);
+      }
     });
+
+    // Slow path for IE < 9.
+    if (nonEnumShadows) {
+      assignIn = createAssigner(function(object, source) {
+        copyObject(source, keysIn(source), object);
+      });
+    }
 
     /**
      * This method is like `_.assignIn` except that it accepts `customizer` which

@@ -21,6 +21,9 @@
       slice = arrayProto.slice,
       WeakMap = root.WeakMap;
 
+  // Leak to avoid sporadic `noglobals` fails on Edge in Sauce Labs.
+  root.msWDfn = undefined;
+
   /*--------------------------------------------------------------------------*/
 
   /** Use a single "load" function. */

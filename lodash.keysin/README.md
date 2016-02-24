@@ -1,4 +1,4 @@
-# lodash.keysin v4.1.2
+# lodash.keysin v4.1.3
 
 The [lodash](https://lodash.com/) method `_.keysIn` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var keysIn = require('lodash.keysin');
 ```
 
-See the [documentation](https://lodash.com/docs#keysIn) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.keysin) for more details.
+See the [documentation](https://lodash.com/docs#keysIn) or [package source](https://github.com/lodash/lodash/blob/4.1.3-npm-packages/lodash.keysin) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash._setcache",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "The internal lodash function `SetCache` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

@@ -1,4 +1,4 @@
-# lodash.zipobject v4.1.2
+# lodash.zipobject v4.1.3
 
 The [lodash](https://lodash.com/) method `_.zipObject` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var zipObject = require('lodash.zipobject');
 ```
 
-See the [documentation](https://lodash.com/docs#zipObject) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.zipobject) for more details.
+See the [documentation](https://lodash.com/docs#zipObject) or [package source](https://github.com/lodash/lodash/blob/4.1.3-npm-packages/lodash.zipobject) for more details.

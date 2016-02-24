@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -55,12 +55,12 @@ function getPlaceholder(func) {
 }
 
 /**
- * Creates a function that invokes the method at `object[key]` and prepends
- * any additional `_.bindKey` arguments to those provided to the bound function.
+ * Creates a function that invokes the method at `object[key]` with `partials`
+ * prepended to the arguments it receives.
  *
  * This method differs from `_.bind` by allowing bound functions to reference
- * methods that may be redefined or don't yet exist.
- * See [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
+ * methods that may be redefined or don't yet exist. See
+ * [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
  * for more details.
  *
  * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
@@ -68,6 +68,7 @@ function getPlaceholder(func) {
  *
  * @static
  * @memberOf _
+ * @since 0.10.0
  * @category Function
  * @param {Object} object The object to invoke the method on.
  * @param {string} key The key of the method.

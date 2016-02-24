@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -128,8 +128,7 @@ var isArray = Array.isArray;
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -160,14 +159,14 @@ function isArrayLikeObject(value) {
 }
 
 /**
- * Checks if `value` is empty. A value is considered empty unless it's an
- * `arguments` object, array, string, or jQuery-like collection with a length
- * greater than `0` or an object with own enumerable properties.
+ * Checks if `value` is an empty collection or object. A value is considered
+ * empty if it's an `arguments` object, array, string, or jQuery-like collection
+ * with a length of `0` or has no own enumerable properties.
  *
  * @static
  * @memberOf _
  * @category Lang
- * @param {Array|Object|string} value The value to inspect.
+ * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is empty, else `false`.
  * @example
  *
@@ -218,8 +217,8 @@ function isEmpty(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

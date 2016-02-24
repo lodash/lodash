@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -53,9 +53,9 @@ function getPlaceholder(func) {
 }
 
 /**
- * Creates a function that invokes `func` with `partial` arguments prepended
- * to those provided to the new function. This method is like `_.bind` except
- * it does **not** alter the `this` binding.
+ * Creates a function that invokes `func` with `partials` prepended to the
+ * arguments it receives. This method is like `_.bind` except it does **not**
+ * alter the `this` binding.
  *
  * The `_.partial.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
@@ -65,6 +65,7 @@ function getPlaceholder(func) {
  *
  * @static
  * @memberOf _
+ * @since 0.2.0
  * @category Function
  * @param {Function} func The function to partially apply arguments to.
  * @param {...*} [partials] The arguments to be partially applied.

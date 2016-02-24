@@ -131,5 +131,5 @@ Methods created to accommodate Lodash’s variadic methods:<br>
 
 There are <%= _.size(mapping.aliasToReal) %> method aliases:<br>
 <%= _.map(mapping.aliasToReal, function(realName, alias) {
-  return ' * Added `_.' + alias + '` as an alias of `_.' + realName + '`';
+  return ' * `_.' + alias + '` is an alias of `_.' + realName + '`';
 }).join('\n') %>

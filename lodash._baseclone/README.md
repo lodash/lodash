@@ -1,4 +1,4 @@
-# lodash._baseclone v4.5.0
+# lodash._baseclone v4.5.1
 
 The internal [lodash](https://lodash.com/) function `baseClone` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseClone = require('lodash._baseclone');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash._baseclone) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash._baseclone) for more details.

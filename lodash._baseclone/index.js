@@ -1,5 +1,5 @@
 /**
- * lodash 4.5.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.5.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -701,8 +701,7 @@ function assocSet(array, key, value) {
  */
 function assignValue(object, key, value) {
   var objValue = object[key];
-  if ((!eq(objValue, value) ||
-        (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) ||
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
       (value === undefined && !(key in object))) {
     object[key] = value;
   }
@@ -1159,11 +1158,9 @@ function initCloneArray(array) {
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
-  if (isPrototype(object)) {
-    return {};
-  }
-  var Ctor = object.constructor;
-  return baseCreate(isFunction(Ctor) ? Ctor.prototype : undefined);
+  return (isFunction(object.constructor) && !isPrototype(object))
+    ? baseCreate(getPrototypeOf(object))
+    : {};
 }
 
 /**
@@ -1250,7 +1247,7 @@ function isKeyable(value) {
  */
 function isPrototype(value) {
   var Ctor = value && value.constructor,
-      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+      proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
 
   return value === proto;
 }

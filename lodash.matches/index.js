@@ -107,10 +107,10 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root = freeGlobal || freeSelf || Function('return this')();
 
 /** Detect free variable `exports`. */
-var freeExports = freeGlobal && typeof exports == 'object' && exports;
+var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module;
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
 /** Detect the popular CommonJS extension `module.exports`. */
 var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -999,9 +999,6 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
     // Recursively populate clone (susceptible to call stack limits).
     assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
   });
-  if (!isFull) {
-    stack['delete'](value);
-  }
   return result;
 }
 
@@ -1491,6 +1488,7 @@ function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](array);
+  stack['delete'](other);
   return result;
 }
 
@@ -1651,6 +1649,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](object);
+  stack['delete'](other);
   return result;
 }
 
@@ -2349,10 +2348,10 @@ function keys(object) {
 /**
  * Creates a function that performs a partial deep comparison between a given
  * object and `source`, returning `true` if the given object has equivalent
- * property values, else `false`. The created function is equivalent to
- * `_.isMatch` with a `source` partially applied.
+ * property values, else `false`.
  *
- * **Note:** This method supports comparing the same values as `_.isEqual`.
+ * **Note:** The created function supports comparing the same values as
+ * `_.isEqual` is equivalent to `_.isMatch` with `source` partially applied.
  *
  * @static
  * @memberOf _

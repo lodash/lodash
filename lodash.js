@@ -6070,7 +6070,7 @@
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @returns {Array} Returns the new array of shared values.
+     * @returns {Array} Returns the new array of shared values taken from the first array provided.
      * @example
      *
      * _.intersection([2, 1], [4, 2], [1, 2]);
@@ -6093,7 +6093,7 @@
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {Array} Returns the new array of shared values.
+     * @returns {Array} Returns the new array of shared values taken from the first array provided.
      * @example
      *
      * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
@@ -6127,7 +6127,7 @@
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @param {Function} [comparator] The comparator invoked per element.
-     * @returns {Array} Returns the new array of shared values.
+     * @returns {Array} Returns the new array of shared values taken from the first array provided.
      * @example
      *
      * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];

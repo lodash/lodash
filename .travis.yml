@@ -43,7 +43,7 @@ before_install:
       PATTERN[3]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
       PATTERN[4]="|\s*if\s*\(ctorString\b[\s\S]+?\}\s*\}|"
       PATTERN[5]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
-      PATTERN[6]="|\s*if\s*\(!lodashFunc\)\s*\{\s*return;\s*\}|"
+      PATTERN[6]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
       PATTERN[7]="|\s*define\([\s\S]+?\);|"
       PATTERN[8]="|\s*root\._\s*=\s*_;|"
 

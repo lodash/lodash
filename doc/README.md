@@ -1013,7 +1013,7 @@ for equality comparisons.
 1. `[arrays]` *(...Array)*: The arrays to inspect.
 
 #### Returns
-*(Array)*:  Returns the new array of shared values.
+*(Array)*:  Returns the new array of shared values taken from the first array provided.
 
 #### Example
 ```js
@@ -1038,7 +1038,7 @@ by which uniqueness is computed. The iteratee is invoked with one argument: (val
 2. `[iteratee=_.identity]` *(Function|Object|string)*: The iteratee invoked per element.
 
 #### Returns
-*(Array)*:  Returns the new array of shared values.
+*(Array)*:  Returns the new array of shared values taken from the first array provided.
 
 #### Example
 ```js
@@ -1067,7 +1067,7 @@ with two arguments: (arrVal, othVal).
 2. `[comparator]` *(Function)*: The comparator invoked per element.
 
 #### Returns
-*(Array)*:  Returns the new array of shared values.
+*(Array)*:  Returns the new array of shared values taken from the first array provided.
 
 #### Example
 ```js

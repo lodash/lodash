@@ -57,7 +57,8 @@ var arrayBufferTag = '[object ArrayBuffer]',
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
     reIsPlainProp = /^\w*$/,
-    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
+    reLeadingDot = /^\./,
+    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 
 /**
  * Used to match `RegExp`
@@ -100,10 +101,10 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root = freeGlobal || freeSelf || Function('return this')();
 
 /** Detect free variable `exports`. */
-var freeExports = freeGlobal && typeof exports == 'object' && exports;
+var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module;
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
 /** Detect the popular CommonJS extension `module.exports`. */
 var moduleExports = freeModule && freeModule.exports === freeExports;
@@ -1253,6 +1254,7 @@ function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](array);
+  stack['delete'](other);
   return result;
 }
 
@@ -1413,6 +1415,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
     }
   }
   stack['delete'](object);
+  stack['delete'](other);
   return result;
 }
 
@@ -1682,8 +1685,13 @@ function matchesStrictComparable(key, srcValue) {
  * @returns {Array} Returns the property path array.
  */
 var stringToPath = memoize(function(string) {
+  string = toString(string);
+
   var result = [];
-  toString(string).replace(rePropName, function(match, number, quote, string) {
+  if (reLeadingDot.test(string)) {
+    result.push('');
+  }
+  string.replace(rePropName, function(match, number, quote, string) {
     result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
   });
   return result;

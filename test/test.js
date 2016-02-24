@@ -1305,6 +1305,30 @@
 
       assert.deepEqual(actual, source);
     });
+
+    QUnit.test('`_.' + methodName + '` should treat sparse array sources as dense', function(assert) {
+      assert.expect(1);
+
+      var array = [1];
+      array[2] = 3;
+
+      assert.deepEqual(func({}, array), { '0': 1, '1': undefined, '2': 3 });
+    });
+
+    QUnit.test('`_.' + methodName + '` should assign values of prototype objects', function(assert) {
+      assert.expect(1);
+
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      assert.deepEqual(func({}, Foo.prototype), { 'a': 1 });
+    });
+
+    QUnit.test('`_.' + methodName + '` should coerce string sources to objects', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(func({}, 'a'), { '0': 'a' });
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -14072,8 +14096,7 @@
     QUnit.test('should treat sparse array sources as dense', function(assert) {
       assert.expect(2);
 
-      var array = Array(3);
-      array[0] = 1;
+      var array = [1];
       array[2] = 3;
 
       var actual = _.merge([], array),
@@ -14115,12 +14138,12 @@
       var array1 = [0],
           array2 = [0, 0],
           array3 = [0, 0, 0, 0],
-          array4 = lodashStable.range(0, 8, 0);
+          array4 = [0, 0, 0, 0, 0, 0, 0, 0];
 
       var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
           buffer = ArrayBuffer && new ArrayBuffer(8);
 
-      // juggle for `Float64Array` shim
+      // Juggle for `Float64Array` shim.
       if (root.Float64Array && (new Float64Array(buffer)).length == 8) {
         arrays[1] = array4;
       }
@@ -14253,8 +14276,7 @@
     QUnit.test('should skip `undefined` values in array sources if a destination value exists', function(assert) {
       assert.expect(2);
 
-      var array = Array(3);
-      array[0] = 1;
+      var array = [1];
       array[2] = 3;
 
       var actual = _.merge([4, 5, 6], array),

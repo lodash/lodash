@@ -8744,7 +8744,7 @@
         }
         maxTimeoutId = timeoutId = trailingCall = undefined;
         if (isCalled) {
-          lastCalled = now();
+          lastCalled = Date.now();
           result = func.apply(thisArg, args);
           if (!timeoutId && !maxTimeoutId) {
             args = thisArg = undefined;
@@ -8753,7 +8753,7 @@
       }
 
       function delayed() {
-        var remaining = wait - (now() - stamp);
+        var remaining = wait - (Date.now() - stamp);
         if (remaining <= 0 || remaining > wait) {
           complete(trailingCall, maxTimeoutId);
         } else {
@@ -8775,7 +8775,7 @@
 
       function debounced() {
         args = arguments;
-        stamp = now();
+        stamp = Date.now();
         thisArg = this;
         trailingCall = trailing && (timeoutId || !leading);
 

@@ -12945,7 +12945,8 @@
     }
 
     /**
-     * Converts `string`, as a whole, to lower case.
+     * Converts `string`, as a whole, to lower case just like
+     * [String#toLowerCase](https://mdn.io/toLowerCase).
      *
      * @static
      * @memberOf _
@@ -12968,7 +12969,8 @@
     }
 
     /**
-     * Converts `string`, as a whole, to upper case.
+     * Converts `string`, as a whole, to upper case just like
+     * [String#toUpperCase](https://mdn.io/toUpperCase).
      *
      * @static
      * @memberOf _

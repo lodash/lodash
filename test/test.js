@@ -14023,7 +14023,7 @@
       source.bar.b = source.foo.b;
 
       var actual = _.merge(object, source);
-      assert.ok(actual.bar.b === actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+      assert.ok(actual.bar.b !== actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
     });
 
     QUnit.test('should work with four arguments', function(assert) {

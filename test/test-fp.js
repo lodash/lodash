@@ -697,7 +697,7 @@
       assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.unset');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.update(function(x) { return x + 1; })('a.b')(value);
+      actual = fp.update('a.b')(function(x) { return x + 1; })(value);
 
       assert.deepEqual(value, deepObject, 'fp.update');
       assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.update');
@@ -773,7 +773,7 @@
       assert.strictEqual(actual.d, value.d, 'fp.unset');
 
       value = _.cloneDeep(object);
-      actual = fp.update(function(x) { return { 'c2': 2 }; }, 'a.b', value);
+      actual = fp.update('a.b', function(x) { return { 'c2': 2 }; }, value);
       assert.strictEqual(actual.d, value.d, 'fp.update');
     });
   }());

@@ -1,43 +1,36 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseFor = require('lodash._basefor'),
-    bindCallback = require('lodash._bindcallback'),
     keysIn = require('lodash.keysin');
 
 /**
- * Creates a function for `_.forIn` or `_.forInRight`.
+ * Converts `value` to a function if it's not one.
  *
  * @private
- * @param {Function} objectFunc The function to iterate over an object.
- * @returns {Function} Returns the new each function.
+ * @param {*} value The value to process.
+ * @returns {Function} Returns the function.
  */
-function createForIn(objectFunc) {
-  return function(object, iteratee, thisArg) {
-    if (typeof iteratee != 'function' || thisArg !== undefined) {
-      iteratee = bindCallback(iteratee, thisArg, 3);
-    }
-    return objectFunc(object, iteratee, keysIn);
-  };
+function toFunction(value) {
+  return typeof value == 'function' ? value : identity;
 }
 
 /**
  * Iterates over own and inherited enumerable properties of an object invoking
- * `iteratee` for each property. The `iteratee` is bound to `thisArg` and invoked
- * with three arguments: (value, key, object). Iteratee functions may exit
- * iteration early by explicitly returning `false`.
+ * `iteratee` for each property. The iteratee is invoked with three arguments:
+ * (value, key, object). Iteratee functions may exit iteration early by explicitly
+ * returning `false`.
  *
  * @static
  * @memberOf _
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
  * @returns {Object} Returns `object`.
  * @example
  *
@@ -51,8 +44,29 @@ function createForIn(objectFunc) {
  * _.forIn(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'a', 'b', and 'c' (iteration order is not guaranteed)
+ * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
  */
-var forIn = createForIn(baseFor);
+function forIn(object, iteratee) {
+  return object == null ? object : baseFor(object, toFunction(iteratee), keysIn);
+}
+
+/**
+ * This method returns the first argument given to it.
+ *
+ * @static
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
 
 module.exports = forIn;

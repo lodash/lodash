@@ -1,4 +1,4 @@
-# lodash.ary v3.1.0
+# lodash.ary v4.0.0
 
 The [lodash](https://lodash.com/) method `_.ary` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var ary = require('lodash.ary');
 ```
 
-See the [documentation](https://lodash.com/docs#ary) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.ary) for more details.
+See the [documentation](https://lodash.com/docs#ary) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.ary) for more details.

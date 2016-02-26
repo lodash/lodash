@@ -1,25 +1,20 @@
 {
   "name": "lodash.sortedindex",
-  "version": "3.1.1",
-  "description": "The modern build of lodash’s `_.sortedIndex` as a module.",
+  "version": "4.0.0",
+  "description": "The lodash method `_.sortedIndex` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
-  "keywords": "lodash, lodash-modularized, stdlib, util",
+  "keywords": "lodash, lodash-modularized, stdlib, util, sortedindex",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Benjamin Tan <demoneaux@gmail.com> (https://d10.github.io/)",
-    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
-    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._basecallback": "^3.0.0",
-    "lodash._binaryindex": "^3.0.0",
-    "lodash._binaryindexby": "^3.0.0",
-    "lodash.isarray": "^3.0.0"
+    "lodash._basesortedindexby": "^3.0.0"
   }
 }

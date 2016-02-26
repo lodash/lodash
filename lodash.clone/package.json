@@ -1,24 +1,23 @@
 {
   "name": "lodash.clone",
-  "version": "3.0.3",
-  "description": "The modern build of lodash’s `_.clone` as a module.",
+  "version": "4.0.0",
+  "description": "The lodash method `_.clone` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
-  "keywords": "lodash, lodash-modularized, stdlib, util",
+  "keywords": "lodash, lodash-modularized, stdlib, util, clone",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Benjamin Tan <demoneaux@gmail.com> (https://d10.github.io/)",
-    "Blaine Bublitz <blaine@iceddev.com> (http://www.iceddev.com/)",
-    "Kit Cambridge <github@kitcambridge.be> (http://kitcambridge.be/)",
+    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._baseclone": "^3.0.0",
-    "lodash._bindcallback": "^3.0.0",
-    "lodash._isiterateecall": "^3.0.0"
+    "lodash._arrayeach": "^3.0.0",
+    "lodash._basefor": "^3.0.0",
+    "lodash._stack": "^3.0.0",
+    "lodash.keys": "^4.0.0"
   }
 }

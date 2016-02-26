@@ -1,0 +1,26 @@
+{
+  "name": "lodash.xorwith",
+  "version": "4.0.0",
+  "description": "The lodash method `_.xorWith` exported as a module.",
+  "homepage": "https://lodash.com/",
+  "icon": "https://lodash.com/icon.svg",
+  "license": "MIT",
+  "keywords": "lodash, lodash-modularized, stdlib, util, xorwith",
+  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+  "contributors": [
+    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
+    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
+  ],
+  "repository": "lodash/lodash",
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
+  "dependencies": {
+    "lodash._arrayfilter": "^3.0.0",
+    "lodash._arrayincludes": "^3.0.0",
+    "lodash._arrayincludeswith": "^3.0.0",
+    "lodash._arraymap": "^3.0.0",
+    "lodash._cachehas": "^3.0.0",
+    "lodash._setcache": "^3.0.0",
+    "lodash.rest": "^4.0.0"
+  }
+}

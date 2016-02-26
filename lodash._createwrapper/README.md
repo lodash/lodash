@@ -1,4 +1,4 @@
-# lodash._createwrapper v3.2.0
+# lodash._createwrapper v4.0.0
 
 The internal [lodash](https://lodash.com/) function `createWrapper` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var createWrapper = require('lodash._createwrapper');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.2.0-npm-packages/lodash._createwrapper) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash._createwrapper) for more details.

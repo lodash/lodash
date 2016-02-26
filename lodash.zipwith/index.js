@@ -1,44 +1,39 @@
 /**
- * lodash 3.8.1 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var restParam = require('lodash.restparam'),
+var rest = require('lodash.rest'),
     unzipWith = require('lodash.unzipwith');
 
 /**
- * This method is like `_.zip` except that it accepts an iteratee to specify
- * how grouped values should be combined. The `iteratee` is bound to `thisArg`
- * and invoked with four arguments: (accumulator, value, index, group).
+ * This method is like `_.zip` except that it accepts `iteratee` to specify
+ * how grouped values should be combined. The iteratee is invoked with the
+ * elements of each group: (...group).
  *
  * @static
  * @memberOf _
+ * @since 3.8.0
  * @category Array
  * @param {...Array} [arrays] The arrays to process.
- * @param {Function} [iteratee] The function to combine grouped values.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
+ * @param {Function} [iteratee=_.identity] The function to combine grouped values.
  * @returns {Array} Returns the new array of grouped elements.
  * @example
  *
- * _.zipWith([1, 2], [10, 20], [100, 200], _.add);
+ * _.zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
+ *   return a + b + c;
+ * });
  * // => [111, 222]
  */
-var zipWith = restParam(function(arrays) {
+var zipWith = rest(function(arrays) {
   var length = arrays.length,
-      iteratee = length > 2 ? arrays[length - 2] : undefined,
-      thisArg = length > 1 ? arrays[length - 1] : undefined;
+      iteratee = length > 1 ? arrays[length - 1] : undefined;
 
-  if (length > 2 && typeof iteratee == 'function') {
-    length -= 2;
-  } else {
-    iteratee = (length > 1 && typeof thisArg == 'function') ? (--length, thisArg) : undefined;
-    thisArg = undefined;
-  }
-  arrays.length = length;
-  return unzipWith(arrays, iteratee, thisArg);
+  iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
+  return unzipWith(arrays, iteratee);
 });
 
 module.exports = zipWith;

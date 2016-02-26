@@ -1,20 +1,18 @@
-# lodash._baseisequal v3.0.7
+# lodash._baseisequal v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `baseIsEqual` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The internal [lodash](https://lodash.com/) function `baseIsEqual` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash._baseisequal
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var baseIsEqual = require('lodash._baseisequal');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.0.7-npm-packages/lodash._baseisequal) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash._baseisequal) for more details.

@@ -1,51 +1,45 @@
 /**
- * lodash 3.8.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var arrayMap = require('lodash._arraymap'),
-    bindCallback = require('lodash._bindcallback'),
     unzip = require('lodash.unzip');
 
 /**
- * A specialized version of `_.reduce` for arrays without support for callback
- * shorthands and `this` binding.
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
  *
  * @private
- * @param {Array} array The array to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @param {*} [accumulator] The initial value.
- * @param {boolean} [initFromArray] Specify using the first element of `array`
- *  as the initial value.
- * @returns {*} Returns the accumulated value.
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {...*} [args] The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
  */
-function arrayReduce(array, iteratee, accumulator, initFromArray) {
-  var index = -1,
-      length = array.length;
-
-  if (initFromArray && length) {
-    accumulator = array[++index];
+function apply(func, thisArg, args) {
+  var length = args ? args.length : 0;
+  switch (length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
   }
-  while (++index < length) {
-    accumulator = iteratee(accumulator, array[index], index, array);
-  }
-  return accumulator;
+  return func.apply(thisArg, args);
 }
 
 /**
- * This method is like `_.unzip` except that it accepts an iteratee to specify
- * how regrouped values should be combined. The `iteratee` is bound to `thisArg`
- * and invoked with four arguments: (accumulator, value, index, group).
+ * This method is like `_.unzip` except that it accepts `iteratee` to specify
+ * how regrouped values should be combined. The iteratee is invoked with the
+ * elements of each group: (...group).
  *
  * @static
  * @memberOf _
  * @category Array
  * @param {Array} array The array of grouped elements to process.
- * @param {Function} [iteratee] The function to combine regrouped values.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
+ * @param {Function} [iteratee=_.identity] The function to combine regrouped values.
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *
@@ -55,18 +49,16 @@ function arrayReduce(array, iteratee, accumulator, initFromArray) {
  * _.unzipWith(zipped, _.add);
  * // => [3, 30, 300]
  */
-function unzipWith(array, iteratee, thisArg) {
-  var length = array ? array.length : 0;
-  if (!length) {
+function unzipWith(array, iteratee) {
+  if (!(array && array.length)) {
     return [];
   }
   var result = unzip(array);
   if (iteratee == null) {
     return result;
   }
-  iteratee = bindCallback(iteratee, thisArg, 4);
   return arrayMap(result, function(group) {
-    return arrayReduce(group, iteratee, undefined, true);
+    return apply(iteratee, undefined, group);
   });
 }
 

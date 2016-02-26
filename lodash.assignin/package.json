@@ -1,0 +1,21 @@
+{
+  "name": "lodash.assignin",
+  "version": "4.0.0",
+  "description": "The lodash method `_.assignIn` exported as a module.",
+  "homepage": "https://lodash.com/",
+  "icon": "https://lodash.com/icon.svg",
+  "license": "MIT",
+  "keywords": "lodash, lodash-modularized, stdlib, util, assignin",
+  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+  "contributors": [
+    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
+    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
+  ],
+  "repository": "lodash/lodash",
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
+  "dependencies": {
+    "lodash.keysin": "^4.0.0",
+    "lodash.rest": "^4.0.0"
+  }
+}

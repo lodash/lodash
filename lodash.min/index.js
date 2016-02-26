@@ -1,125 +1,96 @@
 /**
- * lodash 3.4.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseCallback = require('lodash._basecallback'),
-    baseEach = require('lodash._baseeach'),
-    isIterateeCall = require('lodash._isiterateecall'),
-    toIterable = require('lodash._toiterable'),
-    isArray = require('lodash.isarray'),
-    lt = require('lodash.lt');
-
-/** Used as references for `-Infinity` and `Infinity`. */
-var POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
 
 /**
- * A specialized version of `baseExtremum` for arrays which invokes `iteratee`
- * with one argument: (value).
+ * The base implementation of methods like `_.max` and `_.min` which accepts a
+ * `comparator` to determine the extremum value.
  *
  * @private
  * @param {Array} array The array to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @param {Function} comparator The function used to compare values.
- * @param {*} exValue The initial extremum value.
+ * @param {Function} iteratee The iteratee invoked per iteration.
+ * @param {Function} comparator The comparator used to compare values.
  * @returns {*} Returns the extremum value.
  */
-function arrayExtremum(array, iteratee, comparator, exValue) {
+function baseExtremum(array, iteratee, comparator) {
   var index = -1,
-      length = array.length,
-      computed = exValue,
-      result = computed;
+      length = array.length;
 
   while (++index < length) {
     var value = array[index],
-        current = +iteratee(value);
+        current = iteratee(value);
 
-    if (comparator(current, computed)) {
-      computed = current;
-      result = value;
+    if (current != null && (computed === undefined
+          ? current === current
+          : comparator(current, computed)
+        )) {
+      var computed = current,
+          result = value;
     }
   }
   return result;
 }
 
 /**
- * Gets the extremum value of `collection` invoking `iteratee` for each value
- * in `collection` to generate the criterion by which the value is ranked.
- * The `iteratee` is invoked with three arguments: (value, index|key, collection).
- *
- * @private
- * @param {Array|Object|string} collection The collection to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @param {Function} comparator The function used to compare values.
- * @param {*} exValue The initial extremum value.
- * @returns {*} Returns the extremum value.
- */
-function baseExtremum(collection, iteratee, comparator, exValue) {
-  var computed = exValue,
-      result = computed;
-
-  baseEach(collection, function(value, index, collection) {
-    var current = +iteratee(value, index, collection);
-    if (comparator(current, computed) || (current === exValue && current === result)) {
-      computed = current;
-      result = value;
-    }
-  });
-  return result;
-}
-
-/**
- * Creates a `_.max` or `_.min` function.
- *
- * @private
- * @param {Function} comparator The function used to compare values.
- * @param {*} exValue The initial extremum value.
- * @returns {Function} Returns the new extremum function.
- */
-function createExtremum(comparator, exValue) {
-  return function(collection, iteratee, thisArg) {
-    if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-      iteratee = undefined;
-    }
-    iteratee = baseCallback(iteratee, thisArg, 3);
-    if (iteratee.length == 1) {
-      collection = isArray(collection) ? collection : toIterable(collection);
-      var result = arrayExtremum(collection, iteratee, comparator, exValue);
-      if (!(collection.length && result === exValue)) {
-        return result;
-      }
-    }
-    return baseExtremum(collection, iteratee, comparator, exValue);
-  };
-}
-
-/**
- * Gets the minimum value of `collection`. If `collection` is empty or falsey
- * `Infinity` is returned. If an iteratee function is provided it's invoked
- * for each value in `collection` to generate the criterion by which the value
- * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
- * arguments: (value, index, collection).
- *
- * If a property name is provided for `iteratee` the created `_.property`
- * style callback returns the property value of the given element.
- *
- * If a value is also provided for `thisArg` the created `_.matchesProperty`
- * style callback returns `true` for elements that have a matching property
- * value, else `false`.
- *
- * If an object is provided for `iteratee` the created `_.matches` style
- * callback returns `true` for elements that have the properties of the given
- * object, else `false`.
+ * Checks if `value` is less than `other`.
  *
  * @static
  * @memberOf _
+ * @since 3.9.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if `value` is less than `other`,
+ *  else `false`.
+ * @example
+ *
+ * _.lt(1, 3);
+ * // => true
+ *
+ * _.lt(3, 3);
+ * // => false
+ *
+ * _.lt(3, 1);
+ * // => false
+ */
+function lt(value, other) {
+  return value < other;
+}
+
+/**
+ * This method returns the first argument given to it.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+/**
+ * Computes the minimum value of `array`. If `array` is empty or falsey,
+ * `undefined` is returned.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
  * @category Math
- * @param {Array|Object|string} collection The collection to iterate over.
- * @param {Function|Object|string} [iteratee] The function invoked per iteration.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
+ * @param {Array} array The array to iterate over.
  * @returns {*} Returns the minimum value.
  * @example
  *
@@ -127,22 +98,12 @@ function createExtremum(comparator, exValue) {
  * // => 2
  *
  * _.min([]);
- * // => Infinity
- *
- * var users = [
- *   { 'user': 'barney', 'age': 36 },
- *   { 'user': 'fred',   'age': 40 }
- * ];
- *
- * _.min(users, function(chr) {
- *   return chr.age;
- * });
- * // => { 'user': 'barney', 'age': 36 }
- *
- * // using the `_.property` callback shorthand
- * _.min(users, 'age');
- * // => { 'user': 'barney', 'age': 36 }
+ * // => undefined
  */
-var min = createExtremum(lt, POSITIVE_INFINITY);
+function min(array) {
+  return (array && array.length)
+    ? baseExtremum(array, identity, lt)
+    : undefined;
+}
 
 module.exports = min;

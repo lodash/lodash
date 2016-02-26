@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -17,7 +17,8 @@ var deburr = require('lodash.deburr'),
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as
+ *  the initial value.
  * @returns {*} Returns the accumulated value.
  */
 function arrayReduce(array, iteratee, accumulator, initAccum) {
@@ -47,10 +48,12 @@ function createCompounder(callback) {
 }
 
 /**
- * Converts `string` to [snake case](https://en.wikipedia.org/wiki/Snake_case).
+ * Converts `string` to
+ * [snake case](https://en.wikipedia.org/wiki/Snake_case).
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the snake cased string.
@@ -62,7 +65,7 @@ function createCompounder(callback) {
  * _.snakeCase('fooBar');
  * // => 'foo_bar'
  *
- * _.snakeCase('--foo-bar');
+ * _.snakeCase('--FOO-BAR--');
  * // => 'foo_bar'
  */
 var snakeCase = createCompounder(function(result, word, index) {

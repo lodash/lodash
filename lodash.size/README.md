@@ -1,20 +1,18 @@
-# lodash.size v3.0.2
+# lodash.size v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.size` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.size` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash.size
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var size = require('lodash.size');
 ```
 
-See the [documentation](https://lodash.com/docs#size) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.size) for more details.
+See the [documentation](https://lodash.com/docs#size) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.size) for more details.

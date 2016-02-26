@@ -1,20 +1,18 @@
-# lodash.now v3.1.0
+# lodash.now v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.now` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [lodash](https://lodash.com/) method `_.now` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash.now
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var now = require('lodash.now');
 ```
 
-See the [documentation](https://lodash.com/docs#now) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.now) for more details.
+See the [documentation](https://lodash.com/docs#now) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.now) for more details.

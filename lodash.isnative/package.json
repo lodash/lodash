@@ -1,6 +1,6 @@
 {
   "name": "lodash.isnative",
-  "version": "3.0.7",
+  "version": "4.0.0",
   "description": "The lodash method `_.isNative` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

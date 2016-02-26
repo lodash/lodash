@@ -1,20 +1,18 @@
-# lodash._baseismatch v3.1.3
+# lodash._baseismatch v4.0.0
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) internal `baseIsMatch` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The internal [lodash](https://lodash.com/) function `baseIsMatch` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash._baseismatch
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var baseIsMatch = require('lodash._baseismatch');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/3.1.3-npm-packages/lodash._baseismatch) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash._baseismatch) for more details.

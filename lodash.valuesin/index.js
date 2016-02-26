@@ -1,17 +1,32 @@
 /**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseValues = require('lodash._basevalues'),
+var arrayMap = require('lodash._arraymap'),
     keysIn = require('lodash.keysin');
 
 /**
- * Creates an array of the own and inherited enumerable property values
- * of `object`.
+ * The base implementation of `_.values` and `_.valuesIn` which creates an
+ * array of `object` property values corresponding to the property names
+ * of `props`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array} props The property names to get values for.
+ * @returns {Object} Returns the array of property values.
+ */
+function baseValues(object, props) {
+  return arrayMap(props, function(key) {
+    return object[key];
+  });
+}
+
+/**
+ * Creates an array of the own and inherited enumerable property values of `object`.
  *
  * **Note:** Non-object values are coerced to objects.
  *
@@ -33,7 +48,7 @@ var baseValues = require('lodash._basevalues'),
  * // => [1, 2, 3] (iteration order is not guaranteed)
  */
 function valuesIn(object) {
-  return baseValues(object, keysIn(object));
+  return object == null ? baseValues(object, keysIn(object)) : [];
 }
 
 module.exports = valuesIn;

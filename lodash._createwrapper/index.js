@@ -1,5 +1,5 @@
 /**
- * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -121,6 +121,9 @@ var objectProto = Object.prototype;
  */
 var objectToString = objectProto.toString;
 
+/** Built-in value references. */
+var objectCreate = Object.create;
+
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
     nativeMin = Math.min;
@@ -133,17 +136,9 @@ var nativeMax = Math.max,
  * @param {Object} prototype The object to inherit from.
  * @returns {Object} Returns the new object.
  */
-var baseCreate = (function() {
-  function object() {}
-  return function(prototype) {
-    if (isObject(prototype)) {
-      object.prototype = prototype;
-      var result = new object;
-      object.prototype = undefined;
-    }
-    return result || {};
-  };
-}());
+function baseCreate(proto) {
+  return isObject(proto) ? objectCreate(proto) : {};
+}
 
 /**
  * Creates an array that is the composition of partially applied arguments,
@@ -360,7 +355,10 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
 
       length -= argsHolders.length;
       if (length < arity) {
-        return createRecurryWrapper(func, bitmask, createHybridWrapper, placeholder, thisArg, args, argsHolders, argPos, ary, arity - length);
+        return createRecurryWrapper(
+          func, bitmask, createHybridWrapper, placeholder, thisArg, args,
+          argsHolders, argPos, ary, arity - length
+        );
       }
     }
     var thisBinding = isBind ? thisArg : this,
@@ -447,8 +445,8 @@ function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, par
   if (!(bitmask & CURRY_BOUND_FLAG)) {
     bitmask &= ~(BIND_FLAG | BIND_KEY_FLAG);
   }
-  var result = wrapFunc(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity);
 
+  var result = wrapFunc(func, bitmask, thisArg, newPartials, newsHolders, newPartialsRight, newHoldersRight, newArgPos, ary, arity);
   result.placeholder = placeholder;
   return result;
 }
@@ -498,7 +496,11 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
 
     partials = holders = undefined;
   }
-  var newData = [func, bitmask, thisArg, partials, holders, partialsRight, holdersRight, argPos, ary, arity];
+
+  var newData = [
+    func, bitmask, thisArg, partials, holders, partialsRight, holdersRight,
+    argPos, ary, arity
+  ];
 
   func = newData[0];
   bitmask = newData[1];

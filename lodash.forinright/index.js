@@ -1,29 +1,58 @@
 /**
- * lodash 3.0.2 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseForRight = require('lodash._baseforright'),
-    bindCallback = require('lodash._bindcallback'),
-    keysIn = require('lodash.keysin');
+var keysIn = require('lodash.keysin');
 
 /**
- * Creates a function for `_.forIn` or `_.forInRight`.
+ * This function is like `baseFor` except that it iterates over properties
+ * in the opposite order.
  *
  * @private
- * @param {Function} objectFunc The function to iterate over an object.
- * @returns {Function} Returns the new each function.
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @returns {Object} Returns `object`.
  */
-function createForIn(objectFunc) {
-  return function(object, iteratee, thisArg) {
-    if (typeof iteratee != 'function' || thisArg !== undefined) {
-      iteratee = bindCallback(iteratee, thisArg, 3);
+var baseForRight = createBaseFor(true);
+
+/**
+ * Creates a base function for methods like `_.forIn`.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseFor(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var index = -1,
+        iterable = Object(object),
+        props = keysFunc(object),
+        length = props.length;
+
+    while (length--) {
+      var key = props[fromRight ? length : ++index];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
     }
-    return objectFunc(object, iteratee, keysIn);
+    return object;
   };
+}
+
+/**
+ * Converts `value` to a function if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Function} Returns the function.
+ */
+function toFunction(value) {
+  return typeof value == 'function' ? value : identity;
 }
 
 /**
@@ -35,7 +64,6 @@ function createForIn(objectFunc) {
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
  * @returns {Object} Returns `object`.
  * @example
  *
@@ -49,8 +77,29 @@ function createForIn(objectFunc) {
  * _.forInRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'c', 'b', and 'a' assuming `_.forIn ` logs 'a', 'b', and 'c'
+ * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
  */
-var forInRight = createForIn(baseForRight);
+function forInRight(object, iteratee) {
+  return object == null ? object : baseForRight(object, toFunction(iteratee), keysIn);
+}
+
+/**
+ * This method returns the first argument given to it.
+ *
+ * @static
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
 
 module.exports = forInRight;

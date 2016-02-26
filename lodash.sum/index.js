@@ -1,93 +1,70 @@
 /**
- * lodash 3.6.2 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseCallback = require('lodash._basecallback'),
-    baseEach = require('lodash._baseeach'),
-    isIterateeCall = require('lodash._isiterateecall'),
-    toIterable = require('lodash._toiterable'),
-    isArray = require('lodash.isarray');
 
 /**
- * A specialized version of `_.sum` for arrays without support for callback
- * shorthands and `this` binding..
+ * The base implementation of `_.sum` without support for iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {number} Returns the sum.
  */
-function arraySum(array, iteratee) {
-  var length = array.length,
-      result = 0;
+function baseSum(array, iteratee) {
+  var result,
+      index = -1,
+      length = array.length;
 
-  while (length--) {
-    result += +iteratee(array[length]) || 0;
+  while (++index < length) {
+    var current = iteratee(array[index]);
+    if (current !== undefined) {
+      result = result === undefined ? current : (result + current);
+    }
   }
   return result;
 }
 
 /**
- * The base implementation of `_.sum` without support for callback shorthands
- * and `this` binding.
+ * This method returns the first argument provided to it.
  *
- * @private
- * @param {Array|Object|string} collection The collection to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {number} Returns the sum.
+ * @static
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
  */
-function baseSum(collection, iteratee) {
-  var result = 0;
-  baseEach(collection, function(value, index, collection) {
-    result += +iteratee(value, index, collection) || 0;
-  });
-  return result;
+function identity(value) {
+  return value;
 }
 
 /**
- * Gets the sum of the values in `collection`.
+ * Computes the sum of the values in `array`.
  *
  * @static
  * @memberOf _
  * @category Math
- * @param {Array|Object|string} collection The collection to iterate over.
- * @param {Function|Object|string} [iteratee] The function invoked per iteration.
- * @param {*} [thisArg] The `this` binding of `iteratee`.
+ * @param {Array} array The array to iterate over.
  * @returns {number} Returns the sum.
  * @example
  *
- * _.sum([4, 6]);
- * // => 10
- *
- * _.sum({ 'a': 4, 'b': 6 });
- * // => 10
- *
- * var objects = [
- *   { 'n': 4 },
- *   { 'n': 6 }
- * ];
- *
- * _.sum(objects, function(object) {
- *   return object.n;
- * });
- * // => 10
- *
- * // using the `_.property` callback shorthand
- * _.sum(objects, 'n');
- * // => 10
+ * _.sum([4, 2, 8, 6]);
+ * // => 20
  */
-function sum(collection, iteratee, thisArg) {
-  if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
-    iteratee = undefined;
-  }
-  iteratee = baseCallback(iteratee, thisArg, 3);
-  return iteratee.length == 1
-    ? arraySum(isArray(collection) ? collection : toIterable(collection), iteratee)
-    : baseSum(collection, iteratee);
+function sum(array) {
+  return (array && array.length)
+    ? baseSum(array, identity)
+    : undefined;
 }
 
 module.exports = sum;

@@ -1,14 +1,14 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseFlatten = require('lodash._baseflatten'),
     createWrapper = require('lodash._createwrapper'),
-    restParam = require('lodash.restparam');
+    rest = require('lodash.rest');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var REARG_FLAG = 256;
@@ -24,7 +24,7 @@ var REARG_FLAG = 256;
  * @category Function
  * @param {Function} func The function to rearrange arguments for.
  * @param {...(number|number[])} indexes The arranged argument indexes,
- *  specified as individual indexes or arrays of indexes.
+ *  specified individually or in arrays.
  * @returns {Function} Returns the new function.
  * @example
  *
@@ -34,14 +34,8 @@ var REARG_FLAG = 256;
  *
  * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']
- *
- * var map = _.rearg(_.map, [1, 0]);
- * map(function(n) {
- *   return n * 3;
- * }, [1, 2, 3]);
- * // => [3, 6, 9]
  */
-var rearg = restParam(function(func, indexes) {
+var rearg = rest(function(func, indexes) {
   return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
 });
 

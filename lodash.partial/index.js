@@ -1,31 +1,42 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var createWrapper = require('lodash._createwrapper'),
-    replaceHolders = require('lodash._replaceholders'),
-    restParam = require('lodash.restparam');
+    rest = require('lodash.rest');
 
 /** Used to compose bitmasks for wrapper metadata. */
 var PARTIAL_FLAG = 32;
 
+/** Used as the internal argument placeholder. */
+var PLACEHOLDER = '__lodash_placeholder__';
+
 /**
- * Creates a `_.partial` or `_.partialRight` function.
+ * Replaces all `placeholder` elements in `array` with an internal placeholder
+ * and returns an array of their indexes.
  *
  * @private
- * @param {boolean} flag The partial bit flag.
- * @returns {Function} Returns the new partial function.
+ * @param {Array} array The array to modify.
+ * @param {*} placeholder The placeholder to replace.
+ * @returns {Array} Returns the new array of placeholder indexes.
  */
-function createPartial(flag) {
-  var partialFunc = restParam(function(func, partials) {
-    var holders = replaceHolders(partials, partialFunc.placeholder);
-    return createWrapper(func, flag, undefined, partials, holders);
-  });
-  return partialFunc;
+function replaceHolders(array, placeholder) {
+  var index = -1,
+      length = array.length,
+      resIndex = -1,
+      result = [];
+
+  while (++index < length) {
+    if (array[index] === placeholder) {
+      array[index] = PLACEHOLDER;
+      result[++resIndex] = index;
+    }
+  }
+  return result;
 }
 
 /**
@@ -36,7 +47,7 @@ function createPartial(flag) {
  * The `_.partial.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
  *
- * **Note:** This method does not set the "length" property of partially
+ * **Note:** This method doesn't set the "length" property of partially
  * applied functions.
  *
  * @static
@@ -55,12 +66,15 @@ function createPartial(flag) {
  * sayHelloTo('fred');
  * // => 'hello fred'
  *
- * // using placeholders
+ * // Partially applied with placeholders.
  * var greetFred = _.partial(greet, _, 'fred');
  * greetFred('hi');
  * // => 'hi fred'
  */
-var partial = createPartial(PARTIAL_FLAG);
+var partial = rest(function(func, partials) {
+  var holders = replaceHolders(partials, partial.placeholder);
+  return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
+});
 
 // Assign default placeholders.
 partial.placeholder = {};

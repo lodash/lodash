@@ -14386,6 +14386,20 @@
 
       assert.deepEqual(actual, { 'a': { 'b': ['c'] } });
     });
+
+    QUnit.test('should pop the stack of sources for each sibling property', function(assert) {
+      assert.expect(1);
+
+      var array = ['b', 'c'],
+          object = { 'a': ['a'] },
+          source = { 'a': array, 'b': array };
+
+      var actual = _.mergeWith(object, source, function(a, b) {
+        return lodashStable.isArray(a) ? a.concat(b) : undefined;
+      });
+
+      assert.deepEqual(actual, { 'a': ['a', 'b', 'c'], 'b': ['b', 'c'] });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

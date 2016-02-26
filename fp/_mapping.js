@@ -142,7 +142,6 @@ exports.methodRearg = {
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
   'sortedLastIndexBy': [2, 1, 0],
-  'update': [2, 1, 0],
   'zipWith': [1, 2, 0]
 };
 

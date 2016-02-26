@@ -14386,6 +14386,24 @@
 
       assert.deepEqual(actual, { 'a': { 'b': ['c'] } });
     });
+
+    QUnit.test('should merge correctly when merging a source object with two keys referencing the same object', function(assert) {
+      assert.expect(1);
+      var vegetables = ['peas', 'brocolli'];
+      var foodToMerge = {
+        vegetables: vegetables,
+        greens: vegetables
+      };
+      var food = {
+        vegetables: ['carrot']
+      };
+
+      var actual = _.mergeWith(food, foodToMerge, function(a, b) {
+        return lodashStable.isArray(a) ? a.concat(b) : undefined;
+      });
+
+      assert.deepEqual(actual, { vegetables: ['carrot', 'peas', 'brocolli'], greens: ['peas', 'brocolli'] });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

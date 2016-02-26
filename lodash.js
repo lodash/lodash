@@ -6076,13 +6076,14 @@
     /**
      * Creates an array of unique values that are included in all given arrays
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-     * for equality comparisons.
+     * for equality comparisons. The order of result values is determined by the
+     * order they occur in the first array.
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
-     * @returns {Array} Returns the new array of shared values taken from the first array provided.
+     * @returns {Array} Returns the new array of intersecting values.
      * @example
      *
      * _.intersection([2, 1], [4, 2], [1, 2]);
@@ -6098,14 +6099,15 @@
     /**
      * This method is like `_.intersection` except that it accepts `iteratee`
      * which is invoked for each element of each `arrays` to generate the criterion
-     * by which they're compared. The iteratee is invoked with one argument: (value).
+     * by which they're compared. Result values are chosen from the first array.
+     * The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {Array} Returns the new array of shared values taken from the first array provided.
+     * @returns {Array} Returns the new array of intersecting values.
      * @example
      *
      * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
@@ -6131,15 +6133,16 @@
 
     /**
      * This method is like `_.intersection` except that it accepts `comparator`
-     * which is invoked to compare elements of `arrays`. The comparator is invoked
-     * with two arguments: (arrVal, othVal).
+     * which is invoked to compare elements of `arrays`. Result values are chosen
+     * from the first array. The comparator is invoked with two arguments:
+     * (arrVal, othVal).
      *
      * @static
      * @memberOf _
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @param {Function} [comparator] The comparator invoked per element.
-     * @returns {Array} Returns the new array of shared values taken from the first array provided.
+     * @returns {Array} Returns the new array of intersecting values.
      * @example
      *
      * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];

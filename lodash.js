@@ -564,8 +564,7 @@
   }
 
   /**
-   * A specialized version of `_.includesWith` for arrays without support for
-   * specifying an index to search from.
+   * This function is like `arrayIncludes` except that it accepts a comparator.
    *
    * @private
    * @param {Array} array The array to search.
@@ -790,6 +789,28 @@
   }
 
   /**
+   * This function is like `baseIndexOf` except that it accepts a comparator.
+   *
+   * @private
+   * @param {Array} array The array to search.
+   * @param {*} value The value to search for.
+   * @param {number} fromIndex The index to search from.
+   * @param {Function} comparator The comparator invoked per element.
+   * @returns {number} Returns the index of the matched value, else `-1`.
+   */
+  function baseIndexOfWith(array, value, fromIndex, comparator) {
+    var index = fromIndex - 1,
+        length = array.length;
+
+    while (++index < length) {
+      if (comparator(array[index], value)) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
+  /**
    * The base implementation of `_.reduce` and `_.reduceRight`, without support
    * for iteratee shorthands, which iterates over `collection` using `eachFunc`.
    *
@@ -811,9 +832,9 @@
   }
 
   /**
-   * The base implementation of `_.sortBy` which uses `comparer` to define
-   * the sort order of `array` and replaces criteria objects with their
-   * corresponding values.
+   * The base implementation of `_.sortBy` which uses `comparer` to define the
+   * sort order of `array` and replaces criteria objects with their corresponding
+   * values.
    *
    * @private
    * @param {Array} array The array to sort.
@@ -1441,15 +1462,15 @@
      * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
      * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
      * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
-     * `pullAll`, `pullAllBy`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`,
-     * `reject`, `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`,
-     * `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`,
-     * `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`,
-     * `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`,
-     * `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`, `without`,
-     * `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`, `zipObjectDeep`,
-     * and `zipWith`
+     * `pullAll`, `pullAllBy`, `pullAllWith`, `pullAt`, `push`, `range`,
+     * `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`,
+     * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`,
+     * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+     * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+     * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+     * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `values`, `valuesIn`,
+     * `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
+     * `zipObjectDeep`, and `zipWith`
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
@@ -2160,7 +2181,8 @@
     }
 
     /**
-     * This function is like `assignValue` except that it doesn't assign `undefined` values.
+     * This function is like `assignValue` except that it doesn't assign
+     * `undefined` values.
      *
      * @private
      * @param {Object} object The object to modify.
@@ -3283,18 +3305,6 @@
     }
 
     /**
-     * The base implementation of `_.pullAll`.
-     *
-     * @private
-     * @param {Array} array The array to modify.
-     * @param {Array} values The values to remove.
-     * @returns {Array} Returns `array`.
-     */
-    function basePullAll(array, values) {
-      return basePullAllBy(array, values);
-    }
-
-    /**
      * The base implementation of `_.pullAllBy` without support for iteratee
      * shorthands.
      *
@@ -3302,10 +3312,12 @@
      * @param {Array} array The array to modify.
      * @param {Array} values The values to remove.
      * @param {Function} [iteratee] The iteratee invoked per element.
+     * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns `array`.
      */
-    function basePullAllBy(array, values, iteratee) {
-      var index = -1,
+    function basePullAll(array, values, iteratee, comparator) {
+      var indexOf = comparator ? baseIndexOfWith : baseIndexOf,
+          index = -1,
           length = values.length,
           seen = array;
 
@@ -3317,7 +3329,7 @@
             value = values[index],
             computed = iteratee ? iteratee(value) : value;
 
-        while ((fromIndex = baseIndexOf(seen, computed, fromIndex)) > -1) {
+        while ((fromIndex = indexOf(seen, computed, fromIndex, comparator)) > -1) {
           if (seen !== array) {
             splice.call(seen, fromIndex, 1);
           }
@@ -5577,7 +5589,7 @@
     /**
      * This method is like `_.difference` except that it accepts `iteratee` which
      * is invoked for each element of `array` and `values` to generate the criterion
-     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     * by which they're compared. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -6086,7 +6098,7 @@
     /**
      * This method is like `_.intersection` except that it accepts `iteratee`
      * which is invoked for each element of each `arrays` to generate the criterion
-     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     * by which they're compared. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -6279,7 +6291,7 @@
     /**
      * This method is like `_.pullAll` except that it accepts `iteratee` which is
      * invoked for each element of `array` and `values` to generate the criterion
-     * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+     * by which they're compared. The iteratee is invoked with one argument: (value).
      *
      * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
      *
@@ -6300,7 +6312,35 @@
      */
     function pullAllBy(array, values, iteratee) {
       return (array && array.length && values && values.length)
-        ? basePullAllBy(array, values, getIteratee(iteratee))
+        ? basePullAll(array, values, getIteratee(iteratee))
+        : array;
+    }
+
+    /**
+     * This method is like `_.pullAll` except that it accepts `comparator` which
+     * is invoked to compare elements of `array` to `values`. The comparator is
+     * invoked with two arguments: (arrVal, othVal).
+     *
+     * **Note:** Unlike `_.differenceWith`, this method mutates `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Array
+     * @param {Array} array The array to modify.
+     * @param {Array} values The values to remove.
+     * @param {Function} [comparator] The comparator invoked per element.
+     * @returns {Array} Returns `array`.
+     * @example
+     *
+     * var array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
+     *
+     * _.pullAllWith(array, [{ 'x': 3, 'y': 4 }], _.isEqual);
+     * console.log(array);
+     * // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
+     */
+    function pullAllWith(array, values, comparator) {
+      return (array && array.length && values && values.length)
+        ? basePullAll(array, values, undefined, comparator)
         : array;
     }
 
@@ -7041,7 +7081,7 @@
     /**
      * This method is like `_.xor` except that it accepts `iteratee` which is
      * invoked for each element of each `arrays` to generate the criterion by which
-     * uniqueness is computed. The iteratee is invoked with one argument: (value).
+     * by which they're compared. The iteratee is invoked with one argument: (value).
      *
      * @static
      * @memberOf _
@@ -14465,6 +14505,7 @@
     lodash.pull = pull;
     lodash.pullAll = pullAll;
     lodash.pullAllBy = pullAllBy;
+    lodash.pullAllWith = pullAllWith;
     lodash.pullAt = pullAt;
     lodash.range = range;
     lodash.rangeRight = rangeRight;

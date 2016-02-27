@@ -4808,10 +4808,8 @@
           if (stacked) {
             return stacked == other;
           }
-          stack.set(object, other);
-
           // Recursively compare objects (susceptible to call stack limits).
-          return equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask | UNORDERED_COMPARE_FLAG, stack);
+          return equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask | UNORDERED_COMPARE_FLAG, stack.set(object, other));
 
         case symbolTag:
           if (symbolValueOf) {
@@ -5375,11 +5373,9 @@
      * @returns {*} Returns the value to assign.
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-      if (isObject(objValue) && isObject(srcValue)) {
-        stack.set(srcValue, objValue);
-        baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
-      }
-      return objValue;
+      return (isObject(objValue) && isObject(srcValue))
+        ? baseMerge(objValue, srcValue, undefined, mergeDefaults, stack.set(srcValue, objValue))
+        : objValue;
     }
 
     /**

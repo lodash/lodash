@@ -5374,9 +5374,10 @@
      * @returns {*} Returns the value to assign.
      */
     function mergeDefaults(objValue, srcValue, key, object, source, stack) {
-      return (isObject(objValue) && isObject(srcValue))
-        ? baseMerge(objValue, srcValue, undefined, mergeDefaults, stack.set(srcValue, objValue))
-        : objValue;
+      if (isObject(objValue) && isObject(srcValue)) {
+        baseMerge(objValue, srcValue, undefined, mergeDefaults, stack.set(srcValue, objValue));
+      }
+      return objValue;
     }
 
     /**

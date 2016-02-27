@@ -4350,6 +4350,16 @@
       assert.strictEqual(actual.a.b, null);
     });
 
+    QUnit.test('should not overwrite regexp values', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': { 'b': /x/ } },
+          source = { 'a': { 'b': /y/ } },
+          actual = _.defaultsDeep(object, source);
+
+      assert.deepEqual(actual.a.b, /x/);
+    });
+
     QUnit.test('should not convert function properties to objects', function(assert) {
       assert.expect(2);
 

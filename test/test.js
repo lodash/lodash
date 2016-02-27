@@ -4371,7 +4371,7 @@
     });
 
     QUnit.test('should merge sources containing circular references', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var object = {
         'foo': { 'b': { 'c': { 'd': {} } } },
@@ -4388,7 +4388,9 @@
       source.bar.b = source.foo.b;
 
       var actual = _.defaultsDeep(object, source);
-      assert.ok(actual.bar.b === actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+
+      assert.strictEqual(actual.bar.b, actual.foo.b);
+      assert.strictEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d);
     });
 
     QUnit.test('should not modify sources', function(assert) {
@@ -14007,7 +14009,7 @@
     });
 
     QUnit.test('should merge sources containing circular references', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var object = {
         'foo': { 'a': 1 },
@@ -14023,7 +14025,9 @@
       source.bar.b = source.foo.b;
 
       var actual = _.merge(object, source);
-      assert.ok(actual.bar.b !== actual.foo.b && actual.foo.b.c.d === actual.foo.b.c.d.foo.b.c.d);
+
+      assert.notStrictEqual(actual.bar.b, actual.foo.b);
+      assert.strictEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d);
     });
 
     QUnit.test('should work with four arguments', function(assert) {

@@ -18467,25 +18467,6 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.update');
-
-  (function() {
-    QUnit.test('should call `func` with existing value on `path` of `object` and update it', function(assert) {
-      assert.expect(2);
-
-      var object = { 'a': [{ 'b': { 'c': 10 } }] };
-
-      _.update(object, ['a', 0, 'b', 'c'], function(value) {
-        assert.equal(value, 10);
-        return 20;
-      });
-
-      assert.equal(object.a[0].b.c, 20);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
   QUnit.module('set methods');
 
   lodashStable.each(['set', 'setWith'], function(methodName) {
@@ -22534,6 +22515,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.unary');
+
+  (function() {
+    function fn() {
+      return slice.call(arguments);
+    }
+
+    QUnit.test('should cap the number of arguments provided to `func`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(['6', '8', '10'], _.unary(parseInt));
+      assert.deepEqual(actual, [6, 8, 10]);
+    });
+
+    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
+      assert.expect(1);
+
+      var capped = _.unary(fn);
+      assert.deepEqual(capped(), []);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unescape');
 
   (function() {
@@ -22573,90 +22578,6 @@
       assert.strictEqual(_.unescape(_.escape(unescaped)), unescaped);
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.upperCase');
-
-  (function() {
-    QUnit.test('should uppercase as space-separated words', function(assert) {
-      assert.expect(3);
-
-      assert.strictEqual(_.upperCase('--foo-bar'), 'FOO BAR');
-      assert.strictEqual(_.upperCase('fooBar'), 'FOO BAR');
-      assert.strictEqual(_.upperCase('__foo_bar__'), 'FOO BAR');
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.upperFirst');
-
-  (function() {
-    QUnit.test('should uppercase only the first character', function(assert) {
-      assert.expect(3);
-
-      assert.strictEqual(_.upperFirst('fred'), 'Fred');
-      assert.strictEqual(_.upperFirst('Fred'), 'Fred');
-      assert.strictEqual(_.upperFirst('FRED'), 'FRED');
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.unary');
-
-  (function() {
-    function fn() {
-      return slice.call(arguments);
-    }
-
-    QUnit.test('should cap the number of arguments provided to `func`', function(assert) {
-      assert.expect(1);
-
-      var actual = lodashStable.map(['6', '8', '10'], _.unary(parseInt));
-      assert.deepEqual(actual, [6, 8, 10]);
-    });
-
-    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
-      assert.expect(1);
-
-      var capped = _.unary(fn);
-      assert.deepEqual(capped(), []);
-    });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('union methods');
-
-  lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {
-    var args = (function() { return arguments; }(1, 2, 3)),
-        func = _[methodName];
-
-    QUnit.test('`_.' + methodName + '` should return the union of the given arrays', function(assert) {
-      assert.expect(1);
-
-      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
-      assert.deepEqual(actual, [1, 3, 2, 5, 4]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should not flatten nested arrays', function(assert) {
-      assert.expect(1);
-
-      var actual = func([1, 3, 2], [1, [5]], [2, [4]]);
-      assert.deepEqual(actual, [1, 3, 2, [5], [4]]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
-      assert.expect(3);
-
-      var array = [0];
-      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
-      assert.deepEqual(func(null, array, null, [2, 1]), [0, 2, 1]);
-      assert.deepEqual(func(array, null, args, null), [0, 1, 2, 3]);
-    });
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -22705,6 +22626,38 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('union methods');
+
+  lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
+
+    QUnit.test('`_.' + methodName + '` should return the union of the given arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
+      assert.deepEqual(actual, [1, 3, 2, 5, 4]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should not flatten nested arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([1, 3, 2], [1, [5]], [2, [4]]);
+      assert.deepEqual(actual, [1, 3, 2, [5], [4]]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
+      assert.expect(3);
+
+      var array = [0];
+      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
+      assert.deepEqual(func(null, array, null, [2, 1]), [0, 2, 1]);
+      assert.deepEqual(func(array, null, args, null), [0, 1, 2, 3]);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.uniq');
 
   (function() {
@@ -22715,6 +22668,104 @@
           actual = lodashStable.map(array, lodashStable.uniq);
 
       assert.deepEqual(actual, [[2, 1], [1, 2]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('uniqBy methods');
+
+  lodashStable.each(['uniqBy', 'sortedUniqBy'], function(methodName) {
+    var func = _[methodName],
+        isSorted = methodName == 'sortedUniqBy',
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
+
+    if (isSorted) {
+      objects = _.sortBy(objects, 'a');
+    }
+    QUnit.test('`_.' + methodName + '` should work with an `iteratee` argument', function(assert) {
+      assert.expect(1);
+
+      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3);
+
+      var actual = func(objects, function(object) {
+        return object.a;
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should work with large arrays', function(assert) {
+      assert.expect(2);
+
+      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function() {
+        return [1, 2];
+      });
+
+      var actual = func(largeArray, String);
+
+      assert.deepEqual(actual, [[1, 2]]);
+      assert.strictEqual(actual[0], largeArray[0]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      func(objects, function() {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [objects[0]]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
+      assert.expect(2);
+
+      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),
+          actual = func(objects, 'a');
+
+      assert.deepEqual(actual, expected);
+
+      var arrays = [[2], [3], [1], [2], [3], [1]];
+      if (isSorted) {
+        arrays = lodashStable.sortBy(arrays, 0);
+      }
+      expected = isSorted ? [[1], [2], [3]] : arrays.slice(0, 3);
+      actual = func(arrays, 0);
+
+      assert.deepEqual(actual, expected);
+    });
+
+    lodashStable.each({
+      'an array': [0, 'a'],
+      'an object': { '0': 'a' },
+      'a number': 0,
+      'a string': '0'
+    },
+    function(iteratee, key) {
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' for `iteratee`', function(assert) {
+        assert.expect(1);
+
+        var actual = func([['a'], ['a'], ['b']], iteratee);
+        assert.deepEqual(actual, [['a'], ['b']]);
+      });
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.uniqWith');
+
+  (function() {
+    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
+
+    QUnit.test('should work with a `comparator` argument', function(assert) {
+      assert.expect(1);
+
+      var actual = _.uniqWith(objects, lodashStable.isEqual);
+      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]);
     });
   }());
 
@@ -22848,104 +22899,6 @@
       assert.deepEqual(func(largeArray), expected);
     });
   });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('uniqBy methods');
-
-  lodashStable.each(['uniqBy', 'sortedUniqBy'], function(methodName) {
-    var func = _[methodName],
-        isSorted = methodName == 'sortedUniqBy',
-        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-    if (isSorted) {
-      objects = _.sortBy(objects, 'a');
-    }
-    QUnit.test('`_.' + methodName + '` should work with an `iteratee` argument', function(assert) {
-      assert.expect(1);
-
-      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3);
-
-      var actual = func(objects, function(object) {
-        return object.a;
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should work with large arrays', function(assert) {
-      assert.expect(2);
-
-      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function() {
-        return [1, 2];
-      });
-
-      var actual = func(largeArray, String);
-
-      assert.deepEqual(actual, [[1, 2]]);
-      assert.strictEqual(actual[0], largeArray[0]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      func(objects, function() {
-        args || (args = slice.call(arguments));
-      });
-
-      assert.deepEqual(args, [objects[0]]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
-      assert.expect(2);
-
-      var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),
-          actual = func(objects, 'a');
-
-      assert.deepEqual(actual, expected);
-
-      var arrays = [[2], [3], [1], [2], [3], [1]];
-      if (isSorted) {
-        arrays = lodashStable.sortBy(arrays, 0);
-      }
-      expected = isSorted ? [[1], [2], [3]] : arrays.slice(0, 3);
-      actual = func(arrays, 0);
-
-      assert.deepEqual(actual, expected);
-    });
-
-    lodashStable.each({
-      'an array': [0, 'a'],
-      'an object': { '0': 'a' },
-      'a number': 0,
-      'a string': '0'
-    },
-    function(iteratee, key) {
-      QUnit.test('`_.' + methodName + '` should work with ' + key + ' for `iteratee`', function(assert) {
-        assert.expect(1);
-
-        var actual = func([['a'], ['a'], ['b']], iteratee);
-        assert.deepEqual(actual, [['a'], ['b']]);
-      });
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('lodash.uniqWith');
-
-  (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
-
-    QUnit.test('should work with a `comparator` argument', function(assert) {
-      assert.expect(1);
-
-      var actual = _.uniqWith(objects, lodashStable.isEqual);
-      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]);
-    });
-  }());
 
   /*--------------------------------------------------------------------------*/
 
@@ -23133,6 +23086,53 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.update');
+
+  (function() {
+    QUnit.test('should call `func` with existing value on `path` of `object` and update it', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': [{ 'b': { 'c': 10 } }] };
+
+      _.update(object, ['a', 0, 'b', 'c'], function(value) {
+        assert.equal(value, 10);
+        return 20;
+      });
+
+      assert.equal(object.a[0].b.c, 20);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.upperCase');
+
+  (function() {
+    QUnit.test('should uppercase as space-separated words', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.upperCase('--foo-bar'), 'FOO BAR');
+      assert.strictEqual(_.upperCase('fooBar'), 'FOO BAR');
+      assert.strictEqual(_.upperCase('__foo_bar__'), 'FOO BAR');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.upperFirst');
+
+  (function() {
+    QUnit.test('should uppercase only the first character', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.upperFirst('fred'), 'Fred');
+      assert.strictEqual(_.upperFirst('Fred'), 'Fred');
+      assert.strictEqual(_.upperFirst('FRED'), 'FRED');
     });
   }());
 

@@ -2769,6 +2769,7 @@
           othLength = arrays.length,
           othIndex = othLength,
           caches = Array(othLength),
+          maxLength = Infinity,
           result = [];
 
       while (othIndex--) {
@@ -2776,18 +2777,20 @@
         if (othIndex && iteratee) {
           array = arrayMap(array, baseUnary(iteratee));
         }
-        caches[othIndex] = !comparator && (iteratee || array.length >= 120)
+        var length = array.length;
+        maxLength = length < maxLength ? length : maxLength;
+        caches[othIndex] = !comparator && (iteratee || length >= 120)
           ? new SetCache(othIndex && array)
           : undefined;
       }
       array = arrays[0];
+      length = array.length;
 
       var index = -1,
-          length = array.length,
           seen = caches[0];
 
       outer:
-      while (++index < length) {
+      while (++index < length && result.length < maxLength) {
         var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
@@ -2795,7 +2798,7 @@
               ? cacheHas(seen, computed)
               : includes(result, computed, comparator)
             )) {
-          var othIndex = othLength;
+          othIndex = othLength;
           while (--othIndex) {
             var cache = caches[othIndex];
             if (!(cache

@@ -563,7 +563,7 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should not mutate values', function(assert) {
-      assert.expect(40);
+      assert.expect(42);
 
       function Foo() {}
       Foo.prototype = { 'b': 2 };
@@ -697,10 +697,16 @@
       assert.deepEqual(actual, { 'a': { 'c': 3 } }, 'fp.unset');
 
       value = _.cloneDeep(deepObject);
-      actual = fp.update('a.b')(function(x) { return x + 1; })(value);
+      actual = fp.update('a.b')(function(n) { return n * n; })(value);
 
       assert.deepEqual(value, deepObject, 'fp.update');
-      assert.deepEqual(actual, { 'a': { 'b': 3, 'c': 3 } }, 'fp.update');
+      assert.deepEqual(actual, { 'a': { 'b': 4, 'c': 3 } }, 'fp.update');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.updateWith(Object)('d.e')(_.constant(4))(value);
+
+      assert.deepEqual(value, deepObject, 'fp.updateWith');
+      assert.deepEqual(actual, { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } }, 'fp.updateWith');
     });
   }());
 
@@ -748,7 +754,7 @@
         deepObject = { 'a': { 'b': 2, 'c': 3 } };
 
     QUnit.test('should only clone objects in `path`', function(assert) {
-      assert.expect(9);
+      assert.expect(11);
 
       var object = { 'a': { 'b': { 'c': 1 }, 'd': { 'e': 1 } } },
           value = _.cloneDeep(object),
@@ -761,10 +767,9 @@
       assert.strictEqual(actual.d, value.d, 'fp.set');
 
       value = _.cloneDeep(object);
-      actual = fp.setWith(Object)('a.b.c')(2)(value);
+      actual = fp.setWith(Object)('[0][1]')('a')(value);
 
-      assert.strictEqual(actual.a.b.c, 2, 'fp.setWith');
-      assert.strictEqual(actual.d, value.d, 'fp.setWith');
+      assert.deepEqual(actual[0], { '1': 'a' }, 'fp.setWith');
 
       value = _.cloneDeep(object);
       actual = fp.unset('a.b')(value);
@@ -772,9 +777,17 @@
       assert.notOk('b' in actual, 'fp.unset');
       assert.strictEqual(actual.d, value.d, 'fp.unset');
 
-      value = _.cloneDeep(object);
-      actual = fp.update('a.b', function(x) { return { 'c2': 2 }; }, value);
+      value = _.cloneDeep(deepObject);
+      actual = fp.update('a.b')(function(n) { return n * n; })(value);
+
+      assert.strictEqual(actual.a.b, 4, 'fp.update');
       assert.strictEqual(actual.d, value.d, 'fp.update');
+
+      value = _.cloneDeep(deepObject);
+      actual = fp.updateWith(Object)('[0][1]')(_.constant('a'))(value);
+
+      assert.deepEqual(actual[0], { '1': 'a' }, 'fp.updateWith');
+      assert.strictEqual(actual.d, value.d, 'fp.updateWith');
     });
   }());
 
@@ -787,7 +800,7 @@
         object = { 'a': 1 };
 
     QUnit.test('should provide the correct `customizer` arguments', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
       var args,
           value = _.clone(object);
@@ -828,6 +841,15 @@
       })('b.c')(2)(value);
 
       assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.setWith');
+
+      args = undefined;
+      value = _.clone(object);
+
+      fp.updateWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      })('b.c')(_.constant(2))(value);
+
+      assert.deepEqual(args, [undefined, 'b', { 'a': 1 }], 'fp.updateWith');
     });
   }());
 

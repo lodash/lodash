@@ -73,7 +73,7 @@ exports.aryMethod = {
     'transform', 'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
-    'fill', 'setWith'
+    'fill', 'setWith', 'updateWith'
   ]
 };
 
@@ -121,8 +121,7 @@ exports.iterateeAry = {
   'takeRightWhile': 1,
   'takeWhile': 1,
   'times': 1,
-  'transform': 2,
-  'update': 1
+  'transform': 2
 };
 
 /** Used to map method names to iteratee rearg configs. */
@@ -142,6 +141,7 @@ exports.methodRearg = {
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
   'sortedLastIndexBy': [2, 1, 0],
+  'updateWith': [3, 1, 2, 0],
   'zipWith': [1, 2, 0]
 };
 
@@ -177,7 +177,8 @@ exports.mutate = {
     'set': true,
     'setWith': true,
     'unset': true,
-    'update': true
+    'update': true,
+    'updateWith': true
   }
 };
 

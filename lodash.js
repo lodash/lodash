@@ -3452,19 +3452,6 @@
     }
 
     /**
-     * The base implementation of `_.update`.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the property to update.
-     * @param {Function} updater The function to produce the updated value.
-     * @returns {Object} Returns `object`.
-     */
-    function baseUpdate(object, path, updater) {
-      return baseSet(object, path, updater(baseGet(object, path)));
-    }
-
-    /**
      * The base implementation of `setData` without support for hot loop detection.
      *
      * @private
@@ -3718,6 +3705,19 @@
       object = parent(object, path);
       var key = last(path);
       return (object != null && has(object, key)) ? delete object[key] : true;
+    }
+
+    /**
+     * The base implementation of `_.update`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the property to update.
+     * @param {Function} updater The function to produce the updated value.
+     * @returns {Object} Returns `object`.
+     */
+    function baseUpdate(object, path, updater) {
+      return baseSet(object, path, updater(baseGet(object, path)));
     }
 
     /**
@@ -11913,37 +11913,6 @@
     }
 
     /**
-     * Updates the value at `path` of `object` with given `func`. If a portion
-     * of `path` doesn't exist it's created. Arrays are created for missing index
-     * properties while objects are created for all other missing properties.
-     * The `func` is invoked with `value` at `path` of `object`: (value).
-     *
-     * @static
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to set.
-     * @param {Function} updater The function to produce the updated value.
-     * @returns {Object} Returns the updated `object`.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 3, 'd': '11' } }] };
-     *
-     * _.update(object, 'a[0].b.c', function(n) { return n + 10; });
-     * console.log(object.a[0].b.c);
-     * // => 13
-     *
-     * _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
-     * console.log(object.x[0].y.z);
-     * // => 0
-     */
-    function update(object, path, updater) {
-      return object == null
-        ? object
-        : baseUpdate(object, path, baseCastFunction(updater));
-    }
-
-    /**
      * This method is like `_.set` except that it accepts `customizer` which is
      * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
      * path creation is handled by the method instead. The `customizer` is invoked
@@ -12097,6 +12066,35 @@
      */
     function unset(object, path) {
       return object == null ? true : baseUnset(object, path);
+    }
+
+    /**
+     * Updates the value at `path` of `object` with given `func`. If a portion
+     * of `path` doesn't exist it's created. Arrays are created for missing index
+     * properties while objects are created for all other missing properties.
+     * The `func` is invoked with `value` at `path` of `object`: (value).
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to modify.
+     * @param {Array|string} path The path of the property to set.
+     * @param {Function} updater The function to produce the updated value.
+     * @returns {Object} Returns the updated `object`.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': 3, 'd': '11' } }] };
+     *
+     * _.update(object, 'a[0].b.c', function(n) { return n + 10; });
+     * console.log(object.a[0].b.c);
+     * // => 13
+     *
+     * _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
+     * console.log(object.x[0].y.z);
+     * // => 0
+     */
+    function update(object, path, updater) {
+      return object == null ? object : baseUpdate(object, path, baseCastFunction(updater));
     }
 
     /**

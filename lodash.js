@@ -2766,6 +2766,7 @@
      */
     function baseIntersection(arrays, iteratee, comparator) {
       var includes = comparator ? arrayIncludesWith : arrayIncludes,
+          length = arrays[0].length,
           othLength = arrays.length,
           othIndex = othLength,
           caches = Array(othLength),
@@ -2777,14 +2778,12 @@
         if (othIndex && iteratee) {
           array = arrayMap(array, baseUnary(iteratee));
         }
-        var length = array.length;
-        maxLength = length < maxLength ? length : maxLength;
-        caches[othIndex] = !comparator && (iteratee || length >= 120)
+        maxLength = nativeMin(array.length, maxLength);
+        caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
           ? new SetCache(othIndex && array)
           : undefined;
       }
       array = arrays[0];
-      length = array.length;
 
       var index = -1,
           seen = caches[0];

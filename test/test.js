@@ -23096,22 +23096,30 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.update');
+  QUnit.module('update methods');
 
-  (function() {
-    QUnit.test('should call `updater` with existing value on `path` of `object` and update it', function(assert) {
-      assert.expect(2);
+  lodashStable.each(['update', 'updateWith'], function(methodName) {
+    var func = _[methodName],
+        oldValue = 1,
+        value = 2;
 
-      var object = { 'a': [{ 'b': { 'c': 10 } }] };
+    QUnit.test('`_.' + methodName + '` should invoke `updater` with the value on `path` of `object`', function(assert) {
+      assert.expect(4);
 
-      _.update(object, ['a', 0, 'b', 'c'], function(value) {
-        assert.equal(value, 10);
-        return 20;
+      var object = { 'a': [{ 'b': { 'c': oldValue } }] },
+          expected = oldValue + 1;
+
+      lodashStable.each(['a[0].b.c', ['a', '0', 'b', 'c']], function(path) {
+        func(object, path, function(n) {
+          assert.strictEqual(n, oldValue);
+          return ++n;
+        });
+
+        assert.strictEqual(object.a[0].b.c, expected);
+        object.a[0].b.c = oldValue;
       });
-
-      assert.equal(object.a[0].b.c, 20);
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

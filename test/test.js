@@ -2691,13 +2691,10 @@
       QUnit.test('`_.' + methodName + '` should clone `lastIndex` regexp property', function(assert) {
         assert.expect(1);
 
-        // Avoid a regexp literal for older Opera and use `exec` for older Safari.
-        var regexp = RegExp('c', 'g');
-
+        var regexp = /c/g;
         regexp.exec('abcde');
 
-        var actual = func(regexp);
-        assert.strictEqual(actual.lastIndex, 3);
+        assert.strictEqual(func(regexp).lastIndex, 3);
       });
 
       QUnit.test('`_.' + methodName + '` should clone expando properties', function(assert) {

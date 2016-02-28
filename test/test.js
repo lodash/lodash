@@ -18466,9 +18466,9 @@
 
   QUnit.module('set methods');
 
-  lodashStable.each(['update', 'set', 'setWith'], function(methodName) {
+  lodashStable.each(['update', 'updateWith', 'set', 'setWith'], function(methodName) {
     var func = _[methodName],
-        isUpdate = methodName == 'update';
+        isUpdate = methodName == 'update' || methodName == 'updateWith';
 
     var oldValue = 1,
         value = 2,
@@ -24441,7 +24441,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(299);
+      assert.expect(300);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

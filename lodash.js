@@ -3712,10 +3712,11 @@
      * @param {Object} object The object to query.
      * @param {Array|string} path The path of the property to update.
      * @param {Function} updater The function to produce the updated value.
+     * @param {Function} [customizer] The function to customize path creation.
      * @returns {Object} Returns `object`.
      */
-    function baseUpdate(object, path, updater) {
-      return baseSet(object, path, updater(baseGet(object, path)));
+    function baseUpdate(object, path, updater, customizer) {
+      return baseSet(object, path, updater(baseGet(object, path)), customizer);
     }
 
     /**
@@ -11928,8 +11929,10 @@
      * @returns {Object} Returns `object`.
      * @example
      *
-     * _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, Object);
-     * // => { '0': { '1': { '2': 3 }, 'length': 2 } }
+     * var object = {};
+     *
+     * _.setWith(object, '[0][1]', 'a', Object);
+     * // => { '0': { '1': 'a' } }
      */
     function setWith(object, path, value, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
@@ -12067,10 +12070,11 @@
     }
 
     /**
-     * Updates the value at `path` of `object` with given `func`. If a portion
-     * of `path` doesn't exist it's created. Arrays are created for missing index
-     * properties while objects are created for all other missing properties.
-     * The `func` is invoked with `value` at `path` of `object`: (value).
+     * This method is like `_.set` except that accepts `updater` to produce the
+     * value to set. Use `_.updateWith` to customize `path` creation. The `updater`
+     * is invoked with one argument: (value).
+     *
+     * **Note:** This method mutates `object`.
      *
      * @static
      * @memberOf _
@@ -12078,14 +12082,14 @@
      * @param {Object} object The object to modify.
      * @param {Array|string} path The path of the property to set.
      * @param {Function} updater The function to produce the updated value.
-     * @returns {Object} Returns the updated `object`.
+     * @returns {Object} Returns `object`.
      * @example
      *
-     * var object = { 'a': [{ 'b': { 'c': 3, 'd': '11' } }] };
+     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
      *
-     * _.update(object, 'a[0].b.c', function(n) { return n + 10; });
+     * _.update(object, 'a[0].b.c', function(n) { return n * n; });
      * console.log(object.a[0].b.c);
-     * // => 13
+     * // => 9
      *
      * _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
      * console.log(object.x[0].y.z);
@@ -12093,6 +12097,34 @@
      */
     function update(object, path, updater) {
       return object == null ? object : baseUpdate(object, path, baseCastFunction(updater));
+    }
+
+    /**
+     * This method is like `_.update` except that it accepts `customizer` which is
+     * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
+     * path creation is handled by the method instead. The `customizer` is invoked
+     * with three arguments: (nsValue, key, nsObject).
+     *
+     * **Note:** This method mutates `object`.
+     *
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Object} object The object to modify.
+     * @param {Array|string} path The path of the property to set.
+     * @param {Function} updater The function to produce the updated value.
+     * @param {Function} [customizer] The function to customize assigned values.
+     * @returns {Object} Returns `object`.
+     * @example
+     *
+     * var object = {};
+     *
+     * _.updateWith(object, '[0][1]', _.constant('a'), Object);
+     * // => { '0': { '1': 'a' } }
+     */
+    function updateWith(object, path, updater, customizer) {
+      customizer = typeof customizer == 'function' ? customizer : undefined;
+      return object == null ? object : baseUpdate(object, path, baseCastFunction(updater), customizer);
     }
 
     /**
@@ -14595,6 +14627,7 @@
     lodash.unzip = unzip;
     lodash.unzipWith = unzipWith;
     lodash.update = update;
+    lodash.updateWith = updateWith;
     lodash.values = values;
     lodash.valuesIn = valuesIn;
     lodash.without = without;

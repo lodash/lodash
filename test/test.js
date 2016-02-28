@@ -21500,6 +21500,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.toBoolean');
+
+  (function() {
+    QUnit.test('should convert whole string or boolean to boolean', function(assert) {
+      assert.expect(9);
+
+      assert.deepEqual(_.toBoolean('true'), true);
+      assert.deepEqual(_.toBoolean('  true  '), true);
+      assert.deepEqual(_.toBoolean('tRUe'), true);
+      assert.deepEqual(_.toBoolean(true), true);
+      assert.deepEqual(_.toBoolean('false'), false);
+      assert.deepEqual(_.toBoolean('  false   '), false);
+      assert.deepEqual(_.toBoolean('FalsE'), false);
+      assert.deepEqual(_.toBoolean(false), false);
+      assert.deepEqual(_.toBoolean('Not Boolean'), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toLower');
 
   (function() {
@@ -24433,7 +24453,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(299);
+      assert.expect(300);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

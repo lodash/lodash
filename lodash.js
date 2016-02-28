@@ -10669,6 +10669,40 @@
     }
 
     /**
+     * Converts `value` to an Boolean.
+     *
+     * @static
+     * @memberOf _
+     * @category Lang
+     * @param {*} value The value to convert.
+     * @returns {Boolean} Returns the converted Boolean.
+     * @example
+     *
+     * _.toBoolean('true');
+     * // => true
+     *
+     * _.toBoolean(' True   ');
+     * // => true
+     *
+     * _.toBoolean(' TRUE ');
+     * // => true
+     *
+     * _.toBoolean(true);
+     * // => true
+     *
+     * _.toBoolean('NotBoolean');
+     * // => false
+     */
+    function toBoolean(value) {
+      if (!value) {
+        return false;
+      }
+      if (value === true || value === false || (isObjectLike(value) && objectToString.call(value) == boolTag)) {
+        return value;
+      }
+      return replace(trim(value.toLowerCase()), /[""'']/ig, '') === 'true' ? true : false;
+    }
+    /**
      * Converts `value` to an integer.
      *
      * **Note:** This function is loosely based on [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
@@ -14741,6 +14775,7 @@
     lodash.sumBy = sumBy;
     lodash.template = template;
     lodash.times = times;
+    lodash.toBoolean = toBoolean;
     lodash.toInteger = toInteger;
     lodash.toLength = toLength;
     lodash.toLower = toLower;

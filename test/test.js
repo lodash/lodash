@@ -4654,13 +4654,13 @@
   QUnit.module('lodash.differenceWith');
 
   (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
-
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var actual = _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], lodashStable.isEqual);
-      assert.deepEqual(actual, [{ 'x': 2, 'y': 1 }]);
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+          actual = _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], lodashStable.isEqual);
+
+      assert.deepEqual(actual, [objects[1]]);
     });
   }());
 
@@ -7761,15 +7761,14 @@
   QUnit.module('lodash.intersectionWith');
 
   (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
-
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+          others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
           actual = _.intersectionWith(objects, others, lodashStable.isEqual);
 
-      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }]);
+      assert.deepEqual(actual, [objects[0]]);
     });
   }());
 
@@ -22617,15 +22616,14 @@
   QUnit.module('lodash.unionWith');
 
   (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
-
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+          others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
           actual = _.unionWith(objects, others, lodashStable.isEqual);
 
-      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]);
+      assert.deepEqual(actual, [objects[0], objects[1], others[0]]);
     });
   }());
 
@@ -22764,13 +22762,13 @@
   QUnit.module('lodash.uniqWith');
 
   (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
-
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var actual = _.uniqWith(objects, lodashStable.isEqual);
-      assert.deepEqual(actual, [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]);
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }],
+          actual = _.uniqWith(objects, lodashStable.isEqual);
+
+      assert.deepEqual(actual, [objects[0], objects[1]]);
     });
   }());
 
@@ -23441,15 +23439,14 @@
   QUnit.module('lodash.xorWith');
 
   (function() {
-    var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
-
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+          others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
           actual = _.xorWith(objects, others, lodashStable.isEqual);
 
-      assert.deepEqual(actual, [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]);
+      assert.deepEqual(actual, [objects[1], others[0]]);
     });
   }());
 

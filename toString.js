@@ -8,7 +8,7 @@ define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
 
   /** Used to convert symbols to primitives and strings. */
   var symbolProto = Symbol ? Symbol.prototype : undefined,
-      symbolToString = Symbol ? symbolProto.toString : undefined;
+      symbolToString = symbolProto ? symbolProto.toString : undefined;
 
   /**
    * Converts `value` to a string if it's not one. An empty string is returned
@@ -39,7 +39,7 @@ define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
       return '';
     }
     if (isSymbol(value)) {
-      return Symbol ? symbolToString.call(value) : '';
+      return symbolToString ? symbolToString.call(value) : '';
     }
     var result = (value + '');
     return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;

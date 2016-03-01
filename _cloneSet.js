@@ -8,8 +8,7 @@ define(['./_addSetEntry', './_arrayReduce', './_setToArray'], function(addSetEnt
    * @returns {Object} Returns the cloned set.
    */
   function cloneSet(set) {
-    var Ctor = set.constructor;
-    return arrayReduce(setToArray(set), addSetEntry, new Ctor);
+    return arrayReduce(setToArray(set), addSetEntry, new set.constructor);
   }
 
   return cloneSet;

@@ -2,7 +2,8 @@ define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], functi
 
   /**
    * Creates an array of unique values that is the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
-   * of the given arrays.
+   * of the given arrays. The order of result values is determined by the order
+   * they occur in the arrays.
    *
    * @static
    * @memberOf _

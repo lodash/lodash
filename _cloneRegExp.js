@@ -11,9 +11,7 @@ define([], function() {
    * @returns {Object} Returns the cloned regexp.
    */
   function cloneRegExp(regexp) {
-    var Ctor = regexp.constructor,
-        result = new Ctor(regexp.source, reFlags.exec(regexp));
-
+    var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
     result.lastIndex = regexp.lastIndex;
     return result;
   }

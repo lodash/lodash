@@ -3,6 +3,9 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
+  /** Used as the `TypeError` message for "Functions" methods. */
+  var FUNC_ERROR_TEXT = 'Expected a function';
+
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -10,9 +13,6 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
       CURRY_RIGHT_FLAG = 16,
       PARTIAL_FLAG = 32,
       PARTIAL_RIGHT_FLAG = 64;
-
-  /** Used as the `TypeError` message for "Functions" methods. */
-  var FUNC_ERROR_TEXT = 'Expected a function';
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMax = Math.max;

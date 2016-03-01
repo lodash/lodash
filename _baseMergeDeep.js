@@ -43,7 +43,7 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         }
         else {
           isCommon = false;
-          newValue = baseClone(srcValue, true);
+          newValue = baseClone(srcValue, !customizer);
         }
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -52,7 +52,7 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         }
         else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
           isCommon = false;
-          newValue = baseClone(srcValue, true);
+          newValue = baseClone(srcValue, !customizer);
         }
         else {
           newValue = objValue;
@@ -68,6 +68,7 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
       // Recursively merge objects and arrays (susceptible to call stack limits).
       mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
     }
+    stack['delete'](srcValue);
     assignMergeValue(object, key, newValue);
   }
 

@@ -25,8 +25,7 @@ define(['./_getLength', './isFunction', './isLength'], function(getLength, isFun
    * // => false
    */
   function isArrayLike(value) {
-    return value != null &&
-      !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+    return value != null && isLength(getLength(value)) && !isFunction(value);
   }
 
   return isArrayLike;

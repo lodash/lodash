@@ -1,7 +1,8 @@
 define(['./toString'], function(toString) {
 
   /**
-   * Converts `string`, as a whole, to lower case.
+   * Converts `string`, as a whole, to lower case just like
+   * [String#toLowerCase](https://mdn.io/toLowerCase).
    *
    * @static
    * @memberOf _

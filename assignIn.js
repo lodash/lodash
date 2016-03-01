@@ -1,4 +1,7 @@
-define(['./_copyObject', './_createAssigner', './keysIn'], function(copyObject, createAssigner, keysIn) {
+define(['./_assignValue', './_copyObject', './_createAssigner', './isArrayLike', './_isPrototype', './keysIn'], function(assignValue, copyObject, createAssigner, isArrayLike, isPrototype, keysIn) {
+
+  /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+  var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
 
   /**
    * This method is like `_.assign` except that it iterates over own and
@@ -30,7 +33,13 @@ define(['./_copyObject', './_createAssigner', './keysIn'], function(copyObject, 
    * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
    */
   var assignIn = createAssigner(function(object, source) {
-    copyObject(source, keysIn(source), object);
+    if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+      copyObject(source, keysIn(source), object);
+      return;
+    }
+    for (var key in source) {
+      assignValue(object, key, source[key]);
+    }
   });
 
   return assignIn;

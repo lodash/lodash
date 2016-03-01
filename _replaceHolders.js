@@ -15,14 +15,14 @@ define([], function() {
   function replaceHolders(array, placeholder) {
     var index = -1,
         length = array.length,
-        resIndex = -1,
+        resIndex = 0,
         result = [];
 
     while (++index < length) {
       var value = array[index];
       if (value === placeholder || value === PLACEHOLDER) {
         array[index] = PLACEHOLDER;
-        result[++resIndex] = index;
+        result[resIndex++] = index;
       }
     }
     return result;

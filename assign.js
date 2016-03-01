@@ -1,4 +1,13 @@
-define(['./_copyObject', './_createAssigner', './keys'], function(copyObject, createAssigner, keys) {
+define(['./_assignValue', './_copyObject', './_createAssigner', './isArrayLike', './_isPrototype', './keys'], function(assignValue, copyObject, createAssigner, isArrayLike, isPrototype, keys) {
+
+  /** Used for built-in method references. */
+  var objectProto = Object.prototype;
+
+  /** Used to check objects for own properties. */
+  var hasOwnProperty = objectProto.hasOwnProperty;
+
+  /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+  var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
 
   /**
    * Assigns own enumerable properties of source objects to the destination
@@ -31,7 +40,15 @@ define(['./_copyObject', './_createAssigner', './keys'], function(copyObject, cr
    * // => { 'a': 1, 'c': 3, 'e': 5 }
    */
   var assign = createAssigner(function(object, source) {
-    copyObject(source, keys(source), object);
+    if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+      copyObject(source, keys(source), object);
+      return;
+    }
+    for (var key in source) {
+      if (hasOwnProperty.call(source, key)) {
+        assignValue(object, key, source[key]);
+      }
+    }
   });
 
   return assign;

@@ -1,5 +1,8 @@
 define(['./_composeArgs', './_composeArgsRight', './_copyArray', './_replaceHolders'], function(composeArgs, composeArgsRight, copyArray, replaceHolders) {
 
+  /** Used as the internal argument placeholder. */
+  var PLACEHOLDER = '__lodash_placeholder__';
+
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
@@ -7,9 +10,6 @@ define(['./_composeArgs', './_composeArgsRight', './_copyArray', './_replaceHold
       CURRY_FLAG = 8,
       ARY_FLAG = 128,
       REARG_FLAG = 256;
-
-  /** Used as the internal argument placeholder. */
-  var PLACEHOLDER = '__lodash_placeholder__';
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;

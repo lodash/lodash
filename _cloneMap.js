@@ -8,8 +8,7 @@ define(['./_addMapEntry', './_arrayReduce', './_mapToArray'], function(addMapEnt
    * @returns {Object} Returns the cloned map.
    */
   function cloneMap(map) {
-    var Ctor = map.constructor;
-    return arrayReduce(mapToArray(map), addMapEntry, new Ctor);
+    return arrayReduce(mapToArray(map), addMapEntry, new map.constructor);
   }
 
   return cloneMap;

@@ -1,6 +1,6 @@
 var mapping = require('./_mapping'),
     mutateMap = mapping.mutate,
-    placeholder = {};
+    fallbackHolder = {};
 
 /**
  * The base implementation of `convert` which accepts a `util` object of methods
@@ -40,7 +40,8 @@ function baseConvert(util, name, func, options) {
     'rearg': 'rearg' in options ? options.rearg : true
   };
 
-  var forceRearg = ('rearg' in options) && options.rearg;
+  var forceRearg = ('rearg' in options) && options.rearg,
+      placeholder = isLib ? func : fallbackHolder;
 
   var helpers = isLib ? func : {
     'ary': util.ary,

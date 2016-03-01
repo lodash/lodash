@@ -715,7 +715,20 @@
   QUnit.module('placeholder methods');
 
   (function() {
-    QUnit.test('should support placeholders', function(assert) {
+    QUnit.test('should use `fp` as the default placeholder', function(assert) {
+      assert.expect(3);
+
+      var actual = fp.add(fp, 'b')('a');
+      assert.strictEqual(actual, 'ab');
+
+      actual = fp.slice(fp, 2)(1)(['a', 'b', 'c']);
+      assert.deepEqual(actual, ['b']);
+
+      actual = fp.fill(fp, 2)(1, '*')([1, 2, 3]);
+      assert.deepEqual(actual, [1, '*', 3]);
+    });
+
+    QUnit.test('should support `fp.placeholder`', function(assert) {
       assert.expect(6);
 
       _.each([[], fp.__], function(ph) {

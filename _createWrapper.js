@@ -8,6 +8,9 @@ import mergeData from './_mergeData';
 import setData from './_setData';
 import toInteger from './toInteger';
 
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
     BIND_KEY_FLAG = 2,
@@ -15,9 +18,6 @@ var BIND_FLAG = 1,
     CURRY_RIGHT_FLAG = 16,
     PARTIAL_FLAG = 32,
     PARTIAL_RIGHT_FLAG = 64;
-
-/** Used as the `TypeError` message for "Functions" methods. */
-var FUNC_ERROR_TEXT = 'Expected a function';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;

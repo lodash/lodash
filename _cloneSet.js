@@ -10,8 +10,7 @@ import setToArray from './_setToArray';
  * @returns {Object} Returns the cloned set.
  */
 function cloneSet(set) {
-  var Ctor = set.constructor;
-  return arrayReduce(setToArray(set), addSetEntry, new Ctor);
+  return arrayReduce(setToArray(set), addSetEntry, new set.constructor);
 }
 
 export default cloneSet;

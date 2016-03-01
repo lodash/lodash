@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.5.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.5.1';
+var VERSION = '4.6.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -179,6 +179,7 @@ lodash.propertyOf = util.propertyOf;
 lodash.pull = array.pull;
 lodash.pullAll = array.pullAll;
 lodash.pullAllBy = array.pullAllBy;
+lodash.pullAllWith = array.pullAllWith;
 lodash.pullAt = array.pullAt;
 lodash.range = util.range;
 lodash.rangeRight = util.rangeRight;
@@ -221,6 +222,8 @@ lodash.uniqWith = array.uniqWith;
 lodash.unset = object.unset;
 lodash.unzip = array.unzip;
 lodash.unzipWith = array.unzipWith;
+lodash.update = object.update;
+lodash.updateWith = object.updateWith;
 lodash.values = object.values;
 lodash.valuesIn = object.valuesIn;
 lodash.without = array.without;

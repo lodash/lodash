@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.5.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -201,6 +201,7 @@ export { default as propertyOf } from './propertyOf';
 export { default as pull } from './pull';
 export { default as pullAll } from './pullAll';
 export { default as pullAllBy } from './pullAllBy';
+export { default as pullAllWith } from './pullAllWith';
 export { default as pullAt } from './pullAt';
 export { default as random } from './random';
 export { default as range } from './range';
@@ -283,6 +284,8 @@ export { default as uniqueId } from './uniqueId';
 export { default as unset } from './unset';
 export { default as unzip } from './unzip';
 export { default as unzipWith } from './unzipWith';
+export { default as update } from './update';
+export { default as updateWith } from './updateWith';
 export { default as upperCase } from './upperCase';
 export { default as upperFirst } from './upperFirst';
 export { default as value } from './value';

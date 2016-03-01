@@ -12,9 +12,9 @@ var UNORDERED_COMPARE_FLAG = 1,
  * @param {Array} array The array to compare.
  * @param {Array} other The other array to compare.
  * @param {Function} equalFunc The function to determine equivalents of values.
- * @param {Function} [customizer] The function to customize comparisons.
- * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
- * @param {Object} [stack] Tracks traversed `array` and `other` objects.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual` for more details.
+ * @param {Object} stack Tracks traversed `array` and `other` objects.
  * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
  */
 function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {

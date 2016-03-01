@@ -27,8 +27,7 @@ import isLength from './isLength';
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 export default isArrayLike;

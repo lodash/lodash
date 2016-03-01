@@ -9,11 +9,8 @@ import cloneArrayBuffer from './_cloneArrayBuffer';
  * @returns {Object} Returns the cloned typed array.
  */
 function cloneTypedArray(typedArray, isDeep) {
-  var arrayBuffer = typedArray.buffer,
-      buffer = isDeep ? cloneArrayBuffer(arrayBuffer) : arrayBuffer,
-      Ctor = typedArray.constructor;
-
-  return new Ctor(buffer, typedArray.byteOffset, typedArray.length);
+  var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
+  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
 export default cloneTypedArray;

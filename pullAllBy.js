@@ -1,10 +1,10 @@
 import baseIteratee from './_baseIteratee';
-import basePullAllBy from './_basePullAllBy';
+import basePullAll from './_basePullAll';
 
 /**
  * This method is like `_.pullAll` except that it accepts `iteratee` which is
  * invoked for each element of `array` and `values` to generate the criterion
- * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+ * by which they're compared. The iteratee is invoked with one argument: (value).
  *
  * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
  *
@@ -25,7 +25,7 @@ import basePullAllBy from './_basePullAllBy';
  */
 function pullAllBy(array, values, iteratee) {
   return (array && array.length && values && values.length)
-    ? basePullAllBy(array, values, baseIteratee(iteratee))
+    ? basePullAll(array, values, baseIteratee(iteratee))
     : array;
 }
 

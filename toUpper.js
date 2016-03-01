@@ -1,7 +1,8 @@
 import toString from './toString';
 
 /**
- * Converts `string`, as a whole, to upper case.
+ * Converts `string`, as a whole, to upper case just like
+ * [String#toUpperCase](https://mdn.io/toUpperCase).
  *
  * @static
  * @memberOf _

@@ -38,6 +38,8 @@ export { default as toPairs } from './toPairs';
 export { default as toPairsIn } from './toPairsIn';
 export { default as transform } from './transform';
 export { default as unset } from './unset';
+export { default as update } from './update';
+export { default as updateWith } from './updateWith';
 export { default as values } from './values';
 export { default as valuesIn } from './valuesIn';
 export { default as default } from './object.default';

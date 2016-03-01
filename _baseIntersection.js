@@ -5,6 +5,9 @@ import arrayMap from './_arrayMap';
 import baseUnary from './_baseUnary';
 import cacheHas from './_cacheHas';
 
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMin = Math.min;
+
 /**
  * The base implementation of methods like `_.intersection`, without support
  * for iteratee shorthands, that accepts an array of arrays to inspect.
@@ -17,9 +20,11 @@ import cacheHas from './_cacheHas';
  */
 function baseIntersection(arrays, iteratee, comparator) {
   var includes = comparator ? arrayIncludesWith : arrayIncludes,
+      length = arrays[0].length,
       othLength = arrays.length,
       othIndex = othLength,
       caches = Array(othLength),
+      maxLength = Infinity,
       result = [];
 
   while (othIndex--) {
@@ -27,18 +32,18 @@ function baseIntersection(arrays, iteratee, comparator) {
     if (othIndex && iteratee) {
       array = arrayMap(array, baseUnary(iteratee));
     }
-    caches[othIndex] = !comparator && (iteratee || array.length >= 120)
+    maxLength = nativeMin(array.length, maxLength);
+    caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
       ? new SetCache(othIndex && array)
       : undefined;
   }
   array = arrays[0];
 
   var index = -1,
-      length = array.length,
       seen = caches[0];
 
   outer:
-  while (++index < length) {
+  while (++index < length && result.length < maxLength) {
     var value = array[index],
         computed = iteratee ? iteratee(value) : value;
 
@@ -46,7 +51,7 @@ function baseIntersection(arrays, iteratee, comparator) {
           ? cacheHas(seen, computed)
           : includes(result, computed, comparator)
         )) {
-      var othIndex = othLength;
+      othIndex = othLength;
       while (--othIndex) {
         var cache = caches[othIndex];
         if (!(cache

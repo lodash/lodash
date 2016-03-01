@@ -38,6 +38,8 @@ import toPairs from './toPairs';
 import toPairsIn from './toPairsIn';
 import transform from './transform';
 import unset from './unset';
+import update from './update';
+import updateWith from './updateWith';
 import values from './values';
 import valuesIn from './valuesIn';
 
@@ -50,5 +52,5 @@ export default {
   mapKeys, mapValues, merge, mergeWith, omit,
   omitBy, pick, pickBy, result, set,
   setWith, toPairs, toPairsIn, transform, unset,
-  values, valuesIn
+  update, updateWith, values, valuesIn
 };

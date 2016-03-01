@@ -6,17 +6,17 @@ var LodashWrapper = require('./_LodashWrapper'),
     isLaziable = require('./_isLaziable'),
     rest = require('./rest');
 
-/** Used to compose bitmasks for wrapper metadata. */
-var CURRY_FLAG = 8,
-    PARTIAL_FLAG = 32,
-    ARY_FLAG = 128,
-    REARG_FLAG = 256;
-
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used to compose bitmasks for wrapper metadata. */
+var CURRY_FLAG = 8,
+    PARTIAL_FLAG = 32,
+    ARY_FLAG = 128,
+    REARG_FLAG = 256;
 
 /**
  * Creates a `_.flow` or `_.flowRight` function.

@@ -50,7 +50,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       }
       else {
         isCommon = false;
-        newValue = baseClone(srcValue, true);
+        newValue = baseClone(srcValue, !customizer);
       }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -59,7 +59,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
         isCommon = false;
-        newValue = baseClone(srcValue, true);
+        newValue = baseClone(srcValue, !customizer);
       }
       else {
         newValue = objValue;
@@ -75,6 +75,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
     // Recursively merge objects and arrays (susceptible to call stack limits).
     mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
   }
+  stack['delete'](srcValue);
   assignMergeValue(object, key, newValue);
 }
 

@@ -1,6 +1,12 @@
-var copyObject = require('./_copyObject'),
+var assignValue = require('./_assignValue'),
+    copyObject = require('./_copyObject'),
     createAssigner = require('./_createAssigner'),
+    isArrayLike = require('./isArrayLike'),
+    isPrototype = require('./_isPrototype'),
     keysIn = require('./keysIn');
+
+/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
 
 /**
  * This method is like `_.assign` except that it iterates over own and
@@ -32,7 +38,13 @@ var copyObject = require('./_copyObject'),
  * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
  */
 var assignIn = createAssigner(function(object, source) {
-  copyObject(source, keysIn(source), object);
+  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+    copyObject(source, keysIn(source), object);
+    return;
+  }
+  for (var key in source) {
+    assignValue(object, key, source[key]);
+  }
 });
 
 module.exports = assignIn;

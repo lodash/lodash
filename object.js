@@ -39,6 +39,8 @@ module.exports = {
   'toPairsIn': require('./toPairsIn'),
   'transform': require('./transform'),
   'unset': require('./unset'),
+  'update': require('./update'),
+  'updateWith': require('./updateWith'),
   'values': require('./values'),
   'valuesIn': require('./valuesIn')
 };

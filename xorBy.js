@@ -8,7 +8,7 @@ var arrayFilter = require('./_arrayFilter'),
 /**
  * This method is like `_.xor` except that it accepts `iteratee` which is
  * invoked for each element of each `arrays` to generate the criterion by which
- * uniqueness is computed. The iteratee is invoked with one argument: (value).
+ * by which they're compared. The iteratee is invoked with one argument: (value).
  *
  * @static
  * @memberOf _

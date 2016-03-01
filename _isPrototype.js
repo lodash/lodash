@@ -1,5 +1,3 @@
-var isFunction = require('./isFunction');
-
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -12,7 +10,7 @@ var objectProto = Object.prototype;
  */
 function isPrototype(value) {
   var Ctor = value && value.constructor,
-      proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
   return value === proto;
 }

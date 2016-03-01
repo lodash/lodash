@@ -6,15 +6,16 @@ var arrayMap = require('./_arrayMap'),
 
 /**
  * This method is like `_.intersection` except that it accepts `comparator`
- * which is invoked to compare elements of `arrays`. The comparator is invoked
- * with two arguments: (arrVal, othVal).
+ * which is invoked to compare elements of `arrays`. Result values are chosen
+ * from the first array. The comparator is invoked with two arguments:
+ * (arrVal, othVal).
  *
  * @static
  * @memberOf _
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} [comparator] The comparator invoked per element.
- * @returns {Array} Returns the new array of shared values.
+ * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
  * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];

@@ -28,6 +28,7 @@ module.exports = {
   'pull': require('./pull'),
   'pullAll': require('./pullAll'),
   'pullAllBy': require('./pullAllBy'),
+  'pullAllWith': require('./pullAllWith'),
   'pullAt': require('./pullAt'),
   'remove': require('./remove'),
   'reverse': require('./reverse'),

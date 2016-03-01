@@ -32,11 +32,11 @@ function chunk(array, size) {
     return [];
   }
   var index = 0,
-      resIndex = -1,
+      resIndex = 0,
       result = Array(nativeCeil(length / size));
 
   while (index < length) {
-    result[++resIndex] = baseSlice(array, index, (index += size));
+    result[resIndex++] = baseSlice(array, index, (index += size));
   }
   return result;
 }

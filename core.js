@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.5.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.6.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,10 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.5.1';
+  var VERSION = '4.6.0';
+
+  /** Used as the `TypeError` message for "Functions" methods. */
+  var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -22,9 +25,6 @@
   /** Used to compose bitmasks for comparison styles. */
   var UNORDERED_COMPARE_FLAG = 1,
       PARTIAL_COMPARE_FLAG = 2;
-
-  /** Used as the `TypeError` message for "Functions" methods. */
-  var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used as references for various `Number` constants. */
   var INFINITY = 1 / 0,
@@ -426,46 +426,48 @@
    * `after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,
    * `before`, `bind`, `bindAll`, `bindKey`, `castArray`, `chain`, `chunk`,
    * `commit`, `compact`, `concat`, `conforms`, `constant`, `countBy`, `create`,
-   * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`, `difference`,
-   * `differenceBy`, `differenceWith`, `drop`, `dropRight`, `dropRightWhile`,
-   * `dropWhile`, `fill`, `filter`, `flatten`, `flattenDeep`, `flattenDepth`,
-   * `flip`, `flow`, `flowRight`, `fromPairs`, `functions`, `functionsIn`,
-   * `groupBy`, `initial`, `intersection`, `intersectionBy`, `intersectionWith`,
-   * `invert`, `invertBy`, `invokeMap`, `iteratee`, `keyBy`, `keys`, `keysIn`,
-   * `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`, `memoize`,
-   * `merge`, `mergeWith`, `method`, `methodOf`, `mixin`, `negate`, `nthArg`,
-   * `omit`, `omitBy`, `once`, `orderBy`, `over`, `overArgs`, `overEvery`,
-   * `overSome`, `partial`, `partialRight`, `partition`, `pick`, `pickBy`, `plant`,
-   * `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`, `pullAt`, `push`,
-   * `range`, `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`,
-   * `sampleSize`, `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`,
-   * `splice`, `spread`, `tail`, `take`, `takeRight`, `takeRightWhile`,
-   * `takeWhile`, `tap`, `throttle`, `thru`, `toArray`, `toPairs`, `toPairsIn`,
-   * `toPath`, `toPlainObject`, `transform`, `unary`, `union`, `unionBy`,
-   * `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`, `unshift`, `unzip`,
-   * `unzipWith`, `values`, `valuesIn`, `without`, `wrap`, `xor`, `xorBy`,
-   * `xorWith`, `zip`, `zipObject`, `zipObjectDeep`, and `zipWith`
+   * `curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,
+   * `difference`, `differenceBy`, `differenceWith`, `drop`, `dropRight`,
+   * `dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,
+   * `flatten`, `flattenDeep`, `flattenDepth`, `flip`, `flow`, `flowRight`,
+   * `fromPairs`, `functions`, `functionsIn`, `groupBy`, `initial`, `intersection`,
+   * `intersectionBy`, `intersectionWith`, `invert`, `invertBy`, `invokeMap`,
+   * `iteratee`, `keyBy`, `keys`, `keysIn`, `map`, `mapKeys`, `mapValues`,
+   * `matches`, `matchesProperty`, `memoize`, `merge`, `mergeWith`, `method`,
+   * `methodOf`, `mixin`, `negate`, `nthArg`, `omit`, `omitBy`, `once`, `orderBy`,
+   * `over`, `overArgs`, `overEvery`, `overSome`, `partial`, `partialRight`,
+   * `partition`, `pick`, `pickBy`, `plant`, `property`, `propertyOf`, `pull`,
+   * `pullAll`, `pullAllBy`, `pullAllWith`, `pullAt`, `push`, `range`,
+   * `rangeRight`, `rearg`, `reject`, `remove`, `rest`, `reverse`, `sampleSize`,
+   * `set`, `setWith`, `shuffle`, `slice`, `sort`, `sortBy`, `splice`, `spread`,
+   * `tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
+   * `thru`, `toArray`, `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`,
+   * `transform`, `unary`, `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`,
+   * `uniqWith`, `unset`, `unshift`, `unzip`, `unzipWith`, `update`, `values`,
+   * `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`, `zipObject`,
+   * `zipObjectDeep`, and `zipWith`
    *
    * The wrapper methods that are **not** chainable by default are:
    * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
-   * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `endsWith`, `eq`,
-   * `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
-   * `findLastIndex`, `findLastKey`, `floor`, `forEach`, `forEachRight`, `forIn`,
-   * `forInRight`, `forOwn`, `forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`,
-   * `head`, `identity`, `includes`, `indexOf`, `inRange`, `invoke`, `isArguments`,
-   * `isArray`, `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
-   * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
-   * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
-   * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-   * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-   * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
-   * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
-   * `lt`, `lte`, `max`, `maxBy`, `mean`, `min`, `minBy`, `noConflict`, `noop`,
-   * `now`, `pad`, `padEnd`, `padStart`, `parseInt`, `pop`, `random`, `reduce`,
-   * `reduceRight`, `repeat`, `result`, `round`, `runInContext`, `sample`,
-   * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`,
-   * `sortedLastIndex`, `sortedLastIndexBy`, `startCase`, `startsWith`, `subtract`,
-   * `sum`, `sumBy`, `template`, `times`, `toLower`, `toInteger`, `toLength`,
+   * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `each`, `eachRight`,
+   * `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`,
+   * `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`, `floor`,
+   * `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`, `forOwnRight`,
+   * `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`, `includes`,
+   * `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`, `isArrayBuffer`,
+   * `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isBuffer`, `isDate`,
+   * `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`, `isFinite`,
+   * `isFunction`, `isInteger`, `isLength`, `isMap`, `isMatch`, `isMatchWith`,
+   * `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`, `isObject`, `isObjectLike`,
+   * `isPlainObject`, `isRegExp`, `isSafeInteger`, `isSet`, `isString`,
+   * `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`, `join`, `kebabCase`,
+   * `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`,
+   * `maxBy`, `mean`, `min`, `minBy`, `noConflict`, `noop`, `now`, `pad`,
+   * `padEnd`, `padStart`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+   * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
+   * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+   * `sortedLastIndexBy`, `startCase`, `startsWith`, `subtract`, `sum`, `sumBy`,
+   * `template`, `times`, `toInteger`, `toJSON`, `toLength`, `toLower`,
    * `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`, `trimEnd`,
    * `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`, `upperFirst`,
    * `value`, and `words`
@@ -765,35 +767,16 @@
 
     if (!objIsArr) {
       objTag = objectToString.call(object);
-      if (objTag == argsTag) {
-        objTag = objectTag;
-      }
+      objTag = objTag == argsTag ? objectTag : objTag;
     }
     if (!othIsArr) {
       othTag = objectToString.call(other);
-      if (othTag == argsTag) {
-        othTag = objectTag;
-      }
+      othTag = othTag == argsTag ? objectTag : othTag;
     }
     var objIsObj = objTag == objectTag && !isHostObject(object),
         othIsObj = othTag == objectTag && !isHostObject(other),
         isSameTag = objTag == othTag;
 
-    if (isSameTag && !(objIsArr || objIsObj)) {
-      return equalByTag(object, other, objTag, equalFunc, customizer, bitmask);
-    }
-    var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
-    if (!isPartial) {
-      var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-          othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-      if (objIsWrapped || othIsWrapped) {
-        return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stack);
-      }
-    }
-    if (!isSameTag) {
-      return false;
-    }
     stack || (stack = []);
     var stacked = find(stack, function(entry) {
       return entry[0] === object;
@@ -802,7 +785,27 @@
       return stacked[1] == other;
     }
     stack.push([object, other]);
-    var result =  (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, bitmask, stack);
+    if (isSameTag && !objIsObj) {
+      var result = (objIsArr || isTypedArray(object))
+        ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
+        : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
+      stack.pop();
+      return result;
+    }
+    if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
+      var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+          othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+      if (objIsWrapped || othIsWrapped) {
+        var result = equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stack);
+        stack.pop();
+        return result;
+      }
+    }
+    if (!isSameTag) {
+      return false;
+    }
+    var result = equalObjects(object, other, equalFunc, customizer, bitmask, stack);
     stack.pop();
     return result;
   }
@@ -1205,9 +1208,9 @@
    * @param {Array} array The array to compare.
    * @param {Array} other The other array to compare.
    * @param {Function} equalFunc The function to determine equivalents of values.
-   * @param {Function} [customizer] The function to customize comparisons.
-   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-   * @param {Object} [stack] Tracks traversed `array` and `other` objects.
+   * @param {Function} customizer The function to customize comparisons.
+   * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual` for more details.
+   * @param {Object} stack Tracks traversed `array` and `other` objects.
    * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
    */
   function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
@@ -1263,11 +1266,12 @@
    * @param {Object} other The other object to compare.
    * @param {string} tag The `toStringTag` of the objects to compare.
    * @param {Function} equalFunc The function to determine equivalents of values.
-   * @param {Function} [customizer] The function to customize comparisons.
-   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
+   * @param {Function} customizer The function to customize comparisons.
+   * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual` for more details.
+   * @param {Object} stack Tracks traversed `object` and `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
-  function equalByTag(object, other, tag, equalFunc, customizer, bitmask) {
+  function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
     switch (tag) {
 
       case boolTag:
@@ -1301,9 +1305,9 @@
    * @param {Object} object The object to compare.
    * @param {Object} other The other object to compare.
    * @param {Function} equalFunc The function to determine equivalents of values.
-   * @param {Function} [customizer] The function to customize comparisons.
-   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
-   * @param {Object} [stack] Tracks traversed `object` and `other` objects.
+   * @param {Function} customizer The function to customize comparisons.
+   * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual` for more details.
+   * @param {Object} stack Tracks traversed `object` and `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
   function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
@@ -1395,7 +1399,7 @@
    */
   function isPrototype(value) {
     var Ctor = value && value.constructor,
-        proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
+        proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
     return value === proto;
   }
@@ -2452,8 +2456,7 @@
    * // => false
    */
   function isArrayLike(value) {
-    return value != null &&
-      !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+    return value != null && isLength(getLength(value)) && !isFunction(value);
   }
 
   /**
@@ -2525,14 +2528,14 @@
   }
 
   /**
-   * Checks if `value` is empty. A value is considered empty unless it's an
-   * `arguments` object, array, string, or jQuery-like collection with a length
-   * greater than `0` or an object with own enumerable properties.
+   * Checks if `value` is an empty collection or object. A value is considered
+   * empty if it's an `arguments` object, array, string, or jQuery-like collection
+   * with a length of `0` or has no own enumerable properties.
    *
    * @static
    * @memberOf _
    * @category Lang
-   * @param {Array|Object|string} value The value to inspect.
+   * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is empty, else `false`.
    * @example
    *
@@ -2642,8 +2645,8 @@
    */
   function isFunction(value) {
     // The use of `Object#toString` avoids issues with the `typeof` operator
-    // in Safari 8 which returns 'object' for typed array constructors, and
-    // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+    // in Safari 8 which returns 'object' for typed array and weak map constructors,
+    // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
     var tag = isObject(value) ? objectToString.call(value) : '';
     return tag == funcTag || tag == genTag;
   }

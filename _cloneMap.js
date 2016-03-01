@@ -10,8 +10,7 @@ var addMapEntry = require('./_addMapEntry'),
  * @returns {Object} Returns the cloned map.
  */
 function cloneMap(map) {
-  var Ctor = map.constructor;
-  return arrayReduce(mapToArray(map), addMapEntry, new Ctor);
+  return arrayReduce(mapToArray(map), addMapEntry, new map.constructor);
 }
 
 module.exports = cloneMap;

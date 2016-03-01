@@ -1,5 +1,4 @@
 var baseCreate = require('./_baseCreate'),
-    isFunction = require('./isFunction'),
     isPrototype = require('./_isPrototype');
 
 /** Built-in value references. */
@@ -13,7 +12,7 @@ var getPrototypeOf = Object.getPrototypeOf;
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
-  return (isFunction(object.constructor) && !isPrototype(object))
+  return (typeof object.constructor == 'function' && !isPrototype(object))
     ? baseCreate(getPrototypeOf(object))
     : {};
 }

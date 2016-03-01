@@ -1,6 +1,18 @@
-var copyObject = require('./_copyObject'),
+var assignValue = require('./_assignValue'),
+    copyObject = require('./_copyObject'),
     createAssigner = require('./_createAssigner'),
+    isArrayLike = require('./isArrayLike'),
+    isPrototype = require('./_isPrototype'),
     keys = require('./keys');
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
+var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
 
 /**
  * Assigns own enumerable properties of source objects to the destination
@@ -33,7 +45,15 @@ var copyObject = require('./_copyObject'),
  * // => { 'a': 1, 'c': 3, 'e': 5 }
  */
 var assign = createAssigner(function(object, source) {
-  copyObject(source, keys(source), object);
+  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+    copyObject(source, keys(source), object);
+    return;
+  }
+  for (var key in source) {
+    if (hasOwnProperty.call(source, key)) {
+      assignValue(object, key, source[key]);
+    }
+  }
 });
 
 module.exports = assign;

@@ -6,8 +6,9 @@ var baseDifference = require('./_baseDifference'),
 
 /**
  * This method is like `_.difference` except that it accepts `comparator`
- * which is invoked to compare elements of `array` to `values`. The comparator
- * is invoked with two arguments: (arrVal, othVal).
+ * which is invoked to compare elements of `array` to `values`. Result values
+ * are chosen from the first array. The comparator is invoked with two arguments:
+ * (arrVal, othVal).
  *
  * @static
  * @memberOf _

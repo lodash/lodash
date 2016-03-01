@@ -55,25 +55,25 @@ exports.aryMethod = {
     'hasIn', 'includes', 'indexOf', 'intersection', 'invertBy', 'invoke', 'invokeMap',
     'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map',
     'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy', 'omit',
-    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt',
-    'partial', 'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
-    'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
-    'repeat', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
-    'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
-    'split', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile',
-    'takeWhile', 'tap', 'throttle', 'thru', 'times', 'trimChars', 'trimCharsEnd',
-    'trimCharsStart', 'truncate', 'union', 'uniqBy', 'uniqWith', 'unset',
-    'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
+    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
+    'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt',
+    'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'result',
+    'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf', 'sortedLastIndex',
+    'sortedLastIndexOf', 'sortedUniqBy', 'split', 'startsWith', 'subtract', 'sumBy',
+    'take', 'takeRight', 'takeRightWhile', 'takeWhile', 'tap', 'throttle', 'thru',
+    'times', 'trimChars', 'trimCharsEnd', 'trimCharsStart', 'truncate', 'union',
+    'uniqBy', 'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip',
+    'zipObject', 'zipObjectDeep'
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
     'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-    'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'reduce', 'reduceRight',
-    'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform',
-    'unionBy', 'unionWith', 'xorBy', 'xorWith', 'zipWith'
+    'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'pullAllWith', 'reduce',
+    'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
+    'transform', 'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
-    'fill', 'setWith'
+    'fill', 'setWith', 'updateWith'
   ]
 };
 
@@ -137,9 +137,11 @@ exports.methodRearg = {
   'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
   'pullAllBy': [2, 1, 0],
+  'pullAllWith': [2, 1, 0],
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
   'sortedLastIndexBy': [2, 1, 0],
+  'updateWith': [3, 1, 2, 0],
   'zipWith': [1, 2, 0]
 };
 
@@ -156,6 +158,7 @@ exports.mutate = {
     'pull': true,
     'pullAll': true,
     'pullAllBy': true,
+    'pullAllWith': true,
     'pullAt': true,
     'remove': true,
     'reverse': true
@@ -173,7 +176,9 @@ exports.mutate = {
   'set': {
     'set': true,
     'setWith': true,
-    'unset': true
+    'unset': true,
+    'update': true,
+    'updateWith': true
   }
 };
 

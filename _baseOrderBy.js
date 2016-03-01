@@ -14,12 +14,8 @@ var arrayMap = require('./_arrayMap'),
  * @returns {Array} Returns the new sorted array.
  */
 function baseOrderBy(collection, iteratees, orders) {
-  var index = -1,
-      toIteratee = baseIteratee;
-
-  iteratees = arrayMap(iteratees.length ? iteratees : Array(1), function(iteratee) {
-    return toIteratee(iteratee);
-  });
+  var index = -1;
+  iteratees = arrayMap(iteratees.length ? iteratees : Array(1), baseIteratee);
 
   var result = baseMap(collection, function(value, key, collection) {
     var criteria = arrayMap(iteratees, function(iteratee) {

@@ -2327,13 +2327,14 @@
      * @private
      * @param {*} value The value to clone.
      * @param {boolean} [isDeep] Specify a deep clone.
+     * @param {boolean} [isFull] Specify a clone including symbols.
      * @param {Function} [customizer] The function to customize cloning.
      * @param {string} [key] The key of `value`.
      * @param {Object} [object] The parent object of `value`.
      * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
      * @returns {*} Returns the cloned value.
      */
-    function baseClone(value, isDeep, customizer, key, object, stack) {
+    function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
       var result;
       if (customizer) {
         result = object ? customizer(value, key, object, stack) : customizer(value);
@@ -2363,7 +2364,8 @@
           }
           result = initCloneObject(isFunc ? {} : value);
           if (!isDeep) {
-            return copySymbols(value, baseAssign(result, value));
+            result = baseAssign(result, value);
+            return isFull ? copySymbols(value, result) : result;
           }
         } else {
           if (!cloneableTags[tag]) {
@@ -2382,9 +2384,9 @@
 
       // Recursively populate clone (susceptible to call stack limits).
       (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
-        assignValue(result, key, baseClone(subValue, isDeep, customizer, key, value, stack));
+        assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
       });
-      return isArr ? result : copySymbols(value, result);
+      return (isFull && !isArr) ? copySymbols(value, result) : result;
     }
 
     /**
@@ -9466,7 +9468,7 @@
      * // => true
      */
     function clone(value) {
-      return baseClone(value);
+      return baseClone(value, false, true);
     }
 
     /**
@@ -9499,7 +9501,7 @@
      * // => 0
      */
     function cloneWith(value, customizer) {
-      return baseClone(value, false, customizer);
+      return baseClone(value, false, true, customizer);
     }
 
     /**
@@ -9519,7 +9521,7 @@
      * // => false
      */
     function cloneDeep(value) {
-      return baseClone(value, true);
+      return baseClone(value, true, true);
     }
 
     /**
@@ -9549,7 +9551,7 @@
      * // => 20
      */
     function cloneDeepWith(value, customizer) {
-      return baseClone(value, true, customizer);
+      return baseClone(value, true, true, customizer);
     }
 
     /**

@@ -1,4 +1,4 @@
-# lodash v4.6.0
+# lodash v4.6.1
 
 The [lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
@@ -20,11 +20,11 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.6.0/LICENSE) & supports [modern environments](#support).<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.6.1/LICENSE) & supports [modern environments](#support).<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.6.0/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.6.0/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.6.0/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.6.0/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 ## Why Lodash?
@@ -43,10 +43,10 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
- * [lodash/fp](https://github.com/lodash/lodash/tree/4.6.0-npm/fp)
+ * [lodash/fp](https://github.com/lodash/lodash/tree/4.6.1-npm/fp)
 
 ## Further Reading
 
-  * [Contributing](https://github.com/lodash/lodash/blob/4.6.0/.github/CONTRIBUTING.md)
+  * [Contributing](https://github.com/lodash/lodash/blob/4.6.1/.github/CONTRIBUTING.md)
   * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
   * [Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki)

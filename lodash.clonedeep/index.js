@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,9 +13,11 @@ var baseClone = require('lodash._baseclone');
  *
  * @static
  * @memberOf _
+ * @since 1.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @returns {*} Returns the deep cloned value.
+ * @see _.clone
  * @example
  *
  * var objects = [{ 'a': 1 }, { 'b': 2 }];

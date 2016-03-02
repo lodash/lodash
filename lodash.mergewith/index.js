@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -111,7 +111,8 @@ var objectToString = objectProto.toString;
 var propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
 /**
- * This function is like `assignValue` except that it doesn't assign `undefined` values.
+ * This function is like `assignValue` except that it doesn't assign
+ * `undefined` values.
  *
  * @private
  * @param {Object} object The object to modify.
@@ -223,7 +224,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       }
       else {
         isCommon = false;
-        newValue = baseClone(srcValue, true);
+        newValue = baseClone(srcValue, !customizer);
       }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -232,7 +233,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
         isCommon = false;
-        newValue = baseClone(srcValue, true);
+        newValue = baseClone(srcValue, !customizer);
       }
       else {
         newValue = objValue;
@@ -248,6 +249,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
     // Recursively merge objects and arrays (susceptible to call stack limits).
     mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
   }
+  stack['delete'](srcValue);
   assignMergeValue(object, key, newValue);
 }
 
@@ -498,8 +500,7 @@ var isArray = Array.isArray;
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -547,8 +548,8 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

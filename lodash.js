@@ -1393,7 +1393,7 @@
     var metaMap = WeakMap && new WeakMap;
 
     /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-    var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+    var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
     /** Used to lookup unminified function names. */
     var realNames = {};

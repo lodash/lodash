@@ -1,4 +1,4 @@
-# lodash.isplainobject v4.0.5
+# lodash.isplainobject v4.0.6
 
 The [lodash](https://lodash.com/) method `_.isPlainObject` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isPlainObject = require('lodash.isplainobject');
 ```
 
-See the [documentation](https://lodash.com/docs#isPlainObject) or [package source](https://github.com/lodash/lodash/blob/4.0.5-npm-packages/lodash.isplainobject) for more details.
+See the [documentation](https://lodash.com/docs#isPlainObject) or [package source](https://github.com/lodash/lodash/blob/4.0.6-npm-packages/lodash.isplainobject) for more details.

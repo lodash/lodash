@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.5 (Custom Build) <https://lodash.com/>
+ * lodash 4.0.6 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -45,8 +45,11 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  */
 var objectToString = objectProto.toString;
 
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
 /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
 /**
  * Assigns `value` to `key` of `object` if the existing value is not equivalent

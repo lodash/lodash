@@ -30,7 +30,7 @@ function isHostObject(value) {
 }
 
 /**
- * Creates a function that invokes `func` with its first argument transformed.
+ * Creates a unary function that invokes `func` with its argument transformed.
  *
  * @private
  * @param {Function} func The function to wrap.
@@ -44,10 +44,11 @@ function overArg(func, transform) {
 }
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = Function.prototype.toString;
+var funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
@@ -57,22 +58,13 @@ var objectCtorString = funcToString.call(Object);
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeGetPrototype = Object.getPrototypeOf;
-
-/**
- * Gets the `[[Prototype]]` of `value`.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {null|Object} Returns the `[[Prototype]]`.
- */
-var getPrototype = overArg(nativeGetPrototype, Object);
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
@@ -111,8 +103,7 @@ function isObjectLike(value) {
  * @since 0.8.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
  * @example
  *
  * function Foo() {

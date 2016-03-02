@@ -25,7 +25,7 @@ var baseClone = require('./_baseClone');
  * // => true
  */
 function clone(value) {
-  return baseClone(value);
+  return baseClone(value, false, true);
 }
 
 module.exports = clone;

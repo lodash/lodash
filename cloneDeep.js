@@ -17,7 +17,7 @@ var baseClone = require('./_baseClone');
  * // => false
  */
 function cloneDeep(value) {
-  return baseClone(value, true);
+  return baseClone(value, true, true);
 }
 
 module.exports = cloneDeep;

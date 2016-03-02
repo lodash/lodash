@@ -30,7 +30,7 @@ var baseClone = require('./_baseClone');
  * // => 0
  */
 function cloneWith(value, customizer) {
-  return baseClone(value, false, customizer);
+  return baseClone(value, false, true, customizer);
 }
 
 module.exports = cloneWith;

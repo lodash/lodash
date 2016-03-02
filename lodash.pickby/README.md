@@ -1,4 +1,4 @@
-# lodash.pickby v4.2.1
+# lodash.pickby v4.2.2
 
 The [lodash](https://lodash.com/) method `_.pickBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var pickBy = require('lodash.pickby');
 ```
 
-See the [documentation](https://lodash.com/docs#pickBy) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.pickby) for more details.
+See the [documentation](https://lodash.com/docs#pickBy) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.pickby) for more details.

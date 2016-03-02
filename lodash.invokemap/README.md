@@ -1,4 +1,4 @@
-# lodash.invokemap v4.2.1
+# lodash.invokemap v4.2.2
 
 The [lodash](https://lodash.com/) method `_.invokeMap` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var invokeMap = require('lodash.invokemap');
 ```
 
-See the [documentation](https://lodash.com/docs#invokeMap) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.invokemap) for more details.
+See the [documentation](https://lodash.com/docs#invokeMap) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.invokemap) for more details.

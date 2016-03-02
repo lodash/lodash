@@ -5390,7 +5390,7 @@
      * @returns {*} Returns the parent value.
      */
     function parent(object, path) {
-      return path.length == 1 ? object : get(object, baseSlice(path, 0, -1));
+      return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
     }
 
     /**
@@ -11872,7 +11872,7 @@
     function result(object, path, defaultValue) {
       if (!isKey(path, object)) {
         path = baseCastPath(path);
-        var result = get(object, path);
+        var result = baseGet(object, path);
         object = parent(object, path);
       } else {
         result = object == null ? undefined : object[path];

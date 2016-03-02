@@ -1,7 +1,13 @@
 define(['./_assignValue', './_copyObject', './_createAssigner', './isArrayLike', './_isPrototype', './keysIn'], function(assignValue, copyObject, createAssigner, isArrayLike, isPrototype, keysIn) {
 
+  /** Used for built-in method references. */
+  var objectProto = Object.prototype;
+
+  /** Built-in value references. */
+  var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
   /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-  var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+  var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
   /**
    * This method is like `_.assign` except that it iterates over own and

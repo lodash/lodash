@@ -17,7 +17,7 @@ define(['./_baseClone'], function(baseClone) {
    * // => false
    */
   function cloneDeep(value) {
-    return baseClone(value, true);
+    return baseClone(value, true, true);
   }
 
   return cloneDeep;

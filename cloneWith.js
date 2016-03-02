@@ -30,7 +30,7 @@ define(['./_baseClone'], function(baseClone) {
    * // => 0
    */
   function cloneWith(value, customizer) {
-    return baseClone(value, false, customizer);
+    return baseClone(value, false, true, customizer);
   }
 
   return cloneWith;

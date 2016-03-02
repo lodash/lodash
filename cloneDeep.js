@@ -17,7 +17,7 @@ import baseClone from './_baseClone';
  * // => false
  */
 function cloneDeep(value) {
-  return baseClone(value, true);
+  return baseClone(value, true, true);
 }
 
 export default cloneDeep;

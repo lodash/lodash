@@ -30,7 +30,7 @@ import baseClone from './_baseClone';
  * // => 0
  */
 function cloneWith(value, customizer) {
-  return baseClone(value, false, customizer);
+  return baseClone(value, false, true, customizer);
 }
 
 export default cloneWith;

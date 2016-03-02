@@ -25,7 +25,7 @@ import baseClone from './_baseClone';
  * // => true
  */
 function clone(value) {
-  return baseClone(value);
+  return baseClone(value, false, true);
 }
 
 export default clone;

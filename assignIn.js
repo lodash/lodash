@@ -5,8 +5,14 @@ import isArrayLike from './isArrayLike';
 import isPrototype from './_isPrototype';
 import keysIn from './keysIn';
 
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
 /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
 /**
  * This method is like `_.assign` except that it iterates over own and

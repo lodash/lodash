@@ -27,7 +27,7 @@ import baseClone from './_baseClone';
  * // => 20
  */
 function cloneDeepWith(value, customizer) {
-  return baseClone(value, true, customizer);
+  return baseClone(value, true, true, customizer);
 }
 
 export default cloneDeepWith;

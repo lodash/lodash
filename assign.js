@@ -11,8 +11,11 @@ var objectProto = Object.prototype;
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
 
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
 /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-var nonEnumShadows = !({ 'valueOf': 1 }).propertyIsEnumerable('valueOf');
+var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
 /**
  * Assigns own enumerable properties of source objects to the destination

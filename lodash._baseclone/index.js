@@ -1,5 +1,5 @@
 /**
- * lodash 4.5.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.5.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -124,6 +124,7 @@ var root = freeGlobal ||
  * @returns {Object} Returns `map`.
  */
 function addMapEntry(map, pair) {
+  // Don't return `Map#set` because it doesn't return the map instance in IE 11.
   map.set(pair[0], pair[1]);
   return map;
 }
@@ -331,7 +332,7 @@ var mapCtorString = Map ? funcToString.call(Map) : '',
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,
-    symbolValueOf = Symbol ? symbolProto.valueOf : undefined;
+    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
 
 /**
  * Creates an hash object.
@@ -878,9 +879,7 @@ function cloneBuffer(buffer, isDeep) {
   if (isDeep) {
     return buffer.slice();
   }
-  var Ctor = buffer.constructor,
-      result = new Ctor(buffer.length);
-
+  var result = new buffer.constructor(buffer.length);
   buffer.copy(result);
   return result;
 }
@@ -893,11 +892,8 @@ function cloneBuffer(buffer, isDeep) {
  * @returns {ArrayBuffer} Returns the cloned array buffer.
  */
 function cloneArrayBuffer(arrayBuffer) {
-  var Ctor = arrayBuffer.constructor,
-      result = new Ctor(arrayBuffer.byteLength),
-      view = new Uint8Array(result);
-
-  view.set(new Uint8Array(arrayBuffer));
+  var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
+  new Uint8Array(result).set(new Uint8Array(arrayBuffer));
   return result;
 }
 
@@ -909,8 +905,7 @@ function cloneArrayBuffer(arrayBuffer) {
  * @returns {Object} Returns the cloned map.
  */
 function cloneMap(map) {
-  var Ctor = map.constructor;
-  return arrayReduce(mapToArray(map), addMapEntry, new Ctor);
+  return arrayReduce(mapToArray(map), addMapEntry, new map.constructor);
 }
 
 /**
@@ -921,9 +916,7 @@ function cloneMap(map) {
  * @returns {Object} Returns the cloned regexp.
  */
 function cloneRegExp(regexp) {
-  var Ctor = regexp.constructor,
-      result = new Ctor(regexp.source, reFlags.exec(regexp));
-
+  var result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
   result.lastIndex = regexp.lastIndex;
   return result;
 }
@@ -936,8 +929,7 @@ function cloneRegExp(regexp) {
  * @returns {Object} Returns the cloned set.
  */
 function cloneSet(set) {
-  var Ctor = set.constructor;
-  return arrayReduce(setToArray(set), addSetEntry, new Ctor);
+  return arrayReduce(setToArray(set), addSetEntry, new set.constructor);
 }
 
 /**
@@ -948,7 +940,7 @@ function cloneSet(set) {
  * @returns {Object} Returns the cloned symbol object.
  */
 function cloneSymbol(symbol) {
-  return Symbol ? Object(symbolValueOf.call(symbol)) : {};
+  return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {};
 }
 
 /**
@@ -960,11 +952,8 @@ function cloneSymbol(symbol) {
  * @returns {Object} Returns the cloned typed array.
  */
 function cloneTypedArray(typedArray, isDeep) {
-  var arrayBuffer = typedArray.buffer,
-      buffer = isDeep ? cloneArrayBuffer(arrayBuffer) : arrayBuffer,
-      Ctor = typedArray.constructor;
-
-  return new Ctor(buffer, typedArray.byteOffset, typedArray.length);
+  var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
+  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
 /**
@@ -1085,7 +1074,7 @@ var getLength = baseProperty('length');
  * @returns {*} Returns the function if it's native, else `undefined`.
  */
 function getNative(object, key) {
-  var value = object == null ? undefined : object[key];
+  var value = object[key];
   return isNative(value) ? value : undefined;
 }
 
@@ -1158,7 +1147,7 @@ function initCloneArray(array) {
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
-  return (isFunction(object.constructor) && !isPrototype(object))
+  return (typeof object.constructor == 'function' && !isPrototype(object))
     ? baseCreate(getPrototypeOf(object))
     : {};
 }
@@ -1247,7 +1236,7 @@ function isKeyable(value) {
  */
 function isPrototype(value) {
   var Ctor = value && value.constructor,
-      proto = (isFunction(Ctor) && Ctor.prototype) || objectProto;
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
   return value === proto;
 }
@@ -1358,8 +1347,7 @@ var isArray = Array.isArray;
  * // => false
  */
 function isArrayLike(value) {
-  return value != null &&
-    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+  return value != null && isLength(getLength(value)) && !isFunction(value);
 }
 
 /**
@@ -1427,8 +1415,8 @@ var isBuffer = !Buffer ? constant(false) : function(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array constructors, and
-  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }

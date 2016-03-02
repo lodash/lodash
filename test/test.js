@@ -7096,6 +7096,17 @@
       });
     });
 
+    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for nested inherited properties', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype.a = { 'b': 1 };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        assert.strictEqual(func(new Foo, path), !isHas);
+      });
+    });
+
     QUnit.test('`_.' + methodName + '` should return `true` for index values within bounds for arrays, `arguments` objects, and strings', function(assert) {
       assert.expect(1);
 

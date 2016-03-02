@@ -1033,7 +1033,7 @@ var getSymbols = nativeGetSymbols ? overArg(nativeGetSymbols, Object) : stubArra
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-var getSymbolsIn = !nativeGetSymbols ? getSymbols : function(object) {
+var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
   var result = [];
   while (object) {
     arrayPush(result, getSymbols(object));
@@ -1068,7 +1068,7 @@ function indexKeys(object) {
  */
 function isFlattenable(value) {
   return isArray(value) || isArguments(value) ||
-    !!(spreadableSymbol && value && value[spreadableSymbol])
+    !!(spreadableSymbol && value && value[spreadableSymbol]);
 }
 
 /**

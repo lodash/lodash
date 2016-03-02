@@ -1,5 +1,5 @@
 /**
- * lodash 4.4.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -55,6 +55,19 @@ function arrayMap(array, iteratee) {
   return result;
 }
 
+/**
+ * The base implementation of `_.unary` without support for storing wrapper metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -70,11 +83,14 @@ var objectToString = objectProto.toString;
  *
  * @private
  * @param {Function} arrayFunc The function to iterate over iteratees.
- * @returns {Function} Returns the new invoker function.
+ * @returns {Function} Returns the new over function.
  */
 function createOver(arrayFunc) {
   return rest(function(iteratees) {
-    iteratees = arrayMap(baseFlatten(iteratees, 1, isFlattenableIteratee), baseIteratee);
+    iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
+      ? arrayMap(iteratees[0], baseUnary(baseIteratee))
+      : arrayMap(baseFlatten(iteratees, 1, isFlattenableIteratee), baseUnary(baseIteratee));
+
     return rest(function(args) {
       var thisArg = this;
       return arrayFunc(iteratees, function(iteratee) {

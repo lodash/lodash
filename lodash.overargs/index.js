@@ -1,5 +1,5 @@
 /**
- * lodash 4.4.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -53,6 +53,19 @@ function arrayMap(array, iteratee) {
     result[index] = iteratee(array[index], index, array);
   }
   return result;
+}
+
+/**
+ * The base implementation of `_.unary` without support for storing wrapper metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
 }
 
 /** Used for built-in method references. */
@@ -113,7 +126,10 @@ function isFlattenableIteratee(value) {
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
+  transforms = (transforms.length == 1 && isArray(transforms[0]))
+    ? arrayMap(transforms[0], baseUnary(baseIteratee))
+    : arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseUnary(baseIteratee));
+
   var funcsLength = transforms.length;
   return rest(function(args) {
     var index = -1,

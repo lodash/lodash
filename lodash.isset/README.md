@@ -1,4 +1,4 @@
-# lodash.isset v4.3.1
+# lodash.isset v4.3.2
 
 The [lodash](https://lodash.com/) method `_.isSet` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isSet = require('lodash.isset');
 ```
 
-See the [documentation](https://lodash.com/docs#isSet) or [package source](https://github.com/lodash/lodash/blob/4.3.1-npm-packages/lodash.isset) for more details.
+See the [documentation](https://lodash.com/docs#isSet) or [package source](https://github.com/lodash/lodash/blob/4.3.2-npm-packages/lodash.isset) for more details.

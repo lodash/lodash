@@ -1,10 +1,10 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseClone = require('lodash._baseclone'),
     keys = require('lodash.keys');
@@ -14,7 +14,7 @@ var baseClone = require('lodash._baseclone'),
  *
  * @private
  * @param {Object} source The object of property predicates to conform to.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new spec function.
  */
 function baseConforms(source) {
   var props = keys(source),
@@ -30,7 +30,8 @@ function baseConforms(source) {
           predicate = source[key],
           value = object[key];
 
-      if ((value === undefined && !(key in Object(object))) || !predicate(value)) {
+      if ((value === undefined &&
+          !(key in Object(object))) || !predicate(value)) {
         return false;
       }
     }
@@ -45,9 +46,10 @@ function baseConforms(source) {
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Util
  * @param {Object} source The object of property predicates to conform to.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new spec function.
  * @example
  *
  * var users = [

@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,16 +10,18 @@ var baseClone = require('lodash._baseclone');
 
 /**
  * This method is like `_.clone` except that it accepts `customizer` which
- * is invoked to produce the cloned value. If `customizer` returns `undefined`
+ * is invoked to produce the cloned value. If `customizer` returns `undefined`,
  * cloning is handled by the method instead. The `customizer` is invoked with
  * up to four arguments; (value [, index|key, object, stack]).
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to clone.
  * @param {Function} [customizer] The function to customize cloning.
  * @returns {*} Returns the cloned value.
+ * @see _.cloneDeepWith
  * @example
  *
  * function customizer(value) {

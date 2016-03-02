@@ -1,4 +1,4 @@
-# lodash.overargs v4.4.0
+# lodash.overargs v4.4.1
 
 The [lodash](https://lodash.com/) method `_.overArgs` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var overArgs = require('lodash.overargs');
 ```
 
-See the [documentation](https://lodash.com/docs#overArgs) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.overargs) for more details.
+See the [documentation](https://lodash.com/docs#overArgs) or [package source](https://github.com/lodash/lodash/blob/4.4.1-npm-packages/lodash.overargs) for more details.

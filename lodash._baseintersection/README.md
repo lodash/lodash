@@ -1,4 +1,4 @@
-# lodash._baseintersection v4.4.0
+# lodash._baseintersection v4.4.1
 
 The internal [lodash](https://lodash.com/) function `baseIntersection` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var baseIntersection = require('lodash._baseintersection');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash._baseintersection) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.4.1-npm-packages/lodash._baseintersection) for more details.

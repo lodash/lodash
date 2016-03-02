@@ -1,5 +1,5 @@
 /**
- * lodash 4.4.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -25,8 +25,7 @@ function arrayIncludes(array, value) {
 }
 
 /**
- * A specialized version of `_.includesWith` for arrays without support for
- * specifying an index to search from.
+ * This function is like `arrayIncludes` except that it accepts a comparator.
  *
  * @private
  * @param {Array} array The array to search.
@@ -125,6 +124,9 @@ function indexOfNaN(array, fromIndex, fromRight) {
   return -1;
 }
 
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMin = Math.min;
+
 /**
  * Checks if `value` is in `cache`.
  *
@@ -156,9 +158,11 @@ function cacheHas(cache, value) {
  */
 function baseIntersection(arrays, iteratee, comparator) {
   var includes = comparator ? arrayIncludesWith : arrayIncludes,
+      length = arrays[0].length,
       othLength = arrays.length,
       othIndex = othLength,
       caches = Array(othLength),
+      maxLength = Infinity,
       result = [];
 
   while (othIndex--) {
@@ -166,18 +170,18 @@ function baseIntersection(arrays, iteratee, comparator) {
     if (othIndex && iteratee) {
       array = arrayMap(array, baseUnary(iteratee));
     }
-    caches[othIndex] = !comparator && (iteratee || array.length >= 120)
+    maxLength = nativeMin(array.length, maxLength);
+    caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
       ? new SetCache(othIndex && array)
       : undefined;
   }
   array = arrays[0];
 
   var index = -1,
-      length = array.length,
       seen = caches[0];
 
   outer:
-  while (++index < length) {
+  while (++index < length && result.length < maxLength) {
     var value = array[index],
         computed = iteratee ? iteratee(value) : value;
 
@@ -185,7 +189,7 @@ function baseIntersection(arrays, iteratee, comparator) {
           ? cacheHas(seen, computed)
           : includes(result, computed, comparator)
         )) {
-      var othIndex = othLength;
+      othIndex = othLength;
       while (--othIndex) {
         var cache = caches[othIndex];
         if (!(cache

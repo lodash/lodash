@@ -1,4 +1,4 @@
-# lodash.flattendepth v4.4.0
+# lodash.flattendepth v4.4.1
 
 The [lodash](https://lodash.com/) method `_.flattenDepth` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var flattenDepth = require('lodash.flattendepth');
 ```
 
-See the [documentation](https://lodash.com/docs#flattenDepth) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.flattendepth) for more details.
+See the [documentation](https://lodash.com/docs#flattenDepth) or [package source](https://github.com/lodash/lodash/blob/4.4.1-npm-packages/lodash.flattendepth) for more details.

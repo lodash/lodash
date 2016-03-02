@@ -565,11 +565,11 @@
   suites.push(
     Benchmark.Suite('`_.assign`')
       .add(buildName, {
-        'fn': 'lodashAssign({}, object)',
+        'fn': 'lodashAssign({}, { "a": 1, "b": 2, "c": 3 })',
         'teardown': 'function assign(){}'
       })
       .add(otherName, {
-        'fn': '_assign({}, object)',
+        'fn': '_assign({}, { "a": 1, "b": 2, "c": 3 })',
         'teardown': 'function assign(){}'
       })
   );
@@ -577,11 +577,11 @@
   suites.push(
     Benchmark.Suite('`_.assign` with multiple sources')
       .add(buildName, {
-        'fn': 'lodashAssign({}, object, object)',
+        'fn': 'lodashAssign({}, { "a": 1, "b": 2 }, { "c": 3, "d": 4 })',
         'teardown': 'function assign(){}'
       })
       .add(otherName, {
-        'fn': '_assign({}, object, object)',
+        'fn': '_assign({}, { "a": 1, "b": 2 }, { "c": 3, "d": 4 })',
         'teardown': 'function assign(){}'
       })
   );

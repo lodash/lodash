@@ -26,8 +26,25 @@ var extend = require('lodash/fp/extend');
 ## Convert
 
 Although `lodash/fp` & its method modules come pre-converted, there are times when
-you may want to convert another lodash package or create a customized conversion.
-That’s when the `convert` module comes in handy.
+you may want to customize the conversion. That’s when the `convert` method comes in handy.
+
+
+```js
+// Disable capping of the iteratee arguments so it is possible to access
+// the `key` argument
+var mapValuesWithKey = require("lodash/fp/mapValues").convert({cap: false});
+
+mapValuesWithKey(function(value, key) {
+  if (key === "foo") {
+    return -1;
+  }
+  return value;
+}, {foo: 1, bar: 1});
+// => {foo: -1, bar: 1}
+```
+
+It's also possible to use the convert function directly to convert functions or
+objects manually.
 
 ```js
 var convert = require('lodash/fp/convert');
@@ -45,7 +62,7 @@ var fp = convert({
 var fp = convert(lodash.runInContext());
 ```
 
-It’s even customizable.
+It’s customizable too.
 ```js
 // Every option is `true` by default.
 var filter = convert('filter', _.filter, {

@@ -18471,13 +18471,11 @@
     QUnit.test('should work with a `customizer` callback', function(assert) {
       assert.expect(1);
 
-      var actual = _.setWith({ '0': { 'length': 2 } }, '[0][1][2]', 3, function(value) {
-        if (!lodashStable.isObject(value)) {
-          return {};
-        }
+      var actual = _.setWith({ '0': {} }, '[0][1][2]', 3, function(value) {
+        return lodashStable.isObject(value) ? undefined : {};
       });
 
-      assert.deepEqual(actual, { '0': { '1': { '2': 3 }, 'length': 2 } });
+      assert.deepEqual(actual, { '0': { '1': { '2': 3 } } });
     });
 
     QUnit.test('should work with a `customizer` that returns `undefined`', function(assert) {
@@ -23116,6 +23114,29 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.updateWith');
+
+  (function() {
+    QUnit.test('should work with a `customizer` callback', function(assert) {
+      assert.expect(1);
+
+      var actual = _.updateWith({ '0': {} }, '[0][1][2]', alwaysThree, function(value) {
+        return lodashStable.isObject(value) ? undefined : {};
+      });
+
+      assert.deepEqual(actual, { '0': { '1': { '2': 3 } } });
+    });
+
+    QUnit.test('should work with a `customizer` that returns `undefined`', function(assert) {
+      assert.expect(1);
+
+      var actual = _.updateWith({}, 'a[0].b.c', alwaysFour, alwaysUndefined);
+      assert.deepEqual(actual, { 'a': [{ 'b': { 'c': 4 } }] });
     });
   }());
 

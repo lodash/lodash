@@ -279,6 +279,9 @@ function baseConvert(util, name, func, options) {
       setPlaceholder = true;
       func.placeholder = result.placeholder = placeholder;
     }
+    result.convert = function(options) {
+      return baseConvert(util, name, func, options);
+    };
     return result;
   };
 

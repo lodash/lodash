@@ -9502,6 +9502,29 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isEqualTo');
+
+  (function() {
+    QUnit.test('should return a function that returns `true` when a deeply-equal value is provided', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.isEqualTo('a')('a'), true);
+      assert.strictEqual(_.isEqualTo(['a'])(['a']), true);
+      assert.strictEqual(_.isEqualTo({ '0': 'a' })({ '0': 'a' }), true);
+      assert.strictEqual(_.isEqualTo(NaN)(NaN), true);
+    });
+
+    QUnit.test('should return a function that returns `false` when an unequal value is provided', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.isEqualTo('a')('b'), false);
+      assert.strictEqual(_.isEqualTo('5')(5), false);
+      assert.strictEqual(_.isEqualTo(null)(undefined), false);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isError');
 
   (function() {
@@ -24473,7 +24496,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(300);
+      assert.expect(301);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

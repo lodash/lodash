@@ -9918,6 +9918,24 @@
     }
 
     /**
+    * Creates a function that checks whether its provided argument is deeply
+    * equal to `value`.
+    *
+    * @static
+    * @memberOf _
+    * @category Function
+    * @param {*} value The value to compare.
+    * @returns {Function} Returns the new function.
+    * @example
+    *
+    * _.filter([1, 2, 1, 3, 1, 4], _.isEqualTo(1))
+    * // => [1, 1, 1]
+    */
+    function isEqualTo(value) {
+      return partial(isEqual, value);
+    }
+
+    /**
      * This method is like `_.isEqual` except that it accepts `customizer` which
      * is invoked to compare values. If `customizer` returns `undefined` comparisons
      * are handled by the method instead. The `customizer` is invoked with up to
@@ -14712,6 +14730,7 @@
     lodash.isElement = isElement;
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
+    lodash.isEqualTo = isEqualTo;
     lodash.isEqualWith = isEqualWith;
     lodash.isError = isError;
     lodash.isFinite = isFinite;

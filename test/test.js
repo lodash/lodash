@@ -369,7 +369,7 @@
   });
 
   /**
-   * Removes all own enumerable properties from a given object.
+   * Removes all own enumerable string keyed properties from a given object.
    *
    * @private
    * @param {Object} object The object to empty.
@@ -6075,7 +6075,7 @@
   lodashStable.each(['forIn', 'forInRight'], function(methodName) {
     var func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` iterates over inherited properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` iterates over inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }
@@ -6529,7 +6529,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'source properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'string keyed source properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }
@@ -9877,7 +9877,7 @@
       assert.strictEqual(_.isMatch(object, { 'a': { 'b': { 'c': 1 } } }), true);
     });
 
-    QUnit.test('should match inherited `object` properties', function(assert) {
+    QUnit.test('should match inherited string keyed `object` properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }
@@ -12218,10 +12218,20 @@
         func = _[methodName],
         isKeys = methodName == 'keys';
 
-    QUnit.test('`_.' + methodName + '` should return the keys of an object', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the string keyed property names of `object`', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func({ 'a': 1, 'b': 1 }).sort(), ['a', 'b']);
+    });
+
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties', function(assert) {
+      assert.expect(1);
+
+      function Foo() { this.a = 1; }
+      Foo.prototype.b = 2;
+
+      var expected = isKeys ? ['a'] : ['a', 'b'];
+      assert.deepEqual(func(new Foo).sort(), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function(assert) {
@@ -12263,7 +12273,7 @@
       assert.deepEqual(func(array).sort(), ['0', 'a']);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of arrays', function(assert) {
       assert.expect(1);
 
       var expected = isKeys ? ['0'] : ['0', 'a'];
@@ -12299,7 +12309,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of `arguments` objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of `arguments` objects', function(assert) {
       assert.expect(1);
 
       var values = [args, strictArgs],
@@ -12330,7 +12340,7 @@
       assert.deepEqual(func(object).sort(), ['0', 'a']);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties of string objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of string objects', function(assert) {
       assert.expect(1);
 
       var expected = isKeys ? ['0'] : ['0', 'a'];
@@ -12355,16 +12365,6 @@
       var Fake = { 'prototype': {} };
       Fake.prototype.constructor = Fake;
       assert.deepEqual(func(Fake.prototype), ['constructor']);
-    });
-
-    QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited properties', function(assert) {
-      assert.expect(1);
-
-      function Foo() { this.a = 1; }
-      Foo.prototype.b = 2;
-
-      var expected = isKeys ? ['a'] : ['a', 'b'];
-      assert.deepEqual(func(new Foo).sort(), expected);
     });
   });
 
@@ -12981,7 +12981,7 @@
       assert.strictEqual(matches(object), true);
     });
 
-    QUnit.test('should match inherited `object` properties', function(assert) {
+    QUnit.test('should match inherited string keyed `object` properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }
@@ -13415,7 +13415,7 @@
       });
     });
 
-    QUnit.test('should match inherited `srcValue` properties', function(assert) {
+    QUnit.test('should match inherited string keyed `srcValue` properties', function(assert) {
       assert.expect(2);
 
       function Foo() {}
@@ -15460,7 +15460,7 @@
       assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should iterate over inherited properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should iterate over inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() {}
@@ -16511,7 +16511,7 @@
       assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should iterate over inherited properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should iterate over inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() {}
@@ -18745,7 +18745,7 @@
     var args = arguments,
         array = [1, 2, 3];
 
-    QUnit.test('should return the number of own enumerable properties of an object', function(assert) {
+    QUnit.test('should return the number of own enumerable string keyed properties of an object', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(_.size({ 'one': 1, 'two': 2, 'three': 3 }), 3);
@@ -21973,7 +21973,7 @@
   (function() {
     var args = arguments;
 
-    QUnit.test('should flatten inherited properties', function(assert) {
+    QUnit.test('should flatten inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() { this.b = 2; }
@@ -23218,7 +23218,7 @@
       assert.deepEqual(func(object), ['a', 'b', 2]);
     });
 
-    QUnit.test('`_.' + methodName + '` should ' + (isValues ? 'not ' : '') + ' include inherited property values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should ' + (isValues ? 'not ' : '') + 'include inherited string keyed property values', function(assert) {
       assert.expect(1);
 
       function Foo() { this.a = 1; }

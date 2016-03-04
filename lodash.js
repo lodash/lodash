@@ -8421,7 +8421,7 @@
 
     /**
      * Gets the size of `collection` by returning its length for array-like
-     * values or the number of own enumerable properties for objects.
+     * values or the number of own enumerable string keyed properties for objects.
      *
      * @static
      * @memberOf _
@@ -10011,7 +10011,7 @@
     /**
      * Checks if `value` is an empty collection or object. A value is considered
      * empty if it's an `arguments` object, array, string, or jQuery-like collection
-     * with a length of `0` or has no own enumerable properties.
+     * with a length of `0` or has no own enumerable string keyed properties.
      *
      * @static
      * @memberOf _
@@ -10977,8 +10977,8 @@
     }
 
     /**
-     * Converts `value` to a plain object flattening inherited enumerable
-     * properties of `value` to own properties of the plain object.
+     * Converts `value` to a plain object flattening inherited enumerable string
+     * keyed properties of `value` to own properties of the plain object.
      *
      * @static
      * @memberOf _
@@ -11071,9 +11071,9 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Assigns own enumerable properties of source objects to the destination
-     * object. Source objects are applied from left to right. Subsequent sources
-     * overwrite property assignments of previous sources.
+     * Assigns own enumerable string keyed properties of source objects to the
+     * destination object. Source objects are applied from left to right.
+     * Subsequent sources overwrite property assignments of previous sources.
      *
      * **Note:** This method mutates `object` and is loosely based on
      * [`Object.assign`](https://mdn.io/Object/assign).
@@ -11243,7 +11243,8 @@
 
     /**
      * Creates an object that inherits from the `prototype` object. If a `properties`
-     * object is given its own enumerable properties are assigned to the created object.
+     * object is given its own enumerable string keyed properties are assigned to
+     * the created object.
      *
      * @static
      * @memberOf _
@@ -11280,10 +11281,10 @@
     }
 
     /**
-     * Assigns own and inherited enumerable properties of source objects to the
-     * destination object for all destination properties that resolve to `undefined`.
-     * Source objects are applied from left to right. Once a property is set,
-     * additional values of the same property are ignored.
+     * Assigns own and inherited enumerable string keyed properties of source
+     * objects to the destination object for all destination properties that
+     * resolve to `undefined`. Source objects are applied from left to right.
+     * Once a property is set, additional values of the same property are ignored.
      *
      * **Note:** This method mutates `object`.
      *
@@ -11405,10 +11406,10 @@
     }
 
     /**
-     * Iterates over own and inherited enumerable properties of an object invoking
-     * `iteratee` for each property. The iteratee is invoked with three arguments:
-     * (value, key, object). Iteratee functions may exit iteration early by explicitly
-     * returning `false`.
+     * Iterates over own and inherited enumerable string keyed properties of an
+     * object invoking `iteratee` for each property. The iteratee is invoked with
+     * three arguments: (value, key, object). Iteratee functions may exit iteration
+     * early by explicitly returning `false`.
      *
      * @static
      * @memberOf _
@@ -11469,8 +11470,8 @@
     }
 
     /**
-     * Iterates over own enumerable properties of an object invoking `iteratee`
-     * for each property. The iteratee is invoked with three arguments:
+     * Iterates over own enumerable string keyed properties of an object invoking
+     * `iteratee` for each property. The iteratee is invoked with three arguments:
      * (value, key, object). Iteratee functions may exit iteration early by
      * explicitly returning `false`.
      *
@@ -11529,8 +11530,8 @@
     }
 
     /**
-     * Creates an array of function property names from own enumerable properties
-     * of `object`.
+     * Creates an array of function property names from own enumerable string
+     * keyed properties of `object`.
      *
      * @static
      * @since 0.1.0
@@ -11748,7 +11749,7 @@
     var invoke = rest(baseInvoke);
 
     /**
-     * Creates an array of the own enumerable property names of `object`.
+     * Creates an array of the own enumerable string keyed property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects. See the
      * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
@@ -11796,7 +11797,8 @@
     }
 
     /**
-     * Creates an array of the own and inherited enumerable property names of `object`.
+     * Creates an array of the own and inherited enumerable string keyed property
+     * names of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *
@@ -11841,8 +11843,8 @@
     /**
      * The opposite of `_.mapValues`; this method creates an object with the
      * same values as `object` and keys generated by running each own enumerable
-     * property of `object` through `iteratee`. The iteratee is invoked with
-     * three arguments: (value, key, object).
+     * string keyed property of `object` through `iteratee`. The iteratee is
+     * invoked with three arguments: (value, key, object).
      *
      * @static
      * @memberOf _
@@ -11870,8 +11872,9 @@
 
     /**
      * Creates an object with the same keys as `object` and values generated by
-     * running each own enumerable property of `object` through `iteratee`. The
-     * iteratee is invoked with three arguments: (value, key, object).
+     * running each own enumerable string keyed property of `object` through
+     * `iteratee`. The iteratee is invoked with three arguments:
+     * (value, key, object).
      *
      * @static
      * @memberOf _
@@ -11906,12 +11909,12 @@
 
     /**
      * This method is like `_.assign` except that it recursively merges own and
-     * inherited enumerable properties of source objects into the destination
-     * object. Source properties that resolve to `undefined` are skipped if a
-     * destination value exists. Array and plain object properties are merged
-     * recursively.Other objects and value types are overridden by assignment.
-     * Source objects are applied from left to right. Subsequent sources
-     * overwrite property assignments of previous sources.
+     * inherited enumerable string keyed properties of source objects into the
+     * destination object. Source properties that resolve to `undefined` are
+     * skipped if a destination value exists. Array and plain object properties
+     * are merged recursively.Other objects and value types are overridden by
+     * assignment. Source objects are applied from left to right. Subsequent
+     * sources overwrite property assignments of previous sources.
      *
      * **Note:** This method mutates `object`.
      *
@@ -11983,7 +11986,8 @@
 
     /**
      * The opposite of `_.pick`; this method creates an object composed of the
-     * own and inherited enumerable properties of `object` that are not omitted.
+     * own and inherited enumerable string keyed properties of `object` that are
+     * not omitted.
      *
      * @static
      * @since 0.1.0
@@ -12010,9 +12014,9 @@
 
     /**
      * The opposite of `_.pickBy`; this method creates an object composed of
-     * the own and inherited enumerable properties of `object` that `predicate`
-     * doesn't return truthy for. The predicate is invoked with two arguments:
-     * (value, key).
+     * the own and inherited enumerable string keyed properties of `object` that
+     * `predicate` doesn't return truthy for. The predicate is invoked with two
+     * arguments: (value, key).
      *
      * @static
      * @memberOf _
@@ -12184,8 +12188,8 @@
     }
 
     /**
-     * Creates an array of own enumerable key-value pairs for `object` which
-     * can be consumed by `_.fromPairs`.
+     * Creates an array of own enumerable string keyed-value pairs for `object`
+     * which can be consumed by `_.fromPairs`.
      *
      * @static
      * @memberOf _
@@ -12210,8 +12214,8 @@
     }
 
     /**
-     * Creates an array of own and inherited enumerable key-value pairs for
-     * `object` which can be consumed by `_.fromPairs`.
+     * Creates an array of own and inherited enumerable string keyed-value pairs
+     * for `object` which can be consumed by `_.fromPairs`.
      *
      * @static
      * @memberOf _
@@ -12238,8 +12242,8 @@
     /**
      * An alternative to `_.reduce`; this method transforms `object` to a new
      * `accumulator` object which is the result of running each of its own enumerable
-     * properties through `iteratee`, with each invocation potentially mutating
-     * the `accumulator` object. The iteratee is invoked with four arguments:
+     * string keyed properties through `iteratee`, with each invocation potentially
+     * mutating the `accumulator` object. The iteratee is invoked with four arguments:
      * (accumulator, value, key, object). Iteratee functions may exit iteration
      * early by explicitly returning `false`.
      *
@@ -12378,7 +12382,7 @@
     }
 
     /**
-     * Creates an array of the own enumerable property values of `object`.
+     * Creates an array of the own enumerable string keyed property values of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *
@@ -12408,7 +12412,8 @@
     }
 
     /**
-     * Creates an array of the own and inherited enumerable property values of `object`.
+     * Creates an array of the own and inherited enumerable string keyed property
+     * values of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *
@@ -14056,9 +14061,9 @@
     });
 
     /**
-     * Adds all own enumerable function properties of a source object to the
-     * destination object. If `object` is a function then methods are added to
-     * its prototype as well.
+     * Adds all own enumerable string keyed function properties of a source object
+     * to the destination object. If `object` is a function then methods are added
+     * to its prototype as well.
      *
      * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
      * avoid conflicts caused by modifying the original.

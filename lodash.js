@@ -3317,11 +3317,8 @@
      * @returns {Object} Returns the new object.
      */
     function basePickBy(object, predicate) {
-      var props = keysIn(object);
-      if (!isArray(object)) {
-        arrayPush(props, getSymbolsIn(object));
-      }
       var index = -1,
+          props = getAllKeysIn(object),
           length = props.length,
           result = {};
 
@@ -4950,6 +4947,21 @@
       }
       stack['delete'](object);
       return result;
+    }
+
+    /**
+     * Creates an array of the own and inherited enumerable property names and
+     * symbols of `object`.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names and symbols.
+     */
+    function getAllKeysIn(object) {
+      var result = keysIn(object);
+      return isArray(object)
+        ? result
+        : arrayPush(result, getSymbolsIn(object));
     }
 
     /**
@@ -12049,7 +12061,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {...(string|string[])} [props] The property names to omit, specified
+     * @param {...(string|string[])} [props] The property identifiers to omit, specified
      *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example
@@ -12063,12 +12075,8 @@
       if (object == null) {
         return {};
       }
-      var allProps = keysIn(object);
-      if (!isArray(object)) {
-        arrayPush(allProps, getSymbolsIn(object));
-      }
       props = arrayMap(baseFlatten(props, 1), baseCastKey);
-      return basePick(object, baseDifference(allProps, props));
+      return basePick(object, baseDifference(getAllKeysIn(object), props));
     });
 
     /**

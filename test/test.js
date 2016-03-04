@@ -13410,7 +13410,7 @@
       });
     });
 
-    QUnit.test('should work with non-string `path` arguments', function(assert) {
+    QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3];
@@ -14488,7 +14488,7 @@
       });
     });
 
-    QUnit.test('should work with non-string `path` arguments', function(assert) {
+    QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = lodashStable.times(3, _.constant);
@@ -14643,7 +14643,7 @@
       });
     });
 
-    QUnit.test('should work with non-string `path` arguments', function(assert) {
+    QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = lodashStable.times(3, _.constant);
@@ -16593,7 +16593,7 @@
       });
     });
 
-    QUnit.test('should work with non-string `path` arguments', function(assert) {
+    QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3];
@@ -16722,7 +16722,7 @@
       });
     });
 
-    QUnit.test('should work with non-string `path` arguments', function(assert) {
+    QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3],

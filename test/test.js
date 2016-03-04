@@ -10856,6 +10856,18 @@
       }
     });
 
+    QUnit.test('should return `false` for objects with a custom `[[Prototype]]`', function(assert) {
+      assert.expect(1);
+
+      if (create) {
+        var object = create({ 'a': 1 });
+        assert.strictEqual(_.isPlainObject(object), false);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('should return `false` for DOM elements', function(assert) {
       assert.expect(1);
 

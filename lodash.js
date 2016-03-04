@@ -3291,11 +3291,11 @@
 
     /**
      * The base implementation of `_.pick` without support for individual
-     * property names.
+     * property identifiers.
      *
      * @private
      * @param {Object} object The source object.
-     * @param {string[]} props The property names to pick.
+     * @param {string[]} props The property identifiers to pick.
      * @returns {Object} Returns the new object.
      */
     function basePick(object, props) {
@@ -3846,7 +3846,7 @@
      * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
      *
      * @private
-     * @param {Array} props The property names.
+     * @param {Array} props The property identifiers.
      * @param {Array} values The property values.
      * @param {Function} assignFunc The function to assign values.
      * @returns {Object} Returns the new object.
@@ -4048,7 +4048,7 @@
      *
      * @private
      * @param {Object} source The object to copy properties from.
-     * @param {Array} props The property names to copy.
+     * @param {Array} props The property identifiers to copy.
      * @param {Object} [object={}] The object to copy properties to.
      * @returns {Object} Returns `object`.
      */
@@ -4062,7 +4062,7 @@
      *
      * @private
      * @param {Object} source The object to copy properties from.
-     * @param {Array} props The property names to copy.
+     * @param {Array} props The property identifiers to copy.
      * @param {Object} [object={}] The object to copy properties to.
      * @param {Function} [customizer] The function to customize copied values.
      * @returns {Object} Returns `object`.
@@ -7334,13 +7334,13 @@
 
     /**
      * This method is like `_.fromPairs` except that it accepts two arrays,
-     * one of property names and one of corresponding values.
+     * one of property identifiers and one of corresponding values.
      *
      * @static
      * @memberOf _
      * @since 0.4.0
      * @category Array
-     * @param {Array} [props=[]] The property names.
+     * @param {Array} [props=[]] The property identifiers.
      * @param {Array} [values=[]] The property values.
      * @returns {Object} Returns the new object.
      * @example
@@ -7359,7 +7359,7 @@
      * @memberOf _
      * @since 4.1.0
      * @category Array
-     * @param {Array} [props=[]] The property names.
+     * @param {Array} [props=[]] The property identifiers.
      * @param {Array} [values=[]] The property values.
      * @returns {Object} Returns the new object.
      * @example
@@ -11597,8 +11597,8 @@
     }
 
     /**
-     * Creates an array of function property names from own enumerable string
-     * keyed properties of `object`.
+     * Creates an array of function property names from own enumerable properties
+     * of `object`.
      *
      * @static
      * @since 0.1.0
@@ -11816,7 +11816,7 @@
     var invoke = rest(baseInvoke);
 
     /**
-     * Creates an array of the own enumerable string keyed property names of `object`.
+     * Creates an array of the own enumerable property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects. See the
      * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
@@ -11864,8 +11864,7 @@
     }
 
     /**
-     * Creates an array of the own and inherited enumerable string keyed property
-     * names of `object`.
+     * Creates an array of the own and inherited enumerable property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects.
      *
@@ -12114,7 +12113,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The source object.
-     * @param {...(string|string[])} [props] The property names to pick, specified
+     * @param {...(string|string[])} [props] The property identifiers to pick, specified
      *  individually or in arrays.
      * @returns {Object} Returns the new object.
      * @example

@@ -7066,7 +7066,7 @@
       assert.strictEqual(func(args, 1), true);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with non-string `path` arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3];
@@ -7074,6 +7074,25 @@
       lodashStable.each([1, [1]], function(path) {
         assert.strictEqual(func(array, path), true);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with a symbol `path`', function(assert) {
+      assert.expect(1);
+
+      function Foo() {
+        this[symbol] = 1;
+      }
+
+      if (Symbol) {
+        var symbol2 = Symbol('b');
+        Foo.prototype[symbol2] = 2;
+        var path = isHas ? symbol : symbol2;
+
+        assert.strictEqual(func(new Foo, path), true);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('`_.' + methodName + '` should work for objects with a `[[Prototype]]` of `null`', function(assert) {
@@ -16531,13 +16550,15 @@
     var expected = { 'a': 1, 'c': 3 },
         func = _[methodName],
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        prop = function(object, props) { return props; };
+        prop = lodashStable.nthArg(1);
 
     if (methodName == 'pickBy') {
       prop = function(object, props) {
-        props = typeof props == 'string' ? [props] : props;
+        props = lodashStable.isArray(props) ? props : [props];
         return function(value) {
-          return _.some(props, function(key) { return object[key] === value; });
+          return lodashStable.some(props, function(key) {
+            return object[key] === value;
+          });
         };
       };
     }
@@ -16548,7 +16569,7 @@
       assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should iterate over inherited string keyed properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should pick inherited properties', function(assert) {
       assert.expect(1);
 
       function Foo() {}
@@ -16556,6 +16577,28 @@
 
       var foo = new Foo;
       assert.deepEqual(func(foo, prop(foo, ['a', 'c'])), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should pick symbol properties', function(assert) {
+      assert.expect(2);
+
+      function Foo() {
+        this[symbol] = 1;
+      }
+
+      if (Symbol) {
+        var symbol2 = Symbol('b');
+        Foo.prototype[symbol2] = 2;
+
+        var foo = new Foo,
+            actual = func(foo, prop(foo, [symbol, symbol2]));
+
+        assert.strictEqual(actual[symbol], 1);
+        assert.strictEqual(actual[symbol2], 2);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
     });
 
     QUnit.test('`_.' + methodName + '` should work with an array `object` argument', function(assert) {
@@ -17903,7 +17946,7 @@
   lodashStable.each(['get', 'result'], function(methodName) {
     var func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` should get property values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should get string keyed property values', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1 };
@@ -17911,6 +17954,20 @@
       lodashStable.each(['a', ['a']], function(path) {
         assert.strictEqual(func(object, path), 1);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should get symbol keyed property values', function(assert) {
+      assert.expect(1);
+
+      if (Symbol) {
+        var object = {};
+        object[symbol] = 1;
+
+        assert.strictEqual(func(object, symbol), 1);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('`_.' + methodName + '` should get deep property values', function(assert) {

@@ -14526,7 +14526,10 @@
      * // => false
      */
     function toPath(value) {
-      return isArray(value) ? arrayMap(value, baseCastKey) : stringToPath(value);
+      if (isArray(value)) {
+        return arrayMap(value, baseCastKey);
+      }
+      return isSymbol(value) ? [value] : stringToPath(value);
     }
 
     /**

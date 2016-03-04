@@ -22111,6 +22111,21 @@
       });
     });
 
+    QUnit.test('should not coerce symbols to strings', function(assert) {
+      assert.expect(4);
+
+      if (Symbol) {
+        var object = Object(symbol);
+        lodashStable.each([symbol, object, [symbol], [object]], function(value) {
+          var actual = _.toPath(value);
+          assert.ok(lodashStable.isSymbol(actual[0]));
+        });
+      }
+      else {
+        skipAssert(assert, 4);
+      }
+    });
+
     QUnit.test('should handle complex paths', function(assert) {
       assert.expect(1);
 

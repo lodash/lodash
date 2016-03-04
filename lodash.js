@@ -2328,7 +2328,10 @@
      * @returns {Array} Returns the cast property path array.
      */
     function baseCastPath(value) {
-      return isArray(value) ? value : stringToPath(value);
+      if (isArray(value)) {
+        return value;
+      }
+      return isSymbol(value) ? [value] : stringToPath(value);
     }
 
     /**
@@ -5262,11 +5265,12 @@
      * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
      */
     function isKey(value, object) {
-      if (typeof value == 'number') {
+      var type = typeof value;
+      if (type == 'number' || type == 'symbol') {
         return true;
       }
       return !isArray(value) &&
-        (reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+        (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
           (object != null && value in Object(object)));
     }
 
@@ -10967,7 +10971,9 @@
         value = isObject(other) ? (other + '') : other;
       }
       if (typeof value != 'string') {
-        return value === 0 ? value : +value;
+        return value === 0
+          ?  value
+          : (typeof value == 'symbol' ? NAN : +value);
       }
       value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);

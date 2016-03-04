@@ -2948,16 +2948,16 @@
         assert.expect(1);
 
         var argsList = [],
-            foo = new Foo;
+            object = new Foo;
 
-        func(foo, function() {
+        func(object, function() {
           var length = arguments.length,
               args = slice.call(arguments, 0, length - (length > 1 ? 1 : 0));
 
           argsList.push(args);
         });
 
-        assert.deepEqual(argsList, isDeep ? [[foo], [1, 'a', foo]] : [[foo]]);
+        assert.deepEqual(argsList, isDeep ? [[object], [1, 'a', object]] : [[object]]);
       });
 
       QUnit.test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', function(assert) {
@@ -14133,8 +14133,7 @@
       function Foo() {}
 
       var object = new Foo,
-          source = { 'a': 1 },
-          actual = _.merge(object, source);
+          actual = _.merge(object, { 'a': 1 });
 
       assert.strictEqual(actual, object);
       assert.strictEqual(object.a, 1);
@@ -15504,8 +15503,7 @@
       function Foo() {}
       Foo.prototype = object;
 
-      var foo = new Foo;
-      assert.deepEqual(func(foo, prop(object, ['a', 'c'])), expected);
+      assert.deepEqual(func(new Foo, prop(object, ['a', 'c'])), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should work with an array `object` argument', function(assert) {
@@ -22117,8 +22115,8 @@
       assert.expect(4);
 
       var accumulators = [, null, undefined],
-          expected = lodashStable.map(accumulators, alwaysTrue),
-          object = new Foo;
+          object = new Foo,
+          expected = lodashStable.map(accumulators, alwaysTrue);
 
       var iteratee = function(result, value, key) {
         result[key] = square(value);

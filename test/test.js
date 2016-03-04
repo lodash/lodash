@@ -11357,7 +11357,8 @@
         var object = new Foo;
         if (objToString.call(object) == objectTag) {
           assert.strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
-        } else {
+        }
+        else {
           skipAssert(assert);
         }
       });

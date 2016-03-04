@@ -2303,7 +2303,7 @@
      *
      * @private
      * @param {*} value The value to inspect.
-     * @returns {Array} Returns the array-like object.
+     * @returns {Array|Object} Returns the cast array-like object.
      */
     function baseCastArrayLikeObject(value) {
       return isArrayLikeObject(value) ? value : [];
@@ -2314,10 +2314,21 @@
      *
      * @private
      * @param {*} value The value to inspect.
-     * @returns {Array} Returns the array-like object.
+     * @returns {Function} Returns cast function.
      */
     function baseCastFunction(value) {
       return typeof value == 'function' ? value : identity;
+    }
+
+    /**
+     * Casts `value` to a string if it's not a string or symbol.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {string|symbol} Returns the cast key.
+     */
+    function baseCastKey(key) {
+      return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
     }
 
     /**
@@ -12042,8 +12053,12 @@
       if (object == null) {
         return {};
       }
-      props = arrayMap(baseFlatten(props, 1), String);
-      return basePick(object, baseDifference(keysIn(object), props));
+      var allProps = keysIn(object);
+      if (!isArray(object)) {
+        arrayPush(allProps, getSymbolsIn(object));
+      }
+      props = arrayMap(baseFlatten(props, 1), baseCastKey);
+      return basePick(object, baseDifference(allProps, props));
     });
 
     /**
@@ -14494,7 +14509,7 @@
      * // => false
      */
     function toPath(value) {
-      return isArray(value) ? arrayMap(value, String) : stringToPath(value);
+      return isArray(value) ? arrayMap(value, baseCastKey) : stringToPath(value);
     }
 
     /**

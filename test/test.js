@@ -15512,30 +15512,85 @@
     var expected = { 'b': 2, 'd': 4 },
         func = _[methodName],
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        prop = function(object, props) { return props; };
+        prop = lodashStable.nthArg(1);
 
     if (methodName == 'omitBy') {
       prop = function(object, props) {
-        props = typeof props == 'string' ? [props] : props;
+        props = lodashStable.isArray(props) ? props : [props];
         return function(value) {
-          return _.some(props, function(key) { return object[key] === value; });
+          return lodashStable.some(props, function(key) {
+            return object[key] === value;
+          });
         };
       };
     }
-    QUnit.test('`_.' + methodName + '` should create an object with omitted properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should create an object with omitted string keyed properties', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(func(object, prop(object, 'a')), { 'b': 2, 'c': 3, 'd': 4 });
       assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should iterate over inherited string keyed properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should include inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() {}
       Foo.prototype = object;
 
       assert.deepEqual(func(new Foo, prop(object, ['a', 'c'])), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should include symbol properties', function(assert) {
+      assert.expect(2);
+
+      function Foo() {
+        this.a = 0;
+        this[symbol] = 1;
+      }
+
+      if (Symbol) {
+        var symbol2 = Symbol('b');
+        Foo.prototype[symbol2] = 2;
+
+        var foo = new Foo,
+            actual = func(foo, prop(foo, 'a'));
+
+        assert.strictEqual(actual[symbol], 1);
+        assert.strictEqual(actual[symbol2], 2);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should create an object with omitted symbol properties', function(assert) {
+      assert.expect(6);
+
+      function Foo() {
+        this.a = 0;
+        this[symbol] = 1;
+      }
+
+      if (Symbol) {
+        var symbol2 = Symbol('b');
+        Foo.prototype[symbol2] = 2;
+
+        var foo = new Foo,
+            actual = func(foo, prop(foo, symbol));
+
+        assert.strictEqual(actual.a, 0);
+        assert.strictEqual(actual[symbol], undefined);
+        assert.strictEqual(actual[symbol2], 2);
+
+        actual = func(foo, prop(foo, symbol2));
+
+        assert.strictEqual(actual.a, 0);
+        assert.strictEqual(actual[symbol], 1);
+        assert.strictEqual(actual[symbol2], undefined);
+      }
+      else {
+        skipAssert(assert, 6);
+      }
     });
 
     QUnit.test('`_.' + methodName + '` should work with an array `object` argument', function(assert) {
@@ -16574,14 +16629,14 @@
         };
       };
     }
-    QUnit.test('`_.' + methodName + '` should create an object of picked properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should create an object of picked string keyed properties', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(func(object, prop(object, 'a')), { 'a': 1 });
       assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should pick inherited properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should pick inherited string keyed properties', function(assert) {
       assert.expect(1);
 
       function Foo() {}

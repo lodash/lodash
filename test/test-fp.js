@@ -67,6 +67,14 @@
     };
   }());
 
+  var allFalseOptions = {
+    'cap': false,
+    'curry': false,
+    'fixed': false,
+    'immutable': false,
+    'rearg': false
+  };
+
   var fp = root.fp
     ? (fp = _.noConflict(), _ = root._, fp)
     : convert(_.runInContext());
@@ -95,17 +103,9 @@
     console.log('Running lodash/fp tests.');
   }
 
-  QUnit.module('convert');
+  QUnit.module('convert module');
 
   (function() {
-    var allFalseOptions = {
-      'cap': false,
-      'curry': false,
-      'fixed': false,
-      'immutable': false,
-      'rearg': false
-    };
-
     QUnit.test('should work when given an object', function(assert) {
       assert.expect(2);
 
@@ -269,6 +269,41 @@
       else {
         skipAssert(assert, 3);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('convert method');
+
+  (function() {
+    QUnit.test('should work when given an object', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          remove = fp.remove.convert(allFalseOptions);
+
+      var actual = remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(remove(), []);
+    });
+
+    QUnit.test('should extend existing configs', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3, 4],
+          remove = fp.remove.convert({ 'cap': false }).convert({ 'rearg': false });
+
+      var actual = remove(array)(function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [2, 4]);
     });
   }());
 

@@ -1,5 +1,6 @@
 module.exports = {
   'ary': require('../ary'),
+  'assign': require('../_baseAssign'),
   'clone': require('../clone'),
   'curry': require('../curry'),
   'forEach': require('../_arrayEach'),

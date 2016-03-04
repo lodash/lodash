@@ -14,7 +14,7 @@ In a browser:
 In Node.js:
 ```js
 // Load the fp build.
-var _ = require('lodash/fp');
+var fp = require('lodash/fp');
 
 // Load a method category.
 var object = require('lodash/fp/object');
@@ -25,27 +25,34 @@ var extend = require('lodash/fp/extend');
 
 ## Convert
 
-Although `lodash/fp` & its method modules come pre-converted, there are times when
-you may want to customize the conversion. That’s when the `convert` method comes in handy.
-
-
+Although `lodash/fp` & its method modules come pre-converted, there are times
+when you may want to customize the conversion. That’s when the `convert` method
+comes in handy.
 ```js
-// Disable capping of the iteratee arguments so it is possible to access
-// the `key` argument
-var mapValuesWithKey = require("lodash/fp/mapValues").convert({cap: false});
+// Every option is `true` by default.
+var mapValues = fp.mapValues.convert({
+  // Specify capping iteratee arguments.
+  'cap': true,
+  // Specify currying.
+  'curry': true,
+  // Specify fixed arity.
+  'fixed': true,
+  // Specify immutable operations.
+  'immutable': true,
+  // Specify rearranging arguments.
+  'rearg': true
+});
+
+// Disable capping of iteratee arguments to access the `key` param.
+var mapValuesWithKey = fp.mapValues.convert({ 'cap': false });
 
 mapValuesWithKey(function(value, key) {
-  if (key === "foo") {
-    return -1;
-  }
-  return value;
-}, {foo: 1, bar: 1});
-// => {foo: -1, bar: 1}
+  return key == 'a' ? -1 : value;
+})({ 'a': 1, 'b': 1 });
+// => { 'a': -1, 'b': 1 }
 ```
 
-It's also possible to use the convert function directly to convert functions or
-objects manually.
-
+It’s also possible to use the convert module directly for manual conversions.
 ```js
 var convert = require('lodash/fp/convert');
 
@@ -60,31 +67,6 @@ var fp = convert({
 
 // Convert by `lodash` instance.
 var fp = convert(lodash.runInContext());
-```
-
-It’s customizable too.
-```js
-// Every option is `true` by default.
-var filter = convert('filter', _.filter, {
-  // Specify capping iteratee arguments.
-  'cap': true,
-  // Specify currying.
-  'curry': true,
-  // Specify fixed arity.
-  'fixed': true,
-  // Specify immutable operations.
-  'immutable': true,
-  // Specify rearranging arguments.
-  'rearg': true
-});
-
-// Specify `cap` of `false` to create a function that doesn’t cap iteratee arguments.
-var filter = convert('filter', _.filter, { 'cap': false });
-
-filter(function(value, index) {
-  return index % 2 == 0;
-})(['a', 'b', 'c']);
-// => ['a', 'c']
 ```
 
 ## Mapping

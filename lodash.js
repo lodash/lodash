@@ -2339,10 +2339,9 @@
      * @returns {Array} Returns the cast property path array.
      */
     function baseCastPath(value) {
-      if (isArray(value)) {
-        return value;
-      }
-      return isSymbol(value) ? [value] : stringToPath(value);
+      return isArray(value)
+        ? value
+        : stringToPath(value);
     }
 
     /**

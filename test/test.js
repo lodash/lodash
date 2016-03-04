@@ -771,7 +771,9 @@
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
       }
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var object = { 'a': 1 },
@@ -1460,7 +1462,9 @@
     QUnit.test('should pluck inherited property values', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var actual = _.at(new Foo, 'b');
@@ -2493,7 +2497,9 @@
   QUnit.module('clone methods');
 
   (function() {
-    function Foo() { this.a = 1; }
+    function Foo() {
+      this.a = 1;
+    }
     Foo.prototype.b = 1;
     Foo.c = function() {};
 
@@ -3239,7 +3245,6 @@
           return value > 1;
         };
       }
-
       Foo.prototype.b = function(value) {
         return value > 8;
       };
@@ -3721,9 +3726,9 @@
     QUnit.test('should ensure `new curried` is an instance of `func`', function(assert) {
       assert.expect(2);
 
-      var Foo = function(value) {
+      function Foo(value) {
         return value && object;
-      };
+      }
 
       var curried = _.curry(Foo),
           object = {};
@@ -3880,9 +3885,9 @@
     QUnit.test('should ensure `new curried` is an instance of `func`', function(assert) {
       assert.expect(2);
 
-      var Foo = function(value) {
+      function Foo(value) {
         return value && object;
-      };
+      }
 
       var curried = _.curryRight(Foo),
           object = {};
@@ -5717,7 +5722,9 @@
     QUnit.test('should iterate over own properties of objects', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = [1, 2]; }
+      function Foo() {
+        this.a = [1, 2];
+      }
       Foo.prototype.b = [3, 4];
 
       var actual = _.flatMap(new Foo, identity);
@@ -6078,7 +6085,9 @@
     QUnit.test('`_.' + methodName + '` iterates over inherited string keyed properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var keys = [];
@@ -6386,7 +6395,9 @@
       QUnit.test('`_.' + methodName + '` iterates over own properties of objects', function(assert) {
         assert.expect(1);
 
-        function Foo() { this.a = 1; }
+        function Foo() {
+          this.a = 1;
+        }
         Foo.prototype.b = 2;
 
         if (func) {
@@ -6532,7 +6543,9 @@
     QUnit.test('`_.' + methodName + '` should assign own ' + (isAssign ? '' : 'and inherited ') + 'string keyed source properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var expected = isAssign ? { 'a': 1 } : { 'a': 1, 'b': 2 };
@@ -6854,6 +6867,7 @@
         this.b = 'b';
       }
       Foo.prototype.c = noop;
+
       assert.deepEqual(_.functions(new Foo).sort(), ['a']);
     });
   }());
@@ -8583,7 +8597,9 @@
     QUnit.test('should work with jQuery/MooTools DOM query collections', function(assert) {
       assert.expect(1);
 
-      function Foo(elements) { push.apply(this, elements); }
+      function Foo(elements) {
+        push.apply(this, elements);
+      }
       Foo.prototype = { 'length': 0, 'splice': arrayProto.splice };
 
       assert.strictEqual(_.isEmpty(new Foo([])), true);
@@ -8823,10 +8839,14 @@
     QUnit.test('should compare object instances', function(assert) {
       assert.expect(4);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.a = 1;
 
-      function Bar() { this.a = 1; }
+      function Bar() {
+        this.a = 1;
+      }
       Bar.prototype.a = 2;
 
       assert.strictEqual(_.isEqual(new Foo, new Foo), true);
@@ -8965,7 +8985,9 @@
     QUnit.test('should treat objects created by `Object.create(null)` like a plain object', function(assert) {
       assert.expect(2);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.constructor = null;
 
       var object2 = { 'a': 1 };
@@ -9880,7 +9902,9 @@
     QUnit.test('should match inherited string keyed `object` properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       assert.strictEqual(_.isMatch({ 'a': new Foo }, { 'a': { 'b': 2 } }), true);
@@ -9889,7 +9913,9 @@
     QUnit.test('should not match by inherited `source` properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
@@ -12227,7 +12253,9 @@
     QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var expected = isKeys ? ['a'] : ['a', 'b'];
@@ -12702,7 +12730,9 @@
     QUnit.test('should iterate over own properties of objects', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var actual = _.map(new Foo, identity);
@@ -12919,7 +12949,9 @@
     QUnit.test('should iterate over own properties of objects', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 'a'; }
+      function Foo() {
+        this.a = 'a';
+      }
       Foo.prototype.b = 'b';
 
       var actual = func(new Foo, function(value, key) { return key; });
@@ -12984,7 +13016,9 @@
     QUnit.test('should match inherited string keyed `object` properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var object = { 'a': new Foo },
@@ -12996,7 +13030,9 @@
     QUnit.test('should not match by inherited `source` properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var objects = [{ 'a': 1 }, { 'a': 1, 'b': 2 }],
@@ -13432,7 +13468,9 @@
     QUnit.test('should not match by inherited `srcValue` properties', function(assert) {
       assert.expect(2);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var objects = [{ 'a': { 'a': 1 } }, { 'a': { 'a': 1, 'b': 2 } }],
@@ -16721,7 +16759,9 @@
     QUnit.test('should pluck inherited property values', function(assert) {
       assert.expect(2);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var propOf = _.propertyOf(new Foo);
@@ -18780,7 +18820,9 @@
     QUnit.test('should work with jQuery/MooTools DOM query collections', function(assert) {
       assert.expect(1);
 
-      function Foo(elements) { push.apply(this, elements); }
+      function Foo(elements) {
+        push.apply(this, elements);
+      }
       Foo.prototype = { 'length': 0, 'splice': arrayProto.splice };
 
       assert.strictEqual(_.size(new Foo(array)), 3);
@@ -21976,7 +22018,9 @@
     QUnit.test('should flatten inherited string keyed properties', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.b = 2; }
+      function Foo() {
+        this.b = 2;
+      }
       Foo.prototype.c = 3;
 
       var actual = lodashStable.assign({ 'a': 1 }, _.toPlainObject(new Foo));
@@ -23221,7 +23265,9 @@
     QUnit.test('`_.' + methodName + '` should ' + (isValues ? 'not ' : '') + 'include inherited string keyed property values', function(assert) {
       assert.expect(1);
 
-      function Foo() { this.a = 1; }
+      function Foo() {
+        this.a = 1;
+      }
       Foo.prototype.b = 2;
 
       var expected = isValues ? [1] : [1, 2];

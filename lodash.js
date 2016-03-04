@@ -1,7 +1,7 @@
 /**
  * @license
  * lodash 4.6.1 <https://lodash.com/>
- * Copyright jQuery Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

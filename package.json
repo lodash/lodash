@@ -1,7 +1,7 @@
 {
   "name": "lodash",
-  "license": "MIT",
   "version": "4.6.1",
+  "license": "MIT",
   "main": "lodash.js",
   "private": true,
   "devDependencies": {

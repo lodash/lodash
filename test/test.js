@@ -21836,39 +21836,10 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.toInteger and lodash.toNumber');
+  QUnit.module('number coercion methods');
 
-  lodashStable.each(['toInteger', 'toNumber'], function(methodName) {
-    var func = _[methodName],
-        isInt = methodName == 'toInteger';
-
-    function negative(string) {
-      return '-' + string;
-    }
-
-    function pad(string) {
-      return whitespace + string + whitespace;
-    }
-
-    function positive(string) {
-      return '+' + string;
-    }
-
-    QUnit.test('`_.' + methodName + '` should convert empty values to `0` or `NaN`', function(assert) {
-      assert.expect(1);
-
-      var values = falsey.concat(whitespace);
-
-      var expected = lodashStable.map(values, function(value) {
-        return (isInt || (value === whitespace)) ? 0 : Number(value);
-      });
-
-      var actual = lodashStable.map(values, function(value, index) {
-        return index ? func(value) : func();
-      });
-
-      assert.deepEqual(actual, expected);
-    });
+  lodashStable.each(['toInteger', 'toNumber', 'toSafeInteger'], function(methodName) {
+    var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should preserve sign of `0`', function(assert) {
       assert.expect(1);
@@ -21883,6 +21854,25 @@
 
       assert.deepEqual(actual, expected);
     });
+  });
+
+  lodashStable.each(['toInteger', 'toLength', 'toNumber', 'toSafeInteger'], function(methodName) {
+    var func = _[methodName],
+        isToLength = methodName == 'toLength',
+        isToNumber = methodName == 'toNumber',
+        isToSafeInteger = methodName == 'toSafeInteger';
+
+    function negative(string) {
+      return '-' + string;
+    }
+
+    function pad(string) {
+      return whitespace + string + whitespace;
+    }
+
+    function positive(string) {
+      return '+' + string;
+    }
 
     QUnit.test('`_.' + methodName + '` should convert number primitives and objects to numbers', function(assert) {
       assert.expect(1);
@@ -21890,7 +21880,7 @@
       var values = [2, 1.2, MAX_SAFE_INTEGER, MAX_INTEGER, Infinity, NaN];
 
       var expected = lodashStable.map(values, function(value) {
-        if (isInt) {
+        if (!isToNumber) {
           if (value == 1.2) {
             value = 1;
           }
@@ -21900,20 +21890,16 @@
           else if (value !== value) {
             value = 0;
           }
+          if (isToLength || isToSafeInteger) {
+            value = Math.min(value, isToLength ? MAX_ARRAY_LENGTH : MAX_SAFE_INTEGER);
+          }
         }
-        return [value, value, -value, -value];
+        var neg = isToLength ? 0 : -value;
+        return [value, value, neg, neg];
       });
 
       var actual = lodashStable.map(values, function(value) {
-        return lodashStable.flattenDeep(
-          lodashStable.times(2, function(index) {
-            var other = index ? -value : value;
-            return [
-              func(other),
-              func(Object(other))
-            ];
-          })
-        );
+        return [func(value), func(Object(value)), func(-value), func(Object(-value))];
       });
 
       assert.deepEqual(actual, expected);
@@ -21933,7 +21919,7 @@
 
       var expected = lodashStable.map(values, function(value) {
         var n = +value;
-        if (isInt) {
+        if (!isToNumber) {
           if (n == 1.234567890) {
             n = 1;
           }
@@ -21943,25 +21929,24 @@
           else if (n == Number.MIN_VALUE || n !== n) {
             n = 0;
           }
+          if (isToLength || isToSafeInteger) {
+            n = Math.min(n, isToLength ? MAX_ARRAY_LENGTH : MAX_SAFE_INTEGER);
+          }
         }
-        return [n, n, n, n, n, n, -n, -n];
+        var neg = isToLength ? 0 : -n;
+        return [n, n, n, n, n, n, neg, neg];
       });
 
       var actual = lodashStable.map(values, function(value) {
-        return lodashStable.flattenDeep(
-          lodashStable.map(transforms, function(mod) {
-            return [
-              func(mod(value)),
-              func(Object(mod(value)))
-            ];
-          })
-        );
+        return lodashStable.flatMap(transforms, function(mod) {
+          return [func(mod(value)), func(Object(mod(value)))];
+        });
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should convert binary and octal strings to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert binary/octal strings to numbers', function(assert) {
       assert.expect(1);
 
       var numbers = [42, 5349, 1715004],
@@ -21973,44 +21958,56 @@
       });
 
       var actual = lodashStable.map(values, function(value) {
-        return lodashStable.flattenDeep(
-          lodashStable.times(2, function(index) {
-            var other = index ? value.toUpperCase() : value;
-            return lodashStable.map(transforms, function(mod) {
-              return [
-                func(mod(other)),
-                func(Object(mod(other)))
-              ];
-            });
-          })
-        );
+        var upper = value.toUpperCase();
+        return lodashStable.flatMap(transforms, function(mod) {
+          return [func(mod(value)), func(Object(mod(value))), func(mod(upper)), func(Object(mod(upper)))];
+        });
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should convert invalid binary and octal strings to `NaN`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert invalid binary/octal strings to `' + (isToNumber ? 'NaN' : '0') + '`', function(assert) {
       assert.expect(1);
 
       var transforms = [identity, pad, positive, negative],
           values = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
 
       var expected = lodashStable.map(values, function(n) {
-        return lodashStable.times(16, lodashStable.constant(isInt ? 0 : NaN));
+        return lodashStable.times(8, lodashStable.constant(isToNumber ? NaN : 0));
       });
 
       var actual = lodashStable.map(values, function(value) {
-        return lodashStable.flattenDeep(
-          lodashStable.times(2, function(index) {
-            var other = index ? value.toUpperCase() : value;
-            return lodashStable.map(transforms, function(mod) {
-              return [
-                func(mod(value)),
-                func(Object(mod(value)))
-              ];
-            });
-          })
-        );
+        return lodashStable.flatMap(transforms, function(mod) {
+          return [func(mod(value)), func(Object(mod(value)))];
+        });
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should convert symbols to `' + (isToNumber ? 'NaN' : '0') + '`', function(assert) {
+      assert.expect(1);
+
+      if (Symbol) {
+        assert.deepEqual(func(symbol), isToNumber ? NaN : 0);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should convert empty values to `0` or `NaN`', function(assert) {
+      assert.expect(1);
+
+      var values = falsey.concat(whitespace);
+
+      var expected = lodashStable.map(values, function(value) {
+        return (isToNumber && value !== whitespace) ? Number(value) : 0;
+      });
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? func(value) : func();
       });
 
       assert.deepEqual(actual, expected);
@@ -22044,7 +22041,7 @@
         42,   42
       ];
 
-      if (isInt) {
+      if (!isToNumber) {
         expected = [
           0, 0, 1, 0,
           0, 2, 1, 1,

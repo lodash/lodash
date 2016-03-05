@@ -296,7 +296,7 @@ function baseConvert(util, name, func, options) {
     result.convert = convert;
     if (mapping.placeholder[name]) {
       setPlaceholder = true;
-      func.placeholder = result.placeholder = placeholder;
+      result.placeholder = func.placeholder = placeholder;
     }
     return result;
   };

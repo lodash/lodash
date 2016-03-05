@@ -14526,7 +14526,7 @@
       if (isArray(value)) {
         return arrayMap(value, baseCastKey);
       }
-      return isSymbol(value) ? [value] : stringToPath(value);
+      return isSymbol(value) ? [value] : copyArray(stringToPath(value));
     }
 
     /**

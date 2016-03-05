@@ -22108,6 +22108,12 @@
       });
     });
 
+    QUnit.test('should a new path array', function(assert) {
+      assert.expect(1);
+
+      assert.notStrictEqual(_.toPath('a.b.c'), _.toPath('a.b.c'));
+    });
+
     QUnit.test('should not coerce symbols to strings', function(assert) {
       assert.expect(4);
 

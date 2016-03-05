@@ -231,7 +231,7 @@ function baseConvert(util, name, func, options) {
     var wrapper = wrappers[name];
 
     var convert = function(options) {
-      var newUtil = isLib ? pristine.runInContext() : helpers,
+      var newUtil = isLib ? pristine : helpers,
           newFunc = isLib ? pristine[name] : func,
           newOptions = assign(assign({}, config), options);
 

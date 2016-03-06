@@ -11022,6 +11022,9 @@
      * // => 3
      */
     function toNumber(value) {
+      if (typeof value == 'number') {
+        return value;
+      }
       if (isSymbol(value)) {
         return NAN;
       }

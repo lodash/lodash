@@ -21872,6 +21872,20 @@
       return '+' + string;
     }
 
+    QUnit.test('`_.' + methodName + '` should pass thru primitive number values', function(assert) {
+      assert.expect(1);
+
+      var values = [0, 1, NaN];
+
+      var expected = lodashStable.map(values, function(value) {
+        return (!isToNumber && value !== value) ? 0 : value;
+      });
+
+      var actual = lodashStable.map(values, func);
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('`_.' + methodName + '` should convert number primitives and objects to numbers', function(assert) {
       assert.expect(1);
 

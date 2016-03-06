@@ -21990,7 +21990,15 @@
       assert.expect(1);
 
       if (Symbol) {
-        assert.deepEqual(func(symbol), isToNumber ? NaN : 0);
+        var object1 = Object(symbol),
+            object2 = Object(symbol),
+            values = [symbol, object1, object2],
+            expected = lodashStable.map(values, lodashStable.constant(isToNumber ? NaN : 0));
+
+        object2.valueOf = undefined;
+        var actual = lodashStable.map(values, func);
+
+        assert.deepEqual(actual, expected);
       }
       else {
         skipAssert(assert);

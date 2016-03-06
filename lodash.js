@@ -11022,14 +11022,15 @@
      * // => 3
      */
     function toNumber(value) {
+      if (isSymbol(value)) {
+        return NAN;
+      }
       if (isObject(value)) {
         var other = isFunction(value.valueOf) ? value.valueOf() : value;
         value = isObject(other) ? (other + '') : other;
       }
       if (typeof value != 'string') {
-        return value === 0
-          ?  value
-          : (typeof value == 'symbol' ? NAN : +value);
+        return value === 0 ?  value : +value;
       }
       value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);

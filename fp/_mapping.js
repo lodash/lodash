@@ -50,12 +50,12 @@ exports.aryMethod = {
     'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
     'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith', 'eq', 'every',
     'filter', 'find', 'find', 'findIndex', 'findKey', 'findLast', 'findLastIndex',
-    'findLastKey', 'flatMap', 'flattenDepth', 'forEach', 'forEachRight', 'forIn',
-    'forInRight', 'forOwn', 'forOwnRight', 'get', 'groupBy', 'gt', 'gte', 'has',
-    'hasIn', 'includes', 'indexOf', 'intersection', 'invertBy', 'invoke', 'invokeMap',
-    'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map',
-    'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy', 'omit',
-    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
+    'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth', 'forEach', 'forEachRight',
+    'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get', 'groupBy', 'gt', 'gte',
+    'has', 'hasIn', 'includes', 'indexOf', 'intersection', 'invertBy', 'invoke',
+    'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf', 'lt', 'lte',
+    'map', 'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy',
+    'omit', 'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
     'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt',
     'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'result',
     'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf', 'sortedLastIndex',
@@ -68,9 +68,10 @@ exports.aryMethod = {
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
     'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-    'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'pullAllWith', 'reduce',
-    'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
-    'transform', 'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
+    'isMatchWith', 'flatMapDepth', 'mergeWith', 'orderBy', 'pullAllBy',
+    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
+    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
+    'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith', 'updateWith'
@@ -101,6 +102,8 @@ exports.iterateeAry = {
   'findLastIndex': 1,
   'findLastKey': 1,
   'flatMap': 1,
+  'flatMapDeep': 1,
+  'flatMapDepth': 1,
   'forEach': 1,
   'forEachRight': 1,
   'forIn': 1,

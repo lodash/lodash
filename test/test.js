@@ -5696,32 +5696,62 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.flatMap');
+  QUnit.module('lodash.flatMapDepth');
 
   (function() {
-    var array = [1, 2, 3, 4];
+    var array = [1, [2, [3, [4]], 5]];
+
+    QUnit.test('should use a default `depth` of `1`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.flatMapDepth(array), [1, 2, [3, [4]], 5]);
+    });
+
+    QUnit.test('should treat a `depth` of < `1` as a shallow clone', function(assert) {
+      assert.expect(2);
+
+      lodashStable.each([-1, 0], function(depth) {
+        assert.deepEqual(_.flatMapDepth(array, identity, depth), [1, [2, [3, [4]], 5]]);
+      });
+    });
+
+    QUnit.test('should coerce `depth` to an integer', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.flatMapDepth(array, identity, 2.2), [1, 2, 3, [4], 5]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('flatMap methods');
+
+  lodashStable.each(['flatMap', 'flatMapDeep', 'flatMapDepth'], function(methodName) {
+    var func = _[methodName],
+        isDeep = methodName == 'flatMapDeep',
+        array = [1, 2, 3, 4];
 
     function duplicate(n) {
       return [n, n];
     }
 
-    QUnit.test('should map values in `array` to a new flattened array', function(assert) {
+    QUnit.test('`_.' + methodName + '` should map values in `array` to a new flattened array', function(assert) {
       assert.expect(1);
 
-      var actual = _.flatMap(array, duplicate),
+      var actual = func(array, duplicate),
           expected = lodashStable.flatten(lodashStable.map(array, duplicate));
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': [1, 2] }, { 'a': [3, 4] }];
-      assert.deepEqual(_.flatMap(objects, 'a'), array);
+      assert.deepEqual(func(objects, 'a'), array);
     });
 
-    QUnit.test('should iterate over own properties of objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should iterate over own string keyed properties of objects', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -5729,59 +5759,55 @@
       }
       Foo.prototype.b = [3, 4];
 
-      var actual = _.flatMap(new Foo, identity);
+      var actual = func(new Foo, identity);
       assert.deepEqual(actual, [1, 2]);
     });
 
-    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
-      assert.expect(1);
+    QUnit.test('`_.' + methodName + '` should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(2);
 
       var array = [[1, 2], [3, 4]],
+          object = { 'a': [1, 2], 'b': [3, 4] },
           values = [, null, undefined],
           expected = lodashStable.map(values, lodashStable.constant([1, 2, 3, 4]));
 
-      var actual = lodashStable.map(values, function(value, index) {
-        return index ? _.flatMap(array, value) : _.flatMap(array);
+      lodashStable.each([array, object], function(collection) {
+        var actual = lodashStable.map(values, function(value, index) {
+          return index ? func(collection, value) : func(collection);
+        });
+
+        assert.deepEqual(actual, expected);
       });
-
-      assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work on an object with no `iteratee`', function(assert) {
-      assert.expect(1);
-
-      var actual = _.flatMap({ 'a': [1, 2], 'b': [3, 4] });
-      assert.deepEqual(actual, array);
-    });
-
-    QUnit.test('should handle object arguments with non-number length properties', function(assert) {
-      assert.expect(1);
-
-      var object = { 'length': [1, 2] };
-      assert.deepEqual(_.flatMap(object, identity), [1, 2]);
-    });
-
-    QUnit.test('should accept a falsey `collection` argument', function(assert) {
+    QUnit.test('`_.' + methodName + '` should accept a falsey `collection` argument', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(falsey, alwaysEmptyArray);
 
       var actual = lodashStable.map(falsey, function(collection, index) {
         try {
-          return index ? _.flatMap(collection) : _.flatMap();
+          return index ? func(collection) : func();
         } catch (e) {}
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should treat number values for `collection` as empty', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat number values for `collection` as empty', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.flatMap(1), []);
+      assert.deepEqual(func(1), []);
     });
 
-    QUnit.test('should work in a lazy sequence', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with objects with non-number length properties', function(assert) {
+      assert.expect(1);
+
+      var object = { 'length': [1, 2] };
+      assert.deepEqual(func(object, identity), [1, 2]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
@@ -5790,16 +5816,16 @@
 
         lodashStable.times(2, function(index) {
           var array = index ? largeArray : smallArray,
-              actual = _(array).filter(isEven).flatMap(duplicate).take(2).value();
+              actual = _(array).filter(isEven)[methodName](duplicate).take(2).value();
 
-          assert.deepEqual(actual, _.take(_.flatMap(_.filter(array, isEven), duplicate), 2));
+          assert.deepEqual(actual, _.take(func(_.filter(array, isEven), duplicate), 2));
         });
       }
       else {
         skipAssert(assert, 2);
       }
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -6394,7 +6420,7 @@
       var array = [1, 2, 3],
           func = _[methodName];
 
-      QUnit.test('`_.' + methodName + '` iterates over own properties of objects', function(assert) {
+      QUnit.test('`_.' + methodName + '` iterates over own string keyed properties of objects', function(assert) {
         assert.expect(1);
 
         function Foo() {
@@ -12769,7 +12795,7 @@
       assert.deepEqual(_.map(objects, 'a'), ['x', 'y']);
     });
 
-    QUnit.test('should iterate over own properties of objects', function(assert) {
+    QUnit.test('should iterate over own string keyed properties of objects', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -12782,47 +12808,19 @@
     });
 
     QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var values = [, null, undefined],
+      var object = { 'a': 1, 'b': 2 },
+          values = [, null, undefined],
           expected = lodashStable.map(values, lodashStable.constant([1, 2]));
 
-      var actual = lodashStable.map(values, function(value, index) {
-        return index ? _.map(array, value) : _.map(array);
-      });
-
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should work on an object with no `iteratee`', function(assert) {
-      assert.expect(1);
-
-      var actual = _.map({ 'a': 1, 'b': 2 });
-      assert.deepEqual(actual, array);
-    });
-
-    QUnit.test('should handle object arguments with non-number length properties', function(assert) {
-      assert.expect(1);
-
-      var value = { 'value': 'x' },
-          object = { 'length': { 'value': 'x' } };
-
-      assert.deepEqual(_.map(object, identity), [value]);
-    });
-
-    QUnit.test('should treat a nodelist as an array-like object', function(assert) {
-      assert.expect(1);
-
-      if (document) {
-        var actual = _.map(document.getElementsByTagName('body'), function(element) {
-          return element.nodeName.toLowerCase();
+      lodashStable.each([array, object], function(collection) {
+        var actual = lodashStable.map(values, function(value, index) {
+          return index ? _.map(collection, value) : _.map(collection);
         });
 
-        assert.deepEqual(actual, ['body']);
-      }
-      else {
-        skipAssert(assert);
-      }
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should accept a falsey `collection` argument', function(assert) {
@@ -12843,6 +12841,30 @@
       assert.expect(1);
 
       assert.deepEqual(_.map(1), []);
+    });
+
+    QUnit.test('should treat a nodelist as an array-like object', function(assert) {
+      assert.expect(1);
+
+      if (document) {
+        var actual = _.map(document.getElementsByTagName('body'), function(element) {
+          return element.nodeName.toLowerCase();
+        });
+
+        assert.deepEqual(actual, ['body']);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should work with objects with non-number length properties', function(assert) {
+      assert.expect(1);
+
+      var value = { 'value': 'x' },
+          object = { 'length': { 'value': 'x' } };
+
+      assert.deepEqual(_.map(object, identity), [value]);
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {
@@ -12988,7 +13010,7 @@
         func = _[methodName],
         object = { 'a': 1, 'b': 2 };
 
-    QUnit.test('should iterate over own properties of objects', function(assert) {
+    QUnit.test('`_.' + methodName + '` should iterate over own string keyed properties of objects', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -13000,7 +13022,7 @@
       assert.deepEqual(actual, { 'a': 'a' });
     });
 
-    QUnit.test('should accept a falsey `object` argument', function(assert) {
+    QUnit.test('`_.' + methodName + '` should accept a falsey `object` argument', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(falsey, alwaysEmptyObject);
@@ -13014,7 +13036,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return a wrapped value when chaining', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a wrapped value when chaining', function(assert) {
       assert.expect(1);
 
       if (!isNpm) {
@@ -24701,7 +24723,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(300);
+      assert.expect(302);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

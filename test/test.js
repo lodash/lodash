@@ -21339,7 +21339,7 @@
     });
 
     QUnit.test('should trigger a second throttled call as soon as possible', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       var done = assert.async();
 
@@ -21357,9 +21357,13 @@
       }, 192);
 
       setTimeout(function() {
+        assert.strictEqual(callCount, 1);
+      }, 254);
+
+      setTimeout(function() {
         assert.strictEqual(callCount, 2);
         done();
-      }, 288);
+      }, 384);
     });
 
     QUnit.test('should apply default options', function(assert) {

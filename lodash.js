@@ -6138,6 +6138,7 @@
      *
      * @static
      * @memberOf _
+     * @since 0.1.0
      * @alias first
      * @category Array
      * @param {Array} array The array to query.
@@ -7490,6 +7491,7 @@
      *
      * @name at
      * @memberOf _
+     * @since 1.0.0
      * @category Seq
      * @param {...(string|string[])} [paths] The property paths of elements to pick,
      *  specified individually or in arrays.
@@ -7534,6 +7536,7 @@
      *
      * @name chain
      * @memberOf _
+     * @since 0.1.0
      * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -7564,6 +7567,7 @@
      *
      * @name commit
      * @memberOf _
+     * @since 3.2.0
      * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -7594,6 +7598,7 @@
      *
      * @name next
      * @memberOf _
+     * @since 4.0.0
      * @category Seq
      * @returns {Object} Returns the next iterator value.
      * @example
@@ -7624,6 +7629,7 @@
      *
      * @name Symbol.iterator
      * @memberOf _
+     * @since 4.0.0
      * @category Seq
      * @returns {Object} Returns the wrapper object.
      * @example
@@ -7645,6 +7651,7 @@
      *
      * @name plant
      * @memberOf _
+     * @since 3.2.0
      * @category Seq
      * @param {*} value The value to plant.
      * @returns {Object} Returns the new `lodash` wrapper instance.
@@ -7690,6 +7697,7 @@
      *
      * @name reverse
      * @memberOf _
+     * @since 0.1.0
      * @category Seq
      * @returns {Object} Returns the new `lodash` wrapper instance.
      * @example
@@ -7725,6 +7733,7 @@
      *
      * @name value
      * @memberOf _
+     * @since 0.1.0
      * @alias toJSON, valueOf
      * @category Seq
      * @returns {*} Returns the resolved unwrapped value.
@@ -8003,6 +8012,7 @@
      *
      * @static
      * @memberOf _
+     * @since 0.1.0
      * @alias each
      * @category Collection
      * @param {Array|Object} collection The collection to iterate over.

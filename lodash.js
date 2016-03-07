@@ -9000,14 +9000,12 @@
      * jQuery(window).on('popstate', debounced.cancel);
      */
     function debounce(func, wait, options) {
-      var args,
-          maxTimeoutId,
+      var lastArgs,
+          lastThis,
+          lastCallTime = 0,
+          timerId,
+          lastInvokeTime = 0,
           result,
-          stamp,
-          thisArg,
-          timeoutId,
-          trailingCall,
-          lastCalled = 0,
           leading = false,
           maxWait = false,
           trailing = true;
@@ -9022,95 +9020,137 @@
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
 
-      function cancel() {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-        if (maxTimeoutId) {
-          clearTimeout(maxTimeoutId);
-        }
-        lastCalled = 0;
-        args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
+      function invoke(time) {
+        var t = lastThis,
+            a = lastArgs;
+
+        lastThis = lastArgs = undefined;
+        lastInvokeTime = time;
+        result = func.apply(t, a);
+        return result;
       }
 
-      function complete(isCalled, id) {
-        if (id) {
-          clearTimeout(id);
+      function leadingEdge() {
+        // reset any maxWait timer
+        lastInvokeTime = lastCallTime;
+
+        // start the timer to the trailing edge
+        timerId = setTimeout(timerExpired, wait);
+
+        // invoke the leading edge
+        if (leading) {
+          invoke(lastCallTime);
         }
-        maxTimeoutId = timeoutId = trailingCall = undefined;
-        if (isCalled) {
-          lastCalled = now();
-          result = func.apply(thisArg, args);
-          if (!timeoutId && !maxTimeoutId) {
-            args = thisArg = undefined;
+
+        return result;
+      }
+
+      function trailingEdge(time) {
+        if (timerId !== undefined) {
+          clearTimeout(timerId);
+          timerId = undefined;
+        }
+
+        // only invoke if we have lastArgs, which means
+        // there has been a call to our func since the last invocation
+        if (trailing && lastArgs) {
+          invoke(time);
+        }
+        else {
+          lastThis = lastArgs = undefined;
+        }
+
+        return result;
+      }
+
+      function checkTimes(time) {
+        var timeSinceLastInvoke = time - lastInvokeTime,
+            waitTime = time - lastCallTime,
+            remainingWait,
+            shouldInvoke;
+
+        if (waitTime >= wait) {
+          // activity has stopped.  we are at the trailing edge
+          trailingEdge(time);
+          return undefined;
+        }
+
+        if (waitTime < 0) {
+          // the system time has gone backwards.  Treat it as the trailing edge
+          trailingEdge(time);
+          return undefined;
+        }
+
+        shouldInvoke = (maxWait !== false && timeSinceLastInvoke >= maxWait);
+
+        // Restart the timer to the smaller of remaining maxWait and remaining wait
+        remainingWait = wait - waitTime;
+        if (maxWait !== false) {
+          remainingWait = nativeMin(remainingWait, maxWait - timeSinceLastInvoke);
+        }
+
+        return {
+          shouldInvoke: shouldInvoke,
+          remainingWait: remainingWait
+        };
+      }
+
+      function timerExpired() {
+        var checkResult,
+            time = now();
+
+        timerId = undefined;
+        checkResult = checkTimes(time);
+
+        if (checkResult !== undefined) {
+          // restart the timer
+          timerId = setTimeout(timerExpired, checkResult.remainingWait);
+
+          // and invoke if necessary
+          if (checkResult.shouldInvoke) {
+            invoke(time);
           }
         }
       }
 
-      function delayed() {
-        var remaining = wait - (now() - stamp);
-        if (remaining <= 0 || remaining > wait) {
-          complete(trailingCall, maxTimeoutId);
-        } else {
-          timeoutId = setTimeout(delayed, remaining);
+      function cancel() {
+        if (timerId !== undefined) {
+          clearTimeout(timerId);
+          timerId = undefined;
         }
+
+        lastThis = lastArgs = undefined;
       }
 
       function flush() {
-        if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
-          result = func.apply(thisArg, args);
+        if (timerId !== undefined) {
+          trailingEdge(now());
         }
-        cancel();
-        return result;
-      }
 
-      function maxDelayed() {
-        complete(trailing, timeoutId);
+        return result;
       }
 
       function debounced() {
-        args = arguments;
-        stamp = now();
-        thisArg = this;
-        trailingCall = trailing && (timeoutId || !leading);
+        var checkResult;
+        lastThis = this;
+        lastArgs = arguments;
+        lastCallTime = now();
 
-        if (maxWait === false) {
-          var leadingCall = leading && !timeoutId;
-        } else {
-          if (!lastCalled && !maxTimeoutId && !leading) {
-            lastCalled = stamp;
-          }
-          var remaining = maxWait - (stamp - lastCalled);
+        if (timerId === undefined) {
+          return leadingEdge();
+        }
 
-          var isCalled = (remaining <= 0 || remaining > maxWait) &&
-            (leading || maxTimeoutId);
-
-          if (isCalled) {
-            if (maxTimeoutId) {
-              maxTimeoutId = clearTimeout(maxTimeoutId);
-            }
-            lastCalled = stamp;
-            result = func.apply(thisArg, args);
-          }
-          else if (!maxTimeoutId) {
-            maxTimeoutId = setTimeout(maxDelayed, remaining);
+        // check the current times to handle invocations in a tight loop
+        checkResult = checkTimes(lastCallTime);
+        if (checkResult) {
+          if (checkResult.shouldInvoke) {
+            invoke(lastCallTime);
           }
         }
-        if (isCalled && timeoutId) {
-          timeoutId = clearTimeout(timeoutId);
-        }
-        else if (!timeoutId && wait !== maxWait) {
-          timeoutId = setTimeout(delayed, wait);
-        }
-        if (leadingCall) {
-          isCalled = true;
-          result = func.apply(thisArg, args);
-        }
-        if (isCalled && !timeoutId && !maxTimeoutId) {
-          args = thisArg = undefined;
-        }
+
         return result;
       }
+
       debounced.cancel = cancel;
       debounced.flush = flush;
       return debounced;

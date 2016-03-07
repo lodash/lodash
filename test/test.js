@@ -5806,25 +5806,6 @@
       var object = { 'length': [1, 2] };
       assert.deepEqual(func(object, identity), [1, 2]);
     });
-
-    QUnit.test('`_.' + methodName + '` should work in a lazy sequence', function(assert) {
-      assert.expect(2);
-
-      if (!isNpm) {
-        var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
-            smallArray = array;
-
-        lodashStable.times(2, function(index) {
-          var array = index ? largeArray : smallArray,
-              actual = _(array).filter(isEven)[methodName](duplicate).take(2).value();
-
-          assert.deepEqual(actual, _.take(func(_.filter(array, isEven), duplicate), 2));
-        });
-      }
-      else {
-        skipAssert(assert, 2);
-      }
-    });
   });
 
   /*--------------------------------------------------------------------------*/

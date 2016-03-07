@@ -22084,28 +22084,54 @@
   QUnit.module('lodash.toPairs');
 
   (function() {
-    QUnit.test('should create a two dimensional array of key-value pairs', function(assert) {
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.entries, _.toPairs);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.toPairsIn');
+
+  (function() {
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.entriesIn, _.toPairsIn);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('toPairs methods');
+
+  lodashStable.each(['toPairs', 'toPairsIn'], function(methodName) {
+    var func = _[methodName];
+
+    QUnit.test('`_.' + methodName + '` should create a two dimensional array of key-value pairs', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1, 'b': 2 };
-      assert.deepEqual(_.toPairs(object), [['a', 1], ['b', 2]]);
+      assert.deepEqual(func(object), [['a', 1], ['b', 2]]);
     });
 
-    QUnit.test('should work with an object that has a `length` property', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
       var object = { '0': 'a', '1': 'b', 'length': 2 };
-      assert.deepEqual(_.toPairs(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
+      assert.deepEqual(func(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
     });
 
-    QUnit.test('should work with strings', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with strings', function(assert) {
       assert.expect(2);
 
       lodashStable.each(['xo', Object('xo')], function(string) {
-        assert.deepEqual(_.toPairs(string), [['0', 'x'], ['1', 'o']]);
+        assert.deepEqual(func(string), [['0', 'x'], ['1', 'o']]);
       });
     });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -24693,6 +24719,7 @@
       'times',
       'toArray',
       'toPairs',
+      'toPairsIn',
       'union',
       'uniq',
       'values',
@@ -24704,7 +24731,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(302);
+      assert.expect(305);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 
@@ -24742,7 +24769,7 @@
     });
 
     QUnit.test('should return an array', function(assert) {
-      assert.expect(70);
+      assert.expect(72);
 
       var array = [1, 2, 3];
 

@@ -12298,6 +12298,7 @@
      * @static
      * @memberOf _
      * @since 4.0.0
+     * @alias entries
      * @category Object
      * @param {Object} object The object to query.
      * @returns {Array} Returns the new array of key-value pairs.
@@ -12324,6 +12325,7 @@
      * @static
      * @memberOf _
      * @since 4.0.0
+     * @alias entriesIn
      * @category Object
      * @param {Object} object The object to query.
      * @returns {Array} Returns the new array of key-value pairs.
@@ -15048,6 +15050,8 @@
     lodash.zipWith = zipWith;
 
     // Add aliases.
+    lodash.entries = toPairs;
+    lodash.entriesIn = toPairsIn;
     lodash.extend = assignIn;
     lodash.extendWith = assignInWith;
 

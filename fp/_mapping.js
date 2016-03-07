@@ -12,6 +12,8 @@ exports.aliasToReal = {
   'dissocPath': 'unset',
   'each': 'forEach',
   'eachRight': 'forEachRight',
+  'entries': 'toPairs',
+  'entriesIn': 'toPairsIn',
   'equals': 'isEqual',
   'extend': 'assignIn',
   'extendWith': 'assignInWith',

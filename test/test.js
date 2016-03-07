@@ -4193,6 +4193,74 @@
       }, 192);
     });
 
+    QUnit.test('should honor leading: false when maxWait is not supplied', function (assert) {
+      assert.expect(6);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function (value) {
+        ++callCount;
+        return value;
+      }, 32);
+
+      // leading should not fire
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      assert.strictEqual(callCount, 0);
+
+      setTimeout(function () {
+        // trailing should fire by now
+        assert.strictEqual(callCount, 1);
+
+        // do it again
+        var actual = [debounced(4), debounced(5), debounced(6)];
+        // previous result
+        assert.deepEqual(actual, [2, 2, 2]);
+        assert.strictEqual(callCount, 1);
+      }, 128);
+
+      setTimeout(function () {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 256);
+    });
+
+    QUnit.test('should honor leading: false when maxWait is supplied', function (assert) {
+      assert.expect(6);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function (value) {
+        ++callCount;
+        return value;
+      }, 32, { 'maxWait': 64 });
+
+      // leading should not fire
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      assert.strictEqual(callCount, 0);
+
+      setTimeout(function () {
+        // trailing should fire by now
+        assert.strictEqual(callCount, 1);
+
+        // do it again
+        var actual = [debounced(4), debounced(5), debounced(6)];
+        // previous result
+        assert.deepEqual(actual, [2, 2, 2]);
+        assert.strictEqual(callCount, 1);
+      }, 128);
+
+      setTimeout(function () {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 256);
+    });
+
     QUnit.test('should invoke the `trailing` call with the correct arguments and `this` binding', function(assert) {
       assert.expect(2);
 

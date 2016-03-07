@@ -6867,8 +6867,10 @@
     QUnit.test('should return the function names of an object', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 'a', 'b': identity, 'c': /x/, 'd': lodashStable.each };
-      assert.deepEqual(_.functions(object).sort(), ['b', 'd']);
+      var object = { 'a': 'a', 'b': identity, 'c': /x/, 'd': noop },
+          actual = _.functions(object).sort();
+
+      assert.deepEqual(actual, ['b', 'd']);
     });
 
     QUnit.test('should not include inherited functions', function(assert) {
@@ -6880,7 +6882,7 @@
       }
       Foo.prototype.c = noop;
 
-      assert.deepEqual(_.functions(new Foo).sort(), ['a']);
+      assert.deepEqual(_.functions(new Foo), ['a']);
     });
   }());
 
@@ -12291,7 +12293,9 @@
     QUnit.test('`_.' + methodName + '` should return the string keyed property names of `object`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(func({ 'a': 1, 'b': 1 }).sort(), ['a', 'b']);
+      var actual = func({ 'a': 1, 'b': 1 }).sort();
+
+      assert.deepEqual(actual, ['a', 'b']);
     });
 
     QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties', function(assert) {
@@ -12302,8 +12306,10 @@
       }
       Foo.prototype.b = 2;
 
-      var expected = isKeys ? ['a'] : ['a', 'b'];
-      assert.deepEqual(func(new Foo).sort(), expected);
+      var expected = isKeys ? ['a'] : ['a', 'b'],
+          actual = func(new Foo).sort();
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function(assert) {
@@ -12328,7 +12334,9 @@
       var array = [1];
       array[2] = 3;
 
-      assert.deepEqual(func(array).sort(), ['0', '1', '2']);
+      var actual = func(array).sort();
+
+      assert.deepEqual(actual, ['0', '1', '2']);
     });
 
     QUnit.test('`_.' + methodName + '` should not coerce nullish values to objects', function(assert) {
@@ -12347,16 +12355,21 @@
       var array = [1];
       array.a = 1;
 
-      assert.deepEqual(func(array).sort(), ['0', 'a']);
+      var actual = func(array).sort();
+
+      assert.deepEqual(actual, ['0', 'a']);
     });
 
     QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of arrays', function(assert) {
       assert.expect(1);
 
-      var expected = isKeys ? ['0'] : ['0', 'a'];
-
       arrayProto.a = 1;
-      assert.deepEqual(func([1]).sort(), expected);
+
+      var expected = isKeys ? ['0'] : ['0', 'a'],
+          actual = func([1]).sort();
+
+      assert.deepEqual(actual, expected);
+
       delete arrayProto.a;
     });
 
@@ -12364,8 +12377,11 @@
       assert.expect(1);
 
       var values = [args, strictArgs],
-          expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2'])),
-          actual = lodashStable.map(values, func);
+          expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2']));
+
+      var actual = lodashStable.map(values, function(value) {
+        return func(value).sort();
+      });
 
       assert.deepEqual(actual, expected);
     });
@@ -12405,7 +12421,9 @@
     QUnit.test('`_.' + methodName + '` should work with string objects', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(func(Object('abc')).sort(), ['0', '1', '2']);
+      var actual = func(Object('abc')).sort();
+
+      assert.deepEqual(actual, ['0', '1', '2']);
     });
 
     QUnit.test('`_.' + methodName + '` should return keys for custom properties on string objects', function(assert) {
@@ -12414,16 +12432,21 @@
       var object = Object('a');
       object.a = 1;
 
-      assert.deepEqual(func(object).sort(), ['0', 'a']);
+      var actual = func(object).sort();
+
+      assert.deepEqual(actual, ['0', 'a']);
     });
 
     QUnit.test('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of string objects', function(assert) {
       assert.expect(1);
 
-      var expected = isKeys ? ['0'] : ['0', 'a'];
-
       stringProto.a = 1;
-      assert.deepEqual(func(Object('a')).sort(), expected);
+
+      var expected = isKeys ? ['0'] : ['0', 'a'],
+          actual = func(Object('a')).sort();
+
+      assert.deepEqual(actual, expected);
+
       delete stringProto.a;
     });
 
@@ -17176,11 +17199,11 @@
     QUnit.test('should return `0` or `1` when no arguments are given', function(assert) {
       assert.expect(1);
 
-      var actual = lodashStable.map(array, function() {
+      var actual = lodashStable.uniq(lodashStable.map(array, function() {
         return _.random();
-      });
+      })).sort();
 
-      assert.deepEqual(_.uniq(actual).sort(), [0, 1]);
+      assert.deepEqual(actual, [0, 1]);
     });
 
     QUnit.test('should support a `min` and `max` argument', function(assert) {
@@ -18556,6 +18579,7 @@
       assert.expect(2);
 
       var actual = _.sampleSize(array, 2);
+
       assert.strictEqual(actual.length, 2);
       assert.deepEqual(lodashStable.difference(actual, array), []);
     });
@@ -18563,8 +18587,9 @@
     QUnit.test('should contain elements of the collection', function(assert) {
       assert.expect(1);
 
-      var actual = _.sampleSize(array, array.length);
-      assert.deepEqual(actual.sort(), array);
+      var actual = _.sampleSize(array, array.length).sort();
+
+      assert.deepEqual(actual, array);
     });
 
     QUnit.test('should treat falsey `n` values as `0`', function(assert) {
@@ -18591,7 +18616,8 @@
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
-        assert.deepEqual(_.sampleSize(array, n).sort(), array);
+        var actual = _.sampleSize(array, n).sort();
+        assert.deepEqual(actual, array);
       });
     });
 
@@ -23458,18 +23484,22 @@
         func = _[methodName],
         isValues = methodName == 'values';
 
-    QUnit.test('`_.' + methodName + '` should get the values of an object', function(assert) {
+    QUnit.test('`_.' + methodName + '` should get string keyed values of `object`', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 1, 'b': 2 };
-      assert.deepEqual(func(object), [1, 2]);
+      var object = { 'a': 1, 'b': 2 },
+          actual = func(object).sort();
+
+      assert.deepEqual(actual, [1, 2]);
     });
 
     QUnit.test('`_.' + methodName + '` should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
-      var object = { '0': 'a', '1': 'b', 'length': 2 };
-      assert.deepEqual(func(object), ['a', 'b', 2]);
+      var object = { '0': 'a', '1': 'b', 'length': 2 },
+          actual = func(object).sort();
+
+      assert.deepEqual(actual, [2, 'a', 'b']);
     });
 
     QUnit.test('`_.' + methodName + '` should ' + (isValues ? 'not ' : '') + 'include inherited string keyed property values', function(assert) {
@@ -23480,8 +23510,10 @@
       }
       Foo.prototype.b = 2;
 
-      var expected = isValues ? [1] : [1, 2];
-      assert.deepEqual(func(new Foo).sort(), expected);
+      var expected = isValues ? [1] : [1, 2],
+          actual = func(new Foo).sort();
+
+      assert.deepEqual(actual, expected);
     });
   });
 

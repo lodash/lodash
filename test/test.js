@@ -22108,27 +22108,47 @@
   QUnit.module('toPairs methods');
 
   lodashStable.each(['toPairs', 'toPairsIn'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isToPairs = methodName == 'toPairs';
 
-    QUnit.test('`_.' + methodName + '` should create a two dimensional array of key-value pairs', function(assert) {
+    QUnit.test('`_.' + methodName + '` should create an array of string keyed-value pairs', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 1, 'b': 2 };
-      assert.deepEqual(func(object), [['a', 1], ['b', 2]]);
+      var object = { 'a': 1, 'b': 2 },
+          actual = lodashStable.sortBy(func(object), 0);
+
+      assert.deepEqual(actual, [['a', 1], ['b', 2]]);
     });
 
     QUnit.test('`_.' + methodName + '` should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
-      var object = { '0': 'a', '1': 'b', 'length': 2 };
-      assert.deepEqual(func(object), [['0', 'a'], ['1', 'b'], ['length', 2]]);
+      var object = { '0': 'a', '1': 'b', 'length': 2 },
+          actual = lodashStable.sortBy(func(object), 0);
+
+      assert.deepEqual(actual, [['0', 'a'], ['1', 'b'], ['length', 2]]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should ' + (isToPairs ? 'not ' : '') + 'include inherited string keyed property values', function(assert) {
+      assert.expect(1);
+
+      function Foo() {
+        this.a = 1;
+      }
+      Foo.prototype.b = 2;
+
+      var expected = isToPairs ? [['a', 1]] : [['a', 1], ['b', 2]],
+          actual = lodashStable.sortBy(func(new Foo), 0);
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should work with strings', function(assert) {
       assert.expect(2);
 
       lodashStable.each(['xo', Object('xo')], function(string) {
-        assert.deepEqual(func(string), [['0', 'x'], ['1', 'o']]);
+        var actual = lodashStable.sortBy(func(string), 0);
+        assert.deepEqual(actual, [['0', 'x'], ['1', 'o']]);
       });
     });
   });

@@ -3714,7 +3714,7 @@
       assert.deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
     });
 
-    QUnit.test('should return a function with a `length` of `0`', function(assert) {
+    QUnit.test('should create a function with a `length` of `0`', function(assert) {
       assert.expect(6);
 
       lodashStable.times(2, function(index) {
@@ -3873,7 +3873,7 @@
       assert.deepEqual(curried(1, 2, 3, 4, 5, 6), [1, 2, 3, 4, 5, 6]);
     });
 
-    QUnit.test('should return a function with a `length` of `0`', function(assert) {
+    QUnit.test('should create a function with a `length` of `0`', function(assert) {
       assert.expect(6);
 
       lodashStable.times(2, function(index) {

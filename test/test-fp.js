@@ -1035,6 +1035,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.flatMapDepth');
+
+  (function() {
+    QUnit.test('should have an argument order of `iteratee`, `depth`, then `collection`', function(assert) {
+      assert.expect(2);
+
+      function duplicate(n) {
+        return [[[n, n]]];
+      }
+
+      var array = [1, 2],
+          object = { 'a': 1, 'b': 2 },
+          expected = [[1, 1], [2, 2]];
+
+      assert.deepEqual(fp.flatMapDepth(duplicate)(2)(array), expected);
+      assert.deepEqual(fp.flatMapDepth(duplicate)(2)(object), expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.flow and fp.flowRight');
 
   _.each(['flow', 'flowRight'], function(methodName) {

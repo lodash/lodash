@@ -9020,7 +9020,7 @@
         trailing = 'trailing' in options ? !!options.trailing : trailing;
       }
 
-      function invoke(time) {
+      function invokeFunc(time) {
         var args = lastArgs,
             thisArg = lastThis;
 
@@ -9036,7 +9036,7 @@
         // Start the timer to the trailing edge.
         timerId = setTimeout(timerExpired, wait);
         // Invoke the leading edge.
-        return leading ? invoke(lastCallTime) : result;
+        return leading ? invokeFunc(lastCallTime) : result;
       }
 
       function trailingEdge(time) {
@@ -9047,7 +9047,7 @@
         // Only invoke if we have `lastArgs`, which means there has been a call
         // to `func` since the last invocation
         if (trailing && lastArgs) {
-          return invoke(time);
+          return invokeFunc(time);
         }
         lastArgs = lastThis = undefined;
         return result;
@@ -9089,7 +9089,7 @@
           // Restart the timer.
           timerId = setTimeout(timerExpired, check.remainingWait);
           if (check.shouldInvoke) {
-            invoke(time);
+            invokeFunc(time);
           }
         }
       }
@@ -9116,7 +9116,7 @@
         // Check the current times to handle invocations in a tight loop.
         var check = checkTimes(lastCallTime);
         return (check && check.shouldInvoke)
-          ? invoke(lastCallTime)
+          ? invokeFunc(lastCallTime)
           : result;
       }
       debounced.cancel = cancel;

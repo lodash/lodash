@@ -97,7 +97,8 @@ var browserNameMap = {
   'googlechrome': 'Chrome',
   'iehta': 'Internet Explorer',
   'ipad': 'iPad',
-  'iphone': 'iPhone'
+  'iphone': 'iPhone',
+  'microsoftedge': 'Edge'
 };
 
 /** List of platforms to load the runner on. */
@@ -107,7 +108,7 @@ var platforms = [
   ['Windows 10', 'chrome', '47'],
   ['Windows 10', 'firefox', '44'],
   ['Windows 10', 'firefox', '43'],
-  ['Windows 10', 'microsoftedge', '20.10240'],
+  ['Windows 10', 'microsoftedge', '13'],
   ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],

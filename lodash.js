@@ -9030,13 +9030,13 @@
         return result;
       }
 
-      function leadingEdge() {
+      function leadingEdge(time) {
         // Reset any `maxWait` timer.
-        lastInvokeTime = lastCallTime;
-        // Start the timer to the trailing edge.
+        lastInvokeTime = time;
+        // Start the timer for the trailing edge.
         timerId = setTimeout(timerExpired, wait);
         // Invoke the leading edge.
-        return leading ? invokeFunc(lastCallTime) : result;
+        return leading ? invokeFunc(time) : result;
       }
 
       function trailingEdge(time) {
@@ -9044,8 +9044,8 @@
           clearTimeout(timerId);
           timerId = undefined;
         }
-        // Only invoke if we have `lastArgs`, which means there has been a call
-        // to `func` since the last invocation
+        // Only invoke if we have `lastArgs` which means `func` has been
+        // debounced at least once.
         if (trailing && lastArgs) {
           return invokeFunc(time);
         }
@@ -9054,24 +9054,21 @@
       }
 
       function checkTimes(time) {
-        var timeSinceLastInvoke = time - lastInvokeTime,
-            waitTime = time - lastCallTime;
+        var timeSinceLastCall = time - lastCallTime,
+            timeSinceLastInvoke = time - lastInvokeTime;
 
-        if (waitTime >= wait) {
-          // Activity has stopped. We are at the trailing edge.
+        // Either activity has stopped and we're at the trailing edge or the system
+        // time has gone backwards and we're treating it as the trailing edge.
+        if (timeSinceLastCall >= wait || timeSinceLastCall < 0) {
           trailingEdge(time);
-          return;
+          return null;
         }
-        if (waitTime < 0) {
-          // The system time has gone backwards. Treat it as the trailing edge.
-          trailingEdge(time);
-          return;
-        }
-        var shouldInvoke = (maxWait !== false && timeSinceLastInvoke >= maxWait);
+        var remainingWait = wait - timeSinceLastCall,
+            shouldInvoke = false;
 
-        // Restart the timer to the smaller of remaining maxWait and remaining wait.
-        var remainingWait = wait - waitTime;
+        // Restart the timer to the smaller of remaining `wait` and `maxWait`.
         if (maxWait !== false) {
+          shouldInvoke = timeSinceLastInvoke >= maxWait;
           remainingWait = nativeMin(remainingWait, maxWait - timeSinceLastInvoke);
         }
         return {
@@ -9085,7 +9082,7 @@
             check = checkTimes(time);
 
         timerId = undefined;
-        if (check !== undefined) {
+        if (check) {
           // Restart the timer.
           timerId = setTimeout(timerExpired, check.remainingWait);
           if (check.shouldInvoke) {
@@ -9111,9 +9108,9 @@
         lastCallTime = now();
 
         if (timerId === undefined) {
-          return leadingEdge();
+          return leadingEdge(lastCallTime);
         }
-        // Check the current times to handle invocations in a tight loop.
+        // Check times to handle invocations in a tight loop.
         var check = checkTimes(lastCallTime);
         return (check && check.shouldInvoke)
           ? invokeFunc(lastCallTime)

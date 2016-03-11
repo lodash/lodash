@@ -9972,6 +9972,19 @@
       assert.strictEqual(_.isMap(weakMap), false);
     });
 
+    QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
+      assert.expect(1);
+
+      var values = [true, false],
+          expected = lodashStable.map(values, alwaysFalse);
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isMap({ 'constructor': value });
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should work with maps from another realm', function(assert) {
       assert.expect(1);
 
@@ -11092,6 +11105,19 @@
       assert.strictEqual(_.isSet(weakSet), false);
     });
 
+    QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
+      assert.expect(1);
+
+      var values = [true, false],
+          expected = lodashStable.map(values, alwaysFalse);
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isSet({ 'constructor': value });
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should work with weak sets from another realm', function(assert) {
       assert.expect(1);
 
@@ -11382,6 +11408,19 @@
       assert.strictEqual(_.isWeakMap(/x/), false);
       assert.strictEqual(_.isWeakMap('a'), false);
       assert.strictEqual(_.isWeakMap(symbol), false);
+    });
+
+    QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
+      assert.expect(1);
+
+      var values = [true, false],
+          expected = lodashStable.map(values, alwaysFalse);
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.isWeakMap({ 'constructor': value });
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should work with weak maps from another realm', function(assert) {

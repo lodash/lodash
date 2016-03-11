@@ -9039,6 +9039,37 @@
         return leading ? invokeFunc(time) : result;
       }
 
+      function remainingWait(time) {
+        var timeSinceLastCall = time - lastCallTime,
+            timeSinceLastInvoke = time - lastInvokeTime,
+            result = wait - timeSinceLastCall;
+
+        return maxWait === false ? result : nativeMin(result, maxWait - timeSinceLastInvoke);
+      }
+
+      function shouldInvoke(time) {
+        var timeSinceLastCall = time - lastCallTime,
+            timeSinceLastInvoke = time - lastInvokeTime;
+
+        // Either activity has stopped and we're at the trailing edge, the system
+        // time has gone backwards and we're treating it as the trailing edge, or
+        // we've hit the `maxWait` limit.
+        return (
+          (timeSinceLastCall >= wait) ||
+            (timeSinceLastCall < 0) ||
+              (maxWait !== false && timeSinceLastInvoke >= maxWait)
+        );
+      }
+
+      function timerExpired() {
+        var time = now();
+        if (shouldInvoke(time)) {
+          return trailingEdge(time);
+        }
+        // Restart the timer.
+        timerId = setTimeout(timerExpired, remainingWait(time));
+      }
+
       function trailingEdge(time) {
         if (timerId !== undefined) {
           clearTimeout(timerId);
@@ -9051,44 +9082,6 @@
         }
         lastArgs = lastThis = undefined;
         return result;
-      }
-
-      function checkTimes(time) {
-        var timeSinceLastCall = time - lastCallTime,
-            timeSinceLastInvoke = time - lastInvokeTime;
-
-        // Either activity has stopped and we're at the trailing edge or the system
-        // time has gone backwards and we're treating it as the trailing edge.
-        if (timeSinceLastCall >= wait || timeSinceLastCall < 0) {
-          trailingEdge(time);
-          return null;
-        }
-        var remainingWait = wait - timeSinceLastCall,
-            shouldInvoke = false;
-
-        // Restart the timer to the smaller of remaining `wait` and `maxWait`.
-        if (maxWait !== false) {
-          shouldInvoke = timeSinceLastInvoke >= maxWait;
-          remainingWait = nativeMin(remainingWait, maxWait - timeSinceLastInvoke);
-        }
-        return {
-          'shouldInvoke': shouldInvoke,
-          'remainingWait': remainingWait
-        };
-      }
-
-      function timerExpired() {
-        var time = now(),
-            check = checkTimes(time);
-
-        timerId = undefined;
-        if (check) {
-          // Restart the timer.
-          timerId = setTimeout(timerExpired, check.remainingWait);
-          if (check.shouldInvoke) {
-            invokeFunc(time);
-          }
-        }
       }
 
       function cancel() {
@@ -9111,10 +9104,12 @@
           return leadingEdge(lastCallTime);
         }
         // Check times to handle invocations in a tight loop.
-        var check = checkTimes(lastCallTime);
-        return (check && check.shouldInvoke)
-          ? invokeFunc(lastCallTime)
-          : result;
+        if (shouldInvoke(lastCallTime)) {
+          clearTimeout(timerId);
+          timerId = undefined;
+          return invokeFunc(lastCallTime);
+        }
+        return result;
       }
       debounced.cancel = cancel;
       debounced.flush = flush;

@@ -13115,7 +13115,9 @@
           result += string;
         }
         n = nativeFloor(n / 2);
-        string += string;
+        if (n) {
+          string += string;
+        }
       } while (n);
 
       return result;

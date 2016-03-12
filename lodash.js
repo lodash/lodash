@@ -1910,7 +1910,7 @@
      * @memberOf MapCache
      * @param {string} key The key of the value to set.
      * @param {*} value The value to set.
-     * @returns {Object} Returns the map cache object.
+     * @returns {Object} Returns the map cache instance.
      */
     function mapSet(key, value) {
       var data = this.__data__;
@@ -2081,7 +2081,7 @@
      * @memberOf Stack
      * @param {string} key The key of the value to set.
      * @param {*} value The value to set.
-     * @returns {Object} Returns the stack cache object.
+     * @returns {Object} Returns the stack cache instance.
      */
     function stackSet(key, value) {
       var data = this.__data__,
@@ -2115,7 +2115,7 @@
      * Removes `key` and its value from the associative array.
      *
      * @private
-     * @param {Array} array The array to query.
+     * @param {Array} array The array to modify.
      * @param {string} key The key of the value to remove.
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */

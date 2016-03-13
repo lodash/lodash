@@ -393,8 +393,9 @@
       assert.expect(1);
 
       var funcMethods = [
-        'after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce', 'delay',
-        'overArgs', 'partial', 'partialRight', 'rearg', 'throttle', 'wrap'
+        'after', 'ary', 'before', 'bind', 'bindKey', 'curryN', 'debounce',
+        'delay', 'overArgs', 'partial', 'partialRight', 'rearg', 'throttle',
+        'wrap'
       ];
 
       var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
@@ -1138,6 +1139,32 @@
 
       assert.strictEqual(fp.inRange(2)(4)(3), true);
       assert.strictEqual(fp.inRange(-2)(-6)(-3), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.invoke');
+
+  (function() {
+    QUnit.test('should not accept an `args` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.invoke('toUpperCase')('a');
+      assert.strictEqual(actual, 'A');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.invokeArgs');
+
+  (function() {
+    QUnit.test('should accept an `args` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.invokeArgs('concat')('a')(['b', 'c']);
+      assert.strictEqual(actual, 'abc');
     });
   }());
 

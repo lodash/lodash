@@ -69,6 +69,12 @@ var fp = convert({
 var fp = convert(lodash.runInContext());
 ```
 
+## Chaining
+
+The `lodash/fp` module **does not** convert chain sequence methods. See
+[Izaak Schroeder’s article](https://medium.com/making-internets/why-using-chain-is-a-mistake-9bc1f80d51ba)
+for more details.
+
 ## Mapping
 
 Immutable auto-curried iteratee-first data-last methods sound great, but what

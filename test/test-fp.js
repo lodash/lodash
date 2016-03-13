@@ -1105,12 +1105,14 @@
 
   QUnit.module('fp.getOr');
 
-  QUnit.test('should accept a `defaultValue` param', function(assert) {
-    assert.expect(1);
+  (function() {
+    QUnit.test('should accept a `defaultValue` param', function(assert) {
+      assert.expect(1);
 
-    var actual = fp.getOr('default')('path')({});
-    assert.strictEqual(actual, 'default');
-  });
+      var actual = fp.getOr('default')('path')({});
+      assert.strictEqual(actual, 'default');
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

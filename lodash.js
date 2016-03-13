@@ -1413,14 +1413,14 @@
 
     /**
      * Creates a `lodash` object which wraps `value` to enable implicit method
-     * chaining. Methods that operate on and return arrays, collections, and
-     * functions can be chained together. Methods that retrieve a single value or
-     * may return a primitive value will automatically end the chain sequence and
-     * return the unwrapped value. Otherwise, the value must be unwrapped with
-     * `_#value`.
+     * chain sequences. Methods that operate on and return arrays, collections,
+     * and functions can be chained together. Methods that retrieve a single value
+     * or may return a primitive value will automatically end the chain sequence
+     * and return the unwrapped value. Otherwise, the value must be unwrapped
+     * with `_#value`.
      *
-     * Explicit chaining, which must be unwrapped with `_#value` in all cases,
-     * may be enabled using `_.chain`.
+     * Explicit chain sequences, which must be unwrapped with `_#value`, may be
+     * enabled using `_.chain`.
      *
      * The execution of chained methods is lazy, that is, it's deferred until
      * `_#value` is implicitly or explicitly called.
@@ -1539,7 +1539,7 @@
     }
 
     /**
-     * The function whose prototype all chaining wrappers inherit from.
+     * The function whose prototype chain sequence wrappers inherit from.
      *
      * @private
      */
@@ -1552,7 +1552,7 @@
      *
      * @private
      * @param {*} value The value to wrap.
-     * @param {boolean} [chainAll] Enable chaining for all wrapper methods.
+     * @param {boolean} [chainAll] Enable explicit method chain sequences.
      */
     function LodashWrapper(value, chainAll) {
       this.__wrapped__ = value;
@@ -7397,8 +7397,9 @@
     /*------------------------------------------------------------------------*/
 
     /**
-     * Creates a `lodash` object that wraps `value` with explicit method chaining enabled.
-     * The result of such method chaining must be unwrapped with `_#value`.
+     * Creates a `lodash` wrapper instance that wraps `value` with explicit method
+     * chain sequences enabled. The result of such sequences must be unwrapped
+     * with `_#value`.
      *
      * @static
      * @memberOf _
@@ -7433,7 +7434,7 @@
     /**
      * This method invokes `interceptor` and returns `value`. The interceptor
      * is invoked with one argument; (value). The purpose of this method is to
-     * "tap into" a method chain in order to modify intermediate results.
+     * "tap into" a method chain sequence in order to modify intermediate results.
      *
      * @static
      * @memberOf _
@@ -7461,7 +7462,7 @@
     /**
      * This method is like `_.tap` except that it returns the result of `interceptor`.
      * The purpose of this method is to "pass thru" values replacing intermediate
-     * results in a method chain.
+     * results in a method chain sequence.
      *
      * @static
      * @memberOf _
@@ -7531,7 +7532,7 @@
     });
 
     /**
-     * Enables explicit method chaining on the wrapper object.
+     * Creates a `lodash` wrapper instance with explicit method chain sequences enabled.
      *
      * @name chain
      * @memberOf _
@@ -7562,7 +7563,7 @@
     }
 
     /**
-     * Executes the chained sequence and returns the wrapped result.
+     * Executes the chain sequence and returns the wrapped result.
      *
      * @name commit
      * @memberOf _
@@ -7646,7 +7647,7 @@
     }
 
     /**
-     * Creates a clone of the chained sequence planting `value` as the wrapped value.
+     * Creates a clone of the chain sequence planting `value` as the wrapped value.
      *
      * @name plant
      * @memberOf _
@@ -7728,7 +7729,7 @@
     }
 
     /**
-     * Executes the chained sequence to extract the unwrapped value.
+     * Executes the chain sequence to resolve the unwrapped value.
      *
      * @name value
      * @memberOf _
@@ -14899,7 +14900,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // Add methods that return wrapped values when chaining.
+    // Add methods that return wrapped values in chain sequences.
     lodash.after = after;
     lodash.ary = ary;
     lodash.assign = assign;
@@ -15061,7 +15062,7 @@
 
     /*------------------------------------------------------------------------*/
 
-    // Add methods that return unwrapped values when chaining.
+    // Add methods that return unwrapped values in chain sequences.
     lodash.add = add;
     lodash.attempt = attempt;
     lodash.camelCase = camelCase;
@@ -15408,7 +15409,7 @@
       };
     });
 
-    // Map minified function names to their real names.
+    // Map minified method names to their real names.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName];
       if (lodashFunc) {
@@ -15429,7 +15430,7 @@
     LazyWrapper.prototype.reverse = lazyReverse;
     LazyWrapper.prototype.value = lazyValue;
 
-    // Add chaining functions to the `lodash` wrapper.
+    // Add chain sequence methods to the `lodash` wrapper.
     lodash.prototype.at = wrapperAt;
     lodash.prototype.chain = wrapperChain;
     lodash.prototype.commit = wrapperCommit;

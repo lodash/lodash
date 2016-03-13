@@ -59,13 +59,14 @@ exports.aryMethod = {
     'map', 'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy',
     'omit', 'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
     'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt',
-    'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'result',
-    'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf', 'sortedLastIndex',
-    'sortedLastIndexOf', 'sortedUniqBy', 'split', 'startsWith', 'subtract', 'sumBy',
-    'take', 'takeRight', 'takeRightWhile', 'takeWhile', 'tap', 'throttle', 'thru',
-    'times', 'trimChars', 'trimCharsEnd', 'trimCharsStart', 'truncate', 'union',
-    'uniqBy', 'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip',
-    'zipObject', 'zipObjectDeep'
+    'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat',
+    'restFrom', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
+    'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
+    'split', 'spreadFrom', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight',
+    'takeRightWhile', 'takeWhile', 'tap', 'throttle', 'thru', 'times', 'trimChars',
+    'trimCharsEnd', 'trimCharsStart', 'truncate', 'union', 'uniqBy', 'uniqWith',
+    'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
+    'zipObjectDeep'
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
@@ -219,6 +220,8 @@ exports.remap = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
   'getOr': 'get',
+  'restFrom': 'rest',
+  'spreadFrom': 'spread',
   'trimChars': 'trim',
   'trimCharsEnd': 'trimEnd',
   'trimCharsStart': 'trimStart'

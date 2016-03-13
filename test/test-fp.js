@@ -1447,6 +1447,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.restFrom');
+
+  (function() {
+    QUnit.test('should accept a `start` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.restFrom(2)(function() {
+        return slice.call(arguments);
+      })('a', 'b', 'c', 'd');
+
+      assert.deepEqual(actual, ['a', 'b', ['c', 'd']]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.runInContext');
 
   (function() {
@@ -1461,6 +1477,22 @@
 
       var runInContext = convert('runInContext', _.runInContext);
       assert.strictEqual(typeof runInContext({}).curryN, 'function');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.spreadFrom');
+
+  (function() {
+    QUnit.test('should accept a `start` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.spreadFrom(2)(function() {
+        return slice.call(arguments);
+      })('a', 'b', ['c', 'd']);
+
+      assert.deepEqual(actual, ['a', 'b', 'c', 'd']);
     });
   }());
 

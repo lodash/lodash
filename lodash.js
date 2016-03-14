@@ -9925,6 +9925,7 @@
      *
      * @static
      * @memberOf _
+     * @since 0.1.0
      * @type {Function}
      * @category Lang
      * @param {*} value The value to check.

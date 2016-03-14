@@ -115,6 +115,10 @@ function baseConvert(util, name, func, options) {
     return result;
   };
 
+  var convertLib = function(options) {
+    return _.runInContext.convert(options)();
+  };
+
   var createCloner = function(func) {
     return function(object) {
       return func({}, object);
@@ -230,7 +234,7 @@ function baseConvert(util, name, func, options) {
     name = mapping.aliasToReal[name] || name;
     var wrapper = wrappers[name];
 
-    var convert = function(options) {
+    var convertMethod = function(options) {
       var newUtil = isLib ? pristine : helpers,
           newFunc = isLib ? pristine[name] : func,
           newOptions = assign(assign({}, config), options);
@@ -240,7 +244,7 @@ function baseConvert(util, name, func, options) {
 
     if (wrapper) {
       var result = wrapper(func);
-      result.convert = convert;
+      result.convert = convertMethod;
       return result;
     }
     var wrapped = func;
@@ -293,7 +297,7 @@ function baseConvert(util, name, func, options) {
         return func.apply(this, arguments);
       };
     }
-    result.convert = convert;
+    result.convert = convertMethod;
     if (mapping.placeholder[name]) {
       setPlaceholder = true;
       result.placeholder = func.placeholder = placeholder;
@@ -322,10 +326,11 @@ function baseConvert(util, name, func, options) {
     _[pair[0]] = pair[1];
   });
 
+  _.convert = convertLib;
   if (setPlaceholder) {
     _.placeholder = placeholder;
   }
-  // Wrap the lodash method and its aliases.
+  // Reassign aliases.
   each(keys(_), function(key) {
     each(mapping.realToAlias[key] || [], function(alias) {
       _[alias] = _[key];

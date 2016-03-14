@@ -274,7 +274,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('convert method');
+  QUnit.module('convert on methods');
 
   (function() {
     QUnit.test('should work when given an object', function(assert) {
@@ -299,6 +299,41 @@
           remove = fp.remove.convert({ 'cap': false }).convert({ 'rearg': false });
 
       var actual = remove(array)(function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [2, 4]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.convert');
+
+  (function() {
+    QUnit.test('should work when given an object', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          lodash = fp.convert(allFalseOptions);
+
+      var actual = lodash.remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(lodash.remove(), []);
+    });
+
+    QUnit.test('should extend existing configs', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3, 4],
+          lodash = fp.convert({ 'cap': false }).convert({ 'rearg': false });
+
+      var actual = lodash.remove(array)(function(n, index) {
         return index % 2 == 0;
       });
 

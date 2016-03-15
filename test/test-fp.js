@@ -1382,6 +1382,26 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('padChars methods');
+
+  _.each(['padChars', 'padCharsStart', 'padCharsEnd'], function(methodName) {
+    var func = fp[methodName],
+        isPad = methodName == 'padChars',
+        isStart = methodName == 'padCharsStart';
+
+    QUnit.test('`_.' + methodName + '` should truncate pad characters to fit the pad length', function(assert) {
+      assert.expect(1);
+
+      if (isPad) {
+        assert.strictEqual(func('_-')(8)('abc'), '_-abc_-_');
+      } else {
+        assert.strictEqual(func('_-')(6)('abc'), isStart ? '_-_abc' : 'abc_-_');
+      }
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.partial and fp.partialRight');
 
   _.each(['partial', 'partialRight'], function(methodName) {
@@ -1546,7 +1566,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.trimChars');
+  QUnit.module('trimChars methods');
 
   _.each(['trimChars', 'trimCharsStart', 'trimCharsEnd'], function(methodName, index) {
     var func = fp[methodName],

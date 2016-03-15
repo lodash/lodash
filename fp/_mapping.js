@@ -72,9 +72,10 @@ exports.aryMethod = {
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
     'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'invokeArgs',
     'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith', 'orderBy',
-    'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set',
-    'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
-    'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
+    'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy', 'pullAllWith',
+    'reduce', 'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy',
+    'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith', 'update',
+    'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith', 'updateWith'
@@ -143,6 +144,9 @@ exports.methodRearg = {
   'invokeArgs': [1, 0, 2],
   'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
+  'padChars': [2, 1, 0],
+  'padCharsEnd': [2, 1, 0],
+  'padCharsStart': [2, 1, 0],
   'pullAllBy': [2, 1, 0],
   'pullAllWith': [2, 1, 0],
   'setWith': [3, 1, 2, 0],
@@ -223,6 +227,9 @@ exports.remap = {
   'curryRightN': 'curryRight',
   'getOr': 'get',
   'invokeArgs': 'invoke',
+  'padChars': 'pad',
+  'padCharsEnd': 'padEnd',
+  'padCharsStart': 'padStart',
   'restFrom': 'rest',
   'spreadFrom': 'spread',
   'trimChars': 'trim',

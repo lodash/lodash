@@ -106,7 +106,36 @@
   QUnit.module('convert module');
 
   (function() {
-    QUnit.test('should work when given an object', function(assert) {
+    QUnit.test('should work with `name` and `func`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3, 4],
+          remove = convert('remove', _.remove);
+
+      var actual = remove(function(n) {
+        return n % 2 == 0;
+      })(array);
+
+      assert.deepEqual(array, [1, 2, 3, 4]);
+      assert.deepEqual(actual, [1, 3]);
+    });
+
+    QUnit.test('should work with `name`, `func`, and `options`', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          remove = convert('remove', _.remove, allFalseOptions);
+
+      var actual = remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(remove(), []);
+    });
+
+    QUnit.test('should work with an object', function(assert) {
       assert.expect(2);
 
       if (!document) {
@@ -125,44 +154,55 @@
       }
     });
 
-    QUnit.test('should only add a `placeholder` property if needed', function(assert) {
-      assert.expect(2);
+    QUnit.test('should work with an object and `options`', function(assert) {
+      assert.expect(3);
 
       if (!document) {
-        var methodNames = _.keys(mapping.placeholder),
-            expected = _.map(methodNames, _.constant(true));
+        var array = [1, 2, 3, 4],
+            lodash = convert({ 'remove': _.remove }, allFalseOptions);
 
-        var actual = _.map(methodNames, function(methodName) {
-          var object = {};
-          object[methodName] = _[methodName];
-
-          var lodash = convert(object);
-          return methodName in lodash;
+        var actual = lodash.remove(array, function(n, index) {
+          return index % 2 == 0;
         });
 
-        assert.deepEqual(actual, expected);
-
-        var lodash = convert({ 'add': _.add });
-        assert.notOk('placeholder' in lodash);
+        assert.deepEqual(array, [2, 4]);
+        assert.deepEqual(actual, [1, 3]);
+        assert.deepEqual(lodash.remove(), []);
       }
       else {
-        skipAssert(assert, 2);
+        skipAssert(assert, 3);
       }
     });
 
-    QUnit.test('should accept an `options` argument', function(assert) {
+    QUnit.test('should work with lodash and `options`', function(assert) {
       assert.expect(3);
 
       var array = [1, 2, 3, 4],
-          remove = convert('remove', _.remove, allFalseOptions);
+          lodash = convert(_.runInContext(), allFalseOptions);
 
-      var actual = remove(array, function(n, index) {
+      var actual = lodash.remove(array, function(n, index) {
         return index % 2 == 0;
       });
 
       assert.deepEqual(array, [2, 4]);
       assert.deepEqual(actual, [1, 3]);
-      assert.deepEqual(remove(), []);
+      assert.deepEqual(lodash.remove(), []);
+    });
+
+    QUnit.test('should work with `runInContext` and `options`', function(assert) {
+      assert.expect(3);
+
+      var array = [1, 2, 3, 4],
+          runInContext = convert('runInContext', _.runInContext, allFalseOptions),
+          lodash = runInContext();
+
+      var actual = lodash.remove(array, function(n, index) {
+        return index % 2 == 0;
+      });
+
+      assert.deepEqual(array, [2, 4]);
+      assert.deepEqual(actual, [1, 3]);
+      assert.deepEqual(lodash.remove(), []);
     });
 
     QUnit.test('should accept a variety of options', function(assert) {
@@ -220,68 +260,46 @@
       assert.strictEqual(add('2')('1'), '12');
     });
 
-    QUnit.test('should use `options` in `runInContext`', function(assert) {
-      assert.expect(3);
-
-      var array = [1, 2, 3, 4],
-          runInContext = convert('runInContext', _.runInContext, allFalseOptions),
-          lodash = runInContext();
-
-      var actual = lodash.remove(array, function(n, index) {
-        return index % 2 == 0;
-      });
-
-      assert.deepEqual(array, [2, 4]);
-      assert.deepEqual(actual, [1, 3]);
-      assert.deepEqual(lodash.remove(), []);
-    });
-
-    QUnit.test('should work when given lodash and `options`', function(assert) {
-      assert.expect(3);
-
-      var array = [1, 2, 3, 4],
-          lodash = convert(_.runInContext(), allFalseOptions);
-
-      var actual = lodash.remove(array, function(n, index) {
-        return index % 2 == 0;
-      });
-
-      assert.deepEqual(array, [2, 4]);
-      assert.deepEqual(actual, [1, 3]);
-      assert.deepEqual(lodash.remove(), []);
-    });
-
-    QUnit.test('should work when given an object and `options`', function(assert) {
-      assert.expect(3);
+    QUnit.test('should only add a `placeholder` property if needed', function(assert) {
+      assert.expect(2);
 
       if (!document) {
-        var array = [1, 2, 3, 4],
-            lodash = convert({ 'remove': _.remove }, allFalseOptions);
+        var methodNames = _.keys(mapping.placeholder),
+            expected = _.map(methodNames, _.constant(true));
 
-        var actual = lodash.remove(array, function(n, index) {
-          return index % 2 == 0;
+        var actual = _.map(methodNames, function(methodName) {
+          var object = {};
+          object[methodName] = _[methodName];
+
+          var lodash = convert(object);
+          return methodName in lodash;
         });
 
-        assert.deepEqual(array, [2, 4]);
-        assert.deepEqual(actual, [1, 3]);
-        assert.deepEqual(lodash.remove(), []);
+        assert.deepEqual(actual, expected);
+
+        var lodash = convert({ 'add': _.add });
+        assert.notOk('placeholder' in lodash);
       }
       else {
-        skipAssert(assert, 3);
+        skipAssert(assert, 2);
       }
     });
   }());
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('convert on methods');
+  QUnit.module('convert methods');
 
-  (function() {
-    QUnit.test('should work when given an object', function(assert) {
+  _.each(['fp.convert', 'method.convert'], function(methodName) {
+    var isFp = methodName == 'fp.convert',
+        func = isFp ? fp.convert : fp.remove.convert;
+
+    QUnit.test('`' + methodName + '` should work with an object', function(assert) {
       assert.expect(3);
 
       var array = [1, 2, 3, 4],
-          remove = fp.remove.convert(allFalseOptions);
+          lodash = func(allFalseOptions),
+          remove = isFp ? lodash.remove : lodash;
 
       var actual = remove(array, function(n, index) {
         return index % 2 == 0;
@@ -292,11 +310,12 @@
       assert.deepEqual(remove(), []);
     });
 
-    QUnit.test('should extend existing configs', function(assert) {
+    QUnit.test('`' + methodName + '` should extend existing configs', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3, 4],
-          remove = fp.remove.convert({ 'cap': false }).convert({ 'rearg': false });
+          lodash = func({ 'cap': false }),
+          remove = (isFp ? lodash.remove : lodash).convert({ 'rearg': false });
 
       var actual = remove(array)(function(n, index) {
         return index % 2 == 0;
@@ -305,42 +324,7 @@
       assert.deepEqual(array, [1, 2, 3, 4]);
       assert.deepEqual(actual, [2, 4]);
     });
-  }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('fp.convert');
-
-  (function() {
-    QUnit.test('should work when given an object', function(assert) {
-      assert.expect(3);
-
-      var array = [1, 2, 3, 4],
-          lodash = fp.convert(allFalseOptions);
-
-      var actual = lodash.remove(array, function(n, index) {
-        return index % 2 == 0;
-      });
-
-      assert.deepEqual(array, [2, 4]);
-      assert.deepEqual(actual, [1, 3]);
-      assert.deepEqual(lodash.remove(), []);
-    });
-
-    QUnit.test('should extend existing configs', function(assert) {
-      assert.expect(2);
-
-      var array = [1, 2, 3, 4],
-          lodash = fp.convert({ 'cap': false }).convert({ 'rearg': false });
-
-      var actual = lodash.remove(array)(function(n, index) {
-        return index % 2 == 0;
-      });
-
-      assert.deepEqual(array, [1, 2, 3, 4]);
-      assert.deepEqual(actual, [2, 4]);
-    });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

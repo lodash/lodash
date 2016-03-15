@@ -2246,7 +2246,7 @@
   QUnit.module('lodash.castArray');
 
   (function() {
-    QUnit.test('should wrap non array items in an array', function(assert) {
+    QUnit.test('should wrap non-array items in an array', function(assert) {
       assert.expect(1);
 
       var values = falsey.concat(true, 1, 'a', { 'a': 1 }),
@@ -8505,7 +8505,7 @@
       }
     });
 
-    QUnit.test('should return `false` for non buffers', function(assert) {
+    QUnit.test('should return `false` for non-buffers', function(assert) {
       assert.expect(13);
 
       var expected = lodashStable.map(falsey, alwaysFalse);
@@ -9946,7 +9946,7 @@
       }
     });
 
-    QUnit.test('should return `false` for non maps', function(assert) {
+    QUnit.test('should return `false` for non-maps', function(assert) {
       assert.expect(14);
 
       var expected = lodashStable.map(falsey, alwaysFalse);
@@ -11079,7 +11079,7 @@
       }
     });
 
-    QUnit.test('should return `false` for non sets', function(assert) {
+    QUnit.test('should return `false` for non-sets', function(assert) {
       assert.expect(14);
 
       var expected = lodashStable.map(falsey, alwaysFalse);
@@ -14590,7 +14590,7 @@
       assert.deepEqual(actual, [undefined]);
     });
 
-    QUnit.test('should defer to `customizer` when it returns a value other than `undefined`', function(assert) {
+    QUnit.test('should defer to `customizer` when it returns a non `undefined` value', function(assert) {
       assert.expect(1);
 
       var actual = _.mergeWith({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {

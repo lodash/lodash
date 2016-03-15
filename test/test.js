@@ -14610,6 +14610,16 @@
       assert.deepEqual(actual, { 'a': { 'b': ['c'] } });
     });
 
+    QUnit.test('should clone sources when `customizer` result is `undefined`', function(assert) {
+      assert.expect(1);
+
+      var source1 = { 'a': { 'b': { 'c': 1 } } },
+          source2 = { 'a': { 'b': { 'd': 2 } } },
+          actual = _.mergeWith({}, source1, source2, alwaysUndefined);
+
+      assert.deepEqual(source1.a.b, { 'c': 1 });
+    });
+
     QUnit.test('should pop the stack of sources for each sibling property', function(assert) {
       assert.expect(1);
 

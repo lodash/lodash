@@ -14,7 +14,7 @@
     "docdown": "~0.4.1",
     "dojo": "^1.10.4",
     "ecstatic": "^1.4.0",
-    "fs-extra": "~0.26.5",
+    "fs-extra": "~0.26.7",
     "glob": "^7.0.3",
     "istanbul": "0.4.2",
     "jquery": "^2.2.1",

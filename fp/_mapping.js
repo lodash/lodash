@@ -71,11 +71,11 @@ exports.aryMethod = {
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
     'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'invokeArgs',
-    'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith', 'orderBy',
-    'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy', 'pullAllWith',
-    'reduce', 'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy',
-    'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith', 'update',
-    'xorBy', 'xorWith', 'zipWith'
+    'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith',
+    'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy',
+    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
+    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
+    'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith', 'updateWith'
@@ -142,6 +142,7 @@ exports.methodRearg = {
   'assignWith': [1, 2, 0],
   'getOr': [2, 1, 0],
   'invokeArgs': [1, 0, 2],
+  'invokeArgsMap': [1, 0, 2],
   'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
   'padChars': [2, 1, 0],
@@ -159,6 +160,7 @@ exports.methodRearg = {
 /** Used to map method names to spread configs. */
 exports.methodSpread = {
   'invokeArgs': 2,
+  'invokeArgsMap': 2,
   'partial': 1,
   'partialRight': 1
 };
@@ -227,6 +229,7 @@ exports.remap = {
   'curryRightN': 'curryRight',
   'getOr': 'get',
   'invokeArgs': 'invoke',
+  'invokeArgsMap': 'invokeMap',
   'padChars': 'pad',
   'padCharsEnd': 'padEnd',
   'padCharsStart': 'padStart',

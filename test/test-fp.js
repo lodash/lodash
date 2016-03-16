@@ -1176,6 +1176,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.invokeMap');
+
+  (function() {
+    QUnit.test('should not accept an `args` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.invokeMap('toUpperCase')(['a', 'b']);
+      assert.deepEqual(actual, ['A', 'B']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.invokeArgs');
 
   (function() {
@@ -1184,6 +1197,19 @@
 
       var actual = fp.invokeArgs('concat')('a')(['b', 'c']);
       assert.strictEqual(actual, 'abc');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.invokeArgsMap');
+
+  (function() {
+    QUnit.test('should accept an `args` param', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.invokeArgsMap('concat')(['a', 'A'])(['b', 'c']);
+      assert.deepEqual(actual, ['abc', 'Abc']);
     });
   }());
 

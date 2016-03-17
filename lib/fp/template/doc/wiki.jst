@@ -100,7 +100,7 @@ when you may want to customize the conversion. That’s when the `convert` metho
 comes in handy.
 ```js
 // Every option is `true` by default.
-var mapValues = fp.mapValues.convert({
+var _fp = fp.convert({
   // Specify capping iteratee arguments.
   'cap': true,
   // Specify currying.
@@ -113,16 +113,17 @@ var mapValues = fp.mapValues.convert({
   'rearg': true
 });
 
-// Disable capping of iteratee arguments to access the `key` param.
+// The `convert` method is available on each method too.
 var mapValuesWithKey = fp.mapValues.convert({ 'cap': false });
 
+// Here’s an example of disabling iteratee argument caps to access the `key` param.
 mapValuesWithKey(function(value, key) {
   return key == 'a' ? -1 : value;
 })({ 'a': 1, 'b': 1 });
 // => { 'a': -1, 'b': 1 }
 ```
 
-It’s also possible to use the convert module directly for manual conversions.
+// Manual conversions are also possible with the `convert` module.
 ```js
 var convert = require('lodash/fp/convert');
 

@@ -24,7 +24,7 @@
     "qunit-extras": "^1.5.0",
     "qunitjs": "~1.22.0",
     "request": "^2.69.0",
-    "requirejs": "^2.1.22",
+    "requirejs": "^2.2.0",
     "sauce-tunnel": "^2.4.0",
     "uglify-js": "2.6.2",
     "webpack": "^1.12.14"

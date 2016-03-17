@@ -1,8 +1,10 @@
 /** Used to map aliases to their real names. */
 exports.aliasToReal = {
   '__': 'placeholder',
-  'all': 'some',
+  'all': 'every',
   'allPass': 'overEvery',
+  'any': 'some',
+  'anyPass': 'overSome',
   'apply': 'spread',
   'assoc': 'set',
   'assocPath': 'set',
@@ -30,7 +32,6 @@ exports.aliasToReal = {
   'prop': 'get',
   'propOf': 'propertyOf',
   'propOr': 'getOr',
-  'somePass': 'overSome',
   'unapply': 'rest',
   'unnest': 'flatten',
   'useWith': 'overArgs',

@@ -471,7 +471,7 @@
       assert.expect(10);
 
       var array = ['a', 'b', 'c'],
-          other = ['b', 'b', 'd'],
+          other = ['b', 'd', 'b'],
           object = { 'a': 1, 'b': 2, 'c': 2 },
           actual = fp.difference(array)(other);
 
@@ -495,7 +495,7 @@
       actual = fp.uniqBy(_.identity, other);
       assert.deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
 
-      actual = fp.without('b')(array);
+      actual = fp.without(array)(other);
       assert.deepEqual(actual, ['a', 'c'], 'fp.without');
 
       actual = fp.xor(other)(array);

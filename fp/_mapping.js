@@ -36,6 +36,7 @@ exports.aliasToReal = {
   'unnest': 'flatten',
   'useWith': 'overArgs',
   'whereEq': 'filter',
+  'without': 'difference',
   'zipObj': 'zipObject'
 };
 
@@ -163,7 +164,8 @@ exports.methodSpread = {
   'invokeArgs': 2,
   'invokeArgsMap': 2,
   'partial': 1,
-  'partialRight': 1
+  'partialRight': 1,
+  'without': 1
 };
 
 /** Used to identify methods which mutate arrays or objects. */

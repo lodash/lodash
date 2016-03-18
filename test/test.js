@@ -12672,7 +12672,7 @@
     QUnit.test('should lowercase as space-separated words', function(assert) {
       assert.expect(3);
 
-      assert.strictEqual(_.lowerCase('--Foo-Bar'), 'foo bar');
+      assert.strictEqual(_.lowerCase('--Foo-Bar--'), 'foo bar');
       assert.strictEqual(_.lowerCase('fooBar'), 'foo bar');
       assert.strictEqual(_.lowerCase('__FOO_BAR__'), 'foo bar');
     });
@@ -21869,7 +21869,7 @@
     QUnit.test('should convert whole string to lower case', function(assert) {
       assert.expect(3);
 
-      assert.deepEqual(_.toLower('--Foo-Bar'), '--foo-bar');
+      assert.deepEqual(_.toLower('--Foo-Bar--'), '--foo-bar--');
       assert.deepEqual(_.toLower('fooBar'), 'foobar');
       assert.deepEqual(_.toLower('__FOO_BAR__'), '__foo_bar__');
     });
@@ -23594,7 +23594,7 @@
     QUnit.test('should uppercase as space-separated words', function(assert) {
       assert.expect(3);
 
-      assert.strictEqual(_.upperCase('--foo-bar'), 'FOO BAR');
+      assert.strictEqual(_.upperCase('--foo-bar--'), 'FOO BAR');
       assert.strictEqual(_.upperCase('fooBar'), 'FOO BAR');
       assert.strictEqual(_.upperCase('__foo_bar__'), 'FOO BAR');
     });

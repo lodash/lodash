@@ -1195,7 +1195,7 @@
     QUnit.test('should accept an `args` param', function(assert) {
       assert.expect(1);
 
-      var actual = fp.invokeArgs('concat')('a')(['b', 'c']);
+      var actual = fp.invokeArgs('concat')(['b', 'c'])('a');
       assert.strictEqual(actual, 'abc');
     });
   }());
@@ -1208,7 +1208,7 @@
     QUnit.test('should accept an `args` param', function(assert) {
       assert.expect(1);
 
-      var actual = fp.invokeArgsMap('concat')(['a', 'A'])(['b', 'c']);
+      var actual = fp.invokeArgsMap('concat')(['b', 'c'])(['a', 'A']);
       assert.deepEqual(actual, ['abc', 'Abc']);
     });
   }());

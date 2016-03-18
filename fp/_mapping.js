@@ -143,8 +143,6 @@ exports.methodRearg = {
   'assignInWith': [1, 2, 0],
   'assignWith': [1, 2, 0],
   'getOr': [2, 1, 0],
-  'invokeArgs': [1, 0, 2],
-  'invokeArgsMap': [1, 0, 2],
   'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
   'padChars': [2, 1, 0],

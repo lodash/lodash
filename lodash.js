@@ -13208,17 +13208,17 @@
      * @returns {string} Returns the start cased string.
      * @example
      *
-     * _.startCase('--foo-bar');
+     * _.startCase('--foo-bar--');
      * // => 'Foo Bar'
      *
      * _.startCase('fooBar');
      * // => 'Foo Bar'
      *
-     * _.startCase('__foo_bar__');
-     * // => 'Foo Bar'
+     * _.startCase('__FOO_BAR__');
+     * // => 'FOO BAR'
      */
     var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + capitalize(word);
+      return result + (index ? ' ' : '') + upperFirst(word);
     });
 
     /**

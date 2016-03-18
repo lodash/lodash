@@ -2090,7 +2090,7 @@
 
     var strings = [
       'foo bar', 'Foo bar', 'foo Bar', 'Foo Bar',
-      'FOO BAR', 'fooBar', '--foo-bar', '__foo_bar__'
+      'FOO BAR', 'fooBar', '--foo-bar--', '__foo_bar__'
     ];
 
     var converted = (function() {
@@ -2108,7 +2108,8 @@
       assert.expect(1);
 
       var actual = lodashStable.map(strings, function(string) {
-        return func(string) === converted;
+        var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
+        return func(string) === expected;
       });
 
       assert.deepEqual(actual, lodashStable.map(strings, alwaysTrue));
@@ -2118,7 +2119,8 @@
       assert.expect(1);
 
       var actual = lodashStable.map(strings, function(string) {
-        return func(func(string)) === converted;
+        var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
+        return func(func(string)) === expected;
       });
 
       assert.deepEqual(actual, lodashStable.map(strings, alwaysTrue));
@@ -19816,6 +19818,20 @@
 
       var spread = _.spread(fn, 1.6);
       assert.deepEqual(spread(1, [2, 3]), [1, 2, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.startCase');
+
+  (function() {
+    QUnit.test('should uppercase only the first character of each word', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.startCase('--foo-bar--'), 'Foo Bar');
+      assert.strictEqual(_.startCase('fooBar'), 'Foo Bar');
+      assert.strictEqual(_.startCase('__FOO_BAR__'), 'FOO BAR');
     });
   }());
 

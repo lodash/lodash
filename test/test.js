@@ -9519,11 +9519,15 @@
     });
 
     QUnit.test('should handle comparisons if `customizer` returns `undefined`', function(assert) {
-      assert.expect(3);
+      assert.expect(6);
 
       assert.strictEqual(_.isEqualWith('a', 'a', noop), true);
       assert.strictEqual(_.isEqualWith(['a'], ['a'], noop), true);
       assert.strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'a' }, noop), true);
+
+      assert.strictEqual(_.isEqualWith('a', 'b', noop), false);
+      assert.strictEqual(_.isEqualWith(['a'], ['b'], noop), false);
+      assert.strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'b' }, noop), false);
     });
 
     QUnit.test('should not handle comparisons if `customizer` returns `true`', function(assert) {

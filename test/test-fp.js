@@ -1693,6 +1693,49 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.isEqualWith');
+
+  (function() {
+    QUnit.test('should handle comparisons if `customizer` returns `undefined`', function(assert) {
+      assert.expect(6);
+
+      assert.strictEqual(fp.isEqualWith(noop)('a', 'a'), true);
+      assert.strictEqual(fp.isEqualWith(noop)(['a'], ['a']), true);
+      assert.strictEqual(fp.isEqualWith(noop)({ '0': 'a' }, { '0': 'a' }), true);
+
+      assert.strictEqual(fp.isEqualWith(noop)('a', 'b'), false);
+      assert.strictEqual(fp.isEqualWith(noop)(['a'], ['b']), false);
+      assert.strictEqual(fp.isEqualWith(noop)({ '0': 'a' }, { '0': 'b' }), false);
+    });
+
+    QUnit.test('should not handle comparisons if `customizer` returns `true`', function(assert) {
+      assert.expect(3);
+
+      var customizer = function(value) {
+        return fp.isString(value) || undefined;
+      };
+
+      assert.strictEqual(fp.isEqualWith(customizer)('a', 'b'), true);
+      assert.strictEqual(fp.isEqualWith(customizer)(['a'], ['b']), true);
+      assert.strictEqual(fp.isEqualWith(customizer)({ '0': 'a' }, { '0': 'b' }), true);
+    });
+
+    QUnit.test('should not handle comparisons if `customizer` returns `false`', function(assert) {
+      assert.expect(3);
+
+      var customizer = function(value) {
+        return fp.isString(value) ? false : undefined;
+      };
+
+      assert.strictEqual(fp.isEqualWith(customizer)('a', 'a'), false);
+      assert.strictEqual(fp.isEqualWith(customizer)(['a'], ['a']), false);
+      assert.strictEqual(fp.isEqualWith(customizer)({ '0': 'a' }, { '0': 'a' }), false);
+    });
+  }());
+
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.config.asyncRetries = 10;
   QUnit.config.hidepassed = true;
 

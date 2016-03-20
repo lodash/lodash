@@ -19,6 +19,7 @@ exports.aliasToReal = {
   'apply': 'spread',
   'assoc': 'set',
   'assocPath': 'set',
+  'complement': 'negate',
   'compose': 'flowRight',
   'contains': 'includes',
   'dissoc': 'unset',

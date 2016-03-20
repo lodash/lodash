@@ -868,7 +868,7 @@
         object = { 'a': 1 };
 
     QUnit.test('should provide the correct `customizer` arguments', function(assert) {
-      assert.expect(5);
+      assert.expect(6);
 
       var args,
           value = _.clone(object);
@@ -888,11 +888,26 @@
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }], 'fp.extendWith');
 
-      var stack = { '__data__': { 'array': [], 'map': null } },
-          expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
+      var iteration = 0,
+          objects = [{ 'a': 1 }, { 'a': 2 }],
+          stack = { '__data__': { 'array': [[objects[0], objects[1]]], 'map': null } },
+          expected = [1, 2, 'a', objects[0], objects[1], stack];
+
+      args = undefined;
+
+      fp.isEqualWith(function() {
+        if (++iteration == 2) {
+          args = _.map(arguments, _.cloneDeep);
+        }
+      })(objects[0])(objects[1]);
+
+      args[5] = _.omitBy(args[5], _.isFunction);
+      assert.deepEqual(args, expected, 'fp.isEqualWith');
 
       args = undefined;
       value = { 'a': [1] };
+      stack = { '__data__': { 'array': [], 'map': null } };
+      expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
 
       fp.mergeWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));

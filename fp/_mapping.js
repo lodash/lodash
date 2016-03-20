@@ -1,5 +1,17 @@
 /** Used to map aliases to their real names. */
 exports.aliasToReal = {
+
+  // Lodash aliases.
+  'each': 'forEach',
+  'eachRight': 'forEachRight',
+  'entries': 'toPairs',
+  'entriesIn': 'toPairsIn',
+  'extend': 'assignIn',
+  'extendWith': 'assignInWith',
+  'first': 'head',
+  'without': 'difference',
+
+  // Ramda aliases.
   '__': 'placeholder',
   'all': 'every',
   'allPass': 'overEvery',
@@ -12,14 +24,7 @@ exports.aliasToReal = {
   'contains': 'includes',
   'dissoc': 'unset',
   'dissocPath': 'unset',
-  'each': 'forEach',
-  'eachRight': 'forEachRight',
-  'entries': 'toPairs',
-  'entriesIn': 'toPairsIn',
   'equals': 'isEqual',
-  'extend': 'assignIn',
-  'extendWith': 'assignInWith',
-  'first': 'head',
   'identical': 'eq',
   'init': 'initial',
   'mapObj': 'mapValues',
@@ -37,7 +42,6 @@ exports.aliasToReal = {
   'unnest': 'flatten',
   'useWith': 'overArgs',
   'whereEq': 'filter',
-  'without': 'difference',
   'zipObj': 'zipObject'
 };
 

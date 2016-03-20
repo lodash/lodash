@@ -14,6 +14,7 @@ exports.aliasToReal = {
   '__': 'placeholder',
   'all': 'every',
   'allPass': 'overEvery',
+  'always': 'constant',
   'any': 'some',
   'anyPass': 'overSome',
   'apply': 'spread',

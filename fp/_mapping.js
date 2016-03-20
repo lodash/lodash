@@ -20,6 +20,7 @@ exports.aliasToReal = {
   'extend': 'assignIn',
   'extendWith': 'assignInWith',
   'first': 'head',
+  'identical': 'eq',
   'init': 'initial',
   'mapObj': 'mapValues',
   'omitAll': 'omit',

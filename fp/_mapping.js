@@ -9,7 +9,6 @@ exports.aliasToReal = {
   'extend': 'assignIn',
   'extendWith': 'assignInWith',
   'first': 'head',
-  'without': 'difference',
 
   // Ramda aliases.
   '__': 'placeholder',
@@ -264,6 +263,7 @@ exports.skipRearg = {
   'range': true,
   'rangeRight': true,
   'subtract': true,
+  'without': true,
   'zip': true,
   'zipObject': true
 };

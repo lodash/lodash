@@ -4709,6 +4709,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.divide');
+
+  (function() {
+    QUnit.test('should divide two numbers', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.divide(6, 4), 1.5);
+      assert.strictEqual(_.divide(-6, 4), -1.5);
+      assert.strictEqual(_.divide(-6, -4), 1.5);
+    });
+
+    QUnit.test('should coerce arguments to numbers', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.divide('6', '4'), 1.5);
+      assert.deepEqual(_.divide('x', 'y'), NaN);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.drop');
 
   (function() {
@@ -15270,6 +15291,27 @@
       else {
         skipAssert(assert);
       }
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.multiply');
+
+  (function() {
+    QUnit.test('should multiply two numbers', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.multiply(6, 4), 24);
+      assert.strictEqual(_.multiply(-6, 4), -24);
+      assert.strictEqual(_.multiply(-6, -4), 24);
+    });
+
+    QUnit.test('should coerce arguments to numbers', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.multiply('6', '4'), 24);
+      assert.deepEqual(_.multiply('x', 'y'), NaN);
     });
   }());
 

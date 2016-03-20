@@ -31,6 +31,17 @@ to convert each method.
 
 #### Capped Iteratee Arguments
 
+Iteratee arguments are capped to avoid gotchas with variadic iteratees.
+```js
+// The `lodash/map` iteratee recieves three arguments: (value, index|key, collection).
+_.map(['6', '8', '10'], parseInt);
+// → [6, NaN, 2]
+
+// The `lodash/fp/map` iteratee is capped at one argument: (value).
+fp.map(parseInt)(['6', '8', '10']);
+// → [6, 8, 10]
+```
+
 Methods that cap iteratees to one argument:<br>
 <%= toFuncList(_.keys(_.pickBy(mapping.iterateeAry, _.partial(_.eq, _, 1)))) %>
 
@@ -40,6 +51,19 @@ Methods that cap iteratees to two arguments:<br>
 The iteratee of `mapKeys` is invoked with one argument: (key)
 
 #### Fixed Arity
+
+Methods have fixed arities to support auto-currying.
+```js
+// The `lodash/padStart` method accepts an optional `chars` param.
+_.padStart('a', 3, '-')
+// → '--a'
+
+// The `lodash/fp/padStart` method does not.
+fp.padStart(3)('a');
+// → '  a'
+fp.padCharsStart('-')(3)('a');
+// → '--a'
+```
 
 Methods with a fixed arity of one:<br>
 <%= toFuncList(mapping.aryMethod[1]) %>
@@ -54,6 +78,19 @@ Methods with a fixed arity of four:<br>
 <%= toFuncList(mapping.aryMethod[4]) %>
 
 #### Rearranged Arguments
+
+Method arguments are rearranged to make composition easier.
+```js
+// The `lodash/filter` method accepts (collection, iteratee).
+var compact = _.partial(_.filter, _, Boolean);
+compact(['a', null, 'c']);
+// → ['a', 'c']
+
+// The `lodash/fp/filter` method accepts (iteratee, collection)
+var compact = fp.filter(Boolean);
+compact(['a', null, 'c']);
+// → ['a', 'c']
+```
 
 Methods with a fixed arity of two have an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[2]) %>
@@ -76,6 +113,10 @@ The methods `partial` & `partialRight` accept an array of arguments to partially
 apply as their second parameter.
 
 #### New Methods
+
+Not all variadic methods have corresponding new method variants. Feel free to
+[request](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md#feature-requests)
+any additions.
 
 Methods created to accommodate Lodash’s variadic methods:<br>
 <%= toFuncList(_.keys(mapping.remap)) %>

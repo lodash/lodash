@@ -24331,6 +24331,21 @@
         skipAssert(assert, 5);
       }
     });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).pop() : _().pop();
+          return result === undefined;
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -24352,6 +24367,21 @@
       else {
         skipAssert(assert, 2);
       }
+    });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).push(1).value() : _().push(1).value();
+          return lodashStable.eq(result, value);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -24379,6 +24409,21 @@
         skipAssert(assert, 5);
       }
     });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).shift() : _().shift();
+          return result === undefined;
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -24400,6 +24445,21 @@
       else {
         skipAssert(assert, 2);
       }
+    });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).sort().value() : _().sort().value();
+          return lodashStable.eq(result, value);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -24427,6 +24487,21 @@
         skipAssert(assert, 5);
       }
     });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).splice(0, 1).value() : _().splice(0, 1).value();
+          return lodashStable.isEqual(result, []);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -24448,6 +24523,21 @@
       else {
         skipAssert(assert, 2);
       }
+    });
+
+    QUnit.test('should accept falsey arguments', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, alwaysTrue);
+
+      var actual = lodashStable.map(falsey, function(value, index) {
+        try {
+          var result = index ? _(value).unshift(1).value() : _().unshift(1).value();
+          return lodashStable.eq(result, value);
+        } catch (e) {}
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

@@ -15394,18 +15394,26 @@
       };
     });
 
-    // Add `Array` and `String` methods to `lodash.prototype`.
+    // Add `Array` methods to `lodash.prototype`.
     arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
       var func = arrayProto[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
+          mutates = methodName != 'sort',
           retUnwrapped = /^(?:pop|shift)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var args = arguments;
         if (retUnwrapped && !this.__chain__) {
-          return func.apply(this.value(), args);
+          var value = this.value();
+          if ((mutates ? !isArray(value) : (value == null))) {
+            value = [];
+          }
+          return func.apply(value, args);
         }
         return this[chainName](function(value) {
+          if ((mutates ? !isArray(value) : (value == null))) {
+            value = [];
+          }
           return func.apply(value, args);
         });
       };

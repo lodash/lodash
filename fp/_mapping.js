@@ -93,10 +93,6 @@ exports.aryRearg = {
 
 /** Used to map method names to their iteratee ary. */
 exports.iterateeAry = {
-  'assignWith': 2,
-  'assignInWith': 2,
-  'cloneDeepWith': 1,
-  'cloneWith': 1,
   'dropRightWhile': 1,
   'dropWhile': 1,
   'every': 1,
@@ -116,8 +112,6 @@ exports.iterateeAry = {
   'forInRight': 1,
   'forOwn': 1,
   'forOwnRight': 1,
-  'isEqualWith': 2,
-  'isMatchWith': 2,
   'map': 1,
   'mapKeys': 1,
   'mapValues': 1,

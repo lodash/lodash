@@ -26,6 +26,8 @@ exports.aliasToReal = {
   'equals': 'isEqual',
   'identical': 'eq',
   'init': 'initial',
+  'invertObj': 'invert',
+  'juxt': 'over',
   'mapObj': 'mapValues',
   'omitAll': 'omit',
   'nAry': 'ary',

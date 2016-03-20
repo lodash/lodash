@@ -1075,6 +1075,29 @@
   }
 
   /**
+   * Creates a function that performs a mathematical operation on two values.
+   *
+   * @private
+   * @param {Function} operator The function to perform the operation.
+   * @returns {Function} Returns the new mathematical operation function.
+   */
+  function createMathOperation(operator) {
+    return function(value, other) {
+      var result;
+      if (value === undefined && other === undefined) {
+        return 0;
+      }
+      if (value !== undefined) {
+        result = value;
+      }
+      if (other !== undefined) {
+        result = result === undefined ? other : operator(result, other);
+      }
+      return result;
+    };
+  }
+
+  /**
    * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
    *
    * @private
@@ -14615,19 +14638,9 @@
      * _.add(6, 4);
      * // => 10
      */
-    function add(augend, addend) {
-      var result;
-      if (augend === undefined && addend === undefined) {
-        return 0;
-      }
-      if (augend !== undefined) {
-        result = augend;
-      }
-      if (addend !== undefined) {
-        result = result === undefined ? addend : (result + addend);
-      }
-      return result;
-    }
+    var add = createMathOperation(function(augend, addend) {
+      return augend + addend;
+    });
 
     /**
      * Computes `number` rounded up to `precision`.
@@ -14651,6 +14664,25 @@
      * // => 6100
      */
     var ceil = createRound('ceil');
+
+    /**
+     * Divide two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.7.0
+     * @category Math
+     * @param {number} dividend The first number in a division.
+     * @param {number} divisor The second number in a division.
+     * @returns {number} Returns the quotient.
+     * @example
+     *
+     * _.divide(6, 4);
+     * // => 1.5
+     */
+    var divide = createMathOperation(function(dividend, divisor) {
+      return dividend / divisor;
+    });
 
     /**
      * Computes `number` rounded down to `precision`.
@@ -14800,6 +14832,25 @@
     }
 
     /**
+     * Multiply two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.7.0
+     * @category Math
+     * @param {number} multiplier The first number in a multiplication.
+     * @param {number} multiplicand The second number in a multiplication.
+     * @returns {number} Returns the product.
+     * @example
+     *
+     * _.multiply(6, 4);
+     * // => 24
+     */
+    var multiply = createMathOperation(function(multiplier, multiplicand) {
+      return multiplier * multiplicand;
+    });
+
+    /**
      * Computes `number` rounded to `precision`.
      *
      * @static
@@ -14837,19 +14888,9 @@
      * _.subtract(6, 4);
      * // => 2
      */
-    function subtract(minuend, subtrahend) {
-      var result;
-      if (minuend === undefined && subtrahend === undefined) {
-        return 0;
-      }
-      if (minuend !== undefined) {
-        result = minuend;
-      }
-      if (subtrahend !== undefined) {
-        result = result === undefined ? subtrahend : (result - subtrahend);
-      }
-      return result;
-    }
+    var subtract = createMathOperation(function(minuend, subtrahend) {
+      return minuend - subtrahend;
+    });
 
     /**
      * Computes the sum of the values in `array`.
@@ -15076,6 +15117,7 @@
     lodash.cloneDeepWith = cloneDeepWith;
     lodash.cloneWith = cloneWith;
     lodash.deburr = deburr;
+    lodash.divide = divide;
     lodash.endsWith = endsWith;
     lodash.eq = eq;
     lodash.escape = escape;
@@ -15155,6 +15197,7 @@
     lodash.mean = mean;
     lodash.min = min;
     lodash.minBy = minBy;
+    lodash.multiply = multiply;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;

@@ -929,7 +929,7 @@
     var func = fp[methodName],
         isAdd = methodName == 'add';
 
-    QUnit.test('`fp.' + methodName + '` should have `rearg` applied', function(assert) {
+    QUnit.test('`fp.' + methodName + '` should not have `rearg` applied', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(func('1')('2'), isAdd ? '12' : -1);
@@ -1018,6 +1018,21 @@
       assert.deepEqual(fp.difference([1, 2])([2, 3]), [1]);
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.divide and fp.multiply');
+
+  _.each(['divide', 'multiply'], function(methodName) {
+    var func = fp[methodName],
+        isDivide = methodName == 'divide';
+
+    QUnit.test('`fp.' + methodName + '` should not have `rearg` applied', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func('2')('4'), isDivide ? 0.5 : 8);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

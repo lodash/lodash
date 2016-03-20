@@ -24677,11 +24677,13 @@
 
   (function() {
     var funcs = [
+      'add',
       'camelCase',
       'capitalize',
       'ceil',
       'clone',
       'deburr',
+      'divide',
       'endsWith',
       'escape',
       'escapeRegExp',
@@ -24731,6 +24733,7 @@
       'maxBy',
       'min',
       'minBy',
+      'multiply',
       'pad',
       'padEnd',
       'padStart',
@@ -24749,6 +24752,7 @@
       'some',
       'startCase',
       'startsWith',
+      'subtract',
       'sum',
       'toInteger',
       'toLower',
@@ -24770,9 +24774,7 @@
         assert.expect(1);
 
         if (!isNpm) {
-          var array = [1, 2, 3],
-              actual = _(array)[methodName]();
-
+          var actual = _()[methodName]();
           assert.notOk(actual instanceof _);
         }
         else {
@@ -24784,9 +24786,7 @@
         assert.expect(1);
 
         if (!isNpm) {
-          var array = [1, 2, 3],
-              actual = _(array).chain()[methodName]();
-
+          var actual = _().chain()[methodName]();
           assert.ok(actual instanceof _);
         }
         else {
@@ -25012,7 +25012,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(305);
+      assert.expect(307);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

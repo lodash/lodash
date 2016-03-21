@@ -12845,7 +12845,7 @@
     });
 
     QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
-      assert.expect(4);
+      assert.expect(3);
 
       var array = isSorted
         ? [1, 2, NaN, NaN]
@@ -12853,13 +12853,12 @@
 
       if (isSorted) {
         assert.strictEqual(func(array, NaN, true), isIndexOf ? 2 : 3);
-        skipAssert(assert, 3);
+        skipAssert(assert, 2);
       }
       else {
         assert.strictEqual(func(array, NaN), isIndexOf ? 1 : 5);
         assert.strictEqual(func(array, NaN, 2), isIndexOf ? 3 : 1);
         assert.strictEqual(func(array, NaN, -2), isIndexOf ? 5 : 3);
-        skipAssert(assert);
       }
     });
 

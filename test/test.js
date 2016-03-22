@@ -50,6 +50,7 @@
       create = Object.create,
       fnToString = funcProto.toString,
       freeze = Object.freeze,
+      getSymbols = Object.getOwnPropertySymbols,
       identity = function(value) { return value; },
       JSON = root.JSON,
       noop = function() {},
@@ -484,7 +485,6 @@
       };
     }()));
 
-    var _getOwnPropertySymbols = Object.getOwnPropertySymbols;
     setProperty(Object, 'getOwnPropertySymbols', undefined);
 
     var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
@@ -539,8 +539,8 @@
     setProperty(objectProto, 'propertyIsEnumerable', _propertyIsEnumerable);
     setProperty(root, 'Buffer', Buffer);
 
-    if (_getOwnPropertySymbols) {
-      Object.getOwnPropertySymbols = _getOwnPropertySymbols;
+    if (getSymbols) {
+      Object.getOwnPropertySymbols = getSymbols;
     } else {
       delete Object.getOwnPropertySymbols;
     }
@@ -2741,24 +2741,34 @@
       });
 
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
-        assert.expect(2);
+        assert.expect(3);
+
+        function Foo() {
+          this[symbol] = { 'c': 1 };
+        }
 
         if (Symbol) {
-          var object = {};
-          object[symbol] = {};
-          assert.strictEqual(func(object)[symbol], object[symbol]);
+          var symbol2 = Symbol('b');
+          Foo.prototype[symbol2] = 2;
+
+          var object = { 'a': { 'b': new Foo } };
+          object[symbol] = { 'b': 1 };
+
+          var actual = func(object);
+
+          assert.deepEqual(getSymbols(actual.a.b), [symbol]);
 
           if (isDeep) {
-            object = { 'a': { 'b': {} } };
-            object.a.b[symbol] = {};
-            assert.strictEqual(func(object).a.b[symbol], object.a.b[symbol]);
+            assert.deepEqual(actual[symbol], object[symbol]);
+            assert.deepEqual(actual.a.b[symbol], object.a.b[symbol]);
           }
           else {
-            skipAssert(assert);
+            assert.strictEqual(actual[symbol], object[symbol]);
+            assert.strictEqual(actual.a, object.a);
           }
         }
         else {
-          skipAssert(assert, 2);
+          skipAssert(assert, 3);
         }
       });
 

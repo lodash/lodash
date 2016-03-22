@@ -19985,6 +19985,22 @@
       assert.strictEqual(func(undefined, 4), 4);
     });
 
+    QUnit.test('`_.' + methodName + '` should preserve sign of `0`', function(assert) {
+      assert.expect(2);
+
+      var values = [0, '0', -0, '-0'],
+          expected = [[0, Infinity], ['0', Infinity], [-0, -Infinity], ['-0', -Infinity]];
+
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(values, function(value) {
+          var result = index ? func(undefined, value) : func(value);
+          return [result, 1 / result];
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
     QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
       assert.expect(1);
 

@@ -19115,30 +19115,34 @@
     });
 
     QUnit.test('should work with maps', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       if (Map) {
-        var map = new Map;
-        map.set('a', 1);
-        map.set('b', 2);
-        assert.strictEqual(_.size(map), 2);
+        lodashStable.each([new Map, realm.map], function(map) {
+          map.set('a', 1);
+          map.set('b', 2);
+          assert.strictEqual(_.size(map), 2);
+          map.clear();
+        });
       }
       else {
-        skipAssert(assert);
+        skipAssert(assert, 2);
       }
     });
 
     QUnit.test('should work with sets', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       if (Set) {
-        var set = new Set;
-        set.add(1);
-        set.add(2);
-        assert.strictEqual(_.size(set), 2);
+        lodashStable.each([new Set, realm.set], function(set) {
+          set.add(1);
+          set.add(2);
+          assert.strictEqual(_.size(set), 2);
+          set.clear();
+        });
       }
       else {
-        skipAssert(assert);
+        skipAssert(assert, 2);
       }
     });
 

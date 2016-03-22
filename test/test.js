@@ -8658,7 +8658,7 @@
     var args = arguments;
 
     QUnit.test('should return `true` for empty values', function(assert) {
-      assert.expect(8);
+      assert.expect(10);
 
       var expected = lodashStable.map(empties, alwaysTrue),
           actual = lodashStable.map(empties, _.isEmpty);
@@ -8672,6 +8672,14 @@
       assert.strictEqual(_.isEmpty(/x/), true);
       assert.strictEqual(_.isEmpty(symbol), true);
       assert.strictEqual(_.isEmpty(), true);
+
+      if (Buffer) {
+        assert.strictEqual(_.isEmpty(new Buffer(0)), true);
+        assert.strictEqual(_.isEmpty(new Buffer(1)), false);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
     });
 
     QUnit.test('should return `false` for non-empty values', function(assert) {

@@ -12282,17 +12282,24 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      if (!isKey(path, object)) {
-        path = baseCastPath(path);
-        var result = baseGet(object, path);
-        object = parent(object, path);
-      } else {
-        result = object == null ? undefined : object[path];
+      path = isKey(path, object) ? [path] : baseCastPath(path);
+
+      var index = -1,
+          length = path.length;
+
+      if (!length) {
+        object = undefined;
+        length = 1;
       }
-      if (result === undefined) {
-        result = defaultValue;
+      while (++index < length) {
+        var value = object == null ? undefined : object[path[index]];
+        if (value === undefined) {
+          index = length;
+          value = defaultValue;
+        }
+        object = value = isFunction(value) ? value.call(object) : value;
       }
-      return isFunction(result) ? result.call(object) : result;
+      return value;
     }
 
     /**

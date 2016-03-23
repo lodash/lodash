@@ -18301,27 +18301,14 @@
     });
 
     QUnit.test('`_.' + methodName + '` should follow `path` over non-plain objects', function(assert) {
-      assert.expect(4);
+      assert.expect(2);
 
-      var object = { 'a': '' },
-          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
+      var paths = ['a.b.c', ['a', 'b', 'c']];
 
       lodashStable.each(paths, function(path) {
-        numberProto.a = 1;
-
-        var actual = func(0, path);
-        assert.strictEqual(actual, 1);
-
+        numberProto.a = { 'b': { 'c': 1 } };
+        assert.strictEqual(func(0, path), 1);
         delete numberProto.a;
-      });
-
-      lodashStable.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
-        stringProto.replace.b = 1;
-
-        var actual = func(object, path);
-        assert.strictEqual(actual, 1);
-
-        delete stringProto.replace.b;
       });
     });
 
@@ -18345,6 +18332,12 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return the default value when `path` is empty', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(func({}, [], 'a'), 'a');
     });
   });
 

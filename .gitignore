@@ -5,3 +5,5 @@
 lodash.compat.min.js
 coverage
 node_modules
+.opt-in
+.opt-out

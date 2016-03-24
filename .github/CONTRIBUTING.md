@@ -65,3 +65,18 @@ Guidelines are enforced using [JSCS](https://www.npmjs.com/package/jscs):
 ```bash
 $ npm run style
 ```
+
+## Tips
+
+You can opt-into a pre-push git hook by adding a file: `.opt-in` to the root
+of the project (it is `.gitignore`d) and put in it:
+
+```
+pre-push
+```
+
+With that, [the pre-push git hook][git hook config] will run which just runs
+[`npm run validate`][validate script] which runs the linter and tests.
+
+[git hook config]: https://github.com/lodash/lodash/blob/ac9bea77431737bdaa46952d65418a89c63dd7db/package.json#L56
+[validate script]: https://github.com/lodash/lodash/blob/ac9bea77431737bdaa46952d65418a89c63dd7db/package.json#L52

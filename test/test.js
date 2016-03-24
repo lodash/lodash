@@ -8672,7 +8672,11 @@
       assert.strictEqual(_.isEmpty(/x/), true);
       assert.strictEqual(_.isEmpty(symbol), true);
       assert.strictEqual(_.isEmpty(), true);
-      assert.strictEqual(_.isEmpty(new Buffer('')), true);
+      if ( Buffer  ) { // Buffer doesn't exist in browsers. 
+        assert.strictEqual(_.isEmpty(new Buffer('')), true);
+      } else  {
+        assert(true);
+      }
     });
 
     QUnit.test('should return `false` for non-empty values', function(assert) {

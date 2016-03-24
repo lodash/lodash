@@ -10207,9 +10207,10 @@
      * // => false
      */
     function isEmpty(value) {
-      if (isBuffer(value) || isArrayLike(value) &&
+      if (isArrayLike(value) &&
           (isArray(value) || isString(value) ||
-            isFunction(value.splice) || isArguments(value))) {
+            isFunction(value.splice) || isArguments(value) ||
+              isBuffer(value))) {
         return !value.length;
       }
       for (var key in value) {

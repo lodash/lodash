@@ -61,7 +61,17 @@ established in the code.
   functions.
 
 Guidelines are enforced using [JSCS](https://www.npmjs.com/package/jscs):
-
 ```bash
 $ npm run style
 ```
+
+## Tips
+
+You can opt-in to a pre-push git hook by adding an `.opt-in` file to the root of
+the project containing:
+```txt
+pre-push
+```
+
+With that, when you `git push`, the pre-push git hook will trigger and execute
+`npm run validate`.

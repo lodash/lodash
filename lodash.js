@@ -12287,6 +12287,7 @@
       var index = -1,
           length = path.length;
 
+      // Ensure the loop is entered when path is empty.
       if (!length) {
         object = undefined;
         length = 1;

@@ -22081,17 +22081,21 @@
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should preserve sign of `0`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var values = [0, '0', -0, '-0'],
           expected = [[0, Infinity], [0, Infinity], [-0, -Infinity], [-0, -Infinity]];
 
-      var actual = lodashStable.map(values, function(value) {
-        var result = func(value);
-        return [result, 1 / result];
-      });
+      lodashStable.times(2, function(index) {
+        var others = lodashStable.map(values, index ? Object : identity);
 
-      assert.deepEqual(actual, expected);
+        var actual = lodashStable.map(others, function(value) {
+          var result = func(value);
+          return [result, 1 / result];
+        });
+
+        assert.deepEqual(actual, expected);
+      });
     });
   });
 

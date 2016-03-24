@@ -9137,10 +9137,9 @@
       }
 
       function trailingEdge(time) {
-        if (timerId !== undefined) {
-          clearTimeout(timerId);
-          timerId = undefined;
-        }
+        clearTimeout(timerId);
+        timerId = undefined;
+
         // Only invoke if we have `lastArgs` which means `func` has been
         // debounced at least once.
         if (trailing && lastArgs) {

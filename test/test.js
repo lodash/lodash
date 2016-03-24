@@ -21782,11 +21782,30 @@
       }, 32, { 'leading': false });
 
       funced();
-      var actual = funced.flush();
+      assert.strictEqual(funced.flush(), 1);
 
       setTimeout(function() {
-        assert.strictEqual(actual, 1);
         assert.strictEqual(callCount, 1);
+        done();
+      }, 64);
+    });
+
+    QUnit.test('_.' + methodName + ' should noop `cancel` and `flush` when nothing is queued', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var funced = func(function() {
+        callCount++;
+      }, 32);
+
+      funced.cancel();
+      assert.strictEqual(funced.flush(), undefined);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 0);
         done();
       }, 64);
     });

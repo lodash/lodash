@@ -67,7 +67,7 @@ exports.aryMethod = {
     'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',
     'intersection', 'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch',
     'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues',
-    'matchesProperty', 'maxBy', 'merge', 'minBy', 'multiply', 'omit', 'omitBy',
+    'matchesProperty', 'maxBy', 'meanBy', 'merge', 'minBy', 'multiply', 'omit', 'omitBy',
     'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial', 'partialRight',
     'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt', 'random', 'range',
     'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'restFrom', 'result',

@@ -101,11 +101,6 @@
     assert.equal(collection2.get(model.clone()), collection2.first());
   });
 
-  QUnit.test('get with "undefined" id', function(assert) {
-    var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
-    assert.equal(collection.get(1).id, 1);
-  });
-
   QUnit.test('has', function(assert) {
     assert.expect(15);
     assert.ok(col.has(a));
@@ -1583,7 +1578,7 @@
   });
 
   QUnit.test('_addReference binds all collection events & adds to the lookup hashes', function(assert) {
-    assert.expect(9);
+    assert.expect(8);
 
     var calls = {add: 0, remove: 0};
 
@@ -1603,7 +1598,6 @@
         assert.equal(this._byId[model.id], void 0);
         assert.equal(this._byId[model.cid], void 0);
         assert.equal(model.collection, void 0);
-        assert.equal(model._events, void 0);
       }
 
     });
@@ -1739,13 +1733,14 @@
     assert.equal(c2.modelId(m.attributes), void 0);
   });
 
-  QUnit.test('#3039: adding at index fires with correct at', function(assert) {
-    assert.expect(3);
-    var collection = new Backbone.Collection([{at: 0}, {at: 4}]);
+  QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
+    assert.expect(4);
+    var collection = new Backbone.Collection([{val: 0}, {val: 4}]);
     collection.on('add', function(model, coll, options) {
-      assert.equal(model.get('at'), options.index);
+      assert.equal(model.get('val'), options.index);
     });
-    collection.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
+    collection.add([{val: 1}, {val: 2}, {val: 3}], {at: 1});
+    collection.add({val: 5}, {at: 10});
   });
 
   QUnit.test('#3039: index is not sent when at is not specified', function(assert) {

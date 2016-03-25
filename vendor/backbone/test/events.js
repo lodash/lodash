@@ -417,6 +417,18 @@
     assert.equal(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
+  QUnit.test('bind a callback with a default context when none supplied', function(assert) {
+    assert.expect(1);
+    var obj = _.extend({
+      assertTrue: function() {
+        assert.equal(this, obj, '`this` was bound to the callback');
+      }
+    }, Backbone.Events);
+
+    obj.once('event', obj.assertTrue);
+    obj.trigger('event');
+  });
+
   QUnit.test('bind a callback with a supplied context', function(assert) {
     assert.expect(1);
     var TestClass = function() {
@@ -585,6 +597,19 @@
 
     obj.trigger('a b c');
     assert.equal(obj.counter, 3);
+  });
+
+  QUnit.test('bind a callback with a supplied context using once with object notation', function(assert) {
+    assert.expect(1);
+    var obj = {counter: 0};
+    var context = {};
+    _.extend(obj, Backbone.Events);
+
+    obj.once({
+      a: function() {
+        assert.strictEqual(this, context, 'defaults `context` to `callback` param');
+      }
+    }, context).trigger('a');
   });
 
   QUnit.test('once with off only by context', function(assert) {

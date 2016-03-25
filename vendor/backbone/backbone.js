@@ -1,4 +1,4 @@
-//     Backbone.js 1.2.3
+//     Backbone.js 1.3.2
 
 //     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
@@ -44,7 +44,7 @@
   var slice = Array.prototype.slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.2.3';
+  Backbone.VERSION = '1.3.2';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -242,7 +242,6 @@
 
       listening.obj.off(name, callback, this);
     }
-    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
 
     return this;
   };
@@ -299,7 +298,7 @@
         delete events[name];
       }
     }
-    if (_.size(events)) return events;
+    return events;
   };
 
   // Bind an event to only be triggered a single time. After the first time
@@ -309,7 +308,8 @@
   Events.once = function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
-    return this.on(events, void 0, context);
+    if (typeof name === 'string' && context == null) callback = void 0;
+    return this.on(events, callback, context);
   };
 
   // Inversion-of-control versions of `once`.
@@ -398,7 +398,8 @@
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
-    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
+    var defaults = _.result(this, 'defaults');
+    attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
@@ -714,7 +715,7 @@
 
     // Check if the model is currently in a valid state.
     isValid: function(options) {
-      return this._validate({}, _.defaults({validate: true}, options));
+      return this._validate({}, _.extend({}, options, {validate: true}));
     },
 
     // Run validation against the next complete set of model attributes,
@@ -824,7 +825,7 @@
     set: function(models, options) {
       if (models == null) return;
 
-      options = _.defaults({}, options, setOptions);
+      options = _.extend({}, setOptions, options);
       if (options.parse && !this._isModel(models)) {
         models = this.parse(models, options) || [];
       }
@@ -834,6 +835,7 @@
 
       var at = options.at;
       if (at != null) at = +at;
+      if (at > this.length) at = this.length;
       if (at < 0) at += this.length + 1;
 
       var set = [];
@@ -978,11 +980,13 @@
       return slice.apply(this.models, arguments);
     },
 
-    // Get a model from the set by id.
+    // Get a model from the set by id, cid, model object with id or cid
+    // properties, or an attributes object that is transformed through modelId.
     get: function(obj) {
       if (obj == null) return void 0;
-      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
-      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+      return this._byId[obj] ||
+        this._byId[this.modelId(obj.attributes || obj)] ||
+        obj.cid && this._byId[obj.cid];
     },
 
     // Returns `true` if the model is in the collection.
@@ -1913,5 +1917,4 @@
   };
 
   return Backbone;
-
 });

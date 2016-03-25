@@ -5771,7 +5771,20 @@
     QUnit.test('should use a default `depth` of `1`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.flatMapDepth(array), [1, 2, [3, [4]], 5]);
+      assert.deepEqual(_.flatMapDepth(array, identity), [1, 2, [3, [4]], 5]);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant([1, 2, [3, [4]], 5]));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.flatMapDepth(array, value) : _.flatMapDepth(array);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should treat a `depth` of < `1` as a shallow clone', function(assert) {
@@ -13085,11 +13098,18 @@
       assert.deepEqual(actual, { 'c': { 'b': 'c' } });
     });
 
-    QUnit.test('should work on an object with no `iteratee`', function(assert) {
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
       assert.expect(1);
 
-      var actual = _.mapKeys({ 'a': 1, 'b': 2 });
-      assert.deepEqual(actual, { '1': 1, '2': 2 });
+      var object = { 'a': 1, 'b': 2 },
+          values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant({ '1': 1, '2': 2 }));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.mapKeys(object, value) : _.mapKeys(object);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -13122,12 +13142,19 @@
       assert.deepEqual(actual, { 'a': 1 });
     });
 
-    QUnit.test('should work on an object with no `iteratee`', function(assert) {
-      assert.expect(2);
+    QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
+      assert.expect(1);
 
-      var actual = _.mapValues({ 'a': 1, 'b': 2 });
-      assert.deepEqual(actual, object);
-      assert.notStrictEqual(actual, object);
+      var object = { 'a': 1, 'b': 2 },
+          values = [, null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant([true, false]));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        var result = index ? _.mapValues(object, value) : _.mapValues(object);
+        return [lodashStable.isEqual(result, object), result === object];
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

@@ -812,6 +812,20 @@
   }
 
   /**
+   * The base implementation of `_.mean` and `_.meanBy` without support for
+   * iteratee shorthands.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The function invoked per iteration.
+   * @returns {number} Returns the mean.
+   */
+  function baseMean(array, iteratee) {
+    var length = array ? array.length : 0;
+    return length ? (baseSum(array, iteratee) / length) : NAN;
+  }
+
+  /**
    * The base implementation of `_.reduce` and `_.reduceRight`, without support
    * for iteratee shorthands, which iterates over `collection` using `eachFunc`.
    *
@@ -853,7 +867,8 @@
   }
 
   /**
-   * The base implementation of `_.sum` without support for iteratee shorthands.
+   * The base implementation of `_.sum` and `_.sumBy` without support for
+   * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
@@ -14820,7 +14835,7 @@
      * // => 5
      */
     function mean(array) {
-      return meanBy(array, identity);
+      return baseMean(array, identity);
     }
 
     /**
@@ -14847,7 +14862,7 @@
      * // => 5
      */
     function meanBy(array, iteratee) {
-      return sumBy(array, iteratee) / (array ? array.length : 0);
+      return baseMean(array, getIteratee(iteratee));
     }
 
     /**

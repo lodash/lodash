@@ -3320,7 +3320,7 @@
      */
     function baseOrderBy(collection, iteratees, orders) {
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : Array(1), getIteratee());
+      iteratees = arrayMap(iteratees.length ? iteratees : [identity], getIteratee());
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {

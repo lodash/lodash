@@ -522,6 +522,7 @@
 
       setProperty(root.Map, 'toString', createToString('Map'));
     }
+    setProperty(root, 'Promise', noop);
     setProperty(root, 'Set', noop);
     setProperty(root, 'Symbol', undefined);
     setProperty(root, 'WeakMap', noop);
@@ -550,6 +551,11 @@
       setProperty(root, 'Map', Map);
     } else {
       delete root.Map;
+    }
+    if (Promise) {
+      setProperty(root, 'Promise', Promise);
+    } else {
+      delete root.Promise;
     }
     if (Set) {
       setProperty(root, 'Set', Set);

@@ -16169,6 +16169,19 @@
       assert.strictEqual(_.pad(Object('abc'), 4), 'abc ');
       assert.strictEqual(_.pad({ 'toString': lodashStable.constant('abc') }, 5), ' abc ');
     });
+
+    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
+      assert.expect(1);
+
+      var values = [undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant(' abc  '));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.pad('abc', 6, value);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -16194,6 +16207,19 @@
       assert.strictEqual(_.padEnd(Object('abc'), 4), 'abc ');
       assert.strictEqual(_.padEnd({ 'toString': lodashStable.constant('abc') }, 5), 'abc  ');
     });
+
+    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
+      assert.expect(1);
+
+      var values = [undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant('abc   '));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.padEnd('abc', 6, value);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -16218,6 +16244,19 @@
 
       assert.strictEqual(_.padStart(Object('abc'), 4), ' abc');
       assert.strictEqual(_.padStart({ 'toString': lodashStable.constant('abc') }, 5), '  abc');
+    });
+
+    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
+      assert.expect(1);
+
+      var values = [undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant('   abc'));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.padStart('abc', 6, value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -16263,14 +16302,6 @@
         assert.strictEqual(func(undefined, 2, chars), expected);
         assert.strictEqual(func('', 2, chars), expected);
       });
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with nullish or empty string values for `chars`', function(assert) {
-      assert.expect(3);
-
-      assert.notStrictEqual(func('abc', 6, null), 'abc');
-      assert.notStrictEqual(func('abc', 6, undefined), 'abc');
-      assert.strictEqual(func('abc', 6, ''), 'abc');
     });
   });
 

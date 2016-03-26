@@ -4556,12 +4556,13 @@
     function createPadding(string, length, chars) {
       length = toInteger(length);
 
-      var strLength = stringSize(string);
+      var strLength = length ? stringSize(string) : 0;
       if (!length || strLength >= length) {
         return '';
       }
       var padLength = length - strLength;
       chars = chars === undefined ? ' ' : (chars + '');
+      chars = chars == '' ? ' ' : chars;
 
       var result = repeat(chars, nativeCeil(padLength / stringSize(chars)));
       return reHasComplexSymbol.test(chars)
@@ -13044,7 +13045,7 @@
       string = toString(string);
       length = toInteger(length);
 
-      var strLength = stringSize(string);
+      var strLength = length ? stringSize(string) : 0;
       if (!length || strLength >= length) {
         return string;
       }

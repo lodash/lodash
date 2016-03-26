@@ -6,6 +6,7 @@ define(['./_baseIteratee', './_baseSortedUniqBy'], function(baseIteratee, baseSo
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Array
    * @param {Array} array The array to inspect.
    * @param {Function} [iteratee] The iteratee invoked per element.

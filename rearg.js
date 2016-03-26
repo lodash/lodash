@@ -14,6 +14,7 @@ define(['./_baseFlatten', './_createWrapper', './rest'], function(baseFlatten, c
    *
    * @static
    * @memberOf _
+   * @since 3.0.0
    * @category Function
    * @param {Function} func The function to rearrange arguments for.
    * @param {...(number|number[])} indexes The arranged argument indexes,

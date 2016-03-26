@@ -1,13 +1,11 @@
-define([], function() {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_createMathOperation'], function(createMathOperation) {
 
   /**
    * Adds two numbers.
    *
    * @static
    * @memberOf _
+   * @since 3.4.0
    * @category Math
    * @param {number} augend The first number in an addition.
    * @param {number} addend The second number in an addition.
@@ -17,19 +15,9 @@ define([], function() {
    * _.add(6, 4);
    * // => 10
    */
-  function add(augend, addend) {
-    var result;
-    if (augend === undefined && addend === undefined) {
-      return 0;
-    }
-    if (augend !== undefined) {
-      result = augend;
-    }
-    if (addend !== undefined) {
-      result = result === undefined ? addend : (result + addend);
-    }
-    return result;
-  }
+  var add = createMathOperation(function(augend, addend) {
+    return augend + addend;
+  });
 
   return add;
 });

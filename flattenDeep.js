@@ -8,6 +8,7 @@ define(['./_baseFlatten'], function(baseFlatten) {
    *
    * @static
    * @memberOf _
+   * @since 3.0.0
    * @category Array
    * @param {Array} array The array to flatten.
    * @returns {Array} Returns the new flattened array.

@@ -19,6 +19,7 @@ define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'],
    *
    * @static
    * @memberOf _
+   * @since 0.2.0
    * @category Function
    * @param {Function} func The function to partially apply arguments to.
    * @param {...*} [partials] The arguments to be partially applied.

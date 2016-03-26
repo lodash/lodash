@@ -11,6 +11,7 @@ define(['./_baseMerge', './_createAssigner'], function(baseMerge, createAssigner
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Object
    * @param {Object} object The destination object.
    * @param {...Object} sources The source objects.

@@ -10,6 +10,7 @@ define(['./_createPadding', './_stringSize', './toInteger', './toString'], funct
    *
    * @static
    * @memberOf _
+   * @since 3.0.0
    * @category String
    * @param {string} [string=''] The string to pad.
    * @param {number} [length=0] The padding length.
@@ -30,15 +31,16 @@ define(['./_createPadding', './_stringSize', './toInteger', './toString'], funct
     string = toString(string);
     length = toInteger(length);
 
-    var strLength = stringSize(string);
+    var strLength = length ? stringSize(string) : 0;
     if (!length || strLength >= length) {
       return string;
     }
-    var mid = (length - strLength) / 2,
-        leftLength = nativeFloor(mid),
-        rightLength = nativeCeil(mid);
-
-    return createPadding('', leftLength, chars) + string + createPadding('', rightLength, chars);
+    var mid = (length - strLength) / 2;
+    return (
+      createPadding(nativeFloor(mid), chars) +
+      string +
+      createPadding(nativeCeil(mid), chars)
+    );
   }
 
   return pad;

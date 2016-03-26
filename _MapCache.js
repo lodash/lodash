@@ -18,7 +18,7 @@ define(['./_mapClear', './_mapDelete', './_mapGet', './_mapHas', './_mapSet'], f
     }
   }
 
-  // Add functions to the `MapCache`.
+  // Add methods to `MapCache`.
   MapCache.prototype.clear = mapClear;
   MapCache.prototype['delete'] = mapDelete;
   MapCache.prototype.get = mapGet;

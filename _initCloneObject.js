@@ -1,7 +1,4 @@
-define(['./_baseCreate', './_isPrototype'], function(baseCreate, isPrototype) {
-
-  /** Built-in value references. */
-  var getPrototypeOf = Object.getPrototypeOf;
+define(['./_baseCreate', './_getPrototype', './_isPrototype'], function(baseCreate, getPrototype, isPrototype) {
 
   /**
    * Initializes an object clone.
@@ -12,7 +9,7 @@ define(['./_baseCreate', './_isPrototype'], function(baseCreate, isPrototype) {
    */
   function initCloneObject(object) {
     return (typeof object.constructor == 'function' && !isPrototype(object))
-      ? baseCreate(getPrototypeOf(object))
+      ? baseCreate(getPrototype(object))
       : {};
   }
 

@@ -8,6 +8,7 @@ define([], function() {
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @alias first
    * @category Array
    * @param {Array} array The array to query.

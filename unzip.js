@@ -10,6 +10,7 @@ define(['./_arrayFilter', './_arrayMap', './_baseProperty', './_baseTimes', './i
    *
    * @static
    * @memberOf _
+   * @since 1.2.0
    * @category Array
    * @param {Array} array The array of grouped elements to process.
    * @returns {Array} Returns the new array of regrouped elements.

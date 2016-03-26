@@ -7,7 +7,7 @@ define([], function() {
    * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
    *
    * @private
-   * @param {Array} props The property names.
+   * @param {Array} props The property identifiers.
    * @param {Array} values The property values.
    * @param {Function} assignFunc The function to assign values.
    * @returns {Object} Returns the new object.
@@ -19,7 +19,8 @@ define([], function() {
         result = {};
 
     while (++index < length) {
-      assignFunc(result, props[index], index < valsLength ? values[index] : undefined);
+      var value = index < valsLength ? values[index] : undefined;
+      assignFunc(result, props[index], value);
     }
     return result;
   }

@@ -5,10 +5,12 @@ define([], function() {
    *
    * @static
    * @memberOf _
+   * @since 3.9.0
    * @category Lang
    * @param {*} value The value to compare.
    * @param {*} other The other value to compare.
-   * @returns {boolean} Returns `true` if `value` is greater than `other`, else `false`.
+   * @returns {boolean} Returns `true` if `value` is greater than `other`,
+   *  else `false`.
    * @example
    *
    * _.gt(3, 1);

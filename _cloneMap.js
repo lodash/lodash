@@ -5,10 +5,13 @@ define(['./_addMapEntry', './_arrayReduce', './_mapToArray'], function(addMapEnt
    *
    * @private
    * @param {Object} map The map to clone.
+   * @param {Function} cloneFunc The function to clone values.
+   * @param {boolean} [isDeep] Specify a deep clone.
    * @returns {Object} Returns the cloned map.
    */
-  function cloneMap(map) {
-    return arrayReduce(mapToArray(map), addMapEntry, new map.constructor);
+  function cloneMap(map, isDeep, cloneFunc) {
+    var array = isDeep ? cloneFunc(mapToArray(map), true) : mapToArray(map);
+    return arrayReduce(array, addMapEntry, new map.constructor);
   }
 
   return cloneMap;

@@ -24,7 +24,8 @@ define(['./keys'], function(keys) {
             predicate = source[key],
             value = object[key];
 
-        if ((value === undefined && !(key in Object(object))) || !predicate(value)) {
+        if ((value === undefined &&
+            !(key in Object(object))) || !predicate(value)) {
           return false;
         }
       }

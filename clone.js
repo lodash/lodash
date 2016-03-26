@@ -13,6 +13,7 @@ define(['./_baseClone'], function(baseClone) {
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Lang
    * @param {*} value The value to clone.
    * @returns {*} Returns the cloned value.

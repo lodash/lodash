@@ -5,6 +5,7 @@ define(['./_createRound'], function(createRound) {
    *
    * @static
    * @memberOf _
+   * @since 3.10.0
    * @category Math
    * @param {number} number The number to round.
    * @param {number} [precision=0] The precision to round to.

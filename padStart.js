@@ -1,4 +1,4 @@
-define(['./_createPadding', './toString'], function(createPadding, toString) {
+define(['./_createPadding', './_stringSize', './toInteger', './toString'], function(createPadding, stringSize, toInteger, toString) {
 
   /**
    * Pads `string` on the left side if it's shorter than `length`. Padding
@@ -6,6 +6,7 @@ define(['./_createPadding', './toString'], function(createPadding, toString) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category String
    * @param {string} [string=''] The string to pad.
    * @param {number} [length=0] The padding length.
@@ -24,7 +25,12 @@ define(['./_createPadding', './toString'], function(createPadding, toString) {
    */
   function padStart(string, length, chars) {
     string = toString(string);
-    return createPadding(string, length, chars) + string;
+    length = toInteger(length);
+
+    var strLength = length ? stringSize(string) : 0;
+    return (length && strLength < length)
+      ? (createPadding(length - strLength, chars) + string)
+      : string;
   }
 
   return padStart;

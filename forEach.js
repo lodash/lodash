@@ -1,16 +1,17 @@
-define(['./_arrayEach', './_baseCastFunction', './_baseEach', './isArray'], function(arrayEach, baseCastFunction, baseEach, isArray) {
+define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function(arrayEach, baseEach, baseIteratee, isArray) {
 
   /**
    * Iterates over elements of `collection` invoking `iteratee` for each element.
    * The iteratee is invoked with three arguments: (value, index|key, collection).
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
-   * **Note:** As with other "Collections" methods, objects with a "length" property
-   * are iterated like arrays. To avoid this behavior use `_.forIn` or `_.forOwn`
-   * for object iteration.
+   * **Note:** As with other "Collections" methods, objects with a "length"
+   * property are iterated like arrays. To avoid this behavior use `_.forIn`
+   * or `_.forOwn` for object iteration.
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @alias each
    * @category Collection
    * @param {Array|Object} collection The collection to iterate over.
@@ -21,17 +22,17 @@ define(['./_arrayEach', './_baseCastFunction', './_baseEach', './isArray'], func
    * _([1, 2]).forEach(function(value) {
    *   console.log(value);
    * });
-   * // => logs `1` then `2`
+   * // => Logs `1` then `2`.
    *
    * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'a' then 'b' (iteration order is not guaranteed)
+   * // => Logs 'a' then 'b' (iteration order is not guaranteed).
    */
   function forEach(collection, iteratee) {
     return (typeof iteratee == 'function' && isArray(collection))
       ? arrayEach(collection, iteratee)
-      : baseEach(collection, baseCastFunction(iteratee));
+      : baseEach(collection, baseIteratee(iteratee));
   }
 
   return forEach;

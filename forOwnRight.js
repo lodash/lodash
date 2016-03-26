@@ -1,4 +1,4 @@
-define(['./_baseCastFunction', './_baseForOwnRight'], function(baseCastFunction, baseForOwnRight) {
+define(['./_baseForOwnRight', './_baseIteratee'], function(baseForOwnRight, baseIteratee) {
 
   /**
    * This method is like `_.forOwn` except that it iterates over properties of
@@ -6,6 +6,7 @@ define(['./_baseCastFunction', './_baseForOwnRight'], function(baseCastFunction,
    *
    * @static
    * @memberOf _
+   * @since 2.0.0
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -22,10 +23,10 @@ define(['./_baseCastFunction', './_baseForOwnRight'], function(baseCastFunction,
    * _.forOwnRight(new Foo, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
+   * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
    */
   function forOwnRight(object, iteratee) {
-    return object && baseForOwnRight(object, baseCastFunction(iteratee));
+    return object && baseForOwnRight(object, baseIteratee(iteratee));
   }
 
   return forOwnRight;

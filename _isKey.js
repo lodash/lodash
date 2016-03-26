@@ -1,4 +1,4 @@
-define(['./isArray'], function(isArray) {
+define(['./isArray', './isSymbol'], function(isArray, isSymbol) {
 
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -13,11 +13,12 @@ define(['./isArray'], function(isArray) {
    * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
    */
   function isKey(value, object) {
-    if (typeof value == 'number') {
+    var type = typeof value;
+    if (type == 'number' || type == 'symbol') {
       return true;
     }
     return !isArray(value) &&
-      (reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+      (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
         (object != null && value in Object(object)));
   }
 

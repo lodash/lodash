@@ -1,4 +1,4 @@
-define(['./_baseCastFunction', './_baseTimes', './toInteger'], function(baseCastFunction, baseTimes, toInteger) {
+define(['./_baseIteratee', './_baseTimes', './toInteger'], function(baseIteratee, baseTimes, toInteger) {
 
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991;
@@ -14,6 +14,7 @@ define(['./_baseCastFunction', './_baseTimes', './toInteger'], function(baseCast
    * each invocation. The iteratee is invoked with one argument; (index).
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category Util
    * @param {number} n The number of times to invoke `iteratee`.
@@ -35,7 +36,7 @@ define(['./_baseCastFunction', './_baseTimes', './toInteger'], function(baseCast
     var index = MAX_ARRAY_LENGTH,
         length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-    iteratee = baseCastFunction(iteratee);
+    iteratee = baseIteratee(iteratee);
     n -= MAX_ARRAY_LENGTH;
 
     var result = baseTimes(length, iteratee);

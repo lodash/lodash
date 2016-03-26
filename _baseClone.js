@@ -1,4 +1,4 @@
-define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseForOwn', './_cloneBuffer', './_copyArray', './_copySymbols', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './_isHostObject', './isObject'], function(Stack, arrayEach, assignValue, baseAssign, baseForOwn, cloneBuffer, copyArray, copySymbols, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isHostObject, isObject) {
+define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_cloneBuffer', './_copyArray', './_copySymbols', './_getAllKeys', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './_isHostObject', './isObject', './keys'], function(Stack, arrayEach, assignValue, baseAssign, cloneBuffer, copyArray, copySymbols, getAllKeys, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isHostObject, isObject, keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -21,6 +21,7 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseF
       weakMapTag = '[object WeakMap]';
 
   var arrayBufferTag = '[object ArrayBuffer]',
+      dataViewTag = '[object DataView]',
       float32Tag = '[object Float32Array]',
       float64Tag = '[object Float64Array]',
       int8Tag = '[object Int8Array]',
@@ -34,16 +35,16 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseF
   /** Used to identify `toStringTag` values supported by `_.clone`. */
   var cloneableTags = {};
   cloneableTags[argsTag] = cloneableTags[arrayTag] =
-  cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
-  cloneableTags[dateTag] = cloneableTags[float32Tag] =
-  cloneableTags[float64Tag] = cloneableTags[int8Tag] =
-  cloneableTags[int16Tag] = cloneableTags[int32Tag] =
-  cloneableTags[mapTag] = cloneableTags[numberTag] =
-  cloneableTags[objectTag] = cloneableTags[regexpTag] =
-  cloneableTags[setTag] = cloneableTags[stringTag] =
-  cloneableTags[symbolTag] = cloneableTags[uint8Tag] =
-  cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] =
-  cloneableTags[uint32Tag] = true;
+  cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+  cloneableTags[boolTag] = cloneableTags[dateTag] =
+  cloneableTags[float32Tag] = cloneableTags[float64Tag] =
+  cloneableTags[int8Tag] = cloneableTags[int16Tag] =
+  cloneableTags[int32Tag] = cloneableTags[mapTag] =
+  cloneableTags[numberTag] = cloneableTags[objectTag] =
+  cloneableTags[regexpTag] = cloneableTags[setTag] =
+  cloneableTags[stringTag] = cloneableTags[symbolTag] =
+  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
   cloneableTags[weakMapTag] = false;
 
@@ -91,14 +92,13 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseF
         }
         result = initCloneObject(isFunc ? {} : value);
         if (!isDeep) {
-          result = baseAssign(result, value);
-          return isFull ? copySymbols(value, result) : result;
+          return copySymbols(value, baseAssign(result, value));
         }
       } else {
         if (!cloneableTags[tag]) {
           return object ? value : {};
         }
-        result = initCloneByTag(value, tag, isDeep);
+        result = initCloneByTag(value, tag, baseClone, isDeep);
       }
     }
     // Check for circular references and return its corresponding clone.
@@ -109,11 +109,18 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseF
     }
     stack.set(value, result);
 
+    if (!isArr) {
+      var props = isFull ? getAllKeys(value) : keys(value);
+    }
     // Recursively populate clone (susceptible to call stack limits).
-    (isArr ? arrayEach : baseForOwn)(value, function(subValue, key) {
+    arrayEach(props || value, function(subValue, key) {
+      if (props) {
+        key = subValue;
+        subValue = value[key];
+      }
       assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
     });
-    return (isFull && !isArr) ? copySymbols(value, result) : result;
+    return result;
   }
 
   return baseClone;

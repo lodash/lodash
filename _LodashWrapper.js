@@ -8,7 +8,7 @@ define(['./_baseCreate', './_baseLodash'], function(baseCreate, baseLodash) {
    *
    * @private
    * @param {*} value The value to wrap.
-   * @param {boolean} [chainAll] Enable chaining for all wrapper methods.
+   * @param {boolean} [chainAll] Enable explicit method chain sequences.
    */
   function LodashWrapper(value, chainAll) {
     this.__wrapped__ = value;

@@ -1,13 +1,11 @@
-define([], function() {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_createMathOperation'], function(createMathOperation) {
 
   /**
    * Subtract two numbers.
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Math
    * @param {number} minuend The first number in a subtraction.
    * @param {number} subtrahend The second number in a subtraction.
@@ -17,19 +15,9 @@ define([], function() {
    * _.subtract(6, 4);
    * // => 2
    */
-  function subtract(minuend, subtrahend) {
-    var result;
-    if (minuend === undefined && subtrahend === undefined) {
-      return 0;
-    }
-    if (minuend !== undefined) {
-      result = minuend;
-    }
-    if (subtrahend !== undefined) {
-      result = result === undefined ? subtrahend : (result - subtrahend);
-    }
-    return result;
-  }
+  var subtract = createMathOperation(function(minuend, subtrahend) {
+    return minuend - subtrahend;
+  });
 
   return subtract;
 });

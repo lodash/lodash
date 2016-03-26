@@ -6,6 +6,7 @@ define(['./toString', './upperFirst'], function(toString, upperFirst) {
    *
    * @static
    * @memberOf _
+   * @since 3.0.0
    * @category String
    * @param {string} [string=''] The string to capitalize.
    * @returns {string} Returns the capitalized string.

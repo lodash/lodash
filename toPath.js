@@ -1,10 +1,11 @@
-define(['./_arrayMap', './isArray', './_stringToPath'], function(arrayMap, isArray, stringToPath) {
+define(['./_arrayMap', './_baseCastKey', './_copyArray', './isArray', './isSymbol', './_stringToPath'], function(arrayMap, baseCastKey, copyArray, isArray, isSymbol, stringToPath) {
 
   /**
    * Converts `value` to a property path array.
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Util
    * @param {*} value The value to convert.
    * @returns {Array} Returns the new property path array.
@@ -26,7 +27,10 @@ define(['./_arrayMap', './isArray', './_stringToPath'], function(arrayMap, isArr
    * // => false
    */
   function toPath(value) {
-    return isArray(value) ? arrayMap(value, String) : stringToPath(value);
+    if (isArray(value)) {
+      return arrayMap(value, baseCastKey);
+    }
+    return isSymbol(value) ? [value] : copyArray(stringToPath(value));
   }
 
   return toPath;

@@ -7,6 +7,7 @@ define(['./_arrayEach', './_baseFlatten', './bind', './rest'], function(arrayEac
    * **Note:** This method doesn't set the "length" property of bound functions.
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category Util
    * @param {Object} object The object to bind and assign the bound methods to.
@@ -24,7 +25,7 @@ define(['./_arrayEach', './_baseFlatten', './bind', './rest'], function(arrayEac
    *
    * _.bindAll(view, 'onClick');
    * jQuery(element).on('click', view.onClick);
-   * // => logs 'clicked docs' when clicked
+   * // => Logs 'clicked docs' when clicked.
    */
   var bindAll = rest(function(object, methodNames) {
     arrayEach(baseFlatten(methodNames, 1), function(key) {

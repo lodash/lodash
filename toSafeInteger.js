@@ -9,6 +9,7 @@ define(['./_baseClamp', './toInteger'], function(baseClamp, toInteger) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Lang
    * @param {*} value The value to convert.
    * @returns {number} Returns the converted integer.

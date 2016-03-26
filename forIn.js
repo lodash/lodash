@@ -1,13 +1,14 @@
-define(['./_baseCastFunction', './_baseFor', './keysIn'], function(baseCastFunction, baseFor, keysIn) {
+define(['./_baseFor', './_baseIteratee', './keysIn'], function(baseFor, baseIteratee, keysIn) {
 
   /**
-   * Iterates over own and inherited enumerable properties of an object invoking
-   * `iteratee` for each property. The iteratee is invoked with three arguments:
-   * (value, key, object). Iteratee functions may exit iteration early by explicitly
-   * returning `false`.
+   * Iterates over own and inherited enumerable string keyed properties of an
+   * object invoking `iteratee` for each property. The iteratee is invoked with
+   * three arguments: (value, key, object). Iteratee functions may exit iteration
+   * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
+   * @since 0.3.0
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -24,12 +25,12 @@ define(['./_baseCastFunction', './_baseFor', './keysIn'], function(baseCastFunct
    * _.forIn(new Foo, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
+   * // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).
    */
   function forIn(object, iteratee) {
     return object == null
       ? object
-      : baseFor(object, baseCastFunction(iteratee), keysIn);
+      : baseFor(object, baseIteratee(iteratee), keysIn);
   }
 
   return forIn;

@@ -1,4 +1,4 @@
-define(['./_baseCastPath', './isArguments', './isArray', './_isIndex', './_isKey', './isLength', './isString', './last', './_parent'], function(baseCastPath, isArguments, isArray, isIndex, isKey, isLength, isString, last, parent) {
+define(['./_baseCastPath', './isArguments', './isArray', './_isIndex', './_isKey', './isLength', './isString'], function(baseCastPath, isArguments, isArray, isIndex, isKey, isLength, isString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -19,10 +19,16 @@ define(['./_baseCastPath', './isArguments', './isArray', './_isIndex', './_isKey
     var result = hasFunc(object, path);
     if (!result && !isKey(path)) {
       path = baseCastPath(path);
-      object = parent(object, path);
-      if (object != null) {
-        path = last(path);
-        result = hasFunc(object, path);
+
+      var index = -1,
+          length = path.length;
+
+      while (object != null && ++index < length) {
+        var key = path[index];
+        if (!(result = hasFunc(object, key))) {
+          break;
+        }
+        object = object[key];
       }
     }
     var length = object ? object.length : undefined;

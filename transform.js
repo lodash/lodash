@@ -1,18 +1,16 @@
-define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, isArray, isFunction, isObject, isTypedArray) {
-
-  /** Built-in value references. */
-  var getPrototypeOf = Object.getPrototypeOf;
+define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './_getPrototype', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, getPrototype, isArray, isFunction, isObject, isTypedArray) {
 
   /**
    * An alternative to `_.reduce`; this method transforms `object` to a new
    * `accumulator` object which is the result of running each of its own enumerable
-   * properties through `iteratee`, with each invocation potentially mutating
-   * the `accumulator` object. The iteratee is invoked with four arguments:
+   * string keyed properties through `iteratee`, with each invocation potentially
+   * mutating the `accumulator` object. The iteratee is invoked with four arguments:
    * (accumulator, value, key, object). Iteratee functions may exit iteration
    * early by explicitly returning `false`.
    *
    * @static
    * @memberOf _
+   * @since 1.3.0
    * @category Object
    * @param {Array|Object} object The object to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -41,7 +39,7 @@ define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './
         if (isArr) {
           accumulator = isArray(object) ? new Ctor : [];
         } else {
-          accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
+          accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
         }
       } else {
         accumulator = {};

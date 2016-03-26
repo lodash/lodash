@@ -9,10 +9,11 @@ define(['./_baseGet'], function(baseGet) {
    *
    * @static
    * @memberOf _
+   * @since 3.7.0
    * @category Object
    * @param {Object} object The object to query.
    * @param {Array|string} path The path of the property to get.
-   * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
+   * @param {*} [defaultValue] The value returned for `undefined` resolved values.
    * @returns {*} Returns the resolved value.
    * @example
    *

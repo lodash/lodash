@@ -8,6 +8,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'
    * corresponding `transforms`.
    *
    * @static
+   * @since 4.0.0
    * @memberOf _
    * @category Function
    * @param {Function} func The function to wrap.

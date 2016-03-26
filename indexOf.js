@@ -11,6 +11,7 @@ define(['./_baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Array
    * @param {Array} array The array to search.
    * @param {*} value The value to search for.

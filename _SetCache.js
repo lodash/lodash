@@ -18,7 +18,7 @@ define(['./_MapCache', './_cachePush'], function(MapCache, cachePush) {
     }
   }
 
-  // Add functions to the `SetCache`.
+  // Add methods to `SetCache`.
   SetCache.prototype.push = cachePush;
 
   return SetCache;

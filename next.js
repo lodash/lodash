@@ -9,6 +9,7 @@ define(['./toArray'], function(toArray) {
    *
    * @name next
    * @memberOf _
+   * @since 4.0.0
    * @category Seq
    * @returns {Object} Returns the next iterator value.
    * @example

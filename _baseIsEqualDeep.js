@@ -24,7 +24,8 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
    * @param {Object} other The other object to compare.
    * @param {Function} equalFunc The function to determine equivalents of values.
    * @param {Function} [customizer] The function to customize comparisons.
-   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual` for more details.
+   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
+   *  for more details.
    * @param {Object} [stack] Tracks traversed `object` and `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
@@ -57,8 +58,11 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
           othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
       if (objIsWrapped || othIsWrapped) {
+        var objUnwrapped = objIsWrapped ? object.value() : object,
+            othUnwrapped = othIsWrapped ? other.value() : other;
+
         stack || (stack = new Stack);
-        return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, bitmask, stack);
+        return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
       }
     }
     if (!isSameTag) {

@@ -1,4 +1,4 @@
-define(['./_arrayConcat', './_baseFlatten', './isArray', './rest'], function(arrayConcat, baseFlatten, isArray, rest) {
+define(['./_arrayConcat', './_baseFlatten', './castArray', './_copyArray'], function(arrayConcat, baseFlatten, castArray, copyArray) {
 
   /**
    * Creates a new array concatenating `array` with any additional arrays
@@ -6,6 +6,7 @@ define(['./_arrayConcat', './_baseFlatten', './isArray', './rest'], function(arr
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Array
    * @param {Array} array The array to concatenate.
    * @param {...*} [values] The values to concatenate.
@@ -21,13 +22,19 @@ define(['./_arrayConcat', './_baseFlatten', './isArray', './rest'], function(arr
    * console.log(array);
    * // => [1]
    */
-  var concat = rest(function(array, values) {
-    if (!isArray(array)) {
-      array = array == null ? [] : [Object(array)];
+  function concat() {
+    var length = arguments.length,
+        array = castArray(arguments[0]);
+
+    if (length < 2) {
+      return length ? copyArray(array) : [];
     }
-    values = baseFlatten(values, 1);
-    return arrayConcat(array, values);
-  });
+    var args = Array(length - 1);
+    while (length--) {
+      args[length - 1] = arguments[length];
+    }
+    return arrayConcat(array, baseFlatten(args, 1));
+  }
 
   return concat;
 });

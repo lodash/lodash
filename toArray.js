@@ -14,6 +14,7 @@ define(['./_Symbol', './_copyArray', './_getTag', './isArrayLike', './isString',
    * Converts `value` to an array.
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category Lang
    * @param {*} value The value to convert.

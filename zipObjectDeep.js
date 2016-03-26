@@ -5,8 +5,9 @@ define(['./_baseSet', './_baseZipObject'], function(baseSet, baseZipObject) {
    *
    * @static
    * @memberOf _
+   * @since 4.1.0
    * @category Array
-   * @param {Array} [props=[]] The property names.
+   * @param {Array} [props=[]] The property identifiers.
    * @param {Array} [values=[]] The property values.
    * @returns {Object} Returns the new object.
    * @example

@@ -8,6 +8,7 @@ define(['./_arrayMap', './_baseCastArrayLikeObject', './_baseIntersection', './r
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
    * @returns {Array} Returns the new array of intersecting values.

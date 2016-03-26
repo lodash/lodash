@@ -35,17 +35,24 @@ define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', '
    * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category String
    * @param {string} [string=''] The template string.
-   * @param {Object} [options] The options object.
-   * @param {RegExp} [options.escape] The HTML "escape" delimiter.
-   * @param {RegExp} [options.evaluate] The "evaluate" delimiter.
-   * @param {Object} [options.imports] An object to import into the template as free variables.
-   * @param {RegExp} [options.interpolate] The "interpolate" delimiter.
-   * @param {string} [options.sourceURL] The sourceURL of the template's compiled source.
-   * @param {string} [options.variable] The data object variable name.
-   * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
+   * @param {Object} [options={}] The options object.
+   * @param {RegExp} [options.escape=_.templateSettings.escape]
+   *  The HTML "escape" delimiter.
+   * @param {RegExp} [options.evaluate=_.templateSettings.evaluate]
+   *  The "evaluate" delimiter.
+   * @param {Object} [options.imports=_.templateSettings.imports]
+   *  An object to import into the template as free variables.
+   * @param {RegExp} [options.interpolate=_.templateSettings.interpolate]
+   *  The "interpolate" delimiter.
+   * @param {string} [options.sourceURL='templateSources[n]']
+   *  The sourceURL of the compiled template.
+   * @param {string} [options.variable='obj']
+   *  The data object variable name.
+   * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
    * @returns {Function} Returns the compiled template function.
    * @example
    *
@@ -94,7 +101,7 @@ define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', '
    * // Use the `sourceURL` option to specify a custom sourceURL for the template.
    * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
    * compiled(data);
-   * // => find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector
+   * // => Find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector.
    *
    * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
    * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
@@ -114,7 +121,8 @@ define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', '
    * ');
    */
   function template(string, options, guard) {
-    // Based on John Resig's `tmpl` implementation (http://ejohn.org/blog/javascript-micro-templating/)
+    // Based on John Resig's `tmpl` implementation
+    // (http://ejohn.org/blog/javascript-micro-templating/)
     // and Laura Doktorova's doT.js (https://github.com/olado/doT).
     var settings = templateSettings.imports._.templateSettings || templateSettings;
 

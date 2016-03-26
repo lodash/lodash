@@ -6,6 +6,7 @@ define(['./_baseClamp', './_baseRandom', './toArray', './toInteger'], function(b
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Collection
    * @param {Array|Object} collection The collection to sample.
    * @param {number} [n=0] The number of elements to sample.

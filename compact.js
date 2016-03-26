@@ -6,6 +6,7 @@ define([], function() {
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Array
    * @param {Array} array The array to compact.
    * @returns {Array} Returns the new array of filtered values.

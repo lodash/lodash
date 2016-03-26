@@ -6,6 +6,7 @@ define(['./_baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNum
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Function
    * @param {Function} func The function to delay.
    * @param {number} wait The number of milliseconds to delay invocation.
@@ -16,7 +17,7 @@ define(['./_baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNum
    * _.delay(function(text) {
    *   console.log(text);
    * }, 1000, 'later');
-   * // => logs 'later' after one second
+   * // => Logs 'later' after one second.
    */
   var delay = rest(function(func, wait, args) {
     return baseDelay(func, toNumber(wait) || 0, args);

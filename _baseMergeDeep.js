@@ -15,7 +15,8 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
    * @param {number} srcIndex The index of `source`.
    * @param {Function} mergeFunc The function to merge values.
    * @param {Function} [customizer] The function to customize assigned values.
-   * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
+   * @param {Object} [stack] Tracks traversed source values and their merged
+   *  counterparts.
    */
   function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
     var objValue = object[key],
@@ -43,7 +44,7 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         }
         else {
           isCommon = false;
-          newValue = baseClone(srcValue, !customizer);
+          newValue = baseClone(srcValue, true);
         }
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -52,7 +53,7 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         }
         else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
           isCommon = false;
-          newValue = baseClone(srcValue, !customizer);
+          newValue = baseClone(srcValue, true);
         }
         else {
           newValue = objValue;

@@ -1,19 +1,20 @@
-define(['./_baseCastPath', './get', './isFunction', './_isKey', './_parent'], function(baseCastPath, get, isFunction, isKey, parent) {
+define(['./_baseCastPath', './isFunction', './_isKey'], function(baseCastPath, isFunction, isKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /**
-   * This method is like `_.get` except that if the resolved value is a function
-   * it's invoked with the `this` binding of its parent object and its result
-   * is returned.
+   * This method is like `_.get` except that if the resolved value is a
+   * function it's invoked with the `this` binding of its parent object and
+   * its result is returned.
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category Object
    * @param {Object} object The object to query.
    * @param {Array|string} path The path of the property to resolve.
-   * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
+   * @param {*} [defaultValue] The value returned for `undefined` resolved values.
    * @returns {*} Returns the resolved value.
    * @example
    *
@@ -32,17 +33,25 @@ define(['./_baseCastPath', './get', './isFunction', './_isKey', './_parent'], fu
    * // => 'default'
    */
   function result(object, path, defaultValue) {
-    if (!isKey(path, object)) {
-      path = baseCastPath(path);
-      var result = get(object, path);
-      object = parent(object, path);
-    } else {
-      result = object == null ? undefined : object[path];
+    path = isKey(path, object) ? [path] : baseCastPath(path);
+
+    var index = -1,
+        length = path.length;
+
+    // Ensure the loop is entered when path is empty.
+    if (!length) {
+      object = undefined;
+      length = 1;
     }
-    if (result === undefined) {
-      result = defaultValue;
+    while (++index < length) {
+      var value = object == null ? undefined : object[path[index]];
+      if (value === undefined) {
+        index = length;
+        value = defaultValue;
+      }
+      object = isFunction(value) ? value.call(object) : value;
     }
-    return isFunction(result) ? result.call(object) : result;
+    return object;
   }
 
   return result;

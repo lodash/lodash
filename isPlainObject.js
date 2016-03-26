@@ -1,4 +1,4 @@
-define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLike) {
+define(['./_getPrototype', './_isHostObject', './isObjectLike'], function(getPrototype, isHostObject, isObjectLike) {
 
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';
@@ -9,6 +9,9 @@ define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLik
   /** Used to resolve the decompiled source of functions. */
   var funcToString = Function.prototype.toString;
 
+  /** Used to check objects for own properties. */
+  var hasOwnProperty = objectProto.hasOwnProperty;
+
   /** Used to infer the `Object` constructor. */
   var objectCtorString = funcToString.call(Object);
 
@@ -18,18 +21,17 @@ define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLik
    */
   var objectToString = objectProto.toString;
 
-  /** Built-in value references. */
-  var getPrototypeOf = Object.getPrototypeOf;
-
   /**
    * Checks if `value` is a plain object, that is, an object created by the
    * `Object` constructor or one with a `[[Prototype]]` of `null`.
    *
    * @static
    * @memberOf _
+   * @since 0.8.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a plain object,
+   *  else `false`.
    * @example
    *
    * function Foo() {
@@ -53,11 +55,11 @@ define(['./_isHostObject', './isObjectLike'], function(isHostObject, isObjectLik
         objectToString.call(value) != objectTag || isHostObject(value)) {
       return false;
     }
-    var proto = getPrototypeOf(value);
+    var proto = getPrototype(value);
     if (proto === null) {
       return true;
     }
-    var Ctor = proto.constructor;
+    var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
     return (typeof Ctor == 'function' &&
       Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
   }

@@ -5,14 +5,16 @@ define(['./_baseEach', './_baseFind', './_baseFindIndex', './_baseIteratee', './
 
   /**
    * Iterates over elements of `collection`, returning the first element
-   * `predicate` returns truthy for. The predicate is invoked with three arguments:
-   * (value, index|key, collection).
+   * `predicate` returns truthy for. The predicate is invoked with three
+   * arguments: (value, index|key, collection).
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Collection
    * @param {Array|Object} collection The collection to search.
-   * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+   * @param {Array|Function|Object|string} [predicate=_.identity]
+   *  The function invoked per iteration.
    * @returns {*} Returns the matched element, else `undefined`.
    * @example
    *

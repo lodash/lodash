@@ -6,9 +6,11 @@ define(['./isArrayLike', './isObjectLike'], function(isArrayLike, isObjectLike) 
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+   * @returns {boolean} Returns `true` if `value` is an array-like object,
+   *  else `false`.
    * @example
    *
    * _.isArrayLikeObject([1, 2, 3]);

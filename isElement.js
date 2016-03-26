@@ -5,9 +5,11 @@ define(['./isObjectLike', './isPlainObject'], function(isObjectLike, isPlainObje
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
+   * @returns {boolean} Returns `true` if `value` is a DOM element,
+   *  else `false`.
    * @example
    *
    * _.isElement(document.body);

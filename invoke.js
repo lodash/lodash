@@ -5,6 +5,7 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Object
    * @param {Object} object The object to query.
    * @param {Array|string} path The path of the method to invoke.

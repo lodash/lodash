@@ -1,13 +1,14 @@
-define(['./_baseCastFunction', './_baseForOwn'], function(baseCastFunction, baseForOwn) {
+define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) {
 
   /**
-   * Iterates over own enumerable properties of an object invoking `iteratee`
-   * for each property. The iteratee is invoked with three arguments:
+   * Iterates over own enumerable string keyed properties of an object invoking
+   * `iteratee` for each property. The iteratee is invoked with three arguments:
    * (value, key, object). Iteratee functions may exit iteration early by
    * explicitly returning `false`.
    *
    * @static
    * @memberOf _
+   * @since 0.3.0
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -24,10 +25,10 @@ define(['./_baseCastFunction', './_baseForOwn'], function(baseCastFunction, base
    * _.forOwn(new Foo, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'a' then 'b' (iteration order is not guaranteed)
+   * // => Logs 'a' then 'b' (iteration order is not guaranteed).
    */
   function forOwn(object, iteratee) {
-    return object && baseForOwn(object, baseCastFunction(iteratee));
+    return object && baseForOwn(object, baseIteratee(iteratee));
   }
 
   return forOwn;

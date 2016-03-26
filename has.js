@@ -4,6 +4,7 @@ define(['./_baseHas', './_hasPath'], function(baseHas, hasPath) {
    * Checks if `path` is a direct property of `object`.
    *
    * @static
+   * @since 0.1.0
    * @memberOf _
    * @category Object
    * @param {Object} object The object to query.

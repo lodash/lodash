@@ -12,7 +12,8 @@ define(['./_baseMerge', './isObject'], function(baseMerge, isObject) {
    * @param {string} key The key of the property to merge.
    * @param {Object} object The parent object of `objValue`.
    * @param {Object} source The parent object of `srcValue`.
-   * @param {Object} [stack] Tracks traversed source values and their merged counterparts.
+   * @param {Object} [stack] Tracks traversed source values and their merged
+   *  counterparts.
    * @returns {*} Returns the value to assign.
    */
   function mergeDefaults(objValue, srcValue, key, object, source, stack) {

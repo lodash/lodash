@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseIteratee', './_baseMap', './_baseSortBy', './_compareMultiple'], function(arrayMap, baseIteratee, baseMap, baseSortBy, compareMultiple) {
+define(['./_arrayMap', './_baseIteratee', './_baseMap', './_baseSortBy', './_compareMultiple', './identity'], function(arrayMap, baseIteratee, baseMap, baseSortBy, compareMultiple, identity) {
 
   /**
    * The base implementation of `_.orderBy` without param guards.
@@ -11,7 +11,7 @@ define(['./_arrayMap', './_baseIteratee', './_baseMap', './_baseSortBy', './_com
    */
   function baseOrderBy(collection, iteratees, orders) {
     var index = -1;
-    iteratees = arrayMap(iteratees.length ? iteratees : Array(1), baseIteratee);
+    iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseIteratee);
 
     var result = baseMap(collection, function(value, key, collection) {
       var criteria = arrayMap(iteratees, function(iteratee) {

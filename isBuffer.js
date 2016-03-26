@@ -32,6 +32,7 @@ define(['./constant', './_root'], function(constant, root) {
    *
    * @static
    * @memberOf _
+   * @since 4.3.0
    * @category Lang
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.

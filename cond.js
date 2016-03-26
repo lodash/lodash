@@ -11,6 +11,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Util
    * @param {Array} pairs The predicate-function pairs.
    * @returns {Function} Returns the new function.
@@ -32,13 +33,14 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
    * // => 'no match'
    */
   function cond(pairs) {
-    var length = pairs ? pairs.length : 0;
+    var length = pairs ? pairs.length : 0,
+        toIteratee = baseIteratee;
 
     pairs = !length ? [] : arrayMap(pairs, function(pair) {
       if (typeof pair[1] != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      return [baseIteratee(pair[0]), pair[1]];
+      return [toIteratee(pair[0]), pair[1]];
     });
 
     return rest(function(args) {

@@ -1,4 +1,4 @@
-define(['./_baseCastFunction', './_baseForRight', './keysIn'], function(baseCastFunction, baseForRight, keysIn) {
+define(['./_baseForRight', './_baseIteratee', './keysIn'], function(baseForRight, baseIteratee, keysIn) {
 
   /**
    * This method is like `_.forIn` except that it iterates over properties of
@@ -6,6 +6,7 @@ define(['./_baseCastFunction', './_baseForRight', './keysIn'], function(baseCast
    *
    * @static
    * @memberOf _
+   * @since 2.0.0
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -22,12 +23,12 @@ define(['./_baseCastFunction', './_baseForRight', './keysIn'], function(baseCast
    * _.forInRight(new Foo, function(value, key) {
    *   console.log(key);
    * });
-   * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
+   * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
    */
   function forInRight(object, iteratee) {
     return object == null
       ? object
-      : baseForRight(object, baseCastFunction(iteratee), keysIn);
+      : baseForRight(object, baseIteratee(iteratee), keysIn);
   }
 
   return forInRight;

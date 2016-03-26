@@ -8,7 +8,7 @@ define(['./_Map', './_assocSet', './_hashSet', './_isKeyable'], function(Map, as
    * @memberOf MapCache
    * @param {string} key The key of the value to set.
    * @param {*} value The value to set.
-   * @returns {Object} Returns the map cache object.
+   * @returns {Object} Returns the map cache instance.
    */
   function mapSet(key, value) {
     var data = this.__data__;

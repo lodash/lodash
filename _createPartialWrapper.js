@@ -10,9 +10,11 @@ define(['./_apply', './_createCtorWrapper', './_root'], function(apply, createCt
    *
    * @private
    * @param {Function} func The function to wrap.
-   * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
+   * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
+   *  for more details.
    * @param {*} thisArg The `this` binding of `func`.
-   * @param {Array} partials The arguments to prepend to those provided to the new function.
+   * @param {Array} partials The arguments to prepend to those provided to
+   *  the new function.
    * @returns {Function} Returns the new wrapped function.
    */
   function createPartialWrapper(func, bitmask, thisArg, partials) {

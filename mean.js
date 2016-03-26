@@ -1,10 +1,11 @@
-define(['./sum'], function(sum) {
+define(['./_baseMean', './identity'], function(baseMean, identity) {
 
   /**
    * Computes the mean of the values in `array`.
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Math
    * @param {Array} array The array to iterate over.
    * @returns {number} Returns the mean.
@@ -14,7 +15,7 @@ define(['./sum'], function(sum) {
    * // => 5
    */
   function mean(array) {
-    return sum(array) / (array ? array.length : 0);
+    return baseMean(array, identity);
   }
 
   return mean;

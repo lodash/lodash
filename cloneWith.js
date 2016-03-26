@@ -8,6 +8,7 @@ define(['./_baseClone'], function(baseClone) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Lang
    * @param {*} value The value to clone.
    * @param {Function} [customizer] The function to customize cloning.

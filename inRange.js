@@ -11,6 +11,7 @@ define(['./_baseInRange', './toNumber'], function(baseInRange, toNumber) {
    *
    * @static
    * @memberOf _
+   * @since 3.3.0
    * @category Number
    * @param {number} number The number to check.
    * @param {number} [start=0] The start of the range.

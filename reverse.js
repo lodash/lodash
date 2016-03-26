@@ -15,7 +15,9 @@ define([], function() {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Array
+   * @param {Array} array The array to modify.
    * @returns {Array} Returns `array`.
    * @example
    *

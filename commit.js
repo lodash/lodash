@@ -1,10 +1,11 @@
 define(['./_LodashWrapper'], function(LodashWrapper) {
 
   /**
-   * Executes the chained sequence and returns the wrapped result.
+   * Executes the chain sequence and returns the wrapped result.
    *
    * @name commit
    * @memberOf _
+   * @since 3.2.0
    * @category Seq
    * @returns {Object} Returns the new `lodash` wrapper instance.
    * @example

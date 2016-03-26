@@ -5,6 +5,7 @@ define(['./_baseSum', './identity'], function(baseSum, identity) {
    *
    * @static
    * @memberOf _
+   * @since 3.4.0
    * @category Math
    * @param {Array} array The array to iterate over.
    * @returns {number} Returns the sum.

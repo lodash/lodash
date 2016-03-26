@@ -1,4 +1,4 @@
-define(['./_baseSlice', './get'], function(baseSlice, get) {
+define(['./_baseGet', './_baseSlice'], function(baseGet, baseSlice) {
 
   /**
    * Gets the parent value at `path` of `object`.
@@ -9,7 +9,7 @@ define(['./_baseSlice', './get'], function(baseSlice, get) {
    * @returns {*} Returns the parent value.
    */
   function parent(object, path) {
-    return path.length == 1 ? object : get(object, baseSlice(path, 0, -1));
+    return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
   }
 
   return parent;

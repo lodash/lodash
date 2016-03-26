@@ -5,6 +5,7 @@ define(['./_baseAt', './_baseFlatten', './rest'], function(baseAt, baseFlatten, 
    *
    * @static
    * @memberOf _
+   * @since 1.0.0
    * @category Object
    * @param {Object} object The object to iterate over.
    * @param {...(string|string[])} [paths] The property paths of elements to pick,

@@ -6,7 +6,8 @@ define(['./_baseEach'], function(baseEach) {
    * @private
    * @param {Array|Object} collection The collection to iterate over.
    * @param {Function} predicate The function invoked per iteration.
-   * @returns {boolean} Returns `true` if all elements pass the predicate check, else `false`
+   * @returns {boolean} Returns `true` if all elements pass the predicate check,
+   *  else `false`
    */
   function baseEvery(collection, predicate) {
     var result = true;

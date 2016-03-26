@@ -5,6 +5,7 @@ define(['./_baseProperty', './_basePropertyDeep', './_isKey'], function(baseProp
    *
    * @static
    * @memberOf _
+   * @since 2.4.0
    * @category Util
    * @param {Array|string} path The path of the property to get.
    * @returns {Function} Returns the new function.

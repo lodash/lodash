@@ -7,6 +7,7 @@ define(['./_getLength', './isFunction', './isLength'], function(getLength, isFun
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Lang
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is array-like, else `false`.

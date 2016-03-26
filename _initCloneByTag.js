@@ -1,4 +1,4 @@
-define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', './_cloneSymbol', './_cloneTypedArray'], function(cloneArrayBuffer, cloneMap, cloneRegExp, cloneSet, cloneSymbol, cloneTypedArray) {
+define(['./_cloneArrayBuffer', './_cloneDataView', './_cloneMap', './_cloneRegExp', './_cloneSet', './_cloneSymbol', './_cloneTypedArray'], function(cloneArrayBuffer, cloneDataView, cloneMap, cloneRegExp, cloneSet, cloneSymbol, cloneTypedArray) {
 
   /** `Object#toString` result references. */
   var boolTag = '[object Boolean]',
@@ -11,6 +11,7 @@ define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', '
       symbolTag = '[object Symbol]';
 
   var arrayBufferTag = '[object ArrayBuffer]',
+      dataViewTag = '[object DataView]',
       float32Tag = '[object Float32Array]',
       float64Tag = '[object Float64Array]',
       int8Tag = '[object Int8Array]',
@@ -30,10 +31,11 @@ define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', '
    * @private
    * @param {Object} object The object to clone.
    * @param {string} tag The `toStringTag` of the object to clone.
+   * @param {Function} cloneFunc The function to clone values.
    * @param {boolean} [isDeep] Specify a deep clone.
    * @returns {Object} Returns the initialized clone.
    */
-  function initCloneByTag(object, tag, isDeep) {
+  function initCloneByTag(object, tag, cloneFunc, isDeep) {
     var Ctor = object.constructor;
     switch (tag) {
       case arrayBufferTag:
@@ -43,13 +45,16 @@ define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', '
       case dateTag:
         return new Ctor(+object);
 
+      case dataViewTag:
+        return cloneDataView(object, isDeep);
+
       case float32Tag: case float64Tag:
       case int8Tag: case int16Tag: case int32Tag:
       case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
         return cloneTypedArray(object, isDeep);
 
       case mapTag:
-        return cloneMap(object);
+        return cloneMap(object, isDeep, cloneFunc);
 
       case numberTag:
       case stringTag:
@@ -59,7 +64,7 @@ define(['./_cloneArrayBuffer', './_cloneMap', './_cloneRegExp', './_cloneSet', '
         return cloneRegExp(object);
 
       case setTag:
-        return cloneSet(object);
+        return cloneSet(object, isDeep, cloneFunc);
 
       case symbolTag:
         return cloneSymbol(object);

@@ -11,6 +11,7 @@ define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './last', 
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Array
    * @param {Array} array The array to inspect.
    * @param {...Array} [values] The values to exclude.

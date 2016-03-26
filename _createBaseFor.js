@@ -1,7 +1,7 @@
 define([], function() {
 
   /**
-   * Creates a base function for methods like `_.forIn`.
+   * Creates a base function for methods like `_.forIn` and `_.forOwn`.
    *
    * @private
    * @param {boolean} [fromRight] Specify iterating from right to left.

@@ -16,6 +16,7 @@ define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Lang
    * @param {*} value The value to process.
    * @returns {string} Returns the string.

@@ -6,9 +6,11 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Object
    * @param {Object} object The source object.
-   * @param {Function|Object|string} [predicate=_.identity] The function invoked per property.
+   * @param {Array|Function|Object|string} [predicate=_.identity]
+   *  The function invoked per property.
    * @returns {Object} Returns the new object.
    * @example
    *

@@ -13,6 +13,7 @@ define(['./_baseSet'], function(baseSet) {
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Object
    * @param {Object} object The object to modify.
    * @param {Array|string} path The path of the property to set.

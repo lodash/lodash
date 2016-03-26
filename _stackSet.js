@@ -11,7 +11,7 @@ define(['./_MapCache', './_assocSet'], function(MapCache, assocSet) {
    * @memberOf Stack
    * @param {string} key The key of the value to set.
    * @param {*} value The value to set.
-   * @returns {Object} Returns the stack cache object.
+   * @returns {Object} Returns the stack cache instance.
    */
   function stackSet(key, value) {
     var data = this.__data__,

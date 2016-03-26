@@ -7,6 +7,7 @@ define(['./_baseFlatten', './_baseUniq', './rest'], function(baseFlatten, baseUn
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
    * @returns {Array} Returns the new array of combined values.

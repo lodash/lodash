@@ -13,6 +13,7 @@ define(['./_baseKeysIn', './_indexKeys', './_isIndex', './_isPrototype'], functi
    *
    * @static
    * @memberOf _
+   * @since 3.0.0
    * @category Object
    * @param {Object} object The object to query.
    * @returns {Array} Returns the array of property names.

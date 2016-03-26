@@ -1,15 +1,16 @@
 define(['./_copyObjectWith', './_createAssigner', './keys'], function(copyObjectWith, createAssigner, keys) {
 
   /**
-   * This method is like `_.assign` except that it accepts `customizer` which
-   * is invoked to produce the assigned values. If `customizer` returns `undefined`
-   * assignment is handled by the method instead. The `customizer` is invoked
-   * with five arguments: (objValue, srcValue, key, object, source).
+   * This method is like `_.assign` except that it accepts `customizer`
+   * which is invoked to produce the assigned values. If `customizer` returns
+   * `undefined` assignment is handled by the method instead. The `customizer`
+   * is invoked with five arguments: (objValue, srcValue, key, object, source).
    *
    * **Note:** This method mutates `object`.
    *
    * @static
    * @memberOf _
+   * @since 4.0.0
    * @category Object
    * @param {Object} object The destination object.
    * @param {...Object} sources The source objects.

@@ -17,6 +17,7 @@ define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'],
    *
    * @static
    * @memberOf _
+   * @since 0.1.0
    * @category Function
    * @param {Function} func The function to bind.
    * @param {*} thisArg The `this` binding of `func`.

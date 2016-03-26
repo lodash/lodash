@@ -1,4 +1,6 @@
 import createPadding from './_createPadding';
+import stringSize from './_stringSize';
+import toInteger from './toInteger';
 import toString from './toString';
 
 /**
@@ -7,6 +9,7 @@ import toString from './toString';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to pad.
  * @param {number} [length=0] The padding length.
@@ -25,7 +28,12 @@ import toString from './toString';
  */
 function padStart(string, length, chars) {
   string = toString(string);
-  return createPadding(string, length, chars) + string;
+  length = toInteger(length);
+
+  var strLength = length ? stringSize(string) : 0;
+  return (length && strLength < length)
+    ? (createPadding(length - strLength, chars) + string)
+    : string;
 }
 
 export default padStart;

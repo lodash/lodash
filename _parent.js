@@ -1,5 +1,5 @@
+import baseGet from './_baseGet';
 import baseSlice from './_baseSlice';
-import get from './get';
 
 /**
  * Gets the parent value at `path` of `object`.
@@ -10,7 +10,7 @@ import get from './get';
  * @returns {*} Returns the parent value.
  */
 function parent(object, path) {
-  return path.length == 1 ? object : get(object, baseSlice(path, 0, -1));
+  return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
 }
 
 export default parent;

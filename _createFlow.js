@@ -58,7 +58,9 @@ function createFlow(fromRight) {
           ) {
         wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
       } else {
-        wrapper = (func.length == 1 && isLaziable(func)) ? wrapper[funcName]() : wrapper.thru(func);
+        wrapper = (func.length == 1 && isLaziable(func))
+          ? wrapper[funcName]()
+          : wrapper.thru(func);
       }
     }
     return function() {

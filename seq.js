@@ -1,7 +1,6 @@
 export { default as at } from './wrapperAt';
 export { default as chain } from './chain';
 export { default as commit } from './commit';
-export { default as flatMap } from './wrapperFlatMap';
 export { default as lodash } from './wrapperLodash';
 export { default as next } from './next';
 export { default as plant } from './plant';

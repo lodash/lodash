@@ -1,15 +1,16 @@
-import baseCastFunction from './_baseCastFunction';
 import baseFor from './_baseFor';
+import baseIteratee from './_baseIteratee';
 import keysIn from './keysIn';
 
 /**
- * Iterates over own and inherited enumerable properties of an object invoking
- * `iteratee` for each property. The iteratee is invoked with three arguments:
- * (value, key, object). Iteratee functions may exit iteration early by explicitly
- * returning `false`.
+ * Iterates over own and inherited enumerable string keyed properties of an
+ * object invoking `iteratee` for each property. The iteratee is invoked with
+ * three arguments: (value, key, object). Iteratee functions may exit iteration
+ * early by explicitly returning `false`.
  *
  * @static
  * @memberOf _
+ * @since 0.3.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -26,12 +27,12 @@ import keysIn from './keysIn';
  * _.forIn(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'a', 'b', then 'c' (iteration order is not guaranteed)
+ * // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).
  */
 function forIn(object, iteratee) {
   return object == null
     ? object
-    : baseFor(object, baseCastFunction(iteratee), keysIn);
+    : baseFor(object, baseIteratee(iteratee), keysIn);
 }
 
 export default forIn;

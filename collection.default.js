@@ -7,6 +7,8 @@ import filter from './filter';
 import find from './find';
 import findLast from './findLast';
 import flatMap from './flatMap';
+import flatMapDeep from './flatMapDeep';
+import flatMapDepth from './flatMapDepth';
 import forEach from './forEach';
 import forEachRight from './forEachRight';
 import groupBy from './groupBy';
@@ -28,9 +30,9 @@ import sortBy from './sortBy';
 
 export default {
   at, countBy, each, eachRight, every,
-  filter, find, findLast, flatMap, forEach,
-  forEachRight, groupBy, includes, invokeMap, keyBy,
-  map, orderBy, partition, reduce, reduceRight,
-  reject, sample, sampleSize, shuffle, size,
-  some, sortBy
+  filter, find, findLast, flatMap, flatMapDeep,
+  flatMapDepth, forEach, forEachRight, groupBy, includes,
+  invokeMap, keyBy, map, orderBy, partition,
+  reduce, reduceRight, reject, sample, sampleSize,
+  shuffle, size, some, sortBy
 };

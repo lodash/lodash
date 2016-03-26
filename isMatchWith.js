@@ -9,6 +9,7 @@ import getMatchData from './_getMatchData';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {Object} object The object to inspect.
  * @param {Object} source The object of property values to match.

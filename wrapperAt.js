@@ -11,6 +11,7 @@ import thru from './thru';
  *
  * @name at
  * @memberOf _
+ * @since 1.0.0
  * @category Seq
  * @param {...(string|string[])} [paths] The property paths of elements to pick,
  *  specified individually or in arrays.

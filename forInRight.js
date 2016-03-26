@@ -1,5 +1,5 @@
-import baseCastFunction from './_baseCastFunction';
 import baseForRight from './_baseForRight';
+import baseIteratee from './_baseIteratee';
 import keysIn from './keysIn';
 
 /**
@@ -8,6 +8,7 @@ import keysIn from './keysIn';
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -24,12 +25,12 @@ import keysIn from './keysIn';
  * _.forInRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
+ * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
  */
 function forInRight(object, iteratee) {
   return object == null
     ? object
-    : baseForRight(object, baseCastFunction(iteratee), keysIn);
+    : baseForRight(object, baseIteratee(iteratee), keysIn);
 }
 
 export default forInRight;

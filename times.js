@@ -1,4 +1,4 @@
-import baseCastFunction from './_baseCastFunction';
+import baseIteratee from './_baseIteratee';
 import baseTimes from './_baseTimes';
 import toInteger from './toInteger';
 
@@ -16,6 +16,7 @@ var nativeMin = Math.min;
  * each invocation. The iteratee is invoked with one argument; (index).
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {number} n The number of times to invoke `iteratee`.
@@ -37,7 +38,7 @@ function times(n, iteratee) {
   var index = MAX_ARRAY_LENGTH,
       length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-  iteratee = baseCastFunction(iteratee);
+  iteratee = baseIteratee(iteratee);
   n -= MAX_ARRAY_LENGTH;
 
   var result = baseTimes(length, iteratee);

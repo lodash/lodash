@@ -5,6 +5,7 @@ import baseClone from './_baseClone';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @param {Function} [customizer] The function to customize cloning.

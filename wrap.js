@@ -9,6 +9,7 @@ import partial from './partial';
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Function
  * @param {*} value The value to wrap.
  * @param {Function} [wrapper=identity] The wrapper function.

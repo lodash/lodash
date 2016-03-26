@@ -22,6 +22,7 @@ var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @alias extend
  * @category Object
  * @param {Object} object The destination object.

@@ -1,5 +1,8 @@
 import arrayMap from './_arrayMap';
+import baseCastKey from './_baseCastKey';
+import copyArray from './_copyArray';
 import isArray from './isArray';
+import isSymbol from './isSymbol';
 import stringToPath from './_stringToPath';
 
 /**
@@ -7,6 +10,7 @@ import stringToPath from './_stringToPath';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Util
  * @param {*} value The value to convert.
  * @returns {Array} Returns the new property path array.
@@ -28,7 +32,10 @@ import stringToPath from './_stringToPath';
  * // => false
  */
 function toPath(value) {
-  return isArray(value) ? arrayMap(value, String) : stringToPath(value);
+  if (isArray(value)) {
+    return arrayMap(value, baseCastKey);
+  }
+  return isSymbol(value) ? [value] : copyArray(stringToPath(value));
 }
 
 export default toPath;

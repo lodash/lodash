@@ -5,6 +5,7 @@ import drop from './drop';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Array
  * @param {Array} array The array to query.
  * @returns {Array} Returns the slice of `array`.

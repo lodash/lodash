@@ -6,6 +6,7 @@ import baseGet from './_baseGet';
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Util
  * @param {Object} object The object to query.
  * @returns {Function} Returns the new function.

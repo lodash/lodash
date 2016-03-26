@@ -5,6 +5,7 @@ import createCompounder from './_createCompounder';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the upper cased string.

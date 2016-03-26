@@ -7,6 +7,7 @@ import rest from './rest';
  *
  * @static
  * @memberOf _
+ * @since 1.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {...(string|string[])} [paths] The property paths of elements to pick,

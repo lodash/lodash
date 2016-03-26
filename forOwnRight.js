@@ -1,5 +1,5 @@
-import baseCastFunction from './_baseCastFunction';
 import baseForOwnRight from './_baseForOwnRight';
+import baseIteratee from './_baseIteratee';
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -7,6 +7,7 @@ import baseForOwnRight from './_baseForOwnRight';
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -23,10 +24,10 @@ import baseForOwnRight from './_baseForOwnRight';
  * _.forOwnRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
+ * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, baseCastFunction(iteratee));
+  return object && baseForOwnRight(object, baseIteratee(iteratee));
 }
 
 export default forOwnRight;

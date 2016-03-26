@@ -1,11 +1,11 @@
 /**
  * @license
- * lodash 4.6.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.7.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 import array from './array';
 import collection from './collection';
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.6.1';
+var VERSION = '4.7.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -88,7 +88,7 @@ var mixin = (function(func) {
   };
 }(_mixin));
 
-// Add functions that return wrapped values when chaining.
+// Add methods that return wrapped values in chain sequences.
 lodash.after = func.after;
 lodash.ary = func.ary;
 lodash.assign = object.assign;
@@ -127,6 +127,8 @@ lodash.dropWhile = array.dropWhile;
 lodash.fill = array.fill;
 lodash.filter = collection.filter;
 lodash.flatMap = collection.flatMap;
+lodash.flatMapDeep = collection.flatMapDeep;
+lodash.flatMapDepth = collection.flatMapDepth;
 lodash.flatten = array.flatten;
 lodash.flattenDeep = array.flattenDeep;
 lodash.flattenDepth = array.flattenDepth;
@@ -238,13 +240,15 @@ lodash.zipObjectDeep = array.zipObjectDeep;
 lodash.zipWith = array.zipWith;
 
 // Add aliases.
+lodash.entries = object.toPairs;
+lodash.entriesIn = object.toPairsIn;
 lodash.extend = object.assignIn;
 lodash.extendWith = object.assignInWith;
 
-// Add functions to `lodash.prototype`.
+// Add methods to `lodash.prototype`.
 mixin(lodash, lodash);
 
-// Add functions that return unwrapped values when chaining.
+// Add methods that return unwrapped values in chain sequences.
 lodash.add = math.add;
 lodash.attempt = util.attempt;
 lodash.camelCase = string.camelCase;
@@ -256,6 +260,7 @@ lodash.cloneDeep = lang.cloneDeep;
 lodash.cloneDeepWith = lang.cloneDeepWith;
 lodash.cloneWith = lang.cloneWith;
 lodash.deburr = string.deburr;
+lodash.divide = math.divide;
 lodash.endsWith = string.endsWith;
 lodash.eq = lang.eq;
 lodash.escape = string.escape;
@@ -333,8 +338,10 @@ lodash.lte = lang.lte;
 lodash.max = math.max;
 lodash.maxBy = math.maxBy;
 lodash.mean = math.mean;
+lodash.meanBy = math.meanBy;
 lodash.min = math.min;
 lodash.minBy = math.minBy;
+lodash.multiply = math.multiply;
 lodash.noop = util.noop;
 lodash.now = date.now;
 lodash.pad = string.pad;
@@ -571,7 +578,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   };
 });
 
-// Add `Array` and `String` methods to `lodash.prototype`.
+// Add `Array` methods to `lodash.prototype`.
 arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
   var func = arrayProto[methodName],
       chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
@@ -580,15 +587,16 @@ arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(method
   lodash.prototype[methodName] = function() {
     var args = arguments;
     if (retUnwrapped && !this.__chain__) {
-      return func.apply(this.value(), args);
+      var value = this.value();
+      return func.apply(isArray(value) ? value : [], args);
     }
     return this[chainName](function(value) {
-      return func.apply(value, args);
+      return func.apply(isArray(value) ? value : [], args);
     });
   };
 });
 
-// Map minified function names to their real names.
+// Map minified method names to their real names.
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   var lodashFunc = lodash[methodName];
   if (lodashFunc) {
@@ -604,16 +612,15 @@ realNames[createHybridWrapper(undefined, BIND_KEY_FLAG).name] = [{
   'func': undefined
 }];
 
-// Add functions to the lazy wrapper.
+// Add methods to `LazyWrapper`.
 LazyWrapper.prototype.clone = lazyClone;
 LazyWrapper.prototype.reverse = lazyReverse;
 LazyWrapper.prototype.value = lazyValue;
 
-// Add chaining functions to the `lodash` wrapper.
+// Add chain sequence methods to the `lodash` wrapper.
 lodash.prototype.at = seq.at;
 lodash.prototype.chain = seq.wrapperChain;
 lodash.prototype.commit = seq.commit;
-lodash.prototype.flatMap = seq.flatMap;
 lodash.prototype.next = seq.next;
 lodash.prototype.plant = seq.plant;
 lodash.prototype.reverse = seq.reverse;

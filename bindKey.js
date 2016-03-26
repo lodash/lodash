@@ -13,8 +13,8 @@ var BIND_FLAG = 1,
  * any additional `_.bindKey` arguments to those provided to the bound function.
  *
  * This method differs from `_.bind` by allowing bound functions to reference
- * methods that may be redefined or don't yet exist.
- * See [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
+ * methods that may be redefined or don't yet exist. See
+ * [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
  * for more details.
  *
  * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
@@ -22,6 +22,7 @@ var BIND_FLAG = 1,
  *
  * @static
  * @memberOf _
+ * @since 0.10.0
  * @category Function
  * @param {Object} object The object to invoke the method on.
  * @param {string} key The key of the method.

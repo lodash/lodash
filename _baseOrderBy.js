@@ -3,6 +3,7 @@ import baseIteratee from './_baseIteratee';
 import baseMap from './_baseMap';
 import baseSortBy from './_baseSortBy';
 import compareMultiple from './_compareMultiple';
+import identity from './identity';
 
 /**
  * The base implementation of `_.orderBy` without param guards.
@@ -15,7 +16,7 @@ import compareMultiple from './_compareMultiple';
  */
 function baseOrderBy(collection, iteratees, orders) {
   var index = -1;
-  iteratees = arrayMap(iteratees.length ? iteratees : Array(1), baseIteratee);
+  iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseIteratee);
 
   var result = baseMap(collection, function(value, key, collection) {
     var criteria = arrayMap(iteratees, function(iteratee) {

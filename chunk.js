@@ -12,6 +12,7 @@ var nativeCeil = Math.ceil,
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Array
  * @param {Array} array The array to process.
  * @param {number} [size=0] The length of each chunk.

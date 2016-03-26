@@ -1,6 +1,6 @@
 import arrayEachRight from './_arrayEachRight';
-import baseCastFunction from './_baseCastFunction';
 import baseEachRight from './_baseEachRight';
+import baseIteratee from './_baseIteratee';
 import isArray from './isArray';
 
 /**
@@ -9,6 +9,7 @@ import isArray from './isArray';
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @alias eachRight
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -19,12 +20,12 @@ import isArray from './isArray';
  * _.forEachRight([1, 2], function(value) {
  *   console.log(value);
  * });
- * // => logs `2` then `1`
+ * // => Logs `2` then `1`.
  */
 function forEachRight(collection, iteratee) {
   return (typeof iteratee == 'function' && isArray(collection))
     ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, baseCastFunction(iteratee));
+    : baseEachRight(collection, baseIteratee(iteratee));
 }
 
 export default forEachRight;

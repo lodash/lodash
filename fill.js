@@ -9,6 +9,7 @@ import isIterateeCall from './_isIterateeCall';
  *
  * @static
  * @memberOf _
+ * @since 3.2.0
  * @category Array
  * @param {Array} array The array to fill.
  * @param {*} value The value to fill `array` with.

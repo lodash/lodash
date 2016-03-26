@@ -2,11 +2,11 @@ import arrayReduce from './_arrayReduce';
 
 /**
  * The base implementation of `_.pick` without support for individual
- * property names.
+ * property identifiers.
  *
  * @private
  * @param {Object} object The source object.
- * @param {string[]} props The property names to pick.
+ * @param {string[]} props The property identifiers to pick.
  * @returns {Object} Returns the new object.
  */
 function basePick(object, props) {

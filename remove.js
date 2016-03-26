@@ -11,9 +11,11 @@ import basePullAt from './_basePullAt';
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
- * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
+ * @param {Array|Function|Object|string} [predicate=_.identity]
+ *  The function invoked per iteration.
  * @returns {Array} Returns the new array of removed elements.
  * @example
  *

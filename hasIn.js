@@ -6,6 +6,7 @@ import hasPath from './_hasPath';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Object
  * @param {Object} object The object to query.
  * @param {Array|string} path The path to check.

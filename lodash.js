@@ -1,11 +1,11 @@
 /**
  * @license
- * lodash 4.6.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.7.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 export { default as add } from './add';
 export { default as after } from './after';
@@ -50,6 +50,7 @@ export { default as delay } from './delay';
 export { default as difference } from './difference';
 export { default as differenceBy } from './differenceBy';
 export { default as differenceWith } from './differenceWith';
+export { default as divide } from './divide';
 export { default as drop } from './drop';
 export { default as dropRight } from './dropRight';
 export { default as dropRightWhile } from './dropRightWhile';
@@ -57,6 +58,8 @@ export { default as dropWhile } from './dropWhile';
 export { default as each } from './each';
 export { default as eachRight } from './eachRight';
 export { default as endsWith } from './endsWith';
+export { default as entries } from './entries';
+export { default as entriesIn } from './entriesIn';
 export { default as eq } from './eq';
 export { default as escape } from './escape';
 export { default as escapeRegExp } from './escapeRegExp';
@@ -72,6 +75,8 @@ export { default as findLast } from './findLast';
 export { default as findLastIndex } from './findLastIndex';
 export { default as findLastKey } from './findLastKey';
 export { default as flatMap } from './flatMap';
+export { default as flatMapDeep } from './flatMapDeep';
+export { default as flatMapDepth } from './flatMapDepth';
 export { default as flatten } from './flatten';
 export { default as flattenDeep } from './flattenDeep';
 export { default as flattenDepth } from './flattenDepth';
@@ -165,6 +170,7 @@ export { default as matchesProperty } from './matchesProperty';
 export { default as max } from './max';
 export { default as maxBy } from './maxBy';
 export { default as mean } from './mean';
+export { default as meanBy } from './meanBy';
 export { default as memoize } from './memoize';
 export { default as merge } from './merge';
 export { default as mergeWith } from './mergeWith';
@@ -173,6 +179,7 @@ export { default as methodOf } from './methodOf';
 export { default as min } from './min';
 export { default as minBy } from './minBy';
 export { default as mixin } from './mixin';
+export { default as multiply } from './multiply';
 export { default as negate } from './negate';
 export { default as next } from './next';
 export { default as noop } from './noop';
@@ -298,7 +305,6 @@ export { default as wrap } from './wrap';
 export { default as wrapperAt } from './wrapperAt';
 export { default as wrapperChain } from './wrapperChain';
 export { default as wrapperCommit } from './commit';
-export { default as wrapperFlatMap } from './wrapperFlatMap';
 export { default as wrapperLodash } from './wrapperLodash';
 export { default as wrapperNext } from './next';
 export { default as wrapperPlant } from './plant';

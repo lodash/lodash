@@ -16,9 +16,11 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  *
  * @static
  * @memberOf _
+ * @since 4.1.0
  * @category Object
  * @param {Object} object The object to invert.
- * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Array|Function|Object|string} [iteratee=_.identity]
+ *  The iteratee invoked per element.
  * @returns {Object} Returns the new inverted object.
  * @example
  *

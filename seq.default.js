@@ -1,7 +1,6 @@
 import at from './wrapperAt';
 import chain from './chain';
 import commit from './commit';
-import flatMap from './wrapperFlatMap';
 import lodash from './wrapperLodash';
 import next from './next';
 import plant from './plant';
@@ -15,7 +14,7 @@ import valueOf from './valueOf';
 import wrapperChain from './wrapperChain';
 
 export default {
-  at, chain, commit, flatMap, lodash,
-  next, plant, reverse, tap, thru,
-  toIterator, toJSON, value, valueOf, wrapperChain
+  at, chain, commit, lodash, next,
+  plant, reverse, tap, thru, toIterator,
+  toJSON, value, valueOf, wrapperChain
 };

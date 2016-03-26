@@ -1,7 +1,7 @@
 import arrayConcat from './_arrayConcat';
 import baseFlatten from './_baseFlatten';
-import isArray from './isArray';
-import rest from './rest';
+import castArray from './castArray';
+import copyArray from './_copyArray';
 
 /**
  * Creates a new array concatenating `array` with any additional arrays
@@ -9,6 +9,7 @@ import rest from './rest';
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Array
  * @param {Array} array The array to concatenate.
  * @param {...*} [values] The values to concatenate.
@@ -24,12 +25,18 @@ import rest from './rest';
  * console.log(array);
  * // => [1]
  */
-var concat = rest(function(array, values) {
-  if (!isArray(array)) {
-    array = array == null ? [] : [Object(array)];
+function concat() {
+  var length = arguments.length,
+      array = castArray(arguments[0]);
+
+  if (length < 2) {
+    return length ? copyArray(array) : [];
   }
-  values = baseFlatten(values, 1);
-  return arrayConcat(array, values);
-});
+  var args = Array(length - 1);
+  while (length--) {
+    args[length - 1] = arguments[length];
+  }
+  return arrayConcat(array, baseFlatten(args, 1));
+}
 
 export default concat;

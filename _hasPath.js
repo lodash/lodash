@@ -5,8 +5,6 @@ import isIndex from './_isIndex';
 import isKey from './_isKey';
 import isLength from './isLength';
 import isString from './isString';
-import last from './last';
-import parent from './_parent';
 
 /**
  * Checks if `path` exists on `object`.
@@ -24,10 +22,16 @@ function hasPath(object, path, hasFunc) {
   var result = hasFunc(object, path);
   if (!result && !isKey(path)) {
     path = baseCastPath(path);
-    object = parent(object, path);
-    if (object != null) {
-      path = last(path);
-      result = hasFunc(object, path);
+
+    var index = -1,
+        length = path.length;
+
+    while (object != null && ++index < length) {
+      var key = path[index];
+      if (!(result = hasFunc(object, key))) {
+        break;
+      }
+      object = object[key];
     }
   }
   var length = object ? object.length : undefined;

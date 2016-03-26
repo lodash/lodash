@@ -19,7 +19,7 @@ function SetCache(values) {
   }
 }
 
-// Add functions to the `SetCache`.
+// Add methods to `SetCache`.
 SetCache.prototype.push = cachePush;
 
 export default SetCache;

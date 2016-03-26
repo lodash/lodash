@@ -10,6 +10,7 @@ import baseMatchesProperty from './_baseMatchesProperty';
  *
  * @static
  * @memberOf _
+ * @since 3.2.0
  * @category Util
  * @param {Array|string} path The path of the property to get.
  * @param {*} srcValue The value to match.

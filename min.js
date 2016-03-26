@@ -7,6 +7,7 @@ import lt from './lt';
  * `undefined` is returned.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Math
  * @param {Array} array The array to iterate over.

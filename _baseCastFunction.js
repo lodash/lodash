@@ -5,7 +5,7 @@ var identity = require('./identity');
  *
  * @private
  * @param {*} value The value to inspect.
- * @returns {Array} Returns the array-like object.
+ * @returns {Function} Returns cast function.
  */
 function baseCastFunction(value) {
   return typeof value == 'function' ? value : identity;

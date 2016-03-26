@@ -6,13 +6,14 @@ var toString = require('./toString');
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the upper cased string.
  * @example
  *
- * _.toUpper('--foo-bar');
- * // => '--FOO-BAR'
+ * _.toUpper('--foo-bar--');
+ * // => '--FOO-BAR--'
  *
  * _.toUpper('fooBar');
  * // => 'FOOBAR'

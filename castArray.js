@@ -5,6 +5,7 @@ var isArray = require('./isArray');
  *
  * @static
  * @memberOf _
+ * @since 4.4.0
  * @category Lang
  * @param {*} value The value to inspect.
  * @returns {Array} Returns the cast array.

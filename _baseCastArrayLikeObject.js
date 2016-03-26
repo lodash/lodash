@@ -5,7 +5,7 @@ var isArrayLikeObject = require('./isArrayLikeObject');
  *
  * @private
  * @param {*} value The value to inspect.
- * @returns {Array} Returns the array-like object.
+ * @returns {Array|Object} Returns the cast array-like object.
  */
 function baseCastArrayLikeObject(value) {
   return isArrayLikeObject(value) ? value : [];

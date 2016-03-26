@@ -2,24 +2,23 @@ var arrayEach = require('./_arrayEach'),
     baseCreate = require('./_baseCreate'),
     baseForOwn = require('./_baseForOwn'),
     baseIteratee = require('./_baseIteratee'),
+    getPrototype = require('./_getPrototype'),
     isArray = require('./isArray'),
     isFunction = require('./isFunction'),
     isObject = require('./isObject'),
     isTypedArray = require('./isTypedArray');
 
-/** Built-in value references. */
-var getPrototypeOf = Object.getPrototypeOf;
-
 /**
  * An alternative to `_.reduce`; this method transforms `object` to a new
  * `accumulator` object which is the result of running each of its own enumerable
- * properties through `iteratee`, with each invocation potentially mutating
- * the `accumulator` object. The iteratee is invoked with four arguments:
+ * string keyed properties through `iteratee`, with each invocation potentially
+ * mutating the `accumulator` object. The iteratee is invoked with four arguments:
  * (accumulator, value, key, object). Iteratee functions may exit iteration
  * early by explicitly returning `false`.
  *
  * @static
  * @memberOf _
+ * @since 1.3.0
  * @category Object
  * @param {Array|Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -48,7 +47,7 @@ function transform(object, iteratee, accumulator) {
       if (isArr) {
         accumulator = isArray(object) ? new Ctor : [];
       } else {
-        accumulator = isFunction(Ctor) ? baseCreate(getPrototypeOf(object)) : {};
+        accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
       }
     } else {
       accumulator = {};

@@ -11,7 +11,8 @@ var apply = require('./_apply'),
  *
  * @private
  * @param {Function} func The function to wrap.
- * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
+ * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
+ *  for more details.
  * @param {number} arity The arity of `func`.
  * @returns {Function} Returns the new wrapped function.
  */

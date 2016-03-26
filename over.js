@@ -7,6 +7,7 @@ var arrayMap = require('./_arrayMap'),
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Util
  * @param {...(Function|Function[])} iteratees The iteratees to invoke.
  * @returns {Function} Returns the new function.

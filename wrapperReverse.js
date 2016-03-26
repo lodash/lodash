@@ -10,6 +10,7 @@ var LazyWrapper = require('./_LazyWrapper'),
  *
  * @name reverse
  * @memberOf _
+ * @since 0.1.0
  * @category Seq
  * @returns {Object} Returns the new `lodash` wrapper instance.
  * @example

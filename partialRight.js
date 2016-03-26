@@ -18,6 +18,7 @@ var PARTIAL_RIGHT_FLAG = 64;
  *
  * @static
  * @memberOf _
+ * @since 1.0.0
  * @category Function
  * @param {Function} func The function to partially apply arguments to.
  * @param {...*} [partials] The arguments to be partially applied.

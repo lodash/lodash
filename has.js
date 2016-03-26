@@ -5,6 +5,7 @@ var baseHas = require('./_baseHas'),
  * Checks if `path` is a direct property of `object`.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The object to query.

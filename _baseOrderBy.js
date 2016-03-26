@@ -2,7 +2,8 @@ var arrayMap = require('./_arrayMap'),
     baseIteratee = require('./_baseIteratee'),
     baseMap = require('./_baseMap'),
     baseSortBy = require('./_baseSortBy'),
-    compareMultiple = require('./_compareMultiple');
+    compareMultiple = require('./_compareMultiple'),
+    identity = require('./identity');
 
 /**
  * The base implementation of `_.orderBy` without param guards.
@@ -15,7 +16,7 @@ var arrayMap = require('./_arrayMap'),
  */
 function baseOrderBy(collection, iteratees, orders) {
   var index = -1;
-  iteratees = arrayMap(iteratees.length ? iteratees : Array(1), baseIteratee);
+  iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseIteratee);
 
   var result = baseMap(collection, function(value, key, collection) {
     var criteria = arrayMap(iteratees, function(iteratee) {

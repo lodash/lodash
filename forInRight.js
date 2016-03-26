@@ -1,5 +1,5 @@
-var baseCastFunction = require('./_baseCastFunction'),
-    baseForRight = require('./_baseForRight'),
+var baseForRight = require('./_baseForRight'),
+    baseIteratee = require('./_baseIteratee'),
     keysIn = require('./keysIn');
 
 /**
@@ -8,6 +8,7 @@ var baseCastFunction = require('./_baseCastFunction'),
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -24,12 +25,12 @@ var baseCastFunction = require('./_baseCastFunction'),
  * _.forInRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
+ * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
  */
 function forInRight(object, iteratee) {
   return object == null
     ? object
-    : baseForRight(object, baseCastFunction(iteratee), keysIn);
+    : baseForRight(object, baseIteratee(iteratee), keysIn);
 }
 
 module.exports = forInRight;

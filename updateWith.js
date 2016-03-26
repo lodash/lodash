@@ -11,6 +11,7 @@ var baseCastFunction = require('./_baseCastFunction'),
  *
  * @static
  * @memberOf _
+ * @since 4.6.0
  * @category Object
  * @param {Object} object The object to modify.
  * @param {Array|string} path The path of the property to set.

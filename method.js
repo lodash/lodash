@@ -7,6 +7,7 @@ var baseInvoke = require('./_baseInvoke'),
  *
  * @static
  * @memberOf _
+ * @since 3.7.0
  * @category Util
  * @param {Array|string} path The path of the method to invoke.
  * @param {...*} [args] The arguments to invoke the method with.
@@ -21,8 +22,8 @@ var baseInvoke = require('./_baseInvoke'),
  * _.map(objects, _.method('a.b.c'));
  * // => [2, 1]
  *
- * _.invokeMap(_.sortBy(objects, _.method(['a', 'b', 'c'])), 'a.b.c');
- * // => [1, 2]
+ * _.map(objects, _.method(['a', 'b', 'c']));
+ * // => [2, 1]
  */
 var method = rest(function(path, args) {
   return function(object) {

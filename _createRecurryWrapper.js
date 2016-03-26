@@ -15,11 +15,13 @@ var BIND_FLAG = 1,
  *
  * @private
  * @param {Function} func The function to wrap.
- * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper` for more details.
+ * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
+ *  for more details.
  * @param {Function} wrapFunc The function to create the `func` wrapper.
  * @param {*} placeholder The placeholder value.
  * @param {*} [thisArg] The `this` binding of `func`.
- * @param {Array} [partials] The arguments to prepend to those provided to the new function.
+ * @param {Array} [partials] The arguments to prepend to those provided to
+ *  the new function.
  * @param {Array} [holders] The `partials` placeholder indexes.
  * @param {Array} [argPos] The argument positions of the new function.
  * @param {number} [ary] The arity cap of `func`.

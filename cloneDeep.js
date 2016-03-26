@@ -5,6 +5,7 @@ var baseClone = require('./_baseClone');
  *
  * @static
  * @memberOf _
+ * @since 1.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @returns {*} Returns the deep cloned value.

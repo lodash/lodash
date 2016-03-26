@@ -10,6 +10,7 @@ var createRange = require('./_createRange');
  * floating-point values which can produce unexpected results.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Util
  * @param {number} [start=0] The start of the range.

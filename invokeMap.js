@@ -13,6 +13,7 @@ var apply = require('./_apply'),
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Array|Function|string} path The path of the method to invoke or

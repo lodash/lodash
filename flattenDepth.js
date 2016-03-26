@@ -6,6 +6,7 @@ var baseFlatten = require('./_baseFlatten'),
  *
  * @static
  * @memberOf _
+ * @since 4.4.0
  * @category Array
  * @param {Array} array The array to flatten.
  * @param {number} [depth=1] The maximum recursion depth.

@@ -11,6 +11,7 @@ var pullAll = require('./pullAll'),
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
  * @param {...*} [values] The values to remove.

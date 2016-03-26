@@ -9,6 +9,7 @@ var basePullAll = require('./_basePullAll');
  *
  * @static
  * @memberOf _
+ * @since 4.6.0
  * @category Array
  * @param {Array} array The array to modify.
  * @param {Array} values The values to remove.

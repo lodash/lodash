@@ -22,10 +22,11 @@ var nativeMin = Math.min;
  *
  * Merging metadata reduces the number of wrappers used to invoke a function.
  * This is possible because methods like `_.bind`, `_.curry`, and `_.partial`
- * may be applied regardless of execution order. Methods like `_.ary` and `_.rearg`
- * modify function arguments, making the order in which they are executed important,
- * preventing the merging of metadata. However, we make an exception for a safe
- * combined case where curried functions have `_.ary` and or `_.rearg` applied.
+ * may be applied regardless of execution order. Methods like `_.ary` and
+ * `_.rearg` modify function arguments, making the order in which they are
+ * executed important, preventing the merging of metadata. However, we make
+ * an exception for a safe combined case where curried functions have `_.ary`
+ * and or `_.rearg` applied.
  *
  * @private
  * @param {Array} data The destination metadata.

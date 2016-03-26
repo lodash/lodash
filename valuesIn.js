@@ -2,12 +2,14 @@ var baseValues = require('./_baseValues'),
     keysIn = require('./keysIn');
 
 /**
- * Creates an array of the own and inherited enumerable property values of `object`.
+ * Creates an array of the own and inherited enumerable string keyed property
+ * values of `object`.
  *
  * **Note:** Non-object values are coerced to objects.
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Object
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property values.

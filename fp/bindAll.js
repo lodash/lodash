@@ -1,1 +1,2 @@
-module.exports = require('../bindAll');
+var convert = require('./convert');
+module.exports = convert('bindAll', require('../bindAll'));

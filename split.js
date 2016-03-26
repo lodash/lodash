@@ -3,10 +3,12 @@ var toString = require('./toString');
 /**
  * Splits `string` by `separator`.
  *
- * **Note:** This method is based on [`String#split`](https://mdn.io/String/split).
+ * **Note:** This method is based on
+ * [`String#split`](https://mdn.io/String/split).
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to split.
  * @param {RegExp|string} separator The separator pattern to split by.

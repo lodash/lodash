@@ -7,6 +7,7 @@ var arraySome = require('./_arraySome'),
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Util
  * @param {...(Function|Function[])} predicates The predicates to check.
  * @returns {Function} Returns the new function.

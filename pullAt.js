@@ -13,6 +13,7 @@ var arrayMap = require('./_arrayMap'),
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Array
  * @param {Array} array The array to modify.
  * @param {...(number|number[])} [indexes] The indexes of elements to remove,

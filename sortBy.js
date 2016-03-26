@@ -11,30 +11,32 @@ var baseFlatten = require('./_baseFlatten'),
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {...(Function|Function[]|Object|Object[]|string|string[])} [iteratees=[_.identity]]
- *  The iteratees to sort by, specified individually or in arrays.
+ * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
+ *  [iteratees=[_.identity]] The iteratees to sort by, specified individually
+ *  or in arrays.
  * @returns {Array} Returns the new sorted array.
  * @example
  *
  * var users = [
  *   { 'user': 'fred',   'age': 48 },
  *   { 'user': 'barney', 'age': 36 },
- *   { 'user': 'fred',   'age': 42 },
+ *   { 'user': 'fred',   'age': 40 },
  *   { 'user': 'barney', 'age': 34 }
  * ];
  *
  * _.sortBy(users, function(o) { return o.user; });
- * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
+ * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
  *
  * _.sortBy(users, ['user', 'age']);
- * // => objects for [['barney', 34], ['barney', 36], ['fred', 42], ['fred', 48]]
+ * // => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
  *
  * _.sortBy(users, 'user', function(o) {
  *   return Math.floor(o.age / 10);
  * });
- * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 42]]
+ * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
  */
 var sortBy = rest(function(collection, iteratees) {
   if (collection == null) {

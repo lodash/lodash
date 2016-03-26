@@ -41,10 +41,12 @@ function baseConvert(util, name, func, options) {
   };
 
   var forceRearg = ('rearg' in options) && options.rearg,
-      placeholder = isLib ? func : fallbackHolder;
+      placeholder = isLib ? func : fallbackHolder,
+      pristine = isLib ? func.runInContext() : undefined;
 
   var helpers = isLib ? func : {
     'ary': util.ary,
+    'assign': util.assign,
     'clone': util.clone,
     'curry': util.curry,
     'forEach': util.forEach,
@@ -58,6 +60,7 @@ function baseConvert(util, name, func, options) {
   };
 
   var ary = helpers.ary,
+      assign = helpers.assign,
       clone = helpers.clone,
       curry = helpers.curry,
       each = helpers.forEach,
@@ -110,6 +113,10 @@ function baseConvert(util, name, func, options) {
       nested = nested[key];
     }
     return result;
+  };
+
+  var convertLib = function(options) {
+    return _.runInContext.convert(options)();
   };
 
   var createCloner = function(func) {
@@ -226,8 +233,19 @@ function baseConvert(util, name, func, options) {
   var wrap = function(name, func) {
     name = mapping.aliasToReal[name] || name;
     var wrapper = wrappers[name];
+
+    var convertMethod = function(options) {
+      var newUtil = isLib ? pristine : helpers,
+          newFunc = isLib ? pristine[name] : func,
+          newOptions = assign(assign({}, config), options);
+
+      return baseConvert(newUtil, name, newFunc, newOptions);
+    };
+
     if (wrapper) {
-      return wrapper(func);
+      var result = wrapper(func);
+      result.convert = convertMethod;
+      return result;
     }
     var wrapped = func;
     if (config.immutable) {
@@ -241,7 +259,6 @@ function baseConvert(util, name, func, options) {
         wrapped = immutWrap(func, cloneByPath);
       }
     }
-    var result;
     each(aryMethodKeys, function(aryKey) {
       each(mapping.aryMethod[aryKey], function(otherName) {
         if (name == otherName) {
@@ -275,9 +292,15 @@ function baseConvert(util, name, func, options) {
     });
 
     result || (result = wrapped);
+    if (result == func) {
+      result = function() {
+        return func.apply(this, arguments);
+      };
+    }
+    result.convert = convertMethod;
     if (mapping.placeholder[name]) {
       setPlaceholder = true;
-      func.placeholder = result.placeholder = placeholder;
+      result.placeholder = func.placeholder = placeholder;
     }
     return result;
   };
@@ -303,10 +326,11 @@ function baseConvert(util, name, func, options) {
     _[pair[0]] = pair[1];
   });
 
+  _.convert = convertLib;
   if (setPlaceholder) {
     _.placeholder = placeholder;
   }
-  // Wrap the lodash method and its aliases.
+  // Reassign aliases.
   each(keys(_), function(key) {
     each(mapping.realToAlias[key] || [], function(alias) {
       _[alias] = _[key];

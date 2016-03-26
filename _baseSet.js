@@ -15,7 +15,7 @@ var assignValue = require('./_assignValue'),
  * @returns {Object} Returns `object`.
  */
 function baseSet(object, path, value, customizer) {
-  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : baseCastPath(path);
 
   var index = -1,
       length = path.length,

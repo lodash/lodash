@@ -1,6 +1,6 @@
 var arrayEachRight = require('./_arrayEachRight'),
-    baseCastFunction = require('./_baseCastFunction'),
     baseEachRight = require('./_baseEachRight'),
+    baseIteratee = require('./_baseIteratee'),
     isArray = require('./isArray');
 
 /**
@@ -9,6 +9,7 @@ var arrayEachRight = require('./_arrayEachRight'),
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @alias eachRight
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -19,12 +20,12 @@ var arrayEachRight = require('./_arrayEachRight'),
  * _.forEachRight([1, 2], function(value) {
  *   console.log(value);
  * });
- * // => logs `2` then `1`
+ * // => Logs `2` then `1`.
  */
 function forEachRight(collection, iteratee) {
   return (typeof iteratee == 'function' && isArray(collection))
     ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, baseCastFunction(iteratee));
+    : baseEachRight(collection, baseIteratee(iteratee));
 }
 
 module.exports = forEachRight;

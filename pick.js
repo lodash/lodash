@@ -6,11 +6,12 @@ var baseFlatten = require('./_baseFlatten'),
  * Creates an object composed of the picked `object` properties.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The source object.
- * @param {...(string|string[])} [props] The property names to pick, specified
- *  individually or in arrays.
+ * @param {...(string|string[])} [props] The property identifiers to pick,
+ *  specified individually or in arrays.
  * @returns {Object} Returns the new object.
  * @example
  *

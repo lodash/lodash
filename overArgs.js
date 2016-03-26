@@ -12,6 +12,7 @@ var nativeMin = Math.min;
  * corresponding `transforms`.
  *
  * @static
+ * @since 4.0.0
  * @memberOf _
  * @category Function
  * @param {Function} func The function to wrap.

@@ -41,7 +41,7 @@ before_install:
       PATTERN[1]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
       PATTERN[2]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
       PATTERN[3]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
-      PATTERN[4]="|\s*if\s*\(ctorString\b[\s\S]+?\}\s*\}|"
+      PATTERN[4]="|\bcase\s+(?:set|map|weakMap)CtorString:.+|g"
       PATTERN[5]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
       PATTERN[6]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
       PATTERN[7]="|\s*define\([\s\S]+?\);|"

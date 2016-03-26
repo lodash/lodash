@@ -72,7 +72,7 @@
 
   var arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined,
       map = Map ? new Map : undefined,
-      promise = Promise ? Promise.resolve() : undefined,
+      promise = Promise ? Promise.resolve(1) : undefined,
       set = Set ? new Set : undefined,
       symbol = Symbol ? Symbol('a') : undefined,
       weakMap = WeakMap ? new WeakMap : undefined,
@@ -590,7 +590,7 @@
       "    'null': null,",
       "    'number': Object(0),",
       "    'object': { 'a': 1 },",
-      "    'promise': root.Promise ? Promise.resolve() : undefined,",
+      "    'promise': root.Promise ? Promise.resolve(1) : undefined,",
       "    'regexp': /x/,",
       "    'set': root.Set ? new root.Set : undefined,",
       "    'string': Object('a'),",
@@ -639,7 +639,7 @@
       "  'null': null,",
       "  'number': Object(0),",
       "  'object': { 'a': 1 },",
-      "  'promise': root.Promise ? Promise.resolve() : undefined,",
+      "  'promise': root.Promise ? Promise.resolve(1) : undefined,",
       "  'regexp': /x/,",
       "  'set': root.Set ? new root.Set : undefined,",
       "  'string': Object('a'),",
@@ -9254,29 +9254,34 @@
     });
 
     QUnit.test('should compare maps', function(assert) {
-      assert.expect(4);
+      assert.expect(8);
 
       if (Map) {
-        var map1 = new Map,
-            map2 = new Map;
+        lodashStable.each([[map, new Map], [map, realm.map]], function(maps) {
+          var map1 = maps[0],
+              map2 = maps[1];
 
-        map1.set('a', 1);
-        map2.set('b', 2);
-        assert.strictEqual(_.isEqual(map1, map2), false);
+          map1.set('a', 1);
+          map2.set('b', 2);
+          assert.strictEqual(_.isEqual(map1, map2), false);
 
-        map1.set('b', 2);
-        map2.set('a', 1);
-        assert.strictEqual(_.isEqual(map1, map2), true);
+          map1.set('b', 2);
+          map2.set('a', 1);
+          assert.strictEqual(_.isEqual(map1, map2), true);
 
-        map1['delete']('a');
-        map1.set('a', 1);
-        assert.strictEqual(_.isEqual(map1, map2), true);
+          map1['delete']('a');
+          map1.set('a', 1);
+          assert.strictEqual(_.isEqual(map1, map2), true);
 
-        map2['delete']('a');
-        assert.strictEqual(_.isEqual(map1, map2), false);
+          map2['delete']('a');
+          assert.strictEqual(_.isEqual(map1, map2), false);
+
+          map1.clear();
+          map2.clear();
+        });
       }
       else {
-        skipAssert(assert, 4);
+        skipAssert(assert, 8);
       }
     });
 
@@ -9301,17 +9306,19 @@
     });
 
     QUnit.test('should compare promises by reference', function(assert) {
-      assert.expect(2);
+      assert.expect(4);
 
       if (promise) {
-        var promise1 = Promise.resolve(1),
-            promise2 = Promise.resolve(1);
+        lodashStable.each([[promise, Promise.resolve(1)], [promise, realm.promise]], function(promises) {
+          var promise1 = promises[0],
+              promise2 = promises[1];
 
-        assert.strictEqual(_.isEqual(promise1, promise2), false);
-        assert.strictEqual(_.isEqual(promise1, promise1), true);
+          assert.strictEqual(_.isEqual(promise1, promise2), false);
+          assert.strictEqual(_.isEqual(promise1, promise1), true);
+        });
       }
       else {
-        skipAssert(assert, 2);
+        skipAssert(assert, 4);
       }
     });
 
@@ -9326,29 +9333,34 @@
     });
 
     QUnit.test('should compare sets', function(assert) {
-      assert.expect(4);
+      assert.expect(8);
 
       if (Set) {
-        var set1 = new Set,
-            set2 = new Set;
+        lodashStable.each([[set, new Set], [set, realm.set]], function(sets) {
+          var set1 = sets[0],
+              set2 = sets[1];
 
-        set1.add(1);
-        set2.add(2);
-        assert.strictEqual(_.isEqual(set1, set2), false);
+          set1.add(1);
+          set2.add(2);
+          assert.strictEqual(_.isEqual(set1, set2), false);
 
-        set1.add(2);
-        set2.add(1);
-        assert.strictEqual(_.isEqual(set1, set2), true);
+          set1.add(2);
+          set2.add(1);
+          assert.strictEqual(_.isEqual(set1, set2), true);
 
-        set1['delete'](1);
-        set1.add(1);
-        assert.strictEqual(_.isEqual(set1, set2), true);
+          set1['delete'](1);
+          set1.add(1);
+          assert.strictEqual(_.isEqual(set1, set2), true);
 
-        set2['delete'](1);
-        assert.strictEqual(_.isEqual(set1, set2), false);
+          set2['delete'](1);
+          assert.strictEqual(_.isEqual(set1, set2), false);
+
+          set1.clear();
+          set2.clear();
+        });
       }
       else {
-        skipAssert(assert, 4);
+        skipAssert(assert, 8);
       }
     });
 

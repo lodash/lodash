@@ -62,6 +62,7 @@
 
   var ArrayBuffer = root.ArrayBuffer,
       Buffer = root.Buffer,
+      DataView = root.DataView,
       Promise = root.Promise,
       Map = root.Map,
       Set = root.Set,
@@ -178,6 +179,9 @@
     'Uint16Array',
     'Uint32Array'
   ];
+
+  /** Used to check whether methods support array views. */
+  var arrayViews = typedArrays.concat('DataView');
 
   /** The file path of the lodash file to test. */
   var filePath = (function() {
@@ -606,7 +610,7 @@
       "    'weakSet': root.WeakSet ? new root.WeakSet : undefined",
       '  };',
       '',
-      "  ['" + typedArrays.join("', '") + "'].forEach(function(type) {",
+      "  ['" + arrayViews.join("', '") + "'].forEach(function(type) {",
       '    var Ctor = root[type]',
       '    object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '  });',
@@ -655,7 +659,7 @@
       "  'weakSet': root.WeakSet ? new root.WeakSet : undefined",
       '};',
       '',
-      "_.each(['" + typedArrays.join("', '") + "'], function(type) {",
+      "_.each(['" + arrayViews.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
       '  object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '});',
@@ -2884,8 +2888,8 @@
         }
       });
 
-      lodashStable.each(typedArrays, function(type) {
-        QUnit.test('`_.' + methodName + '` should clone ' + type + ' arrays', function(assert) {
+      lodashStable.each(arrayViews, function(type) {
+        QUnit.test('`_.' + methodName + '` should clone ' + type + ' values', function(assert) {
           assert.expect(10);
 
           var Ctor = root[type];
@@ -2893,14 +2897,14 @@
           lodashStable.times(2, function(index) {
             if (Ctor) {
               var buffer = new ArrayBuffer(24),
-                  array = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
-                  actual = func(array);
+                  view = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
+                  actual = func(view);
 
-              assert.deepEqual(actual, array);
-              assert.notStrictEqual(actual, array);
-              assert.strictEqual(actual.buffer === array.buffer, !isDeep);
-              assert.strictEqual(actual.byteOffset, array.byteOffset);
-              assert.strictEqual(actual.length, array.length);
+              assert.deepEqual(actual, view);
+              assert.notStrictEqual(actual, view);
+              assert.strictEqual(actual.buffer === view.buffer, !isDeep);
+              assert.strictEqual(actual.byteOffset, view.byteOffset);
+              assert.strictEqual(actual.length, view.length);
             }
             else {
               skipAssert(assert, 5);
@@ -9210,6 +9214,29 @@
       }
     });
 
+    QUnit.test('should compare array views', function(assert) {
+      assert.expect(1);
+
+      var pairs = lodashStable.map(arrayViews, function(type, index) {
+        var otherType = arrayViews[(index + 1) % arrayViews.length],
+            CtorA = root[type] || function(n) { this.n = n; },
+            CtorB = root[otherType] || function(n) { this.n = n; },
+            bufferA = root[type] ? new ArrayBuffer(8) : 8,
+            bufferB = root[otherType] ? new ArrayBuffer(8) : 8,
+            bufferC = root[otherType] ? new ArrayBuffer(16) : 16;
+
+        return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
+      });
+
+      var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
+
+      var actual = lodashStable.map(pairs, function(pair) {
+        return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should compare date objects', function(assert) {
       assert.expect(4);
 
@@ -9388,29 +9415,6 @@
       else {
         skipAssert(assert, 2);
       }
-    });
-
-    QUnit.test('should compare typed arrays', function(assert) {
-      assert.expect(1);
-
-      var pairs = lodashStable.map(typedArrays, function(type, index) {
-        var otherType = typedArrays[(index + 1) % typedArrays.length],
-            CtorA = root[type] || function(n) { this.n = n; },
-            CtorB = root[otherType] || function(n) { this.n = n; },
-            bufferA = root[type] ? new ArrayBuffer(8) : 8,
-            bufferB = root[otherType] ? new ArrayBuffer(8) : 8,
-            bufferC = root[otherType] ? new ArrayBuffer(16) : 16;
-
-        return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
-      });
-
-      var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
-
-      var actual = lodashStable.map(pairs, function(pair) {
-        return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should work as an iteratee for `_.every`', function(assert) {
@@ -9825,14 +9829,14 @@
       assert.strictEqual(_.isFunction(generator), typeof generator == 'function');
     });
 
-    QUnit.test('should return `true` for typed array constructors', function(assert) {
+    QUnit.test('should return `true` for array view constructors', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(typedArrays, function(type) {
+      var expected = lodashStable.map(arrayViews, function(type) {
         return objToString.call(root[type]) == funcTag;
       });
 
-      var actual = lodashStable.map(typedArrays, function(type) {
+      var actual = lodashStable.map(arrayViews, function(type) {
         return _.isFunction(root[type]);
       });
 

@@ -86,6 +86,7 @@
       weakSetTag = '[object WeakSet]';
 
   var arrayBufferTag = '[object ArrayBuffer]',
+      dataViewTag = '[object DataView]',
       float32Tag = '[object Float32Array]',
       float64Tag = '[object Float64Array]',
       int8Tag = '[object Int8Array]',
@@ -232,7 +233,7 @@
 
   /** Used to assign default `context` object properties. */
   var contextProps = [
-    'Array', 'Buffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
+    'Array', 'Buffer', 'DataView', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
     'Promise', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
     'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
@@ -251,25 +252,26 @@
   typedArrayTags[uint32Tag] = true;
   typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
   typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-  typedArrayTags[dateTag] = typedArrayTags[errorTag] =
-  typedArrayTags[funcTag] = typedArrayTags[mapTag] =
-  typedArrayTags[numberTag] = typedArrayTags[objectTag] =
-  typedArrayTags[regexpTag] = typedArrayTags[setTag] =
-  typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
+  typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+  typedArrayTags[errorTag] = typedArrayTags[funcTag] =
+  typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+  typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+  typedArrayTags[setTag] = typedArrayTags[stringTag] =
+  typedArrayTags[weakMapTag] = false;
 
   /** Used to identify `toStringTag` values supported by `_.clone`. */
   var cloneableTags = {};
   cloneableTags[argsTag] = cloneableTags[arrayTag] =
-  cloneableTags[arrayBufferTag] = cloneableTags[boolTag] =
-  cloneableTags[dateTag] = cloneableTags[float32Tag] =
-  cloneableTags[float64Tag] = cloneableTags[int8Tag] =
-  cloneableTags[int16Tag] = cloneableTags[int32Tag] =
-  cloneableTags[mapTag] = cloneableTags[numberTag] =
-  cloneableTags[objectTag] = cloneableTags[regexpTag] =
-  cloneableTags[setTag] = cloneableTags[stringTag] =
-  cloneableTags[symbolTag] = cloneableTags[uint8Tag] =
-  cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] =
-  cloneableTags[uint32Tag] = true;
+  cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+  cloneableTags[boolTag] = cloneableTags[dateTag] =
+  cloneableTags[float32Tag] = cloneableTags[float64Tag] =
+  cloneableTags[int8Tag] = cloneableTags[int16Tag] =
+  cloneableTags[int32Tag] = cloneableTags[mapTag] =
+  cloneableTags[numberTag] = cloneableTags[objectTag] =
+  cloneableTags[regexpTag] = cloneableTags[setTag] =
+  cloneableTags[stringTag] = cloneableTags[symbolTag] =
+  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
+  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
   cloneableTags[weakMapTag] = false;
 
@@ -3970,6 +3972,19 @@
     }
 
     /**
+     * Creates a clone of `dataView`.
+     *
+     * @private
+     * @param {Object} dataView The data view to clone.
+     * @param {boolean} [isDeep] Specify a deep clone.
+     * @returns {Object} Returns the cloned data view.
+     */
+    function cloneDataView(dataView, isDeep) {
+      var buffer = isDeep ? cloneArrayBuffer(dataView.buffer) : dataView.buffer;
+      return new dataView.constructor(buffer, dataView.byteOffset, dataView.byteLength);
+    }
+
+    /**
      * Creates a clone of `map`.
      *
      * @private
@@ -4909,6 +4924,14 @@
      */
     function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
       switch (tag) {
+        case dataViewTag:
+          if ((object.byteLength != other.byteLength) ||
+              (object.byteOffset != other.byteOffset)) {
+            return false;
+          }
+          object = object.buffer;
+          other = other.buffer;
+
         case arrayBufferTag:
           if ((object.byteLength != other.byteLength) ||
               !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
@@ -5362,6 +5385,9 @@
         case boolTag:
         case dateTag:
           return new Ctor(+object);
+
+        case dataViewTag:
+          return cloneDataView(object, isDeep);
 
         case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:

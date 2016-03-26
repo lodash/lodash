@@ -77,6 +77,7 @@
       mapTag = '[object Map]',
       numberTag = '[object Number]',
       objectTag = '[object Object]',
+      promiseTag = '[object Promise]',
       regexpTag = '[object RegExp]',
       setTag = '[object Set]',
       stringTag = '[object String]',
@@ -233,9 +234,9 @@
   var contextProps = [
     'Array', 'Buffer', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
-    'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
-    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_',
-    'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
+    'Promise', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
+    'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
+    '_', 'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -1424,6 +1425,7 @@
 
     /* Built-in method references that are verified to be native. */
     var Map = getNative(context, 'Map'),
+        Promise = getNative(context, 'Promise'),
         Set = getNative(context, 'Set'),
         WeakMap = getNative(context, 'WeakMap'),
         nativeCreate = getNative(Object, 'create');
@@ -1439,6 +1441,7 @@
 
     /** Used to detect maps, sets, and weakmaps. */
     var mapCtorString = Map ? funcToString.call(Map) : '',
+        promiseCtorString = Promise ? funcToString.call(Promise) : '',
         setCtorString = Set ? funcToString.call(Set) : '',
         weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
 
@@ -5219,10 +5222,12 @@
       return objectToString.call(value);
     }
 
-    // Fallback for IE 11 providing `toStringTag` values for maps, sets, and weakmaps.
+    // Fallback for IE 11 or maps, sets, and weakmaps and Node.js 5 for promises.
     if ((Map && getTag(new Map) != mapTag) ||
-        (Set && getTag(new Set) != setTag) ||
-        (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+          (Promise && getTag(Promise.resolve()) != promiseTag) ||
+          (Set && getTag(new Set) != setTag) ||
+          (WeakMap && getTag(new WeakMap) != weakMapTag)
+        ) {
       getTag = function(value) {
         var result = objectToString.call(value),
             Ctor = result == objectTag ? value.constructor : null,
@@ -5231,6 +5236,7 @@
         if (ctorString) {
           switch (ctorString) {
             case mapCtorString: return mapTag;
+            case promiseCtorString: return promiseTag;
             case setCtorString: return setTag;
             case weakMapCtorString: return weakMapTag;
           }

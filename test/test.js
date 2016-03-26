@@ -62,6 +62,7 @@
 
   var ArrayBuffer = root.ArrayBuffer,
       Buffer = root.Buffer,
+      Promise = root.Promise,
       Map = root.Map,
       Set = root.Set,
       Symbol = root.Symbol,
@@ -71,6 +72,7 @@
 
   var arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined,
       map = Map ? new Map : undefined,
+      promise = Promise ? Promise.resolve() : undefined,
       set = Set ? new Set : undefined,
       symbol = Symbol ? Symbol('a') : undefined,
       weakMap = WeakMap ? new WeakMap : undefined,
@@ -588,6 +590,7 @@
       "    'null': null,",
       "    'number': Object(0),",
       "    'object': { 'a': 1 },",
+      "    'promise': root.Promise ? Promise.resolve() : undefined,",
       "    'regexp': /x/,",
       "    'set': root.Set ? new root.Set : undefined,",
       "    'string': Object('a'),",
@@ -636,6 +639,7 @@
       "  'null': null,",
       "  'number': Object(0),",
       "  'object': { 'a': 1 },",
+      "  'promise': root.Promise ? Promise.resolve() : undefined,",
       "  'regexp': /x/,",
       "  'set': root.Set ? new root.Set : undefined,",
       "  'string': Object('a'),",
@@ -9290,6 +9294,21 @@
         map1.set('b', 1);
         map2.set('b', 2);
         assert.strictEqual(_.isEqual(map1, map2), false);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
+    QUnit.test('should compare promises by reference', function(assert) {
+      assert.expect(2);
+
+      if (promise) {
+        var promise1 = Promise.resolve(1),
+            promise2 = Promise.resolve(1);
+
+        assert.strictEqual(_.isEqual(promise1, promise2), false);
+        assert.strictEqual(_.isEqual(promise1, promise1), true);
       }
       else {
         skipAssert(assert, 2);

@@ -62,6 +62,7 @@
 
   var ArrayBuffer = root.ArrayBuffer,
       Buffer = root.Buffer,
+      DataView = root.DataView,
       Map = root.Map,
       Set = root.Set,
       Symbol = root.Symbol,
@@ -70,6 +71,7 @@
       WeakSet = root.WeakSet;
 
   var arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined,
+      dataView = DataView && ArrayBuffer ? new DataView(new ArrayBuffer(32), 0) : undefined,
       map = Map ? new Map : undefined,
       set = Set ? new Set : undefined,
       symbol = Symbol ? Symbol('a') : undefined,
@@ -2628,6 +2630,20 @@
           var actual = func(arrayBuffer);
           assert.strictEqual(actual.byteLength, arrayBuffer.byteLength);
           assert.notStrictEqual(actual, arrayBuffer);
+        }
+        else {
+          skipAssert(assert, 2);
+        }
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone dataviews', function(assert) {
+        assert.expect(2);
+
+        if (DataView) {
+          var actual = func(dataView);
+
+          assert.strictEqual(actual.byteLength, dataView.byteLength);
+          assert.notStrictEqual(actual, dataView);
         }
         else {
           skipAssert(assert, 2);

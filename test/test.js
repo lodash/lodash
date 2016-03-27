@@ -16318,7 +16318,7 @@
         isPad = methodName == 'pad',
         isStart = methodName == 'padStart';
 
-    QUnit.test('`_.' + methodName + '` should not pad is string is >= `length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not pad if string is >= `length`', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(func('abc', 2), 'abc');

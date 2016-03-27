@@ -10399,15 +10399,15 @@
             isArguments(value) || isBuffer(value))) {
         return !value.length;
       }
-      for (var key in value) {
-        if (hasOwnProperty.call(value, key)) {
-          return false;
-        }
-      }
       if (isObjectLike(value)) {
         var tag = getTag(value);
         if (tag == mapTag || tag == setTag) {
           return !value.size;
+        }
+      }
+      for (var key in value) {
+        if (hasOwnProperty.call(value, key)) {
+          return false;
         }
       }
       return true;

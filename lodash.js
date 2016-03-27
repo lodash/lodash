@@ -5249,7 +5249,7 @@
 
     // Fallback for data views, maps, sets, and weak maps in IE 11,
     // for data views in Edge, and promises in Node.js.
-    if ((DataView && getTag(new DataView(new ArrayBuffer)) != dataViewTag) ||
+    if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
           (Map && getTag(new Map) != mapTag) ||
           (Promise && getTag(Promise.resolve()) != promiseTag) ||
           (Set && getTag(new Set) != setTag) ||

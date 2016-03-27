@@ -588,6 +588,7 @@
       '      root = this;',
       '',
       '  var object = {',
+      "    'ArrayBuffer': root.ArrayBuffer,",
       "    'arguments': (function() { return arguments; }(1, 2, 3)),",
       "    'array': [1],",
       "    'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
@@ -612,6 +613,7 @@
       '',
       "  ['" + arrayViews.join("', '") + "'].forEach(function(type) {",
       '    var Ctor = root[type]',
+      '    object[type] = Ctor;',
       '    object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '  });',
       '',
@@ -637,6 +639,7 @@
       '      root = this;',
       '',
       'var object = {',
+      "  'ArrayBuffer': root.ArrayBuffer,",
       "  'arguments': (function() { return arguments; }(1, 2, 3)),",
       "  'array': [1],",
       "  'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
@@ -661,6 +664,7 @@
       '',
       "_.each(['" + arrayViews.join("', '") + "'], function(type) {",
       '  var Ctor = root[type];',
+      '  object[type] = Ctor;',
       '  object[type.toLowerCase()] = Ctor ? new Ctor(new ArrayBuffer(24)) : undefined;',
       '});',
       '',
@@ -9215,26 +9219,30 @@
     });
 
     QUnit.test('should compare array views', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var pairs = lodashStable.map(arrayViews, function(type, index) {
-        var otherType = arrayViews[(index + 1) % arrayViews.length],
-            CtorA = root[type] || function(n) { this.n = n; },
-            CtorB = root[otherType] || function(n) { this.n = n; },
-            bufferA = root[type] ? new ArrayBuffer(8) : 8,
-            bufferB = root[otherType] ? new ArrayBuffer(8) : 8,
-            bufferC = root[otherType] ? new ArrayBuffer(16) : 16;
+      lodashStable.times(2, function(index) {
+        var ns = index ? realm : root;
 
-        return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
+        var pairs = lodashStable.map(arrayViews, function(type, viewIndex) {
+          var otherType = arrayViews[(viewIndex + 1) % arrayViews.length],
+              CtorA = ns[type] || function(n) { this.n = n; },
+              CtorB = ns[otherType] || function(n) { this.n = n; },
+              bufferA = ns[type] ? new ns.ArrayBuffer(8) : 8,
+              bufferB = ns[otherType] ? new ns.ArrayBuffer(8) : 8,
+              bufferC = ns[otherType] ? new ns.ArrayBuffer(16) : 16;
+
+          return [new CtorA(bufferA), new CtorA(bufferA), new CtorB(bufferB), new CtorB(bufferC)];
+        });
+
+        var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
+
+        var actual = lodashStable.map(pairs, function(pair) {
+          return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
+        });
+
+        assert.deepEqual(actual, expected);
       });
-
-      var expected = lodashStable.map(pairs, lodashStable.constant([true, false, false]));
-
-      var actual = lodashStable.map(pairs, function(pair) {
-        return [_.isEqual(pair[0], pair[1]), _.isEqual(pair[0], pair[2]), _.isEqual(pair[2], pair[3])];
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should compare date objects', function(assert) {

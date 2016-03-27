@@ -145,7 +145,7 @@
   /** Used to detect binary string values. */
   var reIsBinary = /^0b[01]+$/i;
 
-  /** Used to detect host constructors (Safari > 5). */
+  /** Used to detect host constructors (Safari). */
   var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
   /** Used to detect octal string values. */
@@ -1443,7 +1443,7 @@
     var realNames = {};
 
     /** Used to detect maps, sets, and weakmaps. */
-    var dataViewCtorString = DataView ? funcToString.call(DataView) : '',
+    var dataViewCtorString = DataView ? (DataView + '') : '',
         mapCtorString = Map ? funcToString.call(Map) : '',
         promiseCtorString = Promise ? funcToString.call(Promise) : '',
         setCtorString = Set ? funcToString.call(Set) : '',

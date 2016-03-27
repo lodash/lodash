@@ -1426,7 +1426,8 @@
         nativeReverse = arrayProto.reverse;
 
     /* Built-in method references that are verified to be native. */
-    var Map = getNative(context, 'Map'),
+    var DataView = getNative(context, 'DataView'),
+        Map = getNative(context, 'Map'),
         Promise = getNative(context, 'Promise'),
         Set = getNative(context, 'Set'),
         WeakMap = getNative(context, 'WeakMap'),
@@ -1442,7 +1443,8 @@
     var realNames = {};
 
     /** Used to detect maps, sets, and weakmaps. */
-    var mapCtorString = Map ? funcToString.call(Map) : '',
+    var dataViewCtorString = DataView ? funcToString.call(DataView) : '',
+        mapCtorString = Map ? funcToString.call(Map) : '',
         promiseCtorString = Promise ? funcToString.call(Promise) : '',
         setCtorString = Set ? funcToString.call(Set) : '',
         weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
@@ -5245,8 +5247,10 @@
       return objectToString.call(value);
     }
 
-    // Fallback for IE 11 or maps, sets, and weakmaps and Node.js 5 for promises.
-    if ((Map && getTag(new Map) != mapTag) ||
+    // Fallback for data views, maps, sets, and weak maps in IE 11,
+    // for data views in Edge, and promises in Node.js.
+    if ((DataView && getTag(new DataView(new ArrayBuffer)) != dataViewTag) ||
+          (Map && getTag(new Map) != mapTag) ||
           (Promise && getTag(Promise.resolve()) != promiseTag) ||
           (Set && getTag(new Set) != setTag) ||
           (WeakMap && getTag(new WeakMap) != weakMapTag)
@@ -5258,6 +5262,7 @@
 
         if (ctorString) {
           switch (ctorString) {
+            case dataViewCtorString: return dataViewTag;
             case mapCtorString: return mapTag;
             case promiseCtorString: return promiseTag;
             case setCtorString: return setTag;

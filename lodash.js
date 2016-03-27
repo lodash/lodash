@@ -4622,21 +4622,13 @@
      * is truncated if the number of characters exceeds `length`.
      *
      * @private
-     * @param {string} string The string to create padding for.
-     * @param {number} [length=0] The padding length.
+     * @param {number} length The padding length.
      * @param {string} [chars=' '] The string used as padding.
      * @returns {string} Returns the padding for `string`.
      */
-    function createPadding(string, length, chars) {
-      length = toInteger(length);
-
-      var strLength = length ? stringSize(string) : 0;
-      if (!length || strLength >= length) {
-        return '';
-      }
+    function createPadding(length, chars) {
       chars = chars === undefined ? ' ' : (chars + '');
       chars = chars == '' ? ' ' : chars;
-      length -= strLength;
 
       var charsLength = chars.length;
       if (charsLength == 1) {
@@ -13274,14 +13266,11 @@
       if (!length || strLength >= length) {
         return string;
       }
-      var mid = (length - strLength) / 2,
-          leftLength = nativeFloor(mid),
-          rightLength = nativeCeil(mid);
-
+      var mid = (length - strLength) / 2;
       return (
-        createPadding('', leftLength, chars) +
+        createPadding(nativeFloor(mid), chars) +
         string +
-        createPadding('', rightLength, chars)
+        createPadding(nativeCeil(mid), chars)
       );
     }
 
@@ -13310,7 +13299,12 @@
      */
     function padEnd(string, length, chars) {
       string = toString(string);
-      return string + createPadding(string, length, chars);
+      length = toInteger(length);
+
+      var strLength = length ? stringSize(string) : 0;
+      return (length && strLength < length)
+        ? (string + createPadding(length - strLength, chars))
+        : string;
     }
 
     /**
@@ -13338,7 +13332,12 @@
      */
     function padStart(string, length, chars) {
       string = toString(string);
-      return createPadding(string, length, chars) + string;
+      length = toInteger(length);
+
+      var strLength = length ? stringSize(string) : 0;
+      return (length && strLength < length)
+        ? (createPadding(length - strLength, chars) + string)
+        : string;
     }
 
     /**

@@ -8744,6 +8744,38 @@
       assert.strictEqual(_.isEmpty(new Foo([])), true);
     });
 
+    QUnit.test('should work with maps', function(assert) {
+      assert.expect(4);
+
+      if (Map) {
+        lodashStable.each([new Map, realm.map], function(map) {
+          assert.strictEqual(_.isEmpty(map), true);
+          map.set('a', 1);
+          assert.strictEqual(_.isEmpty(map), false);
+          map.clear();
+        });
+      }
+      else {
+        skipAssert(assert, 4);
+      }
+    });
+
+    QUnit.test('should work with sets', function(assert) {
+      assert.expect(4);
+
+      if (Set) {
+        lodashStable.each([new Set, realm.set], function(set) {
+          assert.strictEqual(_.isEmpty(set), true);
+          set.add(1);
+          assert.strictEqual(_.isEmpty(set), false);
+          set.clear();
+        });
+      }
+      else {
+        skipAssert(assert, 4);
+      }
+    });
+
     QUnit.test('should not treat objects with negative lengths as array-like', function(assert) {
       assert.expect(1);
 

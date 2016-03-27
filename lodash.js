@@ -10361,10 +10361,14 @@
     }
 
     /**
-     * Checks if `value` is an empty object or collection. A value is considered
-     * empty if it's an `arguments` object, array, buffer, string, or jQuery-like
-     * collection with a length of `0` or has no own enumerable string keyed
+     * Checks if `value` is an empty object, collection, map, or set.
+     *
+     * Objects are considered empty if they have no own enumerable string keyed
      * properties.
+     *
+     * Array-like values such as `arguments` objects, arrays, buffers, strings, or
+     * jQuery-like collections are considered empty if they have a `length` of `0`.
+     * Similarly, maps and sets are considered empty if they have a `size` of `0`.
      *
      * @static
      * @memberOf _
@@ -10398,6 +10402,12 @@
       for (var key in value) {
         if (hasOwnProperty.call(value, key)) {
           return false;
+        }
+      }
+      if (isObjectLike(value)) {
+        var tag = getTag(value);
+        if (tag == mapTag || tag == setTag) {
+          return !value.size;
         }
       }
       return true;

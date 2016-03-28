@@ -475,9 +475,9 @@
   });
 
   QUnit.test('debounce asap', function(assert) {
-    assert.expect(4);
+    assert.expect(6);
     var done = assert.async();
-    var a, b;
+    var a, b, c;
     var counter = 0;
     var incr = function(){ return ++counter; };
     var debouncedIncr = _.debounce(incr, 64, true);
@@ -489,7 +489,13 @@
     _.delay(debouncedIncr, 16);
     _.delay(debouncedIncr, 32);
     _.delay(debouncedIncr, 48);
-    _.delay(function(){ assert.equal(counter, 1, 'incr was debounced'); done(); }, 128);
+    _.delay(function(){
+      assert.equal(counter, 1, 'incr was debounced');
+      c = debouncedIncr();
+      assert.equal(c, 2);
+      assert.equal(counter, 2, 'incr was called again');
+      done();
+    }, 128);
   });
 
   QUnit.test('debounce asap cancel', function(assert) {

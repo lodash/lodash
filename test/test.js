@@ -3096,6 +3096,22 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should cast non-array `array` values to arrays', function(assert) {
+      assert.expect(1);
+
+      var values = [true, false, 1, NaN, 'a'];
+
+      var expected = lodashStable.map(values, function(value) {
+        return [value, 2, [3]]
+      });
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.concat(value, [2], [[3]]);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should treat sparse arrays as dense', function(assert) {
       assert.expect(3);
 

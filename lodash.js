@@ -14118,6 +14118,7 @@
      * @since 3.0.0
      * @category Util
      * @param {Function} func The function to attempt.
+     * @param {...*} [args] The arguments to invoke `func` with.
      * @returns {*} Returns the `func` result or error object.
      * @example
      *

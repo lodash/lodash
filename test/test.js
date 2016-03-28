@@ -24020,17 +24020,20 @@
     });
 
     QUnit.test('should work with compound words', function(assert) {
-      assert.expect(9);
+      assert.expect(12);
 
       assert.deepEqual(_.words('12Feet'), ['12', 'Feet']);
+      assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('enable 6h format'), ['enable', '6', 'h', 'format']);
       assert.deepEqual(_.words('enable 24H format'), ['enable', '24', 'H', 'format']);
       assert.deepEqual(_.words('isISO8601'), ['is', 'ISO', '8601']);
+      assert.deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
       assert.deepEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);
       assert.deepEqual(_.words('xhr2Request'), ['xhr', '2', 'Request']);
-      assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
-      assert.deepEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+      assert.deepEqual(_.words('XMLHttp'), ['XML', 'Http']);
+      assert.deepEqual(_.words('XmlHTTP'), ['Xml', 'HTTP']);
+      assert.deepEqual(_.words('XmlHttp'), ['Xml', 'Http']);
     });
 
     QUnit.test('should work with compound words containing diacritical marks', function(assert) {

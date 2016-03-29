@@ -136,7 +136,7 @@
   ];
 
   /** Used to provide falsey values to methods. */
-  var falsey = [, '', 0, false, NaN, null, undefined];
+  var falsey = [, null, undefined, false, 0, NaN, ''];
 
   /** Used to specify the emoji style glyph variant of characters. */
   var emojiVar = '\ufe0f';
@@ -165,7 +165,7 @@
   ];
 
   /** Used to provide primitive values to methods. */
-  var primitives = [true, null, 1, 'a', undefined];
+  var primitives = [null, undefined, false, true, 1, NaN, 'a'];
 
   /** Used to check whether methods support typed arrays. */
   var typedArrays = [
@@ -2578,7 +2578,7 @@
       assert.expect(164);
 
       var Stack,
-          keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol || {}, undefined];
+          keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;
@@ -2693,7 +2693,7 @@
       QUnit.test('`_.' + methodName + '` should clone expando properties', function(assert) {
         assert.expect(1);
 
-        var values = lodashStable.map([true, false, 1, 'a'], function(value) {
+        var values = lodashStable.map([false, true, 1, 'a'], function(value) {
           var object = Object(value);
           object.a = 1;
           return object;
@@ -3183,7 +3183,7 @@
     QUnit.test('should throw a TypeError if `pairs` is not composed of functions', function(assert) {
       assert.expect(2);
 
-      lodashStable.each([true, false], function(value) {
+      lodashStable.each([false, true], function(value) {
         assert.raises(function() { _.cond([[alwaysTrue, value]])(); }, TypeError);
       });
     });
@@ -4151,10 +4151,10 @@
         withMaxWait();
         withoutMaxWait();
       }
-      var actual = [Boolean(withCount), Boolean(withoutCount)];
+      var actual = [Boolean(withoutCount), Boolean(withCount)];
 
       setTimeout(function() {
-        assert.deepEqual(actual, [true, false]);
+        assert.deepEqual(actual, [false, true]);
         done();
       }, 1);
     });
@@ -10070,7 +10070,7 @@
     QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
       assert.expect(1);
 
-      var values = [true, false],
+      var values = [false, true],
           expected = lodashStable.map(values, alwaysFalse);
 
       var actual = lodashStable.map(values, function(value) {
@@ -11203,7 +11203,7 @@
     QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
       assert.expect(1);
 
-      var values = [true, false],
+      var values = [false, true],
           expected = lodashStable.map(values, alwaysFalse);
 
       var actual = lodashStable.map(values, function(value) {
@@ -11508,7 +11508,7 @@
     QUnit.test('should work for objects with a non-function `constructor` (test in IE 11)', function(assert) {
       assert.expect(1);
 
-      var values = [true, false],
+      var values = [false, true],
           expected = lodashStable.map(values, alwaysFalse);
 
       var actual = lodashStable.map(values, function(value) {
@@ -14315,7 +14315,7 @@
     QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
       assert.expect(164);
 
-      var keys = [true, false, 1, -Infinity, NaN, {}, null, 'a', symbol || {} , undefined];
+      var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;
@@ -22891,7 +22891,7 @@
       assert.expect(2);
 
       var Ctors = [Boolean, Boolean, Number, Number, Number, String, String],
-          values = [true, false, 0, 1, NaN, '', 'a'],
+          values = [false, true, 0, 1, NaN, '', 'a'],
           expected = lodashStable.map(values, alwaysEmptyObject);
 
       var results = lodashStable.map(values, function(value) {
@@ -23565,7 +23565,7 @@
       assert.expect(1);
 
       var largeArray = [],
-          expected = [false, true, null, undefined, NaN],
+          expected = [null, undefined, false, true, NaN],
           count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
 
       lodashStable.each(expected, function(value) {
@@ -24347,8 +24347,8 @@
         [['barney', 36], ['fred', 40]]
       ],
       '3-tuples': [
-        [['barney', 'fred'], [36, 40], [true, false]],
-        [['barney', 36, true], ['fred', 40, false]]
+        [['barney', 'fred'], [36, 40], [false, true]],
+        [['barney', 36, false], ['fred', 40, true]]
       ]
     };
 
@@ -24448,7 +24448,7 @@
 
   QUnit.module('lodash(...).next');
 
-  lodashStable.each([true, false], function(implict) {
+  lodashStable.each([false, true], function(implict) {
     function chain(value) {
       return implict ? _(value) : _.chain(value);
     }

@@ -22657,6 +22657,27 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.fromPath');
+
+  (function() {
+    QUnit.test('should convert an array to a path string', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(_.fromPath(['a', 'b', 'c']), 'a.b.c');
+      assert.deepEqual(_.fromPath(['a', '0', 'b', 'c']), 'a[0].b.c');
+    });
+
+    QUnit.test('should handle numeric array elements', function(assert) {
+      assert.expect(3);
+
+      assert.deepEqual(_.fromPath(['a', 0, 'b', 'c']), 'a[0].b.c');
+      assert.deepEqual(_.fromPath(['a', 'b', 2, 'c']), 'a.b[2].c');
+      assert.deepEqual(_.fromPath([0, 'a', 'b', 'c']), '[0].a.b.c');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.toPlainObject');
 
   (function() {
@@ -25317,7 +25338,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(308);
+      assert.expect(309);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

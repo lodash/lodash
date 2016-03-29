@@ -1520,7 +1520,7 @@
      * `remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,
      * `slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`, `takeRight`,
      * `takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,
-     * `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`, `unary`,
+     * `toPairs`, `toPairsIn`, `toPath`, `fromPath`, `toPlainObject`, `transform`, `unary`,
      * `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`,
      * `unshift`, `unzip`, `unzipWith`, `update`, `updateWith`, `values`,
      * `valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
@@ -5743,6 +5743,20 @@
       });
       return result;
     });
+
+    /**
+     * Converts `array` to a property path string.
+     *
+     * @private
+     * @param {Array} array The array to convert.
+     * @returns {string} Returns the property path string.
+     */
+    function pathToString(array) {
+      return array.reduce(function(string, item) {
+        var prefix = string === '' ? '' : '.';
+        return string + (isNaN(Number(item)) ? prefix + item : '[' + item + ']');
+      }, '');
+    }
 
     /**
      * Creates a clone of `wrapper`.
@@ -14914,6 +14928,31 @@
     }
 
     /**
+     * Converts array `value` to a property path string.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.6.1
+     * @category Util
+     * @param {*} value The value to convert.
+     * @returns {string} Returns the new property path string.
+     * @example
+     *
+     * _.fromPath(['a', 'b', 'c']);
+     * // => 'a.b.c'
+     *
+     * _.fromPath(['a', '0', 'b', 'c']);
+     * // => 'a[0].b.c'
+     *
+     */
+    function fromPath(value) {
+      if (isArray(value)) {
+        return pathToString(value);
+      }
+      return ''
+    }
+
+    /**
      * Generates a unique ID. If `prefix` is given the ID is appended to it.
      *
      * @static
@@ -15412,6 +15451,7 @@
     lodash.toPairs = toPairs;
     lodash.toPairsIn = toPairsIn;
     lodash.toPath = toPath;
+    lodash.fromPath = fromPath;
     lodash.toPlainObject = toPlainObject;
     lodash.transform = transform;
     lodash.unary = unary;

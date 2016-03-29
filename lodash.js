@@ -5853,13 +5853,19 @@
      * console.log(array);
      * // => [1]
      */
-    var concat = rest(function(array, values) {
-      if (!isArray(array)) {
-        array = array == null ? [] : [array];
+    function concat() {
+      var length = arguments.length;
+      if (!length) {
+        return [];
       }
-      values = baseFlatten(values, 1);
-      return arrayConcat(array, values);
-    });
+      var array = castArray(arguments[0]),
+          args = Array(length - 1);
+
+      while (length--) {
+        args[length - 1] = arguments[length];
+      }
+      return arrayConcat(array, baseFlatten(args, 1));
+    }
 
     /**
      * Creates an array of unique `array` values not included in the other given

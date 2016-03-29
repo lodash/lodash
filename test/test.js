@@ -3066,46 +3066,26 @@
       assert.deepEqual(array, [1]);
     });
 
-    QUnit.test('should return an empty array when `array` is nullish', function(assert) {
-      assert.expect(1);
+    QUnit.test('should cast non-array `array` values to arrays', function(assert) {
+      assert.expect(2);
 
-      var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysEmptyArray);
+      var values = [, null, undefined, false, true, 1, NaN, 'a'];
+
+      var expected = lodashStable.map(values, function(value, index) {
+        return index ? [value] : [];
+      });
 
       var actual = lodashStable.map(values, function(value, index) {
-        try {
-          return index ? _.concat(value) : _.concat();
-        } catch (e) {}
+        return index ? _.concat(value) : _.concat();
       });
 
       assert.deepEqual(actual, expected);
-    });
 
-    QUnit.test('should treat nullish `array` values as empty arrays', function(assert) {
-      assert.expect(1);
-
-      var values = [null, undefined],
-          expected = lodashStable.map(values, lodashStable.constant([1, 2, [3]]));
-
-      var actual = lodashStable.map(values, function(value) {
-        try {
-          return _.concat(value, 1, [2], [[3]]);
-        } catch (e) {}
+      expected = lodashStable.map(values, function(value) {
+        return [value, 2, [3]];
       });
 
-      assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should cast non-array `array` values to arrays', function(assert) {
-      assert.expect(1);
-
-      var values = [true, false, 1, NaN, 'a'];
-
-      var expected = lodashStable.map(values, function(value) {
-        return [value, 2, [3]]
-      });
-
-      var actual = lodashStable.map(values, function(value) {
+      actual = lodashStable.map(values, function(value) {
         return _.concat(value, [2], [[3]]);
       });
 

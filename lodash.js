@@ -9294,14 +9294,11 @@
         var timeSinceLastCall = time - lastCallTime,
             timeSinceLastInvoke = time - lastInvokeTime;
 
-        // Either activity has stopped and we're at the trailing edge, the system
-        // time has gone backwards and we're treating it as the trailing edge, or
-        // we've hit the `maxWait` limit.
-        return (
-          (timeSinceLastCall >= wait) ||
-            (timeSinceLastCall < 0) ||
-              (maxWait !== false && timeSinceLastInvoke >= maxWait)
-        );
+        // Either this is the first call, activity has stopped and we're at the
+        // trailing edge, the system time has gone backwards and we're treating
+        // it as the trailing edge, or we've hit the `maxWait` limit.
+        return (!lastCallTime || (timeSinceLastCall >= wait) ||
+          (timeSinceLastCall < 0) || (maxWait !== false && timeSinceLastInvoke >= maxWait));
       }
 
       function timerExpired() {

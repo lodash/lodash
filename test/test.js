@@ -3991,23 +3991,38 @@
 
   (function() {
     QUnit.test('should debounce a function', function(assert) {
-      assert.expect(2);
+      assert.expect(6);
 
       var done = assert.async();
 
-      var callCount = 0,
-          debounced = _.debounce(function() { callCount++; }, 32);
+      var callCount = 0;
 
-      debounced();
-      debounced();
-      debounced();
+      var debounced = _.debounce(function(value) {
+        ++callCount;
+        return value;
+      }, 32);
 
+      // Leading should not fire.
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
+        // Trailing should fire by now.
         assert.strictEqual(callCount, 1);
+
+        // Do it again.
+        var actual = [debounced(3), debounced(4), debounced(5)];
+
+        // Previous result.
+        assert.deepEqual(actual, [2, 2, 2]);
+        assert.strictEqual(callCount, 1);
+      }, 128);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
         done();
-      }, 96);
+      }, 256);
     });
 
     QUnit.test('subsequent debounced calls return the last `func` result', function(assert) {
@@ -4130,6 +4145,41 @@
     });
 
     QUnit.test('should support a `maxWait` option', function(assert) {
+      assert.expect(6);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function(value) {
+        ++callCount;
+        return value;
+      }, 32, { 'maxWait': 64 });
+
+      // Leading should not fire.
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      assert.strictEqual(callCount, 0);
+
+      setTimeout(function() {
+        // Trailing should fire by now.
+        assert.strictEqual(callCount, 1);
+
+        // Do it again.
+        var actual = [debounced(3), debounced(4), debounced(5)];
+
+        // Previous result.
+        assert.deepEqual(actual, [2, 2, 2]);
+        assert.strictEqual(callCount, 1);
+      }, 128);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 256);
+    });
+
+    QUnit.test('should support `maxWait` in a tight loop', function(assert) {
       assert.expect(1);
 
       var done = assert.async();
@@ -4181,76 +4231,6 @@
         assert.strictEqual(callCount, 2);
         done();
       }, 192);
-    });
-
-    QUnit.test('should honor leading: false when maxWait is not supplied', function(assert) {
-      assert.expect(6);
-
-      var done = assert.async();
-
-      var callCount = 0;
-
-      var debounced = _.debounce(function(value) {
-        ++callCount;
-        return value;
-      }, 32);
-
-      // Leading should not fire.
-      var actual = [debounced(0), debounced(1), debounced(2)];
-      assert.deepEqual(actual, [undefined, undefined, undefined]);
-      assert.strictEqual(callCount, 0);
-
-      setTimeout(function() {
-        // Trailing should fire by now.
-        assert.strictEqual(callCount, 1);
-
-        // Do it again.
-        var actual = [debounced(4), debounced(5), debounced(6)];
-
-        // Previous result.
-        assert.deepEqual(actual, [2, 2, 2]);
-        assert.strictEqual(callCount, 1);
-      }, 128);
-
-      setTimeout(function() {
-        assert.strictEqual(callCount, 2);
-        done();
-      }, 256);
-    });
-
-    QUnit.test('should honor leading: false when maxWait is supplied', function(assert) {
-      assert.expect(6);
-
-      var done = assert.async();
-
-      var callCount = 0;
-
-      var debounced = _.debounce(function(value) {
-        ++callCount;
-        return value;
-      }, 32, { 'maxWait': 64 });
-
-      // Leading should not fire.
-      var actual = [debounced(0), debounced(1), debounced(2)];
-      assert.deepEqual(actual, [undefined, undefined, undefined]);
-      assert.strictEqual(callCount, 0);
-
-      setTimeout(function() {
-        // Trailing should fire by now.
-        assert.strictEqual(callCount, 1);
-
-        // Do it again.
-        var actual = [debounced(4), debounced(5), debounced(6)];
-
-        // Previous result.
-        assert.deepEqual(actual, [2, 2, 2]);
-        assert.strictEqual(callCount, 1);
-      }, 128);
-
-      setTimeout(function() {
-        assert.strictEqual(callCount, 2);
-        done();
-      }, 256);
     });
 
     QUnit.test('should invoke the `trailing` call with the correct arguments and `this` binding', function(assert) {

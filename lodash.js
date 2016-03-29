@@ -9330,6 +9330,7 @@
         if (timerId !== undefined) {
           clearTimeout(timerId);
         }
+        lastCallTime = lastInvokeTime = 0;
         lastArgs = lastThis = timerId = undefined;
       }
 
@@ -9338,17 +9339,20 @@
       }
 
       function debounced() {
+        var time = now(),
+            isInvoking = shouldInvoke(time);
+
         lastArgs = arguments;
         lastThis = this;
-        lastCallTime = now();
+        lastCallTime = time;
 
-        if (timerId === undefined) {
-          return leadingEdge(lastCallTime);
-        }
-        // Check times to handle invocations in a tight loop.
-        if (shouldInvoke(lastCallTime)) {
+        if (isInvoking) {
+          if (timerId === undefined) {
+            return leadingEdge(lastCallTime);
+          }
+          // Handle invocations in a tight loop.
           clearTimeout(timerId);
-          timerId = undefined;
+          timerId = setTimeout(timerExpired, wait);
           return invokeFunc(lastCallTime);
         }
         return result;

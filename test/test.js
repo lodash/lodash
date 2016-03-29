@@ -21956,10 +21956,12 @@
 
       assert.strictEqual(funced(), 1);
       funced.cancel();
+
       assert.strictEqual(funced(), 2);
+      funced();
 
       setTimeout(function() {
-        assert.strictEqual(callCount, 2);
+        assert.strictEqual(callCount, 3);
         done();
       }, 64);
     });

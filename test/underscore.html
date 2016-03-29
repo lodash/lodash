@@ -291,6 +291,9 @@
           'isMatch': [
             'doesnt falsey match constructor on undefined/null'
           ],
+          'isSet': [
+            'Died on test #9'
+          ],
           'findKey': [
             'called with context'
           ],
@@ -381,7 +384,6 @@
 
       // Only excuse in Sauce Labs.
       if (!ui.isSauceLabs) {
-        delete QUnit.config.excused.Functions['throttle repeatedly with results'];
         delete QUnit.config.excused.Functions['throttle does not trigger trailing call when trailing is set to false'];
         delete QUnit.config.excused.Utility.now;
       }

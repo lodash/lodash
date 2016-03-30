@@ -32,7 +32,7 @@
     "webpack": "^1.12.14"
   },
   "scripts": {
-    "build": "npm run build:main & npm run build:fp",
+    "build": "npm run build:main & npm run build:fp & wait",
     "build:fp": "node lib/fp/build-dist.js",
     "build:fp-modules": "node lib/fp/build-modules.js",
     "build:main": "node lib/main/build-dist.js",
@@ -41,7 +41,7 @@
     "doc:fp": "node lib/fp/build-doc",
     "doc:site": "node lib/main/build-doc site",
     "pretest": "npm run build",
-    "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test",
+    "style": "npm run style:main & npm run style:fp & npm run style:perf & npm run style:test & wait",
     "style:fp": "jscs fp/*.js lib/**/*.js",
     "style:main": "jscs lodash.js",
     "style:perf": "jscs perf/*.js perf/**/*.js",
@@ -49,7 +49,7 @@
     "test": "npm run test:main && npm run test:fp",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test",
-    "validate": "npm run style & npm run test"
+    "validate": "npm run style & npm run test & wait"
   },
   "config": {
     "ghooks": {

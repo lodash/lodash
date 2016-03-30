@@ -1,10 +1,10 @@
 /**
- * lodash 4.2.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var keys = require('lodash.keys'),
     root = require('lodash._root');
@@ -17,14 +17,17 @@ var funcTag = '[object Function]',
     genTag = '[object GeneratorFunction]',
     mapTag = '[object Map]',
     objectTag = '[object Object]',
+    promiseTag = '[object Promise]',
     setTag = '[object Set]',
     stringTag = '[object String]',
     weakMapTag = '[object WeakMap]';
 
+var dataViewTag = '[object DataView]';
+
 /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
-/** Used to detect host constructors (Safari > 5). */
+/** Used to detect host constructors (Safari). */
 var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
 /** Used to compose unicode character classes. */
@@ -196,12 +199,16 @@ var Symbol = root.Symbol,
     iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
 
 /* Built-in method references that are verified to be native. */
-var Map = getNative(root, 'Map'),
+var DataView = getNative(root, 'DataView'),
+    Map = getNative(root, 'Map'),
+    Promise = getNative(root, 'Promise'),
     Set = getNative(root, 'Set'),
     WeakMap = getNative(root, 'WeakMap');
 
 /** Used to detect maps, sets, and weakmaps. */
-var mapCtorString = Map ? funcToString.call(Map) : '',
+var dataViewCtorString = DataView ? (DataView + '') : '',
+    mapCtorString = Map ? funcToString.call(Map) : '',
+    promiseCtorString = Promise ? funcToString.call(Promise) : '',
     setCtorString = Set ? funcToString.call(Set) : '',
     weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
 
@@ -240,8 +247,9 @@ function copyArray(source, array) {
 /**
  * Gets the "length" property value of `object`.
  *
- * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
- * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
  *
  * @private
  * @param {Object} object The object to query.
@@ -273,8 +281,11 @@ function getTag(value) {
   return objectToString.call(value);
 }
 
-// Fallback for IE 11 providing `toStringTag` values for maps, sets, and weakmaps.
-if ((Map && getTag(new Map) != mapTag) ||
+// Fallback for data views, maps, sets, and weak maps in IE 11,
+// for data views in Edge, and promises in Node.js.
+if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (Map && getTag(new Map) != mapTag) ||
+    (Promise && getTag(Promise.resolve()) != promiseTag) ||
     (Set && getTag(new Set) != setTag) ||
     (WeakMap && getTag(new WeakMap) != weakMapTag)) {
   getTag = function(value) {
@@ -284,7 +295,9 @@ if ((Map && getTag(new Map) != mapTag) ||
 
     if (ctorString) {
       switch (ctorString) {
+        case dataViewCtorString: return dataViewTag;
         case mapCtorString: return mapTag;
+        case promiseCtorString: return promiseTag;
         case setCtorString: return setTag;
         case weakMapCtorString: return weakMapTag;
       }
@@ -298,10 +311,12 @@ if ((Map && getTag(new Map) != mapTag) ||
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
  * @example
  *
  * _.isArray([1, 2, 3]);
@@ -325,6 +340,7 @@ var isArray = Array.isArray;
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -351,9 +367,11 @@ function isArrayLike(value) {
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -373,13 +391,16 @@ function isFunction(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
  * @example
  *
  * _.isLength(3);
@@ -405,6 +426,7 @@ function isLength(value) {
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is an object, else `false`.
@@ -433,6 +455,7 @@ function isObject(value) {
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
@@ -459,9 +482,11 @@ function isObjectLike(value) {
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
  * @example
  *
  * _.isNative(Array.prototype.push);
@@ -485,10 +510,12 @@ function isNative(value) {
  * Checks if `value` is classified as a `String` primitive or object.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
  * @example
  *
  * _.isString('abc');
@@ -506,6 +533,7 @@ function isString(value) {
  * Converts `value` to an array.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Lang
  * @param {*} value The value to convert.
@@ -541,11 +569,12 @@ function toArray(value) {
 }
 
 /**
- * Creates an array of the own enumerable property values of `object`.
+ * Creates an array of the own enumerable string keyed property values of `object`.
  *
  * **Note:** Non-object values are coerced to objects.
  *
  * @static
+ * @since 0.1.0
  * @memberOf _
  * @category Object
  * @param {Object} object The object to query.

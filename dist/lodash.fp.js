@@ -79,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var mapping = __webpack_require__(2),
 	    mutateMap = mapping.mutate,
-	    placeholder = {};
+	    fallbackHolder = {};
 
 	/**
 	 * The base implementation of `convert` which accepts a `util` object of methods
@@ -119,10 +119,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'rearg': 'rearg' in options ? options.rearg : true
 	  };
 
-	  var forceRearg = ('rearg' in options) && options.rearg;
+	  var forceRearg = ('rearg' in options) && options.rearg,
+	      placeholder = isLib ? func : fallbackHolder,
+	      pristine = isLib ? func.runInContext() : undefined;
 
 	  var helpers = isLib ? func : {
 	    'ary': util.ary,
+	    'assign': util.assign,
 	    'clone': util.clone,
 	    'curry': util.curry,
 	    'forEach': util.forEach,
@@ -136,6 +139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  var ary = helpers.ary,
+	      assign = helpers.assign,
 	      clone = helpers.clone,
 	      curry = helpers.curry,
 	      each = helpers.forEach,
@@ -188,6 +192,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nested = nested[key];
 	    }
 	    return result;
+	  };
+
+	  var convertLib = function(options) {
+	    return _.runInContext.convert(options)();
 	  };
 
 	  var createCloner = function(func) {
@@ -304,8 +312,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var wrap = function(name, func) {
 	    name = mapping.aliasToReal[name] || name;
 	    var wrapper = wrappers[name];
+
+	    var convertMethod = function(options) {
+	      var newUtil = isLib ? pristine : helpers,
+	          newFunc = isLib ? pristine[name] : func,
+	          newOptions = assign(assign({}, config), options);
+
+	      return baseConvert(newUtil, name, newFunc, newOptions);
+	    };
+
 	    if (wrapper) {
-	      return wrapper(func);
+	      var result = wrapper(func);
+	      result.convert = convertMethod;
+	      return result;
 	    }
 	    var wrapped = func;
 	    if (config.immutable) {
@@ -319,7 +338,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        wrapped = immutWrap(func, cloneByPath);
 	      }
 	    }
-	    var result;
 	    each(aryMethodKeys, function(aryKey) {
 	      each(mapping.aryMethod[aryKey], function(otherName) {
 	        if (name == otherName) {
@@ -353,9 +371,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 
 	    result || (result = wrapped);
+	    if (result == func) {
+	      result = function() {
+	        return func.apply(this, arguments);
+	      };
+	    }
+	    result.convert = convertMethod;
 	    if (mapping.placeholder[name]) {
 	      setPlaceholder = true;
-	      func.placeholder = result.placeholder = placeholder;
+	      result.placeholder = func.placeholder = placeholder;
 	    }
 	    return result;
 	  };
@@ -381,10 +405,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _[pair[0]] = pair[1];
 	  });
 
+	  _.convert = convertLib;
 	  if (setPlaceholder) {
 	    _.placeholder = placeholder;
 	  }
-	  // Wrap the lodash method and its aliases.
+	  // Reassign aliases.
 	  each(keys(_), function(key) {
 	    each(mapping.realToAlias[key] || [], function(alias) {
 	      _[alias] = _[key];
@@ -403,23 +428,36 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map aliases to their real names. */
 	exports.aliasToReal = {
+
+	  // Lodash aliases.
+	  'each': 'forEach',
+	  'eachRight': 'forEachRight',
+	  'entries': 'toPairs',
+	  'entriesIn': 'toPairsIn',
+	  'extend': 'assignIn',
+	  'extendWith': 'assignInWith',
+	  'first': 'head',
+
+	  // Ramda aliases.
 	  '__': 'placeholder',
-	  'all': 'some',
+	  'all': 'every',
 	  'allPass': 'overEvery',
+	  'always': 'constant',
+	  'any': 'some',
+	  'anyPass': 'overSome',
 	  'apply': 'spread',
 	  'assoc': 'set',
 	  'assocPath': 'set',
+	  'complement': 'negate',
 	  'compose': 'flowRight',
 	  'contains': 'includes',
 	  'dissoc': 'unset',
 	  'dissocPath': 'unset',
-	  'each': 'forEach',
-	  'eachRight': 'forEachRight',
 	  'equals': 'isEqual',
-	  'extend': 'assignIn',
-	  'extendWith': 'assignInWith',
-	  'first': 'head',
+	  'identical': 'eq',
 	  'init': 'initial',
+	  'invertObj': 'invert',
+	  'juxt': 'over',
 	  'mapObj': 'mapValues',
 	  'omitAll': 'omit',
 	  'nAry': 'ary',
@@ -431,7 +469,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'prop': 'get',
 	  'propOf': 'propertyOf',
 	  'propOr': 'getOr',
-	  'somePass': 'overSome',
 	  'unapply': 'rest',
 	  'unnest': 'flatten',
 	  'useWith': 'overArgs',
@@ -448,32 +485,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
 	  ],
 	  '2': [
-	    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindKey',
-	    'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
+	    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
+	    'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
 	    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
-	    'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith', 'eq', 'every',
-	    'filter', 'find', 'find', 'findIndex', 'findKey', 'findLast', 'findLastIndex',
-	    'findLastKey', 'flatMap', 'flattenDepth', 'forEach', 'forEachRight', 'forIn',
-	    'forInRight', 'forOwn', 'forOwnRight', 'get', 'groupBy', 'gt', 'gte', 'has',
-	    'hasIn', 'includes', 'indexOf', 'intersection', 'invertBy', 'invoke', 'invokeMap',
-	    'isEqual', 'isMatch', 'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map',
-	    'mapKeys', 'mapValues', 'matchesProperty', 'maxBy', 'merge', 'minBy', 'omit',
-	    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
-	    'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt',
-	    'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'result',
+	    'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith',
+	    'eq', 'every', 'filter', 'find', 'find', 'findIndex', 'findKey', 'findLast',
+	    'findLastIndex', 'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth',
+	    'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight',
+	    'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',
+	    'intersection', 'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch',
+	    'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues',
+	    'matchesProperty', 'maxBy', 'meanBy', 'merge', 'minBy', 'multiply', 'omit', 'omitBy',
+	    'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial', 'partialRight',
+	    'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt', 'random', 'range',
+	    'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'restFrom', 'result',
 	    'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf', 'sortedLastIndex',
-	    'sortedLastIndexOf', 'sortedUniqBy', 'split', 'startsWith', 'subtract', 'sumBy',
-	    'take', 'takeRight', 'takeRightWhile', 'takeWhile', 'tap', 'throttle', 'thru',
-	    'times', 'trimChars', 'trimCharsEnd', 'trimCharsStart', 'truncate', 'union',
-	    'uniqBy', 'uniqWith', 'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip',
-	    'zipObject', 'zipObjectDeep'
+	    'sortedLastIndexOf', 'sortedUniqBy', 'split', 'spreadFrom', 'startsWith',
+	    'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile', 'takeWhile', 'tap',
+	    'throttle', 'thru', 'times', 'trimChars', 'trimCharsEnd', 'trimCharsStart',
+	    'truncate', 'union', 'uniqBy', 'uniqWith', 'unset', 'unzipWith', 'without',
+	    'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
 	  ],
 	  '3': [
 	    'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
-	    'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'isEqualWith',
-	    'isMatchWith', 'mergeWith', 'orderBy', 'pullAllBy', 'pullAllWith', 'reduce',
-	    'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy',
-	    'transform', 'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
+	    'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'invokeArgs',
+	    'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith',
+	    'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy',
+	    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
+	    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
+	    'update', 'xorBy', 'xorWith', 'zipWith'
 	  ],
 	  '4': [
 	    'fill', 'setWith', 'updateWith'
@@ -489,10 +529,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to their iteratee ary. */
 	exports.iterateeAry = {
-	  'assignWith': 2,
-	  'assignInWith': 2,
-	  'cloneDeepWith': 1,
-	  'cloneWith': 1,
 	  'dropRightWhile': 1,
 	  'dropWhile': 1,
 	  'every': 1,
@@ -504,14 +540,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'findLastIndex': 1,
 	  'findLastKey': 1,
 	  'flatMap': 1,
+	  'flatMapDeep': 1,
+	  'flatMapDepth': 1,
 	  'forEach': 1,
 	  'forEachRight': 1,
 	  'forIn': 1,
 	  'forInRight': 1,
 	  'forOwn': 1,
 	  'forOwnRight': 1,
-	  'isEqualWith': 2,
-	  'isMatchWith': 2,
 	  'map': 1,
 	  'mapKeys': 1,
 	  'mapValues': 1,
@@ -537,8 +573,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'assignInWith': [1, 2, 0],
 	  'assignWith': [1, 2, 0],
 	  'getOr': [2, 1, 0],
+	  'isEqualWith': [1, 2, 0],
 	  'isMatchWith': [2, 1, 0],
 	  'mergeWith': [1, 2, 0],
+	  'padChars': [2, 1, 0],
+	  'padCharsEnd': [2, 1, 0],
+	  'padCharsStart': [2, 1, 0],
 	  'pullAllBy': [2, 1, 0],
 	  'pullAllWith': [2, 1, 0],
 	  'setWith': [3, 1, 2, 0],
@@ -550,8 +590,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to spread configs. */
 	exports.methodSpread = {
+	  'invokeArgs': 2,
+	  'invokeArgsMap': 2,
 	  'partial': 1,
-	  'partialRight': 1
+	  'partialRight': 1,
+	  'without': 1
 	};
 
 	/** Used to identify methods which mutate arrays or objects. */
@@ -617,6 +660,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'curryN': 'curry',
 	  'curryRightN': 'curryRight',
 	  'getOr': 'get',
+	  'invokeArgs': 'invoke',
+	  'invokeArgsMap': 'invokeMap',
+	  'padChars': 'pad',
+	  'padCharsEnd': 'padEnd',
+	  'padCharsStart': 'padStart',
+	  'restFrom': 'rest',
+	  'spreadFrom': 'spread',
 	  'trimChars': 'trim',
 	  'trimCharsEnd': 'trimEnd',
 	  'trimCharsStart': 'trimStart'
@@ -627,20 +677,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'add': true,
 	  'assign': true,
 	  'assignIn': true,
+	  'bind': true,
+	  'bindKey': true,
 	  'concat': true,
 	  'difference': true,
+	  'divide': true,
+	  'eq': true,
 	  'gt': true,
 	  'gte': true,
+	  'isEqual': true,
 	  'lt': true,
 	  'lte': true,
 	  'matchesProperty': true,
 	  'merge': true,
+	  'multiply': true,
 	  'partial': true,
 	  'partialRight': true,
 	  'random': true,
 	  'range': true,
 	  'rangeRight': true,
 	  'subtract': true,
+	  'without': true,
 	  'zip': true,
 	  'zipObject': true
 	};

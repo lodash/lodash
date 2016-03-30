@@ -1,4 +1,4 @@
-# lodash.isweakmap v4.3.2
+# lodash.isweakmap v4.3.3
 
 The [lodash](https://lodash.com/) method `_.isWeakMap` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isWeakMap = require('lodash.isweakmap');
 ```
 
-See the [documentation](https://lodash.com/docs#isWeakMap) or [package source](https://github.com/lodash/lodash/blob/4.3.2-npm-packages/lodash.isweakmap) for more details.
+See the [documentation](https://lodash.com/docs#isWeakMap) or [package source](https://github.com/lodash/lodash/blob/4.3.3-npm-packages/lodash.isweakmap) for more details.

@@ -8258,7 +8258,7 @@
     function forEach(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayEach(collection, iteratee)
-        : baseEach(collection, baseCastFunction(iteratee));
+        : baseEach(collection, getIteratee(iteratee));
     }
 
     /**
@@ -8283,7 +8283,7 @@
     function forEachRight(collection, iteratee) {
       return (typeof iteratee == 'function' && isArray(collection))
         ? arrayEachRight(collection, iteratee)
-        : baseEachRight(collection, baseCastFunction(iteratee));
+        : baseEachRight(collection, getIteratee(iteratee));
     }
 
     /**
@@ -11841,7 +11841,7 @@
     function forIn(object, iteratee) {
       return object == null
         ? object
-        : baseFor(object, baseCastFunction(iteratee), keysIn);
+        : baseFor(object, getIteratee(iteratee), keysIn);
     }
 
     /**
@@ -11872,7 +11872,7 @@
     function forInRight(object, iteratee) {
       return object == null
         ? object
-        : baseForRight(object, baseCastFunction(iteratee), keysIn);
+        : baseForRight(object, getIteratee(iteratee), keysIn);
     }
 
     /**
@@ -11903,7 +11903,7 @@
      * // => Logs 'a' then 'b' (iteration order is not guaranteed).
      */
     function forOwn(object, iteratee) {
-      return object && baseForOwn(object, baseCastFunction(iteratee));
+      return object && baseForOwn(object, getIteratee(iteratee));
     }
 
     /**
@@ -11932,7 +11932,7 @@
      * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
      */
     function forOwnRight(object, iteratee) {
-      return object && baseForOwnRight(object, baseCastFunction(iteratee));
+      return object && baseForOwnRight(object, getIteratee(iteratee));
     }
 
     /**
@@ -14865,7 +14865,7 @@
       var index = MAX_ARRAY_LENGTH,
           length = nativeMin(n, MAX_ARRAY_LENGTH);
 
-      iteratee = baseCastFunction(iteratee);
+      iteratee = getIteratee(iteratee);
       n -= MAX_ARRAY_LENGTH;
 
       var result = baseTimes(length, iteratee);

@@ -2982,8 +2982,7 @@
       if (value === other) {
         return true;
       }
-      if (value == null || other == null ||
-          (!isObject(value) && !isObjectLike(other))) {
+      if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
       return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
@@ -4923,7 +4922,7 @@
           }
         } else if (!(
               arrValue === othValue ||
-              equalFunc(arrValue, othValue, customizer, bitmask, stack)
+                equalFunc(arrValue, othValue, customizer, bitmask, stack)
             )) {
           result = false;
           break;

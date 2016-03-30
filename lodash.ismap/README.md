@@ -1,4 +1,4 @@
-# lodash.ismap v4.3.2
+# lodash.ismap v4.3.3
 
 The [lodash](https://lodash.com/) method `_.isMap` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isMap = require('lodash.ismap');
 ```
 
-See the [documentation](https://lodash.com/docs#isMap) or [package source](https://github.com/lodash/lodash/blob/4.3.2-npm-packages/lodash.ismap) for more details.
+See the [documentation](https://lodash.com/docs#isMap) or [package source](https://github.com/lodash/lodash/blob/4.3.3-npm-packages/lodash.ismap) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash.isset",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "The lodash method `_.isSet` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

@@ -249,6 +249,8 @@ exports.skipRearg = {
   'add': true,
   'assign': true,
   'assignIn': true,
+  'bind': true,
+  'bindKey': true,
   'concat': true,
   'difference': true,
   'divide': true,

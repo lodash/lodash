@@ -16207,34 +16207,36 @@
   QUnit.module('lodash.pad');
 
   (function() {
+    var string = 'abc';
+
     QUnit.test('should pad a string to a given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.pad('abc', 9), '   abc   ');
+      var values = [, undefined],
+          expected = lodashStable.map(values, lodashStable.constant(' abc  '));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.pad(string, 6, value) : _.pad(string, 6);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(_.pad('abc', 8), '  abc   ');
-      assert.strictEqual(_.pad('abc', 8, '_-'), '_-abc_-_');
+      assert.strictEqual(_.pad(string, 8), '  abc   ');
+      assert.strictEqual(_.pad(string, 8, '_-'), '_-abc_-_');
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
-      assert.expect(2);
-
-      assert.strictEqual(_.pad(Object('abc'), 4), 'abc ');
-      assert.strictEqual(_.pad({ 'toString': lodashStable.constant('abc') }, 5), ' abc ');
-    });
-
-    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
       assert.expect(1);
 
-      var values = [undefined, ''],
-          expected = lodashStable.map(values, lodashStable.constant(' abc  '));
+      var values = [Object(string), { 'toString': lodashStable.constant(string) }],
+          expected = lodashStable.map(values, alwaysTrue);
 
       var actual = lodashStable.map(values, function(value) {
-        return _.pad('abc', 6, value);
+        return _.pad(value, 6) === ' abc  ';
       });
 
       assert.deepEqual(actual, expected);
@@ -16246,33 +16248,35 @@
   QUnit.module('lodash.padEnd');
 
   (function() {
+    var string = 'abc';
+
     QUnit.test('should pad a string to a given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padEnd('abc', 6), 'abc   ');
+      var values = [, undefined],
+          expected = lodashStable.map(values, lodashStable.constant('abc   '));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.padEnd(string, 6, value) : _.padEnd(string, 6);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padEnd('abc', 6, '_-'), 'abc_-_');
+      assert.strictEqual(_.padEnd(string, 6, '_-'), 'abc_-_');
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
-      assert.expect(2);
-
-      assert.strictEqual(_.padEnd(Object('abc'), 4), 'abc ');
-      assert.strictEqual(_.padEnd({ 'toString': lodashStable.constant('abc') }, 5), 'abc  ');
-    });
-
-    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
       assert.expect(1);
 
-      var values = [undefined, ''],
-          expected = lodashStable.map(values, lodashStable.constant('abc   '));
+      var values = [Object(string), { 'toString': lodashStable.constant(string) }],
+          expected = lodashStable.map(values, alwaysTrue);
 
       var actual = lodashStable.map(values, function(value) {
-        return _.padEnd('abc', 6, value);
+        return _.padEnd(value, 6) === 'abc   ';
       });
 
       assert.deepEqual(actual, expected);
@@ -16284,33 +16288,35 @@
   QUnit.module('lodash.padStart');
 
   (function() {
+    var string = 'abc';
+
     QUnit.test('should pad a string to a given length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padStart('abc', 6), '   abc');
+      var values = [, undefined],
+          expected = lodashStable.map(values, lodashStable.constant('   abc'));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.padStart(string, 6, value) : _.padStart(string, 6);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.padStart('abc', 6, '_-'), '_-_abc');
+      assert.strictEqual(_.padStart(string, 6, '_-'), '_-_abc');
     });
 
     QUnit.test('should coerce `string` to a string', function(assert) {
-      assert.expect(2);
-
-      assert.strictEqual(_.padStart(Object('abc'), 4), ' abc');
-      assert.strictEqual(_.padStart({ 'toString': lodashStable.constant('abc') }, 5), '  abc');
-    });
-
-    QUnit.test('should use " " in place of `undefined` or empty string `chars` values', function(assert) {
       assert.expect(1);
 
-      var values = [undefined, ''],
-          expected = lodashStable.map(values, lodashStable.constant('   abc'));
+      var values = [Object(string), { 'toString': lodashStable.constant(string) }],
+          expected = lodashStable.map(values, alwaysTrue);
 
       var actual = lodashStable.map(values, function(value) {
-        return _.padStart('abc', 6, value);
+        return _.padStart(value, 6) === '   abc';
       });
 
       assert.deepEqual(actual, expected);
@@ -16324,20 +16330,21 @@
   lodashStable.each(['pad', 'padStart', 'padEnd'], function(methodName) {
     var func = _[methodName],
         isPad = methodName == 'pad',
-        isStart = methodName == 'padStart';
+        isStart = methodName == 'padStart',
+        string = 'abc';
 
     QUnit.test('`_.' + methodName + '` should not pad if string is >= `length`', function(assert) {
       assert.expect(2);
 
-      assert.strictEqual(func('abc', 2), 'abc');
-      assert.strictEqual(func('abc', 3), 'abc');
+      assert.strictEqual(func(string, 2), string);
+      assert.strictEqual(func(string, 3), string);
     });
 
     QUnit.test('`_.' + methodName + '` should treat negative `length` as `0`', function(assert) {
       assert.expect(2);
 
       lodashStable.each([0, -2], function(length) {
-        assert.strictEqual(func('abc', length), 'abc');
+        assert.strictEqual(func(string, length), string);
       });
     });
 
@@ -16345,8 +16352,8 @@
       assert.expect(2);
 
       lodashStable.each(['', '4'], function(length) {
-        var actual = length ? (isStart ? ' abc' : 'abc ') : 'abc';
-        assert.strictEqual(func('abc', length), actual);
+        var actual = length ? (isStart ? ' abc' : 'abc ') : string;
+        assert.strictEqual(func(string, length), actual);
       });
     });
 
@@ -16359,6 +16366,19 @@
         assert.strictEqual(func(undefined, 2, chars), expected);
         assert.strictEqual(func('', 2, chars), expected);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `string` when `chars` coerces to an empty string', function(assert) {
+      assert.expect(1);
+
+      var values = ['', Object('')],
+          expected = lodashStable.map(values, lodashStable.constant(string));
+
+      var actual = lodashStable.map(values, function(value) {
+        return _.pad(string, 6, value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   });
 

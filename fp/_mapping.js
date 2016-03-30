@@ -57,8 +57,8 @@ exports.aryMethod = {
     'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
   ],
   '2': [
-    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindKey',
-    'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
+    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
+    'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
     'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
     'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith',
     'eq', 'every', 'filter', 'find', 'find', 'findIndex', 'findKey', 'findLast',

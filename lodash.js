@@ -12571,7 +12571,7 @@
      * console.log(object.a[0].b.c);
      * // => 4
      *
-     * _.set(object, 'x[0].y.z', 5);
+     * _.set(object, ['x', '0', 'y', 'z'], 5);
      * console.log(object.x[0].y.z);
      * // => 5
      */
@@ -12734,7 +12734,7 @@
      * console.log(object);
      * // => { 'a': [{ 'b': {} }] };
      *
-     * _.unset(object, 'a[0].b.c');
+     * _.unset(object, ['a', '0', 'b', 'c']);
      * // => true
      *
      * console.log(object);

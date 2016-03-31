@@ -19,7 +19,7 @@
     "istanbul": "0.4.2",
     "jquery": "^2.2.2",
     "jscs": "^2.11.0",
-    "lodash": "4.5.0",
+    "lodash": "4.7.0",
     "platform": "^1.3.1",
     "qunit-extras": "^1.5.0",
     "qunitjs": "~1.23.0",

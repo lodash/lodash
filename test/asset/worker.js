@@ -5,7 +5,10 @@ addEventListener('message', function(e) {
     try {
       importScripts('../' + e.data);
     } catch (e) {
-      self._ = { 'VERSION': e.message };
+      var lineNumber = e.lineNumber,
+          message = (lineNumber == null ? '' : (lineNumber + ': ')) + e.message;
+
+      self._ = { 'VERSION': message };
     }
     postMessage(_.VERSION);
   }

@@ -10838,7 +10838,9 @@
         return false;
       }
       if (isFunction(value)) {
-        return reIsNative.test(funcToString.call(value));
+        try {
+          return reIsNative.test(funcToString.call(value));
+        } catch (e) {}
       }
       return isObjectLike(value) &&
         (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);

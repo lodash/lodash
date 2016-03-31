@@ -5534,7 +5534,7 @@
     QUnit.test('should iterate over an object with numeric keys (test in Mobile Safari 8)', function(assert) {
       assert.expect(1);
 
-      // Trigger a Mobile Safari 8 JIT bug.
+      // Trigger a mobile Safari 8 JIT bug.
       // See https://github.com/lodash/lodash/issues/799.
       var counter = 0,
           object = { '1': 'foo', '8': 'bar', '50': 'baz' };
@@ -10914,10 +10914,10 @@
       // See https://code.google.com/p/v8/issues/detail?id=2291.
       var object = {};
 
-      // 1: Useless comparison statement, this is half the trigger.
+      // First, have a comparison statement.
       object == object;
 
-      // 2: Initial check with object, this is the other half of the trigger.
+      // Then perform the check with `object`.
       _.isObject(object);
 
       assert.strictEqual(_.isObject('a'), false);

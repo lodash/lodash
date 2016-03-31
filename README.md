@@ -27,14 +27,13 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
  * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.6.1/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
-## Why Lodash?
+## What to Use Lodash For and When To Use It
 
-Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
-numbers, objects, strings, etc. Lodash’s modular methods are great for:
+LoDash is a hassle-free way of handling Javascripts datatypes, by using small packages of pre-written code called modules to achieve programming goals.
 
-* Iterating arrays, objects, & strings
-* Manipulating & testing values
-* Creating composite functions
+These modules are organized together into a powerful utility library that improves the performance of your code, and gives you a few bonuses.
+
+One way you would use it is if you wanted to cycle or iterate through the information in an object or array (two common JavaScript datatype) in a special way. Another is to build functions (methods of handling tasks) that contain other functions.
 
 ## Module Formats
 

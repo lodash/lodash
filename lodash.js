@@ -12539,9 +12539,9 @@
           index = length;
           value = defaultValue;
         }
-        object = value = isFunction(value) ? value.call(object) : value;
+        object = isFunction(value) ? value.call(object) : value;
       }
-      return value;
+      return object;
     }
 
     /**

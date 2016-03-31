@@ -102,7 +102,8 @@ Methods with a fixed arity of four have an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[4]) %>
 
 Methods with custom argument orders:<br>
-<%= _.map(mapping.methodRearg, function(orders, methodName) {
+<%= _.map(_.keys(mapping.methodRearg), function(methodName) {
+  var orders = mapping.methodRearg[methodName];
   return ' * `_.' + methodName + '` has an order of ' + toArgOrder(orders);
 }).join('\n') %>
 
@@ -124,7 +125,8 @@ Methods created to accommodate Lodash’s variadic methods:<br>
 #### Aliases
 
 There are <%= _.size(mapping.aliasToReal) %> method aliases:<br>
-<%= _.map(mapping.aliasToReal, function(realName, alias) {
+<%= _.map(_.keys(mapping.aliasToReal).sort(), function(alias) {
+  var realName = mapping.aliasToReal[alias];
   return ' * `_.' + alias + '` is an alias of `_.' + realName + '`';
 }).join('\n') %>
 

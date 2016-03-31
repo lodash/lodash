@@ -3056,6 +3056,16 @@
   QUnit.module('lodash.concat');
 
   (function() {
+    QUnit.test('should shallow clone `array`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3],
+          actual = _.concat(array);
+
+      assert.deepEqual(actual, array);
+      assert.notStrictEqual(actual, array);
+    });
+
     QUnit.test('should concat arrays and values', function(assert) {
       assert.expect(2);
 

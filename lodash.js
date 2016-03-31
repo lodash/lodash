@@ -5353,9 +5353,9 @@
         var index = -1,
             length = path.length;
 
-        while (object != null && ++index < length) {
+        while (++index < length) {
           var key = path[index];
-          if (!(result = hasFunc(object, key))) {
+          if (!(result = object != null && hasFunc(object, key))) {
             break;
           }
           object = object[key];

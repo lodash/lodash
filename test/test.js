@@ -7128,12 +7128,16 @@
     });
 
     QUnit.test('`_.' + methodName + '` should support deep paths', function(assert) {
-      assert.expect(2);
+      assert.expect(4);
 
       var object = { 'a': { 'b': { 'c': 3 } } };
 
       lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
         assert.strictEqual(func(object, path), true);
+      });
+
+      lodashStable.each(['a.c.b', ['a', 'c', 'b']], function(path) {
+        assert.strictEqual(func(object, path), false);
       });
     });
 
@@ -7265,6 +7269,21 @@
       lodashStable.each(['constructor', ['constructor']], function(path) {
         var actual = lodashStable.map(values, function(value) {
           return func(value, path);
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `false` when nested `object` is nullish', function(assert) {
+      assert.expect(2);
+
+      var values = [null, undefined],
+          expected = lodashStable.map(values, alwaysFalse);
+
+      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = lodashStable.map(values, function(value) {
+          return func({ 'a': value }, path);
         });
 
         assert.deepEqual(actual, expected);

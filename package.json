@@ -15,13 +15,11 @@
     "dojo": "^1.11.0",
     "ecstatic": "^1.4.0",
     "fs-extra": "~0.26.7",
-    "ghooks": "^1.1.1",
     "glob": "^7.0.3",
     "istanbul": "0.4.2",
     "jquery": "^2.2.2",
     "jscs": "^2.11.0",
     "lodash": "4.5.0",
-    "opt-cli": "^1.4.0",
     "platform": "^1.3.1",
     "qunit-extras": "^1.5.0",
     "qunitjs": "~1.23.0",
@@ -50,10 +48,5 @@
     "test:fp": "node test/test-fp",
     "test:main": "node test/test",
     "validate": "npm run style & npm run test & wait"
-  },
-  "config": {
-    "ghooks": {
-      "pre-push": "opt --in pre-push --exec \"npm run validate\""
-    }
   }
 }

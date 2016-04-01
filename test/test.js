@@ -7243,7 +7243,7 @@
     });
 
     QUnit.test('`_.' + methodName + '` should return `true` for index values within bounds for arrays, `arguments` objects, and strings', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var string = Object('abc');
       delete args[0];
@@ -7254,6 +7254,16 @@
 
       var actual = lodashStable.map(values, function(value) {
         return func(value, 0);
+      });
+
+      assert.deepEqual(actual, expected);
+
+      expected = lodashStable.map(values, lodashStable.constant([true, true]));
+
+      actual = lodashStable.map(values, function(value) {
+        return lodashStable.map(['a[0]', ['a', '0']], function(path) {
+          return func({ 'a': value }, path);
+        });
       });
 
       assert.deepEqual(actual, expected);

@@ -5345,7 +5345,8 @@
     function hasPath(object, path, hasFunc) {
       path = isKey(path, object) ? [path] : baseCastPath(path);
 
-      var index = -1,
+      var result,
+          index = -1,
           length = path.length;
 
       while (++index < length) {

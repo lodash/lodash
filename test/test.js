@@ -7275,22 +7275,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return `false` when nested `object` is nullish', function(assert) {
-      assert.expect(2);
-
-      var values = [null, undefined],
-          expected = lodashStable.map(values, alwaysFalse);
-
-      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
-        var actual = lodashStable.map(values, function(value) {
-          return func({ 'a': value }, path);
-        });
-
-        assert.deepEqual(actual, expected);
-      });
-    });
-
-    QUnit.test('`_.' + methodName + '` should return `false` with deep paths when `object` is nullish', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `false` for deep paths when `object` is nullish', function(assert) {
       assert.expect(2);
 
       var values = [null, undefined],
@@ -7305,13 +7290,19 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return `false` if parts of `path` are missing', function(assert) {
-      assert.expect(4);
+    QUnit.test('`_.' + methodName + '` should return `false` for nested nullish values', function(assert) {
+      assert.expect(2);
 
-      var object = {};
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, alwaysFalse);
 
-      lodashStable.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
-        assert.strictEqual(func(object, path), false);
+      lodashStable.each(['a.b.c', ['a', 'b', 'c']], function(path) {
+        var actual = lodashStable.map(values, function(value, index) {
+          var object = index ? { 'a': value } : {};
+          return func(object, path);
+        });
+
+        assert.deepEqual(actual, expected);
       });
     });
   });

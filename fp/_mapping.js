@@ -164,6 +164,10 @@ exports.methodRearg = {
 exports.methodSpread = {
   'invokeArgs': 2,
   'invokeArgsMap': 2,
+  'over': 0,
+  'overArgs': 1,
+  'overEvery': 0,
+  'overSome': 0,
   'partial': 1,
   'partialRight': 1,
   'without': 1
@@ -263,6 +267,7 @@ exports.skipRearg = {
   'matchesProperty': true,
   'merge': true,
   'multiply': true,
+  'overArgs': true,
   'partial': true,
   'partialRight': true,
   'random': true,

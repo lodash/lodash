@@ -15564,13 +15564,6 @@
       assert.deepEqual(over(5, 10), [10, 100]);
     });
 
-    QUnit.test('should flatten `transforms`', function(assert) {
-      assert.expect(1);
-
-      var over = _.overArgs(fn, [doubled, square], String);
-      assert.deepEqual(over(5, 10, 15), [10, 100, '15']);
-    });
-
     QUnit.test('should not transform any argument greater than the number of transforms', function(assert) {
       assert.expect(1);
 
@@ -16097,13 +16090,6 @@
       assert.strictEqual(over(object), false);
     });
 
-    QUnit.test('should flatten `predicates`', function(assert) {
-      assert.expect(1);
-
-      var over = _.overEvery(alwaysTrue, [alwaysFalse]);
-      assert.strictEqual(over(), false);
-    });
-
     QUnit.test('should provide arguments to predicates', function(assert) {
       assert.expect(1);
 
@@ -16197,13 +16183,6 @@
 
       over = _.overSome({ 'b': 1 }, { 'a': 2 });
       assert.strictEqual(over(object), false);
-    });
-
-    QUnit.test('should flatten `predicates`', function(assert) {
-      assert.expect(1);
-
-      var over = _.overSome(alwaysFalse, [alwaysTrue]);
-      assert.strictEqual(over(), true);
     });
 
     QUnit.test('should provide arguments to predicates', function(assert) {

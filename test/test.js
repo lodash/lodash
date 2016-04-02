@@ -786,7 +786,7 @@
     });
 
     QUnit.test('should avoid non-native built-ins', function(assert) {
-      assert.expect(6);
+      assert.expect(7);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -809,6 +809,14 @@
         }
         var label = message('_.keysIn', 'Object#propertyIsEnumerable');
         assert.deepEqual(actual, ['a', 'b'], label);
+
+        try {
+          var actual = lodashBizarro.isEmpty({});
+        } catch (e) {
+          actual = null;
+        }
+        var label = message('_.isEmpty', 'Object#propertyIsEnumerable');
+        assert.strictEqual(actual, true, label);
 
         try {
           actual = [
@@ -875,7 +883,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipAssert(assert, 6);
+        skipAssert(assert, 7);
       }
     });
   }());

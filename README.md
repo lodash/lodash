@@ -1,6 +1,6 @@
 # lodash v4.7.0
 
-The [lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
+The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 ```bash

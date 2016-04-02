@@ -19513,8 +19513,8 @@
         return value === undefined ? array : [];
       });
 
-      var actual = lodashStable.map(falsey, function(end) {
-        return _.slice(array, 0, end);
+      var actual = lodashStable.map(falsey, function(end, index) {
+        return index ? _.slice(array, 0, end) : _.slice(array, 0);
       });
 
       assert.deepEqual(actual, expected);

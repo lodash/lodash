@@ -1,4 +1,4 @@
-define(['./_baseIsEqual', './get', './hasIn'], function(baseIsEqual, get, hasIn) {
+define(['./_baseIsEqual', './get', './hasIn', './_isKey', './_isStrictComparable', './_matchesStrictComparable'], function(baseIsEqual, get, hasIn, isKey, isStrictComparable, matchesStrictComparable) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -16,6 +16,9 @@ define(['./_baseIsEqual', './get', './hasIn'], function(baseIsEqual, get, hasIn)
    * @returns {Function} Returns the new function.
    */
   function baseMatchesProperty(path, srcValue) {
+    if (isKey(path) && isStrictComparable(srcValue)) {
+      return matchesStrictComparable(path, srcValue);
+    }
     return function(object) {
       var objValue = get(object, path);
       return (objValue === undefined && objValue === srcValue)

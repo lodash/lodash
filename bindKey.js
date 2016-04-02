@@ -6,8 +6,8 @@ define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'],
       PARTIAL_FLAG = 32;
 
   /**
-   * Creates a function that invokes the method at `object[key]` and prepends
-   * any additional `_.bindKey` arguments to those provided to the bound function.
+   * Creates a function that invokes the method at `object[key]` with `partials`
+   * prepended to the arguments it receives.
    *
    * This method differs from `_.bind` by allowing bound functions to reference
    * methods that may be redefined or don't yet exist. See

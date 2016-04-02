@@ -1,6 +1,6 @@
-# lodash-amd v4.7.0
+# lodash-amd v4.8.0
 
-The [lodash](https://lodash.com/) library exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
+The [Lodash](https://lodash.com/) library exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 ```bash
@@ -27,4 +27,4 @@ require({
 });
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.7.0-amd) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.8.0-amd) for more details.

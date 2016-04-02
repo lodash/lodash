@@ -2,13 +2,13 @@ define(['./_arrayEvery', './_createOver'], function(arrayEvery, createOver) {
 
   /**
    * Creates a function that checks if **all** of the `predicates` return
-   * truthy when invoked with the arguments provided to the created function.
+   * truthy when invoked with the arguments it receives.
    *
    * @static
    * @memberOf _
    * @since 4.0.0
    * @category Util
-   * @param {...(Function|Function[])} predicates The predicates to check.
+   * @param {...Function} predicates The predicates to check.
    * @returns {Function} Returns the new function.
    * @example
    *

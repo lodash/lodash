@@ -1,6 +1,9 @@
-define(['./isFunction', './_isHostObject', './isObjectLike'], function(isFunction, isHostObject, isObjectLike) {
+define(['./isFunction', './_isHostObject', './isObject', './_toSource'], function(isFunction, isHostObject, isObject, toSource) {
 
-  /** Used to match `RegExp` [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns). */
+  /**
+   * Used to match `RegExp`
+   * [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns).
+   */
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
   /** Used to detect host constructors (Safari). */
@@ -40,14 +43,11 @@ define(['./isFunction', './_isHostObject', './isObjectLike'], function(isFunctio
    * // => false
    */
   function isNative(value) {
-    if (value == null) {
+    if (!isObject(value)) {
       return false;
     }
-    if (isFunction(value)) {
-      return reIsNative.test(funcToString.call(value));
-    }
-    return isObjectLike(value) &&
-      (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
+    var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+    return pattern.test(toSource(value));
   }
 
   return isNative;

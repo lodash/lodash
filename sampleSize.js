@@ -1,4 +1,7 @@
-define(['./_baseClamp', './_baseRandom', './toArray', './toInteger'], function(baseClamp, baseRandom, toArray, toInteger) {
+define(['./_baseClamp', './_baseRandom', './_isIterateeCall', './toArray', './toInteger'], function(baseClamp, baseRandom, isIterateeCall, toArray, toInteger) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /**
    * Gets `n` random elements at unique keys from `collection` up to the
@@ -9,7 +12,8 @@ define(['./_baseClamp', './_baseRandom', './toArray', './toInteger'], function(b
    * @since 4.0.0
    * @category Collection
    * @param {Array|Object} collection The collection to sample.
-   * @param {number} [n=0] The number of elements to sample.
+   * @param {number} [n=1] The number of elements to sample.
+   * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
    * @returns {Array} Returns the random elements.
    * @example
    *
@@ -19,13 +23,17 @@ define(['./_baseClamp', './_baseRandom', './toArray', './toInteger'], function(b
    * _.sampleSize([1, 2, 3], 4);
    * // => [2, 3, 1]
    */
-  function sampleSize(collection, n) {
+  function sampleSize(collection, n, guard) {
     var index = -1,
         result = toArray(collection),
         length = result.length,
         lastIndex = length - 1;
 
-    n = baseClamp(toInteger(n), 0, length);
+    if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
+      n = 1;
+    } else {
+      n = baseClamp(toInteger(n), 0, length);
+    }
     while (++index < n) {
       var rand = baseRandom(index, lastIndex),
           value = result[rand];

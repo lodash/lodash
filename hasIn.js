@@ -27,7 +27,7 @@ define(['./_baseHasIn', './_hasPath'], function(baseHasIn, hasPath) {
    * // => false
    */
   function hasIn(object, path) {
-    return hasPath(object, path, baseHasIn);
+    return object != null && hasPath(object, path, baseHasIn);
   }
 
   return hasIn;

@@ -21,7 +21,7 @@ define(['./_baseUnset'], function(baseUnset) {
    * console.log(object);
    * // => { 'a': [{ 'b': {} }] };
    *
-   * _.unset(object, 'a[0].b.c');
+   * _.unset(object, ['a', '0', 'b', 'c']);
    * // => true
    *
    * console.log(object);

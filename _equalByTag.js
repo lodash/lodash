@@ -77,7 +77,8 @@ define(['./_Symbol', './_Uint8Array', './_equalArrays', './_mapToArray', './_set
       case regexpTag:
       case stringTag:
         // Coerce regexes to strings and treat strings, primitives and objects,
-        // as equal. See https://es5.github.io/#x15.10.6.4 for more details.
+        // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+        // for more details.
         return object == (other + '');
 
       case mapTag:

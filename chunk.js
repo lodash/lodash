@@ -1,4 +1,7 @@
-define(['./_baseSlice', './toInteger'], function(baseSlice, toInteger) {
+define(['./_baseSlice', './_isIterateeCall', './toInteger'], function(baseSlice, isIterateeCall, toInteger) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeCeil = Math.ceil,
@@ -14,7 +17,8 @@ define(['./_baseSlice', './toInteger'], function(baseSlice, toInteger) {
    * @since 3.0.0
    * @category Array
    * @param {Array} array The array to process.
-   * @param {number} [size=0] The length of each chunk.
+   * @param {number} [size=1] The length of each chunk
+   * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
    * @returns {Array} Returns the new array containing chunks.
    * @example
    *
@@ -24,9 +28,12 @@ define(['./_baseSlice', './toInteger'], function(baseSlice, toInteger) {
    * _.chunk(['a', 'b', 'c', 'd'], 3);
    * // => [['a', 'b', 'c'], ['d']]
    */
-  function chunk(array, size) {
-    size = nativeMax(toInteger(size), 0);
-
+  function chunk(array, size, guard) {
+    if ((guard ? isIterateeCall(array, size, guard) : size === undefined)) {
+      size = 1;
+    } else {
+      size = nativeMax(toInteger(size), 0);
+    }
     var length = array ? array.length : 0;
     if (!length || size < 1) {
       return [];

@@ -8,8 +8,8 @@ define(['./_baseIteratee', './_createInverter'], function(baseIteratee, createIn
 
   /**
    * This method is like `_.invert` except that the inverted object is generated
-   * from the results of running each element of `object` through `iteratee`.
-   * The corresponding inverted value of each inverted key is an array of keys
+   * from the results of running each element of `object` thru `iteratee`. The
+   * corresponding inverted value of each inverted key is an array of keys
    * responsible for generating the inverted value. The iteratee is invoked
    * with one argument: (value).
    *

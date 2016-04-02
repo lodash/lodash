@@ -1,7 +1,4 @@
-define(['./_baseIsMatch', './_getMatchData'], function(baseIsMatch, getMatchData) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_baseIsMatch', './_getMatchData', './_matchesStrictComparable'], function(baseIsMatch, getMatchData, matchesStrictComparable) {
 
   /**
    * The base implementation of `_.matches` which doesn't clone `source`.
@@ -13,16 +10,7 @@ define(['./_baseIsMatch', './_getMatchData'], function(baseIsMatch, getMatchData
   function baseMatches(source) {
     var matchData = getMatchData(source);
     if (matchData.length == 1 && matchData[0][2]) {
-      var key = matchData[0][0],
-          value = matchData[0][1];
-
-      return function(object) {
-        if (object == null) {
-          return false;
-        }
-        return object[key] === value &&
-          (value !== undefined || (key in Object(object)));
-      };
+      return matchesStrictComparable(matchData[0][0], matchData[0][1]);
     }
     return function(object) {
       return object === source || baseIsMatch(object, source, matchData);

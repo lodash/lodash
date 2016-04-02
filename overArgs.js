@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply, arrayMap, baseIteratee, rest) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
@@ -12,7 +12,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'
    * @memberOf _
    * @category Function
    * @param {Function} func The function to wrap.
-   * @param {...(Function|Function[])} [transforms] The functions to transform
+   * @param {...Function} [transforms] The functions to transform
    * arguments, specified individually or in arrays.
    * @returns {Function} Returns the new function.
    * @example
@@ -36,7 +36,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'
    * // => [100, 10]
    */
   var overArgs = rest(function(func, transforms) {
-    transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
+    transforms = arrayMap(transforms, baseIteratee);
 
     var funcsLength = transforms.length;
     return rest(function(args) {

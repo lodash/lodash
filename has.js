@@ -28,7 +28,7 @@ define(['./_baseHas', './_hasPath'], function(baseHas, hasPath) {
    * // => false
    */
   function has(object, path) {
-    return hasPath(object, path, baseHas);
+    return object != null && hasPath(object, path, baseHas);
   }
 
   return has;

@@ -29,7 +29,7 @@ import hasPath from './_hasPath';
  * // => false
  */
 function has(object, path) {
-  return hasPath(object, path, baseHas);
+  return object != null && hasPath(object, path, baseHas);
 }
 
 export default has;

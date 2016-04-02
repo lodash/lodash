@@ -28,7 +28,7 @@ import hasPath from './_hasPath';
  * // => false
  */
 function hasIn(object, path) {
-  return hasPath(object, path, baseHasIn);
+  return object != null && hasPath(object, path, baseHasIn);
 }
 
 export default hasIn;

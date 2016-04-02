@@ -1,6 +1,9 @@
 import baseIsEqual from './_baseIsEqual';
 import get from './get';
 import hasIn from './hasIn';
+import isKey from './_isKey';
+import isStrictComparable from './_isStrictComparable';
+import matchesStrictComparable from './_matchesStrictComparable';
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,
@@ -15,6 +18,9 @@ var UNORDERED_COMPARE_FLAG = 1,
  * @returns {Function} Returns the new function.
  */
 function baseMatchesProperty(path, srcValue) {
+  if (isKey(path) && isStrictComparable(srcValue)) {
+    return matchesStrictComparable(path, srcValue);
+  }
   return function(object) {
     var objValue = get(object, path);
     return (objValue === undefined && objValue === srcValue)

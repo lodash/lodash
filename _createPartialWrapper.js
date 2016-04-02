@@ -6,9 +6,8 @@ import root from './_root';
 var BIND_FLAG = 1;
 
 /**
- * Creates a function that wraps `func` to invoke it with the optional `this`
- * binding of `thisArg` and the `partials` prepended to those provided to
- * the wrapper.
+ * Creates a function that wraps `func` to invoke it with the `this` binding
+ * of `thisArg` and `partials` prepended to the arguments it receives.
  *
  * @private
  * @param {Function} func The function to wrap.

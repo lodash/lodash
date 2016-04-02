@@ -4,8 +4,8 @@ import createWrapper from './_createWrapper';
 var ARY_FLAG = 128;
 
 /**
- * Creates a function that accepts up to `n` arguments, ignoring any
- * additional arguments.
+ * Creates a function that invokes `func`, with up to `n` arguments,
+ * ignoring any additional arguments.
  *
  * @static
  * @memberOf _

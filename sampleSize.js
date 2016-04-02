@@ -1,5 +1,6 @@
 import baseClamp from './_baseClamp';
 import baseRandom from './_baseRandom';
+import isIterateeCall from './_isIterateeCall';
 import toArray from './toArray';
 import toInteger from './toInteger';
 
@@ -12,7 +13,8 @@ import toInteger from './toInteger';
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to sample.
- * @param {number} [n=0] The number of elements to sample.
+ * @param {number} [n=1] The number of elements to sample.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
  * @returns {Array} Returns the random elements.
  * @example
  *
@@ -22,13 +24,17 @@ import toInteger from './toInteger';
  * _.sampleSize([1, 2, 3], 4);
  * // => [2, 3, 1]
  */
-function sampleSize(collection, n) {
+function sampleSize(collection, n, guard) {
   var index = -1,
       result = toArray(collection),
       length = result.length,
       lastIndex = length - 1;
 
-  n = baseClamp(toInteger(n), 0, length);
+  if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
+    n = 1;
+  } else {
+    n = baseClamp(toInteger(n), 0, length);
+  }
   while (++index < n) {
     var rand = baseRandom(index, lastIndex),
         value = result[rand];

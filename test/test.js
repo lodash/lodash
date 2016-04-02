@@ -2385,14 +2385,28 @@
       assert.deepEqual(actual, [[0, 1, 2, 3], [4, 5]]);
     });
 
+    QUnit.test('should treat falsey `size` values, except `undefined`, as `0`', function(assert) {
+      assert.expect(1);
+
+      var expected = lodashStable.map(falsey, function(value) {
+        return value === undefined ? [[0], [1], [2], [3], [4], [5]] : [];
+      });
+
+      var actual = lodashStable.map(falsey, function(size, index) {
+        return index ? _.chunk(array, size) : _.chunk(array);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should ensure the minimum `size` is `0`', function(assert) {
       assert.expect(1);
 
-      var values = falsey.concat(-1, -Infinity),
+      var values = lodashStable.reject(falsey, lodashStable.isUndefined).concat(-1, -Infinity),
           expected = lodashStable.map(values, alwaysEmptyArray);
 
-      var actual = lodashStable.map(values, function(value, index) {
-        return index ? _.chunk(array, value) : _.chunk(array);
+      var actual = lodashStable.map(values, function(n) {
+        return _.chunk(array, n);
       });
 
       assert.deepEqual(actual, expected);
@@ -2402,6 +2416,13 @@
       assert.expect(1);
 
       assert.deepEqual(_.chunk(array, array.length / 4), [[0], [1], [2], [3], [4], [5]]);
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map([[1, 2], [3, 4]], _.chunk);
+      assert.deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
   }());
 

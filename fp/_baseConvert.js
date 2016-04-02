@@ -1,6 +1,6 @@
 var mapping = require('./_mapping'),
     mutateMap = mapping.mutate,
-    fallbackHolder = {};
+    fallbackHolder = require('./placeholder');
 
 /**
  * The base implementation of `convert` which accepts a `util` object of methods

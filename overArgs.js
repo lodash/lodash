@@ -1,6 +1,5 @@
 var apply = require('./_apply'),
     arrayMap = require('./_arrayMap'),
-    baseFlatten = require('./_baseFlatten'),
     baseIteratee = require('./_baseIteratee'),
     rest = require('./rest');
 
@@ -16,7 +15,7 @@ var nativeMin = Math.min;
  * @memberOf _
  * @category Function
  * @param {Function} func The function to wrap.
- * @param {...(Function|Function[])} [transforms] The functions to transform
+ * @param {...Function} [transforms] The functions to transform
  * arguments, specified individually or in arrays.
  * @returns {Function} Returns the new function.
  * @example
@@ -40,7 +39,7 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
+  transforms = arrayMap(transforms, baseIteratee);
 
   var funcsLength = transforms.length;
   return rest(function(args) {

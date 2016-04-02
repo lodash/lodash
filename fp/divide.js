@@ -1,2 +1,5 @@
-var convert = require('./convert');
-module.exports = convert('divide', require('../divide'));
+var convert = require('./convert'),
+    func = convert('divide', require('../divide'));
+
+func.placeholder = require('./placeholder');
+module.exports = func;

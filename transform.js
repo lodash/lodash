@@ -10,11 +10,11 @@ var arrayEach = require('./_arrayEach'),
 
 /**
  * An alternative to `_.reduce`; this method transforms `object` to a new
- * `accumulator` object which is the result of running each of its own enumerable
- * string keyed properties through `iteratee`, with each invocation potentially
- * mutating the `accumulator` object. The iteratee is invoked with four arguments:
- * (accumulator, value, key, object). Iteratee functions may exit iteration
- * early by explicitly returning `false`.
+ * `accumulator` object which is the result of running each of its own
+ * enumerable string keyed properties thru `iteratee`, with each invocation
+ * potentially mutating the `accumulator` object. The iteratee is invoked
+ * with four arguments: (accumulator, value, key, object). Iteratee functions
+ * may exit iteration early by explicitly returning `false`.
  *
  * @static
  * @memberOf _

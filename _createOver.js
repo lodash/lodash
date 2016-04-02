@@ -1,6 +1,5 @@
 var apply = require('./_apply'),
     arrayMap = require('./_arrayMap'),
-    baseFlatten = require('./_baseFlatten'),
     baseIteratee = require('./_baseIteratee'),
     rest = require('./rest');
 
@@ -13,7 +12,7 @@ var apply = require('./_apply'),
  */
 function createOver(arrayFunc) {
   return rest(function(iteratees) {
-    iteratees = arrayMap(baseFlatten(iteratees, 1), baseIteratee);
+    iteratees = arrayMap(iteratees, baseIteratee);
     return rest(function(args) {
       var thisArg = this;
       return arrayFunc(iteratees, function(iteratee) {

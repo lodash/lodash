@@ -1,2 +1,5 @@
-var convert = require('./convert');
-module.exports = convert('bindAll', require('../bindAll'));
+var convert = require('./convert'),
+    func = convert('bindAll', require('../bindAll'));
+
+func.placeholder = require('./placeholder');
+module.exports = func;

@@ -3,8 +3,8 @@ var baseFlatten = require('./_baseFlatten'),
 
 /**
  * Creates a flattened array of values by running each element in `collection`
- * through `iteratee` and flattening the mapped results. The iteratee is
- * invoked with three arguments: (value, index|key, collection).
+ * thru `iteratee` and flattening the mapped results. The iteratee is invoked
+ * with three arguments: (value, index|key, collection).
  *
  * @static
  * @memberOf _

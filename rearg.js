@@ -7,7 +7,7 @@ var REARG_FLAG = 256;
 
 /**
  * Creates a function that invokes `func` with arguments arranged according
- * to the specified indexes where the argument value at the first index is
+ * to the specified `indexes` where the argument value at the first index is
  * provided as the first argument, the argument value at the second index is
  * provided as the second argument, and so on.
  *

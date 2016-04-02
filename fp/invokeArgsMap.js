@@ -1,2 +1,5 @@
-var convert = require('./convert');
-module.exports = convert('invokeArgsMap', require('../invokeMap'));
+var convert = require('./convert'),
+    func = convert('invokeArgsMap', require('../invokeMap'));
+
+func.placeholder = require('./placeholder');
+module.exports = func;

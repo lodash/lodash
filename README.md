@@ -1,6 +1,6 @@
-# lodash v4.7.0
+# lodash v4.8.0
 
-The [lodash](https://lodash.com/) library exported as [Node.js](https://nodejs.org/) modules.
+The [Lodash](https://lodash.com/) library exported as [Node.js](https://nodejs.org/) modules.
 
 ## Installation
 
@@ -28,11 +28,11 @@ var chunk = require('lodash/chunk');
 var extend = require('lodash/fp/extend');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.7.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.8.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` when in the REPL.<br>
-Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes lodash by default.
+Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes `lodash` by default.
 
 ## Support
 

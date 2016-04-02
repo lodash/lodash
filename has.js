@@ -29,7 +29,7 @@ var baseHas = require('./_baseHas'),
  * // => false
  */
 function has(object, path) {
-  return hasPath(object, path, baseHas);
+  return object != null && hasPath(object, path, baseHas);
 }
 
 module.exports = has;

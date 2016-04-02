@@ -1,2 +1,5 @@
-var convert = require('./convert');
-module.exports = convert('flattenDepth', require('../flattenDepth'));
+var convert = require('./convert'),
+    func = convert('flattenDepth', require('../flattenDepth'));
+
+func.placeholder = require('./placeholder');
+module.exports = func;

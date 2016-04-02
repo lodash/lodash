@@ -1,2 +1,5 @@
-var convert = require('./convert');
-module.exports = convert('multiply', require('../multiply'));
+var convert = require('./convert'),
+    func = convert('multiply', require('../multiply'));
+
+func.placeholder = require('./placeholder');
+module.exports = func;

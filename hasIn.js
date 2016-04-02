@@ -28,7 +28,7 @@ var baseHasIn = require('./_baseHasIn'),
  * // => false
  */
 function hasIn(object, path) {
-  return hasPath(object, path, baseHasIn);
+  return object != null && hasPath(object, path, baseHasIn);
 }
 
 module.exports = hasIn;

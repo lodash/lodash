@@ -8,7 +8,7 @@ var PARTIAL_RIGHT_FLAG = 64;
 
 /**
  * This method is like `_.partial` except that partially applied arguments
- * are appended to those provided to the new function.
+ * are appended to the arguments it receives.
  *
  * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.

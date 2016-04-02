@@ -1,4 +1,5 @@
 var baseRepeat = require('./_baseRepeat'),
+    isIterateeCall = require('./_isIterateeCall'),
     toInteger = require('./toInteger'),
     toString = require('./toString');
 
@@ -10,7 +11,8 @@ var baseRepeat = require('./_baseRepeat'),
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to repeat.
- * @param {number} [n=0] The number of times to repeat the string.
+ * @param {number} [n=1] The number of times to repeat the string.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
  * @returns {string} Returns the repeated string.
  * @example
  *
@@ -23,8 +25,13 @@ var baseRepeat = require('./_baseRepeat'),
  * _.repeat('abc', 0);
  * // => ''
  */
-function repeat(string, n) {
-  return baseRepeat(toString(string), toInteger(n));
+function repeat(string, n, guard) {
+  if ((guard ? isIterateeCall(string, n, guard) : n === undefined)) {
+    n = 1;
+  } else {
+    n = toInteger(n);
+  }
+  return baseRepeat(toString(string), n);
 }
 
 module.exports = repeat;

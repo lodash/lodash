@@ -10661,23 +10661,13 @@
     var args = arguments;
 
     QUnit.test('should return `true` for native methods', function(assert) {
-      assert.expect(6);
+      assert.expect(1);
 
-      lodashStable.each([Array, create, root.encodeURI, slice, Uint8Array], function(func) {
-        if (func) {
-          assert.strictEqual(_.isNative(func), true);
-        }
-        else {
-          skipAssert(assert);
-        }
-      });
+      var values = [Array, body && body.cloneNode, create, root.encodeURI, Promise, slice, Uint8Array],
+          expected = lodashStable.map(values, Boolean),
+          actual = lodashStable.map(values, _.isNative);
 
-      if (body) {
-        assert.strictEqual(_.isNative(body.cloneNode), true);
-      }
-      else {
-        skipAssert(assert);
-      }
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return `false` for non-native methods', function(assert) {

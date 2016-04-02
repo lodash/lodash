@@ -10855,13 +10855,11 @@
      * // => false
      */
     function isNative(value) {
-      if (value == null) {
+      if (!isObject(value)) {
         return false;
       }
-      if (isObjectLike(value)) {
-        return (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
-      }
-      return reIsNative.test(toSource(value));
+      var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+      return pattern.test(toSource(value));
     }
 
     /**

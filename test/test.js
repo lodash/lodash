@@ -18982,13 +18982,15 @@
       assert.deepEqual(actual, array);
     });
 
-    QUnit.test('should treat falsey `n` values as `0`', function(assert) {
+    QUnit.test('should treat falsey `size` values, except `undefined`, as `0`', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(falsey, alwaysEmptyArray);
+      var expected = lodashStable.map(falsey, function(value) {
+        return value === undefined ? ['a'] : [];
+      });
 
-      var actual = lodashStable.map(falsey, function(n, index) {
-        return index ? _.sampleSize([1], n) : _.sampleSize([1]);
+      var actual = lodashStable.map(falsey, function(size, index) {
+        return index ? _.sampleSize(['a'], size) : _.sampleSize(['a']);
       });
 
       assert.deepEqual(actual, expected);
@@ -19040,6 +19042,13 @@
 
       assert.strictEqual(actual.length, 2);
       assert.deepEqual(lodashStable.difference(actual, lodashStable.values(object)), []);
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map([['a']], _.sampleSize);
+      assert.deepEqual(actual, [['a']]);
     });
   }());
 
@@ -25377,7 +25386,6 @@
       'rangeRight',
       'reject',
       'remove',
-      'sampleSize',
       'shuffle',
       'sortBy',
       'tail',
@@ -25397,7 +25405,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(308);
+      assert.expect(307);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 
@@ -25435,7 +25443,7 @@
     });
 
     QUnit.test('should return an array', function(assert) {
-      assert.expect(72);
+      assert.expect(70);
 
       var array = [1, 2, 3];
 

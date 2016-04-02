@@ -1449,11 +1449,11 @@
     var realNames = {};
 
     /** Used to detect maps, sets, and weakmaps. */
-    var dataViewCtorString = DataView ? (DataView + '') : '',
-        mapCtorString = Map ? funcToString.call(Map) : '',
-        promiseCtorString = Promise ? funcToString.call(Promise) : '',
-        setCtorString = Set ? funcToString.call(Set) : '',
-        weakMapCtorString = WeakMap ? funcToString.call(WeakMap) : '';
+    var dataViewCtorString = toSource(DataView),
+        mapCtorString = toSource(Map),
+        promiseCtorString = toSource(Promise),
+        setCtorString = toSource(Set),
+        weakMapCtorString = toSource(WeakMap);
 
     /** Used to convert symbols to primitives and strings. */
     var symbolProto = Symbol ? Symbol.prototype : undefined,
@@ -5290,7 +5290,7 @@
       getTag = function(value) {
         var result = objectToString.call(value),
             Ctor = result == objectTag ? value.constructor : null,
-            ctorString = typeof Ctor == 'function' ? funcToString.call(Ctor) : '';
+            ctorString = toSource(Ctor);
 
         if (ctorString) {
           switch (ctorString) {
@@ -5738,6 +5738,22 @@
       });
       return result;
     });
+
+    /**
+     * Converts `func` to its source code.
+     *
+     * @private
+     * @param {Function} func The function to process.
+     * @returns {string} Returns the source code.
+     */
+    function toSource(func) {
+      if (isFunction(func)) {
+        try {
+          return funcToString.call(func);
+        } catch (e) {}
+      }
+      return toString(func);
+    }
 
     /**
      * Creates a clone of `wrapper`.
@@ -10842,13 +10858,10 @@
       if (value == null) {
         return false;
       }
-      if (isFunction(value)) {
-        try {
-          return reIsNative.test(funcToString.call(value));
-        } catch (e) {}
+      if (isObjectLike(value)) {
+        return (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
       }
-      return isObjectLike(value) &&
-        (isHostObject(value) ? reIsNative : reIsHostCtor).test(value);
+      return reIsNative.test(toSource(value));
     }
 
     /**

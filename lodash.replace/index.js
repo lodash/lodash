@@ -23,21 +23,17 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 var root = freeGlobal || freeSelf || Function('return this')();
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype,
-    stringProto = String.prototype;
+var objectProto = Object.prototype;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeReplace = stringProto.replace;
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,
@@ -161,7 +157,7 @@ function replace() {
   var args = arguments,
       string = toString(args[0]);
 
-  return args.length < 3 ? string : nativeReplace.call(string, args[1], args[2]);
+  return args.length < 3 ? string : string.replace(args[1], args[2]);
 }
 
 module.exports = replace;

@@ -52,9 +52,10 @@ exports.aliasToReal = {
 exports.aryMethod = {
   '1': [
     'attempt', 'castArray', 'ceil', 'create', 'curry', 'curryRight', 'floor',
-    'fromPairs', 'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin',
-    'over', 'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
-    'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
+    'flow', 'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
+    'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest', 'reverse',
+    'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
+    'uniqueId', 'words'
   ],
   '2': [
     'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
@@ -248,7 +249,17 @@ exports.remap = {
   'trimCharsStart': 'trimStart'
 };
 
-/** Used to track methods that skip `_.rearg`. */
+/** Used to track methods that skip fixing their arity. */
+exports.skipFixed = {
+  'castArray': true,
+  'flow': true,
+  'flowRight': true,
+  'iteratee': true,
+  'mixin': true,
+  'runInContext': true
+};
+
+/** Used to track methods that skip rearranging arguments. */
 exports.skipRearg = {
   'add': true,
   'assign': true,

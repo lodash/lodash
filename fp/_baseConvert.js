@@ -40,7 +40,9 @@ function baseConvert(util, name, func, options) {
     'rearg': 'rearg' in options ? options.rearg : true
   };
 
-  var forceRearg = ('rearg' in options) && options.rearg,
+  var forceCurry = ('curry' in options) && options.curry,
+      forceFixed = ('fixed' in options) && options.fixed,
+      forceRearg = ('rearg' in options) && options.rearg,
       placeholder = isLib ? func : fallbackHolder,
       pristine = isLib ? func.runInContext() : undefined;
 
@@ -116,12 +118,23 @@ function baseConvert(util, name, func, options) {
   };
 
   var convertLib = function(options) {
-    return _.runInContext.convert(options)();
+    return _.runInContext.convert(options)(undefined);
   };
 
   var createCloner = function(func) {
     return function(object) {
       return func({}, object);
+    };
+  };
+
+  var createConverter = function(name, func) {
+    var oldOptions = options;
+    return function(options) {
+      var newUtil = isLib ? pristine : helpers,
+          newFunc = isLib ? pristine[name] : func,
+          newOptions = assign(assign({}, oldOptions), options);
+
+      return baseConvert(newUtil, name, newFunc, newOptions);
     };
   };
 
@@ -232,23 +245,15 @@ function baseConvert(util, name, func, options) {
 
   var wrap = function(name, func) {
     name = mapping.aliasToReal[name] || name;
-    var wrapper = wrappers[name];
 
-    var convertMethod = function(options) {
-      var newUtil = isLib ? pristine : helpers,
-          newFunc = isLib ? pristine[name] : func,
-          newOptions = assign(assign({}, config), options);
-
-      return baseConvert(newUtil, name, newFunc, newOptions);
-    };
+    var result,
+        wrapped = func,
+        wrapper = wrappers[name];
 
     if (wrapper) {
-      var result = wrapper(func);
-      result.convert = convertMethod;
-      return result;
+      wrapped = wrapper(func);
     }
-    var wrapped = func;
-    if (config.immutable) {
+    else if (config.immutable) {
       if (mutateMap.array[name]) {
         wrapped = immutWrap(func, cloneArray);
       }
@@ -267,7 +272,7 @@ function baseConvert(util, name, func, options) {
               spreadStart = mapping.methodSpread[name];
 
           result = wrapped;
-          if (config.fixed) {
+          if (config.fixed && (forceFixed || !mapping.skipFixed[name])) {
             result = spreadStart === undefined
               ? ary(result, aryKey)
               : spread(result, spreadStart);
@@ -282,7 +287,8 @@ function baseConvert(util, name, func, options) {
               result = iterateeAry(result, aryN);
             }
           }
-          if (config.curry && aryKey > 1) {
+          if (forceCurry || (config.curry && aryKey > 1)) {
+            forceCurry  && console.log(forceCurry, name);
             result = curry(result, aryKey);
           }
           return false;
@@ -293,11 +299,11 @@ function baseConvert(util, name, func, options) {
 
     result || (result = wrapped);
     if (result == func) {
-      result = function() {
+      result = forceCurry ? curry(result, 1) : function() {
         return func.apply(this, arguments);
       };
     }
-    result.convert = convertMethod;
+    result.convert = createConverter(name, func);
     if (mapping.placeholder[name]) {
       setPlaceholder = true;
       result.placeholder = func.placeholder = placeholder;
@@ -330,7 +336,8 @@ function baseConvert(util, name, func, options) {
           return;
         }
       }
-      pairs.push([key, wrap(key, _[key])]);
+      _[key].convert = createConverter(key, _[key]);
+      pairs.push([key, _[key]]);
     }
   });
 

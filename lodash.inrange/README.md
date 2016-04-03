@@ -1,4 +1,4 @@
-# lodash.inrange v3.3.3
+# lodash.inrange v3.3.4
 
 The [lodash](https://lodash.com/) method `_.inRange` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var inRange = require('lodash.inrange');
 ```
 
-See the [documentation](https://lodash.com/docs#inRange) or [package source](https://github.com/lodash/lodash/blob/3.3.3-npm-packages/lodash.inrange) for more details.
+See the [documentation](https://lodash.com/docs#inRange) or [package source](https://github.com/lodash/lodash/blob/3.3.4-npm-packages/lodash.inrange) for more details.

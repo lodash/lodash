@@ -1,4 +1,4 @@
-# lodash.fill v3.3.3
+# lodash.fill v3.3.4
 
 The [lodash](https://lodash.com/) method `_.fill` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var fill = require('lodash.fill');
 ```
 
-See the [documentation](https://lodash.com/docs#fill) or [package source](https://github.com/lodash/lodash/blob/3.3.3-npm-packages/lodash.fill) for more details.
+See the [documentation](https://lodash.com/docs#fill) or [package source](https://github.com/lodash/lodash/blob/3.3.4-npm-packages/lodash.fill) for more details.

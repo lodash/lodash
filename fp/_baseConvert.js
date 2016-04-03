@@ -310,7 +310,7 @@ function baseConvert(util, name, func, options) {
   }
   var _ = func;
 
-  // Iterate over methods for the current ary cap.
+  // Convert methods by ary cap.
   var pairs = [];
   each(aryMethodKeys, function(aryKey) {
     each(mapping.aryMethod[aryKey], function(key) {
@@ -319,6 +319,19 @@ function baseConvert(util, name, func, options) {
         pairs.push([key, wrap(key, func)]);
       }
     });
+  });
+
+  // Convert remaining methods.
+  each(keys(_), function(key) {
+    if (typeof _[key] == 'function') {
+      var length = pairs.length;
+      while (length--) {
+        if (pairs[length][0] == key) {
+          return;
+        }
+      }
+      pairs.push([key, wrap(key, _[key])]);
+    }
   });
 
   // Assign to `_` leaving `_.prototype` unchanged to allow chaining.
@@ -330,7 +343,7 @@ function baseConvert(util, name, func, options) {
   if (setPlaceholder) {
     _.placeholder = placeholder;
   }
-  // Reassign aliases.
+  // Assign aliases.
   each(keys(_), function(key) {
     each(mapping.realToAlias[key] || [], function(alias) {
       _[alias] = _[key];

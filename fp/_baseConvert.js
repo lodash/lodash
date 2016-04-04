@@ -3,12 +3,97 @@ var mapping = require('./_mapping'),
     fallbackHolder = require('./placeholder');
 
 /**
+ * Creates a function, with an arity of `n`, that invokes `func` with the
+ * arguments it receives.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {number} n The arity of the new function.
+ * @returns {Function} Returns the new function.
+ */
+function baseArity(func, n) {
+  return n == 2
+    ? function(a, b) { return func.apply(undefined, arguments); }
+    : function(a) { return func.apply(undefined, arguments); };
+}
+
+/**
+ * Creates a function that invokes `func`, with up to `n` arguments, ignoring
+ * any additional arguments.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @param {number} n The arity cap.
+ * @returns {Function} Returns the new function.
+ */
+function baseAry(func, n) {
+  return n == 2
+    ? function(a, b) { return func(a, b); }
+    : function(a) { return func(a); };
+}
+
+/**
+ * Creates a clone of `array`.
+ *
+ * @private
+ * @param {Array} array The array to clone.
+ * @returns {Array} Returns the cloned array.
+ */
+function cloneArray(array) {
+  var length = array ? array.length : 0,
+      result = Array(length);
+
+  while (length--) {
+    result[length] = array[length];
+  }
+  return result;
+}
+
+/**
+ * Creates a function that clones a given object using the assignment `func`.
+ *
+ * @private
+ * @param {Function} func The assignment function.
+ * @returns {Function} Returns the new cloner function.
+ */
+function createCloner(func) {
+  return function(object) {
+    return func({}, object);
+  };
+}
+
+/**
+ * Creates a function that wraps `func` and uses `cloner` to clone the first
+ * argument it receives.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} cloner The function to clone arguments.
+ * @returns {Function} Returns the new immutable function.
+ */
+function immutWrap(func, cloner) {
+  return function() {
+    var length = arguments.length;
+    if (!length) {
+      return result;
+    }
+    var args = Array(length);
+    while (length--) {
+      args[length] = arguments[length];
+    }
+    var result = args[0] = cloner.apply(undefined, args);
+    func.apply(undefined, args);
+    return result;
+  };
+}
+
+/**
  * The base implementation of `convert` which accepts a `util` object of methods
  * required to perform conversions.
  *
  * @param {Object} util The util object.
- * @param {string} name The name of the function to wrap.
- * @param {Function} func The function to wrap.
+ * @param {string} name The name of the function to convert.
+ * @param {Function} func The function to convert.
  * @param {Object} [options] The options object.
  * @param {boolean} [options.cap=true] Specify capping iteratee arguments.
  * @param {boolean} [options.curry=true] Specify currying.
@@ -75,114 +160,6 @@ function baseConvert(util, name, func, options) {
 
   var aryMethodKeys = keys(mapping.aryMethod);
 
-  var baseArity = function(func, n) {
-    return n == 2
-      ? function(a, b) { return func.apply(undefined, arguments); }
-      : function(a) { return func.apply(undefined, arguments); };
-  };
-
-  var baseAry = function(func, n) {
-    return n == 2
-      ? function(a, b) { return func(a, b); }
-      : function(a) { return func(a); };
-  };
-
-  var cloneArray = function(array) {
-    var length = array ? array.length : 0,
-        result = Array(length);
-
-    while (length--) {
-      result[length] = array[length];
-    }
-    return result;
-  };
-
-  var cloneByPath = function(object, path) {
-    path = toPath(path);
-
-    var index = -1,
-        length = path.length,
-        result = clone(Object(object)),
-        nested = result;
-
-    while (nested != null && ++index < length) {
-      var key = path[index],
-          value = nested[key];
-
-      if (value != null) {
-        nested[key] = clone(Object(value));
-      }
-      nested = nested[key];
-    }
-    return result;
-  };
-
-  var convertLib = function(options) {
-    return _.runInContext.convert(options)(undefined);
-  };
-
-  var createCloner = function(func) {
-    return function(object) {
-      return func({}, object);
-    };
-  };
-
-  var createConverter = function(name, func) {
-    var oldOptions = options;
-    return function(options) {
-      var newUtil = isLib ? pristine : helpers,
-          newFunc = isLib ? pristine[name] : func,
-          newOptions = assign(assign({}, oldOptions), options);
-
-      return baseConvert(newUtil, name, newFunc, newOptions);
-    };
-  };
-
-  var immutWrap = function(func, cloner) {
-    return function() {
-      var length = arguments.length;
-      if (!length) {
-        return result;
-      }
-      var args = Array(length);
-      while (length--) {
-        args[length] = arguments[length];
-      }
-      var result = args[0] = cloner.apply(undefined, args);
-      func.apply(undefined, args);
-      return result;
-    };
-  };
-
-  var iterateeAry = function(func, n) {
-    return overArg(func, function(func) {
-      return typeof func == 'function' ? baseAry(func, n) : func;
-    });
-  };
-
-  var iterateeRearg = function(func, indexes) {
-    return overArg(func, function(func) {
-      var n = indexes.length;
-      return baseArity(rearg(baseAry(func, n), indexes), n);
-    });
-  };
-
-  var overArg = function(func, iteratee, retArg) {
-    return function() {
-      var length = arguments.length;
-      if (!length) {
-        return func();
-      }
-      var args = Array(length);
-      while (length--) {
-        args[length] = arguments[length];
-      }
-      var index = config.rearg ? 0 : (length - 1);
-      args[index] = iteratee(args[index]);
-      return func.apply(undefined, args);
-    };
-  };
-
   var wrappers = {
     'castArray': function(castArray) {
       return function() {
@@ -243,7 +220,133 @@ function baseConvert(util, name, func, options) {
     }
   };
 
-  var wrap = function(name, func) {
+  /*--------------------------------------------------------------------------*/
+
+  /**
+   * Creates a clone of `object` by `path`.
+   *
+   * @private
+   * @param {Object} object The object to clone.
+   * @param {Array|string} path The path to clone by.
+   * @returns {Object} Returns the cloned object.
+   */
+  function cloneByPath(object, path) {
+    path = toPath(path);
+
+    var index = -1,
+        length = path.length,
+        result = clone(Object(object)),
+        nested = result;
+
+    while (nested != null && ++index < length) {
+      var key = path[index],
+          value = nested[key];
+
+      if (value != null) {
+        nested[key] = clone(Object(value));
+      }
+      nested = nested[key];
+    }
+    return result;
+  }
+
+  /**
+   * Converts `lodash` to an immutable auto-curried iteratee-first data-last
+   * version with conversion `options` applied.
+   *
+   * @param {Object} [options] The options object. See `baseConvert` for more details.
+   * @returns {Function} Returns the converted `lodash`.
+   */
+  function convertLib(options) {
+    return _.runInContext.convert(options)(undefined);
+  }
+
+  /**
+   * Create a converter function for `func` of `name`.
+   *
+   * @param {string} name The name of the function to convert.
+   * @param {Function} func The function to convert.
+   * @returns {Function} Returns the new converter function.
+   */
+  function createConverter(name, func) {
+    var oldOptions = options;
+    return function(options) {
+      var newUtil = isLib ? pristine : helpers,
+          newFunc = isLib ? pristine[name] : func,
+          newOptions = assign(assign({}, oldOptions), options);
+
+      return baseConvert(newUtil, name, newFunc, newOptions);
+    };
+  }
+
+  /**
+   * Creates a function that wraps `func` to invoke its iteratee, with up to `n`
+   * arguments, ignoring any additional arguments.
+   *
+   * @private
+   * @param {Function} func The function to cap iteratee arguments for.
+   * @param {number} n The arity cap.
+   * @returns {Function} Returns the new function.
+   */
+  function iterateeAry(func, n) {
+    return overArg(func, function(func) {
+      return typeof func == 'function' ? baseAry(func, n) : func;
+    });
+  }
+
+  /**
+   * Creates a function that wraps `func` to invoke its iteratee with arguments
+   * arranged according to the specified `indexes` where the argument value at
+   * the first index is provided as the first argument, the argument value at
+   * the second index is provided as the second argument, and so on.
+   *
+   * @private
+   * @param {Function} func The function to rearrange iteratee arguments for.
+   * @param {number[]} indexes The arranged argument indexes.
+   * @returns {Function} Returns the new function.
+   */
+  function iterateeRearg(func, indexes) {
+    return overArg(func, function(func) {
+      var n = indexes.length;
+      return baseArity(rearg(baseAry(func, n), indexes), n);
+    });
+  }
+
+  /**
+   * Creates a function that invokes `func` with its first argument passed
+   * thru `transform`.
+   *
+   * @private
+   * @param {Function} func The function to wrap.
+   * @param {...Function} transform The functions to transform the first argument.
+   * @returns {Function} Returns the new function.
+   */
+  function overArg(func, transform) {
+    return function() {
+      var length = arguments.length;
+      if (!length) {
+        return func();
+      }
+      var args = Array(length);
+      while (length--) {
+        args[length] = arguments[length];
+      }
+      var index = config.rearg ? 0 : (length - 1);
+      args[index] = transform(args[index]);
+      return func.apply(undefined, args);
+    };
+  }
+
+  /**
+   * Creates a function that wraps `func` and applys the conversions
+   * rules by `name`.
+   *
+   * @private
+   * @param {string} name The name of the function to wrap.
+   * @param {Function} func The function to wrap.
+   * @returns {Function} Returns the converted function.
+   */
+  function wrap(name, func) {
     name = mapping.aliasToReal[name] || name;
 
     var result,
@@ -309,7 +412,9 @@ function baseConvert(util, name, func, options) {
       result.placeholder = func.placeholder = placeholder;
     }
     return result;
-  };
+  }
+
+  /*--------------------------------------------------------------------------*/
 
   if (!isObj) {
     return wrap(name, func);
@@ -329,15 +434,16 @@ function baseConvert(util, name, func, options) {
 
   // Convert remaining methods.
   each(keys(_), function(key) {
-    if (typeof _[key] == 'function') {
+    var func = _[key];
+    if (typeof func == 'function') {
       var length = pairs.length;
       while (length--) {
         if (pairs[length][0] == key) {
           return;
         }
       }
-      _[key].convert = createConverter(key, _[key]);
-      pairs.push([key, _[key]]);
+      func.convert = createConverter(key, func);
+      pairs.push([key, func]);
     }
   });
 

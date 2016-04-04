@@ -1,12 +1,5 @@
-var convert = require('./convert');
-
-var func = convert('<%= name %>', require('../<%= _.result(mapping.remap, name, name) %>'), {
-  'cap': false,
-  'curry': false,
-  'fixed': false,
-  'immutable': false,
-  'rearg': false
-});
+var convert = require('./convert'),
+    func = convert('<%= name %>', require('../<%= _.result(mapping.remap, name, name) %>'), require('./_falseOptions'));
 
 func.placeholder = require('./placeholder');
 module.exports = func;

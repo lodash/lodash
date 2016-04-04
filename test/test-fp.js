@@ -288,6 +288,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('method.convert');
+
+  (function() {
+    QUnit.test('should exist on unconverted methods', function(assert) {
+      assert.expect(2);
+
+      var array = [],
+          isArray = fp.isArray.convert({ 'curry': true });
+
+      assert.strictEqual(fp.isArray(array), true);
+      assert.strictEqual(isArray()(array), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('convert methods');
 
   _.each(['fp.convert', 'method.convert'], function(methodName) {

@@ -221,10 +221,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.methodSpread = {
 	  'invokeArgs': 2,
 	  'invokeArgsMap': 2,
-	  'over': 0,
-	  'overArgs': 1,
-	  'overEvery': 0,
-	  'overSome': 0,
 	  'partial': 1,
 	  'partialRight': 1,
 	  'without': 1

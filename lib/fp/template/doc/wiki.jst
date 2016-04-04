@@ -33,11 +33,13 @@ to convert each method.
 
 Iteratee arguments are capped to avoid gotchas with variadic iteratees.
 ```js
-// The `lodash/map` iteratee recieves three arguments: (value, index|key, collection).
+// The `lodash/map` iteratee receives three arguments:
+// (value, index|key, collection)
 _.map(['6', '8', '10'], parseInt);
 // → [6, NaN, 2]
 
-// The `lodash/fp/map` iteratee is capped at one argument: (value).
+// The `lodash/fp/map` iteratee is capped at one argument:
+// (value)
 fp.map(parseInt)(['6', '8', '10']);
 // → [6, 8, 10]
 ```
@@ -81,12 +83,14 @@ Methods with a fixed arity of four:<br>
 
 Method arguments are rearranged to make composition easier.
 ```js
-// The `lodash/filter` method accepts (collection, iteratee).
+// The `lodash/filter` method is data-first iteratee-last:
+// (collection, iteratee)
 var compact = _.partial(_.filter, _, Boolean);
 compact(['a', null, 'c']);
 // → ['a', 'c']
 
-// The `lodash/fp/filter` method accepts (iteratee, collection)
+// The `lodash/fp/filter` method is iteratee-first data-last:
+// (iteratee, collection)
 var compact = fp.filter(Boolean);
 compact(['a', null, 'c']);
 // → ['a', 'c']

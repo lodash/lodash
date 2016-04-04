@@ -2,8 +2,8 @@
   "name": "lodash",
   "version": "4.7.1-pre",
   "license": "MIT",
-  "main": "lodash.js",
   "private": true,
+  "main": "lodash.js",
   "devDependencies": {
     "async": "^1.5.2",
     "benchmark": "^2.1.0",

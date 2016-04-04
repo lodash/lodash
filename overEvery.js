@@ -8,7 +8,7 @@ define(['./_arrayEvery', './_createOver'], function(arrayEvery, createOver) {
    * @memberOf _
    * @since 4.0.0
    * @category Util
-   * @param {...Function} predicates The predicates to check.
+   * @param {...(Function|Function[])} predicates The predicates to check.
    * @returns {Function} Returns the new function.
    * @example
    *

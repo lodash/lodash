@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply, arrayMap, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, rest) {
 
   /**
    * Creates a function like `_.over`.
@@ -9,7 +9,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
    */
   function createOver(arrayFunc) {
     return rest(function(iteratees) {
-      iteratees = arrayMap(iteratees, baseIteratee);
+      iteratees = arrayMap(baseFlatten(iteratees, 1), baseIteratee);
       return rest(function(args) {
         var thisArg = this;
         return arrayFunc(iteratees, function(iteratee) {

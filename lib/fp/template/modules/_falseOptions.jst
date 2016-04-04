@@ -4,4 +4,4 @@ module.exports = {
   'fixed': false,
   'immutable': false,
   'rearg': false
-});
+};

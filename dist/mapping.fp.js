@@ -108,9 +108,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.aryMethod = {
 	  '1': [
 	    'attempt', 'castArray', 'ceil', 'create', 'curry', 'curryRight', 'floor',
-	    'fromPairs', 'invert', 'iteratee', 'memoize', 'method', 'methodOf', 'mixin',
-	    'over', 'overEvery', 'overSome', 'rest', 'reverse', 'round', 'runInContext',
-	    'spread', 'template', 'trim', 'trimEnd', 'trimStart', 'uniqueId', 'words'
+	    'flow', 'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
+	    'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest', 'reverse',
+	    'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
+	    'uniqueId', 'words'
 	  ],
 	  '2': [
 	    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
@@ -220,6 +221,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.methodSpread = {
 	  'invokeArgs': 2,
 	  'invokeArgsMap': 2,
+	  'over': 0,
+	  'overArgs': 1,
+	  'overEvery': 0,
+	  'overSome': 0,
 	  'partial': 1,
 	  'partialRight': 1,
 	  'without': 1
@@ -300,7 +305,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'trimCharsStart': 'trimStart'
 	};
 
-	/** Used to track methods that skip `_.rearg`. */
+	/** Used to track methods that skip fixing their arity. */
+	exports.skipFixed = {
+	  'castArray': true,
+	  'flow': true,
+	  'flowRight': true,
+	  'iteratee': true,
+	  'mixin': true,
+	  'runInContext': true
+	};
+
+	/** Used to track methods that skip rearranging arguments. */
 	exports.skipRearg = {
 	  'add': true,
 	  'assign': true,
@@ -319,6 +334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'matchesProperty': true,
 	  'merge': true,
 	  'multiply': true,
+	  'overArgs': true,
 	  'partial': true,
 	  'partialRight': true,
 	  'random': true,

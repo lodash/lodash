@@ -1,5 +1,6 @@
 import apply from './_apply';
 import arrayMap from './_arrayMap';
+import baseFlatten from './_baseFlatten';
 import baseIteratee from './_baseIteratee';
 import rest from './rest';
 
@@ -15,7 +16,7 @@ var nativeMin = Math.min;
  * @memberOf _
  * @category Function
  * @param {Function} func The function to wrap.
- * @param {...Function} [transforms] The functions to transform
+ * @param {...(Function|Function[])} [transforms] The functions to transform.
  * arguments, specified individually or in arrays.
  * @returns {Function} Returns the new function.
  * @example
@@ -39,7 +40,7 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(transforms, baseIteratee);
+  transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
 
   var funcsLength = transforms.length;
   return rest(function(args) {

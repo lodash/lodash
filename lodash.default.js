@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.8.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.8.0';
+var VERSION = '4.8.2';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;

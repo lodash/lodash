@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.8.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.8.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash -o ./dist/lodash.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.8.0';
+  var VERSION = '4.8.1';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;

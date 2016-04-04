@@ -66,16 +66,16 @@ fp.padCharsStart('-')(3)('a');
 ```
 
 Methods with a fixed arity of one:<br>
-<%= toFuncList(mapping.aryMethod[1]) %>
+<%= toFuncList(_.difference(mapping.aryMethod[1], _.keys(mapping.skipFixed))) %>
 
 Methods with a fixed arity of two:<br>
-<%= toFuncList(mapping.aryMethod[2]) %>
+<%= toFuncList(_.difference(mapping.aryMethod[2], _.keys(mapping.skipFixed))) %>
 
 Methods with a fixed arity of three:<br>
-<%= toFuncList(mapping.aryMethod[3]) %>
+<%= toFuncList(_.difference(mapping.aryMethod[3], _.keys(mapping.skipFixed))) %>
 
 Methods with a fixed arity of four:<br>
-<%= toFuncList(mapping.aryMethod[4]) %>
+<%= toFuncList(_.difference(mapping.aryMethod[4], _.keys(mapping.skipFixed))) %>
 
 #### Rearranged Arguments
 

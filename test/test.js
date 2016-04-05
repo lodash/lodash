@@ -16040,6 +16040,15 @@
       assert.deepEqual(over(object), [false, true]);
     });
 
+    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+      assert.expect(2);
+
+      var over = _.over(['a', 2], [['b', 2]]);
+
+      assert.deepEqual(over({ 'a': 1, 'b': 2 }), [false, true]);
+      assert.deepEqual(over({ 'a': 2, 'b': 1 }), [true, false]);
+    });
+
     QUnit.test('should provide arguments to predicates', function(assert) {
       assert.expect(1);
 
@@ -16088,6 +16097,7 @@
       assert.expect(2);
 
       var over = _.overEvery(undefined, null);
+
       assert.strictEqual(over(true), true);
       assert.strictEqual(over(false), false);
     });
@@ -16114,6 +16124,15 @@
 
       over = _.overEvery({ 'a': 1 }, { 'c': 3 });
       assert.strictEqual(over(object), false);
+    });
+
+    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+      assert.expect(2);
+
+      var over = _.overEvery(['a', 1], [['b', 2]]);
+
+      assert.strictEqual(over({ 'a': 1, 'b': 2 }), true);
+      assert.strictEqual(over({ 'a': 1, 'b': -2 }), false);
     });
 
     QUnit.test('should flatten `predicates`', function(assert) {
@@ -16190,6 +16209,7 @@
       assert.expect(2);
 
       var over = _.overSome(undefined, null);
+
       assert.strictEqual(over(true), true);
       assert.strictEqual(over(false), false);
     });
@@ -16216,6 +16236,15 @@
 
       over = _.overSome({ 'b': 1 }, { 'a': 2 });
       assert.strictEqual(over(object), false);
+    });
+
+    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+      assert.expect(2);
+
+      var over = _.overSome(['a', 1], [['b', 2]]);
+
+      assert.strictEqual(over({ 'a': 3, 'b': 2 }), true);
+      assert.strictEqual(over({ 'a': 2, 'b': 3 }), false);
     });
 
     QUnit.test('should flatten `predicates`', function(assert) {

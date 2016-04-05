@@ -2700,23 +2700,24 @@
      * @private
      * @param {Array} array The array to flatten.
      * @param {number} depth The maximum recursion depth.
-     * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+     * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+     * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
      * @param {Array} [result=[]] The initial result value.
      * @returns {Array} Returns the new flattened array.
      */
-    function baseFlatten(array, depth, isStrict, result) {
-      result || (result = []);
-
+    function baseFlatten(array, depth, predicate, isStrict, result) {
       var index = -1,
           length = array.length;
 
+      predicate || (predicate = isFlattenable);
+      result || (result = []);
+
       while (++index < length) {
         var value = array[index];
-        if (depth > 0 && isArrayLikeObject(value) &&
-            (isStrict || isArray(value) || isArguments(value))) {
+        if (depth > 0 && predicate(value)) {
           if (depth > 1) {
             // Recursively flatten arrays (susceptible to call stack limits).
-            baseFlatten(value, depth - 1, isStrict, result);
+            baseFlatten(value, depth - 1, predicate, isStrict, result);
           } else {
             arrayPush(result, value);
           }
@@ -4608,7 +4609,7 @@
      */
     function createOver(arrayFunc) {
       return rest(function(iteratees) {
-        iteratees = arrayMap(baseFlatten(iteratees, 1), getIteratee());
+        iteratees = arrayMap(baseFlatten(iteratees, 1, isFlattenableIteratee), getIteratee());
         return rest(function(args) {
           var thisArg = this;
           return arrayFunc(iteratees, function(iteratee) {
@@ -5464,6 +5465,29 @@
     }
 
     /**
+     * Checks if `value` is a flattenable `arguments` object or array.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+     */
+    function isFlattenable(value) {
+      return isArrayLikeObject(value) && (isArray(value) || isArguments(value));
+    }
+
+    /**
+     * Checks if `value` is a flattenable array and not a `_.matchesProperty`
+     * iteratee shorthand.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+     */
+    function isFlattenableIteratee(value) {
+      return isArray(value) && !(value.length == 2 && !isFunction(value[0]));
+    }
+
+    /**
      * Checks if the given arguments are from an iteratee call.
      *
      * @private
@@ -5922,7 +5946,7 @@
      */
     var difference = rest(function(array, values) {
       return isArrayLikeObject(array)
-        ? baseDifference(array, baseFlatten(values, 1, true))
+        ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
         : [];
     });
 
@@ -5956,7 +5980,7 @@
         iteratee = undefined;
       }
       return isArrayLikeObject(array)
-        ? baseDifference(array, baseFlatten(values, 1, true), getIteratee(iteratee))
+        ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), getIteratee(iteratee))
         : [];
     });
 
@@ -5987,7 +6011,7 @@
         comparator = undefined;
       }
       return isArrayLikeObject(array)
-        ? baseDifference(array, baseFlatten(values, 1, true), undefined, comparator)
+        ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), undefined, comparator)
         : [];
     });
 
@@ -7253,7 +7277,7 @@
      * // => [2, 1, 4]
      */
     var union = rest(function(arrays) {
-      return baseUniq(baseFlatten(arrays, 1, true));
+      return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
     });
 
     /**
@@ -7284,7 +7308,7 @@
       if (isArrayLikeObject(iteratee)) {
         iteratee = undefined;
       }
-      return baseUniq(baseFlatten(arrays, 1, true), getIteratee(iteratee));
+      return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), getIteratee(iteratee));
     });
 
     /**
@@ -7312,7 +7336,7 @@
       if (isArrayLikeObject(comparator)) {
         comparator = undefined;
       }
-      return baseUniq(baseFlatten(arrays, 1, true), undefined, comparator);
+      return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);
     });
 
     /**
@@ -9616,8 +9640,7 @@
      * // => [100, 10]
      */
     var overArgs = rest(function(func, transforms) {
-      transforms = arrayMap(baseFlatten(transforms, 1), getIteratee());
-
+      transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), getIteratee());
       var funcsLength = transforms.length;
       return rest(function(args) {
         var index = -1,

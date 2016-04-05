@@ -3493,7 +3493,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var actual = _.countBy(['one', 'two', 'three'], 'length');
@@ -4982,19 +4982,19 @@
       assert.deepEqual(args, [4, 3, array]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropRightWhile(objects, { 'b': 2 }), objects.slice(0, 2));
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropRightWhile(objects, ['b', 2]), objects.slice(0, 2));
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropRightWhile(objects, 'b'), objects.slice(0, 1));
@@ -5052,19 +5052,19 @@
       assert.deepEqual(args, [1, 0, array]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropWhile(objects, { 'b': 2 }), objects.slice(1));
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropWhile(objects, ['b', 2]), objects.slice(1));
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.dropWhile(objects, 'b'), objects.slice(2));
@@ -5340,7 +5340,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
@@ -5348,7 +5348,7 @@
       assert.strictEqual(_.every(objects, 'b'), true);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
@@ -5627,19 +5627,19 @@
         assert.strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
 
-      QUnit.test('should work with "_.matches" shorthands', function(assert) {
+      QUnit.test('should work with `_.matches` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, { 'b': 2 }), expected[2]);
       });
 
-      QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+      QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, ['b', 2]), expected[2]);
       });
 
-      QUnit.test('should work with "_.property" shorthands', function(assert) {
+      QUnit.test('should work with `_.property` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, 'b'), expected[3]);
@@ -5857,7 +5857,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': [1, 2] }, { 'a': [3, 4] }];
@@ -7027,7 +7027,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var actual = _.groupBy(['one', 'two', 'three'], 'length');
@@ -11753,7 +11753,7 @@
       assert.strictEqual(matches(array), true);
     });
 
-    QUnit.test('should support deep paths for "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should support deep paths for `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       var object = { 'a': { 'b': { 'c': { 'd': 1, 'e': 2 } } } },
@@ -11803,7 +11803,7 @@
       assert.strictEqual(prop(array), 'a');
     });
 
-    QUnit.test('should support deep paths for "_.property" shorthands', function(assert) {
+    QUnit.test('should support deep paths for `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var object = { 'a': { 'b': { 'c': 3 } } },
@@ -12467,7 +12467,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var expected = { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } },
@@ -13037,7 +13037,7 @@
       assert.deepEqual(_.map(object, String), expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': 'x' }, { 'a': 'y' }];
@@ -13197,7 +13197,7 @@
       assert.deepEqual(actual, { '1': 1, '2': 2 });
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var actual = _.mapKeys({ 'a': { 'b': 'c' } }, 'b');
@@ -13241,7 +13241,7 @@
       assert.deepEqual(actual, { '0': '1', '1': '2' });
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
@@ -14131,7 +14131,7 @@
       assert.deepEqual(args, [{ 'a': 2 }]);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var arrays = [[2], [3], [1]];
@@ -15218,7 +15218,7 @@
       assert.strictEqual(actual, isMax ? 1 : 3);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }],
@@ -16022,7 +16022,7 @@
       assert.deepEqual(over('a', 'b', 'c'), ['a', 'a']);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16031,7 +16031,7 @@
       assert.deepEqual(over(object), [2, 1]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16040,7 +16040,7 @@
       assert.deepEqual(over(object), [false, true]);
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
       var over = _.over(['a', 2], [['b', 2]]);
@@ -16102,7 +16102,7 @@
       assert.strictEqual(over(false), false);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16114,7 +16114,7 @@
       assert.strictEqual(over(object), true);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16126,7 +16126,7 @@
       assert.strictEqual(over(object), false);
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
       var over = _.overEvery(['a', 1], [['b', 2]]);
@@ -16214,7 +16214,7 @@
       assert.strictEqual(over(false), false);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16226,7 +16226,7 @@
       assert.strictEqual(over(object), false);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1, 'b': 2 },
@@ -16238,7 +16238,7 @@
       assert.strictEqual(over(object), false);
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
       var over = _.overSome(['a', 1], [['b', 2]]);
@@ -16951,7 +16951,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }],
@@ -18149,13 +18149,13 @@
       assert.deepEqual(actual, [0]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func(objects, 'a'), [objects[isFilter ? 1 : 0]]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func(objects, objects[1]), [objects[isFilter ? 1 : 0]]);
@@ -18289,7 +18289,7 @@
       assert.deepEqual(argsList, [[1, 0, clone], [2, 1, clone], [3, 2, clone]]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
@@ -18297,7 +18297,7 @@
       assert.deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
@@ -18305,7 +18305,7 @@
       assert.deepEqual(objects, [{ 'a': 0, 'b': 1 }]);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'a': 0 }, { 'a': 1 }];
@@ -19704,7 +19704,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
@@ -19712,7 +19712,7 @@
       assert.strictEqual(_.some(objects, 'b'), true);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 0, 'b': 0 }, { 'a': 1, 'b': 1}];
@@ -19764,7 +19764,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(_.sortBy(objects.concat(undefined), 'b'), 'b');
@@ -19996,7 +19996,7 @@
       assert.deepEqual(args, [40]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       var objects = [{ 'x': 30 }, { 'x': 50 }],
@@ -20442,7 +20442,7 @@
       assert.deepEqual(args, [6]);
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var arrays = [[2], [3], [1]];
@@ -20749,19 +20749,19 @@
       assert.deepEqual(args, [4, 3, array]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeRightWhile(objects, { 'b': 2 }), objects.slice(2));
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeRightWhile(objects, ['b', 2]), objects.slice(2));
     });
 
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeRightWhile(objects, 'b'), objects.slice(1));
@@ -20864,18 +20864,18 @@
       assert.deepEqual(args, [1, 0, array]);
     });
 
-    QUnit.test('should work with "_.matches" shorthands', function(assert) {
+    QUnit.test('should work with `_.matches` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeWhile(objects, { 'b': 2 }), objects.slice(0, 1));
     });
 
-    QUnit.test('should work with "_.matchesProperty" shorthands', function(assert) {
+    QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeWhile(objects, ['b', 2]), objects.slice(0, 1));
     });
-    QUnit.test('should work with "_.property" shorthands', function(assert) {
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.takeWhile(objects, 'b'), objects.slice(0, 2));
@@ -23568,7 +23568,7 @@
       assert.deepEqual(args, [objects[0]]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with "_.property" shorthands', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
       assert.expect(2);
 
       var expected = isSorted ? [{ 'a': 1 }, { 'a': 2 }, { 'a': 3 }] : objects.slice(0, 3),

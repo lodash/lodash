@@ -14,6 +14,11 @@
         className: 'test-view',
         other: 'non-special-option'
       });
+    },
+
+    afterEach: function() {
+      $('#testElement').remove();
+      $('#test-view').remove();
     }
 
   });

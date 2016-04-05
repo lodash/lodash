@@ -1898,7 +1898,7 @@
       assert.deepEqual(changed.merged, []);
       assert.ok(changed.removed.length === 2);
 
-      assert.ok(changed.removed.indexOf(model) > -1 && changed.removed.indexOf(model2) > -1);
+      assert.ok(_.indexOf(changed.removed, model) > -1 && _.indexOf(changed.removed, model2) > -1);
     });
     collection.remove([model, model2]);
   });

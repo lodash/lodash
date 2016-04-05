@@ -7329,7 +7329,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return `false` for nested nullish values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `false` for nullish values of nested objects', function(assert) {
       assert.expect(2);
 
       var values = [, null, undefined],
@@ -13759,7 +13759,7 @@
       });
     });
 
-    QUnit.test('should return `false` with deep paths when `object` is nullish', function(assert) {
+    QUnit.test('should return `false` for deep paths when `object` is nullish', function(assert) {
       assert.expect(2);
 
       var values = [, null, undefined],
@@ -13966,6 +13966,22 @@
       actual = lodashStable.map(objects, _.matchesProperty('a', { 'b': undefined }));
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should match `undefined` values of nested objects', function(assert) {
+      assert.expect(4);
+
+      var object = { 'a': { 'b': undefined } };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        var matches = _.matchesProperty(path, undefined);
+        assert.strictEqual(matches(object), true);
+      });
+
+      lodashStable.each(['a.a', ['a', 'a']], function(path) {
+        var matches = _.matchesProperty(path, undefined);
+        assert.strictEqual(matches(object), false);
+      });
     });
 
     QUnit.test('should match `undefined` values on primitives', function(assert) {

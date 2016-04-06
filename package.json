@@ -16,7 +16,7 @@
     "ecstatic": "^1.4.0",
     "fs-extra": "~0.26.7",
     "glob": "^7.0.3",
-    "istanbul": "0.4.2",
+    "istanbul": "0.4.3",
     "jquery": "^2.2.3",
     "jscs": "^2.11.0",
     "lodash": "4.7.0",

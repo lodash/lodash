@@ -147,6 +147,21 @@ There are <%= _.size(mapping.aliasToReal) %> method aliases:<br>
   return ' * `_.' + alias + '` is an alias of `_.' + realName + '`';
 }).join('\n') %>
 
+## Placeholders
+
+The placeholder argument, which defaults to `_`, may be used to fill in method
+arguments in a different order. Placeholders are filled by the first available
+arguments of the curried returned function.
+```js
+// The equivalent of `2 > 5`.
+_.gt(2)(5);
+// → false
+
+// The equivalent of `_.gt(5, 2)` or `5 > 2`.
+_.gt(_, 2)(5);
+// → true
+```
+
 ## Chaining
 
 The `lodash/fp` module **does not** convert chain sequence methods. See

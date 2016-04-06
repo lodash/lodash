@@ -69,11 +69,11 @@ The iteratee of `mapKeys` is invoked with one argument: (key)
 
 Methods have fixed arities to support auto-currying.
 ```js
-// The `lodash/padStart` method accepts an optional `chars` param.
+// `lodash/padStart` accepts an optional `chars` param.
 _.padStart('a', 3, '-')
 // → '--a'
 
-// The `lodash/fp/padStart` method does not.
+// `lodash/fp/padStart` does not.
 fp.padStart(3)('a');
 // → '  a'
 fp.padCharsStart('-')(3)('a');
@@ -96,39 +96,43 @@ Methods with a fixed arity of four:<br>
 
 Method arguments are rearranged to make composition easier.
 ```js
-// The `lodash/filter` method is data-first iteratee-last:
+// `lodash/filter` is data-first iteratee-last:
 // (collection, iteratee)
 var compact = _.partial(_.filter, _, Boolean);
 compact(['a', null, 'c']);
 // → ['a', 'c']
 
-// The `lodash/fp/filter` method is iteratee-first data-last:
+// `lodash/fp/filter` is iteratee-first data-last:
 // (iteratee, collection)
 var compact = fp.filter(Boolean);
 compact(['a', null, 'c']);
 // → ['a', 'c']
 ```
 
-Methods with a fixed arity of two have an argument order of:<br>
+##### Most methods follow these rules
+
+A fixed arity of two has an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[2]) %>
 
-Methods with a fixed arity of three have an argument order of:<br>
+A fixed arity of three has an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[3]) %>
 
-Methods with a fixed arity of four have an argument order of:<br>
+A fixed arity of four has an argument order of:<br>
 <%= toArgOrder(mapping.aryRearg[4]) %>
+
+##### Exceptions to the rules
+
+Methods that accept an array of arguments as their second parameter:<br>
+<%= toFuncList(_.keys(mapping.methodSpread)) %>
+
+Methods with unchanged argument orders:<br>
+<%= toFuncList(_.keys(mapping.skipRearg)) %>
 
 Methods with custom argument orders:<br>
 <%= _.map(_.keys(mapping.methodRearg), function(methodName) {
   var orders = mapping.methodRearg[methodName];
   return ' * `_.' + methodName + '` has an order of ' + toArgOrder(orders);
 }).join('\n') %>
-
-Methods with unchanged argument orders:<br>
-<%= toFuncList(_.keys(mapping.skipRearg)) %>
-
-The methods `invokeArgs`, `invokeArgsMap`, `partial`, `partialRight`, & `without`
-accept an array of arguments as their second parameter.
 
 #### New Methods
 

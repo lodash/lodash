@@ -8536,9 +8536,19 @@
      */
     function map(collection, iteratee) {
       var func = isArray(collection) ? arrayMap : baseMap;
-      return func(collection, getIteratee(iteratee, 3));
+      return func(collection, getIteratee(iterateeSugar(iteratee), 3));
     }
 
+    /**
+     * this method transform a iteratee accorging to suggar
+     * ::string will call _.method(method)
+     */
+    function iterateeSugar(iteratee){
+        if (_.startsWith(iteratee, '::')) {
+            return _.method(_.replace(iteratee, '::', ''));
+        }
+        return iteratee;
+    }
     /**
      * This method is like `_.sortBy` except that it allows specifying the sort
      * orders of the iteratees to sort by. If `orders` is unspecified, all values

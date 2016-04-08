@@ -2,7 +2,7 @@ define(['./_baseAssign', './_baseCreate'], function(baseAssign, baseCreate) {
 
   /**
    * Creates an object that inherits from the `prototype` object. If a
-   * `properties` object is given its own enumerable string keyed properties
+   * `properties` object is given, its own enumerable string keyed properties
    * are assigned to the created object.
    *
    * @static

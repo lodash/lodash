@@ -2,7 +2,7 @@ define(['./_arrayEach', './_arrayPush', './_baseFunctions', './_copyArray', './i
 
   /**
    * Adds all own enumerable string keyed function properties of a source
-   * object to the destination object. If `object` is a function then methods
+   * object to the destination object. If `object` is a function, then methods
    * are added to its prototype as well.
    *
    * **Note:** Use `_.runInContext` to create a pristine `lodash` function to

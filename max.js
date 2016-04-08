@@ -4,7 +4,7 @@ define(['./_baseExtremum', './gt', './identity'], function(baseExtremum, gt, ide
   var undefined;
 
   /**
-   * Computes the maximum value of `array`. If `array` is empty or falsey
+   * Computes the maximum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static

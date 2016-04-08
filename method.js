@@ -14,14 +14,14 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    * @example
    *
    * var objects = [
-   *   { 'a': { 'b': { 'c': _.constant(2) } } },
-   *   { 'a': { 'b': { 'c': _.constant(1) } } }
+   *   { 'a': { 'b': _.constant(2) } },
+   *   { 'a': { 'b': _.constant(1) } }
    * ];
    *
-   * _.map(objects, _.method('a.b.c'));
+   * _.map(objects, _.method('a.b'));
    * // => [2, 1]
    *
-   * _.map(objects, _.method(['a', 'b', 'c']));
+   * _.map(objects, _.method(['a', 'b']));
    * // => [2, 1]
    */
   var method = rest(function(path, args) {

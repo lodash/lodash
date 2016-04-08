@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_isFlattenableIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, isFlattenableIteratee, rest) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
@@ -36,8 +36,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './rest'
    * // => [100, 10]
    */
   var overArgs = rest(function(func, transforms) {
-    transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
-
+    transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
     var funcsLength = transforms.length;
     return rest(function(args) {
       var index = -1,

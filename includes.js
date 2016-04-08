@@ -4,7 +4,7 @@ define(['./_baseIndexOf', './isArrayLike', './isString', './toInteger', './value
   var nativeMax = Math.max;
 
   /**
-   * Checks if `value` is in `collection`. If `collection` is a string it's
+   * Checks if `value` is in `collection`. If `collection` is a string, it's
    * checked for a substring of `value`, otherwise
    * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * is used for equality comparisons. If `fromIndex` is negative, it's used as

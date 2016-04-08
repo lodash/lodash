@@ -1,5 +1,8 @@
 define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_toSource'], function(DataView, Map, Promise, Set, WeakMap, toSource) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
       objectTag = '[object Object]',
@@ -46,8 +49,8 @@ define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_toSou
       (WeakMap && getTag(new WeakMap) != weakMapTag)) {
     getTag = function(value) {
       var result = objectToString.call(value),
-          Ctor = result == objectTag ? value.constructor : null,
-          ctorString = toSource(Ctor);
+          Ctor = result == objectTag ? value.constructor : undefined,
+          ctorString = Ctor ? toSource(Ctor) : undefined;
 
       if (ctorString) {
         switch (ctorString) {

@@ -4,7 +4,7 @@ define(['./_baseExtremum', './identity', './lt'], function(baseExtremum, identit
   var undefined;
 
   /**
-   * Computes the minimum value of `array`. If `array` is empty or falsey
+   * Computes the minimum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static

@@ -23251,7 +23251,7 @@
         thumbsUp = '\ud83d\udc4d';
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(33);
+      assert.expect(32);
 
       var allHearts = _.repeat(hearts, 10),
           chars = hearts + comboGlyph,
@@ -23274,9 +23274,8 @@
       assert.strictEqual(_.size(string), 13);
       assert.deepEqual(_.split(string, ' '), ['A', leafs + ',', comboGlyph + ',', 'and', rocket]);
       assert.deepEqual(_.split(string, ' ', 3), ['A', leafs + ',', comboGlyph + ',']);
-      assert.deepEqual(_.split(string, undefined), [string]);
-      assert.deepEqual(_.split(string, undefined, 0), []);
-      assert.deepEqual(_.split(string, '', -1), []);
+      assert.deepEqual(_.split(string, undefined), string.split(undefined));
+      assert.deepEqual(_.split(string, undefined, 0), string.split(undefined, 0));
 
       var expected = ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket];
 

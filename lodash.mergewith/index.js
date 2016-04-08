@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,7 +7,6 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var Stack = require('lodash._stack'),
-    arrayEach = require('lodash._arrayeach'),
     baseFor = require('lodash._basefor'),
     isBuffer = require('lodash.isbuffer'),
     isPlainObject = require('lodash.isplainobject'),
@@ -114,6 +113,27 @@ function addMapEntry(map, pair) {
 function addSetEntry(set, value) {
   set.add(value);
   return set;
+}
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
 }
 
 /**
@@ -232,6 +252,7 @@ var reIsNative = RegExp('^' +
 var Symbol = root.Symbol,
     Uint8Array = root.Uint8Array,
     getOwnPropertySymbols = Object.getOwnPropertySymbols,
+    objectCreate = Object.create,
     propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
 /* Built-in method references that are verified to be native. */
@@ -369,17 +390,9 @@ function baseClone(value, isDeep, customizer, key, object, stack) {
  * @param {Object} prototype The object to inherit from.
  * @returns {Object} Returns the new object.
  */
-var baseCreate = (function() {
-  function object() {}
-  return function(prototype) {
-    if (isObject(prototype)) {
-      object.prototype = prototype;
-      var result = new object;
-      object.prototype = undefined;
-    }
-    return result || {};
-  };
-}());
+function baseCreate(proto) {
+  return isObject(proto) ? objectCreate(proto) : {};
+}
 
 /**
  * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -407,7 +420,10 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
   if (object === source) {
     return;
   }
-  var props = (isArray(source) || isTypedArray(source)) ? undefined : keysIn(source);
+  var props = (isArray(source) || isTypedArray(source))
+    ? undefined
+    : keysIn(source);
+
   arrayEach(props || source, function(srcValue, key) {
     if (props) {
       key = srcValue;
@@ -418,7 +434,10 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
       baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
     }
     else {
-      var newValue = customizer ? customizer(object[key], srcValue, (key + ''), object, source, stack) : undefined;
+      var newValue = customizer
+        ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+        : undefined;
+
       if (newValue === undefined) {
         newValue = srcValue;
       }
@@ -450,21 +469,24 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
     assignMergeValue(object, key, stacked);
     return;
   }
-  var newValue = customizer ? customizer(objValue, srcValue, (key + ''), object, source, stack) : undefined,
-      isCommon = newValue === undefined;
+  var newValue = customizer
+    ? customizer(objValue, srcValue, (key + ''), object, source, stack)
+    : undefined;
+
+  var isCommon = newValue === undefined;
 
   if (isCommon) {
     newValue = srcValue;
     if (isArray(srcValue) || isTypedArray(srcValue)) {
       if (isArray(objValue)) {
-        newValue = srcIndex ? copyArray(objValue) : objValue;
+        newValue = objValue;
       }
       else if (isArrayLikeObject(objValue)) {
         newValue = copyArray(objValue);
       }
       else {
         isCommon = false;
-        newValue = baseClone(srcValue);
+        newValue = baseClone(srcValue, true);
       }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
@@ -473,10 +495,10 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
         isCommon = false;
-        newValue = baseClone(srcValue);
+        newValue = baseClone(srcValue, true);
       }
       else {
-        newValue = srcIndex ? baseClone(objValue) : objValue;
+        newValue = objValue;
       }
     }
     else {
@@ -599,10 +621,11 @@ function cloneSymbol(symbol) {
  * @returns {Object} Returns the cloned typed array.
  */
 function cloneTypedArray(typedArray, isDeep) {
-  var buffer = typedArray.buffer,
+  var arrayBuffer = typedArray.buffer,
+      buffer = isDeep ? cloneArrayBuffer(arrayBuffer) : arrayBuffer,
       Ctor = typedArray.constructor;
 
-  return new Ctor(isDeep ? cloneArrayBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
+  return new Ctor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
 /**
@@ -655,8 +678,11 @@ function copyObjectWith(source, props, object, customizer) {
       length = props.length;
 
   while (++index < length) {
-    var key = props[index],
-        newValue = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : source[key];
 
     assignValue(object, key, newValue);
   }
@@ -689,7 +715,10 @@ function createAssigner(assigner) {
         customizer = length > 1 ? sources[length - 1] : undefined,
         guard = length > 2 ? sources[2] : undefined;
 
-    customizer = typeof customizer == 'function' ? (length--, customizer) : undefined;
+    customizer = typeof customizer == 'function'
+      ? (length--, customizer)
+      : undefined;
+
     if (guard && isIterateeCall(sources[0], sources[1], guard)) {
       customizer = length < 3 ? undefined : customizer;
       length = 1;
@@ -948,7 +977,7 @@ function isArguments(value) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
@@ -975,7 +1004,6 @@ var isArray = Array.isArray;
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -1004,7 +1032,6 @@ function isArrayLike(value) {
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
@@ -1075,7 +1102,8 @@ function isFunction(value) {
  * // => false
  */
 function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
 /**
@@ -1177,7 +1205,8 @@ function isNative(value) {
  * // => false
  */
 function isTypedArray(value) {
-  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
+  return isObjectLike(value) &&
+    isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
 }
 
 /**

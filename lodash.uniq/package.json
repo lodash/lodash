@@ -1,6 +1,6 @@
 {
   "name": "lodash.uniq",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "The lodash method `_.uniq` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,10 +15,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arrayincludes": "^4.0.0",
-    "lodash._arrayincludeswith": "^4.0.0",
-    "lodash._cachehas": "^4.0.0",
-    "lodash._root": "^3.0.0",
-    "lodash._setcache": "^4.0.0"
+    "lodash._baseuniq": "^4.0.0"
   }
 }

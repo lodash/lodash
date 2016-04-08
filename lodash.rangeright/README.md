@@ -1,4 +1,4 @@
-# lodash.rangeright v4.1.0
+# lodash.rangeright v4.2.0
 
 The [lodash](https://lodash.com/) method `_.rangeRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var rangeRight = require('lodash.rangeright');
 ```
 
-See the [documentation](https://lodash.com/docs#rangeRight) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.rangeright) for more details.
+See the [documentation](https://lodash.com/docs#rangeRight) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.rangeright) for more details.

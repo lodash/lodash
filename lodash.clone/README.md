@@ -1,4 +1,4 @@
-# lodash.clone v4.1.1
+# lodash.clone v4.2.0
 
 The [lodash](https://lodash.com/) method `_.clone` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var clone = require('lodash.clone');
 ```
 
-See the [documentation](https://lodash.com/docs#clone) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.clone) for more details.
+See the [documentation](https://lodash.com/docs#clone) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.clone) for more details.

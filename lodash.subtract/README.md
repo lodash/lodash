@@ -1,4 +1,4 @@
-# lodash.subtract v4.1.0
+# lodash.subtract v4.2.0
 
 The [lodash](https://lodash.com/) method `_.subtract` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var subtract = require('lodash.subtract');
 ```
 
-See the [documentation](https://lodash.com/docs#subtract) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.subtract) for more details.
+See the [documentation](https://lodash.com/docs#subtract) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.subtract) for more details.

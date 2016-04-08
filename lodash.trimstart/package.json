@@ -1,6 +1,6 @@
 {
   "name": "lodash.trimstart",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "The lodash method `_.trimStart` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,7 +15,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._charsstartindex": "^4.0.0",
     "lodash.tostring": "^4.0.0"
   }
 }

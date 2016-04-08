@@ -20115,6 +20115,15 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var strings = ['abc', 'def', 'ghi'],
+          actual = lodashStable.map(strings, _.split);
+
+      assert.deepEqual(actual, [['abc'], ['def'], ['ghi']]);
+    });
+
     QUnit.test('should allow mixed string and array prototype methods', function(assert) {
       assert.expect(1);
 

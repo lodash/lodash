@@ -1,4 +1,4 @@
-# lodash.meanby v4.7.0
+# lodash.meanby v4.8.0
 
 The [lodash](https://lodash.com/) method `_.meanBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var meanBy = require('lodash.meanby');
 ```
 
-See the [documentation](https://lodash.com/docs#meanBy) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.meanby) for more details.
+See the [documentation](https://lodash.com/docs#meanBy) or [package source](https://github.com/lodash/lodash/blob/4.8.0-npm-packages/lodash.meanby) for more details.

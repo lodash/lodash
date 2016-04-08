@@ -62,7 +62,7 @@ var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
 
 /**
  * Used to match `RegExp`
- * [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns).
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
@@ -147,7 +147,7 @@ function apply(func, thisArg, args) {
  * specifying an index to search from.
  *
  * @private
- * @param {Array} [array] The array to search.
+ * @param {Array} [array] The array to inspect.
  * @param {*} target The value to search for.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
@@ -160,7 +160,7 @@ function arrayIncludes(array, value) {
  * This function is like `arrayIncludes` except that it accepts a comparator.
  *
  * @private
- * @param {Array} [array] The array to search.
+ * @param {Array} [array] The array to inspect.
  * @param {*} target The value to search for.
  * @param {Function} comparator The comparator invoked per element.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
@@ -243,7 +243,7 @@ function arraySome(array, predicate) {
  * support for iteratee shorthands.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} fromIndex The index to search from.
  * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -265,7 +265,7 @@ function baseFindIndex(array, predicate, fromIndex, fromRight) {
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {*} value The value to search for.
  * @param {number} fromIndex The index to search from.
  * @returns {number} Returns the index of the matched value, else `-1`.
@@ -402,7 +402,7 @@ function mapToArray(map) {
 }
 
 /**
- * Creates a function that invokes `func` with its first argument transformed.
+ * Creates a unary function that invokes `func` with its argument transformed.
  *
  * @private
  * @param {Function} func The function to wrap.
@@ -434,6 +434,7 @@ function setToArray(set) {
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype,
+    funcProto = Function.prototype,
     objectProto = Object.prototype;
 
 /** Used to detect overreaching core-js shims. */
@@ -446,14 +447,14 @@ var maskSrcKey = (function() {
 }());
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = Function.prototype.toString;
+var funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -472,8 +473,7 @@ var Symbol = root.Symbol,
     spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeGetPrototype = Object.getPrototypeOf,
-    nativeKeys = Object.keys,
+var nativeKeys = overArg(Object.keys, Object),
     nativeMax = Math.max;
 
 /* Built-in method references that are verified to be native. */
@@ -943,10 +943,37 @@ Stack.prototype.has = stackHas;
 Stack.prototype.set = stackSet;
 
 /**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys(value, inherited) {
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  // Safari 9 makes `arguments.length` enumerable in strict mode.
+  var result = (isArray(value) || isArguments(value))
+    ? baseTimes(value.length, String)
+    : [];
+
+  var length = result.length,
+      skipIndexes = !!length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty.call(value, key)) &&
+        !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+/**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {*} key The key to search for.
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
@@ -1079,23 +1106,6 @@ function baseGet(object, path) {
  */
 function baseGetTag(value) {
   return objectToString.call(value);
-}
-
-/**
- * The base implementation of `_.has` without support for deep paths.
- *
- * @private
- * @param {Object} [object] The object to query.
- * @param {Array|string} key The key to check.
- * @returns {boolean} Returns `true` if `key` exists, else `false`.
- */
-function baseHas(object, key) {
-  // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
-  // that are composed entirely of index properties, return `false` for
-  // `hasOwnProperty` checks of them.
-  return object != null &&
-    (hasOwnProperty.call(object, key) ||
-      (typeof object == 'object' && key in object && getPrototype(object) === null));
 }
 
 /**
@@ -1300,14 +1310,24 @@ function baseIteratee(value) {
 }
 
 /**
- * The base implementation of `_.keys` which doesn't skip the constructor
- * property of prototypes or treat sparse arrays as dense.
+ * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
  *
  * @private
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property names.
  */
-var baseKeys = overArg(nativeKeys, Object);
+function baseKeys(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+      result.push(key);
+    }
+  }
+  return result;
+}
 
 /**
  * The base implementation of `_.matches` which doesn't clone `source`.
@@ -1542,7 +1562,7 @@ function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
     case regexpTag:
     case stringTag:
       // Coerce regexes to strings and treat strings, primitives and objects,
-      // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
       // for more details.
       return object == (other + '');
 
@@ -1604,7 +1624,7 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
   var index = objLength;
   while (index--) {
     var key = objProps[index];
-    if (!(isPartial ? key in other : baseHas(other, key))) {
+    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
       return false;
     }
   }
@@ -1656,19 +1676,6 @@ function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
 }
 
 /**
- * Gets the "length" property value of `object`.
- *
- * **Note:** This function is used to avoid a
- * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
- * Safari on at least iOS 8.1-8.3 ARM64.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {*} Returns the "length" value.
- */
-var getLength = baseProperty('length');
-
-/**
  * Gets the data for `map`.
  *
  * @private
@@ -1717,15 +1724,6 @@ function getNative(object, key) {
 }
 
 /**
- * Gets the `[[Prototype]]` of `value`.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {null|Object} Returns the `[[Prototype]]`.
- */
-var getPrototype = overArg(nativeGetPrototype, Object);
-
-/**
  * Gets the `toStringTag` of `value`.
  *
  * @private
@@ -1735,7 +1733,7 @@ var getPrototype = overArg(nativeGetPrototype, Object);
 var getTag = baseGetTag;
 
 // Fallback for data views, maps, sets, and weak maps in IE 11,
-// for data views in Edge, and promises in Node.js.
+// for data views in Edge < 14, and promises in Node.js.
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
     (Map && getTag(new Map) != mapTag) ||
     (Promise && getTag(Promise.resolve()) != promiseTag) ||
@@ -1787,24 +1785,7 @@ function hasPath(object, path, hasFunc) {
   }
   var length = object ? object.length : 0;
   return !!length && isLength(length) && isIndex(key, length) &&
-    (isArray(object) || isString(object) || isArguments(object));
-}
-
-/**
- * Creates an array of index keys for `object` values of arrays,
- * `arguments` objects, and strings, otherwise `null` is returned.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array|null} Returns index keys, else `null`.
- */
-function indexKeys(object) {
-  var length = object ? object.length : undefined;
-  if (isLength(length) &&
-      (isArray(object) || isString(object) || isArguments(object))) {
-    return baseTimes(length, String);
-  }
-  return null;
+    (isArray(object) || isArguments(object));
 }
 
 /**
@@ -2043,7 +2024,7 @@ function last(array) {
  * **Note:** The cache is exposed as the `cache` property on the memoized
  * function. Its creation may be customized by replacing the `_.memoize.Cache`
  * constructor with one whose instances implement the
- * [`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)
+ * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
  * method interface of `delete`, `get`, `has`, and `set`.
  *
  * @static
@@ -2102,7 +2083,7 @@ memoize.Cache = MapCache;
 
 /**
  * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * comparison between two values to determine if they are equivalent.
  *
  * @static
@@ -2155,7 +2136,7 @@ function eq(value, other) {
  * // => false
  */
 function isArguments(value) {
-  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
   return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
     (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
 }
@@ -2211,7 +2192,7 @@ var isArray = Array.isArray;
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && isLength(getLength(value)) && !isFunction(value);
+  return value != null && isLength(value.length) && !isFunction(value);
 }
 
 /**
@@ -2262,8 +2243,7 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array and weak map constructors,
-  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }
@@ -2271,16 +2251,15 @@ function isFunction(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is loosely based on
- * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
  *
  * @static
  * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
  * @example
  *
  * _.isLength(3);
@@ -2302,7 +2281,7 @@ function isLength(value) {
 
 /**
  * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
  * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
@@ -2356,28 +2335,6 @@ function isObject(value) {
  */
 function isObjectLike(value) {
   return !!value && typeof value == 'object';
-}
-
-/**
- * Checks if `value` is classified as a `String` primitive or object.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a string, else `false`.
- * @example
- *
- * _.isString('abc');
- * // => true
- *
- * _.isString(1);
- * // => false
- */
-function isString(value) {
-  return typeof value == 'string' ||
-    (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
 }
 
 /**
@@ -2510,7 +2467,7 @@ function hasIn(object, path) {
  * Creates an array of the own enumerable property names of `object`.
  *
  * **Note:** Non-object values are coerced to objects. See the
- * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
  * for more details.
  *
  * @static
@@ -2535,23 +2492,7 @@ function hasIn(object, path) {
  * // => ['0', '1']
  */
 function keys(object) {
-  var isProto = isPrototype(object);
-  if (!(isProto || isArrayLike(object))) {
-    return baseKeys(object);
-  }
-  var indexes = indexKeys(object),
-      skipIndexes = !!indexes,
-      result = indexes || [],
-      length = result.length;
-
-  for (var key in object) {
-    if (baseHas(object, key) &&
-        !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-        !(isProto && key == 'constructor')) {
-      result.push(key);
-    }
-  }
-  return result;
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
 }
 
 /**

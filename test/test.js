@@ -5257,7 +5257,7 @@
     QUnit.test('should handle strings with nothing to escape', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.escapeRegExp('ghi'), 'ghi');
+      assert.strictEqual(_.escapeRegExp('abc'), 'abc');
     });
 
     QUnit.test('should return an empty string for empty values', function(assert) {

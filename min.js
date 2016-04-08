@@ -3,7 +3,7 @@ var baseExtremum = require('./_baseExtremum'),
     lt = require('./lt');
 
 /**
- * Computes the minimum value of `array`. If `array` is empty or falsey
+ * Computes the minimum value of `array`. If `array` is empty or falsey,
  * `undefined` is returned.
  *
  * @static

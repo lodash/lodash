@@ -2,6 +2,7 @@ var apply = require('./_apply'),
     arrayMap = require('./_arrayMap'),
     baseFlatten = require('./_baseFlatten'),
     baseIteratee = require('./_baseIteratee'),
+    isFlattenableIteratee = require('./_isFlattenableIteratee'),
     rest = require('./rest');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -40,8 +41,7 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
-
+  transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
   var funcsLength = transforms.length;
   return rest(function(args) {
     var index = -1,

@@ -33,7 +33,7 @@ var unionBy = rest(function(arrays) {
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
-  return baseUniq(baseFlatten(arrays, 1, true), baseIteratee(iteratee));
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), baseIteratee(iteratee));
 });
 
 module.exports = unionBy;

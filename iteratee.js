@@ -3,8 +3,8 @@ var baseClone = require('./_baseClone'),
 
 /**
  * Creates a function that invokes `func` with the arguments of the created
- * function. If `func` is a property name the created function returns the
- * property value for a given element. If `func` is an array or object the
+ * function. If `func` is a property name, the created function returns the
+ * property value for a given element. If `func` is an array or object, the
  * created function returns `true` for elements that contain the equivalent
  * source properties, otherwise it returns `false`.
  *

@@ -18,7 +18,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * invoked on the trailing edge of the timeout only if the throttled function
  * is invoked more than once during the `wait` timeout.
  *
- * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `_.throttle` and `_.debounce`.
  *
  * @static

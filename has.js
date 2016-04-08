@@ -13,16 +13,16 @@ var baseHas = require('./_baseHas'),
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  * @example
  *
- * var object = { 'a': { 'b': { 'c': 3 } } };
- * var other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+ * var object = { 'a': { 'b': 2 } };
+ * var other = _.create({ 'a': _.create({ 'b': 2 }) });
  *
  * _.has(object, 'a');
  * // => true
  *
- * _.has(object, 'a.b.c');
+ * _.has(object, 'a.b');
  * // => true
  *
- * _.has(object, ['a', 'b', 'c']);
+ * _.has(object, ['a', 'b']);
  * // => true
  *
  * _.has(other, 'a');

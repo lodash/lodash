@@ -29,7 +29,7 @@ var unionWith = rest(function(arrays) {
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;
   }
-  return baseUniq(baseFlatten(arrays, 1, true), undefined, comparator);
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);
 });
 
 module.exports = unionWith;

@@ -13,15 +13,15 @@ var baseHasIn = require('./_baseHasIn'),
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  * @example
  *
- * var object = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+ * var object = _.create({ 'a': _.create({ 'b': 2 }) });
  *
  * _.hasIn(object, 'a');
  * // => true
  *
- * _.hasIn(object, 'a.b.c');
+ * _.hasIn(object, 'a.b');
  * // => true
  *
- * _.hasIn(object, ['a', 'b', 'c']);
+ * _.hasIn(object, ['a', 'b']);
  * // => true
  *
  * _.hasIn(object, 'b');

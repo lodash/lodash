@@ -4,7 +4,7 @@ var nativeCreate = require('./_nativeCreate');
 var objectProto = Object.prototype;
 
 /**
- * Creates an hash object.
+ * Creates a hash object.
  *
  * @private
  * @constructor

@@ -1,6 +1,3 @@
-var isFunction = require('./isFunction'),
-    toString = require('./toString');
-
 /** Used to resolve the decompiled source of functions. */
 var funcToString = Function.prototype.toString;
 
@@ -12,12 +9,15 @@ var funcToString = Function.prototype.toString;
  * @returns {string} Returns the source code.
  */
 function toSource(func) {
-  if (isFunction(func)) {
+  if (func != null) {
     try {
       return funcToString.call(func);
     } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
   }
-  return toString(func);
+  return '';
 }
 
 module.exports = toSource;

@@ -31,7 +31,7 @@ var differenceWith = rest(function(array, values) {
     comparator = undefined;
   }
   return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, true), undefined, comparator)
+    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), undefined, comparator)
     : [];
 });
 

@@ -4,7 +4,7 @@ var toString = require('./toString');
 var idCounter = 0;
 
 /**
- * Generates a unique ID. If `prefix` is given the ID is appended to it.
+ * Generates a unique ID. If `prefix` is given, the ID is appended to it.
  *
  * @static
  * @since 0.1.0

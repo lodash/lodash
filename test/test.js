@@ -6079,17 +6079,18 @@
     });
 
     QUnit.test('`_.' + methodName + '` should return an identity function when no arguments are given', function(assert) {
-      assert.expect(3);
+      assert.expect(6);
 
-      var combined = func();
-
-      try {
-        assert.strictEqual(combined('a'), 'a');
-      } catch (e) {
-        assert.ok(false, e.message);
-      }
-      assert.strictEqual(combined.length, 0);
-      assert.notStrictEqual(combined, identity);
+      _.times(2, function(index) {
+        try {
+          var combined = index ? func([]) : func();
+          assert.strictEqual(combined('a'), 'a');
+        } catch (e) {
+          assert.ok(false, e.message);
+        }
+        assert.strictEqual(combined.length, 0);
+        assert.notStrictEqual(combined, identity);
+      });
     });
 
     QUnit.test('`_.' + methodName + '` should work with a curried function and `_.head`', function(assert) {

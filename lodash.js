@@ -13560,7 +13560,18 @@
      * // => ['a', 'b']
      */
     function split(string, separator, limit) {
-      return toString(string).split(separator, limit);
+      string = toString(string);
+      if (string && (
+            typeof separator == 'string' ||
+            (separator != null && !isRegExp(separator))
+          )) {
+        separator += '';
+        if (separator == '' && reHasComplexSymbol.test(string)) {
+          var strSymbols = stringToArray(string);
+          return limit === undefined ? strSymbols : strSymbols.slice(0, limit < 0 ? 0 : limit);
+        }
+      }
+      return string.split(separator, limit);
     }
 
     /**

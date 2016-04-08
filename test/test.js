@@ -20092,13 +20092,26 @@
   QUnit.module('lodash.split');
 
   (function() {
-    QUnit.test('should support string split', function(assert) {
+    QUnit.test('should split a string by `separator`', function(assert) {
       assert.expect(3);
 
       var string = 'abcde';
       assert.deepEqual(_.split(string, 'c'), ['ab', 'de']);
       assert.deepEqual(_.split(string, /[bd]/), ['a', 'c', 'e']);
       assert.deepEqual(_.split(string, '', 2), ['a', 'b']);
+    });
+
+    QUnit.test('should return an array containing an empty string for empty values', function(assert) {
+      assert.expect(1);
+
+      var values = [, null, undefined, ''],
+          expected = lodashStable.map(values, lodashStable.constant(['']));
+
+      var actual = lodashStable.map(values, function(value, index) {
+        return index ? _.split(value) : _.split();
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should allow mixed string and array prototype methods', function(assert) {
@@ -23238,7 +23251,7 @@
         thumbsUp = '\ud83d\udc4d';
 
     QUnit.test('should account for astral symbols', function(assert) {
-      assert.expect(26);
+      assert.expect(33);
 
       var allHearts = _.repeat(hearts, 10),
           chars = hearts + comboGlyph,
@@ -23259,7 +23272,17 @@
       assert.strictEqual(_.padEnd(string, 16, chars), string + chars + hearts);
 
       assert.strictEqual(_.size(string), 13);
-      assert.deepEqual(_.toArray(string), ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket]);
+      assert.deepEqual(_.split(string, ' '), ['A', leafs + ',', comboGlyph + ',', 'and', rocket]);
+      assert.deepEqual(_.split(string, ' ', 3), ['A', leafs + ',', comboGlyph + ',']);
+      assert.deepEqual(_.split(string, undefined), [string]);
+      assert.deepEqual(_.split(string, undefined, 0), []);
+      assert.deepEqual(_.split(string, '', -1), []);
+
+      var expected = ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket];
+
+      assert.deepEqual(_.split(string, ''), expected);
+      assert.deepEqual(_.split(string, '', 6), expected.slice(0, 6));
+      assert.deepEqual(_.toArray(string), expected);
 
       assert.strictEqual(_.trim(trimString, chars), string);
       assert.strictEqual(_.trimStart(trimString, chars), string + trimChars);

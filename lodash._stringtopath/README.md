@@ -1,4 +1,4 @@
-# lodash._stringtopath v4.7.0
+# lodash._stringtopath v4.7.1
 
 The internal [lodash](https://lodash.com/) function `stringToPath` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var stringToPath = require('lodash._stringtopath');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash._stringtopath) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.7.1-npm-packages/lodash._stringtopath) for more details.

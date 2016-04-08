@@ -13919,7 +13919,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrim, '');
       }
-      chars = (chars + '');
+      chars += '';
       if (!chars) {
         return string;
       }
@@ -13958,7 +13958,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimEnd, '');
       }
-      chars = (chars + '');
+      chars += '';
       if (!chars) {
         return string;
       }
@@ -13995,7 +13995,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimStart, '');
       }
-      chars = (chars + '');
+      chars += '';
       if (!chars) {
         return string;
       }

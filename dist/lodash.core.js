@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.8.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.9.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.8.2';
+  var VERSION = '4.9.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -402,9 +402,9 @@
    * Shortcut fusion is an optimization to merge iteratee calls; this avoids
    * the creation of intermediate arrays and can greatly reduce the number of
    * iteratee executions. Sections of a chain sequence qualify for shortcut
-   * fusion if the section is applied to an array of at least two hundred
-   * elements and any iteratees accept only one argument. The heuristic for
-   * whether a section qualifies for shortcut fusion is subject to change.
+   * fusion if the section is applied to an array of at least `200` elements
+   * and any iteratees accept only one argument. The heuristic for whether a
+   * section qualifies for shortcut fusion is subject to change.
    *
    * Chaining is supported in custom builds as long as the `_#value` method is
    * directly or indirectly included in the build.
@@ -640,23 +640,24 @@
    * @private
    * @param {Array} array The array to flatten.
    * @param {number} depth The maximum recursion depth.
-   * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+   * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+   * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
    * @param {Array} [result=[]] The initial result value.
    * @returns {Array} Returns the new flattened array.
    */
-  function baseFlatten(array, depth, isStrict, result) {
-    result || (result = []);
-
+  function baseFlatten(array, depth, predicate, isStrict, result) {
     var index = -1,
         length = array.length;
 
+    predicate || (predicate = isFlattenable);
+    result || (result = []);
+
     while (++index < length) {
       var value = array[index];
-      if (depth > 0 && isArrayLikeObject(value) &&
-          (isStrict || isArray(value) || isArguments(value))) {
+      if (depth > 0 && predicate(value)) {
         if (depth > 1) {
           // Recursively flatten arrays (susceptible to call stack limits).
-          baseFlatten(value, depth - 1, isStrict, result);
+          baseFlatten(value, depth - 1, predicate, isStrict, result);
         } else {
           arrayPush(result, value);
         }
@@ -1394,6 +1395,17 @@
   }
 
   /**
+   * Checks if `value` is a flattenable `arguments` object or array.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+   */
+  function isFlattenable(value) {
+    return isArrayLikeObject(value) && (isArray(value) || isArguments(value));
+  }
+
+  /**
    * Checks if `value` is likely a prototype object.
    *
    * @private
@@ -1527,8 +1539,8 @@
   /**
    * Gets the index at which the first occurrence of `value` is found in `array`
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-   * for equality comparisons. If `fromIndex` is negative, it's used as the offset
-   * from the end of `array`.
+   * for equality comparisons. If `fromIndex` is negative, it's used as the
+   * offset from the end of `array`.
    *
    * @static
    * @memberOf _
@@ -1956,7 +1968,7 @@
    * Reduces `collection` to a value which is the accumulated result of running
    * each element in `collection` thru `iteratee`, where each successive
    * invocation is supplied the return value of the previous. If `accumulator`
-   * is not given the first element of `collection` is used as the initial
+   * is not given, the first element of `collection` is used as the initial
    * value. The iteratee is invoked with four arguments:
    * (accumulator, value, index|key, collection).
    *
@@ -3212,7 +3224,7 @@
   /**
    * This method is like `_.assignIn` except that it accepts `customizer`
    * which is invoked to produce the assigned values. If `customizer` returns
-   * `undefined` assignment is handled by the method instead. The `customizer`
+   * `undefined`, assignment is handled by the method instead. The `customizer`
    * is invoked with five arguments: (objValue, srcValue, key, object, source).
    *
    * **Note:** This method mutates `object`.
@@ -3243,7 +3255,7 @@
 
   /**
    * Creates an object that inherits from the `prototype` object. If a
-   * `properties` object is given its own enumerable string keyed properties
+   * `properties` object is given, its own enumerable string keyed properties
    * are assigned to the created object.
    *
    * @static
@@ -3317,16 +3329,16 @@
    * @returns {boolean} Returns `true` if `path` exists, else `false`.
    * @example
    *
-   * var object = { 'a': { 'b': { 'c': 3 } } };
-   * var other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+   * var object = { 'a': { 'b': 2 } };
+   * var other = _.create({ 'a': _.create({ 'b': 2 }) });
    *
    * _.has(object, 'a');
    * // => true
    *
-   * _.has(object, 'a.b.c');
+   * _.has(object, 'a.b');
    * // => true
    *
-   * _.has(object, ['a', 'b', 'c']);
+   * _.has(object, ['a', 'b']);
    * // => true
    *
    * _.has(other, 'a');
@@ -3583,8 +3595,8 @@
 
   /**
    * Creates a function that invokes `func` with the arguments of the created
-   * function. If `func` is a property name the created function returns the
-   * property value for a given element. If `func` is an array or object the
+   * function. If `func` is a property name, the created function returns the
+   * property value for a given element. If `func` is an array or object, the
    * created function returns `true` for elements that contain the equivalent
    * source properties, otherwise it returns `false`.
    *
@@ -3655,7 +3667,7 @@
 
   /**
    * Adds all own enumerable string keyed function properties of a source
-   * object to the destination object. If `object` is a function then methods
+   * object to the destination object. If `object` is a function, then methods
    * are added to its prototype as well.
    *
    * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
@@ -3765,7 +3777,7 @@
   }
 
   /**
-   * Generates a unique ID. If `prefix` is given the ID is appended to it.
+   * Generates a unique ID. If `prefix` is given, the ID is appended to it.
    *
    * @static
    * @since 0.1.0
@@ -3789,7 +3801,7 @@
   /*------------------------------------------------------------------------*/
 
   /**
-   * Computes the maximum value of `array`. If `array` is empty or falsey
+   * Computes the maximum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static
@@ -3813,7 +3825,7 @@
   }
 
   /**
-   * Computes the minimum value of `array`. If `array` is empty or falsey
+   * Computes the minimum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static

@@ -5615,37 +5615,37 @@
         'findLastKey': ['2', undefined, '2', '2']
       })[methodName];
 
-      QUnit.test('should return the found value', function(assert) {
+      QUnit.test('`_.' + methodName + '` should return the found value', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
       });
 
-      QUnit.test('should return `' + expected[1] + '` if value is not found', function(assert) {
+      QUnit.test('`_.' + methodName + '` should return `' + expected[1] + '` if value is not found', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
       });
 
-      QUnit.test('should work with `_.matches` shorthands', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with `_.matches` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, { 'b': 2 }), expected[2]);
       });
 
-      QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with `_.matchesProperty` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, ['b', 2]), expected[2]);
       });
 
-      QUnit.test('should work with `_.property` shorthands', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
         assert.expect(1);
 
         assert.strictEqual(func(objects, 'b'), expected[3]);
       });
 
-      QUnit.test('should return `' + expected[1] + '` for empty collections', function(assert) {
+      QUnit.test('`_.' + methodName + '` should return `' + expected[1] + '` for empty collections', function(assert) {
         assert.expect(1);
 
         var emptyValues = lodashStable.endsWith(methodName, 'Index') ? lodashStable.reject(empties, lodashStable.isPlainObject) : empties,
@@ -5673,7 +5673,7 @@
         'findLastKey': '3'
       })[methodName];
 
-      QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
+      QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
         assert.expect(1);
 
         if (!isNpm) {
@@ -5684,7 +5684,7 @@
         }
       });
 
-      QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      QUnit.test('`_.' + methodName + '` should return a wrapped value when explicitly chaining', function(assert) {
         assert.expect(1);
 
         if (!isNpm) {
@@ -5695,7 +5695,7 @@
         }
       });
 
-      QUnit.test('should not execute immediately when explicitly chaining', function(assert) {
+      QUnit.test('`_.' + methodName + '` should not execute immediately when explicitly chaining', function(assert) {
         assert.expect(1);
 
         if (!isNpm) {
@@ -5707,7 +5707,7 @@
         }
       });
 
-      QUnit.test('should work in a lazy sequence', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work in a lazy sequence', function(assert) {
         assert.expect(2);
 
         if (!isNpm) {
@@ -5736,7 +5736,7 @@
       })[methodName];
 
       if (expected != null) {
-        QUnit.test('should work with an object for `collection`', function(assert) {
+        QUnit.test('`_.' + methodName + '` should work with an object for `collection`', function(assert) {
           assert.expect(1);
 
           var actual = func({ 'a': 1, 'b': 2, 'c': 3 }, function(n) {
@@ -6225,7 +6225,7 @@
   lodashStable.each(['forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
-    QUnit.test('should iterate over `length` properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should iterate over `length` properties', function(assert) {
       assert.expect(1);
 
       var object = { '0': 'zero', '1': 'one', 'length': 2 },
@@ -20063,7 +20063,7 @@
     var func = _[methodName],
         isSortedIndexOf = methodName == 'sortedIndexOf';
 
-    QUnit.test('should perform a binary search', function(assert) {
+    QUnit.test('`_.' + methodName + '` should perform a binary search', function(assert) {
       assert.expect(1);
 
       var sorted = [4, 4, 5, 5, 6, 6];
@@ -21921,7 +21921,7 @@
     var func = _[methodName],
         isDebounce = methodName == 'debounce';
 
-    QUnit.test('_.' + methodName + ' should not error for non-object `options` values', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not error for non-object `options` values', function(assert) {
       assert.expect(1);
 
       var pass = true;
@@ -21934,7 +21934,7 @@
       assert.ok(pass);
     });
 
-    QUnit.test('_.' + methodName + ' should use a default `wait` of `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should use a default `wait` of `0`', function(assert) {
       assert.expect(1);
 
       var done = assert.async();
@@ -21954,7 +21954,7 @@
       }, 32);
     });
 
-    QUnit.test('_.' + methodName + ' should invoke `func` with the correct `this` binding', function(assert) {
+    QUnit.test('`_.' + methodName + '` should invoke `func` with the correct `this` binding', function(assert) {
       assert.expect(1);
 
       var done = assert.async();
@@ -21976,7 +21976,7 @@
       }, 64);
     });
 
-    QUnit.test('_.' + methodName + ' supports recursive calls', function(assert) {
+    QUnit.test('`_.' + methodName + '` supports recursive calls', function(assert) {
       assert.expect(2);
 
       var done = assert.async();
@@ -22007,7 +22007,7 @@
       }, 256);
     });
 
-    QUnit.test('_.' + methodName + ' should work if the system time is set backwards', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work if the system time is set backwards', function(assert) {
       assert.expect(1);
 
       var done = assert.async();
@@ -22048,7 +22048,7 @@
       }
     });
 
-    QUnit.test('_.' + methodName + ' should support cancelling delayed calls', function(assert) {
+    QUnit.test('`_.' + methodName + '` should support cancelling delayed calls', function(assert) {
       assert.expect(1);
 
       var done = assert.async();
@@ -22068,7 +22068,7 @@
       }, 64);
     });
 
-    QUnit.test('_.' + methodName + ' should reset `lastCalled` after cancelling', function(assert) {
+    QUnit.test('`_.' + methodName + '` should reset `lastCalled` after cancelling', function(assert) {
       assert.expect(3);
 
       var done = assert.async();
@@ -22091,7 +22091,7 @@
       }, 64);
     });
 
-    QUnit.test('_.' + methodName + ' should support flushing delayed calls', function(assert) {
+    QUnit.test('`_.' + methodName + '` should support flushing delayed calls', function(assert) {
       assert.expect(2);
 
       var done = assert.async();
@@ -22111,7 +22111,7 @@
       }, 64);
     });
 
-    QUnit.test('_.' + methodName + ' should noop `cancel` and `flush` when nothing is queued', function(assert) {
+    QUnit.test('`_.' + methodName + '` should noop `cancel` and `flush` when nothing is queued', function(assert) {
       assert.expect(2);
 
       var done = assert.async();
@@ -22311,7 +22311,7 @@
         array = [1, 2, 3],
         func = _[methodName];
 
-    QUnit.test('should return a dense array', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a dense array', function(assert) {
       assert.expect(3);
 
       var sparse = Array(3);
@@ -22324,7 +22324,7 @@
       assert.deepEqual(actual, sparse);
     });
 
-    QUnit.test('should treat array-like objects like arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat array-like objects like arrays', function(assert) {
       assert.expect(2);
 
       var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
@@ -22332,7 +22332,7 @@
       assert.deepEqual(func(args), array);
     });
 
-    QUnit.test('should return a shallow clone of arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return a shallow clone of arrays', function(assert) {
       assert.expect(2);
 
       var actual = func(array);
@@ -22340,7 +22340,7 @@
       assert.notStrictEqual(actual, array);
     });
 
-    QUnit.test('should work with a node list for `collection`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a node list for `collection`', function(assert) {
       assert.expect(1);
 
       if (document) {

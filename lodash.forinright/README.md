@@ -1,4 +1,4 @@
-# lodash.forinright v4.1.1
+# lodash.forinright v4.2.0
 
 The [lodash](https://lodash.com/) method `_.forInRight` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var forInRight = require('lodash.forinright');
 ```
 
-See the [documentation](https://lodash.com/docs#forInRight) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.forinright) for more details.
+See the [documentation](https://lodash.com/docs#forInRight) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.forinright) for more details.

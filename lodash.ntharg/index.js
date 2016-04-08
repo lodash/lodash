@@ -6,7 +6,6 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var rest = require('lodash.rest');
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
@@ -37,6 +36,26 @@ var reIsUint = /^(?:0|[1-9]\d*)$/;
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -47,8 +66,11 @@ var objectProto = Object.prototype;
  */
 var objectToString = objectProto.toString;
 
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
 /**
- * The base implementation of `_.nth` which doesn't coerce `n` to an integer.
+ * The base implementation of `_.nth` which doesn't coerce arguments.
  *
  * @private
  * @param {Array} array The array to query.
@@ -62,6 +84,35 @@ function baseNth(array, n) {
   }
   n += n < 0 ? length : 0;
   return isIndex(n, length) ? array[n] : undefined;
+}
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = array;
+    return apply(func, this, otherArgs);
+  };
 }
 
 /**
@@ -87,8 +138,7 @@ function isIndex(value, length) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -171,8 +221,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -224,7 +273,7 @@ function toFinite(value) {
 /**
  * Converts `value` to an integer.
  *
- * **Note:** This function is loosely based on
+ * **Note:** This method is loosely based on
  * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
  *
  * @static
@@ -299,7 +348,7 @@ function toNumber(value) {
 }
 
 /**
- * Creates a function that gets the argument at `n` index. If `n` is negative,
+ * Creates a function that gets the argument at index `n`. If `n` is negative,
  * the nth argument from the end is returned.
  *
  * @static
@@ -320,7 +369,7 @@ function toNumber(value) {
  */
 function nthArg(n) {
   n = toInteger(n);
-  return rest(function(args) {
+  return baseRest(function(args) {
     return baseNth(args, n);
   });
 }

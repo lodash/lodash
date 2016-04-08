@@ -1,10 +1,10 @@
 /**
- * lodash 4.1.2 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseDifference = require('lodash._basedifference'),
     rest = require('lodash.rest');
@@ -31,7 +31,7 @@ var objectToString = objectProto.toString;
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -61,9 +61,10 @@ var getLength = baseProperty('length');
  * @memberOf _
  * @since 0.1.0
  * @category Array
- * @param {Array} array The array to filter.
+ * @param {Array} array The array to inspect.
  * @param {...*} [values] The values to exclude.
  * @returns {Array} Returns the new array of filtered values.
+ * @see _.difference, _.xor
  * @example
  *
  * _.without([1, 2, 1, 3], 1, 2);

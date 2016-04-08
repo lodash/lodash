@@ -6,8 +6,6 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var baseToString = require('lodash._basetostring'),
-    toString = require('lodash.tostring');
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
@@ -34,6 +32,15 @@ var reIsOctal = /^0o[0-7]+$/i;
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -44,8 +51,15 @@ var objectProto = Object.prototype;
  */
 var objectToString = objectProto.toString;
 
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
 /**
- * The base implementation of `_.clamp` which doesn't coerce arguments to numbers.
+ * The base implementation of `_.clamp` which doesn't coerce arguments.
  *
  * @private
  * @param {number} number The number to clamp.
@@ -66,6 +80,26 @@ function baseClamp(number, lower, upper) {
 }
 
 /**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
  * Checks if `value` is classified as a `Function` object.
  *
  * @static
@@ -73,8 +107,7 @@ function baseClamp(number, lower, upper) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -157,8 +190,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -210,7 +242,7 @@ function toFinite(value) {
 /**
  * Converts `value` to an integer.
  *
- * **Note:** This function is loosely based on
+ * **Note:** This method is loosely based on
  * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
  *
  * @static
@@ -285,6 +317,31 @@ function toNumber(value) {
 }
 
 /**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+/**
  * Checks if `string` starts with the given target string.
  *
  * @static
@@ -310,7 +367,8 @@ function toNumber(value) {
 function startsWith(string, target, position) {
   string = toString(string);
   position = baseClamp(toInteger(position), 0, string.length);
-  return string.lastIndexOf(baseToString(target), position) == position;
+  target = baseToString(target);
+  return string.slice(position, position + target.length) == target;
 }
 
 module.exports = startsWith;

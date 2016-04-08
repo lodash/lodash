@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,7 +7,6 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var Stack = require('lodash._stack'),
-    arrayEach = require('lodash._arrayeach'),
     baseFor = require('lodash._basefor'),
     isBuffer = require('lodash.isbuffer'),
     keys = require('lodash.keys'),
@@ -90,6 +89,27 @@ function addMapEntry(map, pair) {
 function addSetEntry(set, value) {
   set.add(value);
   return set;
+}
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
 }
 
 /**
@@ -193,7 +213,8 @@ var reIsNative = RegExp('^' +
 /** Built-in value references. */
 var Symbol = root.Symbol,
     Uint8Array = root.Uint8Array,
-    getOwnPropertySymbols = Object.getOwnPropertySymbols;
+    getOwnPropertySymbols = Object.getOwnPropertySymbols,
+    objectCreate = Object.create;
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map'),
@@ -344,17 +365,9 @@ function baseConforms(source) {
  * @param {Object} prototype The object to inherit from.
  * @returns {Object} Returns the new object.
  */
-var baseCreate = (function() {
-  function object() {}
-  return function(prototype) {
-    if (isObject(prototype)) {
-      object.prototype = prototype;
-      var result = new object;
-      object.prototype = undefined;
-    }
-    return result || {};
-  };
-}());
+function baseCreate(proto) {
+  return isObject(proto) ? objectCreate(proto) : {};
+}
 
 /**
  * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -462,10 +475,11 @@ function cloneSymbol(symbol) {
  * @returns {Object} Returns the cloned typed array.
  */
 function cloneTypedArray(typedArray, isDeep) {
-  var buffer = typedArray.buffer,
+  var arrayBuffer = typedArray.buffer,
+      buffer = isDeep ? cloneArrayBuffer(arrayBuffer) : arrayBuffer,
       Ctor = typedArray.constructor;
 
-  return new Ctor(isDeep ? cloneArrayBuffer(buffer) : buffer, typedArray.byteOffset, typedArray.length);
+  return new Ctor(buffer, typedArray.byteOffset, typedArray.length);
 }
 
 /**
@@ -518,8 +532,11 @@ function copyObjectWith(source, props, object, customizer) {
       length = props.length;
 
   while (++index < length) {
-    var key = props[index],
-        newValue = customizer ? customizer(object[key], source[key], key, object, source) : source[key];
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : source[key];
 
     assignValue(object, key, newValue);
   }
@@ -725,7 +742,7 @@ function eq(value, other) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

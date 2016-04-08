@@ -1,6 +1,6 @@
 {
   "name": "lodash.clonewith",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "The lodash method `_.cloneWith` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,7 +15,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arrayeach": "^3.0.0",
     "lodash._basefor": "^3.0.0",
     "lodash._root": "^3.0.0",
     "lodash._stack": "^4.0.0",

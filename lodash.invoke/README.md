@@ -1,4 +1,4 @@
-# lodash.invoke v4.1.1
+# lodash.invoke v4.2.0
 
 The [lodash](https://lodash.com/) method `_.invoke` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var invoke = require('lodash.invoke');
 ```
 
-See the [documentation](https://lodash.com/docs#invoke) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.invoke) for more details.
+See the [documentation](https://lodash.com/docs#invoke) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.invoke) for more details.

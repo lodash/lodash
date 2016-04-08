@@ -1,4 +1,4 @@
-# lodash.foreach v4.1.1
+# lodash.foreach v4.2.0
 
 The [lodash](https://lodash.com/) method `_.forEach` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var forEach = require('lodash.foreach');
 ```
 
-See the [documentation](https://lodash.com/docs#forEach) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.foreach) for more details.
+See the [documentation](https://lodash.com/docs#forEach) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.foreach) for more details.

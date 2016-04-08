@@ -1,12 +1,13 @@
 /**
- * lodash 4.1.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var toString = require('lodash.tostring');
+var baseSlice = require('lodash._baseslice'),
+    toString = require('lodash.tostring');
 
 /** Used as default options for `_.truncate`. */
 var DEFAULT_TRUNC_LENGTH = 30,
@@ -108,6 +109,21 @@ var objectProto = Object.prototype;
  * of values.
  */
 var objectToString = objectProto.toString;
+
+/**
+ * Casts `array` to a slice if it's needed.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {number} start The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the cast slice.
+ */
+function castSlice(array, start, end) {
+  var length = array.length;
+  end = end === undefined ? length : end;
+  return (!start && end >= length) ? array : baseSlice(array, start, end);
+}
 
 /**
  * Checks if `value` is classified as a `Function` object.
@@ -382,7 +398,7 @@ function truncate(string, options) {
     return omission;
   }
   var result = strSymbols
-    ? strSymbols.slice(0, end).join('')
+    ? castSlice(strSymbols, 0, end).join('')
     : string.slice(0, end);
 
   if (separator === undefined) {

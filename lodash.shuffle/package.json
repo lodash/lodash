@@ -1,6 +1,6 @@
 {
   "name": "lodash.shuffle",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "The lodash method `_.shuffle` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

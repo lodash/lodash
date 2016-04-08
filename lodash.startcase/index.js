@@ -1,13 +1,13 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var capitalize = require('lodash.capitalize'),
-    deburr = require('lodash.deburr'),
+var deburr = require('lodash.deburr'),
+    upperFirst = require('lodash.upperfirst'),
     words = require('lodash.words');
 
 /**
@@ -18,7 +18,8 @@ var capitalize = require('lodash.capitalize'),
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as
+ *  the initial value.
  * @returns {*} Returns the accumulated value.
  */
 function arrayReduce(array, iteratee, accumulator, initAccum) {
@@ -48,26 +49,28 @@ function createCompounder(callback) {
 }
 
 /**
- * Converts `string` to [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
+ * Converts `string` to
+ * [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
  *
  * @static
  * @memberOf _
+ * @since 3.1.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the start cased string.
  * @example
  *
- * _.startCase('--foo-bar');
+ * _.startCase('--foo-bar--');
  * // => 'Foo Bar'
  *
  * _.startCase('fooBar');
  * // => 'Foo Bar'
  *
- * _.startCase('__foo_bar__');
- * // => 'Foo Bar'
+ * _.startCase('__FOO_BAR__');
+ * // => 'FOO BAR'
  */
 var startCase = createCompounder(function(result, word, index) {
-  return result + (index ? ' ' : '') + capitalize(word);
+  return result + (index ? ' ' : '') + upperFirst(word);
 });
 
 module.exports = startCase;

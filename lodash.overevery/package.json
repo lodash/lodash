@@ -1,6 +1,6 @@
 {
   "name": "lodash.overevery",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "The lodash method `_.overEvery` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,14 +15,8 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arraymap": "^3.0.0",
     "lodash._baseflatten": "^4.0.0",
-    "lodash._baseisequal": "^4.0.0",
-    "lodash._baseismatch": "^4.0.0",
-    "lodash.get": "^4.0.0",
-    "lodash.hasin": "^4.0.0",
-    "lodash.rest": "^4.0.0",
-    "lodash.topairs": "^4.0.0",
-    "lodash.tostring": "^4.0.0"
+    "lodash._baseiteratee": "^4.0.0",
+    "lodash.rest": "^4.0.0"
   }
 }

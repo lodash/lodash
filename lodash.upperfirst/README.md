@@ -1,4 +1,4 @@
-# lodash.upperfirst v4.1.2
+# lodash.upperfirst v4.2.0
 
 The [lodash](https://lodash.com/) method `_.upperFirst` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var upperFirst = require('lodash.upperfirst');
 ```
 
-See the [documentation](https://lodash.com/docs#upperFirst) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.upperfirst) for more details.
+See the [documentation](https://lodash.com/docs#upperFirst) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.upperfirst) for more details.

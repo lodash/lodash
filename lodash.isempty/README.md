@@ -1,4 +1,4 @@
-# lodash.isempty v4.1.3
+# lodash.isempty v4.2.0
 
 The [lodash](https://lodash.com/) method `_.isEmpty` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isEmpty = require('lodash.isempty');
 ```
 
-See the [documentation](https://lodash.com/docs#isEmpty) or [package source](https://github.com/lodash/lodash/blob/4.1.3-npm-packages/lodash.isempty) for more details.
+See the [documentation](https://lodash.com/docs#isEmpty) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.isempty) for more details.

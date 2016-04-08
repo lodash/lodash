@@ -1,6 +1,6 @@
 {
   "name": "lodash.template",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "The lodash method `_.template` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,12 +15,11 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arraymap": "^3.0.0",
     "lodash._reinterpolate": "^3.0.0",
     "lodash.assigninwith": "^4.0.0",
     "lodash.keys": "^4.0.0",
     "lodash.rest": "^4.0.0",
-    "lodash.templatesettings": "^3.0.0",
+    "lodash.templatesettings": "^4.0.0",
     "lodash.tostring": "^4.0.0"
   }
 }

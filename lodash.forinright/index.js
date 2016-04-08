@@ -1,24 +1,14 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseForRight = require('lodash._baseforright'),
+    baseIteratee = require('lodash._baseiteratee'),
     keysIn = require('lodash.keysin');
-
-/**
- * Casts `value` to `identity` if it's not a function.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the array-like object.
- */
-function baseCastFunction(value) {
-  return typeof value == 'function' ? value : identity;
-}
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of
@@ -26,6 +16,7 @@ function baseCastFunction(value) {
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -42,31 +33,12 @@ function baseCastFunction(value) {
  * _.forInRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'
+ * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
  */
 function forInRight(object, iteratee) {
   return object == null
     ? object
-    : baseForRight(object, baseCastFunction(iteratee), keysIn);
-}
-
-/**
- * This method returns the first argument given to it.
- *
- * @static
- * @memberOf _
- * @category Util
- * @param {*} value Any value.
- * @returns {*} Returns `value`.
- * @example
- *
- * var object = { 'user': 'fred' };
- *
- * _.identity(object) === object;
- * // => true
- */
-function identity(value) {
-  return value;
+    : baseForRight(object, baseIteratee(iteratee), keysIn);
 }
 
 module.exports = forInRight;

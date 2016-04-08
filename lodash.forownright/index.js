@@ -1,24 +1,14 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseForRight = require('lodash._baseforright'),
+    baseIteratee = require('lodash._baseiteratee'),
     keys = require('lodash.keys');
-
-/**
- * Casts `value` to `identity` if it's not a function.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the array-like object.
- */
-function baseCastFunction(value) {
-  return typeof value == 'function' ? value : identity;
-}
 
 /**
  * The base implementation of `_.forOwnRight` without support for iteratee shorthands.
@@ -38,6 +28,7 @@ function baseForOwnRight(object, iteratee) {
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -54,29 +45,10 @@ function baseForOwnRight(object, iteratee) {
  * _.forOwnRight(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'
+ * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, baseCastFunction(iteratee));
-}
-
-/**
- * This method returns the first argument given to it.
- *
- * @static
- * @memberOf _
- * @category Util
- * @param {*} value Any value.
- * @returns {*} Returns `value`.
- * @example
- *
- * var object = { 'user': 'fred' };
- *
- * _.identity(object) === object;
- * // => true
- */
-function identity(value) {
-  return value;
+  return object && baseForOwnRight(object, baseIteratee(iteratee));
 }
 
 module.exports = forOwnRight;

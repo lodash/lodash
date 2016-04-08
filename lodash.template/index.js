@@ -1,13 +1,12 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayMap = require('lodash._arraymap'),
-    assignInWith = require('lodash.assigninwith'),
+var assignInWith = require('lodash.assigninwith'),
     keys = require('lodash.keys'),
     reInterpolate = require('lodash._reinterpolate'),
     rest = require('lodash.rest'),
@@ -68,6 +67,26 @@ function apply(func, thisArg, args) {
     case 3: return func.call(thisArg, args[0], args[1], args[2]);
   }
   return func.apply(thisArg, args);
+}
+
+/**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
 }
 
 /**
@@ -229,7 +248,6 @@ function eq(value, other) {
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -270,8 +288,12 @@ function isArrayLike(value) {
  * // => false
  */
 function isError(value) {
-  return isObjectLike(value) &&
-    typeof value.message == 'string' && objectToString.call(value) == errorTag;
+  if (!isObjectLike(value)) {
+    return false;
+  }
+  var Ctor = value.constructor;
+  return (objectToString.call(value) == errorTag) ||
+    (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
 }
 
 /**
@@ -323,7 +345,8 @@ function isFunction(value) {
  * // => false
  */
 function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
 /**
@@ -567,7 +590,8 @@ function template(string, options, guard) {
     'return __p\n}';
 
   var result = attempt(function() {
-    return Function(importsKeys, sourceURL + 'return ' + source).apply(undefined, importsValues);
+    return Function(importsKeys, sourceURL + 'return ' + source)
+      .apply(undefined, importsValues);
   });
 
   // Provide the compiled function's source by its `toString` method or
@@ -603,7 +627,7 @@ var attempt = rest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
-    return isObject(e) ? e : new Error(e);
+    return isError(e) ? e : new Error(e);
   }
 });
 

@@ -1,4 +1,4 @@
-# lodash.zipwith v4.1.0
+# lodash.zipwith v4.2.0
 
 The [lodash](https://lodash.com/) method `_.zipWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var zipWith = require('lodash.zipwith');
 ```
 
-See the [documentation](https://lodash.com/docs#zipWith) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.zipwith) for more details.
+See the [documentation](https://lodash.com/docs#zipWith) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.zipwith) for more details.

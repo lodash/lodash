@@ -1,6 +1,6 @@
 {
   "name": "lodash.differencewith",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "The lodash method `_.differenceWith` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -16,7 +16,7 @@
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
     "lodash._basedifference": "~4.4.0",
-    "lodash._baseflatten": "~4.1.0",
+    "lodash._baseflatten": "~4.2.0",
     "lodash.rest": "^4.0.0"
   }
 }

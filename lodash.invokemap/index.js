@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,7 +8,6 @@
  */
 var baseEach = require('lodash._baseeach'),
     baseSlice = require('lodash._baseslice'),
-    get = require('lodash.get'),
     rest = require('lodash.rest'),
     toString = require('lodash.tostring');
 
@@ -58,6 +57,37 @@ var objectProto = Object.prototype;
 var objectToString = objectProto.toString;
 
 /**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function baseCastPath(value) {
+  return isArray(value) ? value : stringToPath(value);
+}
+
+/**
+ * The base implementation of `_.get` without support for default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path) {
+  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
+
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[path[index++]];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+/**
  * The base implementation of `_.invoke` without support for individual
  * method arguments.
  *
@@ -69,7 +99,7 @@ var objectToString = objectProto.toString;
  */
 function baseInvoke(object, path, args) {
   if (!isKey(path, object)) {
-    path = baseToPath(path);
+    path = baseCastPath(path);
     object = parent(object, path);
     path = last(path);
   }
@@ -88,18 +118,6 @@ function baseProperty(key) {
   return function(object) {
     return object == null ? undefined : object[key];
   };
-}
-
-/**
- * The base implementation of `_.toPath` which only converts `value` to a
- * path if it's not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Array} Returns the property path array.
- */
-function baseToPath(value) {
-  return isArray(value) ? value : stringToPath(value);
 }
 
 /**
@@ -216,7 +234,7 @@ var invokeMap = rest(function(collection, path, args) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
@@ -243,7 +261,6 @@ var isArray = Array.isArray;
  *
  * @static
  * @memberOf _
- * @type Function
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
@@ -315,7 +332,8 @@ function isFunction(value) {
  * // => false
  */
 function isLength(value) {
-  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
 }
 
 /**
@@ -344,6 +362,35 @@ function isLength(value) {
 function isObject(value) {
   var type = typeof value;
   return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Gets the value at `path` of `object`. If the resolved value is
+ * `undefined` the `defaultValue` is used in its place.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path of the property to get.
+ * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
+ * @returns {*} Returns the resolved value.
+ * @example
+ *
+ * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ *
+ * _.get(object, 'a[0].b.c');
+ * // => 3
+ *
+ * _.get(object, ['a', '0', 'b', 'c']);
+ * // => 3
+ *
+ * _.get(object, 'a.b.c', 'default');
+ * // => 'default'
+ */
+function get(object, path, defaultValue) {
+  var result = object == null ? undefined : baseGet(object, path);
+  return result === undefined ? defaultValue : result;
 }
 
 module.exports = invokeMap;

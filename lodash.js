@@ -13568,7 +13568,7 @@
         separator += '';
         if (separator == '' && reHasComplexSymbol.test(string)) {
           var strSymbols = stringToArray(string);
-          return limit === undefined ? strSymbols : strSymbols.slice(0, limit < 0 ? 0 : limit);
+          return limit === undefined ? strSymbols : strSymbols.slice(0, limit >>> 0);
         }
       }
       return string.split(separator, limit);

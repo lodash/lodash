@@ -1,11 +1,12 @@
 /**
- * lodash 4.7.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+var baseToString = require('lodash._basetostring');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -13,13 +14,9 @@ var FUNC_ERROR_TEXT = 'Expected a function';
 /** Used to stand-in for `undefined` hash values. */
 var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
-/** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
-
 /** `Object#toString` result references. */
 var funcTag = '[object Function]',
-    genTag = '[object GeneratorFunction]',
-    symbolTag = '[object Symbol]';
+    genTag = '[object GeneratorFunction]';
 
 /** Used to match property names within property paths. */
 var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]/g;
@@ -128,95 +125,236 @@ var reIsNative = RegExp('^' +
 );
 
 /** Built-in value references. */
-var Symbol = root.Symbol,
-    splice = arrayProto.splice;
+var splice = arrayProto.splice;
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map'),
     nativeCreate = getNative(Object, 'create');
-
-/** Used to convert symbols to primitives and strings. */
-var symbolProto = Symbol ? Symbol.prototype : undefined,
-    symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 /**
  * Creates a hash object.
  *
  * @private
  * @constructor
- * @returns {Object} Returns the new hash object.
+ * @param {Array} [entries] The key-value pairs to cache.
  */
-function Hash() {}
+function Hash(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+}
 
 /**
  * Removes `key` and its value from the hash.
  *
  * @private
+ * @name delete
+ * @memberOf Hash
  * @param {Object} hash The hash to modify.
  * @param {string} key The key of the value to remove.
  * @returns {boolean} Returns `true` if the entry was removed, else `false`.
  */
-function hashDelete(hash, key) {
-  return hashHas(hash, key) && delete hash[key];
+function hashDelete(key) {
+  return this.has(key) && delete this.__data__[key];
 }
 
 /**
  * Gets the hash value for `key`.
  *
  * @private
- * @param {Object} hash The hash to query.
+ * @name get
+ * @memberOf Hash
  * @param {string} key The key of the value to get.
  * @returns {*} Returns the entry value.
  */
-function hashGet(hash, key) {
+function hashGet(key) {
+  var data = this.__data__;
   if (nativeCreate) {
-    var result = hash[key];
+    var result = data[key];
     return result === HASH_UNDEFINED ? undefined : result;
   }
-  return hasOwnProperty.call(hash, key) ? hash[key] : undefined;
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
 }
 
 /**
  * Checks if a hash value for `key` exists.
  *
  * @private
- * @param {Object} hash The hash to query.
+ * @name has
+ * @memberOf Hash
  * @param {string} key The key of the entry to check.
  * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
  */
-function hashHas(hash, key) {
-  return nativeCreate ? hash[key] !== undefined : hasOwnProperty.call(hash, key);
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
 }
 
 /**
  * Sets the hash `key` to `value`.
  *
  * @private
- * @param {Object} hash The hash to modify.
+ * @name set
+ * @memberOf Hash
  * @param {string} key The key of the value to set.
  * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
  */
-function hashSet(hash, key, value) {
-  hash[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+function hashSet(key, value) {
+  var data = this.__data__;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
 }
 
-// Avoid inheriting from `Object.prototype` when possible.
-Hash.prototype = nativeCreate ? nativeCreate(null) : objectProto;
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+}
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  return true;
+}
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
 
 /**
  * Creates a map cache object to store key-value pairs.
  *
  * @private
  * @constructor
- * @param {Array} [values] The values to cache.
+ * @param {Array} [entries] The key-value pairs to cache.
  */
-function MapCache(values) {
+function MapCache(entries) {
   var index = -1,
-      length = values ? values.length : 0;
+      length = entries ? entries.length : 0;
 
   this.clear();
   while (++index < length) {
-    var entry = values[index];
+    var entry = entries[index];
     this.set(entry[0], entry[1]);
   }
 }
@@ -228,10 +366,10 @@ function MapCache(values) {
  * @name clear
  * @memberOf MapCache
  */
-function mapClear() {
+function mapCacheClear() {
   this.__data__ = {
     'hash': new Hash,
-    'map': Map ? new Map : [],
+    'map': new (Map || ListCache),
     'string': new Hash
   };
 }
@@ -245,12 +383,8 @@ function mapClear() {
  * @param {string} key The key of the value to remove.
  * @returns {boolean} Returns `true` if the entry was removed, else `false`.
  */
-function mapDelete(key) {
-  var data = this.__data__;
-  if (isKeyable(key)) {
-    return hashDelete(typeof key == 'string' ? data.string : data.hash, key);
-  }
-  return Map ? data.map['delete'](key) : assocDelete(data.map, key);
+function mapCacheDelete(key) {
+  return getMapData(this, key)['delete'](key);
 }
 
 /**
@@ -262,12 +396,8 @@ function mapDelete(key) {
  * @param {string} key The key of the value to get.
  * @returns {*} Returns the entry value.
  */
-function mapGet(key) {
-  var data = this.__data__;
-  if (isKeyable(key)) {
-    return hashGet(typeof key == 'string' ? data.string : data.hash, key);
-  }
-  return Map ? data.map.get(key) : assocGet(data.map, key);
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
 }
 
 /**
@@ -279,12 +409,8 @@ function mapGet(key) {
  * @param {string} key The key of the entry to check.
  * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
  */
-function mapHas(key) {
-  var data = this.__data__;
-  if (isKeyable(key)) {
-    return hashHas(typeof key == 'string' ? data.string : data.hash, key);
-  }
-  return Map ? data.map.has(key) : assocHas(data.map, key);
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
 }
 
 /**
@@ -297,71 +423,17 @@ function mapHas(key) {
  * @param {*} value The value to set.
  * @returns {Object} Returns the map cache instance.
  */
-function mapSet(key, value) {
-  var data = this.__data__;
-  if (isKeyable(key)) {
-    hashSet(typeof key == 'string' ? data.string : data.hash, key, value);
-  } else if (Map) {
-    data.map.set(key, value);
-  } else {
-    assocSet(data.map, key, value);
-  }
+function mapCacheSet(key, value) {
+  getMapData(this, key).set(key, value);
   return this;
 }
 
 // Add methods to `MapCache`.
-MapCache.prototype.clear = mapClear;
-MapCache.prototype['delete'] = mapDelete;
-MapCache.prototype.get = mapGet;
-MapCache.prototype.has = mapHas;
-MapCache.prototype.set = mapSet;
-
-/**
- * Removes `key` and its value from the associative array.
- *
- * @private
- * @param {Array} array The array to modify.
- * @param {string} key The key of the value to remove.
- * @returns {boolean} Returns `true` if the entry was removed, else `false`.
- */
-function assocDelete(array, key) {
-  var index = assocIndexOf(array, key);
-  if (index < 0) {
-    return false;
-  }
-  var lastIndex = array.length - 1;
-  if (index == lastIndex) {
-    array.pop();
-  } else {
-    splice.call(array, index, 1);
-  }
-  return true;
-}
-
-/**
- * Gets the associative array value for `key`.
- *
- * @private
- * @param {Array} array The array to query.
- * @param {string} key The key of the value to get.
- * @returns {*} Returns the entry value.
- */
-function assocGet(array, key) {
-  var index = assocIndexOf(array, key);
-  return index < 0 ? undefined : array[index][1];
-}
-
-/**
- * Checks if an associative array value for `key` exists.
- *
- * @private
- * @param {Array} array The array to query.
- * @param {string} key The key of the entry to check.
- * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
- */
-function assocHas(array, key) {
-  return assocIndexOf(array, key) > -1;
-}
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -382,20 +454,18 @@ function assocIndexOf(array, key) {
 }
 
 /**
- * Sets the associative array `key` to `value`.
+ * Gets the data for `map`.
  *
  * @private
- * @param {Array} array The array to modify.
- * @param {string} key The key of the value to set.
- * @param {*} value The value to set.
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
  */
-function assocSet(array, key, value) {
-  var index = assocIndexOf(array, key);
-  if (index < 0) {
-    array.push([key, value]);
-  } else {
-    array[index][1] = value;
-  }
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
 }
 
 /**
@@ -420,8 +490,9 @@ function getNative(object, key) {
  */
 function isKeyable(value) {
   var type = typeof value;
-  return type == 'number' || type == 'boolean' ||
-    (type == 'string' && value != '__proto__') || value == null;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
 }
 
 /**
@@ -477,7 +548,7 @@ function toSource(func) {
  * @category Function
  * @param {Function} func The function to have its output memoized.
  * @param {Function} [resolver] The function to resolve the cache key.
- * @returns {Function} Returns the new memoizing function.
+ * @returns {Function} Returns the new memoized function.
  * @example
  *
  * var object = { 'a': 1, 'b': 2 };
@@ -618,34 +689,6 @@ function isObject(value) {
 }
 
 /**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return !!value && typeof value == 'object';
-}
-
-/**
  * Checks if `value` is a native function.
  *
  * @static
@@ -672,29 +715,6 @@ function isNative(value) {
 }
 
 /**
- * Checks if `value` is classified as a `Symbol` primitive or object.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
- * @example
- *
- * _.isSymbol(Symbol.iterator);
- * // => true
- *
- * _.isSymbol('abc');
- * // => false
- */
-function isSymbol(value) {
-  return typeof value == 'symbol' ||
-    (isObjectLike(value) && objectToString.call(value) == symbolTag);
-}
-
-/**
  * Converts `value` to a string. An empty string is returned for `null`
  * and `undefined` values. The sign of `-0` is preserved.
  *
@@ -716,18 +736,7 @@ function isSymbol(value) {
  * // => '1,2,3'
  */
 function toString(value) {
-  // Exit early for strings to avoid a performance hit in some environments.
-  if (typeof value == 'string') {
-    return value;
-  }
-  if (value == null) {
-    return '';
-  }
-  if (isSymbol(value)) {
-    return symbolToString ? symbolToString.call(value) : '';
-  }
-  var result = (value + '');
-  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+  return value == null ? '' : baseToString(value);
 }
 
 module.exports = stringToPath;

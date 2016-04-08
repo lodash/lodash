@@ -1,4 +1,4 @@
-# lodash.flatmapdepth v4.7.0
+# lodash.flatmapdepth v4.8.0
 
 The [lodash](https://lodash.com/) method `_.flatMapDepth` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var flatMapDepth = require('lodash.flatmapdepth');
 ```
 
-See the [documentation](https://lodash.com/docs#flatMapDepth) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.flatmapdepth) for more details.
+See the [documentation](https://lodash.com/docs#flatMapDepth) or [package source](https://github.com/lodash/lodash/blob/4.8.0-npm-packages/lodash.flatmapdepth) for more details.

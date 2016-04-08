@@ -1,5 +1,5 @@
 /**
- * lodash 4.7.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.8.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>

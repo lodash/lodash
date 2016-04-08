@@ -1,5 +1,6 @@
 import baseFlatten from './_baseFlatten';
 import baseUniq from './_baseUniq';
+import isArrayLikeObject from './isArrayLikeObject';
 import rest from './rest';
 
 /**
@@ -19,7 +20,7 @@ import rest from './rest';
  * // => [2, 1, 4]
  */
 var union = rest(function(arrays) {
-  return baseUniq(baseFlatten(arrays, 1, true));
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
 });
 
 export default union;

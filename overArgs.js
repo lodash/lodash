@@ -2,6 +2,7 @@ import apply from './_apply';
 import arrayMap from './_arrayMap';
 import baseFlatten from './_baseFlatten';
 import baseIteratee from './_baseIteratee';
+import isFlattenableIteratee from './_isFlattenableIteratee';
 import rest from './rest';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -40,8 +41,7 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
-
+  transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
   var funcsLength = transforms.length;
   return rest(function(args) {
     var index = -1,

@@ -3,7 +3,7 @@ import gt from './gt';
 import identity from './identity';
 
 /**
- * Computes the maximum value of `array`. If `array` is empty or falsey
+ * Computes the maximum value of `array`. If `array` is empty or falsey,
  * `undefined` is returned.
  *
  * @static

@@ -3,7 +3,7 @@ import identity from './identity';
 import lt from './lt';
 
 /**
- * Computes the minimum value of `array`. If `array` is empty or falsey
+ * Computes the minimum value of `array`. If `array` is empty or falsey,
  * `undefined` is returned.
  *
  * @static

@@ -2357,50 +2357,6 @@
     }
 
     /**
-     * Casts `value` to an empty array if it's not an array like object.
-     *
-     * @private
-     * @param {*} value The value to inspect.
-     * @returns {Array|Object} Returns the cast array-like object.
-     */
-    function baseCastArrayLikeObject(value) {
-      return isArrayLikeObject(value) ? value : [];
-    }
-
-    /**
-     * Casts `value` to `identity` if it's not a function.
-     *
-     * @private
-     * @param {*} value The value to inspect.
-     * @returns {Function} Returns cast function.
-     */
-    function baseCastFunction(value) {
-      return typeof value == 'function' ? value : identity;
-    }
-
-    /**
-     * Casts `value` to a string if it's not a string or symbol.
-     *
-     * @private
-     * @param {*} value The value to inspect.
-     * @returns {string|symbol} Returns the cast key.
-     */
-    function baseCastKey(key) {
-      return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
-    }
-
-    /**
-     * Casts `value` to a path array if it's not one.
-     *
-     * @private
-     * @param {*} value The value to inspect.
-     * @returns {Array} Returns the cast property path array.
-     */
-    function baseCastPath(value) {
-      return isArray(value) ? value : stringToPath(value);
-    }
-
-    /**
      * The base implementation of `_.clamp` which doesn't coerce arguments to numbers.
      *
      * @private
@@ -2801,7 +2757,7 @@
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path) {
-      path = isKey(path, object) ? [path] : baseCastPath(path);
+      path = isKey(path, object) ? [path] : castPath(path);
 
       var index = 0,
           length = path.length;
@@ -2963,7 +2919,7 @@
      */
     function baseInvoke(object, path, args) {
       if (!isKey(path, object)) {
-        path = baseCastPath(path);
+        path = castPath(path);
         object = parent(object, path);
         path = last(path);
       }
@@ -3485,7 +3441,7 @@
             splice.call(array, index, 1);
           }
           else if (!isKey(index, array)) {
-            var path = baseCastPath(index),
+            var path = castPath(index),
                 object = parent(array, path);
 
             if (object != null) {
@@ -3575,7 +3531,7 @@
      * @returns {Object} Returns `object`.
      */
     function baseSet(object, path, value, customizer) {
-      path = isKey(path, object) ? [path] : baseCastPath(path);
+      path = isKey(path, object) ? [path] : castPath(path);
 
       var index = -1,
           length = path.length,
@@ -3854,7 +3810,7 @@
      * @returns {boolean} Returns `true` if the property is deleted, else `false`.
      */
     function baseUnset(object, path) {
-      path = isKey(path, object) ? [path] : baseCastPath(path);
+      path = isKey(path, object) ? [path] : castPath(path);
       object = parent(object, path);
       var key = last(path);
       return (object != null && has(object, key)) ? delete object[key] : true;
@@ -3962,6 +3918,54 @@
         assignFunc(result, props[index], value);
       }
       return result;
+    }
+
+    /**
+     * Casts `value` to an empty array if it's not an array like object.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {Array|Object} Returns the cast array-like object.
+     */
+    function castArrayLikeObject(value) {
+      return isArrayLikeObject(value) ? value : [];
+    }
+
+    /**
+     * Casts `value` to `identity` if it's not a function.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {Function} Returns cast function.
+     */
+    function castFunction(value) {
+      return typeof value == 'function' ? value : identity;
+    }
+
+    /**
+     * Casts `value` to a path array if it's not one.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {Array} Returns the cast property path array.
+     */
+    function castPath(value) {
+      return isArray(value) ? value : stringToPath(value);
+    }
+
+    /**
+     * Casts `array` to a slice if it's needed.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {number} start The start position.
+     * @param {number} [end=array.length] The end position.
+     * @returns {Array} Returns the cast slice.
+     */
+    function castSlice(array, start, end) {
+      var length = array.length;
+      end = end === undefined ? length : end;
+      return (!start && end >= length) ? array : baseSlice(array, start, end);
     }
 
     /**
@@ -4357,8 +4361,13 @@
           ? stringToArray(string)
           : undefined;
 
-        var chr = strSymbols ? strSymbols[0] : string.charAt(0),
-            trailing = strSymbols ? strSymbols.slice(1).join('') : string.slice(1);
+        var chr = strSymbols
+          ? strSymbols[0]
+          : string.charAt(0);
+
+        var trailing = strSymbols
+          ? castSlice(strSymbols, 1).join('')
+          : string.slice(1);
 
         return chr[methodName]() + trailing;
       };
@@ -4637,7 +4646,7 @@
       }
       var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
       return reHasComplexSymbol.test(chars)
-        ? stringToArray(result).slice(0, length).join('')
+        ? castSlice(stringToArray(result), 0, length).join('')
         : result.slice(0, length);
     }
 
@@ -5345,7 +5354,7 @@
      * @returns {boolean} Returns `true` if `path` exists, else `false`.
      */
     function hasPath(object, path, hasFunc) {
-      path = isKey(path, object) ? [path] : baseCastPath(path);
+      path = isKey(path, object) ? [path] : castPath(path);
 
       var result,
           index = -1,
@@ -5782,6 +5791,17 @@
       });
       return result;
     });
+
+    /**
+     * Converts `value` to a string key if it's not a string or symbol.
+     *
+     * @private
+     * @param {*} value The value to inspect.
+     * @returns {string|symbol} Returns the key.
+     */
+    function toKey(key) {
+      return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
+    }
 
     /**
      * Converts `func` to its source code.
@@ -6481,7 +6501,7 @@
      * // => [2]
      */
     var intersection = rest(function(arrays) {
-      var mapped = arrayMap(arrays, baseCastArrayLikeObject);
+      var mapped = arrayMap(arrays, castArrayLikeObject);
       return (mapped.length && mapped[0] === arrays[0])
         ? baseIntersection(mapped)
         : [];
@@ -6512,7 +6532,7 @@
      */
     var intersectionBy = rest(function(arrays) {
       var iteratee = last(arrays),
-          mapped = arrayMap(arrays, baseCastArrayLikeObject);
+          mapped = arrayMap(arrays, castArrayLikeObject);
 
       if (iteratee === last(mapped)) {
         iteratee = undefined;
@@ -6547,7 +6567,7 @@
      */
     var intersectionWith = rest(function(arrays) {
       var comparator = last(arrays),
-          mapped = arrayMap(arrays, baseCastArrayLikeObject);
+          mapped = arrayMap(arrays, castArrayLikeObject);
 
       if (comparator === last(mapped)) {
         comparator = undefined;
@@ -8944,7 +8964,7 @@
       if (length > 1 && isIterateeCall(collection, iteratees[0], iteratees[1])) {
         iteratees = [];
       } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
-        iteratees.length = 1;
+        iteratees = [iteratees[0]];
       }
       return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
     });
@@ -9850,7 +9870,7 @@
       start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
       return rest(function(args) {
         var array = args[start],
-            otherArgs = args.slice(0, start);
+            otherArgs = castSlice(args, 0, start);
 
         if (array) {
           arrayPush(otherArgs, array);
@@ -11498,8 +11518,8 @@
     }
 
     /**
-     * Converts `value` to a string if it's not one. An empty string is returned
-     * for `null` and `undefined` values. The sign of `-0` is preserved.
+     * Converts `value` to a string. An empty string is returned for `null`
+     * and `undefined` values. The sign of `-0` is preserved.
      *
      * @static
      * @memberOf _
@@ -12477,7 +12497,7 @@
       if (object == null) {
         return {};
       }
-      props = arrayMap(baseFlatten(props, 1), baseCastKey);
+      props = arrayMap(baseFlatten(props, 1), toKey);
       return basePick(object, baseDifference(getAllKeysIn(object), props));
     });
 
@@ -12583,7 +12603,7 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      path = isKey(path, object) ? [path] : baseCastPath(path);
+      path = isKey(path, object) ? [path] : castPath(path);
 
       var index = -1,
           length = path.length;
@@ -12829,7 +12849,7 @@
      * // => 0
      */
     function update(object, path, updater) {
-      return object == null ? object : baseUpdate(object, path, baseCastFunction(updater));
+      return object == null ? object : baseUpdate(object, path, castFunction(updater));
     }
 
     /**
@@ -12858,7 +12878,7 @@
      */
     function updateWith(object, path, updater, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
-      return object == null ? object : baseUpdate(object, path, baseCastFunction(updater), customizer);
+      return object == null ? object : baseUpdate(object, path, castFunction(updater), customizer);
     }
 
     /**
@@ -13567,7 +13587,7 @@
           )) {
         separator += '';
         if (separator == '' && reHasComplexSymbol.test(string)) {
-          return baseCastArray(stringToArray(string), 0, limit);
+          return castSlice(stringToArray(string), 0, limit);
         }
       }
       return string.split(separator, limit);
@@ -13918,16 +13938,15 @@
       if (guard || chars === undefined) {
         return string.replace(reTrim, '');
       }
-      chars += '';
-      if (!chars) {
+      if (!(chars += '')) {
         return string;
       }
       var strSymbols = stringToArray(string),
-          chrSymbols = stringToArray(chars);
+          chrSymbols = stringToArray(chars),
+          start = charsStartIndex(strSymbols, chrSymbols),
+          end = charsEndIndex(strSymbols, chrSymbols) + 1;
 
-      return strSymbols
-        .slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1)
-        .join('');
+      return castSlice(strSymbols, start, end).join('');
     }
 
     /**
@@ -13957,14 +13976,13 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimEnd, '');
       }
-      chars += '';
-      if (!chars) {
+      if (!(chars += '')) {
         return string;
       }
-      var strSymbols = stringToArray(string);
-      return strSymbols
-        .slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1)
-        .join('');
+      var strSymbols = stringToArray(string),
+          end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
+
+      return castSlice(strSymbols, 0, end).join('');
     }
 
     /**
@@ -13994,14 +14012,13 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimStart, '');
       }
-      chars += '';
-      if (!chars) {
+      if (!(chars += '')) {
         return string;
       }
-      var strSymbols = stringToArray(string);
-      return strSymbols
-        .slice(charsStartIndex(strSymbols, stringToArray(chars)))
-        .join('');
+      var strSymbols = stringToArray(string),
+          start = charsStartIndex(strSymbols, stringToArray(chars));
+
+      return castSlice(strSymbols, start).join('');
     }
 
     /**
@@ -14065,7 +14082,7 @@
         return omission;
       }
       var result = strSymbols
-        ? strSymbols.slice(0, end).join('')
+        ? castSlice(strSymbols, 0, end).join('')
         : string.slice(0, end);
 
       if (separator === undefined) {
@@ -14988,7 +15005,7 @@
      */
     function toPath(value) {
       if (isArray(value)) {
-        return arrayMap(value, baseCastKey);
+        return arrayMap(value, toKey);
       }
       return isSymbol(value) ? [value] : copyArray(stringToPath(value));
     }

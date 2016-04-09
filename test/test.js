@@ -23286,7 +23286,7 @@
       assert.deepEqual(_.split(string, ' ', 3), ['A', leafs + ',', comboGlyph + ',']);
       assert.deepEqual(_.split(string, undefined), [string]);
       assert.deepEqual(_.split(string, undefined, -1), [string]);
-      assert.deepEqual(_.split(string, undefined, 0), string.split(undefined, 0));
+      assert.deepEqual(_.split(string, undefined, 0), []);
 
       var expected = ['A', ' ', leafs, ',', ' ', comboGlyph, ',', ' ', 'a', 'n', 'd', ' ', rocket];
 

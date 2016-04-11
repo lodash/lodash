@@ -1,4 +1,4 @@
-import baseCastPath from './_baseCastPath';
+import castPath from './_castPath';
 import isArguments from './isArguments';
 import isArray from './isArray';
 import isIndex from './_isIndex';
@@ -16,7 +16,7 @@ import isString from './isString';
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  */
 function hasPath(object, path, hasFunc) {
-  path = isKey(path, object) ? [path] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var result,
       index = -1,

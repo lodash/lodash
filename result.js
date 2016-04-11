@@ -1,4 +1,4 @@
-import baseCastPath from './_baseCastPath';
+import castPath from './_castPath';
 import isFunction from './isFunction';
 import isKey from './_isKey';
 
@@ -32,7 +32,7 @@ import isKey from './_isKey';
  * // => 'default'
  */
 function result(object, path, defaultValue) {
-  path = isKey(path, object) ? [path] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var index = -1,
       length = path.length;

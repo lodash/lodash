@@ -1,9 +1,9 @@
 import arrayMap from './_arrayMap';
-import baseCastKey from './_baseCastKey';
 import copyArray from './_copyArray';
 import isArray from './isArray';
 import isSymbol from './isSymbol';
 import stringToPath from './_stringToPath';
+import toKey from './_toKey';
 
 /**
  * Converts `value` to a property path array.
@@ -33,7 +33,7 @@ import stringToPath from './_stringToPath';
  */
 function toPath(value) {
   if (isArray(value)) {
-    return arrayMap(value, baseCastKey);
+    return arrayMap(value, toKey);
   }
   return isSymbol(value) ? [value] : copyArray(stringToPath(value));
 }

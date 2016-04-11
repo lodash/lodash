@@ -1,4 +1,4 @@
-# lodash-es v4.9.0
+# lodash-es v4.10.0
 
 The [Lodash](https://lodash.com/) library exported as [ES](http://www.ecma-international.org/ecma-262/6.0/) modules.
 
@@ -7,4 +7,4 @@ Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 $ lodash modularize exports=es -o ./
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.9.0-es) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.10.0-es) for more details.

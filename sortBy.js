@@ -15,8 +15,7 @@ import rest from './rest';
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
- *  [iteratees=[_.identity]] The iteratees to sort by, specified individually
- *  or in arrays.
+ *  [iteratees=[_.identity]] The iteratees to sort by.
  * @returns {Array} Returns the new sorted array.
  * @example
  *
@@ -46,7 +45,7 @@ var sortBy = rest(function(collection, iteratees) {
   if (length > 1 && isIterateeCall(collection, iteratees[0], iteratees[1])) {
     iteratees = [];
   } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
-    iteratees.length = 1;
+    iteratees = [iteratees[0]];
   }
   return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
 });

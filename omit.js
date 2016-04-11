@@ -1,10 +1,10 @@
 import arrayMap from './_arrayMap';
-import baseCastKey from './_baseCastKey';
 import baseDifference from './_baseDifference';
 import baseFlatten from './_baseFlatten';
 import basePick from './_basePick';
 import getAllKeysIn from './_getAllKeysIn';
 import rest from './rest';
+import toKey from './_toKey';
 
 /**
  * The opposite of `_.pick`; this method creates an object composed of the
@@ -16,8 +16,7 @@ import rest from './rest';
  * @memberOf _
  * @category Object
  * @param {Object} object The source object.
- * @param {...(string|string[])} [props] The property identifiers to omit,
- *  specified individually or in arrays.
+ * @param {...(string|string[])} [props] The property identifiers to omit.
  * @returns {Object} Returns the new object.
  * @example
  *
@@ -30,7 +29,7 @@ var omit = rest(function(object, props) {
   if (object == null) {
     return {};
   }
-  props = arrayMap(baseFlatten(props, 1), baseCastKey);
+  props = arrayMap(baseFlatten(props, 1), toKey);
   return basePick(object, baseDifference(getAllKeysIn(object), props));
 });
 

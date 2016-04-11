@@ -1,5 +1,5 @@
 import apply from './_apply';
-import baseCastPath from './_baseCastPath';
+import castPath from './_castPath';
 import isKey from './_isKey';
 import last from './last';
 import parent from './_parent';
@@ -16,7 +16,7 @@ import parent from './_parent';
  */
 function baseInvoke(object, path, args) {
   if (!isKey(path, object)) {
-    path = baseCastPath(path);
+    path = castPath(path);
     object = parent(object, path);
     path = last(path);
   }

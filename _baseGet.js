@@ -1,4 +1,4 @@
-import baseCastPath from './_baseCastPath';
+import castPath from './_castPath';
 import isKey from './_isKey';
 
 /**
@@ -10,7 +10,7 @@ import isKey from './_isKey';
  * @returns {*} Returns the resolved value.
  */
 function baseGet(object, path) {
-  path = isKey(path, object) ? [path] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var index = 0,
       length = path.length;

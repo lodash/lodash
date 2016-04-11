@@ -1,3 +1,4 @@
+import castSlice from './_castSlice';
 import charsEndIndex from './_charsEndIndex';
 import stringToArray from './_stringToArray';
 import toString from './toString';
@@ -32,14 +33,13 @@ function trimEnd(string, chars, guard) {
   if (guard || chars === undefined) {
     return string.replace(reTrimEnd, '');
   }
-  chars = (chars + '');
-  if (!chars) {
+  if (!(chars += '')) {
     return string;
   }
-  var strSymbols = stringToArray(string);
-  return strSymbols
-    .slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1)
-    .join('');
+  var strSymbols = stringToArray(string),
+      end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
+
+  return castSlice(strSymbols, 0, end).join('');
 }
 
 export default trimEnd;

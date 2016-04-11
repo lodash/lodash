@@ -1,3 +1,4 @@
+import castSlice from './_castSlice';
 import charsEndIndex from './_charsEndIndex';
 import charsStartIndex from './_charsStartIndex';
 import stringToArray from './_stringToArray';
@@ -36,16 +37,15 @@ function trim(string, chars, guard) {
   if (guard || chars === undefined) {
     return string.replace(reTrim, '');
   }
-  chars = (chars + '');
-  if (!chars) {
+  if (!(chars += '')) {
     return string;
   }
   var strSymbols = stringToArray(string),
-      chrSymbols = stringToArray(chars);
+      chrSymbols = stringToArray(chars),
+      start = charsStartIndex(strSymbols, chrSymbols),
+      end = charsEndIndex(strSymbols, chrSymbols) + 1;
 
-  return strSymbols
-    .slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1)
-    .join('');
+  return castSlice(strSymbols, start, end).join('');
 }
 
 export default trim;

@@ -1,5 +1,5 @@
 import assignValue from './_assignValue';
-import baseCastPath from './_baseCastPath';
+import castPath from './_castPath';
 import isIndex from './_isIndex';
 import isKey from './_isKey';
 import isObject from './isObject';
@@ -15,7 +15,7 @@ import isObject from './isObject';
  * @returns {Object} Returns `object`.
  */
 function baseSet(object, path, value, customizer) {
-  path = isKey(path, object) ? [path] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var index = -1,
       length = path.length,

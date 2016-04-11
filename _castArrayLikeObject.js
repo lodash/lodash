@@ -7,8 +7,8 @@ import isArrayLikeObject from './isArrayLikeObject';
  * @param {*} value The value to inspect.
  * @returns {Array|Object} Returns the cast array-like object.
  */
-function baseCastArrayLikeObject(value) {
+function castArrayLikeObject(value) {
   return isArrayLikeObject(value) ? value : [];
 }
 
-export default baseCastArrayLikeObject;
+export default castArrayLikeObject;

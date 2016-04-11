@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.9.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.10.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.9.0';
+  var VERSION = '4.10.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -670,7 +670,7 @@
 
   /**
    * The base implementation of `baseForOwn` which iterates over `object`
-   * properties returned by `keysFunc` invoking `iteratee` for each property.
+   * properties returned by `keysFunc` and invokes `iteratee` for each property.
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
    * @private
@@ -1885,7 +1885,7 @@
   }
 
   /**
-   * Iterates over elements of `collection` invoking `iteratee` for each element.
+   * Iterates over elements of `collection` and invokes `iteratee` for each element.
    * The iteratee is invoked with three arguments: (value, index|key, collection).
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
@@ -1928,8 +1928,8 @@
    * The guarded methods are:
    * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
    * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
-   * `sampleSize`, `slice`, `some`, `sortBy`, `take`, `takeRight`, `template`,
-   * `trim`, `trimEnd`, `trimStart`, and `words`
+   * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+   * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
    *
    * @static
    * @memberOf _
@@ -2087,8 +2087,7 @@
    * @category Collection
    * @param {Array|Object} collection The collection to iterate over.
    * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
-   *  [iteratees=[_.identity]] The iteratees to sort by, specified individually
-   *  or in arrays.
+   *  [iteratees=[_.identity]] The iteratees to sort by.
    * @returns {Array} Returns the new sorted array.
    * @example
    *
@@ -3123,8 +3122,8 @@
   var toNumber = Number;
 
   /**
-   * Converts `value` to a string if it's not one. An empty string is returned
-   * for `null` and `undefined` values. The sign of `-0` is preserved.
+   * Converts `value` to a string. An empty string is returned for `null`
+   * and `undefined` values. The sign of `-0` is preserved.
    *
    * @static
    * @memberOf _
@@ -3447,8 +3446,7 @@
    * @memberOf _
    * @category Object
    * @param {Object} object The source object.
-   * @param {...(string|string[])} [props] The property identifiers to pick,
-   *  specified individually or in arrays.
+   * @param {...(string|string[])} [props] The property identifiers to pick.
    * @returns {Object} Returns the new object.
    * @example
    *

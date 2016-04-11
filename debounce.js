@@ -169,6 +169,9 @@ function debounce(func, wait, options) {
       timerId = setTimeout(timerExpired, wait);
       return invokeFunc(lastCallTime);
     }
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
     return result;
   }
   debounced.cancel = cancel;

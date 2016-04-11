@@ -1,4 +1,4 @@
-define(['./_assignValue', './_baseCastPath', './_isIndex', './_isKey', './isObject'], function(assignValue, baseCastPath, isIndex, isKey, isObject) {
+define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject'], function(assignValue, castPath, isIndex, isKey, isObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,7 +14,7 @@ define(['./_assignValue', './_baseCastPath', './_isIndex', './_isKey', './isObje
    * @returns {Object} Returns `object`.
    */
   function baseSet(object, path, value, customizer) {
-    path = isKey(path, object) ? [path] : baseCastPath(path);
+    path = isKey(path, object) ? [path] : castPath(path);
 
     var index = -1,
         length = path.length,

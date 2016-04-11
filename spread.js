@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayPush', './rest', './toInteger'], function(apply, arrayPush, rest, toInteger) {
+define(['./_apply', './_arrayPush', './_castSlice', './rest', './toInteger'], function(apply, arrayPush, castSlice, rest, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -50,7 +50,7 @@ define(['./_apply', './_arrayPush', './rest', './toInteger'], function(apply, ar
     start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
     return rest(function(args) {
       var array = args[start],
-          otherArgs = args.slice(0, start);
+          otherArgs = castSlice(args, 0, start);
 
       if (array) {
         arrayPush(otherArgs, array);

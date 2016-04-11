@@ -1,4 +1,4 @@
-define(['./_baseCastPath', './_isIndex', './_isKey', './last', './_parent'], function(baseCastPath, isIndex, isKey, last, parent) {
+define(['./_castPath', './_isIndex', './_isKey', './last', './_parent'], function(castPath, isIndex, isKey, last, parent) {
 
   /** Used for built-in method references. */
   var arrayProto = Array.prototype;
@@ -27,7 +27,7 @@ define(['./_baseCastPath', './_isIndex', './_isKey', './last', './_parent'], fun
           splice.call(array, index, 1);
         }
         else if (!isKey(index, array)) {
-          var path = baseCastPath(index),
+          var path = castPath(index),
               object = parent(array, path);
 
           if (object != null) {

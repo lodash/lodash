@@ -12,8 +12,8 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_isFl
    * @memberOf _
    * @category Function
    * @param {Function} func The function to wrap.
-   * @param {...(Function|Function[])} [transforms] The functions to transform.
-   * arguments, specified individually or in arrays.
+   * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
+   *  [transforms[_.identity]] The functions to transform.
    * @returns {Function} Returns the new function.
    * @example
    *

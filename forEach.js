@@ -1,7 +1,7 @@
 define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function(arrayEach, baseEach, baseIteratee, isArray) {
 
   /**
-   * Iterates over elements of `collection` invoking `iteratee` for each element.
+   * Iterates over elements of `collection` and invokes `iteratee` for each element.
    * The iteratee is invoked with three arguments: (value, index|key, collection).
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *

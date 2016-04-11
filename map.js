@@ -11,8 +11,8 @@ define(['./_arrayMap', './_baseIteratee', './_baseMap', './isArray'], function(a
    * The guarded methods are:
    * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
    * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
-   * `sampleSize`, `slice`, `some`, `sortBy`, `take`, `takeRight`, `template`,
-   * `trim`, `trimEnd`, `trimStart`, and `words`
+   * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+   * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
    *
    * @static
    * @memberOf _

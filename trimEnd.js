@@ -1,4 +1,4 @@
-define(['./_charsEndIndex', './_stringToArray', './toString'], function(charsEndIndex, stringToArray, toString) {
+define(['./_castSlice', './_charsEndIndex', './_stringToArray', './toString'], function(castSlice, charsEndIndex, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -33,14 +33,13 @@ define(['./_charsEndIndex', './_stringToArray', './toString'], function(charsEnd
     if (guard || chars === undefined) {
       return string.replace(reTrimEnd, '');
     }
-    chars = (chars + '');
-    if (!chars) {
+    if (!(chars += '')) {
       return string;
     }
-    var strSymbols = stringToArray(string);
-    return strSymbols
-      .slice(0, charsEndIndex(strSymbols, stringToArray(chars)) + 1)
-      .join('');
+    var strSymbols = stringToArray(string),
+        end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
+
+    return castSlice(strSymbols, 0, end).join('');
   }
 
   return trimEnd;

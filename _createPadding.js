@@ -1,19 +1,7 @@
-define(['./_baseRepeat', './_stringSize', './_stringToArray'], function(baseRepeat, stringSize, stringToArray) {
+define(['./_baseRepeat', './_castSlice', './_reHasComplexSymbol', './_stringSize', './_stringToArray'], function(baseRepeat, castSlice, reHasComplexSymbol, stringSize, stringToArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
-
-  /** Used to compose unicode character classes. */
-  var rsAstralRange = '\\ud800-\\udfff',
-      rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
-      rsComboSymbolsRange = '\\u20d0-\\u20f0',
-      rsVarRange = '\\ufe0e\\ufe0f';
-
-  /** Used to compose unicode capture groups. */
-  var rsZWJ = '\\u200d';
-
-  /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeCeil = Math.ceil;
@@ -36,7 +24,7 @@ define(['./_baseRepeat', './_stringSize', './_stringToArray'], function(baseRepe
     }
     var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
     return reHasComplexSymbol.test(chars)
-      ? stringToArray(result).slice(0, length).join('')
+      ? castSlice(stringToArray(result), 0, length).join('')
       : result.slice(0, length);
   }
 

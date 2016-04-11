@@ -1,15 +1,15 @@
 define(['./isSymbol'], function(isSymbol) {
 
   /**
-   * Casts `value` to a string if it's not a string or symbol.
+   * Converts `value` to a string key if it's not a string or symbol.
    *
    * @private
    * @param {*} value The value to inspect.
-   * @returns {string|symbol} Returns the cast key.
+   * @returns {string|symbol} Returns the key.
    */
-  function baseCastKey(key) {
+  function toKey(key) {
     return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
   }
 
-  return baseCastKey;
+  return toKey;
 });

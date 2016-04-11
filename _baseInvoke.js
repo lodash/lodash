@@ -1,4 +1,4 @@
-define(['./_apply', './_baseCastPath', './_isKey', './last', './_parent'], function(apply, baseCastPath, isKey, last, parent) {
+define(['./_apply', './_castPath', './_isKey', './last', './_parent'], function(apply, castPath, isKey, last, parent) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -15,7 +15,7 @@ define(['./_apply', './_baseCastPath', './_isKey', './last', './_parent'], funct
    */
   function baseInvoke(object, path, args) {
     if (!isKey(path, object)) {
-      path = baseCastPath(path);
+      path = castPath(path);
       object = parent(object, path);
       path = last(path);
     }

@@ -3,6 +3,9 @@ define(['./toString'], function(toString) {
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
+  /** Used to match non-compound words composed of alphanumeric characters. */
+  var reBasicWord = /[a-zA-Z0-9]+/g;
+
   /** Used to compose unicode character classes. */
   var rsAstralRange = '\\ud800-\\udfff',
       rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
@@ -40,9 +43,6 @@ define(['./toString'], function(toString) {
       rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
       rsSeq = rsOptVar + reOptMod + rsOptJoin,
       rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq;
-
-  /** Used to match non-compound words composed of alphanumeric characters. */
-  var reBasicWord = /[a-zA-Z0-9]+/g;
 
   /** Used to match complex or compound words. */
   var reComplexWord = RegExp([

@@ -8,7 +8,8 @@ define(['./_arrayMap', './_createOver'], function(arrayMap, createOver) {
    * @memberOf _
    * @since 4.0.0
    * @category Util
-   * @param {...(Function|Function[])} iteratees The iteratees to invoke.
+   * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
+   *  [iteratees=[_.identity]] The iteratees to invoke.
    * @returns {Function} Returns the new function.
    * @example
    *

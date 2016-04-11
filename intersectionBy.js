@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseCastArrayLikeObject', './_baseIntersection', './_baseIteratee', './last', './rest'], function(arrayMap, baseCastArrayLikeObject, baseIntersection, baseIteratee, last, rest) {
+define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_castArrayLikeObject', './last', './rest'], function(arrayMap, baseIntersection, baseIteratee, castArrayLikeObject, last, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -28,7 +28,7 @@ define(['./_arrayMap', './_baseCastArrayLikeObject', './_baseIntersection', './_
    */
   var intersectionBy = rest(function(arrays) {
     var iteratee = last(arrays),
-        mapped = arrayMap(arrays, baseCastArrayLikeObject);
+        mapped = arrayMap(arrays, castArrayLikeObject);
 
     if (iteratee === last(mapped)) {
       iteratee = undefined;

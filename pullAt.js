@@ -11,8 +11,7 @@ define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compa
    * @since 3.0.0
    * @category Array
    * @param {Array} array The array to modify.
-   * @param {...(number|number[])} [indexes] The indexes of elements to remove,
-   *  specified individually or in arrays.
+   * @param {...(number|number[])} [indexes] The indexes of elements to remove.
    * @returns {Array} Returns the new array of removed elements.
    * @example
    *

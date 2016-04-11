@@ -1,19 +1,10 @@
-define(['./isRegExp', './_stringToArray', './toString'], function(isRegExp, stringToArray, toString) {
+define(['./_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbol', './_stringToArray', './toString'], function(castSlice, isIterateeCall, isRegExp, reHasComplexSymbol, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose unicode character classes. */
-  var rsAstralRange = '\\ud800-\\udfff',
-      rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
-      rsComboSymbolsRange = '\\u20d0-\\u20f0',
-      rsVarRange = '\\ufe0e\\ufe0f';
-
-  /** Used to compose unicode capture groups. */
-  var rsZWJ = '\\u200d';
-
-  /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
+  /** Used as references for the maximum length and index of an array. */
+  var MAX_ARRAY_LENGTH = 4294967295;
 
   /**
    * Splits `string` by `separator`.
@@ -35,6 +26,13 @@ define(['./isRegExp', './_stringToArray', './toString'], function(isRegExp, stri
    * // => ['a', 'b']
    */
   function split(string, separator, limit) {
+    if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
+      separator = limit = undefined;
+    }
+    limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0;
+    if (!limit) {
+      return [];
+    }
     string = toString(string);
     if (string && (
           typeof separator == 'string' ||
@@ -42,8 +40,7 @@ define(['./isRegExp', './_stringToArray', './toString'], function(isRegExp, stri
         )) {
       separator += '';
       if (separator == '' && reHasComplexSymbol.test(string)) {
-        var strSymbols = stringToArray(string);
-        return limit === undefined ? strSymbols : strSymbols.slice(0, limit < 0 ? 0 : limit);
+        return castSlice(stringToArray(string), 0, limit);
       }
     }
     return string.split(separator, limit);

@@ -1,4 +1,4 @@
-define(['./_charsEndIndex', './_charsStartIndex', './_stringToArray', './toString'], function(charsEndIndex, charsStartIndex, stringToArray, toString) {
+define(['./_castSlice', './_charsEndIndex', './_charsStartIndex', './_stringToArray', './toString'], function(castSlice, charsEndIndex, charsStartIndex, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -36,16 +36,15 @@ define(['./_charsEndIndex', './_charsStartIndex', './_stringToArray', './toStrin
     if (guard || chars === undefined) {
       return string.replace(reTrim, '');
     }
-    chars = (chars + '');
-    if (!chars) {
+    if (!(chars += '')) {
       return string;
     }
     var strSymbols = stringToArray(string),
-        chrSymbols = stringToArray(chars);
+        chrSymbols = stringToArray(chars),
+        start = charsStartIndex(strSymbols, chrSymbols),
+        end = charsEndIndex(strSymbols, chrSymbols) + 1;
 
-    return strSymbols
-      .slice(charsStartIndex(strSymbols, chrSymbols), charsEndIndex(strSymbols, chrSymbols) + 1)
-      .join('');
+    return castSlice(strSymbols, start, end).join('');
   }
 
   return trim;

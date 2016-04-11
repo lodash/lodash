@@ -1,4 +1,4 @@
-define(['./_baseCastFunction', './_baseUpdate'], function(baseCastFunction, baseUpdate) {
+define(['./_baseUpdate', './_castFunction'], function(baseUpdate, castFunction) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -29,7 +29,7 @@ define(['./_baseCastFunction', './_baseUpdate'], function(baseCastFunction, base
    */
   function updateWith(object, path, updater, customizer) {
     customizer = typeof customizer == 'function' ? customizer : undefined;
-    return object == null ? object : baseUpdate(object, path, baseCastFunction(updater), customizer);
+    return object == null ? object : baseUpdate(object, path, castFunction(updater), customizer);
   }
 
   return updateWith;

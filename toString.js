@@ -11,8 +11,8 @@ define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
       symbolToString = symbolProto ? symbolProto.toString : undefined;
 
   /**
-   * Converts `value` to a string if it's not one. An empty string is returned
-   * for `null` and `undefined` values. The sign of `-0` is preserved.
+   * Converts `value` to a string. An empty string is returned for `null`
+   * and `undefined` values. The sign of `-0` is preserved.
    *
    * @static
    * @memberOf _

@@ -1,4 +1,4 @@
-define(['./isObject', './isRegExp', './_stringSize', './_stringToArray', './toInteger', './toString'], function(isObject, isRegExp, stringSize, stringToArray, toInteger, toString) {
+define(['./_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './_stringSize', './_stringToArray', './toInteger', './toString'], function(castSlice, isObject, isRegExp, reHasComplexSymbol, stringSize, stringToArray, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -9,18 +9,6 @@ define(['./isObject', './isRegExp', './_stringSize', './_stringToArray', './toIn
 
   /** Used to match `RegExp` flags from their coerced string values. */
   var reFlags = /\w*$/;
-
-  /** Used to compose unicode character classes. */
-  var rsAstralRange = '\\ud800-\\udfff',
-      rsComboMarksRange = '\\u0300-\\u036f\\ufe20-\\ufe23',
-      rsComboSymbolsRange = '\\u20d0-\\u20f0',
-      rsVarRange = '\\ufe0e\\ufe0f';
-
-  /** Used to compose unicode capture groups. */
-  var rsZWJ = '\\u200d';
-
-  /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-  var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
 
   /**
    * Truncates `string` if it's longer than the given maximum string length.
@@ -83,7 +71,7 @@ define(['./isObject', './isRegExp', './_stringSize', './_stringToArray', './toIn
       return omission;
     }
     var result = strSymbols
-      ? strSymbols.slice(0, end).join('')
+      ? castSlice(strSymbols, 0, end).join('')
       : string.slice(0, end);
 
     if (separator === undefined) {

@@ -4248,6 +4248,29 @@
       }, 1);
     });
 
+    QUnit.test('should queue a trailing call for subsequent debounced calls after `maxWait`', function(assert) {
+      assert.expect(1);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function() {
+        ++callCount;
+      }, 64, { 'maxWait': 64 });
+
+      debounced();
+
+      lodashStable.times(20, function(index) {
+        setTimeout(debounced, 54 + index);
+      });
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 160);
+    });
+
     QUnit.test('should cancel `maxDelayed` when `delayed` is invoked', function(assert) {
       assert.expect(2);
 

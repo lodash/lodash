@@ -4624,9 +4624,15 @@
      */
     function createOver(arrayFunc) {
       return rest(function(iteratees) {
+        var toIteratee = getIteratee();
+
         iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
-          ? arrayMap(iteratees[0], getIteratee())
-          : arrayMap(baseFlatten(iteratees, 1, isFlattenableIteratee), getIteratee());
+          ? iteratees[0]
+          : baseFlatten(iteratees, 1, isFlattenableIteratee);
+
+        iteratees = arrayMap(iteratees, function(iteratee) {
+          return toIteratee(iteratee, Infinity);
+        });
 
         return rest(function(args) {
           var thisArg = this;

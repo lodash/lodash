@@ -1443,6 +1443,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.over');
+
+  (function() {
+    QUnit.test('should not cap iteratee args', function(assert) {
+      assert.expect(2);
+
+      _.each([fp.over, convert('over', _.over)], function(func) {
+        var over = func([Math.max, Math.min]);
+        assert.deepEqual(over(1, 2, 3, 4), [4, 1]);
+      });
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.omitBy and fp.pickBy');
 
   _.each(['omitBy', 'pickBy'], function(methodName) {

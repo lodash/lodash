@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.10.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.11.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.10.0';
+  var VERSION = '4.11.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -464,7 +464,7 @@
    * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
    * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
    * `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,
-   * `noConflict`, `noop`, `now`, `pad`, `padEnd`, `padStart`, `parseInt`,
+   * `noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,
    * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
    * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
    * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
@@ -1018,22 +1018,10 @@
    * @param {Object} source The object to copy properties from.
    * @param {Array} props The property identifiers to copy.
    * @param {Object} [object={}] The object to copy properties to.
-   * @returns {Object} Returns `object`.
-   */
-  var copyObject = copyObjectWith;
-
-  /**
-   * This function is like `copyObject` except that it accepts a function to
-   * customize copied values.
-   *
-   * @private
-   * @param {Object} source The object to copy properties from.
-   * @param {Array} props The property identifiers to copy.
-   * @param {Object} [object={}] The object to copy properties to.
    * @param {Function} [customizer] The function to customize copied values.
    * @returns {Object} Returns `object`.
    */
-  function copyObjectWith(source, props, object, customizer) {
+  function copyObject(source, props, object, customizer) {
     object || (object = {});
 
     var index = -1,
@@ -1533,7 +1521,7 @@
    * // => undefined
    */
   function head(array) {
-    return array ? array[0] : undefined;
+    return (array && array.length) ? array[0] : undefined;
   }
 
   /**
@@ -3249,7 +3237,7 @@
    * // => { 'a': 1, 'b': 2 }
    */
   var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
-    copyObjectWith(source, keysIn(source), object, customizer);
+    copyObject(source, keysIn(source), object, customizer);
   });
 
   /**

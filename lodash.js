@@ -1552,7 +1552,7 @@
      * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
      * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
      * `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,
-     * `noConflict`, `noop`, `now`, `pad`, `padEnd`, `padStart`, `parseInt`,
+     * `noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,
      * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
      * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
      * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
@@ -3291,6 +3291,23 @@
       }
       stack['delete'](srcValue);
       assignMergeValue(object, key, newValue);
+    }
+
+    /**
+     * The base implementation of `_.nth` which doesn't coerce `n` to an integer.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {number} n The index of the element to return.
+     * @returns {*} Returns the nth element.
+     */
+    function baseNth(array, n) {
+      var length = array.length;
+      if (!length) {
+        return undefined;
+      }
+      n += n < 0 ? length : 0;
+      return isIndex(n, length) ? array[n] : undefined;
     }
 
     /**
@@ -6652,6 +6669,31 @@
         }
       }
       return -1;
+    }
+
+    /**
+     * Gets the nth element of `array`. If `n` is negative, the nth element
+     * from the end is returned.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.11.0
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {number} [n=0] The index of the element to return..
+     * @returns {*} Returns the nth element.
+     * @example
+     *
+     * var array = ['a', 'b', 'c', 'd'];
+     *
+     * _.nth(array, 1);
+     * // => 'b'
+     *
+     * _.nth(array, -2);
+     * // => 'c';
+     */
+    function nth(array, n) {
+      return (array && array.length) ? baseNth(array, toInteger(n)) : undefined;
     }
 
     /**
@@ -14715,7 +14757,8 @@
     }
 
     /**
-     * Creates a function that returns its nth argument.
+     * Creates a function that returns its nth argument. If `n` is negative,
+     * the nth argument from the end is returned.
      *
      * @static
      * @memberOf _
@@ -14726,15 +14769,18 @@
      * @example
      *
      * var func = _.nthArg(1);
-     *
-     * func('a', 'b', 'c');
+     * func('a', 'b', 'c', 'd');
      * // => 'b'
+     *
+     * var func = _.nthArg(-2);
+     * func('a', 'b', 'c', 'd');
+     * // => 'c'
      */
     function nthArg(n) {
       n = toInteger(n);
-      return function() {
-        return arguments[n];
-      };
+      return rest(function(args) {
+        return baseNth(args, n);
+      });
     }
 
     /**
@@ -15642,6 +15688,7 @@
     lodash.min = min;
     lodash.minBy = minBy;
     lodash.multiply = multiply;
+    lodash.nth = nth;
     lodash.noConflict = noConflict;
     lodash.noop = noop;
     lodash.now = now;

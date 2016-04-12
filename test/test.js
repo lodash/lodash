@@ -15786,20 +15786,81 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('lodash.nthArg');
+  QUnit.module('lodash.nth');
 
   (function() {
-    QUnit.test('should create a function that returns its nth argument', function(assert) {
+    var array = ['a', 'b', 'c', 'd'];
+
+    QUnit.test('should get the nth element of `array`', function(assert) {
       assert.expect(1);
 
-      var expected = ['a', 'b', 'c'];
+      var actual = lodashStable.map(array, function(value, index) {
+        return _.nth(array, index);
+      });
 
-      var actual = lodashStable.times(expected.length, function(n) {
-        var func = _.nthArg(n);
-        return func.apply(undefined, expected);
+      assert.deepEqual(actual, array);
+    });
+
+    QUnit.test('should work with a negative `n`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(lodashStable.range(1, array.length + 1), function(n) {
+        return _.nth(array, -n);
+      });
+
+      assert.deepEqual(actual, ['d', 'c', 'b', 'a']);
+    });
+
+    QUnit.test('should coerce `n` to an integer', function(assert) {
+      assert.expect(2);
+
+      var values = falsey,
+          expected = lodashStable.map(values, alwaysA);
+
+      var actual = lodashStable.map(values, function(n) {
+        return n ? _.nth(array, n) : _.nth(array);
       });
 
       assert.deepEqual(actual, expected);
+
+      values = ['1', 1.6];
+      expected = lodashStable.map(values, alwaysB);
+
+      actual = lodashStable.map(values, function(n) {
+        return _.nth(array, n);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.nthArg');
+
+  (function() {
+    var args = ['a', 'b', 'c', 'd'];
+
+    QUnit.test('should create a function that returns its nth argument', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(args, function(value, index) {
+        var func = _.nthArg(index);
+        return func.apply(undefined, args);
+      });
+
+      assert.deepEqual(actual, args);
+    });
+
+    QUnit.test('should work with a negative `n`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(lodashStable.range(1, args.length + 1), function(n) {
+        var func = _.nthArg(-n);
+        return func.apply(undefined, args);
+      });
+
+      assert.deepEqual(actual, ['d', 'c', 'b', 'a']);
     });
 
     QUnit.test('should coerce `n` to an integer', function(assert) {
@@ -15810,7 +15871,7 @@
 
       var actual = lodashStable.map(values, function(n) {
         var func = n ? _.nthArg(n) : _.nthArg();
-        return func('a', 'b', 'c');
+        return func.apply(undefined, args);
       });
 
       assert.deepEqual(actual, expected);
@@ -15820,7 +15881,7 @@
 
       actual = lodashStable.map(values, function(n) {
         var func = _.nthArg(n);
-        return func('a', 'b', 'c');
+        return func.apply(undefined, args);
       });
 
       assert.deepEqual(actual, expected);
@@ -17799,7 +17860,7 @@
       assert.deepEqual(func(1, 5, 20), [1]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with a negative `step` argument', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a negative `step`', function(assert) {
       assert.expect(2);
 
       assert.deepEqual(func(0, -4, -1), resolve([0, -1, -2, -3]));
@@ -25520,7 +25581,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(307);
+      assert.expect(308);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

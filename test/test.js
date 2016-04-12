@@ -7386,10 +7386,9 @@
     QUnit.test('should return `undefined` when querying empty arrays', function(assert) {
       assert.expect(1);
 
-      var array = [];
-      array['-1'] = 1;
-
-      assert.strictEqual(_.head(array), undefined);
+      arrayProto[0] = 1;
+      assert.strictEqual(_.head([]), undefined);
+      arrayProto.length = 0;
     });
 
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {

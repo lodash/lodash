@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "license": "MIT",
   "private": true,
   "main": "lodash.js",
@@ -19,7 +19,7 @@
     "istanbul": "0.4.3",
     "jquery": "^2.2.3",
     "jscs": "^2.11.0",
-    "lodash": "4.8.2",
+    "lodash": "4.10.0",
     "platform": "^1.3.1",
     "qunit-extras": "^1.5.0",
     "qunitjs": "~1.23.1",

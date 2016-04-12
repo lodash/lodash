@@ -8999,7 +8999,7 @@
       } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
         iteratees = [iteratees[0]];
       }
-      iteratees = (length == 1 && isArray(iteratees[0]))
+      iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
         ? iteratees[0]
         : baseFlatten(iteratees, 1, isFlattenableIteratee);
 

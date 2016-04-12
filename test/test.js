@@ -25370,6 +25370,7 @@
       'min',
       'minBy',
       'multiply',
+      'nth',
       'pad',
       'padEnd',
       'padStart',

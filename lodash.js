@@ -3321,7 +3321,7 @@
      */
     function baseOrderBy(collection, iteratees, orders) {
       var index = -1;
-      iteratees = arrayMap(iteratees.length ? iteratees : [identity], getIteratee());
+      iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(getIteratee()));
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
@@ -4624,15 +4624,9 @@
      */
     function createOver(arrayFunc) {
       return rest(function(iteratees) {
-        var toIteratee = getIteratee();
-
         iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
-          ? iteratees[0]
-          : baseFlatten(iteratees, 1, isFlattenableIteratee);
-
-        iteratees = arrayMap(iteratees, function(iteratee) {
-          return toIteratee(iteratee, Infinity);
-        });
+          ? arrayMap(iteratees[0], baseUnary(getIteratee()))
+          : arrayMap(baseFlatten(iteratees, 1, isFlattenableIteratee), baseUnary(getIteratee()));
 
         return rest(function(args) {
           var thisArg = this;
@@ -9708,8 +9702,8 @@
      */
     var overArgs = rest(function(func, transforms) {
       transforms = (transforms.length == 1 && isArray(transforms[0]))
-        ? arrayMap(transforms[0], getIteratee())
-        : arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), getIteratee());
+        ? arrayMap(transforms[0], baseUnary(getIteratee()))
+        : arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseUnary(getIteratee()));
 
       var funcsLength = transforms.length;
       return rest(function(args) {

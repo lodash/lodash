@@ -1381,7 +1381,8 @@
 
     /** Used for built-in method references. */
     var arrayProto = context.Array.prototype,
-        objectProto = context.Object.prototype;
+        objectProto = context.Object.prototype,
+        stringProto = context.String.prototype;
 
     /** Used to resolve the decompiled source of functions. */
     var funcToString = context.Function.prototype.toString;
@@ -1436,7 +1437,9 @@
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
-        nativeReverse = arrayProto.reverse;
+        nativeReplace = stringProto.replace,
+        nativeReverse = arrayProto.reverse,
+        nativeSplit = stringProto.split;
 
     /* Built-in method references that are verified to be native. */
     var DataView = getNative(context, 'DataView'),
@@ -13513,7 +13516,7 @@
       var args = arguments,
           string = toString(args[0]);
 
-      return args.length < 3 ? string : string.replace(args[1], args[2]);
+      return args.length < 3 ? string : nativeReplace.call(string, args[1], args[2]);
     }
 
     /**
@@ -13578,7 +13581,7 @@
           return castSlice(stringToArray(string), 0, limit);
         }
       }
-      return string.split(separator, limit);
+      return nativeSplit.call(string, separator, limit);
     }
 
     /**

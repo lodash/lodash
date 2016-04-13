@@ -21,7 +21,8 @@ define(['./toString'], function(toString) {
       rsBreakRange = rsMathOpRange + rsNonCharRange + rsQuoteRange + rsSpaceRange;
 
   /** Used to compose unicode capture groups. */
-  var rsBreak = '[' + rsBreakRange + ']',
+  var rsApos = "['\u2019]",
+      rsBreak = '[' + rsBreakRange + ']',
       rsCombo = '[' + rsComboMarksRange + rsComboSymbolsRange + ']',
       rsDigits = '\\d+',
       rsDingbat = '[' + rsDingbatRange + ']',
@@ -38,6 +39,8 @@ define(['./toString'], function(toString) {
   /** Used to compose unicode regexes. */
   var rsLowerMisc = '(?:' + rsLower + '|' + rsMisc + ')',
       rsUpperMisc = '(?:' + rsUpper + '|' + rsMisc + ')',
+      rsOptLowerContr = '(?:' + rsApos + '(?:d|ll|m|re|s|t|ve))?',
+      rsOptUpperContr = '(?:' + rsApos + '(?:D|LL|M|RE|S|T|VE))?',
       reOptMod = rsModifier + '?',
       rsOptVar = '[' + rsVarRange + ']?',
       rsOptJoin = '(?:' + rsZWJ + '(?:' + [rsNonAstral, rsRegional, rsSurrPair].join('|') + ')' + rsOptVar + reOptMod + ')*',
@@ -46,10 +49,10 @@ define(['./toString'], function(toString) {
 
   /** Used to match complex or compound words. */
   var reComplexWord = RegExp([
-    rsUpper + '?' + rsLower + '+(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
-    rsUpperMisc + '+(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
-    rsUpper + '?' + rsLowerMisc + '+',
-    rsUpper + '+',
+    rsUpper + '?' + rsLower + '+' + rsOptLowerContr + '(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
+    rsUpperMisc + '+' + rsOptUpperContr + '(?=' + [rsBreak, rsUpper + rsLowerMisc, '$'].join('|') + ')',
+    rsUpper + '?' + rsLowerMisc + '+' + rsOptLowerContr,
+    rsUpper + '+' + rsOptUpperContr,
     rsDigits,
     rsEmoji
   ].join('|'), 'g');

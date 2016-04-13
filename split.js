@@ -6,6 +6,12 @@ define(['./_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbo
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295;
 
+  /** Used for built-in method references. */
+  var stringProto = String.prototype;
+
+  /* Built-in method references for those with the same name as other `lodash` methods. */
+  var nativeSplit = stringProto.split;
+
   /**
    * Splits `string` by `separator`.
    *
@@ -43,7 +49,7 @@ define(['./_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbo
         return castSlice(stringToArray(string), 0, limit);
       }
     }
-    return string.split(separator, limit);
+    return nativeSplit.call(string, separator, limit);
   }
 
   return split;

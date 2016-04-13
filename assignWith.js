@@ -1,4 +1,4 @@
-define(['./_copyObjectWith', './_createAssigner', './keys'], function(copyObjectWith, createAssigner, keys) {
+define(['./_copyObject', './_createAssigner', './keys'], function(copyObject, createAssigner, keys) {
 
   /**
    * This method is like `_.assign` except that it accepts `customizer`
@@ -28,7 +28,7 @@ define(['./_copyObjectWith', './_createAssigner', './keys'], function(copyObject
    * // => { 'a': 1, 'b': 2 }
    */
   var assignWith = createAssigner(function(object, source, srcIndex, customizer) {
-    copyObjectWith(source, keys(source), object, customizer);
+    copyObject(source, keys(source), object, customizer);
   });
 
   return assignWith;

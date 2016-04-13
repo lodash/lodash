@@ -1,4 +1,4 @@
-define(['./_baseFlatten', './_baseOrderBy', './_isIterateeCall', './rest'], function(baseFlatten, baseOrderBy, isIterateeCall, rest) {
+define(['./_baseFlatten', './_baseOrderBy', './isArray', './_isFlattenableIteratee', './_isIterateeCall', './rest'], function(baseFlatten, baseOrderBy, isArray, isFlattenableIteratee, isIterateeCall, rest) {
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
@@ -44,7 +44,11 @@ define(['./_baseFlatten', './_baseOrderBy', './_isIterateeCall', './rest'], func
     } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
       iteratees = [iteratees[0]];
     }
-    return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
+    iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
+      ? iteratees[0]
+      : baseFlatten(iteratees, 1, isFlattenableIteratee);
+
+    return baseOrderBy(collection, iteratees, []);
   });
 
   return sortBy;

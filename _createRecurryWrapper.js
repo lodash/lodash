@@ -1,4 +1,4 @@
-define(['./_copyArray', './_isLaziable', './_setData'], function(copyArray, isLaziable, setData) {
+define(['./_isLaziable', './_setData'], function(isLaziable, setData) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -31,7 +31,6 @@ define(['./_copyArray', './_isLaziable', './_setData'], function(copyArray, isLa
    */
   function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
     var isCurry = bitmask & CURRY_FLAG,
-        newArgPos = argPos ? copyArray(argPos) : undefined,
         newHolders = isCurry ? holders : undefined,
         newHoldersRight = isCurry ? undefined : holders,
         newPartials = isCurry ? partials : undefined,
@@ -45,7 +44,7 @@ define(['./_copyArray', './_isLaziable', './_setData'], function(copyArray, isLa
     }
     var newData = [
       func, bitmask, thisArg, newPartials, newHolders, newPartialsRight,
-      newHoldersRight, newArgPos, ary, arity
+      newHoldersRight, argPos, ary, arity
     ];
 
     var result = wrapFunc.apply(undefined, newData);

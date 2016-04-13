@@ -1,22 +1,23 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseClone = require('lodash._baseclone'),
     baseIteratee = require('lodash._baseiteratee');
 
 /**
  * Creates a function that invokes `func` with the arguments of the created
- * function. If `func` is a property name the created callback returns the
- * property value for a given element. If `func` is an object the created
- * callback returns `true` for elements that contain the equivalent object
- * properties, otherwise it returns `false`.
+ * function. If `func` is a property name, the created function returns the
+ * property value for a given element. If `func` is an array or object, the
+ * created function returns `true` for elements that contain the equivalent
+ * source properties, otherwise it returns `false`.
  *
  * @static
+ * @since 4.0.0
  * @memberOf _
  * @category Util
  * @param {*} [func=_.identity] The value to convert to a callback.
@@ -24,20 +25,31 @@ var baseClone = require('lodash._baseclone'),
  * @example
  *
  * var users = [
- *   { 'user': 'barney', 'age': 36 },
- *   { 'user': 'fred',   'age': 40 }
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
  * ];
  *
+ * // The `_.matches` iteratee shorthand.
+ * _.filter(users, _.iteratee({ 'user': 'barney', 'active': true }));
+ * // => [{ 'user': 'barney', 'age': 36, 'active': true }]
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.filter(users, _.iteratee(['user', 'fred']));
+ * // => [{ 'user': 'fred', 'age': 40 }]
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.map(users, _.iteratee('user'));
+ * // => ['barney', 'fred']
+ *
  * // Create custom iteratee shorthands.
- * _.iteratee = _.wrap(_.iteratee, function(callback, func) {
- *   var p = /^(\S+)\s*([<>])\s*(\S+)$/.exec(func);
- *   return !p ? callback(func) : function(object) {
- *     return (p[2] == '>' ? object[p[1]] > p[3] : object[p[1]] < p[3]);
+ * _.iteratee = _.wrap(_.iteratee, function(iteratee, func) {
+ *   return !_.isRegExp(func) ? iteratee(func) : function(string) {
+ *     return func.test(string);
  *   };
  * });
  *
- * _.filter(users, 'age > 36');
- * // => [{ 'user': 'fred', 'age': 40 }]
+ * _.filter(['abc', 'def'], /ef/);
+ * // => ['def']
  */
 function iteratee(func) {
   return baseIteratee(typeof func == 'function' ? func : baseClone(func, true));

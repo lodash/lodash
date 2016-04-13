@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -9,6 +9,9 @@
 var baseSlice = require('lodash._baseslice'),
     rest = require('lodash.rest'),
     stringToPath = require('lodash._stringtopath');
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -63,7 +66,7 @@ function baseGet(object, path) {
       length = path.length;
 
   while (object != null && index < length) {
-    object = object[path[index++]];
+    object = object[toKey(path[index++])];
   }
   return (index && index == length) ? object : undefined;
 }
@@ -84,7 +87,7 @@ function baseInvoke(object, path, args) {
     object = parent(object, path);
     path = last(path);
   }
-  var func = object == null ? object : object[path];
+  var func = object == null ? object : object[toKey(path)];
   return func == null ? undefined : apply(func, object, args);
 }
 
@@ -108,13 +111,16 @@ function castPath(value) {
  * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
  */
 function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
   var type = typeof value;
-  if (type == 'number' || type == 'symbol') {
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
     return true;
   }
-  return !isArray(value) &&
-    (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
-      (object != null && value in Object(object)));
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
 }
 
 /**
@@ -127,6 +133,21 @@ function isKey(value, object) {
  */
 function parent(object, path) {
   return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+}
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 
 /**
@@ -236,7 +257,7 @@ function isSymbol(value) {
  * @category Util
  * @param {Array|string} path The path of the method to invoke.
  * @param {...*} [args] The arguments to invoke the method with.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new invoker function.
  * @example
  *
  * var objects = [

@@ -1,4 +1,4 @@
-# lodash.forin v4.3.1
+# lodash.forin v4.4.0
 
 The [lodash](https://lodash.com/) method `_.forIn` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var forIn = require('lodash.forin');
 ```
 
-See the [documentation](https://lodash.com/docs#forIn) or [package source](https://github.com/lodash/lodash/blob/4.3.1-npm-packages/lodash.forin) for more details.
+See the [documentation](https://lodash.com/docs#forIn) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.forin) for more details.

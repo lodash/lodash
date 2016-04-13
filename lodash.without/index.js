@@ -22,7 +22,7 @@ var funcTag = '[object Function]',
 
 /**
  * Used to match `RegExp`
- * [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns).
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
@@ -63,7 +63,7 @@ function apply(func, thisArg, args) {
  * specifying an index to search from.
  *
  * @private
- * @param {Array} [array] The array to search.
+ * @param {Array} [array] The array to inspect.
  * @param {*} target The value to search for.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
@@ -76,7 +76,7 @@ function arrayIncludes(array, value) {
  * This function is like `arrayIncludes` except that it accepts a comparator.
  *
  * @private
- * @param {Array} [array] The array to search.
+ * @param {Array} [array] The array to inspect.
  * @param {*} target The value to search for.
  * @param {Function} comparator The comparator invoked per element.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
@@ -118,7 +118,7 @@ function arrayMap(array, iteratee) {
  * support for iteratee shorthands.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} fromIndex The index to search from.
  * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -140,7 +140,7 @@ function baseFindIndex(array, predicate, fromIndex, fromRight) {
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {*} value The value to search for.
  * @param {number} fromIndex The index to search from.
  * @returns {number} Returns the index of the matched value, else `-1`.
@@ -169,19 +169,6 @@ function baseIndexOf(array, value, fromIndex) {
  */
 function baseIsNaN(value) {
   return value !== value;
-}
-
-/**
- * The base implementation of `_.property` without support for deep paths.
- *
- * @private
- * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new accessor function.
- */
-function baseProperty(key) {
-  return function(object) {
-    return object == null ? undefined : object[key];
-  };
 }
 
 /**
@@ -242,6 +229,7 @@ function isHostObject(value) {
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype,
+    funcProto = Function.prototype,
     objectProto = Object.prototype;
 
 /** Used to detect overreaching core-js shims. */
@@ -254,14 +242,14 @@ var maskSrcKey = (function() {
 }());
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = Function.prototype.toString;
+var funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -640,7 +628,7 @@ SetCache.prototype.has = setCacheHas;
  * Gets the index at which the `key` is found in `array` of key-value pairs.
  *
  * @private
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {*} key The key to search for.
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
@@ -756,19 +744,6 @@ function baseRest(func, start) {
 }
 
 /**
- * Gets the "length" property value of `object`.
- *
- * **Note:** This function is used to avoid a
- * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
- * Safari on at least iOS 8.1-8.3 ARM64.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {*} Returns the "length" value.
- */
-var getLength = baseProperty('length');
-
-/**
  * Gets the data for `map`.
  *
  * @private
@@ -842,7 +817,7 @@ function toSource(func) {
 
 /**
  * Creates an array excluding all given values using
- * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * **Note:** Unlike `_.pull`, this method returns a new array.
@@ -868,7 +843,7 @@ var without = baseRest(function(array, values) {
 
 /**
  * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * comparison between two values to determine if they are equivalent.
  *
  * @static
@@ -928,7 +903,7 @@ function eq(value, other) {
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && isLength(getLength(value)) && !isFunction(value);
+  return value != null && isLength(value.length) && !isFunction(value);
 }
 
 /**
@@ -979,8 +954,7 @@ function isArrayLikeObject(value) {
  */
 function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 8 which returns 'object' for typed array and weak map constructors,
-  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
   var tag = isObject(value) ? objectToString.call(value) : '';
   return tag == funcTag || tag == genTag;
 }
@@ -988,16 +962,15 @@ function isFunction(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is loosely based on
- * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
  *
  * @static
  * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
  * @example
  *
  * _.isLength(3);
@@ -1019,7 +992,7 @@ function isLength(value) {
 
 /**
  * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
  * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static

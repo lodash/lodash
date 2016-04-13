@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -7,6 +7,9 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var stringToPath = require('lodash._stringtopath');
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -67,8 +70,12 @@ function copyArray(source, array) {
  * @param {*} value The value to inspect.
  * @returns {string|symbol} Returns the key.
  */
-function toKey(key) {
-  return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 
 /**

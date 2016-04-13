@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -10,6 +10,10 @@ var baseFlatten = require('lodash._baseflatten'),
     baseIteratee = require('lodash._baseiteratee'),
     rest = require('lodash.rest');
 
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]';
+
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
  * with the `this` binding of `thisArg` and the arguments of `args`.
@@ -17,7 +21,7 @@ var baseFlatten = require('lodash._baseflatten'),
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} args The arguments to invoke `func` with.
+ * @param {Array} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
@@ -51,8 +55,30 @@ function arrayMap(array, iteratee) {
   return result;
 }
 
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMin = Math.min;
+
+/**
+ * Checks if `value` is a flattenable array and not a `_.matchesProperty`
+ * iteratee shorthand.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+ */
+function isFlattenableIteratee(value) {
+  return isArray(value) && !(value.length == 2 && !isFunction(value[0]));
+}
 
 /**
  * Creates a function that invokes `func` with arguments transformed by
@@ -63,8 +89,8 @@ var nativeMin = Math.min;
  * @memberOf _
  * @category Function
  * @param {Function} func The function to wrap.
- * @param {...(Function|Function[])} [transforms] The functions to transform
- * arguments, specified individually or in arrays.
+ * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
+ *  [transforms[_.identity]] The functions to transform.
  * @returns {Function} Returns the new function.
  * @example
  *
@@ -87,8 +113,7 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1), baseIteratee);
-
+  transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
   var funcsLength = transforms.length;
   return rest(function(args) {
     var index = -1,
@@ -100,5 +125,88 @@ var overArgs = rest(function(func, transforms) {
     return apply(func, this, args);
   });
 });
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @type {Function}
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
 
 module.exports = overArgs;

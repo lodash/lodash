@@ -1,10 +1,10 @@
 /**
- * lodash 4.3.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseFind = require('lodash._basefind'),
     baseForRight = require('lodash._baseforright'),
@@ -29,10 +29,13 @@ function baseForOwnRight(object, iteratee) {
  *
  * @static
  * @memberOf _
+ * @since 2.0.0
  * @category Object
  * @param {Object} object The object to search.
- * @param {Function|Object|string} [predicate=_.identity] The function invoked per iteration.
- * @returns {string|undefined} Returns the key of the matched element, else `undefined`.
+ * @param {Array|Function|Object|string} [predicate=_.identity]
+ *  The function invoked per iteration.
+ * @returns {string|undefined} Returns the key of the matched element,
+ *  else `undefined`.
  * @example
  *
  * var users = {

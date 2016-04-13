@@ -1,13 +1,51 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 
 var arrayBufferTag = '[object ArrayBuffer]';
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+/** Detect free variable `exports`. */
+var freeExports = freeGlobal && typeof exports == 'object' && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && typeof module == 'object' && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Detect free variable `process` from Node.js. */
+var freeProcess = moduleExports && freeGlobal.process;
+
+/** Used to access faster Node.js helpers. */
+var nodeUtil = (function() {
+  try {
+    return freeProcess && freeProcess.binding('util');
+  } catch (e) {}
+}());
+
+/* Node.js helper references. */
+var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
+
+/**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -20,6 +58,17 @@ var objectProto = Object.prototype;
 var objectToString = objectProto.toString;
 
 /**
+ * The base implementation of `_.isArrayBuffer` without Node.js optimizations.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
+ */
+function baseIsArrayBuffer(value) {
+  return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
+}
+
+/**
  * Checks if `value` is classified as an `ArrayBuffer` object.
  *
  * @static
@@ -27,8 +76,7 @@ var objectToString = objectProto.toString;
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
  * @example
  *
  * _.isArrayBuffer(new ArrayBuffer(2));
@@ -37,9 +85,7 @@ var objectToString = objectProto.toString;
  * _.isArrayBuffer(new Array(2));
  * // => false
  */
-function isArrayBuffer(value) {
-  return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
-}
+var isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
 
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`

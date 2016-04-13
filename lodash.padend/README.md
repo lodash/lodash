@@ -1,4 +1,4 @@
-# lodash.padend v4.3.0
+# lodash.padend v4.4.0
 
 The [lodash](https://lodash.com/) method `_.padEnd` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var padEnd = require('lodash.padend');
 ```
 
-See the [documentation](https://lodash.com/docs#padEnd) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.padend) for more details.
+See the [documentation](https://lodash.com/docs#padEnd) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.padend) for more details.

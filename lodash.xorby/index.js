@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -56,7 +56,7 @@ var objectToString = objectProto.toString;
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -109,7 +109,7 @@ function last(array) {
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Array|Function|Object|string} [iteratee=_.identity]
  *  The iteratee invoked per element.
- * @returns {Array} Returns the new array of values.
+ * @returns {Array} Returns the new array of filtered values.
  * @example
  *
  * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);

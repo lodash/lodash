@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -11,12 +11,19 @@ var baseFlatten = require('lodash._baseflatten'),
     rest = require('lodash.rest'),
     stringToPath = require('lodash._stringtopath');
 
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0,
+    MAX_SAFE_INTEGER = 9007199254740991;
+
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
     reIsPlainProp = /^\w*$/;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
 
 /**
  * A specialized version of `_.map` for arrays without support for iteratee
@@ -38,38 +45,6 @@ function arrayMap(array, iteratee) {
   return result;
 }
 
-/**
- * Compares values to sort them in ascending order.
- *
- * @private
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {number} Returns the sort order indicator for `value`.
- */
-function compareAscending(value, other) {
-  if (value !== other) {
-    var valIsNull = value === null,
-        valIsUndef = value === undefined,
-        valIsReflexive = value === value;
-
-    var othIsNull = other === null,
-        othIsUndef = other === undefined,
-        othIsReflexive = other === other;
-
-    if ((value > other && !othIsNull) || !valIsReflexive ||
-        (valIsNull && !othIsUndef && othIsReflexive) ||
-        (valIsUndef && othIsReflexive)) {
-      return 1;
-    }
-    if ((value < other && !valIsNull) || !othIsReflexive ||
-        (othIsNull && !valIsUndef && valIsReflexive) ||
-        (othIsUndef && valIsReflexive)) {
-      return -1;
-    }
-  }
-  return 0;
-}
-
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -86,7 +61,7 @@ var objectToString = objectProto.toString;
  * @private
  * @param {Object} object The object to iterate over.
  * @param {string[]} paths The property paths of elements to pick.
- * @returns {Array} Returns the new array of picked elements.
+ * @returns {Array} Returns the picked elements.
  */
 function baseAt(object, paths) {
   var index = -1,
@@ -115,7 +90,7 @@ function baseGet(object, path) {
       length = path.length;
 
   while (object != null && index < length) {
-    object = object[path[index++]];
+    object = object[toKey(path[index++])];
   }
   return (index && index == length) ? object : undefined;
 }
@@ -132,6 +107,59 @@ function castPath(value) {
 }
 
 /**
+ * Compares values to sort them in ascending order.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {number} Returns the sort order indicator for `value`.
+ */
+function compareAscending(value, other) {
+  if (value !== other) {
+    var valIsDefined = value !== undefined,
+        valIsNull = value === null,
+        valIsReflexive = value === value,
+        valIsSymbol = isSymbol(value);
+
+    var othIsDefined = other !== undefined,
+        othIsNull = other === null,
+        othIsReflexive = other === other,
+        othIsSymbol = isSymbol(other);
+
+    if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
+        (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||
+        (valIsNull && othIsDefined && othIsReflexive) ||
+        (!valIsDefined && othIsReflexive) ||
+        !valIsReflexive) {
+      return 1;
+    }
+    if ((!valIsNull && !valIsSymbol && !othIsSymbol && value < other) ||
+        (othIsSymbol && valIsDefined && valIsReflexive && !valIsNull && !valIsSymbol) ||
+        (othIsNull && valIsDefined && valIsReflexive) ||
+        (!othIsDefined && valIsReflexive) ||
+        !othIsReflexive) {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
  * Checks if `value` is a property name and not a property path.
  *
  * @private
@@ -140,13 +168,31 @@ function castPath(value) {
  * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
  */
 function isKey(value, object) {
+  if (isArray(value)) {
+    return false;
+  }
   var type = typeof value;
-  if (type == 'number' || type == 'symbol') {
+  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+      value == null || isSymbol(value)) {
     return true;
   }
-  return !isArray(value) &&
-    (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
-      (object != null && value in Object(object)));
+  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (object != null && value in Object(object));
+}
+
+/**
+ * Converts `value` to a string key if it's not a string or symbol.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {string|symbol} Returns the key.
+ */
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 
 /**
@@ -174,10 +220,15 @@ function isKey(value, object) {
  * // => [10, 20]
  */
 var pullAt = rest(function(array, indexes) {
-  indexes = arrayMap(baseFlatten(indexes, 1), String);
+  indexes = baseFlatten(indexes, 1);
 
-  var result = baseAt(array, indexes);
-  basePullAt(array, indexes.sort(compareAscending));
+  var length = array ? array.length : 0,
+      result = baseAt(array, indexes);
+
+  basePullAt(array, arrayMap(indexes, function(index) {
+    return isIndex(index, length) ? +index : index;
+  }).sort(compareAscending));
+
   return result;
 });
 

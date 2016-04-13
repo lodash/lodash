@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -7,7 +7,7 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseIteratee = require('lodash._baseiteratee'),
-    baseSortedUniqBy = require('lodash._basesorteduniqby');
+    baseSortedUniq = require('lodash._basesorteduniq');
 
 /**
  * This method is like `_.uniqBy` except that it's designed and optimized
@@ -27,7 +27,7 @@ var baseIteratee = require('lodash._baseiteratee'),
  */
 function sortedUniqBy(array, iteratee) {
   return (array && array.length)
-    ? baseSortedUniqBy(array, baseIteratee(iteratee))
+    ? baseSortedUniq(array, baseIteratee(iteratee))
     : [];
 }
 

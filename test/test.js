@@ -2134,7 +2134,32 @@
       assert.deepEqual(actual, lodashStable.map(burredLetters, alwaysTrue));
     });
 
-    QUnit.test('`_.' + methodName + '` should trim latin-1 mathematical operators', function(assert) {
+    QUnit.test('`_.' + methodName + '` should remove contraction apostrophes', function(assert) {
+      assert.expect(2);
+
+      var postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
+
+      lodashStable.each(["'", '\u2019'], function(apos) {
+        var actual = lodashStable.map(postfixes, function(postfix) {
+          return func('a b' + apos + postfix +  ' c');
+        });
+
+        var expected = lodashStable.map(postfixes, function(postfix) {
+          switch (caseName) {
+            case 'camel': return 'aB'  + postfix + 'C';
+            case 'kebab': return 'a-b' + postfix + '-c';
+            case 'lower': return 'a b' + postfix + ' c';
+            case 'snake': return 'a_b' + postfix + '_c';
+            case 'start': return 'A B' + postfix + ' C';
+            case 'upper': return 'A B' + postfix.toUpperCase() + ' C';
+          }
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should remove latin-1 mathematical operators', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(['\xd7', '\xf7'], func);
@@ -2176,7 +2201,7 @@
     QUnit.test('should get the original value after cycling through all case methods', function(assert) {
       assert.expect(1);
 
-      var funcs = [_.camelCase, _.kebabCase, _.snakeCase, _.startCase, _.camelCase];
+      var funcs = [_.camelCase, _.kebabCase, _.lowerCase, _.snakeCase, _.startCase, _.lowerCase, _.camelCase];
 
       var actual = lodashStable.reduce(funcs, function(result, func) {
         return func(result);

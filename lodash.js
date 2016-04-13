@@ -3303,9 +3303,9 @@
      * The base implementation of `_.nth` which doesn't coerce `n` to an integer.
      *
      * @private
-     * @param {Array} array The array to inspect.
+     * @param {Array} array The array to query.
      * @param {number} n The index of the element to return.
-     * @returns {*} Returns the nth element.
+     * @returns {*} Returns the nth element of `array`.
      */
     function baseNth(array, n) {
       var length = array.length;
@@ -6685,9 +6685,9 @@
      * @memberOf _
      * @since 4.11.0
      * @category Array
-     * @param {Array} array The array to inspect.
-     * @param {number} [n=0] The index of the element to return..
-     * @returns {*} Returns the nth element.
+     * @param {Array} array The array to query.
+     * @param {number} [n=0] The index of the element to return.
+     * @returns {*} Returns the nth element of `array`.
      * @example
      *
      * var array = ['a', 'b', 'c', 'd'];

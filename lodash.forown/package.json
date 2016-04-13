@@ -1,6 +1,6 @@
 {
   "name": "lodash.forown",
-  "version": "4.3.1",
+  "version": "4.4.0",
   "description": "The lodash method `_.forOwn` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

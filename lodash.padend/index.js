@@ -1,12 +1,13 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var toString = require('lodash.tostring');
+var baseSlice = require('lodash._baseslice'),
+    toString = require('lodash.tostring');
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
@@ -135,6 +136,21 @@ function baseRepeat(string, n) {
 }
 
 /**
+ * Casts `array` to a slice if it's needed.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {number} start The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the cast slice.
+ */
+function castSlice(array, start, end) {
+  var length = array.length;
+  end = end === undefined ? length : end;
+  return (!start && end >= length) ? array : baseSlice(array, start, end);
+}
+
+/**
  * Creates the padding for `string` based on `length`. The `chars` string
  * is truncated if the number of characters exceeds `length`.
  *
@@ -152,7 +168,7 @@ function createPadding(length, chars) {
   }
   var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
   return reHasComplexSymbol.test(chars)
-    ? stringToArray(result).slice(0, length).join('')
+    ? castSlice(stringToArray(result), 0, length).join('')
     : result.slice(0, length);
 }
 

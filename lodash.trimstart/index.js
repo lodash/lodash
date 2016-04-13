@@ -1,5 +1,5 @@
 /**
- * lodash 4.3.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -7,6 +7,7 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseSlice = require('lodash._baseslice'),
+    baseToString = require('lodash._basetostring'),
     toString = require('lodash.tostring');
 
 /** Used to match leading and trailing whitespace. */
@@ -148,13 +149,10 @@ function castSlice(array, start, end) {
  */
 function trimStart(string, chars, guard) {
   string = toString(string);
-  if (!string) {
-    return string;
-  }
-  if (guard || chars === undefined) {
+  if (string && (guard || chars === undefined)) {
     return string.replace(reTrimStart, '');
   }
-  if (!(chars += '')) {
+  if (!string || !(chars = baseToString(chars))) {
     return string;
   }
   var strSymbols = stringToArray(string),

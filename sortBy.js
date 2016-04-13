@@ -1,5 +1,7 @@
 import baseFlatten from './_baseFlatten';
 import baseOrderBy from './_baseOrderBy';
+import isArray from './isArray';
+import isFlattenableIteratee from './_isFlattenableIteratee';
 import isIterateeCall from './_isIterateeCall';
 import rest from './rest';
 
@@ -47,7 +49,11 @@ var sortBy = rest(function(collection, iteratees) {
   } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
     iteratees = [iteratees[0]];
   }
-  return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
+  iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
+    ? iteratees[0]
+    : baseFlatten(iteratees, 1, isFlattenableIteratee);
+
+  return baseOrderBy(collection, iteratees, []);
 });
 
 export default sortBy;

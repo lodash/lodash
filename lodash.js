@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.10.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.11.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -184,6 +184,7 @@ export { default as negate } from './negate';
 export { default as next } from './next';
 export { default as noop } from './noop';
 export { default as now } from './now';
+export { default as nth } from './nth';
 export { default as nthArg } from './nthArg';
 export { default as omit } from './omit';
 export { default as omitBy } from './omitBy';

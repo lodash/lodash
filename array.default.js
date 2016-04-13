@@ -24,6 +24,7 @@ import intersectionWith from './intersectionWith';
 import join from './join';
 import last from './last';
 import lastIndexOf from './lastIndexOf';
+import nth from './nth';
 import pull from './pull';
 import pullAll from './pullAll';
 import pullAllBy from './pullAllBy';
@@ -68,12 +69,12 @@ export default {
   fill, findIndex, findLastIndex, flatten, flattenDeep,
   flattenDepth, fromPairs, head, indexOf, initial,
   intersection, intersectionBy, intersectionWith, join, last,
-  lastIndexOf, pull, pullAll, pullAllBy, pullAllWith,
-  pullAt, remove, reverse, slice, sortedIndex,
-  sortedIndexBy, sortedIndexOf, sortedLastIndex, sortedLastIndexBy, sortedLastIndexOf,
-  sortedUniq, sortedUniqBy, tail, take, takeRight,
-  takeRightWhile, takeWhile, union, unionBy, unionWith,
-  uniq, uniqBy, uniqWith, unzip, unzipWith,
-  without, xor, xorBy, xorWith, zip,
-  zipObject, zipObjectDeep, zipWith
+  lastIndexOf, nth, pull, pullAll, pullAllBy,
+  pullAllWith, pullAt, remove, reverse, slice,
+  sortedIndex, sortedIndexBy, sortedIndexOf, sortedLastIndex, sortedLastIndexBy,
+  sortedLastIndexOf, sortedUniq, sortedUniqBy, tail, take,
+  takeRight, takeRightWhile, takeWhile, union, unionBy,
+  unionWith, uniq, uniqBy, uniqWith, unzip,
+  unzipWith, without, xor, xorBy, xorWith,
+  zip, zipObject, zipObjectDeep, zipWith
 };

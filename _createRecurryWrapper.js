@@ -1,4 +1,3 @@
-import copyArray from './_copyArray';
 import isLaziable from './_isLaziable';
 import setData from './_setData';
 
@@ -30,7 +29,6 @@ var BIND_FLAG = 1,
  */
 function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
   var isCurry = bitmask & CURRY_FLAG,
-      newArgPos = argPos ? copyArray(argPos) : undefined,
       newHolders = isCurry ? holders : undefined,
       newHoldersRight = isCurry ? undefined : holders,
       newPartials = isCurry ? partials : undefined,
@@ -44,7 +42,7 @@ function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, par
   }
   var newData = [
     func, bitmask, thisArg, newPartials, newHolders, newPartialsRight,
-    newHoldersRight, newArgPos, ary, arity
+    newHoldersRight, argPos, ary, arity
   ];
 
   var result = wrapFunc.apply(undefined, newData);

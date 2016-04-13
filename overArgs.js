@@ -2,6 +2,8 @@ import apply from './_apply';
 import arrayMap from './_arrayMap';
 import baseFlatten from './_baseFlatten';
 import baseIteratee from './_baseIteratee';
+import baseUnary from './_baseUnary';
+import isArray from './isArray';
 import isFlattenableIteratee from './_isFlattenableIteratee';
 import rest from './rest';
 
@@ -41,7 +43,10 @@ var nativeMin = Math.min;
  * // => [100, 10]
  */
 var overArgs = rest(function(func, transforms) {
-  transforms = arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseIteratee);
+  transforms = (transforms.length == 1 && isArray(transforms[0]))
+    ? arrayMap(transforms[0], baseUnary(baseIteratee))
+    : arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseUnary(baseIteratee));
+
   var funcsLength = transforms.length;
   return rest(function(args) {
     var index = -1,

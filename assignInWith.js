@@ -1,4 +1,4 @@
-import copyObjectWith from './_copyObjectWith';
+import copyObject from './_copyObject';
 import createAssigner from './_createAssigner';
 import keysIn from './keysIn';
 
@@ -31,7 +31,7 @@ import keysIn from './keysIn';
  * // => { 'a': 1, 'b': 2 }
  */
 var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
-  copyObjectWith(source, keysIn(source), object, customizer);
+  copyObject(source, keysIn(source), object, customizer);
 });
 
 export default assignInWith;

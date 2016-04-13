@@ -4106,21 +4106,26 @@
       }, 128);
     });
 
-    QUnit.test('subsequent "immediate" debounced calls return the last `func` result', function(assert) {
-      assert.expect(2);
+    QUnit.test('should not call immediately for `wait` of `0`', function(assert) {
+      assert.expect(3);
 
       var done = assert.async();
 
-      var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
-          result = [debounced('x'), debounced('y')];
+      var callCount = 0;
 
-      assert.deepEqual(result, ['x', 'x']);
+      var debounced = _.debounce(function(value) {
+        ++callCount;
+        return value;
+      }, 0);
+
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
-        var result = [debounced('a'), debounced('b')];
-        assert.deepEqual(result, ['a', 'a']);
+        assert.strictEqual(callCount, 1);
         done();
-      }, 64);
+      }, 5);
     });
 
     QUnit.test('should apply default options', function(assert) {
@@ -4175,6 +4180,23 @@
         withLeading('a');
         assert.strictEqual(callCounts[0], 2);
 
+        done();
+      }, 64);
+    });
+
+    QUnit.test('subsequent leading debounced calls return the last `func` result', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
+          result = [debounced('x'), debounced('y')];
+
+      assert.deepEqual(result, ['x', 'x']);
+
+      setTimeout(function() {
+        var result = [debounced('a'), debounced('b')];
+        assert.deepEqual(result, ['a', 'a']);
         done();
       }, 64);
     });
@@ -4319,7 +4341,7 @@
       }, 192);
     });
 
-    QUnit.test('should invoke the `trailing` call with the correct arguments and `this` binding', function(assert) {
+    QUnit.test('should invoke the trailing call with the correct arguments and `this` binding', function(assert) {
       assert.expect(2);
 
       var done = assert.async();

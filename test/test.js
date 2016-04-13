@@ -94,8 +94,7 @@
       alwaysFalse = function() { return false; };
 
   var alwaysNaN = function() { return NaN; },
-      alwaysNull = function() { return null; },
-      alwaysUndefined = function() { return undefined; };
+      alwaysNull = function() { return null; };
 
   var alwaysZero = function() { return 0; },
       alwaysOne = function() { return 1; },
@@ -1283,7 +1282,7 @@
       }));
 
       defineProperty(object, 'b', lodashStable.assign({}, descriptor, {
-        'get': alwaysUndefined
+        'get': noop
       }));
 
       defineProperty(object, 'c', lodashStable.assign({}, descriptor, {
@@ -1359,7 +1358,7 @@
       assert.expect(1);
 
       var expected = { 'a': undefined };
-      assert.deepEqual(func({}, expected, alwaysUndefined), expected);
+      assert.deepEqual(func({}, expected, noop), expected);
     });
   });
 
@@ -8139,7 +8138,7 @@
       assert.expect(1);
 
       var values = [null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       var actual = lodashStable.map(values, function(value) {
         try {
@@ -14126,7 +14125,7 @@
       assert.expect(1);
 
       var values = falsey.concat([[]]),
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       var actual = lodashStable.map(values, function(value, index) {
         try {
@@ -14867,7 +14866,7 @@
 
       var source1 = { 'a': { 'b': { 'c': 1 } } },
           source2 = { 'a': { 'b': { 'd': 2 } } },
-          actual = _.mergeWith({}, source1, source2, alwaysUndefined);
+          actual = _.mergeWith({}, source1, source2, noop);
 
       assert.deepEqual(source1.a.b, { 'c': 1 });
     });
@@ -14974,7 +14973,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor', ['constructor']], function(path) {
         var method = _.method(path);
@@ -14991,7 +14990,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var method = _.method(path);
@@ -15129,7 +15128,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor', ['constructor']], function(path) {
         var actual = lodashStable.map(values, function(value, index) {
@@ -15145,7 +15144,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = lodashStable.map(values, function(value, index) {
@@ -15211,7 +15210,7 @@
       assert.expect(1);
 
       var values = falsey.concat([[]]),
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       var actual = lodashStable.map(values, function(value, index) {
         try {
@@ -15762,7 +15761,7 @@
       assert.expect(1);
 
       var values = empties.concat(true, new Date, _, 1, /x/, 'a'),
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       var actual = lodashStable.map(values, function(value, index) {
         return index ? _.noop(value) : _.noop();
@@ -17386,7 +17385,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor', ['constructor']], function(path) {
         var prop = _.property(path);
@@ -17403,7 +17402,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var prop = _.property(path);
@@ -17518,7 +17517,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor', ['constructor']], function(path) {
         var actual = lodashStable.map(values, function(value, index) {
@@ -17534,7 +17533,7 @@
       assert.expect(2);
 
       var values = [, null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined);
+          expected = lodashStable.map(values, noop);
 
       lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], function(path) {
         var actual = lodashStable.map(values, function(value, index) {
@@ -17748,7 +17747,7 @@
 
       assert.deepEqual(actual, expected);
 
-      expected = lodashStable.map(values, alwaysUndefined),
+      expected = lodashStable.map(values, noop),
       actual = _.at(array, values);
 
       assert.deepEqual(actual, expected);
@@ -18234,7 +18233,7 @@
       assert.expect(1);
 
       var actual = [],
-          expected = lodashStable.map(empties, alwaysUndefined);
+          expected = lodashStable.map(empties, noop);
 
       lodashStable.each(empties, function(value) {
         try {
@@ -18760,7 +18759,7 @@
       assert.expect(2);
 
       var values = [null, undefined],
-          expected = lodashStable.map(values, alwaysUndefined),
+          expected = lodashStable.map(values, noop),
           paths = ['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']];
 
       lodashStable.each(paths, function(path) {
@@ -19168,7 +19167,7 @@
     QUnit.test('should return `undefined` when sampling empty collections', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(empties, alwaysUndefined);
+      var expected = lodashStable.map(empties, noop);
 
       var actual = lodashStable.transform(empties, function(result, value) {
         try {
@@ -19301,7 +19300,7 @@
     QUnit.test('should work with a `customizer` that returns `undefined`', function(assert) {
       assert.expect(1);
 
-      var actual = _.setWith({}, 'a[0].b.c', 4, alwaysUndefined);
+      var actual = _.setWith({}, 'a[0].b.c', 4, noop);
       assert.deepEqual(actual, { 'a': [{ 'b': { 'c': 4 } }] });
     });
   }());
@@ -24182,7 +24181,7 @@
     QUnit.test('should work with a `customizer` that returns `undefined`', function(assert) {
       assert.expect(1);
 
-      var actual = _.updateWith({}, 'a[0].b.c', alwaysFour, alwaysUndefined);
+      var actual = _.updateWith({}, 'a[0].b.c', alwaysFour, noop);
       assert.deepEqual(actual, { 'a': [{ 'b': { 'c': 4 } }] });
     });
   }());

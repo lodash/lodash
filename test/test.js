@@ -15894,6 +15894,35 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('should return `undefined` for empty arrays', function(assert) {
+      assert.expect(1);
+
+      var values = [null, undefined, []],
+          expected = lodashStable.map(values, noop);
+
+      var actual = lodashStable.map(values, function(array) {
+        return _.nth(array, 1);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return `undefined` for non-indexes', function(assert) {
+      assert.expect(1);
+
+      var array = [1, 2],
+          values = [Infinity, array.length],
+          expected = lodashStable.map(values, noop);
+
+      array[-1] = 3;
+
+      var actual = lodashStable.map(values, function(n) {
+        return _.nth(array, n);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -15942,6 +15971,27 @@
       expected = lodashStable.map(values, alwaysB);
 
       actual = lodashStable.map(values, function(n) {
+        var func = _.nthArg(n);
+        return func.apply(undefined, args);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should return `undefined` for empty arrays', function(assert) {
+      assert.expect(1);
+
+      var func = _.nthArg(1);
+      assert.strictEqual(func(), undefined);
+    });
+
+    QUnit.test('should return `undefined` for non-indexes', function(assert) {
+      assert.expect(1);
+
+      var values = [Infinity, args.length],
+          expected = lodashStable.map(values, noop);
+
+      var actual = lodashStable.map(values, function(n) {
         var func = _.nthArg(n);
         return func.apply(undefined, args);
       });

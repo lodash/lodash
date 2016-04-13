@@ -2865,21 +2865,6 @@
         }
       });
 
-      QUnit.test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for methods like `_.map`', function(assert) {
-        assert.expect(2);
-
-        var expected = [{ 'a': [0] }, { 'b': [1] }],
-            actual = lodashStable.map(expected, func);
-
-        assert.deepEqual(actual, expected);
-
-        if (isDeep) {
-          assert.ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
-        } else {
-          assert.ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
-        }
-      });
-
       QUnit.test('`_.' + methodName + '` should create an object from the same realm as `value`', function(assert) {
         assert.expect(1);
 
@@ -2904,6 +2889,21 @@
         });
 
         assert.deepEqual(actual, expected, props.join(', '));
+      });
+
+      QUnit.test('`_.' + methodName + '` should perform a ' + (isDeep ? 'deep' : 'shallow') + ' clone when used as an iteratee for methods like `_.map`', function(assert) {
+        assert.expect(2);
+
+        var expected = [{ 'a': [0] }, { 'b': [1] }],
+            actual = lodashStable.map(expected, func);
+
+        assert.deepEqual(actual, expected);
+
+        if (isDeep) {
+          assert.ok(actual[0] !== expected[0] && actual[0].a !== expected[0].a && actual[1].b !== expected[1].b);
+        } else {
+          assert.ok(actual[0] !== expected[0] && actual[0].a === expected[0].a && actual[1].b === expected[1].b);
+        }
       });
 
       QUnit.test('`_.' + methodName + '` should return a unwrapped value when chaining', function(assert) {
@@ -3993,6 +3993,18 @@
       assert.strictEqual(actual, 3);
     });
 
+    QUnit.test('`_.' + methodName + '` should work for function names that shadow those on `Object.prototype`', function(assert) {
+      assert.expect(1);
+
+      var curried = _.curry(function hasOwnProperty(a, b, c) {
+        return [a, b, c];
+      });
+
+      var expected = [1, 2, 3];
+
+      assert.deepEqual(curried(1)(2)(3), expected);
+    });
+
     QUnit.test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(2);
 
@@ -4009,18 +4021,6 @@
 
         assert.deepEqual(actual, expected);
       });
-    });
-
-    QUnit.test('`_.' + methodName + '` should work for function names that shadow those on `Object.prototype`', function(assert) {
-      assert.expect(1);
-
-      var curried = _.curry(function hasOwnProperty(a, b, c) {
-        return [a, b, c];
-      });
-
-      var expected = [1, 2, 3];
-
-      assert.deepEqual(curried(1)(2)(3), expected);
     });
   });
 
@@ -24319,15 +24319,6 @@
       assert.deepEqual(_.words('abcd', 'ab|cd'), ['ab']);
     });
 
-    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
-      assert.expect(1);
-
-      var strings = lodashStable.map(['a', 'b', 'c'], Object),
-          actual = lodashStable.map(strings, _.words);
-
-      assert.deepEqual(actual, [['a'], ['b'], ['c']]);
-    });
-
     QUnit.test('should work with compound words', function(assert) {
       assert.expect(12);
 
@@ -24351,6 +24342,15 @@
       assert.deepEqual(_.words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
+    });
+
+    QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
+      assert.expect(1);
+
+      var strings = lodashStable.map(['a', 'b', 'c'], Object),
+          actual = lodashStable.map(strings, _.words);
+
+      assert.deepEqual(actual, [['a'], ['b'], ['c']]);
     });
   }());
 

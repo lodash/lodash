@@ -4088,6 +4088,41 @@
       }, 256);
     });
 
+    QUnit.test('should not call immediately by default', function(assert) {
+      assert.expect(6);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function(value) {
+        ++callCount;
+        return value;
+      }, 0);
+
+      // Leading should not fire.
+      var actual = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      assert.strictEqual(callCount, 0);
+
+      setTimeout(function() {
+        // Trailing should fire by now.
+        assert.strictEqual(callCount, 1);
+
+        // Do it again.
+        var actual = [debounced(3), debounced(4), debounced(5)];
+
+        // Previous result.
+        assert.deepEqual(actual, [2, 2, 2]);
+        assert.strictEqual(callCount, 1);
+      }, 5);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 10);
+    });
+
     QUnit.test('subsequent debounced calls return the last `func` result', function(assert) {
       assert.expect(2);
 

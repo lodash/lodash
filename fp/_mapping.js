@@ -38,6 +38,7 @@ exports.aliasToReal = {
   'paths': 'at',
   'pickAll': 'pick',
   'pipe': 'flow',
+  'pluck': 'map',
   'prop': 'get',
   'propEq': 'matchesProperty',
   'propOr': 'getOr',

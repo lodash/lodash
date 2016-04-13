@@ -24418,6 +24418,24 @@
       assert.deepEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
     });
 
+    QUnit.test('should work with contractions', function(assert) {
+      assert.expect(2);
+
+      var postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
+
+      lodashStable.each(["'", '\u2019'], function(apos) {
+        var actual = lodashStable.map(postfixes, function(postfix) {
+          return _.words('a b' + apos + postfix +  ' c');
+        });
+
+        var expected = lodashStable.map(postfixes, function(postfix) {
+          return ['a', 'b' + apos + postfix, 'c'];
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 

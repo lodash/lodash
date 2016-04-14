@@ -40,7 +40,7 @@ define(['./_arrayEach', './_arrayPush', './_baseFunctions', './_copyArray', './i
     var props = keys(source),
         methodNames = baseFunctions(source, props);
 
-    var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
+    var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
         isFunc = isFunction(object);
 
     arrayEach(methodNames, function(methodName) {

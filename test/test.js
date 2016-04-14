@@ -4065,19 +4065,14 @@
         return value;
       }, 32);
 
-      // Leading should not fire.
       var actual = [debounced(0), debounced(1), debounced(2)];
       assert.deepEqual(actual, [undefined, undefined, undefined]);
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
-        // Trailing should fire by now.
         assert.strictEqual(callCount, 1);
 
-        // Do it again.
         var actual = [debounced(3), debounced(4), debounced(5)];
-
-        // Previous result.
         assert.deepEqual(actual, [2, 2, 2]);
         assert.strictEqual(callCount, 1);
       }, 128);
@@ -4106,20 +4101,16 @@
       }, 128);
     });
 
-    QUnit.test('should not call immediately for `wait` of `0`', function(assert) {
-      assert.expect(3);
+    QUnit.test('should not immediately call `func` when `wait` is `0`', function(assert) {
+      assert.expect(2);
 
       var done = assert.async();
 
-      var callCount = 0;
+      var callCount = 0,
+          debounced = _.debounce(function() { ++callCount; }, 0);
 
-      var debounced = _.debounce(function(value) {
-        ++callCount;
-        return value;
-      }, 0);
-
-      var actual = [debounced(0), debounced(1), debounced(2)];
-      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      debounced();
+      debounced();
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
@@ -4133,14 +4124,11 @@
 
       var done = assert.async();
 
-      var callCount = 0;
+      var callCount = 0,
+          debounced = _.debounce(function() { callCount++; }, 32, {});
 
-      var debounced = _.debounce(function(value) {
-        callCount++;
-        return value;
-      }, 32, {});
-
-      assert.strictEqual(debounced('a'), undefined);
+      debounced();
+      assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
         assert.strictEqual(callCount, 1);
@@ -4149,35 +4137,31 @@
     });
 
     QUnit.test('should support a `leading` option', function(assert) {
-      assert.expect(5);
+      assert.expect(4);
 
       var done = assert.async();
 
       var callCounts = [0, 0];
 
-      var withLeading = _.debounce(function(value) {
+      var withLeading = _.debounce(function() {
         callCounts[0]++;
-        return value;
       }, 32, { 'leading': true });
-
-      assert.strictEqual(withLeading('a'), 'a');
-
-      var withoutLeading = _.debounce(identity, 32, { 'leading': false });
-      assert.strictEqual(withoutLeading('a'), undefined);
 
       var withLeadingAndTrailing = _.debounce(function() {
         callCounts[1]++;
       }, 32, { 'leading': true });
 
-      withLeadingAndTrailing();
-      withLeadingAndTrailing();
+      withLeading();
+      assert.strictEqual(callCounts[0], 1);
 
+      withLeadingAndTrailing();
+      withLeadingAndTrailing();
       assert.strictEqual(callCounts[1], 1);
 
       setTimeout(function() {
         assert.deepEqual(callCounts, [1, 2]);
 
-        withLeading('a');
+        withLeading();
         assert.strictEqual(callCounts[0], 2);
 
         done();
@@ -4209,18 +4193,19 @@
       var withCount = 0,
           withoutCount = 0;
 
-      var withTrailing = _.debounce(function(value) {
+      var withTrailing = _.debounce(function() {
         withCount++;
-        return value;
       }, 32, { 'trailing': true });
 
-      var withoutTrailing = _.debounce(function(value) {
+      var withoutTrailing = _.debounce(function() {
         withoutCount++;
-        return value;
       }, 32, { 'trailing': false });
 
-      assert.strictEqual(withTrailing('a'), undefined);
-      assert.strictEqual(withoutTrailing('a'), undefined);
+      withTrailing();
+      assert.strictEqual(withCount, 0);
+
+      withoutTrailing();
+      assert.strictEqual(withoutCount, 0);
 
       setTimeout(function() {
         assert.strictEqual(withCount, 1);
@@ -4230,7 +4215,7 @@
     });
 
     QUnit.test('should support a `maxWait` option', function(assert) {
-      assert.expect(6);
+      assert.expect(4);
 
       var done = assert.async();
 
@@ -4241,20 +4226,14 @@
         return value;
       }, 32, { 'maxWait': 64 });
 
-      // Leading should not fire.
-      var actual = [debounced(0), debounced(1), debounced(2)];
-      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      debounced();
+      debounced();
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
-        // Trailing should fire by now.
         assert.strictEqual(callCount, 1);
-
-        // Do it again.
-        var actual = [debounced(3), debounced(4), debounced(5)];
-
-        // Previous result.
-        assert.deepEqual(actual, [2, 2, 2]);
+        debounced();
+        debounced();
         assert.strictEqual(callCount, 1);
       }, 128);
 
@@ -4287,7 +4266,6 @@
         withoutMaxWait();
       }
       var actual = [Boolean(withoutCount), Boolean(withCount)];
-
       setTimeout(function() {
         assert.deepEqual(actual, [false, true]);
         done();
@@ -22006,11 +21984,8 @@
           })
         }));
 
-        var throttled = lodash.throttle(function() {
-          callCount++;
-        }, 32);
+        var throttled = lodash.throttle(function() { callCount++; }, 32);
 
-        throttled();
         throttled();
         throttled();
 
@@ -22050,18 +22025,14 @@
 
         var callCount = 0,
             limit = (argv || isPhantom) ? 1000 : 320,
-            options = index ? { 'leading': false } : {};
-
-        var throttled = _.throttle(function() {
-          callCount++;
-        }, 32, options);
+            options = index ? { 'leading': false } : {},
+            throttled = _.throttle(function() { callCount++; }, 32, options);
 
         var start = +new Date;
         while ((new Date - start) < limit) {
           throttled();
         }
         var actual = callCount > 1;
-
         setTimeout(function() {
           assert.ok(actual);
           done();
@@ -22098,19 +22069,16 @@
     });
 
     QUnit.test('should apply default options', function(assert) {
-      assert.expect(3);
+      assert.expect(2);
 
       var done = assert.async();
 
-      var callCount = 0;
+      var callCount = 0,
+          throttled = _.throttle(function() { callCount++; }, 32, {});
 
-      var throttled = _.throttle(function(value) {
-        callCount++;
-        return value;
-      }, 32, {});
-
-      assert.strictEqual(throttled('a'), 'a');
-      assert.strictEqual(throttled('b'), 'a');
+      throttled();
+      throttled();
+      assert.strictEqual(callCount, 1);
 
       setTimeout(function() {
         assert.strictEqual(callCount, 2);
@@ -22211,11 +22179,8 @@
 
       var done = assert.async();
 
-      var callCount = 0;
-
-      var funced = func(function() {
-        callCount++;
-      });
+      var callCount = 0,
+          funced = func(function() { callCount++; });
 
       funced();
 
@@ -22231,11 +22196,8 @@
 
       var done = assert.async();
 
-      var object = {
-        'funced': func(function() { actual.push(this); }, 32)
-      };
-
       var actual = [],
+          object = { 'funced': func(function() { actual.push(this); }, 32) },
           expected = lodashStable.times(isDebounce ? 1 : 2, lodashStable.constant(object));
 
       object.funced();
@@ -22388,11 +22350,8 @@
 
       var done = assert.async();
 
-      var callCount = 0;
-
-      var funced = func(function() {
-        callCount++;
-      }, 32);
+      var callCount = 0,
+          funced = func(function() { callCount++; }, 32);
 
       funced.cancel();
       assert.strictEqual(funced.flush(), undefined);

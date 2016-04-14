@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.11.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.11.0';
+  var VERSION = '4.11.1';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -3698,7 +3698,7 @@
       object = this;
       methodNames = baseFunctions(source, keys(source));
     }
-    var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
+    var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
         isFunc = isFunction(object);
 
     baseEach(methodNames, function(methodName) {

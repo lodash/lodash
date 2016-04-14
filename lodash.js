@@ -15997,9 +15997,11 @@
   // Export lodash.
   var _ = runInContext();
 
-  // Expose lodash on the free variable `window` or `self` when available. This
-  // prevents errors in cases where lodash is loaded by a script tag in the presence
-  // of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch for more details.
+  // Expose Lodash on the free variable `window` or `self` when available so it's
+  // globally accessible, even when bundled with Browserify, Webpack, etc. This
+  // also prevents errors in cases where Lodash is loaded by a script tag in the
+  // presence of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch
+  // for more details. Use `_.noConflict` to remove Lodash from the global object.
   (freeWindow || freeSelf || {})._ = _;
 
   // Some AMD build optimizers like r.js check for condition patterns like the following:

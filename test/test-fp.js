@@ -833,21 +833,17 @@
   QUnit.module('set methods');
 
   (function() {
-    var array = [1, 2, 3],
-        object = { 'a': 1 },
-        deepObject = { 'a': { 'b': 2, 'c': 3 } };
-
     QUnit.test('should only clone objects in `path`', function(assert) {
       assert.expect(11);
 
-      var object = { 'a': { 'b': { 'c': 1 }, 'd': { 'e': 1 } } },
+      var object = { 'a': { 'b': 2, 'c': 3 }, 'd': { 'e': 4 } },
           value = _.cloneDeep(object),
-          actual = fp.set('a.b.c.d.e', 3, value);
+          actual = fp.set('a.b.c.d', 5, value);
 
-      assert.ok(_.isObject(actual.a.b.c), 'fp.set');
-      assert.ok(_.isNumber(actual.a.b.c), 'fp.set');
+      assert.ok(_.isObject(actual.a.b), 'fp.set');
+      assert.ok(_.isNumber(actual.a.b), 'fp.set');
 
-      assert.strictEqual(actual.a.b.c.d.e, 3, 'fp.set');
+      assert.strictEqual(actual.a.b.c.d, 5, 'fp.set');
       assert.strictEqual(actual.d, value.d, 'fp.set');
 
       value = _.cloneDeep(object);
@@ -858,16 +854,16 @@
       value = _.cloneDeep(object);
       actual = fp.unset('a.b')(value);
 
-      assert.notOk('b' in actual, 'fp.unset');
-      assert.strictEqual(actual.d, value.d, 'fp.unset');
+      assert.notOk('b' in actual.a, 'fp.unset');
+      assert.strictEqual(actual.a.c, value.a.c, 'fp.unset');
 
-      value = _.cloneDeep(deepObject);
+      value = _.cloneDeep(object);
       actual = fp.update('a.b')(function(n) { return n * n; })(value);
 
       assert.strictEqual(actual.a.b, 4, 'fp.update');
       assert.strictEqual(actual.d, value.d, 'fp.update');
 
-      value = _.cloneDeep(deepObject);
+      value = _.cloneDeep(object);
       actual = fp.updateWith(Object)('[0][1]')(_.constant('a'))(value);
 
       assert.deepEqual(actual[0], { '1': 'a' }, 'fp.updateWith');
@@ -880,8 +876,7 @@
   QUnit.module('with methods');
 
   (function() {
-    var array = [1, 2, 3],
-        object = { 'a': 1 };
+    var object = { 'a': 1 };
 
     QUnit.test('should provide the correct `customizer` arguments', function(assert) {
       assert.expect(7);
@@ -1316,7 +1311,7 @@
       var args,
           object = { 'a': 1 };
 
-      var actual = fp.mapKeys(function() {
+      fp.mapKeys(function() {
         args || (args = slice.call(arguments));
       }, object);
 

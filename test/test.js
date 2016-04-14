@@ -33,7 +33,6 @@
 
   /** Used for native method references. */
   var arrayProto = Array.prototype,
-      errorProto = Error.prototype,
       funcProto = Function.prototype,
       objectProto = Object.prototype,
       numberProto = Number.prototype,
@@ -62,7 +61,6 @@
 
   var ArrayBuffer = root.ArrayBuffer,
       Buffer = root.Buffer,
-      DataView = root.DataView,
       Promise = root.Promise,
       Map = root.Map,
       Set = root.Set,
@@ -5643,8 +5641,7 @@
   lodashStable.each(['find', 'findLast', 'findIndex', 'findLastIndex', 'findKey', 'findLastKey'], function(methodName) {
     QUnit.module('lodash.' + methodName);
 
-    var func = _[methodName],
-        isFindKey = /Key$/.test(methodName);
+    var func = _[methodName];
 
     (function() {
       var objects = [
@@ -5888,7 +5885,6 @@
 
   lodashStable.each(['flatMap', 'flatMapDeep', 'flatMapDepth'], function(methodName) {
     var func = _[methodName],
-        isDeep = methodName == 'flatMapDeep',
         array = [1, 2, 3, 4];
 
     function duplicate(n) {
@@ -6510,7 +6506,6 @@
 
     lodashStable.each(lodashStable.difference(methods, unwrappedMethods), function(methodName) {
       var array = [1, 2, 3],
-          func = _[methodName],
           isBaseEach = methodName == '_baseEach';
 
       QUnit.test('`_.' + methodName + '` should return a wrapped value when implicitly chaining', function(assert) {
@@ -6527,8 +6522,7 @@
     });
 
     lodashStable.each(unwrappedMethods, function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      var array = [1, 2, 3];
 
       QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
         assert.expect(1);
@@ -6559,8 +6553,7 @@
     });
 
     lodashStable.each(lodashStable.difference(methods, arrayMethods, forInMethods), function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName];
+      var func = _[methodName];
 
       QUnit.test('`_.' + methodName + '` iterates over own string keyed properties of objects', function(assert) {
         assert.expect(1);
@@ -6631,8 +6624,7 @@
     });
 
     lodashStable.each(methods, function(methodName) {
-      var array = [1, 2, 3],
-          func = _[methodName],
+      var func = _[methodName],
           isFind = /^find/.test(methodName),
           isSome = methodName == 'some',
           isReduce = /^reduce/.test(methodName);
@@ -8254,7 +8246,7 @@
         var actual = _.invokeMap(array, 'toUpperCase');
       } catch (e) {}
 
-      assert.deepEqual(_.invokeMap(array, 'toUpperCase'), ['A', undefined, undefined, 'D']);
+      assert.deepEqual(actual, ['A', undefined, undefined, 'D']);
     });
 
     QUnit.test('should not error on elements with missing properties', function(assert) {
@@ -13316,8 +13308,7 @@
   QUnit.module('lodash.mapKeys and lodash.mapValues');
 
   lodashStable.each(['mapKeys', 'mapValues'], function(methodName) {
-    var array = [1, 2],
-        func = _[methodName],
+    var func = _[methodName],
         object = { 'a': 1, 'b': 2 };
 
     QUnit.test('`_.' + methodName + '` should iterate over own string keyed properties of objects', function(assert) {
@@ -14865,9 +14856,9 @@
       assert.expect(1);
 
       var source1 = { 'a': { 'b': { 'c': 1 } } },
-          source2 = { 'a': { 'b': { 'd': 2 } } },
-          actual = _.mergeWith({}, source1, source2, noop);
+          source2 = { 'a': { 'b': { 'd': 2 } } };
 
+      _.mergeWith({}, source1, source2, noop);
       assert.deepEqual(source1.a.b, { 'c': 1 });
     });
 
@@ -15233,8 +15224,7 @@
   QUnit.module('extremum methods');
 
   lodashStable.each(['max', 'maxBy', 'min', 'minBy'], function(methodName) {
-    var array = [1, 2, 3],
-        func = _[methodName],
+    var func = _[methodName],
         isMax = /^max/.test(methodName);
 
     QUnit.test('`_.' + methodName + '` should work with Date objects', function(assert) {
@@ -24223,8 +24213,7 @@
 
   lodashStable.each(['update', 'updateWith'], function(methodName) {
     var func = _[methodName],
-        oldValue = 1,
-        value = 2;
+        oldValue = 1;
 
     QUnit.test('`_.' + methodName + '` should invoke `updater` with the value on `path` of `object`', function(assert) {
       assert.expect(4);
@@ -24610,7 +24599,6 @@
 
   lodashStable.each(['zipObject', 'zipObjectDeep'], function(methodName) {
     var func = _[methodName],
-        array = [['barney', 36], ['fred', 40]],
         object = { 'barney': 36, 'fred': 40 },
         isDeep = methodName == 'zipObjectDeep';
 

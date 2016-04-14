@@ -82,12 +82,6 @@
   /** Used to queue benchmark suites. */
   var suites = [];
 
-  /** Used to resolve a value's internal [[Class]]. */
-  var toString = Object.prototype.toString;
-
-  /** Detect if in a browser environment. */
-  var isBrowser = isHostType(root, 'document') && isHostType(root, 'navigator');
-
   /** Use a single "load" function. */
   var load = (typeof require == 'function' && !amd)
     ? require

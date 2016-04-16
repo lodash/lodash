@@ -1083,20 +1083,6 @@
   }
 
   /**
-   * Checks if `value` is a valid array-like index.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-   */
-  function isIndex(value, length) {
-    value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-    length = length == null ? MAX_SAFE_INTEGER : length;
-    return value > -1 && value % 1 == 0 && value < length;
-  }
-
-  /**
    * Converts `iterator` to an array.
    *
    * @private
@@ -4722,7 +4708,7 @@
      * @returns {string} Returns the padding for `string`.
      */
     function createPadding(length, chars) {
-      chars = chars === undefined ? ' ' : (chars + '');
+      chars = chars === undefined ? ' ' : baseToString(chars);
 
       var charsLength = chars.length;
       if (charsLength < 2) {
@@ -5597,6 +5583,21 @@
     }
 
     /**
+     * Checks if `value` is a valid array-like index.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+     * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+     */
+    function isIndex(value, length) {
+      length = length == null ? MAX_SAFE_INTEGER : length;
+      return !!length &&
+        (typeof value == 'number' || reIsUint.test(value)) &&
+        (value > -1 && value % 1 == 0 && value < length);
+    }
+
+    /**
      * Checks if the given arguments are from an iteratee call.
      *
      * @private
@@ -5629,13 +5630,16 @@
      * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
      */
     function isKey(value, object) {
+      if (isArray(value)) {
+        return false;
+      }
       var type = typeof value;
-      if (type == 'number' || type == 'boolean' || type == 'symbol' || value == null) {
+      if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+          value == null || isSymbol(value)) {
         return true;
       }
-      return !isArray(value) &&
-        (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
-          (object != null && value in Object(object)));
+      return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+        (object != null && value in Object(object));
     }
 
     /**
@@ -5647,8 +5651,9 @@
      */
     function isKeyable(value) {
       var type = typeof value;
-      return type == 'number' || type == 'boolean' || type == 'symbol' || value == null ||
-        (type == 'string' && value != '__proto__');
+      return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+        ? (value !== '__proto__')
+        : (value === null);
     }
 
     /**
@@ -13322,7 +13327,7 @@
      */
     function endsWith(string, target, position) {
       string = toString(string);
-      target = typeof target == 'string' ? target : (target + '');
+      target = baseToString(target);
 
       var length = string.length;
       position = position === undefined
@@ -13719,7 +13724,7 @@
             typeof separator == 'string' ||
             (separator != null && !isRegExp(separator))
           )) {
-        separator += '';
+        separator = baseToString(separator);
         if (separator == '' && reHasComplexSymbol.test(string)) {
           return castSlice(stringToArray(string), 0, limit);
         }
@@ -13778,7 +13783,7 @@
     function startsWith(string, target, position) {
       string = toString(string);
       position = baseClamp(toInteger(position), 0, string.length);
-      return string.lastIndexOf(target, position) == position;
+      return string.lastIndexOf(baseToString(target), position) == position;
     }
 
     /**
@@ -14072,7 +14077,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrim, '');
       }
-      if (!(chars += '')) {
+      if (!(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),
@@ -14110,7 +14115,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimEnd, '');
       }
-      if (!(chars += '')) {
+      if (!(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),
@@ -14146,7 +14151,7 @@
       if (guard || chars === undefined) {
         return string.replace(reTrimStart, '');
       }
-      if (!(chars += '')) {
+      if (!(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),

@@ -21856,6 +21856,13 @@
       assert.strictEqual(_.truncate(string, { 'omission': ' [...]' }), 'hi-diddly-ho there, neig [...]');
     });
 
+    QUnit.test('should coerce nullish `omission` values to strings', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.truncate(string, { 'omission': null }), 'hi-diddly-ho there, neighbnull');
+      assert.strictEqual(_.truncate(string, { 'omission': undefined }), 'hi-diddly-ho there, nundefined');
+    });
+
     QUnit.test('should support a `length` option', function(assert) {
       assert.expect(1);
 

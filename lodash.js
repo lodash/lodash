@@ -14249,7 +14249,7 @@
       if (isObject(options)) {
         var separator = 'separator' in options ? options.separator : separator;
         length = 'length' in options ? toInteger(options.length) : length;
-        omission = 'omission' in options ? toString(options.omission) : omission;
+        omission = 'omission' in options ? baseToString(options.omission) : omission;
       }
       string = toString(string);
 
@@ -14289,7 +14289,7 @@
           }
           result = result.slice(0, newEnd === undefined ? end : newEnd);
         }
-      } else if (string.indexOf(separator, end) != end) {
+      } else if (string.indexOf(baseToString(separator), end) != end) {
         var index = result.lastIndexOf(separator);
         if (index > -1) {
           result = result.slice(0, index);

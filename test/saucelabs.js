@@ -84,7 +84,7 @@ var advisor = getOption('advisor', false),
     recordScreenshots = getOption('recordScreenshots', false),
     runner = getOption('runner', 'test/index.html').replace(/^\W+/, ''),
     runnerUrl = getOption('runnerUrl', 'http://localhost:' + port + '/' + runner),
-    statusInterval = getOption('statusInterval', 5),
+    statusInterval = getOption('statusInterval', 10),
     tags = getOption('tags', []),
     throttled = getOption('throttled', 10),
     tunneled = getOption('tunneled', true),
@@ -564,9 +564,11 @@ Job.prototype.remove = function(callback) {
       _.defer(onRemove);
       return;
     }
-    request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}')(this), {
-      'auth': { 'user': this.user, 'pass': this.pass }
-    }, onRemove);
+    _.delay(_.bind(function() {
+      request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}')(this), {
+        'auth': { 'user': this.user, 'pass': this.pass }
+      }, onRemove);
+    }, this), 1e3);
   });
 };
 
@@ -624,10 +626,13 @@ Job.prototype.start = function(callback) {
     return this;
   }
   this.starting = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass },
-    'json': this.options
-  }, _.bind(onJobStart, this));
+
+  _.delay(_.bind(function() {
+    request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': this.options
+    }, _.bind(onJobStart, this));
+  }, this), 1e3);
 
   return this;
 };
@@ -646,10 +651,13 @@ Job.prototype.status = function(callback) {
   }
   this._pollerId = null;
   this.checking = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass },
-    'json': { 'js tests': [this.taskId] }
-  }, _.bind(onJobStatus, this));
+
+  _.delay(_.bind(function() {
+    request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': { 'js tests': [this.taskId] }
+    }, _.bind(onJobStatus, this));
+  }, this), 1e3);
 
   return this;
 };
@@ -677,9 +685,11 @@ Job.prototype.stop = function(callback) {
     _.defer(onStop);
     return this;
   }
-  request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass }
-  }, onStop);
+  _.delay(_.bind(function() {
+    request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass }
+    }, onStop);
+  }, this), 1e3);
 
   return this;
 };
@@ -833,7 +843,11 @@ Tunnel.prototype.dequeue = function() {
       throttled = this.throttled;
 
   while (queue.length && (active.length < throttled)) {
-    active.push(queue.shift().start());
+    var timeout = queue.length * 1e3,
+        job = queue.shift();
+
+    active.push(job);
+    _.delay(_.bind(job.start, job), timeout);
   }
   return this;
 };

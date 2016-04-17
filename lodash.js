@@ -14116,13 +14116,10 @@
      */
     function trim(string, chars, guard) {
       string = toString(string);
-      if (!string) {
-        return string;
-      }
-      if (guard || chars === undefined) {
+      if (string && (guard || chars === undefined)) {
         return string.replace(reTrim, '');
       }
-      if (!(chars = baseToString(chars))) {
+      if (!string || !(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),
@@ -14154,13 +14151,10 @@
      */
     function trimEnd(string, chars, guard) {
       string = toString(string);
-      if (!string) {
-        return string;
-      }
-      if (guard || chars === undefined) {
+      if (string && (guard || chars === undefined)) {
         return string.replace(reTrimEnd, '');
       }
-      if (!(chars = baseToString(chars))) {
+      if (!string || !(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),
@@ -14190,13 +14184,10 @@
      */
     function trimStart(string, chars, guard) {
       string = toString(string);
-      if (!string) {
-        return string;
-      }
-      if (guard || chars === undefined) {
+      if (string && (guard || chars === undefined)) {
         return string.replace(reTrimStart, '');
       }
-      if (!(chars = baseToString(chars))) {
+      if (!string || !(chars = baseToString(chars))) {
         return string;
       }
       var strSymbols = stringToArray(string),

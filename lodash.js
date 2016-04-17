@@ -3689,6 +3689,14 @@
       return result;
     }
 
+    /**
+     * The base implementation of `_.toNumber` which doesn't ensure correct
+     * conversions of binary, hexadecimal, or octal string values.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {number} Returns the number.
+     */
     function baseToNumber(value) {
       if (typeof value == 'number') {
         return value;
@@ -3699,6 +3707,14 @@
       return +value;
     }
 
+    /**
+     * The base implementation of `_.toString` which doesn't convert nullish
+     * values to empty strings or preserve the sign of `-0`.
+     *
+     * @private
+     * @param {*} value The value to process.
+     * @returns {string} Returns the string.
+     */
     function baseToString(value) {
       // Exit early for strings to avoid a performance hit in some environments.
       if (typeof value == 'string') {

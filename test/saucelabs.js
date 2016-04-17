@@ -827,13 +827,16 @@ Tunnel.prototype.start = function(callback) {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.dequeue = function() {
-  var jobs = this.jobs,
+  var count = 0,
+      jobs = this.jobs,
       active = jobs.active,
       queue = jobs.queue,
       throttled = this.throttled;
 
   while (queue.length && (active.length < throttled)) {
-    active.push(queue.shift().start());
+    var job = queue.shift();
+    active.push(job);
+    _.delay(_.bind(job.start, job), ++count * 1000);
   }
   return this;
 };

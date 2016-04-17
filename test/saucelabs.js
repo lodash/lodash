@@ -564,9 +564,11 @@ Job.prototype.remove = function(callback) {
       _.defer(onRemove);
       return;
     }
-    request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}')(this), {
-      'auth': { 'user': this.user, 'pass': this.pass }
-    }, onRemove);
+    _.delay(_.bind(function() {
+      request.del(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}')(this), {
+        'auth': { 'user': this.user, 'pass': this.pass }
+      }, onRemove);
+    }, this), 1000);
   });
 };
 
@@ -624,10 +626,13 @@ Job.prototype.start = function(callback) {
     return this;
   }
   this.starting = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass },
-    'json': this.options
-  }, _.bind(onJobStart, this));
+
+  _.delay(_.bind(function() {
+    request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': this.options
+    }, _.bind(onJobStart, this));
+  }, this), 1000);
 
   return this;
 };
@@ -646,10 +651,13 @@ Job.prototype.status = function(callback) {
   }
   this._pollerId = null;
   this.checking = true;
-  request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass },
-    'json': { 'js tests': [this.taskId] }
-  }, _.bind(onJobStatus, this));
+
+  _.delay(_.bind(function() {
+    request.post(_.template('https://saucelabs.com/rest/v1/${user}/js-tests/status')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass },
+      'json': { 'js tests': [this.taskId] }
+    }, _.bind(onJobStatus, this));
+  }, this), 1000);
 
   return this;
 };
@@ -677,9 +685,11 @@ Job.prototype.stop = function(callback) {
     _.defer(onStop);
     return this;
   }
-  request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop')(this), {
-    'auth': { 'user': this.user, 'pass': this.pass }
-  }, onStop);
+  _.delay(_.bind(function() {
+    request.put(_.template('https://saucelabs.com/rest/v1/${user}/jobs/${id}/stop')(this), {
+      'auth': { 'user': this.user, 'pass': this.pass }
+    }, onStop);
+  }, this), 1000);
 
   return this;
 };
@@ -833,7 +843,11 @@ Tunnel.prototype.dequeue = function() {
       throttled = this.throttled;
 
   while (queue.length && (active.length < throttled)) {
-    active.push(queue.shift().start());
+    var timeout = queue.length * 500,
+        job = queue.shift();
+
+    active.push(job);
+    _.delay(_.bind(job.start, job), timeout);
   }
   return this;
 };

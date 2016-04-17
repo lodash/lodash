@@ -6083,6 +6083,7 @@
      * @param {Array} array The array to inspect.
      * @param {...Array} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
+     * @see _.without, _.xor
      * @example
      *
      * _.difference([3, 2, 1], [4, 2]);
@@ -7669,6 +7670,7 @@
      * @param {Array} array The array to filter.
      * @param {...*} [values] The values to exclude.
      * @returns {Array} Returns the new array of filtered values.
+     * @see _.difference, _.xor
      * @example
      *
      * _.without([1, 2, 1, 3], 1, 2);
@@ -7692,6 +7694,7 @@
      * @category Array
      * @param {...Array} [arrays] The arrays to inspect.
      * @returns {Array} Returns the new array of values.
+     * @see _.difference, _.without
      * @example
      *
      * _.xor([2, 1], [4, 2]);
@@ -8281,6 +8284,7 @@
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
+     * @see _.reject
      * @example
      *
      * var users = [
@@ -8476,6 +8480,7 @@
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array|Object} Returns `collection`.
+     * @see _.forEachRight
      * @example
      *
      * _([1, 2]).forEach(function(value) {
@@ -8506,6 +8511,7 @@
      * @param {Array|Object} collection The collection to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Array|Object} Returns `collection`.
+     * @see _.forEach
      * @example
      *
      * _.forEachRight([1, 2], function(value) {
@@ -8818,6 +8824,7 @@
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @returns {*} Returns the accumulated value.
+     * @see _.reduceRight
      * @example
      *
      * _.reduce([1, 2], function(sum, n) {
@@ -8850,6 +8857,7 @@
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @param {*} [accumulator] The initial value.
      * @returns {*} Returns the accumulated value.
+     * @see _.reduce
      * @example
      *
      * var array = [[0, 1], [2, 3], [4, 5]];
@@ -8878,6 +8886,7 @@
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
      * @returns {Array} Returns the new filtered array.
+     * @see _.filter
      * @example
      *
      * var users = [
@@ -10209,6 +10218,7 @@
      * @category Lang
      * @param {*} value The value to clone.
      * @returns {*} Returns the cloned value.
+     * @see _.cloneDeep, _.cloneDeepWith, _.cloneWith
      * @example
      *
      * var objects = [{ 'a': 1 }, { 'b': 2 }];
@@ -10234,6 +10244,7 @@
      * @param {*} value The value to clone.
      * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the cloned value.
+     * @see _.cloneDeepWith
      * @example
      *
      * function customizer(value) {
@@ -10264,6 +10275,7 @@
      * @category Lang
      * @param {*} value The value to recursively clone.
      * @returns {*} Returns the deep cloned value.
+     * @see _.clone
      * @example
      *
      * var objects = [{ 'a': 1 }, { 'b': 2 }];
@@ -10286,6 +10298,7 @@
      * @param {*} value The value to recursively clone.
      * @param {Function} [customizer] The function to customize cloning.
      * @returns {*} Returns the deep cloned value.
+     * @see _.cloneWith
      * @example
      *
      * function customizer(value) {
@@ -10354,6 +10367,7 @@
      * @param {*} other The other value to compare.
      * @returns {boolean} Returns `true` if `value` is greater than `other`,
      *  else `false`.
+     * @see _.lt
      * @example
      *
      * _.gt(3, 1);
@@ -10378,6 +10392,7 @@
      * @param {*} other The other value to compare.
      * @returns {boolean} Returns `true` if `value` is greater than or equal to
      *  `other`, else `false`.
+     * @see _.lte
      * @example
      *
      * _.gte(3, 1);
@@ -11430,6 +11445,7 @@
      * @param {*} other The other value to compare.
      * @returns {boolean} Returns `true` if `value` is less than `other`,
      *  else `false`.
+     * @see _.gt
      * @example
      *
      * _.lt(1, 3);
@@ -11454,6 +11470,7 @@
      * @param {*} other The other value to compare.
      * @returns {boolean} Returns `true` if `value` is less than or equal to
      *  `other`, else `false`.
+     * @see _.gte
      * @example
      *
      * _.lte(1, 3);
@@ -11724,6 +11741,7 @@
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @returns {Object} Returns `object`.
+     * @see _.assignIn
      * @example
      *
      * function Foo() {
@@ -11766,6 +11784,7 @@
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @returns {Object} Returns `object`.
+     * @see _.assign
      * @example
      *
      * function Foo() {
@@ -11809,6 +11828,7 @@
      * @param {...Object} sources The source objects.
      * @param {Function} [customizer] The function to customize assigned values.
      * @returns {Object} Returns `object`.
+     * @see _.assignWith
      * @example
      *
      * function customizer(objValue, srcValue) {
@@ -11840,6 +11860,7 @@
      * @param {...Object} sources The source objects.
      * @param {Function} [customizer] The function to customize assigned values.
      * @returns {Object} Returns `object`.
+     * @see _.assignInWith
      * @example
      *
      * function customizer(objValue, srcValue) {
@@ -11933,6 +11954,7 @@
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @returns {Object} Returns `object`.
+     * @see _.defaultsDeep
      * @example
      *
      * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
@@ -11956,6 +11978,7 @@
      * @param {Object} object The destination object.
      * @param {...Object} [sources] The source objects.
      * @returns {Object} Returns `object`.
+     * @see _.defaults
      * @example
      *
      * _.defaultsDeep({ 'user': { 'name': 'barney' } }, { 'user': { 'name': 'fred', 'age': 36 } });
@@ -12060,6 +12083,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns `object`.
+     * @see _.forInRight
      * @example
      *
      * function Foo() {
@@ -12091,6 +12115,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns `object`.
+     * @see _.forIn
      * @example
      *
      * function Foo() {
@@ -12124,6 +12149,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns `object`.
+     * @see _.forOwnRight
      * @example
      *
      * function Foo() {
@@ -12153,6 +12179,7 @@
      * @param {Object} object The object to iterate over.
      * @param {Function} [iteratee=_.identity] The function invoked per iteration.
      * @returns {Object} Returns `object`.
+     * @see _.forOwn
      * @example
      *
      * function Foo() {
@@ -12181,6 +12208,7 @@
      * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the new array of property names.
+     * @see _.functionsIn
      * @example
      *
      * function Foo() {
@@ -12207,6 +12235,7 @@
      * @category Object
      * @param {Object} object The object to inspect.
      * @returns {Array} Returns the new array of property names.
+     * @see _.functions
      * @example
      *
      * function Foo() {
@@ -13144,6 +13173,7 @@
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
      * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
+     * @see _.range, _.rangeRight
      * @example
      *
      * _.inRange(3, 2, 4);
@@ -14541,6 +14571,7 @@
      * @category Util
      * @param {...(Function|Function[])} [funcs] Functions to invoke.
      * @returns {Function} Returns the new function.
+     * @see _.flowRight
      * @example
      *
      * function square(n) {
@@ -14558,11 +14589,12 @@
      * invokes the given functions from right to left.
      *
      * @static
-     * @since 0.1.0
+     * @since 3.0.0
      * @memberOf _
      * @category Util
      * @param {...(Function|Function[])} [funcs] Functions to invoke.
      * @returns {Function} Returns the new function.
+     * @see _.flow
      * @example
      *
      * function square(n) {
@@ -15036,6 +15068,7 @@
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
      * @returns {Array} Returns the new array of numbers.
+     * @see _.inRange, _.rangeRight
      * @example
      *
      * _.range(4);
@@ -15073,6 +15106,7 @@
      * @param {number} end The end of the range.
      * @param {number} [step=1] The value to increment or decrement by.
      * @returns {Array} Returns the new array of numbers.
+     * @see _.inRange, _.range
      * @example
      *
      * _.rangeRight(4);

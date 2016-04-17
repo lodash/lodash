@@ -11605,9 +11605,8 @@
       if (typeof value == 'number') {
         return value;
       }
-      var result = baseToNumber(value);
-      if (result !== result) {
-        return result;
+      if (isSymbol(value)) {
+        return NAN;
       }
       if (isObject(value)) {
         var other = isFunction(value.valueOf) ? value.valueOf() : value;

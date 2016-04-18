@@ -6972,6 +6972,7 @@
      * @param {Array} array The array to modify.
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
+     * @param {Boolean} sorted Indicates if the array is already sorted
      * @returns {Array} Returns the new array of removed elements.
      * @example
      *
@@ -7001,11 +7002,18 @@
         if (predicate(value, index, array)) {
           result.push(value);
           indexes.push(index);
+        } else {
+          // if the array is sorted we cant stop checking further, saving lots of cpu cycles
+          if (sorted) { 
+            break;
+          }
         }
       }
       basePullAt(array, indexes);
       return result;
     }
+    
+    
 
     /**
      * Reverses `array` so that the first element becomes the last, the second

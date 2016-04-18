@@ -24274,6 +24274,7 @@
 
   lodashStable.each(['values', 'valuesIn'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
+        strictArgs = (function() { 'use strict'; return arguments; }(1, 2, 3)),
         func = _[methodName],
         isValues = methodName == 'values';
 
@@ -24305,6 +24306,19 @@
 
       var expected = isValues ? [1] : [1, 2],
           actual = func(new Foo).sort();
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
+      assert.expect(1);
+
+      var values = [args, strictArgs],
+          expected = lodashStable.map(values, lodashStable.constant([1, 2, 3]));
+
+      var actual = lodashStable.map(values, function(value) {
+        return func(value).sort();
+      });
 
       assert.deepEqual(actual, expected);
     });

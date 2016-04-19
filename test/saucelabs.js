@@ -214,18 +214,7 @@ if (tunneled) {
  * @returns {string} Returns the formal browser name.
  */
 function browserName(identifier) {
-  return browserNameMap[identifier] || capitalizeWords(identifier);
-}
-
-/**
- * Capitalizes the first character of each word in `string`.
- *
- * @private
- * @param {string} string The string to augment.
- * @returns {string} Returns the augmented string.
- */
-function capitalizeWords(string) {
-  return _.map(string.split(' '), _.capitalize).join(' ');
+  return browserNameMap[identifier] || _.startCase(identifier);
 }
 
 /**
@@ -451,7 +440,7 @@ function onJobStatus(error, res, body) {
     this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
-  var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+  var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + _.startCase(platform[0]),
       errored = !jobResult || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
       failures = _.result(jobResult, 'failed'),
       label = options.name + ':',
@@ -602,7 +591,7 @@ Job.prototype.restart = function(callback) {
 
   var options = this.options,
       platform = options.platforms[0],
-      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + _.startCase(platform[0]),
       label = options.name + ':';
 
   logInline();

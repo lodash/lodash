@@ -16084,9 +16084,10 @@
 
     if (methodName == 'omitBy') {
       prop = function(object, props) {
-        props = lodashStable.isArray(props) ? props : [props];
+        props = lodashStable.castArray(props);
         return function(value) {
           return lodashStable.some(props, function(key) {
+            key = lodashStable.isSymbol(key) ? key : lodashStable.toString(key);
             return object[key] === value;
           });
         };
@@ -16106,6 +16107,22 @@
       Foo.prototype = object;
 
       assert.deepEqual(func(new Foo, prop(object, ['a', 'c'])), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object = { '-0': 'a', '0': 'b' },
+          negExp = { '-0': 'a' },
+          posExp = { '0': 'b' },
+          expected = [posExp, posExp, negExp, negExp],
+          props = [-0, Object(-0), 0, Object(0)];
+
+      var actual = lodashStable.map(props, function(key) {
+        return func(object, prop(object, key));
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should include symbol properties', function(assert) {
@@ -17297,9 +17314,10 @@
 
     if (methodName == 'pickBy') {
       prop = function(object, props) {
-        props = lodashStable.isArray(props) ? props : [props];
+        props = lodashStable.castArray(props);
         return function(value) {
           return lodashStable.some(props, function(key) {
+            key = lodashStable.isSymbol(key) ? key : lodashStable.toString(key);
             return object[key] === value;
           });
         };
@@ -17320,6 +17338,22 @@
 
       var foo = new Foo;
       assert.deepEqual(func(foo, prop(foo, ['a', 'c'])), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object = { '-0': 'a', '0': 'b' },
+          negExp = { '-0': 'a' },
+          posExp = { '0': 'b' },
+          expected = [negExp, negExp, posExp, posExp],
+          props = [-0, Object(-0), 0, Object(0)];
+
+      var actual = lodashStable.map(props, function(key) {
+        return func(object, prop(object, key));
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('`_.' + methodName + '` should pick symbol properties', function(assert) {

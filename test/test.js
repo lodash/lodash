@@ -15356,6 +15356,13 @@
   QUnit.module('lodash.mixin');
 
   (function() {
+    function reset(wrapper) {
+      delete wrapper.a;
+      delete wrapper.prototype.a;
+      delete wrapper.b;
+      delete wrapper.prototype.b;
+    }
+
     function Wrapper(value) {
       if (!(this instanceof Wrapper)) {
         return new Wrapper(value);
@@ -15386,15 +15393,10 @@
 
         assert.strictEqual(_.a(array), 'a');
         assert.strictEqual(_(array).a().value(), 'a');
-
-        delete _.a;
-        delete _.prototype.a;
-
         assert.notOk('b' in _);
         assert.notOk('b' in _.prototype);
 
-        delete _.b;
-        delete _.prototype.b;
+        reset(_);
       }
       else {
         skipAssert(assert, 4);
@@ -15411,8 +15413,7 @@
         assert.strictEqual(_.a(array), 'b');
         assert.strictEqual(_(array).a().value(), 'a');
 
-        delete _.a;
-        delete _.prototype.a;
+        reset(_);
       }
       else {
         skipAssert(assert, 2);
@@ -15426,14 +15427,10 @@
       object.mixin(source);
 
       assert.strictEqual(object.a(array), 'a');
-
       assert.notOk('a' in _);
       assert.notOk('a' in _.prototype);
 
-      delete Wrapper.a;
-      delete Wrapper.prototype.a;
-      delete Wrapper.b;
-      delete Wrapper.prototype.b;
+      reset(_);
     });
 
     QUnit.test('should accept an `object` argument', function(assert) {
@@ -15444,15 +15441,7 @@
       assert.strictEqual(object.a(array), 'a');
     });
 
-    QUnit.test('should return `object`', function(assert) {
-      assert.expect(2);
-
-      var object = {};
-      assert.strictEqual(_.mixin(object, source), object);
-      assert.strictEqual(_.mixin(), _);
-    });
-
-    QUnit.test('should work with a function for `object`', function(assert) {
+    QUnit.test('should accept a function `object`', function(assert) {
       assert.expect(2);
 
       _.mixin(Wrapper, source);
@@ -15463,10 +15452,18 @@
       assert.strictEqual(actual.value(), 'a');
       assert.ok(actual instanceof Wrapper);
 
-      delete Wrapper.a;
-      delete Wrapper.prototype.a;
-      delete Wrapper.b;
-      delete Wrapper.prototype.b;
+      reset(Wrapper);
+    });
+
+    QUnit.test('should return `object`', function(assert) {
+      assert.expect(3);
+
+      var object = {};
+      assert.strictEqual(_.mixin(object, source), object);
+      assert.strictEqual(_.mixin(Wrapper, source), Wrapper);
+      assert.strictEqual(_.mixin(), _);
+
+      reset(Wrapper);
     });
 
     QUnit.test('should not assign inherited `source` methods', function(assert) {
@@ -15504,10 +15501,7 @@
               assert.strictEqual(actual, 'a', message(func, false));
               assert.notOk(actual instanceof func, message(func, false));
             }
-            delete func.a;
-            delete func.prototype.a;
-            delete func.b;
-            delete func.prototype.b;
+            reset(func);
           }
           else {
             skipAssert(assert, 2);
@@ -15521,7 +15515,7 @@
 
       _.mixin({ 'a': noop }, {});
       assert.notOk('a' in _);
-      delete _.a;
+      reset(_);
     });
 
     QUnit.test('should not error for non-object `options` values', function(assert) {
@@ -15543,12 +15537,9 @@
       } catch (e) {
         pass = false;
       }
-      delete _.a;
-      delete _.prototype.a;
-      delete _.b;
-      delete _.prototype.b;
-
       assert.ok(pass);
+
+      reset(_);
     });
 
     QUnit.test('should not return the existing wrapped value when chaining', function(assert) {
@@ -15567,10 +15558,7 @@
             actual = wrapped.mixin(source);
             assert.notStrictEqual(actual, wrapped);
           }
-          delete func.a;
-          delete func.prototype.a;
-          delete func.b;
-          delete func.prototype.b;
+          reset(func);
         }
         else {
           skipAssert(assert);
@@ -15589,10 +15577,7 @@
 
         assert.deepEqual(actual, _.take(_.b(_.map(_.a(array), square), isEven)));
 
-        delete _.a;
-        delete _.prototype.a;
-        delete _.b;
-        delete _.prototype.b;
+        reset(_);
       }
       else {
         skipAssert(assert);

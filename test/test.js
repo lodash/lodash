@@ -8173,6 +8173,19 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object = { '-0': alwaysA, '0': alwaysB },
+          props = [-0, Object(-0), 0, Object(0)];
+
+      var actual = lodashStable.map(props, function(key) {
+        return _.invoke(object, key);
+      });
+
+      assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
+    });
+
     QUnit.test('should support deep paths', function(assert) {
       assert.expect(2);
 

@@ -17473,15 +17473,14 @@
       assert.expect(1);
 
       var object = { '-0': 'a', '0': 'b' },
-          props = [-0, Object(-0), 0, Object(0)],
-          expected = ['a', 'a', 'b', 'b'];
+          props = [-0, Object(-0), 0, Object(0)];
 
       var actual = lodashStable.map(props, function(key) {
         var prop = _.property(key);
         return prop(object);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
     });
 
     QUnit.test('should coerce key to a string', function(assert) {
@@ -17490,8 +17489,7 @@
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
-          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
           values = [null, undefined, fn, {}];
 
       var actual = lodashStable.transform(objects, function(result, object, index) {
@@ -17502,7 +17500,7 @@
         });
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4]);
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -17620,15 +17618,14 @@
       assert.expect(1);
 
       var object = { '-0': 'a', '0': 'b' },
-          props = [-0, Object(-0), 0, Object(0)],
-          expected = ['a', 'a', 'b', 'b'];
+          props = [-0, Object(-0), 0, Object(0)];
 
       var actual = lodashStable.map(props, function(key) {
         var propOf = _.propertyOf(object);
         return propOf(key);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
     });
 
     QUnit.test('should coerce key to a string', function(assert) {
@@ -17637,8 +17634,7 @@
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
-          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
+      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
           values = [null, undefined, fn, {}];
 
       var actual = lodashStable.transform(objects, function(result, object, index) {
@@ -17649,7 +17645,7 @@
         });
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4]);
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -18842,14 +18838,13 @@
       assert.expect(1);
 
       var object = { '-0': 'a', '0': 'b' },
-          props = [-0, Object(-0), 0, Object(0)],
-          expected = ['a', 'a', 'b', 'b'];
+          props = [-0, Object(-0), 0, Object(0)];
 
       var actual = lodashStable.map(props, function(key) {
         return func(object, key);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
     });
 
     QUnit.test('`_.' + methodName + '` should get symbol keyed property values', function(assert) {

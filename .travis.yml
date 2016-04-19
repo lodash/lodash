@@ -63,7 +63,7 @@ script:
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.js"
   - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../dist/lodash.min.js"
   - "[ $SAUCE_LABS == false ] || rm -rf ./node_modules/lodash"
-  - "[ $SAUCE_LABS == false ] || ($BIN ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./node_modules/lodash && node ./node_modules/lodash-cli/bin/lodash -d -o ./node_modules/lodash/lodash.js)"
+  - "[ $SAUCE_LABS == false ] || ($BIN ./node_modules/lodash-cli/bin/lodash -d -o ./node_modules/lodash/index.js && cd ./node_modules/lodash/ && ln -s ./index.js ./lodash.js && cd ../../)"
   - "[ $SAUCE_LABS == false ] || $BIN ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js"
   - "[ $SAUCE_LABS == false ] || npm run build"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\"     runner=\"test/index.html?build=../dist/lodash.js&noglobals=true\"     tags=\"development\""

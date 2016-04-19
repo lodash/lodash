@@ -24210,18 +24210,12 @@
     QUnit.test('should preserve the sign of `0`', function(assert) {
       assert.expect(1);
 
-      var props = [-0, Object(-0), 0, Object(0)];
-
-      var expected = [
-        [true, { '0': 'b' }],
-        [true, { '0': 'b' }],
-        [true, { '-0': 'a' }],
-        [true, { '-0': 'a' }]
-      ];
+      var props = [-0, Object(-0), 0, Object(0)],
+          expected = lodashStable.map(props, lodashStable.constant([true, false]));
 
       var actual = lodashStable.map(props, function(key) {
         var object = { '-0': 'a', '0': 'b' };
-        return [_.unset(object, key), object];
+        return [_.unset(object, key), lodashStable.toString(key) in object];
       });
 
       assert.deepEqual(actual, expected);

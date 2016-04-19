@@ -1929,10 +1929,14 @@
     var args = arguments;
 
     var source = {
+      '_n0': -2,
+      '_p0': -1,
       '_a': 1,
       '_b': 2,
       '_c': 3,
       '_d': 4,
+      '-0': function() { return this._n0; },
+      '0': function() { return this._p0; },
       'a': function() { return this._a; },
       'b': function() { return this._b; },
       'c': function() { return this._c; },
@@ -1945,8 +1949,8 @@
       var object = lodashStable.cloneDeep(source);
       _.bindAll(object, 'a', 'b');
 
-      var actual = lodashStable.map(['a', 'b', 'c'], function(methodName) {
-        return object[methodName].call({});
+      var actual = lodashStable.map(['a', 'b', 'c'], function(key) {
+        return object[key].call({});
       });
 
       assert.deepEqual(actual, [1, 2, undefined]);
@@ -1958,11 +1962,25 @@
       var object = lodashStable.cloneDeep(source);
       _.bindAll(object, ['a', 'b'], ['c']);
 
-      var actual = lodashStable.map(['a', 'b', 'c', 'd'], function(methodName) {
-        return object[methodName].call({});
+      var actual = lodashStable.map(['a', 'b', 'c', 'd'], function(key) {
+        return object[key].call({});
       });
 
       assert.deepEqual(actual, [1, 2, 3, undefined]);
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var props = [-0, Object(-0), 0, Object(0)];
+
+      var actual = lodashStable.map(props, function(key) {
+        var object = lodashStable.cloneDeep(source);
+        _.bindAll(object, key);
+        return object[lodashStable.toString(key)].call({});
+      });
+
+      assert.deepEqual(actual, [-2, -2, -1, -1]);
     });
 
     QUnit.test('should work with an array `object` argument', function(assert) {
@@ -1979,8 +1997,8 @@
       var object = lodashStable.cloneDeep(source);
       _.bindAll(object, args);
 
-      var actual = lodashStable.map(args, function(methodName) {
-        return object[methodName].call({});
+      var actual = lodashStable.map(args, function(key) {
+        return object[key].call({});
       });
 
       assert.deepEqual(actual, [1]);
@@ -13754,6 +13772,37 @@
       });
     });
 
+    QUnit.test('should work with a non-string `path`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3];
+
+      lodashStable.each([1, [1]], function(path) {
+        var matches = _.matchesProperty(path, 2);
+        assert.strictEqual(matches(array), true);
+      });
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object1 = { '-0': 'a' },
+          object2 = { '0': 'b' },
+          pairs = [[object1, object2], [object1, object2], [object2, object1], [object2, object1]],
+          props = [-0, Object(-0), 0, Object(0)],
+          values = ['a', 'a', 'b', 'b'],
+          expected = lodashStable.map(props, lodashStable.constant([true, false]));
+
+      var actual = lodashStable.map(props, function(key, index) {
+        var matches = _.matchesProperty(key, values[index]),
+            pair = pairs[index];
+
+        return [matches(pair[0]), matches(pair[1])];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should coerce key to a string', function(assert) {
       assert.expect(1);
 
@@ -13786,17 +13835,6 @@
       lodashStable.each(['a.b', ['a.b']], function(path) {
         var matches = _.matchesProperty(path, 1);
         assert.strictEqual(matches(object), true);
-      });
-    });
-
-    QUnit.test('should work with a non-string `path`', function(assert) {
-      assert.expect(2);
-
-      var array = [1, 2, 3];
-
-      lodashStable.each([1, [1]], function(path) {
-        var matches = _.matchesProperty(path, 2);
-        assert.strictEqual(matches(array), true);
       });
     });
 
@@ -16113,10 +16151,8 @@
       assert.expect(1);
 
       var object = { '-0': 'a', '0': 'b' },
-          negExp = { '-0': 'a' },
-          posExp = { '0': 'b' },
-          expected = [posExp, posExp, negExp, negExp],
-          props = [-0, Object(-0), 0, Object(0)];
+          props = [-0, Object(-0), 0, Object(0)],
+          expected = [{ '0': 'b' }, { '0': 'b' }, { '-0': 'a' }, { '-0': 'a' }];
 
       var actual = lodashStable.map(props, function(key) {
         return func(object, prop(object, key));
@@ -17344,10 +17380,8 @@
       assert.expect(1);
 
       var object = { '-0': 'a', '0': 'b' },
-          negExp = { '-0': 'a' },
-          posExp = { '0': 'b' },
-          expected = [negExp, negExp, posExp, posExp],
-          props = [-0, Object(-0), 0, Object(0)];
+          props = [-0, Object(-0), 0, Object(0)],
+          expected = [{ '-0': 'a' }, { '-0': 'a' }, { '0': 'b' }, { '0': 'b' }];
 
       var actual = lodashStable.map(props, function(key) {
         return func(object, prop(object, key));
@@ -17414,6 +17448,18 @@
       });
     });
 
+    QUnit.test('should pluck inherited property values', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      lodashStable.each(['a', ['a']], function(path) {
+        var prop = _.property(path);
+        assert.strictEqual(prop(new Foo), 1);
+      });
+    });
+
     QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
@@ -17423,6 +17469,21 @@
         var prop = _.property(path);
         assert.strictEqual(prop(array), 2);
       });
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object = { '-0': 'a', '0': 'b' },
+          props = [-0, Object(-0), 0, Object(0)],
+          expected = ['a', 'a', 'b', 'b'];
+
+      var actual = lodashStable.map(props, function(key) {
+        var prop = _.property(key);
+        return prop(object);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should coerce key to a string', function(assert) {
@@ -17444,18 +17505,6 @@
       });
 
       assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should pluck inherited property values', function(assert) {
-      assert.expect(2);
-
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      lodashStable.each(['a', ['a']], function(path) {
-        var prop = _.property(path);
-        assert.strictEqual(prop(new Foo), 1);
-      });
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -17543,6 +17592,21 @@
       });
     });
 
+    QUnit.test('should pluck inherited property values', function(assert) {
+      assert.expect(2);
+
+      function Foo() {
+        this.a = 1;
+      }
+      Foo.prototype.b = 2;
+
+      var propOf = _.propertyOf(new Foo);
+
+      lodashStable.each(['b', ['b']], function(path) {
+        assert.strictEqual(propOf(path), 2);
+      });
+    });
+
     QUnit.test('should work with a non-string `path`', function(assert) {
       assert.expect(2);
 
@@ -17552,6 +17616,21 @@
       lodashStable.each([1, [1]], function(path) {
         assert.strictEqual(propOf(path), 2);
       });
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var object = { '-0': 'a', '0': 'b' },
+          props = [-0, Object(-0), 0, Object(0)],
+          expected = ['a', 'a', 'b', 'b'];
+
+      var actual = lodashStable.map(props, function(key) {
+        var propOf = _.propertyOf(object);
+        return propOf(key);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should coerce key to a string', function(assert) {
@@ -17573,21 +17652,6 @@
       });
 
       assert.deepEqual(actual, expected);
-    });
-
-    QUnit.test('should pluck inherited property values', function(assert) {
-      assert.expect(2);
-
-      function Foo() {
-        this.a = 1;
-      }
-      Foo.prototype.b = 2;
-
-      var propOf = _.propertyOf(new Foo);
-
-      lodashStable.each(['b', ['b']], function(path) {
-        assert.strictEqual(propOf(path), 2);
-      });
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -17836,9 +17900,23 @@
       assert.deepEqual(actual, expected);
 
       expected = lodashStable.map(values, noop),
-      actual = _.at(array, values);
+      actual = lodashStable.at(array, values);
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var props = [-0, Object(-0), 0, Object(0)];
+
+      var actual = lodashStable.map(props, function(key) {
+        var array = [-1];
+        array['-0'] = -2;
+        return _.pullAt(array, key);
+      });
+
+      assert.deepEqual(actual, [[-2], [-2], [-1], [-1]]);
     });
 
     QUnit.test('should work with deep paths', function(assert) {
@@ -19422,45 +19500,66 @@
     QUnit.test('`_.' + methodName + '` should set property values', function(assert) {
       assert.expect(4);
 
-      var object = { 'a': oldValue };
-
       lodashStable.each(['a', ['a']], function(path) {
-        var actual = func(object, path, updater);
+        var object = { 'a': oldValue },
+            actual = func(object, path, updater);
 
         assert.strictEqual(actual, object);
         assert.strictEqual(object.a, value);
-
-        object.a = oldValue;
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var props = [-0, Object(-0), 0, Object(0)],
+          expected = lodashStable.map(props, lodashStable.constant(value));
+
+      var actual = lodashStable.map(props, function(key) {
+        var object = { '-0': 'a', '0': 'b' };
+        func(object, key, updater);
+        return object[lodashStable.toString(key)];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should unset symbol keyed property values', function(assert) {
+      assert.expect(2);
+
+      if (Symbol) {
+        var object = {};
+        object[symbol] = 1;
+
+        assert.strictEqual(_.unset(object, symbol), true);
+        assert.notOk(symbol in object);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
     });
 
     QUnit.test('`_.' + methodName + '` should set deep property values', function(assert) {
       assert.expect(4);
 
-      var object = { 'a': { 'b': oldValue } };
-
       lodashStable.each(['a.b', ['a', 'b']], function(path) {
-        var actual = func(object, path, updater);
+        var object = { 'a': { 'b': oldValue } },
+            actual = func(object, path, updater);
 
         assert.strictEqual(actual, object);
         assert.strictEqual(object.a.b, value);
-
-        object.a.b = oldValue;
       });
     });
 
     QUnit.test('`_.' + methodName + '` should set a key over a path', function(assert) {
       assert.expect(4);
 
-      var object = { 'a.b': oldValue };
-
       lodashStable.each(['a.b', ['a.b']], function(path) {
-        var actual = func(object, path, updater);
+        var object = { 'a.b': oldValue },
+            actual = func(object, path, updater);
 
         assert.strictEqual(actual, object);
         assert.deepEqual(object, { 'a.b': value });
-
-        object['a.b'] = oldValue;
       });
     });
 
@@ -19570,16 +19669,14 @@
 
       assert.expect(2);
 
-      numberProto.a = oldValue;
-
       lodashStable.each(['a', 'a.a.a'], function(path) {
+        numberProto.a = oldValue;
         try {
           func(0, path, updater);
           assert.strictEqual(0..a, oldValue);
         } catch (e) {
           assert.ok(false, e.message);
         }
-        numberProto.a = oldValue;
       });
 
       delete numberProto.a;
@@ -24113,10 +24210,14 @@
     QUnit.test('should preserve the sign of `0`', function(assert) {
       assert.expect(1);
 
-      var negExp = [true, { '0': 'b' }],
-          posExp = [true, { '-0': 'a' }],
-          expected = [negExp, negExp, posExp, posExp],
-          props = [-0, Object(-0), 0, Object(0)];
+      var props = [-0, Object(-0), 0, Object(0)];
+
+      var expected = [
+        [true, { '0': 'b' }],
+        [true, { '0': 'b' }],
+        [true, { '-0': 'a' }],
+        [true, { '-0': 'a' }]
+      ];
 
       var actual = lodashStable.map(props, function(key) {
         var object = { '-0': 'a', '0': 'b' };

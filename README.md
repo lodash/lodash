@@ -4,7 +4,7 @@
 [Docs](https://lodash.com/docs) |
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
 [Contributing](https://github.com/lodash/lodash/blob/4.11.1/.github/CONTRIBUTING.md) |
-[Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki) |
+[Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
 [Code of Conduct](https://jquery.org/conduct/) |
 [Twitter](https://twitter.com/bestiejs) |
 [Chat](https://gitter.im/lodash/lodash)

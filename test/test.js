@@ -24685,6 +24685,21 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should not treat punctuation as words', function(assert) {
+      assert.expect(1);
+
+      var marks = [
+        '\u2012', '\u2013', '\u2014', '\u2015',
+        '\u2024', '\u2025', '\u2026',
+        '\u205d', '\u205e'
+      ];
+
+      var expected = lodashStable.map(marks, alwaysEmptyArray),
+          actual = lodashStable.map(marks, _.words);
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should support a `pattern` argument', function(assert) {
       assert.expect(2);
 

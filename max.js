@@ -1,4 +1,4 @@
-define(['./_baseExtremum', './gt', './identity'], function(baseExtremum, gt, identity) {
+define(['./_baseExtremum', './_baseGt', './identity'], function(baseExtremum, baseGt, identity) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./_baseExtremum', './gt', './identity'], function(baseExtremum, gt, ide
    */
   function max(array) {
     return (array && array.length)
-      ? baseExtremum(array, identity, gt)
+      ? baseExtremum(array, identity, baseGt)
       : undefined;
   }
 

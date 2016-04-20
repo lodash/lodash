@@ -17,6 +17,7 @@ define(['./_baseClone'], function(baseClone) {
    * @category Lang
    * @param {*} value The value to clone.
    * @returns {*} Returns the cloned value.
+   * @see _.cloneDeep
    * @example
    *
    * var objects = [{ 'a': 1 }, { 'b': 2 }];

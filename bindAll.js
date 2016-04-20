@@ -1,4 +1,4 @@
-define(['./_arrayEach', './_baseFlatten', './bind', './rest'], function(arrayEach, baseFlatten, bind, rest) {
+define(['./_arrayEach', './_baseFlatten', './bind', './rest', './_toKey'], function(arrayEach, baseFlatten, bind, rest, toKey) {
 
   /**
    * Binds methods of an object to the object itself, overwriting the existing
@@ -28,6 +28,7 @@ define(['./_arrayEach', './_baseFlatten', './bind', './rest'], function(arrayEac
    */
   var bindAll = rest(function(object, methodNames) {
     arrayEach(baseFlatten(methodNames, 1), function(key) {
+      key = toKey(key);
       object[key] = bind(object[key], object);
     });
     return object;

@@ -42,6 +42,7 @@ define(['./_SetCache', './_arrayIncludes', './_arrayIncludesWith', './_arrayMap'
       var value = array[index],
           computed = iteratee ? iteratee(value) : value;
 
+      value = (comparator || value !== 0) ? value : 0;
       if (isCommon && computed === computed) {
         var valuesIndex = valuesLength;
         while (valuesIndex--) {

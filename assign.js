@@ -27,6 +27,7 @@ define(['./_assignValue', './_copyObject', './_createAssigner', './isArrayLike',
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
    * @returns {Object} Returns `object`.
+   * @see _.assignIn
    * @example
    *
    * function Foo() {

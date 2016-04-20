@@ -9,8 +9,9 @@ define([], function() {
    */
   function isKeyable(value) {
     var type = typeof value;
-    return type == 'number' || type == 'boolean' ||
-      (type == 'string' && value != '__proto__') || value == null;
+    return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+      ? (value !== '__proto__')
+      : (value === null);
   }
 
   return isKeyable;

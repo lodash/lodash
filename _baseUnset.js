@@ -1,4 +1,4 @@
-define(['./_castPath', './has', './_isKey', './last', './_parent'], function(castPath, has, isKey, last, parent) {
+define(['./_baseHas', './_castPath', './_isKey', './last', './_parent', './_toKey'], function(baseHas, castPath, isKey, last, parent, toKey) {
 
   /**
    * The base implementation of `_.unset`.
@@ -11,8 +11,9 @@ define(['./_castPath', './has', './_isKey', './last', './_parent'], function(cas
   function baseUnset(object, path) {
     path = isKey(path, object) ? [path] : castPath(path);
     object = parent(object, path);
-    var key = last(path);
-    return (object != null && has(object, key)) ? delete object[key] : true;
+
+    var key = toKey(last(path));
+    return !(object != null && baseHas(object, key)) || delete object[key];
   }
 
   return baseUnset;

@@ -1,4 +1,7 @@
-define(['./_Set', './noop'], function(Set, noop) {
+define(['./_Set', './noop', './_setToArray'], function(Set, noop, setToArray) {
+
+  /** Used as references for various `Number` constants. */
+  var INFINITY = 1 / 0;
 
   /**
    * Creates a set of `values`.
@@ -7,7 +10,7 @@ define(['./_Set', './noop'], function(Set, noop) {
    * @param {Array} values The values to add to the set.
    * @returns {Object} Returns the new set.
    */
-  var createSet = !(Set && new Set([1, 2]).size === 2) ? noop : function(values) {
+  var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
     return new Set(values);
   };
 

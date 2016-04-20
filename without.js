@@ -12,6 +12,7 @@ define(['./_baseDifference', './isArrayLikeObject', './rest'], function(baseDiff
    * @param {Array} array The array to filter.
    * @param {...*} [values] The values to exclude.
    * @returns {Array} Returns the new array of filtered values.
+   * @see _.difference, _.xor
    * @example
    *
    * _.without([1, 2, 1, 3], 1, 2);

@@ -1,4 +1,4 @@
-define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
+define(['./_baseClamp', './_baseToString', './toInteger', './toString'], function(baseClamp, baseToString, toInteger, toString) {
 
   /**
    * Checks if `string` starts with the given target string.
@@ -26,7 +26,7 @@ define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInte
   function startsWith(string, target, position) {
     string = toString(string);
     position = baseClamp(toInteger(position), 0, string.length);
-    return string.lastIndexOf(target, position) == position;
+    return string.lastIndexOf(baseToString(target), position) == position;
   }
 
   return startsWith;

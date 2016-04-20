@@ -12,6 +12,7 @@ define(['./_arrayFilter', './_baseFilter', './_baseIteratee', './isArray'], func
    * @param {Array|Function|Object|string} [predicate=_.identity]
    *  The function invoked per iteration.
    * @returns {Array} Returns the new filtered array.
+   * @see _.filter
    * @example
    *
    * var users = [

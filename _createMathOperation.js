@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_baseToNumber', './_baseToString'], function(baseToNumber, baseToString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -20,7 +20,17 @@ define([], function() {
         result = value;
       }
       if (other !== undefined) {
-        result = result === undefined ? other : operator(result, other);
+        if (result === undefined) {
+          return other;
+        }
+        if (typeof value == 'string' || typeof other == 'string') {
+          value = baseToString(value);
+          other = baseToString(other);
+        } else {
+          value = baseToNumber(value);
+          other = baseToNumber(other);
+        }
+        result = operator(value, other);
       }
       return result;
     };

@@ -1,4 +1,4 @@
-define(['./_baseExtremum', './_baseIteratee', './lt'], function(baseExtremum, baseIteratee, lt) {
+define(['./_baseExtremum', './_baseIteratee', './_baseLt'], function(baseExtremum, baseIteratee, baseLt) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -29,7 +29,7 @@ define(['./_baseExtremum', './_baseIteratee', './lt'], function(baseExtremum, ba
    */
   function minBy(array, iteratee) {
     return (array && array.length)
-      ? baseExtremum(array, baseIteratee(iteratee), lt)
+      ? baseExtremum(array, baseIteratee(iteratee), baseLt)
       : undefined;
   }
 

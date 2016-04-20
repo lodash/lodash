@@ -1,4 +1,4 @@
-define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInteger, toString) {
+define(['./_baseClamp', './_baseToString', './toInteger', './toString'], function(baseClamp, baseToString, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -28,7 +28,7 @@ define(['./_baseClamp', './toInteger', './toString'], function(baseClamp, toInte
    */
   function endsWith(string, target, position) {
     string = toString(string);
-    target = typeof target == 'string' ? target : (target + '');
+    target = baseToString(target);
 
     var length = string.length;
     position = position === undefined

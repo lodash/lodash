@@ -1,4 +1,4 @@
-define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject'], function(assignValue, castPath, isIndex, isKey, isObject) {
+define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject', './_toKey'], function(assignValue, castPath, isIndex, isKey, isObject, toKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -22,7 +22,7 @@ define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject']
         nested = object;
 
     while (nested != null && ++index < length) {
-      var key = path[index];
+      var key = toKey(path[index]);
       if (isObject(nested)) {
         var newValue = value;
         if (index != lastIndex) {

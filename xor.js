@@ -12,6 +12,7 @@ define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], functi
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
    * @returns {Array} Returns the new array of values.
+   * @see _.difference, _.without
    * @example
    *
    * _.xor([2, 1], [4, 2]);

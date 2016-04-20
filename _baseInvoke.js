@@ -1,4 +1,4 @@
-define(['./_apply', './_castPath', './_isKey', './last', './_parent'], function(apply, castPath, isKey, last, parent) {
+define(['./_apply', './_castPath', './_isKey', './last', './_parent', './_toKey'], function(apply, castPath, isKey, last, parent, toKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -19,7 +19,7 @@ define(['./_apply', './_castPath', './_isKey', './last', './_parent'], function(
       object = parent(object, path);
       path = last(path);
     }
-    var func = object == null ? object : object[path];
+    var func = object == null ? object : object[toKey(path)];
     return func == null ? undefined : apply(func, object, args);
   }
 

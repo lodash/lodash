@@ -1,4 +1,4 @@
-define(['./_baseRepeat', './_castSlice', './_reHasComplexSymbol', './_stringSize', './_stringToArray'], function(baseRepeat, castSlice, reHasComplexSymbol, stringSize, stringToArray) {
+define(['./_baseRepeat', './_baseToString', './_castSlice', './_reHasComplexSymbol', './_stringSize', './_stringToArray'], function(baseRepeat, baseToString, castSlice, reHasComplexSymbol, stringSize, stringToArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -16,7 +16,7 @@ define(['./_baseRepeat', './_castSlice', './_reHasComplexSymbol', './_stringSize
    * @returns {string} Returns the padding for `string`.
    */
   function createPadding(length, chars) {
-    chars = chars === undefined ? ' ' : (chars + '');
+    chars = chars === undefined ? ' ' : baseToString(chars);
 
     var charsLength = chars.length;
     if (charsLength < 2) {

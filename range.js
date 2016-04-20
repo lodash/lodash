@@ -17,6 +17,7 @@ define(['./_createRange'], function(createRange) {
    * @param {number} end The end of the range.
    * @param {number} [step=1] The value to increment or decrement by.
    * @returns {Array} Returns the new array of numbers.
+   * @see _.inRange, _.rangeRight
    * @example
    *
    * _.range(4);

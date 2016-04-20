@@ -16,6 +16,7 @@ define(['./_copyObject', './_createAssigner', './keys'], function(copyObject, cr
    * @param {...Object} sources The source objects.
    * @param {Function} [customizer] The function to customize assigned values.
    * @returns {Object} Returns `object`.
+   * @see _.assignInWith
    * @example
    *
    * function customizer(objValue, srcValue) {

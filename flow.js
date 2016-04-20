@@ -11,6 +11,7 @@ define(['./_createFlow'], function(createFlow) {
    * @category Util
    * @param {...(Function|Function[])} [funcs] Functions to invoke.
    * @returns {Function} Returns the new function.
+   * @see _.flowRight
    * @example
    *
    * function square(n) {

@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compareAscending', './rest'], function(arrayMap, baseAt, baseFlatten, basePullAt, compareAscending, rest) {
+define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compareAscending', './_isIndex', './rest'], function(arrayMap, baseAt, baseFlatten, basePullAt, compareAscending, isIndex, rest) {
 
   /**
    * Removes elements from `array` corresponding to `indexes` and returns an
@@ -25,10 +25,15 @@ define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compa
    * // => [10, 20]
    */
   var pullAt = rest(function(array, indexes) {
-    indexes = arrayMap(baseFlatten(indexes, 1), String);
+    indexes = baseFlatten(indexes, 1);
 
-    var result = baseAt(array, indexes);
-    basePullAt(array, indexes.sort(compareAscending));
+    var length = array ? array.length : 0,
+        result = baseAt(array, indexes);
+
+    basePullAt(array, arrayMap(indexes, function(index) {
+      return isIndex(index, length) ? +index : index;
+    }).sort(compareAscending));
+
     return result;
   });
 

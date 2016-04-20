@@ -1,4 +1,4 @@
-define(['./_baseSortedIndexBy', './identity'], function(baseSortedIndexBy, identity) {
+define(['./_baseSortedIndexBy', './identity', './isSymbol'], function(baseSortedIndexBy, identity, isSymbol) {
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295,
@@ -25,7 +25,8 @@ define(['./_baseSortedIndexBy', './identity'], function(baseSortedIndexBy, ident
         var mid = (low + high) >>> 1,
             computed = array[mid];
 
-        if ((retHighest ? (computed <= value) : (computed < value)) && computed !== null) {
+        if (computed !== null && !isSymbol(computed) &&
+            (retHighest ? (computed <= value) : (computed < value))) {
           low = mid + 1;
         } else {
           high = mid;

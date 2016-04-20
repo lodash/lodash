@@ -45,6 +45,7 @@ define(['./_SetCache', './_arrayIncludes', './_arrayIncludesWith', './_arrayMap'
       var value = array[index],
           computed = iteratee ? iteratee(value) : value;
 
+      value = (comparator || value !== 0) ? value : 0;
       if (!(seen
             ? cacheHas(seen, computed)
             : includes(result, computed, comparator)

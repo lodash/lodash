@@ -1,4 +1,4 @@
-define(['./_baseExtremum', './_baseIteratee', './gt'], function(baseExtremum, baseIteratee, gt) {
+define(['./_baseExtremum', './_baseGt', './_baseIteratee'], function(baseExtremum, baseGt, baseIteratee) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -29,7 +29,7 @@ define(['./_baseExtremum', './_baseIteratee', './gt'], function(baseExtremum, ba
    */
   function maxBy(array, iteratee) {
     return (array && array.length)
-      ? baseExtremum(array, baseIteratee(iteratee), gt)
+      ? baseExtremum(array, baseIteratee(iteratee), baseGt)
       : undefined;
   }
 

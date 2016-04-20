@@ -14,6 +14,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
    * @param {Array|Function|Object|string} [iteratee=_.identity]
    *  The function invoked per iteration.
    * @returns {Object} Returns the new mapped object.
+   * @see _.mapValues
    * @example
    *
    * _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {

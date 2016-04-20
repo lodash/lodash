@@ -1,4 +1,4 @@
-define(['./_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './_stringSize', './_stringToArray', './toInteger', './toString'], function(castSlice, isObject, isRegExp, reHasComplexSymbol, stringSize, stringToArray, toInteger, toString) {
+define(['./_baseToString', './_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './_stringSize', './_stringToArray', './toInteger', './toString'], function(baseToString, castSlice, isObject, isRegExp, reHasComplexSymbol, stringSize, stringToArray, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -54,7 +54,7 @@ define(['./_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './
     if (isObject(options)) {
       var separator = 'separator' in options ? options.separator : separator;
       length = 'length' in options ? toInteger(options.length) : length;
-      omission = 'omission' in options ? toString(options.omission) : omission;
+      omission = 'omission' in options ? baseToString(options.omission) : omission;
     }
     string = toString(string);
 
@@ -94,7 +94,7 @@ define(['./_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './
         }
         result = result.slice(0, newEnd === undefined ? end : newEnd);
       }
-    } else if (string.indexOf(separator, end) != end) {
+    } else if (string.indexOf(baseToString(separator), end) != end) {
       var index = result.lastIndexOf(separator);
       if (index > -1) {
         result = result.slice(0, index);

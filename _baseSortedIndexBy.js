@@ -1,4 +1,4 @@
-define([], function() {
+define(['./isSymbol'], function(isSymbol) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -31,21 +31,26 @@ define([], function() {
         high = array ? array.length : 0,
         valIsNaN = value !== value,
         valIsNull = value === null,
-        valIsUndef = value === undefined;
+        valIsSymbol = isSymbol(value),
+        valIsUndefined = value === undefined;
 
     while (low < high) {
       var mid = nativeFloor((low + high) / 2),
           computed = iteratee(array[mid]),
-          isDef = computed !== undefined,
-          isReflexive = computed === computed;
+          othIsDefined = computed !== undefined,
+          othIsNull = computed === null,
+          othIsReflexive = computed === computed,
+          othIsSymbol = isSymbol(computed);
 
       if (valIsNaN) {
-        var setLow = isReflexive || retHighest;
+        var setLow = retHighest || othIsReflexive;
+      } else if (valIsUndefined) {
+        setLow = othIsReflexive && (retHighest || othIsDefined);
       } else if (valIsNull) {
-        setLow = isReflexive && isDef && (retHighest || computed != null);
-      } else if (valIsUndef) {
-        setLow = isReflexive && (retHighest || isDef);
-      } else if (computed == null) {
+        setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull);
+      } else if (valIsSymbol) {
+        setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol);
+      } else if (othIsNull || othIsSymbol) {
         setLow = false;
       } else {
         setLow = retHighest ? (computed <= value) : (computed < value);

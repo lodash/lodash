@@ -1,4 +1,4 @@
-define(['./_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbol', './_stringToArray', './toString'], function(castSlice, isIterateeCall, isRegExp, reHasComplexSymbol, stringToArray, toString) {
+define(['./_baseToString', './_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbol', './_stringToArray', './toString'], function(baseToString, castSlice, isIterateeCall, isRegExp, reHasComplexSymbol, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -44,7 +44,7 @@ define(['./_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbo
           typeof separator == 'string' ||
           (separator != null && !isRegExp(separator))
         )) {
-      separator += '';
+      separator = baseToString(separator);
       if (separator == '' && reHasComplexSymbol.test(string)) {
         return castSlice(stringToArray(string), 0, limit);
       }

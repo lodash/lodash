@@ -9,6 +9,7 @@ define(['./_baseClone'], function(baseClone) {
    * @category Lang
    * @param {*} value The value to recursively clone.
    * @returns {*} Returns the deep cloned value.
+   * @see _.clone
    * @example
    *
    * var objects = [{ 'a': 1 }, { 'b': 2 }];

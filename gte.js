@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_createRelationalOperation'], function(createRelationalOperation) {
 
   /**
    * Checks if `value` is greater than or equal to `other`.
@@ -11,6 +11,7 @@ define([], function() {
    * @param {*} other The other value to compare.
    * @returns {boolean} Returns `true` if `value` is greater than or equal to
    *  `other`, else `false`.
+   * @see _.lte
    * @example
    *
    * _.gte(3, 1);
@@ -22,9 +23,9 @@ define([], function() {
    * _.gte(1, 3);
    * // => false
    */
-  function gte(value, other) {
+  var gte = createRelationalOperation(function(value, other) {
     return value >= other;
-  }
+  });
 
   return gte;
 });

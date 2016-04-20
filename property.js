@@ -1,4 +1,4 @@
-define(['./_baseProperty', './_basePropertyDeep', './_isKey'], function(baseProperty, basePropertyDeep, isKey) {
+define(['./_baseProperty', './_basePropertyDeep', './_isKey', './_toKey'], function(baseProperty, basePropertyDeep, isKey, toKey) {
 
   /**
    * Creates a function that returns the value at `path` of a given object.
@@ -23,7 +23,7 @@ define(['./_baseProperty', './_basePropertyDeep', './_isKey'], function(baseProp
    * // => [1, 2]
    */
   function property(path) {
-    return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
+    return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
   }
 
   return property;

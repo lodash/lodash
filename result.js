@@ -1,4 +1,4 @@
-define(['./_castPath', './isFunction', './_isKey'], function(castPath, isFunction, isKey) {
+define(['./_castPath', './isFunction', './_isKey', './_toKey'], function(castPath, isFunction, isKey, toKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -44,7 +44,7 @@ define(['./_castPath', './isFunction', './_isKey'], function(castPath, isFunctio
       length = 1;
     }
     while (++index < length) {
-      var value = object == null ? undefined : object[path[index]];
+      var value = object == null ? undefined : object[toKey(path[index])];
       if (value === undefined) {
         index = length;
         value = defaultValue;

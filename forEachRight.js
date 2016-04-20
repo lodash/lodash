@@ -12,6 +12,7 @@ define(['./_arrayEachRight', './_baseEachRight', './_baseIteratee', './isArray']
    * @param {Array|Object} collection The collection to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @returns {Array|Object} Returns `collection`.
+   * @see _.forEach
    * @example
    *
    * _.forEachRight([1, 2], function(value) {

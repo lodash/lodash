@@ -10,6 +10,7 @@ define(['./_baseFunctions', './keys'], function(baseFunctions, keys) {
    * @category Object
    * @param {Object} object The object to inspect.
    * @returns {Array} Returns the new array of property names.
+   * @see _.functionsIn
    * @example
    *
    * function Foo() {

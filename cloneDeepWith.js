@@ -10,6 +10,7 @@ define(['./_baseClone'], function(baseClone) {
    * @param {*} value The value to recursively clone.
    * @param {Function} [customizer] The function to customize cloning.
    * @returns {*} Returns the deep cloned value.
+   * @see _.cloneWith
    * @example
    *
    * function customizer(value) {

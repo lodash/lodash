@@ -1,4 +1,4 @@
-define(['./_baseIteratee', './_baseSortedUniqBy'], function(baseIteratee, baseSortedUniqBy) {
+define(['./_baseIteratee', './_baseSortedUniq'], function(baseIteratee, baseSortedUniq) {
 
   /**
    * This method is like `_.uniqBy` except that it's designed and optimized
@@ -18,7 +18,7 @@ define(['./_baseIteratee', './_baseSortedUniqBy'], function(baseIteratee, baseSo
    */
   function sortedUniqBy(array, iteratee) {
     return (array && array.length)
-      ? baseSortedUniqBy(array, baseIteratee(iteratee))
+      ? baseSortedUniq(array, baseIteratee(iteratee))
       : [];
   }
 

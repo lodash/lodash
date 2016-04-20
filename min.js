@@ -1,4 +1,4 @@
-define(['./_baseExtremum', './identity', './lt'], function(baseExtremum, identity, lt) {
+define(['./_baseExtremum', './_baseLt', './identity'], function(baseExtremum, baseLt, identity) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./_baseExtremum', './identity', './lt'], function(baseExtremum, identit
    */
   function min(array) {
     return (array && array.length)
-      ? baseExtremum(array, identity, lt)
+      ? baseExtremum(array, identity, baseLt)
       : undefined;
   }
 

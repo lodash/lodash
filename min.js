@@ -1,6 +1,6 @@
 import baseExtremum from './_baseExtremum';
+import baseLt from './_baseLt';
 import identity from './identity';
-import lt from './lt';
 
 /**
  * Computes the minimum value of `array`. If `array` is empty or falsey,
@@ -22,7 +22,7 @@ import lt from './lt';
  */
 function min(array) {
   return (array && array.length)
-    ? baseExtremum(array, identity, lt)
+    ? baseExtremum(array, identity, baseLt)
     : undefined;
 }
 

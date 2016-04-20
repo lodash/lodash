@@ -1,8 +1,9 @@
+import baseHas from './_baseHas';
 import castPath from './_castPath';
-import has from './has';
 import isKey from './_isKey';
 import last from './last';
 import parent from './_parent';
+import toKey from './_toKey';
 
 /**
  * The base implementation of `_.unset`.
@@ -15,8 +16,9 @@ import parent from './_parent';
 function baseUnset(object, path) {
   path = isKey(path, object) ? [path] : castPath(path);
   object = parent(object, path);
-  var key = last(path);
-  return (object != null && has(object, key)) ? delete object[key] : true;
+
+  var key = toKey(last(path));
+  return !(object != null && baseHas(object, key)) || delete object[key];
 }
 
 export default baseUnset;

@@ -15,6 +15,7 @@ import isArray from './isArray';
  * @param {Array|Function|Object|string} [predicate=_.identity]
  *  The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
+ * @see _.filter
  * @example
  *
  * var users = [

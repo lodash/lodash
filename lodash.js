@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.11.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>

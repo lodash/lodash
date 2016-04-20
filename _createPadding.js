@@ -1,4 +1,5 @@
 import baseRepeat from './_baseRepeat';
+import baseToString from './_baseToString';
 import castSlice from './_castSlice';
 import reHasComplexSymbol from './_reHasComplexSymbol';
 import stringSize from './_stringSize';
@@ -17,7 +18,7 @@ var nativeCeil = Math.ceil;
  * @returns {string} Returns the padding for `string`.
  */
 function createPadding(length, chars) {
-  chars = chars === undefined ? ' ' : (chars + '');
+  chars = chars === undefined ? ' ' : baseToString(chars);
 
   var charsLength = chars.length;
   if (charsLength < 2) {

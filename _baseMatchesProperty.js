@@ -4,6 +4,7 @@ import hasIn from './hasIn';
 import isKey from './_isKey';
 import isStrictComparable from './_isStrictComparable';
 import matchesStrictComparable from './_matchesStrictComparable';
+import toKey from './_toKey';
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,
@@ -19,7 +20,7 @@ var UNORDERED_COMPARE_FLAG = 1,
  */
 function baseMatchesProperty(path, srcValue) {
   if (isKey(path) && isStrictComparable(srcValue)) {
-    return matchesStrictComparable(path, srcValue);
+    return matchesStrictComparable(toKey(path), srcValue);
   }
   return function(object) {
     var objValue = get(object, path);

@@ -1,4 +1,5 @@
 import baseClamp from './_baseClamp';
+import baseToString from './_baseToString';
 import toInteger from './toInteger';
 import toString from './toString';
 
@@ -28,7 +29,7 @@ import toString from './toString';
 function startsWith(string, target, position) {
   string = toString(string);
   position = baseClamp(toInteger(position), 0, string.length);
-  return string.lastIndexOf(target, position) == position;
+  return string.lastIndexOf(baseToString(target), position) == position;
 }
 
 export default startsWith;

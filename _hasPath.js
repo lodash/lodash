@@ -5,6 +5,7 @@ import isIndex from './_isIndex';
 import isKey from './_isKey';
 import isLength from './isLength';
 import isString from './isString';
+import toKey from './_toKey';
 
 /**
  * Checks if `path` exists on `object`.
@@ -23,7 +24,7 @@ function hasPath(object, path, hasFunc) {
       length = path.length;
 
   while (++index < length) {
-    var key = path[index];
+    var key = toKey(path[index]);
     if (!(result = object != null && hasFunc(object, key))) {
       break;
     }

@@ -1,5 +1,5 @@
 import baseIteratee from './_baseIteratee';
-import baseSortedUniqBy from './_baseSortedUniqBy';
+import baseSortedUniq from './_baseSortedUniq';
 
 /**
  * This method is like `_.uniqBy` except that it's designed and optimized
@@ -19,7 +19,7 @@ import baseSortedUniqBy from './_baseSortedUniqBy';
  */
 function sortedUniqBy(array, iteratee) {
   return (array && array.length)
-    ? baseSortedUniqBy(array, baseIteratee(iteratee))
+    ? baseSortedUniq(array, baseIteratee(iteratee))
     : [];
 }
 

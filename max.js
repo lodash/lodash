@@ -1,5 +1,5 @@
 import baseExtremum from './_baseExtremum';
-import gt from './gt';
+import baseGt from './_baseGt';
 import identity from './identity';
 
 /**
@@ -22,7 +22,7 @@ import identity from './identity';
  */
 function max(array) {
   return (array && array.length)
-    ? baseExtremum(array, identity, gt)
+    ? baseExtremum(array, identity, baseGt)
     : undefined;
 }
 

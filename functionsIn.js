@@ -11,6 +11,7 @@ import keysIn from './keysIn';
  * @category Object
  * @param {Object} object The object to inspect.
  * @returns {Array} Returns the new array of property names.
+ * @see _.functions
  * @example
  *
  * function Foo() {

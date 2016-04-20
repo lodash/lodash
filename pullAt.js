@@ -3,6 +3,7 @@ import baseAt from './_baseAt';
 import baseFlatten from './_baseFlatten';
 import basePullAt from './_basePullAt';
 import compareAscending from './_compareAscending';
+import isIndex from './_isIndex';
 import rest from './rest';
 
 /**
@@ -30,10 +31,15 @@ import rest from './rest';
  * // => [10, 20]
  */
 var pullAt = rest(function(array, indexes) {
-  indexes = arrayMap(baseFlatten(indexes, 1), String);
+  indexes = baseFlatten(indexes, 1);
 
-  var result = baseAt(array, indexes);
-  basePullAt(array, indexes.sort(compareAscending));
+  var length = array ? array.length : 0,
+      result = baseAt(array, indexes);
+
+  basePullAt(array, arrayMap(indexes, function(index) {
+    return isIndex(index, length) ? +index : index;
+  }).sort(compareAscending));
+
   return result;
 });
 

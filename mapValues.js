@@ -15,6 +15,7 @@ import baseIteratee from './_baseIteratee';
  * @param {Array|Function|Object|string} [iteratee=_.identity]
  *  The function invoked per iteration.
  * @returns {Object} Returns the new mapped object.
+ * @see _.mapKeys
  * @example
  *
  * var users = {

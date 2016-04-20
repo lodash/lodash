@@ -1,3 +1,4 @@
+import baseToString from './_baseToString';
 import castSlice from './_castSlice';
 import isIterateeCall from './_isIterateeCall';
 import isRegExp from './isRegExp';
@@ -46,7 +47,7 @@ function split(string, separator, limit) {
         typeof separator == 'string' ||
         (separator != null && !isRegExp(separator))
       )) {
-    separator += '';
+    separator = baseToString(separator);
     if (separator == '' && reHasComplexSymbol.test(string)) {
       return castSlice(stringToArray(string), 0, limit);
     }

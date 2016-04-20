@@ -3,6 +3,7 @@ import castPath from './_castPath';
 import isKey from './_isKey';
 import last from './last';
 import parent from './_parent';
+import toKey from './_toKey';
 
 /**
  * The base implementation of `_.invoke` without support for individual
@@ -20,7 +21,7 @@ function baseInvoke(object, path, args) {
     object = parent(object, path);
     path = last(path);
   }
-  var func = object == null ? object : object[path];
+  var func = object == null ? object : object[toKey(path)];
   return func == null ? undefined : apply(func, object, args);
 }
 

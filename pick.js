@@ -1,6 +1,8 @@
+import arrayMap from './_arrayMap';
 import baseFlatten from './_baseFlatten';
 import basePick from './_basePick';
 import rest from './rest';
+import toKey from './_toKey';
 
 /**
  * Creates an object composed of the picked `object` properties.
@@ -20,7 +22,7 @@ import rest from './rest';
  * // => { 'a': 1, 'c': 3 }
  */
 var pick = rest(function(object, props) {
-  return object == null ? {} : basePick(object, baseFlatten(props, 1));
+  return object == null ? {} : basePick(object, arrayMap(baseFlatten(props, 1), toKey));
 });
 
 export default pick;

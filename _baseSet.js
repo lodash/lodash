@@ -3,6 +3,7 @@ import castPath from './_castPath';
 import isIndex from './_isIndex';
 import isKey from './_isKey';
 import isObject from './isObject';
+import toKey from './_toKey';
 
 /**
  * The base implementation of `_.set`.
@@ -23,7 +24,7 @@ function baseSet(object, path, value, customizer) {
       nested = object;
 
   while (nested != null && ++index < length) {
-    var key = path[index];
+    var key = toKey(path[index]);
     if (isObject(nested)) {
       var newValue = value;
       if (index != lastIndex) {

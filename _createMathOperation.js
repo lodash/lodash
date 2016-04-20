@@ -1,3 +1,6 @@
+import baseToNumber from './_baseToNumber';
+import baseToString from './_baseToString';
+
 /**
  * Creates a function that performs a mathematical operation on two values.
  *
@@ -15,7 +18,17 @@ function createMathOperation(operator) {
       result = value;
     }
     if (other !== undefined) {
-      result = result === undefined ? other : operator(result, other);
+      if (result === undefined) {
+        return other;
+      }
+      if (typeof value == 'string' || typeof other == 'string') {
+        value = baseToString(value);
+        other = baseToString(other);
+      } else {
+        value = baseToNumber(value);
+        other = baseToNumber(other);
+      }
+      result = operator(value, other);
     }
     return result;
   };

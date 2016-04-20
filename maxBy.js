@@ -1,6 +1,6 @@
 import baseExtremum from './_baseExtremum';
+import baseGt from './_baseGt';
 import baseIteratee from './_baseIteratee';
-import gt from './gt';
 
 /**
  * This method is like `_.max` except that it accepts `iteratee` which is
@@ -28,7 +28,7 @@ import gt from './gt';
  */
 function maxBy(array, iteratee) {
   return (array && array.length)
-    ? baseExtremum(array, baseIteratee(iteratee), gt)
+    ? baseExtremum(array, baseIteratee(iteratee), baseGt)
     : undefined;
 }
 

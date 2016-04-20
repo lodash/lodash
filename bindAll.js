@@ -2,6 +2,7 @@ import arrayEach from './_arrayEach';
 import baseFlatten from './_baseFlatten';
 import bind from './bind';
 import rest from './rest';
+import toKey from './_toKey';
 
 /**
  * Binds methods of an object to the object itself, overwriting the existing
@@ -31,6 +32,7 @@ import rest from './rest';
  */
 var bindAll = rest(function(object, methodNames) {
   arrayEach(baseFlatten(methodNames, 1), function(key) {
+    key = toKey(key);
     object[key] = bind(object[key], object);
   });
   return object;

@@ -1,3 +1,4 @@
+import baseToString from './_baseToString';
 import castSlice from './_castSlice';
 import charsStartIndex from './_charsStartIndex';
 import stringToArray from './_stringToArray';
@@ -27,13 +28,10 @@ var reTrimStart = /^\s+/;
  */
 function trimStart(string, chars, guard) {
   string = toString(string);
-  if (!string) {
-    return string;
-  }
-  if (guard || chars === undefined) {
+  if (string && (guard || chars === undefined)) {
     return string.replace(reTrimStart, '');
   }
-  if (!(chars += '')) {
+  if (!string || !(chars = baseToString(chars))) {
     return string;
   }
   var strSymbols = stringToArray(string),

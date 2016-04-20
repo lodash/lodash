@@ -1,4 +1,5 @@
 import baseClamp from './_baseClamp';
+import baseToString from './_baseToString';
 import toInteger from './toInteger';
 import toString from './toString';
 
@@ -27,7 +28,7 @@ import toString from './toString';
  */
 function endsWith(string, target, position) {
   string = toString(string);
-  target = typeof target == 'string' ? target : (target + '');
+  target = baseToString(target);
 
   var length = string.length;
   position = position === undefined

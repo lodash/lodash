@@ -4722,7 +4722,7 @@
       assert.deepEqual(actual, [1, 3]);
     });
 
-    QUnit.test('`_.' + methodName + '` should treat `-0` and `0` as the same value', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var values = [-0, 0],
@@ -4756,7 +4756,7 @@
       assert.deepEqual(func(array1, array2), [LARGE_ARRAY_SIZE]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` and `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var values = [-0, 0],
@@ -7971,11 +7971,11 @@
       assert.deepEqual(func(args, array), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should treat `-0` and `0` as the same value', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var values = [-0, 0],
-          expected = lodashStable.map(values, lodashStable.constant(['-0']));
+          expected = lodashStable.map(values, lodashStable.constant(['0']));
 
       var actual = lodashStable.map(values, function(value) {
         return lodashStable.map(func(values, [value]), lodashStable.toString);
@@ -7991,11 +7991,11 @@
       assert.deepEqual(actual, [NaN]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` and `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var values = [-0, 0],
-          expected = lodashStable.map(values, lodashStable.constant(['-0']));
+          expected = lodashStable.map(values, lodashStable.constant(['0']));
 
       var actual = lodashStable.map(values, function(value) {
         var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, lodashStable.constant(value));
@@ -24113,11 +24113,11 @@
       assert.deepEqual(func(objects), objects);
     });
 
-    QUnit.test('`_.' + methodName + '` should treat `-0` and `0` as the same value', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(func([-0, 0]), lodashStable.toString);
-      assert.deepEqual(actual, ['-0']);
+      assert.deepEqual(actual, ['0']);
     });
 
     QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
@@ -24142,7 +24142,7 @@
       assert.deepEqual(func(largeArray), expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` and `0`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
       assert.expect(1);
 
       var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {

@@ -2417,7 +2417,7 @@
       }
       outer:
       while (++index < length) {
-        var value = array[index],
+        var value = (value = array[index]) === 0 ? 0 : value,
             computed = iteratee ? iteratee(value) : value;
 
         if (isCommon && computed === computed) {
@@ -2775,7 +2775,7 @@
 
       outer:
       while (++index < length && result.length < maxLength) {
-        var value = array[index],
+        var value = (value = array[index]) === 0 ? 0 : value,
             computed = iteratee ? iteratee(value) : value;
 
         if (!(seen
@@ -3650,40 +3650,26 @@
     }
 
     /**
-     * The base implementation of `_.sortedUniq`.
-     *
-     * @private
-     * @param {Array} array The array to inspect.
-     * @returns {Array} Returns the new duplicate free array.
-     */
-    function baseSortedUniq(array) {
-      return baseSortedUniqBy(array);
-    }
-
-    /**
-     * The base implementation of `_.sortedUniqBy` without support for iteratee
-     * shorthands.
+     * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
+     * support for iteratee shorthands.
      *
      * @private
      * @param {Array} array The array to inspect.
      * @param {Function} [iteratee] The iteratee invoked per element.
      * @returns {Array} Returns the new duplicate free array.
      */
-    function baseSortedUniqBy(array, iteratee) {
-      var index = 0,
+    function baseSortedUniq(array, iteratee) {
+      var index = -1,
           length = array.length,
-          value = array[0],
-          computed = iteratee ? iteratee(value) : value,
-          seen = computed,
-          resIndex = 1,
-          result = [value];
+          resIndex = 0,
+          result = [];
 
       while (++index < length) {
-        value = array[index],
-        computed = iteratee ? iteratee(value) : value;
+        var value = (value = array[index]) === 0 ? 0 : value,
+            computed = iteratee ? iteratee(value) : value;
 
-        if (!eq(computed, seen)) {
-          seen = computed;
+        if (!index || !eq(computed, seen)) {
+          var seen = computed;
           result[resIndex++] = value;
         }
       }
@@ -3763,7 +3749,7 @@
       }
       outer:
       while (++index < length) {
-        var value = array[index],
+        var value = (value = array[index]) === 0 ? 0 : value,
             computed = iteratee ? iteratee(value) : value;
 
         if (isCommon && computed === computed) {
@@ -7267,7 +7253,7 @@
      */
     function sortedUniqBy(array, iteratee) {
       return (array && array.length)
-        ? baseSortedUniqBy(array, getIteratee(iteratee))
+        ? baseSortedUniq(array, getIteratee(iteratee))
         : [];
     }
 

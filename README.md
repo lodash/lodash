@@ -1,5 +1,14 @@
 # lodash v4.11.1
 
+[Site](https://lodash.com/) |
+[Docs](https://lodash.com/docs) |
+[FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
+[Contributing](https://github.com/lodash/lodash/blob/4.11.1/.github/CONTRIBUTING.md) |
+[Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki) |
+[Code of Conduct](https://jquery.org/conduct/) |
+[Twitter](https://twitter.com/bestiejs) |
+[Chat](https://gitter.im/lodash/lodash)
+
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
@@ -8,15 +17,6 @@ $ npm run build
 $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
-
-## Community
-
-[![Gitter](https://badges.gitter.im/lodash/lodash.svg)](https://gitter.im/lodash/lodash)
-
-## Documentation
-
-  * [API Documentation](https://lodash.com/docs)
-  * [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide)
 
 ## Download
 
@@ -44,9 +44,3 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
  * [lodash/fp](https://github.com/lodash/lodash/tree/4.11.1-npm/fp)
-
-## Further Reading
-
-  * [Contributing](https://github.com/lodash/lodash/blob/4.11.1/.github/CONTRIBUTING.md)
-  * [Release Notes](https://github.com/lodash/lodash/releases/tag/4.0.0)
-  * [Wiki (Changelog, Roadmap, etc.)](https://github.com/lodash/lodash/wiki)

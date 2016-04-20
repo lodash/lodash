@@ -4723,16 +4723,18 @@
     });
 
     QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var values = [-0, 0],
-          expected = lodashStable.map(values, alwaysEmptyArray);
+      var array = [-0, 0];
 
-      var actual = lodashStable.map(values, function(value) {
-        return func(values, [value]);
+      var actual = lodashStable.map(array, function(value) {
+        return func(array, [value]);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, [[], []]);
+
+      actual = lodashStable.map(func([-0, 1], [1]), lodashStable.toString);
+      assert.deepEqual(actual, ['0']);
     });
 
     QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
@@ -4757,17 +4759,20 @@
     });
 
     QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var values = [-0, 0],
-          expected = lodashStable.map(values, alwaysEmptyArray);
+      var array = [-0, 0];
 
-      var actual = lodashStable.map(values, function(value) {
+      var actual = lodashStable.map(array, function(value) {
         var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, lodashStable.constant(value));
-        return func(values, largeArray);
+        return func(array, largeArray);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, [[], []]);
+
+      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, alwaysOne);
+      actual = lodashStable.map(func([-0, 1], largeArray), lodashStable.toString);
+      assert.deepEqual(actual, ['0']);
     });
 
     QUnit.test('`_.' + methodName + '` should work with large arrays of `NaN`', function(assert) {
@@ -4838,6 +4843,21 @@
           actual = _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], lodashStable.isEqual);
 
       assert.deepEqual(actual, [objects[1]]);
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var array = [-0, 1],
+          largeArray = lodashStable.times(LARGE_ARRAY_SIZE, alwaysOne),
+          others = [[1], largeArray],
+          expected = lodashStable.map(others, lodashStable.constant(['-0']));
+
+      var actual = lodashStable.map(others, function(other) {
+        return lodashStable.map(_.differenceWith(array, other, lodashStable.eq), lodashStable.toString);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -8086,6 +8106,21 @@
           actual = _.intersectionWith(objects, others, lodashStable.isEqual);
 
       assert.deepEqual(actual, [objects[0]]);
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var array = [-0],
+          largeArray = lodashStable.times(LARGE_ARRAY_SIZE, alwaysZero),
+          others = [[0], largeArray],
+          expected = lodashStable.map(others, lodashStable.constant(['-0']));
+
+      var actual = lodashStable.map(others, function(other) {
+        return lodashStable.map(_.intersectionWith(array, other, lodashStable.eq), lodashStable.toString);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 
@@ -24077,6 +24112,23 @@
           actual = _.uniqWith(objects, lodashStable.isEqual);
 
       assert.deepEqual(actual, [objects[0], objects[1]]);
+    });
+
+    QUnit.test('should preserve the sign of `0`', function(assert) {
+      assert.expect(1);
+
+      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+        return isEven(index) ? -0 : 0;
+      });
+
+      var arrays = [[-0, 0], largeArray],
+          expected = lodashStable.map(arrays, lodashStable.constant(['-0']));
+
+      var actual = lodashStable.map(arrays, function(array) {
+        return lodashStable.map(_.uniqWith(array, lodashStable.eq), lodashStable.toString);
+      });
+
+      assert.deepEqual(actual, expected);
     });
   }());
 

@@ -2417,9 +2417,10 @@
       }
       outer:
       while (++index < length) {
-        var value = (value = array[index]) === 0 ? 0 : value,
+        var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
+        value = (comparator || value !== 0) ? value : 0;
         if (isCommon && computed === computed) {
           var valuesIndex = valuesLength;
           while (valuesIndex--) {
@@ -2775,9 +2776,10 @@
 
       outer:
       while (++index < length && result.length < maxLength) {
-        var value = (value = array[index]) === 0 ? 0 : value,
+        var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
+        value = (comparator || value !== 0) ? value : 0;
         if (!(seen
               ? cacheHas(seen, computed)
               : includes(result, computed, comparator)
@@ -3665,12 +3667,12 @@
           result = [];
 
       while (++index < length) {
-        var value = (value = array[index]) === 0 ? 0 : value,
+        var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
         if (!index || !eq(computed, seen)) {
           var seen = computed;
-          result[resIndex++] = value;
+          result[resIndex++] = value === 0 ? 0 : value;
         }
       }
       return result;
@@ -3749,9 +3751,10 @@
       }
       outer:
       while (++index < length) {
-        var value = (value = array[index]) === 0 ? 0 : value,
+        var value = array[index],
             computed = iteratee ? iteratee(value) : value;
 
+        value = (comparator || value !== 0) ? value : 0;
         if (isCommon && computed === computed) {
           var seenIndex = seen.length;
           while (seenIndex--) {

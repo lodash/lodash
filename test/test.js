@@ -25596,6 +25596,12 @@
     var funcs = [
       'castArray',
       'concat',
+      'difference',
+      'differenceBy',
+      'differenceWith',
+      'intersection',
+      'intersectionBy',
+      'intersectionWith',
       'pull',
       'pullAll',
       'pullAt',
@@ -25605,7 +25611,16 @@
       'splice',
       'split',
       'toArray',
-      'words'
+      'union',
+      'unionBy',
+      'unionWith',
+      'uniq',
+      'uniqBy',
+      'uniqWith',
+      'words',
+      'xor',
+      'xorBy',
+      'xorWith'
     ];
 
     lodashStable.each(funcs, function(methodName) {

@@ -24,7 +24,7 @@ Lodash is released under the [MIT license](https://raw.githubusercontent.com/lod
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
  * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.js) ([~21 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.js) ([~22 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 ## Why Lodash?

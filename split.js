@@ -1,4 +1,5 @@
-var castSlice = require('./_castSlice'),
+var baseToString = require('./_baseToString'),
+    castSlice = require('./_castSlice'),
     isIterateeCall = require('./_isIterateeCall'),
     isRegExp = require('./isRegExp'),
     reHasComplexSymbol = require('./_reHasComplexSymbol'),
@@ -46,7 +47,7 @@ function split(string, separator, limit) {
         typeof separator == 'string' ||
         (separator != null && !isRegExp(separator))
       )) {
-    separator += '';
+    separator = baseToString(separator);
     if (separator == '' && reHasComplexSymbol.test(string)) {
       return castSlice(stringToArray(string), 0, limit);
     }

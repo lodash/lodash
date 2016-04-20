@@ -12,6 +12,7 @@ var baseForOwnRight = require('./_baseForOwnRight'),
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
  * @returns {Object} Returns `object`.
+ * @see _.forOwn
  * @example
  *
  * function Foo() {

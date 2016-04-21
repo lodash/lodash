@@ -20840,6 +20840,18 @@
       });
     });
 
+    QUnit.test('`_.' + methodName + '` should convert symbols to `NaN`', function(assert) {
+      assert.expect(2);
+
+      if (Symbol) {
+        assert.deepEqual(func(0, symbol), NaN);
+        assert.deepEqual(func(symbol, 0), NaN);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
     QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
       assert.expect(1);
 

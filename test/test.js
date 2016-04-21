@@ -20840,6 +20840,13 @@
       });
     });
 
+    QUnit.test('`_.' + methodName + '` should convert objects to `NaN`', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(func(0, {}), NaN);
+      assert.deepEqual(func({}, 0), NaN);
+    });
+
     QUnit.test('`_.' + methodName + '` should convert symbols to `NaN`', function(assert) {
       assert.expect(2);
 

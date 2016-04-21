@@ -3311,7 +3311,6 @@
      * @returns {Function} Returns the new function.
      */
     function baseProperty(key) {
-      key = toKey(key);
       return function(object) {
         return object == null ? undefined : object[key];
       };
@@ -15007,7 +15006,7 @@
      * // => [1, 2]
      */
     function property(path) {
-      return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
+      return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
     }
 
     /**

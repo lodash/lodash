@@ -20250,14 +20250,20 @@
       assert.deepEqual(actual, [3, 1, 2]);
     });
 
-    QUnit.test('should move `null`, `undefined`, and `NaN` values to the end', function(assert) {
+    QUnit.test('should move symbol, `null`, `undefined`, and `NaN` values to the end', function(assert) {
       assert.expect(2);
 
-      var array = [NaN, undefined, null, 4, null, 1, undefined, 3, NaN, 2];
-      assert.deepEqual(_.sortBy(array), [1, 2, 3, 4, null, null, undefined, undefined, NaN, NaN]);
+      var symbol1 = Symbol ? Symbol('a') : null,
+          symbol2 = Symbol ? Symbol('b') : null,
+          array = [NaN, undefined, null, 4, symbol1, null, 1, symbol2, undefined, 3, NaN, 2],
+          expected = [1, 2, 3, 4, symbol1, symbol2, null, null, undefined, undefined, NaN, NaN];
 
-      array = [NaN, undefined, null, 'd', null, 'a', undefined, 'c', NaN, 'b'];
-      assert.deepEqual(_.sortBy(array), ['a', 'b', 'c', 'd', null, null, undefined, undefined, NaN, NaN]);
+      assert.deepEqual(_.sortBy(array), expected);
+
+      array = [NaN, undefined, symbol1, null, 'd', null, 'a', symbol2, undefined, 'c', NaN, 'b'];
+      expected = ['a', 'b', 'c', 'd', symbol1, symbol2, null, null, undefined, undefined, NaN, NaN];
+
+      assert.deepEqual(_.sortBy(array), expected);
     });
 
     QUnit.test('should treat number values for `collection` as empty', function(assert) {

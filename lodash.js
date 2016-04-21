@@ -4062,27 +4062,27 @@
      */
     function compareAscending(value, other) {
       if (value !== other) {
-        var valIsNull = value === null,
-            valIsUndef = value === undefined,
+        var valIsDefined = value !== undefined,
+            valIsNull = value === null,
             valIsReflexive = value === value,
             valIsSymbol = isSymbol(value);
 
-        var othIsNull = other === null,
-            othIsUndef = other === undefined,
+        var othIsDefined = other !== undefined,
+            othIsNull = other === null,
             othIsReflexive = other === other,
             othIsSymbol = isSymbol(other);
 
-        if ((valIsSymbol && !othIsSymbol) ||
-            (!othIsNull && !othIsSymbol && value > other) ||
-            (valIsNull && !othIsUndef && othIsReflexive) ||
-            (valIsUndef && othIsReflexive) ||
+        if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
+            (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||
+            (valIsNull && othIsDefined && othIsReflexive) ||
+            (!valIsDefined && othIsReflexive) ||
             !valIsReflexive) {
           return 1;
         }
-        if ((othIsSymbol && !valIsSymbol) ||
-            (!valIsNull && !valIsSymbol && value < other) ||
-            (othIsNull && !valIsUndef && valIsReflexive) ||
-            (othIsUndef && valIsReflexive) ||
+        if ((!valIsNull && !valIsSymbol && !othIsSymbol && value < other) ||
+            (othIsSymbol && valIsDefined && valIsReflexive && !valIsNull && !valIsSymbol) ||
+            (othIsNull && valIsDefined && valIsReflexive) ||
+            (!othIsDefined && valIsReflexive) ||
             !othIsReflexive) {
           return -1;
         }

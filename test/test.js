@@ -10934,7 +10934,7 @@
       }
     });
 
-    QUnit.test('should work with nulls from another realm', function(assert) {
+    QUnit.test('should work with nils from another realm', function(assert) {
       assert.expect(2);
 
       if (realm.object) {
@@ -20441,6 +20441,7 @@
 
       var symbol1 = Symbol ? Symbol('a') : null,
           symbol2 = Symbol ? Symbol('b') : null,
+          symbol3 = Symbol ? Symbol('c') : null,
           expected = [1, '2', {}, symbol1, symbol2, null, undefined, NaN, NaN];
 
       lodashStable.each([
@@ -20449,11 +20450,34 @@
       ], function(array) {
         assert.deepEqual(_.sortBy(array), expected);
         assert.strictEqual(func(expected, 3), 2);
-        assert.strictEqual(func(expected, symbol1), (isSortedIndex ? 3 : (Symbol ? 5 : 6)));
-        assert.strictEqual(func(expected, null), (isSortedIndex ? (Symbol ? 5 : 3) : 6));
+        assert.strictEqual(func(expected, symbol3), isSortedIndex ? 3 : (Symbol ? 5 : 6));
+        assert.strictEqual(func(expected, null), isSortedIndex ? (Symbol ? 5 : 3) : 6);
         assert.strictEqual(func(expected, undefined), isSortedIndex ? 6 : 7);
         assert.strictEqual(func(expected, NaN), isSortedIndex ? 7 : 9);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should align with `_.sortBy` for nulls', function(assert) {
+      assert.expect(3);
+
+      var array = [null, null];
+
+      assert.strictEqual(func(array, null), isSortedIndex ? 0 : 2);
+      assert.strictEqual(func(array, 1), 0);
+      assert.strictEqual(func(array, 'a'), 0);
+    });
+
+    QUnit.test('`_.' + methodName + '` should align with `_.sortBy` for symbols', function(assert) {
+      assert.expect(3);
+
+      var symbol1 = Symbol ? Symbol('a') : null,
+          symbol2 = Symbol ? Symbol('b') : null,
+          symbol3 = Symbol ? Symbol('c') : null,
+          array = [symbol1, symbol2];
+
+      assert.strictEqual(func(array, symbol3), isSortedIndex ? 0 : 2);
+      assert.strictEqual(func(array, 1), 0);
+      assert.strictEqual(func(array, 'a'), 0);
     });
   });
 

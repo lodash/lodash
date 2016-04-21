@@ -1,4 +1,4 @@
-# lodash.sum v3.4.0
+# lodash.sum v3.5.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.sum` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var sum = require('lodash.sum');
 ```
 
-See the [documentation](https://lodash.com/docs#sum) or [package source](https://github.com/lodash/lodash/blob/3.4.0-npm-packages/lodash.sum) for more details.
+See the [documentation](https://lodash.com/docs#sum) or [package source](https://github.com/lodash/lodash/blob/3.5.0-npm-packages/lodash.sum) for more details.

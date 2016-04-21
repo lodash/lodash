@@ -1,12 +1,14 @@
 /**
- * lodash 3.4.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.5.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseCompareAscending = require('lodash._basecompareascending'),
+var arrayMap = require('lodash._arraymap'),
+    baseCallback = require('lodash._basecallback'),
+    baseCompareAscending = require('lodash._basecompareascending'),
     baseEach = require('lodash._baseeach'),
     baseSortBy = require('lodash._basesortby');
 
@@ -14,7 +16,7 @@ var baseCompareAscending = require('lodash._basecompareascending'),
  * Used by `_.sortByOrder` to compare multiple properties of each element
  * in a collection and stable sort them in the following order:
  *
- * If orders is unspecified, sort in ascending order for all properties.
+ * If `orders` is unspecified, sort in ascending order for all properties.
  * Otherwise, for each property, sort in ascending order if its corresponding value in
  * orders is true, and descending order if false.
  *
@@ -57,33 +59,73 @@ function compareMultiple(object, other, orders) {
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
 /**
+ * The base implementation of `_.map` without support for callback shorthands
+ * and `this` binding.
+ *
+ * @private
+ * @param {Array|Object|string} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function baseMap(collection, iteratee) {
+  var index = -1,
+      length = getLength(collection),
+      result = isLength(length) ? Array(length) : [];
+
+  baseEach(collection, function(value, key, collection) {
+    result[++index] = iteratee(value, key, collection);
+  });
+  return result;
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
  * The base implementation of `_.sortByOrder` without param guards.
  *
  * @private
  * @param {Array|Object|string} collection The collection to iterate over.
- * @param {string[]} props The property names to sort by.
- * @param {boolean[]} orders The sort orders of `props`.
+ * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
+ * @param {boolean[]} orders The sort orders of `iteratees`.
  * @returns {Array} Returns the new sorted array.
  */
-function baseSortByOrder(collection, props, orders) {
-  var index = -1,
-      length = collection.length,
-      result = isLength(length) ? Array(length) : [];
+function baseSortByOrder(collection, iteratees, orders) {
+  var index = -1;
 
-  baseEach(collection, function(value) {
-    var length = props.length,
-        criteria = Array(length);
+  iteratees = arrayMap(iteratees, function(iteratee) { return baseCallback(iteratee); });
 
-    while (length--) {
-      criteria[length] = value == null ? undefined : value[props[length]];
-    }
-    result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
+  var result = baseMap(collection, function(value) {
+    var criteria = arrayMap(iteratees, function(iteratee) { return iteratee(value); });
+    return { 'criteria': criteria, 'index': ++index, 'value': value };
   });
 
   return baseSortBy(result, function(object, other) {
     return compareMultiple(object, other, orders);
   });
 }
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * in Safari on iOS 8.1 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
 
 /**
  * Checks if `value` is a valid array-like length.

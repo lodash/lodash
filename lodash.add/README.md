@@ -1,4 +1,4 @@
-# lodash.add v3.4.4
+# lodash.add v3.5.0
 
 The [lodash](https://lodash.com/) method `_.add` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var add = require('lodash.add');
 ```
 
-See the [documentation](https://lodash.com/docs#add) or [package source](https://github.com/lodash/lodash/blob/3.4.4-npm-packages/lodash.add) for more details.
+See the [documentation](https://lodash.com/docs#add) or [package source](https://github.com/lodash/lodash/blob/3.5.0-npm-packages/lodash.add) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash.add",
-  "version": "3.4.4",
+  "version": "3.5.0",
   "description": "The lodash method `_.add` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -13,5 +13,9 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
+  "dependencies": {
+    "lodash._basetonumber": "~4.11.0",
+    "lodash._basetostring": "~4.11.0"
+  }
 }

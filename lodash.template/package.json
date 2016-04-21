@@ -1,6 +1,6 @@
 {
   "name": "lodash.template",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "The modern build of lodash’s `_.template` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -23,6 +23,7 @@
     "lodash._isiterateecall": "^3.0.0",
     "lodash._reinterpolate": "^3.0.0",
     "lodash.escape": "^3.0.0",
+    "lodash.isnative": "^3.0.0",
     "lodash.keys": "^3.0.0",
     "lodash.restparam": "^3.0.0",
     "lodash.templatesettings": "^3.0.0"

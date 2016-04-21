@@ -1,11 +1,13 @@
 /**
- * lodash 3.4.4 (Custom Build) <https://lodash.com/>
+ * lodash 3.5.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+var baseToNumber = require('lodash._basetonumber'),
+    baseToString = require('lodash._basetostring');
 
 /**
  * Creates a function that performs a mathematical operation on two values.
@@ -24,7 +26,17 @@ function createMathOperation(operator) {
       result = value;
     }
     if (other !== undefined) {
-      result = result === undefined ? other : operator(result, other);
+      if (result === undefined) {
+        return other;
+      }
+      if (typeof value == 'string' || typeof other == 'string') {
+        value = baseToString(value);
+        other = baseToString(other);
+      } else {
+        value = baseToNumber(value);
+        other = baseToNumber(other);
+      }
+      result = operator(value, other);
     }
     return result;
   };

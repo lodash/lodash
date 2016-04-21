@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.1 <https://lodash.com/>
+ * lodash 4.11.2 <https://lodash.com/>
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -12,7 +12,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.11.1';
+  var VERSION = '4.11.2';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;

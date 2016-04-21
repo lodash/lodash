@@ -1,9 +1,9 @@
-# lodash v4.11.1
+# lodash v4.11.2
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
-[Contributing](https://github.com/lodash/lodash/blob/4.11.1/.github/CONTRIBUTING.md) |
+[Contributing](https://github.com/lodash/lodash/blob/4.11.2/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
 [Code of Conduct](https://jquery.org/conduct/) |
 [Twitter](https://twitter.com/bestiejs) |
@@ -20,11 +20,11 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.11.1/LICENSE) & supports [modern environments](#support).<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.11.2/LICENSE) & supports [modern environments](#support).<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.js) ([~22 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.1/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.11.2/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.2/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.11.2/dist/lodash.js) ([~22 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.11.2/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 ## Why Lodash?
@@ -43,4 +43,4 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
- * [lodash/fp](https://github.com/lodash/lodash/tree/4.11.1-npm/fp)
+ * [lodash/fp](https://github.com/lodash/lodash/tree/4.11.2-npm/fp)

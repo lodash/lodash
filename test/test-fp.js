@@ -1474,6 +1474,19 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.update');
+
+  (function() {
+    QUnit.test('should not convert end of `path` to an object', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.update('a.b')(_.identity)({ 'a': { 'b': 1 } });
+      assert.strictEqual(typeof actual.a.b, 'number');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('padChars methods');
 
   _.each(['padChars', 'padCharsStart', 'padCharsEnd'], function(methodName) {

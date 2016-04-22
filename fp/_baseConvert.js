@@ -235,6 +235,7 @@ function baseConvert(util, name, func, options) {
 
     var index = -1,
         length = path.length,
+        lastIndex = length - 1,
         result = clone(Object(object)),
         nested = result;
 
@@ -243,7 +244,7 @@ function baseConvert(util, name, func, options) {
           value = nested[key];
 
       if (value != null) {
-        nested[key] = clone(Object(value));
+        nested[path[index]] = clone(index == lastIndex ? value : Object(value));
       }
       nested = nested[key];
     }

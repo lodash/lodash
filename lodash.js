@@ -457,30 +457,6 @@
   }
 
   /**
-   * Creates a new array concatenating `array` with `other`.
-   *
-   * @private
-   * @param {Array} array The first array to concatenate.
-   * @param {Array} other The second array to concatenate.
-   * @returns {Array} Returns the new concatenated array.
-   */
-  function arrayConcat(array, other) {
-    var index = -1,
-        length = array.length,
-        othIndex = -1,
-        othLength = other.length,
-        result = Array(length + othLength);
-
-    while (++index < length) {
-      result[index] = array[index];
-    }
-    while (++othIndex < othLength) {
-      result[index++] = other[othIndex];
-    }
-    return result;
-  }
-
-  /**
    * A specialized version of `_.forEach` for arrays without support for
    * iteratee shorthands.
    *
@@ -4592,8 +4568,8 @@
 
       function wrapper() {
         var length = arguments.length,
-            index = length,
-            args = Array(length);
+            args = Array(length),
+            index = length;
 
         while (index--) {
           args[index] = arguments[index];
@@ -6053,16 +6029,16 @@
      */
     function concat() {
       var length = arguments.length,
-          array = castArray(arguments[0]);
+          args = Array(length ? length - 1 : 0),
+          array = arguments[0],
+          index = length;
 
-      if (length < 2) {
-        return length ? copyArray(array) : [];
+      while (index--) {
+        args[index - 1] = arguments[index];
       }
-      var args = Array(length - 1);
-      while (length--) {
-        args[length - 1] = arguments[length];
-      }
-      return arrayConcat(array, baseFlatten(args, 1));
+      return length
+        ? arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1))
+        : [];
     }
 
     /**

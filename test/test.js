@@ -10437,7 +10437,21 @@
 
       source = { 'a': ['d', 'b'] };
       actual = lodashStable.filter(objects, predicate);
+
       assert.deepEqual(actual, []);
+    });
+
+    QUnit.test('should partial match arrays with duplicate values', function(assert) {
+      assert.expect(1);
+
+      var objects = [{ 'a': [1, 2] }, { 'a': [2, 2] }],
+          source = { 'a': [2, 2] };
+
+      var actual = lodashStable.filter(objects, function(object) {
+        return _.isMatch(object, source);
+      });
+
+      assert.deepEqual(actual, [objects[1]]);
     });
 
     QUnit.test('should partial match arrays of objects', function(assert) {
@@ -13630,6 +13644,15 @@
       assert.deepEqual(actual, []);
     });
 
+    QUnit.test('should partial match arrays with duplicate values', function(assert) {
+      assert.expect(1);
+
+      var objects = [{ 'a': [1, 2] }, { 'a': [2, 2] }],
+          actual = lodashStable.filter(objects, _.matches({ 'a': [2, 2] }));
+
+      assert.deepEqual(actual, [objects[1]]);
+    });
+
     QUnit.test('should partial match arrays of objects', function(assert) {
       assert.expect(1);
 
@@ -14073,6 +14096,15 @@
 
       actual = lodashStable.filter(objects, _.matchesProperty('a', ['d', 'b']));
       assert.deepEqual(actual, []);
+    });
+
+    QUnit.test('should partial match arrays with duplicate values', function(assert) {
+      assert.expect(1);
+
+      var objects = [{ 'a': [1, 2] }, { 'a': [2, 2] }],
+          actual = lodashStable.filter(objects, _.matchesProperty('a', [2, 2]));
+
+      assert.deepEqual(actual, [objects[1]]);
     });
 
     QUnit.test('should partial match arrays of objects', function(assert) {

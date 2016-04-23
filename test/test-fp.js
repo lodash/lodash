@@ -1178,6 +1178,35 @@
       });
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('forEach methods');
+
+  _.each(['forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should provide `value` to `iteratee`', function(assert) {
+      assert.expect(2);
+
+      var args;
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(['a']);
+
+      assert.deepEqual(args, ['a']);
+
+      args = undefined;
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })({ 'a': 1 });
+
+      assert.deepEqual(args, [1]);
+    });
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('fp.getOr');

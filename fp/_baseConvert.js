@@ -189,25 +189,22 @@ function baseConvert(util, name, func, options) {
         if (!isFunction(func)) {
           return mixin(func, Object(source));
         }
-        var methods = [],
-            methodNames = [];
-
+        var pairs = [];
         each(keys(source), function(key) {
           var value = source[key];
           if (isFunction(value)) {
-            methodNames.push(key);
-            methods.push(func.prototype[key]);
+            pairs.push([key, func.prototype[key]]);
           }
         });
 
         mixin(func, Object(source));
 
-        each(methodNames, function(methodName, index) {
-          var method = methods[index];
-          if (isFunction(method)) {
-            func.prototype[methodName] = method;
+        each(pairs, function(pair) {
+          var value = pair[1];
+          if (isFunction(value)) {
+            func.prototype[pair[0]] = value;
           } else {
-            delete func.prototype[methodName];
+            delete func.prototype[pair[0]];
           }
         });
         return func;

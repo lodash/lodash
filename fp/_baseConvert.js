@@ -191,8 +191,7 @@ function baseConvert(util, name, func, options) {
         }
         var pairs = [];
         each(keys(source), function(key) {
-          var value = source[key];
-          if (isFunction(value)) {
+          if (isFunction(source[key])) {
             pairs.push([key, func.prototype[key]]);
           }
         });

@@ -901,7 +901,7 @@
 
       var iteration = 0,
           objects = [{ 'a': 1 }, { 'a': 2 }],
-          stack = { '__data__': { 'array': [[objects[0], objects[1]]], 'map': null } },
+          stack = { '__data__': { '__data__': [objects] } },
           expected = [1, 2, 'a', objects[0], objects[1], stack];
 
       args = undefined;
@@ -913,10 +913,12 @@
       })(objects[0])(objects[1]);
 
       args[5] = _.omitBy(args[5], _.isFunction);
+      args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
+
       assert.deepEqual(args, expected, 'fp.isEqualWith');
 
       args = undefined;
-      stack = { '__data__': { 'array': [], 'map': null } };
+      stack = { '__data__': { '__data__': [] } };
       expected = [2, 1, 'a', objects[1], objects[0], stack];
 
       fp.isMatchWith(function() {
@@ -924,6 +926,8 @@
       })(objects[0])(objects[1]);
 
       args[5] = _.omitBy(args[5], _.isFunction);
+      args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
+
       assert.deepEqual(args, expected, 'fp.isMatchWith');
 
       args = undefined;
@@ -935,6 +939,8 @@
       })(value)({ 'a': [2, 3] });
 
       args[5] = _.omitBy(args[5], _.isFunction);
+      args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
+
       assert.deepEqual(args, expected, 'fp.mergeWith');
 
       args = undefined;

@@ -1022,7 +1022,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.curry and fp.curryRight');
+  QUnit.module('curry methods');
 
   _.each(['curry', 'curryRight'], function(methodName) {
     var func = fp[methodName];
@@ -1036,7 +1036,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.curryN and fp.curryRightN');
+  QUnit.module('curryN methods');
 
   _.each(['curryN', 'curryRightN'], function(methodName) {
     var func = fp[methodName];
@@ -1133,7 +1133,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.flow and fp.flowRight');
+  QUnit.module('flow methods');
 
   _.each(['flow', 'flowRight'], function(methodName) {
     var func = fp[methodName],
@@ -1343,12 +1343,11 @@
     QUnit.test('should only provide `key` to `iteratee`', function(assert) {
       assert.expect(1);
 
-      var args,
-          object = { 'a': 1 };
+      var args;
 
       fp.mapKeys(function() {
         args || (args = slice.call(arguments));
-      }, object);
+      }, { 'a': 1 });
 
       assert.deepEqual(args, ['a']);
     });
@@ -1496,12 +1495,11 @@
     QUnit.test('`fp.' + methodName + '` should provide `value` and `key` to `iteratee`', function(assert) {
       assert.expect(1);
 
-      var args,
-          object = { 'a': 1 };
+      var args;
 
       func(function() {
         args || (args = slice.call(arguments));
-      })(object);
+      })({ 'a': 1 });
 
       assert.deepEqual(args, [1, 'a']);
     });
@@ -1542,7 +1540,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.partial and fp.partialRight');
+  QUnit.module('partial methods');
 
   _.each(['partial', 'partialRight'], function(methodName) {
     var func = fp[methodName],
@@ -1615,7 +1613,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.reduce and fp.reduceRight');
+  QUnit.module('reduce methods');
 
   _.each(['reduce', 'reduceRight'], function(methodName) {
     var func = fp[methodName],
@@ -1624,12 +1622,11 @@
     QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
       assert.expect(1);
 
-      var args,
-          array = [1, 2, 3];
+      var args;
 
       func(function() {
         args || (args = slice.call(arguments));
-      })(0)(array);
+      })(0)([1, 2, 3]);
 
       assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
     });

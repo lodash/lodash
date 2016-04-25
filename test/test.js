@@ -22784,14 +22784,6 @@
       assert.deepEqual(_.toArray({ 'a': 1, 'b': 2 }), [1, 2]);
     });
 
-    QUnit.test('should convert strings to arrays', function(assert) {
-      assert.expect(3);
-
-      assert.deepEqual(_.toArray(''), []);
-      assert.deepEqual(_.toArray('ab'), ['a', 'b']);
-      assert.deepEqual(_.toArray(Object('ab')), ['a', 'b']);
-    });
-
     QUnit.test('should convert iterables to arrays', function(assert) {
       assert.expect(1);
 
@@ -22804,6 +22796,28 @@
       else {
         skipAssert(assert);
       }
+    });
+
+    QUnit.test('should convert maps to arrays', function(assert) {
+      assert.expect(1);
+
+      if (Map) {
+        var map = new Map;
+        map.set('a', 1);
+        map.set('b', 2);
+        assert.deepEqual(_.toArray(map), [['a', 1], ['b', 2]]);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should convert strings to arrays', function(assert) {
+      assert.expect(3);
+
+      assert.deepEqual(_.toArray(''), []);
+      assert.deepEqual(_.toArray('ab'), ['a', 'b']);
+      assert.deepEqual(_.toArray(Object('ab')), ['a', 'b']);
     });
 
     QUnit.test('should work in a lazy sequence', function(assert) {

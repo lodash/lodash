@@ -23256,15 +23256,6 @@
       assert.deepEqual(actual, [['a', 1], ['b', 2]]);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with an object that has a `length` property', function(assert) {
-      assert.expect(1);
-
-      var object = { '0': 'a', '1': 'b', 'length': 2 },
-          actual = lodashStable.sortBy(func(object), 0);
-
-      assert.deepEqual(actual, [['0', 'a'], ['1', 'b'], ['length', 2]]);
-    });
-
     QUnit.test('`_.' + methodName + '` should ' + (isToPairs ? 'not ' : '') + 'include inherited string keyed property values', function(assert) {
       assert.expect(1);
 
@@ -23279,7 +23270,30 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with strings', function(assert) {
+    QUnit.test('`_.' + methodName + '` should convert objects with a `length` property', function(assert) {
+      assert.expect(1);
+
+      var object = { '0': 'a', '1': 'b', 'length': 2 },
+          actual = lodashStable.sortBy(func(object), 0);
+
+      assert.deepEqual(actual, [['0', 'a'], ['1', 'b'], ['length', 2]]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should convert maps', function(assert) {
+      assert.expect(1);
+
+      if (Map) {
+        var map = new Map;
+        map.set('a', 1);
+        map.set('b', 2);
+        assert.deepEqual(func(map), [['a', 1], ['b', 2]]);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should convert strings', function(assert) {
       assert.expect(2);
 
       lodashStable.each(['xo', Object('xo')], function(string) {

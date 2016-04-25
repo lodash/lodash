@@ -7582,7 +7582,7 @@
     },
     function(collection, key) {
       var isStr = typeof collection == 'string',
-          values = _.toArray(collection),
+          values = lodashStable.toArray(collection),
           length = values.length;
 
       QUnit.test('should work with ' + key + ' and  return `true` for  matched values', function(assert) {
@@ -9905,7 +9905,7 @@
       lodashStable.each([[map1, map2], [set1, set2]], function(pair, index) {
         if (pair[0]) {
           var argsList = [],
-              array = _.toArray(pair[0]);
+              array = lodashStable.toArray(pair[0]);
 
           var expected = [
             [pair[0], pair[1]],
@@ -10760,7 +10760,7 @@
       lodashStable.each([[map1, map2], [set1, set2]], function(pair, index) {
         if (pair[0]) {
           var argsList = [],
-              array = _.toArray(pair[0]),
+              array = lodashStable.toArray(pair[0]),
               object1 = { 'a': pair[0] },
               object2 = { 'a': pair[1] };
 
@@ -25308,7 +25308,7 @@
             wrapped = chain(array);
 
         assert.strictEqual(wrapped[Symbol.iterator](), wrapped);
-        assert.deepEqual(_.toArray(wrapped), array);
+        assert.deepEqual(lodashStable.toArray(wrapped), array);
       }
       else {
         skipAssert(assert, 2);
@@ -25339,12 +25339,12 @@
         var array = [1, 2],
             wrapped = chain(array);
 
-        assert.deepEqual(_.toArray(wrapped), array);
-        assert.deepEqual(_.toArray(wrapped), [], 'produces an empty array for exhausted iterator');
+        assert.deepEqual(lodashStable.toArray(wrapped), array);
+        assert.deepEqual(lodashStable.toArray(wrapped), [], 'produces an empty array for exhausted iterator');
 
         var other = wrapped.filter();
-        assert.deepEqual(_.toArray(other), array, 'reset for new chain segments');
-        assert.deepEqual(_.toArray(wrapped), [], 'iterator is still exhausted');
+        assert.deepEqual(lodashStable.toArray(other), array, 'reset for new chain segments');
+        assert.deepEqual(lodashStable.toArray(wrapped), [], 'iterator is still exhausted');
       }
       else {
         skipAssert(assert, 4);
@@ -25360,10 +25360,10 @@
             values = [],
             wrapped = chain(array);
 
-        assert.deepEqual(_.toArray(wrapped), array);
+        assert.deepEqual(lodashStable.toArray(wrapped), array);
 
         wrapped = wrapped.filter(predicate);
-        assert.deepEqual(_.toArray(wrapped), _.filter(array, isEven), 'reset for new lazy chain segments');
+        assert.deepEqual(lodashStable.toArray(wrapped), _.filter(array, isEven), 'reset for new lazy chain segments');
         assert.deepEqual(values, array, 'memoizes iterator values');
       }
       else {
@@ -25418,11 +25418,11 @@
             array2 = [6, 8],
             wrapped1 = _(array1).map(square);
 
-        assert.deepEqual(_.toArray(wrapped1), [4, 16]);
-        assert.deepEqual(_.toArray(wrapped1), []);
+        assert.deepEqual(lodashStable.toArray(wrapped1), [4, 16]);
+        assert.deepEqual(lodashStable.toArray(wrapped1), []);
 
         var wrapped2 = wrapped1.plant(array2);
-        assert.deepEqual(_.toArray(wrapped2), [36, 64]);
+        assert.deepEqual(lodashStable.toArray(wrapped2), [36, 64]);
       }
       else {
         skipAssert(assert, 3);

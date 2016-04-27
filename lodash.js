@@ -12885,7 +12885,8 @@
 
     /**
      * Creates an array of own enumerable string keyed-value pairs for `object`
-     * which can be consumed by `_.fromPairs`.
+     * which can be consumed by `_.fromPairs`. If `object` is a map, its entries
+     * are returned.
      *
      * @static
      * @memberOf _
@@ -12910,7 +12911,8 @@
 
     /**
      * Creates an array of own and inherited enumerable string keyed-value pairs
-     * for `object` which can be consumed by `_.fromPairs`.
+     * for `object` which can be consumed by `_.fromPairs`. If `object` is a map,
+     * its entries are returned.
      *
      * @static
      * @memberOf _

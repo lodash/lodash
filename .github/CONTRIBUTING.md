@@ -36,7 +36,7 @@ As such, we request that all contributors sign the jQuery Foundation
 [contributor license agreement (CLA)](https://contribute.jquery.org/CLA/).
 
 For more information about CLAs, please check out Alex Russell’s excellent post,
-[“Why Do I Need to Sign This?”](http://infrequently.org/2008/06/why-do-i-need-to-sign-this/).
+[“Why Do I Need to Sign This?”](https://infrequently.org/2008/06/why-do-i-need-to-sign-this/).
 
 ## Coding Guidelines
 

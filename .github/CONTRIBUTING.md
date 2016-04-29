@@ -48,7 +48,7 @@ established in the code.
 
 - **Naming**:<br>
   Keep variable & method names concise & descriptive.<br>
-  Variable names `index`, `collection`, & `callback` are preferable to
+  Variable names `index`, `array`, & `iteratee` are preferable to
   `i`, `arr`, & `fn`.
 
 - **Quotes**:<br>

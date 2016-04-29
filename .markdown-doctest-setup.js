@@ -1,53 +1,44 @@
-var _ = require(__dirname);
+var _ = require('./lodash.js');
 
-function jQuery () {
+function mockQuery() {
   return {
-    on: function (ev, cb) {
-      cb()
+    'on': function(eventName, callback) {
+      callback();
     }
-  }
+  };
 }
 
-jQuery.each = function (items, f) {
-  items.forEach(f)
-}
+mockQuery.each = _.each;
 
 module.exports = {
-  globals: {
+  'babel': false,
+  'globals': {
     '_': _,
 
-    asyncSave: _.noop,
-    addContactToList: _.noop,
-    calculateLayout: _.noop,
-    createApplication: _.noop,
-    updatePosition: _.noop,
-    sendMail: _.noop,
-    renewToken: _.noop,
-    batchLog: _.noop,
+    // Example mocks.
+    'asyncSave': _.noop,
+    'addContactToList': _.noop,
+    'batchLog': _.noop,
+    'calculateLayout': _.noop,
+    'createApplication': _.noop,
+    'data': { 'user': 'mock'},
+    'mainText': '',
+    'renewToken': _.noop,
+    'sendMail': _.noop,
+    'updatePosition': _.noop,
 
-    setImmediate: setImmediate,
-    Buffer: Buffer,
-    EventSource: function () {},
+    // DOM mocks.
+    'document': { 'body': { 'childNodes': [], 'nodeName': 'BODY' } },
+    'element': {},
+    'EventSource': _.noop,
+    'jQuery': mockQuery,
+    'window': {},
 
-    fs: {writeFileSync: _.noop},
-    path: {join: _.noop},
-
-    cwd: __dirname,
-    mainText: '',
-    data: {user: 'mock'},
-
-    document: {
-      body: {
-        childNodes: [],
-        nodeName: 'body'
-      }
-    },
-
-    jQuery: jQuery,
-
-    element: {},
-    window: {}
-  },
-
-  babel: false
+    // Node.js mocks.
+    'Buffer': Buffer,
+    'fs': { 'writeFileSync': _.noop },
+    'path': require('path'),
+    'process': process,
+    'setImmediate': setImmediate
+  }
 }

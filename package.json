@@ -10,7 +10,7 @@
     "build:fp-modules": "node lib/fp/build-modules.js",
     "build:main": "node lib/main/build-dist.js",
     "build:main-modules": "node lib/main/build-modules.js",
-    "doc": "node lib/main/build-doc github && npm run test:docs",
+    "doc": "node lib/main/build-doc github && npm run test:doc",
     "doc:fp": "node lib/fp/build-doc",
     "doc:site": "node lib/main/build-doc site",
     "pretest": "npm run build",
@@ -20,9 +20,9 @@
     "style:perf": "jscs perf/*.js perf/**/*.js",
     "style:test": "jscs test/*.js test/**/*.js",
     "test": "npm run test:main && npm run test:fp",
+    "test:doc": "markdown-doctest",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test",
-    "test:docs": "markdown-doctest",
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {

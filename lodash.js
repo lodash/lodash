@@ -13941,7 +13941,7 @@
      *
      * // Use the `source` property to inline compiled templates for meaningful
      * // line numbers in error messages and stack traces.
-     * fs.writeFileSync(path.join(cwd, 'jst.js'), '\
+     * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
      *   var JST = {\
      *     "main": ' + _.template(mainText).source + '\
      *   };\

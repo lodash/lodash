@@ -13908,12 +13908,6 @@
      * compiled({ 'user': 'pebbles' });
      * // => 'hello pebbles!'
      *
-     * // Use custom template delimiters.
-     * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-     * var compiled = _.template('hello {{ user }}!');
-     * compiled({ 'user': 'mustache' });
-     * // => 'hello mustache!'
-     *
      * // Use backslashes to treat delimiters as plain text.
      * var compiled = _.template('<%= "\\<%- value %\\>" %>');
      * compiled({ 'value': 'ignored' });
@@ -13938,6 +13932,12 @@
      * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
      * //   return __p;
      * // }
+     *
+     * // Use custom template delimiters.
+     * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+     * var compiled = _.template('hello {{ user }}!');
+     * compiled({ 'user': 'mustache' });
+     * // => 'hello mustache!'
      *
      * // Use the `source` property to inline compiled templates for meaningful
      * // line numbers in error messages and stack traces.

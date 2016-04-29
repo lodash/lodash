@@ -34,7 +34,7 @@ module.exports = {
 
     cwd: __dirname,
     mainText: '',
-    data: {user: 'Quinoa'},
+    data: {user: 'mock'},
 
     document: {
       body: {

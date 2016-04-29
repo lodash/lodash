@@ -1,4 +1,4 @@
-function noop () {}
+var _ = require(__dirname);
 
 function jQuery () {
   return {
@@ -14,23 +14,23 @@ jQuery.each = function (items, f) {
 
 module.exports = {
   globals: {
-    '_': require(__dirname),
+    '_': _,
 
-    asyncSave: noop,
-    addContactToList: noop,
-    calculateLayout: noop,
-    createApplication: noop,
-    updatePosition: noop,
-    sendMail: noop,
-    renewToken: noop,
-    batchLog: noop,
+    asyncSave: _.noop,
+    addContactToList: _.noop,
+    calculateLayout: _.noop,
+    createApplication: _.noop,
+    updatePosition: _.noop,
+    sendMail: _.noop,
+    renewToken: _.noop,
+    batchLog: _.noop,
 
     setImmediate: setImmediate,
     Buffer: Buffer,
     EventSource: function () {},
 
-    fs: {writeFileSync: noop},
-    path: {join: noop},
+    fs: {writeFileSync: _.noop},
+    path: {join: _.noop},
 
     cwd: __dirname,
     mainText: '',

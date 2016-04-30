@@ -14,10 +14,8 @@
 
   /** Method and object shortcuts. */
   var phantom = root.phantom,
-      amd = root.define && define.amd,
       argv = root.process && process.argv,
       document = !phantom && root.document,
-      noop = function() {},
       slice = arrayProto.slice,
       WeakMap = root.WeakMap;
 
@@ -26,30 +24,17 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /** Use a single "load" function. */
-  var load = (!amd && typeof require == 'function')
-    ? require
-    : noop;
+  /** Load QUnit and extras. */
+  var QUnit = root.QUnit || require('qunit-extras');
 
-  /** The unit testing framework. */
-  var QUnit = root.QUnit || (root.QUnit = (
-    QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
-    QUnit = QUnit.QUnit || QUnit
-  ));
-
-  /** Load stable Lodash and QUnit Extras. */
-  var _ = root._ || (root._ = (
-    _ = load('../lodash.js'),
+  /** Load stable Lodash. */
+  var _ = root._ || (
+    _ = require('../lodash.js'),
     _.runInContext(root)
-  ));
-
-  var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
-  if (QUnitExtras) {
-    QUnitExtras.runInContext(root);
-  }
+  );
 
   var convert = (function() {
-    var baseConvert = root.fp || load('../fp/_baseConvert.js');
+    var baseConvert = root.fp || require('../fp/_baseConvert.js');
     if (!root.fp) {
       return function(name, func, options) {
         return baseConvert(_, name, func, options);
@@ -79,7 +64,7 @@
     ? (fp = _.noConflict(), _ = root._, fp)
     : convert(_.runInContext());
 
-  var mapping = root.mapping || load('../fp/_mapping.js');
+  var mapping = root.mapping || require('../fp/_mapping.js');
 
   /*--------------------------------------------------------------------------*/
 

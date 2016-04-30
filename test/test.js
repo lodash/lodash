@@ -300,10 +300,10 @@
     ? require
     : noop;
 
-  /** The unit testing framework. */
-  var QUnit = root.QUnit || (root.QUnit = load('../node_modules/qunitjs/qunit/qunit.js'));
+  /** Load QUnit and extras. */
+  var QUnit = root.QUnit || load('qunit-extras');
 
-  /** Load stable Lodash and QUnit Extras. */
+  /** Load stable Lodash. */
   var lodashStable = root.lodashStable;
   if (!lodashStable) {
     try {
@@ -315,11 +315,6 @@
     lodashStable = lodashStable.noConflict();
   }
   lodashStable = lodashStable.runInContext(root);
-
-  var QUnitExtras = load('../node_modules/qunit-extras/qunit-extras.js');
-  if (QUnitExtras) {
-    QUnitExtras.runInContext(root);
-  }
 
   /** The `lodash` function to test. */
   var _ = root._ || (root._ = (

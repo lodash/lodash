@@ -41,7 +41,7 @@
     "jquery": "^2.2.3",
     "jscs": "^3.0.1",
     "lodash": "4.10.0",
-    "markdown-doctest": "^0.3.4",
+    "markdown-doctest": "^0.4.0",
     "platform": "^1.3.1",
     "qunit-extras": "^2.0.0",
     "qunitjs": "~1.23.1",

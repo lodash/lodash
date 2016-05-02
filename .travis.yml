@@ -55,18 +55,24 @@ before_install:
           node ./test/remove.js "$PTRN" ./lodash.js
         done
       fi
-  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
-  - "node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
+  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
+  - "mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
+  - "cd ../../ && npm i && cd ../../"
 script:
-  - "([ $SAUCE_LABS == true ] || [ $ISTANBUL == true ]) && rm -rf ./node_modules/lodash"
-  - "[ $ISTANBUL == false ]   || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./node_modules/lodash && node ./node_modules/lodash-cli/bin/lodash -d -o ./node_modules/lodash/lodash.js)"
+
+# Detect code coverage.
+  - "[ $SAUCE_LABS == true ]  || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js)"
   - "[ $ISTANBUL == false ]   || istanbul cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/coverage.json | codecov) || true"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.js"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../dist/lodash.min.js"
-  - "[ $SAUCE_LABS == false ] || (node ./node_modules/lodash-cli/bin/lodash -d -o ./node_modules/lodash/index.js && cd ./node_modules/lodash/ && ln -s ./index.js ./lodash.js && cd ../../)"
+  
+# Test in Node.js and PhantomJS.
+  - "[ $ISTANBUL == true ]    || node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
+  - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || cd ./test"
+  - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || $BIN $OPTION ./test.js ../lodash.js"
+  - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../dist/lodash.min.js"
+
+# Test in Sauce Labs.
   - "[ $SAUCE_LABS == false ] || node ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js"
   - "[ $SAUCE_LABS == false ] || npm run build"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\"     runner=\"test/index.html?build=../dist/lodash.js&noglobals=true\"     tags=\"development\""

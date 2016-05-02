@@ -1002,7 +1002,7 @@
       'MapCache': MapCache
     };
 
-    var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
+    var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || noop];
 
     var pairs = lodashStable.map(keys, function(key, index) {
       var lastIndex = keys.length - 1;
@@ -2693,7 +2693,7 @@
       assert.expect(164);
 
       var Stack,
-          keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
+          keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || noop];
 
       var pairs = lodashStable.map(keys, function(key, index) {
         var lastIndex = keys.length - 1;

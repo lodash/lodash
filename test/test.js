@@ -685,15 +685,15 @@
 
     if (coverage || (isModularize && !(amd || isNpm))) {
       lodashStable.each([
-        '_baseEach',
-        '_Hash',
-        '_isIndex',
-        '_isIterateeCall',
-        '_ListCache',
-        '_MapCache',
-        '_Stack'
+        'baseEach',
+        'Hash',
+        'isIndex',
+        'isIterateeCall',
+        'ListCache',
+        'MapCache',
+        'Stack'
       ], function(funcName) {
-        var func = require(path.join(basePath, funcName));
+        var func = require(path.join(basePath, '_' + funcName));
         _['_' + funcName] = func[funcName] || func['default'] || func;
       });
     }

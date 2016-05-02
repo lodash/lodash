@@ -61,13 +61,13 @@ before_install:
 script:
 
 # Detect code coverage.
-  - "[ $SAUCE_LABS == true ]  || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js)"
   - "[ $ISTANBUL == false ]   || istanbul cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/coverage.json | codecov) || true"
   
 # Test in Node.js and PhantomJS.
   - "[ $ISTANBUL == true ]    || node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
+  - "[ $ISTANBUL == true ]    || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js)"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || cd ./test"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || $BIN $OPTION ./test.js ../lodash.js"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../dist/lodash.min.js"

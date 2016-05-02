@@ -683,7 +683,7 @@
     var path = require('path'),
         basePath = path.dirname(filePath);
 
-    if (isModularize && !(amd || isNpm)) {
+    if (coverage || (isModularize && !(amd || isNpm))) {
       lodashStable.each([
         '_baseEach',
         '_Hash',
@@ -15969,7 +15969,7 @@
     QUnit.test('should work with a `root` of `this`', function(assert) {
       assert.expect(2);
 
-      if (!isModularize && !coverage && (!document && realm.object)) {
+      if (!coverage && !document && !isModularize && realm.object) {
         var fs = require('fs'),
             vm = require('vm'),
             expected = {},

@@ -686,8 +686,12 @@
     if (isModularize && !(amd || isNpm)) {
       lodashStable.each([
         '_baseEach',
+        '_Hash',
         '_isIndex',
-        '_isIterateeCall'
+        '_isIterateeCall',
+        '_ListCache',
+        '_MapCache',
+        '_Stack'
       ], function(relPath) {
         var func = require(path.join(basePath, relPath)),
             funcName = path.basename(relPath);
@@ -991,6 +995,55 @@
       }
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('map caches');
+
+  lodashStable.each(['_Hash', '_ListCache', '_MapCache', '_Stack'], function(ctorName) {
+    var Ctor = _[ctorName];
+
+    QUnit.test('`' + ctorName + '` should implement a `Map` interface', function(assert) {
+      assert.expect(82);
+
+      var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
+
+      var pairs = lodashStable.map(keys, function(key, index) {
+        var lastIndex = keys.length - 1;
+        return [key, keys[lastIndex - index]];
+      });
+
+      var cache = Ctor ? new Ctor(pairs) : undefined;
+
+      lodashStable.each(keys, function(key, index) {
+        if (cache) {
+          var value = pairs[index][1];
+
+          assert.deepEqual(cache.get(key), value);
+          assert.strictEqual(cache.has(key), true);
+          assert.strictEqual(cache['delete'](key), true);
+          assert.strictEqual(cache.has(key), false);
+          assert.strictEqual(cache.get(key), undefined);
+          assert.strictEqual(cache['delete'](key), false);
+          assert.strictEqual(cache.set(key, value), cache);
+          assert.strictEqual(cache.has(key), true);
+        }
+        else {
+          skipAssert(assert, 8);
+        }
+      });
+
+      if (cache) {
+        assert.strictEqual(cache.clear(), undefined);
+        assert.ok(lodashStable.every(keys, function(key) {
+          return !cache.has(key);
+        }));
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -14575,51 +14628,6 @@
       assert.strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
-    });
-
-    QUnit.test('should implement a `Map` interface on the cache object', function(assert) {
-      assert.expect(164);
-
-      var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
-
-      var pairs = lodashStable.map(keys, function(key, index) {
-        var lastIndex = keys.length - 1;
-        return [key, keys[lastIndex - index]];
-      });
-
-      lodashStable.times(2, function(index) {
-        var memoize = (index ? (lodashBizarro || {}) : _).memoize,
-            Cache = memoize ? memoize.Cache : undefined,
-            cache = Cache ? new Cache(pairs) : undefined;
-
-        lodashStable.each(keys, function(key, index) {
-          if (cache) {
-            var value = pairs[index][1];
-
-            assert.deepEqual(cache.get(key), value);
-            assert.strictEqual(cache.has(key), true);
-            assert.strictEqual(cache['delete'](key), true);
-            assert.strictEqual(cache.has(key), false);
-            assert.strictEqual(cache.get(key), undefined);
-            assert.strictEqual(cache['delete'](key), false);
-            assert.strictEqual(cache.set(key, value), cache);
-            assert.strictEqual(cache.has(key), true);
-          }
-          else {
-            skipAssert(assert, 8);
-          }
-        });
-
-        if (cache) {
-          assert.strictEqual(cache.clear(), undefined);
-          assert.ok(lodashStable.every(keys, function(key) {
-            return !cache.has(key);
-          }));
-        }
-        else {
-          skipAssert(assert, 2);
-        }
-      });
     });
   }());
 

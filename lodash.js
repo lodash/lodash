@@ -5619,7 +5619,7 @@
      * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
      */
     function isFlattenable(value) {
-      return isArrayLikeObject(value) && (isArray(value) || isArguments(value));
+      return isArray(value) || isArguments(value);
     }
 
     /**

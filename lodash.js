@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.2 <https://lodash.com/>
+ * lodash <https://lodash.com/>
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>

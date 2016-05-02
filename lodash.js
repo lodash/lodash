@@ -1147,6 +1147,23 @@
   }
 
   /**
+   * Converts `set` to its value-value pairs.
+   *
+   * @private
+   * @param {Object} set The set to convert.
+   * @returns {Array} Returns the value-value pairs.
+   */
+  function setToPairs(set) {
+    var index = -1,
+        result = Array(set.size);
+
+    set.forEach(function(value) {
+      result[++index] = [value, value];
+    });
+    return result;
+  }
+
+  /**
    * Gets the number of symbols in `string`.
    *
    * @private
@@ -4908,7 +4925,13 @@
     function createToPairs(keysFunc) {
       return function(object) {
         var tag = getTag(object);
-        return tag == mapTag ? mapToArray(object) : baseToPairs(object, keysFunc(object));
+        if (tag == mapTag) {
+          return mapToArray(object);
+        }
+        if (tag == setTag) {
+          return setToPairs(object);
+        }
+        return baseToPairs(object, keysFunc(object));
       };
     }
 
@@ -12906,8 +12929,8 @@
 
     /**
      * Creates an array of own enumerable string keyed-value pairs for `object`
-     * which can be consumed by `_.fromPairs`. If `object` is a map, its entries
-     * are returned.
+     * which can be consumed by `_.fromPairs`. If `object` is a map or set, its
+     * entries are returned.
      *
      * @static
      * @memberOf _
@@ -12932,8 +12955,8 @@
 
     /**
      * Creates an array of own and inherited enumerable string keyed-value pairs
-     * for `object` which can be consumed by `_.fromPairs`. If `object` is a map,
-     * its entries are returned.
+     * for `object` which can be consumed by `_.fromPairs`. If `object` is a map
+     * or set, its entries are returned.
      *
      * @static
      * @memberOf _

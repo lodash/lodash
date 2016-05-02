@@ -692,10 +692,8 @@
         '_ListCache',
         '_MapCache',
         '_Stack'
-      ], function(relPath) {
-        var func = require(path.join(basePath, relPath)),
-            funcName = path.basename(relPath);
-
+      ], function(funcName) {
+        var func = require(path.join(basePath, funcName));
         _['_' + funcName] = func[funcName] || func['default'] || func;
       });
     }

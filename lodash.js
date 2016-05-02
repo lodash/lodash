@@ -1689,6 +1689,7 @@
     /**
      * Removes all key-value entries from the hash.
      *
+     * @private
      * @name clear
      * @memberOf Hash
      */
@@ -1699,6 +1700,7 @@
     /**
      * Removes `key` and its value from the hash.
      *
+     * @private
      * @name delete
      * @memberOf Hash
      * @param {Object} hash The hash to modify.
@@ -1712,6 +1714,7 @@
     /**
      * Gets the hash value for `key`.
      *
+     * @private
      * @name get
      * @memberOf Hash
      * @param {string} key The key of the value to get.
@@ -1729,6 +1732,7 @@
     /**
      * Checks if a hash value for `key` exists.
      *
+     * @private
      * @name has
      * @memberOf Hash
      * @param {string} key The key of the entry to check.
@@ -1742,6 +1746,7 @@
     /**
      * Sets the hash `key` to `value`.
      *
+     * @private
      * @name set
      * @memberOf Hash
      * @param {string} key The key of the value to set.
@@ -1784,6 +1789,7 @@
     /**
      * Removes all key-value entries from the list cache.
      *
+     * @private
      * @name clear
      * @memberOf ListCache
      */
@@ -1794,6 +1800,7 @@
     /**
      * Removes `key` and its value from the list cache.
      *
+     * @private
      * @name delete
      * @memberOf ListCache
      * @param {string} key The key of the value to remove.
@@ -1818,6 +1825,7 @@
     /**
      * Gets the list cache value for `key`.
      *
+     * @private
      * @name get
      * @memberOf ListCache
      * @param {string} key The key of the value to get.
@@ -1833,6 +1841,7 @@
     /**
      * Checks if a list cache value for `key` exists.
      *
+     * @private
      * @name has
      * @memberOf ListCache
      * @param {string} key The key of the entry to check.
@@ -1845,6 +1854,7 @@
     /**
      * Sets the list cache `key` to `value`.
      *
+     * @private
      * @name set
      * @memberOf ListCache
      * @param {string} key The key of the value to set.
@@ -1893,6 +1903,7 @@
     /**
      * Removes all key-value entries from the map.
      *
+     * @private
      * @name clear
      * @memberOf MapCache
      */
@@ -1920,6 +1931,7 @@
     /**
      * Gets the map value for `key`.
      *
+     * @private
      * @name get
      * @memberOf MapCache
      * @param {string} key The key of the value to get.
@@ -1932,6 +1944,7 @@
     /**
      * Checks if a map value for `key` exists.
      *
+     * @private
      * @name has
      * @memberOf MapCache
      * @param {string} key The key of the entry to check.
@@ -1944,6 +1957,7 @@
     /**
      * Sets the map `key` to `value`.
      *
+     * @private
      * @name set
      * @memberOf MapCache
      * @param {string} key The key of the value to set.
@@ -1985,6 +1999,7 @@
     /**
      * Adds `value` to the array cache.
      *
+     * @private
      * @name add
      * @memberOf SetCache
      * @alias push
@@ -1999,6 +2014,7 @@
     /**
      * Checks if `value` is in the array cache.
      *
+     * @private
      * @name has
      * @memberOf SetCache
      * @param {*} value The value to search for.
@@ -2028,6 +2044,7 @@
     /**
      * Removes all key-value entries from the stack.
      *
+     * @private
      * @name clear
      * @memberOf Stack
      */
@@ -2038,6 +2055,7 @@
     /**
      * Removes `key` and its value from the stack.
      *
+     * @private
      * @name delete
      * @memberOf Stack
      * @param {string} key The key of the value to remove.
@@ -2050,6 +2068,7 @@
     /**
      * Gets the stack value for `key`.
      *
+     * @private
      * @name get
      * @memberOf Stack
      * @param {string} key The key of the value to get.
@@ -2062,6 +2081,7 @@
     /**
      * Checks if a stack value for `key` exists.
      *
+     * @private
      * @name has
      * @memberOf Stack
      * @param {string} key The key of the entry to check.
@@ -2074,6 +2094,7 @@
     /**
      * Sets the stack `key` to `value`.
      *
+     * @private
      * @name set
      * @memberOf Stack
      * @param {string} key The key of the value to set.

@@ -683,15 +683,11 @@
     var path = require('path'),
         basePath = path.dirname(filePath);
 
-    if (coverage || (isModularize && !(amd || isNpm))) {
+    if (isModularize && !(amd || isNpm)) {
       lodashStable.each([
         'baseEach',
-        'Hash',
         'isIndex',
-        'isIterateeCall',
-        'ListCache',
-        'MapCache',
-        'Stack'
+        'isIterateeCall'
       ], function(funcName) {
         var func = require(path.join(basePath, '_' + funcName));
         _['_' + funcName] = func[funcName] || func['default'] || func;
@@ -998,23 +994,35 @@
 
   QUnit.module('map caches');
 
-  lodashStable.each(['_Hash', '_ListCache', '_MapCache', '_Stack'], function(ctorName) {
-    var Ctor = _[ctorName];
+  (function() {
+    var MapCache = _.memoize.Cache;
 
-    QUnit.test('`' + ctorName + '` should implement a `Map` interface', function(assert) {
-      assert.expect(82);
+    var caches = {
+      'Hash': new MapCache().__data__.hash.constructor,
+      'MapCache': MapCache
+    };
 
-      var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
+    var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || {}];
 
-      var pairs = lodashStable.map(keys, function(key, index) {
-        var lastIndex = keys.length - 1;
-        return [key, keys[lastIndex - index]];
-      });
+    var pairs = lodashStable.map(keys, function(key, index) {
+      var lastIndex = keys.length - 1;
+      return [key, keys[lastIndex - index]];
+    });
 
-      var cache = Ctor ? new Ctor(pairs) : undefined;
+    _.isMatchWith({ 'a': 1 }, { 'a': 1 }, function() {
+      var stack = lodashStable.last(arguments);
+      caches.ListCache = stack.__data__.constructor;
+      caches.Stack = stack.constructor;
+    });
 
-      lodashStable.each(keys, function(key, index) {
-        if (cache) {
+    lodashStable.each(['Hash', 'ListCache', 'MapCache', 'Stack'], function(ctorName) {
+      QUnit.test('`' + ctorName + '` should implement a `Map` interface', function(assert) {
+        assert.expect(82);
+
+        var Ctor = caches[ctorName],
+            cache = new Ctor(pairs);
+
+        lodashStable.each(keys, function(key, index) {
           var value = pairs[index][1];
 
           assert.deepEqual(cache.get(key), value);
@@ -1025,23 +1033,15 @@
           assert.strictEqual(cache['delete'](key), false);
           assert.strictEqual(cache.set(key, value), cache);
           assert.strictEqual(cache.has(key), true);
-        }
-        else {
-          skipAssert(assert, 8);
-        }
-      });
+        });
 
-      if (cache) {
         assert.strictEqual(cache.clear(), undefined);
         assert.ok(lodashStable.every(keys, function(key) {
           return !cache.has(key);
         }));
-      }
-      else {
-        skipAssert(assert, 2);
-      }
+      });
     });
-  });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

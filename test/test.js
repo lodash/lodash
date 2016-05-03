@@ -2708,9 +2708,7 @@
       var actual;
 
       _.cloneDeepWith({ 'a': 1 }, function() {
-        if (arguments.length > 1) {
-          actual || (actual = _.last(arguments));
-        }
+        actual = _.last(arguments);
       });
 
       assert.ok(actual instanceof mapCaches.Stack);
@@ -10757,6 +10755,18 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should provide `stack` to `customizer`', function(assert) {
+      assert.expect(1);
+
+      var actual;
+
+      _.isMatchWith({ 'a': 1 }, { 'a': 1 }, function() {
+        actual = _.last(arguments);
+      });
+
+      assert.ok(actual instanceof mapCaches.Stack);
+    });
+
     QUnit.test('should ensure `customizer` is a function', function(assert) {
       assert.expect(1);
 
@@ -15021,6 +15031,18 @@
       });
 
       assert.deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
+    });
+
+    QUnit.test('should provide `stack` to `customizer`', function(assert) {
+      assert.expect(1);
+
+      var actual;
+
+      _.mergeWith({}, { 'a': { 'b': 1 } }, function() {
+        actual = _.last(arguments);
+      });
+
+      assert.ok(actual instanceof mapCaches.Stack);
     });
 
     QUnit.test('should overwrite primitives with source object clones', function(assert) {

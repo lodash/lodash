@@ -23307,6 +23307,20 @@
       }
     });
 
+    QUnit.test('`_.' + methodName + '` should convert sets', function(assert) {
+      assert.expect(1);
+
+      if (Set) {
+        var set = new Set;
+        set.add(1);
+        set.add(2);
+        assert.deepEqual(func(set), [[1, 1], [2, 2]]);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('`_.' + methodName + '` should convert strings', function(assert) {
       assert.expect(2);
 

@@ -323,6 +323,21 @@
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
+  /** Used to test pseudo private map caches. */
+  var mapCaches = (function() {
+    var MapCache = _.memoize.Cache;
+    var result = {
+      'Hash': new MapCache().__data__.hash.constructor,
+      'MapCache': MapCache
+    };
+    _.isMatchWith({ 'a': 1 }, { 'a': 1 }, function() {
+      var stack = lodashStable.last(arguments);
+      result.ListCache = stack.__data__.constructor;
+      result.Stack = stack.constructor;
+    });
+    return result;
+  }());
+
   /** Used to detect instrumented istanbul code coverage runs. */
   var coverage = root.__coverage__ || root[lodashStable.findKey(root, function(value, key) {
     return /^(?:\$\$cov_\d+\$\$)$/.test(key);
@@ -995,13 +1010,6 @@
   QUnit.module('map caches');
 
   (function() {
-    var MapCache = _.memoize.Cache;
-
-    var caches = {
-      'Hash': new MapCache().__data__.hash.constructor,
-      'MapCache': MapCache
-    };
-
     var keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || noop];
 
     var pairs = lodashStable.map(keys, function(key, index) {
@@ -1009,18 +1017,23 @@
       return [key, keys[lastIndex - index]];
     });
 
-    _.isMatchWith({ 'a': 1 }, { 'a': 1 }, function() {
-      var stack = lodashStable.last(arguments);
-      caches.ListCache = stack.__data__.constructor;
-      caches.Stack = stack.constructor;
+    var largeStack = new mapCaches.Stack(pairs);
+
+    lodashStable.times(LARGE_ARRAY_SIZE - pairs.length + 1, function() {
+      largeStack.set({}, {});
     });
 
-    lodashStable.each(['Hash', 'ListCache', 'MapCache', 'Stack'], function(ctorName) {
-      QUnit.test('`' + ctorName + '` should implement a `Map` interface', function(assert) {
-        assert.expect(82);
+    var caches = {
+      'hashes': new mapCaches.Hash(pairs),
+      'list caches': new mapCaches.ListCache(pairs),
+      'map caches': new mapCaches.MapCache(pairs),
+      'stack caches': new mapCaches.Stack(pairs),
+      'large stacks': largeStack
+    };
 
-        var Ctor = caches[ctorName],
-            cache = new Ctor(pairs);
+    lodashStable.forOwn(caches, function(cache, key) {
+      QUnit.test('should implement a `Map` interface for ' + key, function(assert) {
+        assert.expect(82);
 
         lodashStable.each(keys, function(key, index) {
           var value = pairs[index][1];
@@ -2690,47 +2703,17 @@
     });
 
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
-      assert.expect(164);
+      assert.expect(1);
 
-      var Stack,
-          keys = [null, undefined, false, true, 1, -Infinity, NaN, {}, 'a', symbol || noop];
-
-      var pairs = lodashStable.map(keys, function(key, index) {
-        var lastIndex = keys.length - 1;
-        return [key, keys[lastIndex - index]];
-      });
+      var actual;
 
       _.cloneDeepWith({ 'a': 1 }, function() {
         if (arguments.length > 1) {
-          Stack || (Stack = _.last(arguments).constructor);
+          actual || (actual = _.last(arguments));
         }
       });
 
-      var stacks = [new Stack(pairs), new Stack(pairs)];
-
-      lodashStable.times(LARGE_ARRAY_SIZE - pairs.length + 1, function() {
-        stacks[1].set({}, {});
-      });
-
-      lodashStable.each(stacks, function(stack) {
-        lodashStable.each(keys, function(key, index) {
-          var value = pairs[index][1];
-
-          assert.deepEqual(stack.get(key), value);
-          assert.strictEqual(stack.has(key), true);
-          assert.strictEqual(stack['delete'](key), true);
-          assert.strictEqual(stack.has(key), false);
-          assert.strictEqual(stack.get(key), undefined);
-          assert.strictEqual(stack['delete'](key), false);
-          assert.strictEqual(stack.set(key, value), stack);
-          assert.strictEqual(stack.has(key), true);
-        });
-
-        assert.strictEqual(stack.clear(), undefined);
-        assert.ok(lodashStable.every(keys, function(key) {
-          return !stack.has(key);
-        }));
-      });
+      assert.ok(actual instanceof mapCaches.Stack);
     });
 
     lodashStable.each(['clone', 'cloneDeep'], function(methodName) {

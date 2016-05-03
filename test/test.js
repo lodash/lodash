@@ -2711,7 +2711,10 @@
         actual = _.last(arguments);
       });
 
-      assert.ok(actual instanceof mapCaches.Stack);
+      assert.ok(isNpm
+        ? actual.constructor.name == 'Stack'
+        : actual instanceof mapCaches.Stack
+      );
     });
 
     lodashStable.each(['clone', 'cloneDeep'], function(methodName) {
@@ -10764,7 +10767,10 @@
         actual = _.last(arguments);
       });
 
-      assert.ok(actual instanceof mapCaches.Stack);
+      assert.ok(isNpm
+        ? actual.constructor.name == 'Stack'
+        : actual instanceof mapCaches.Stack
+      );
     });
 
     QUnit.test('should ensure `customizer` is a function', function(assert) {
@@ -15036,7 +15042,10 @@
         actual = _.last(arguments);
       });
 
-      assert.ok(actual instanceof mapCaches.Stack);
+      assert.ok(isNpm
+        ? actual.constructor.name == 'Stack'
+        : actual instanceof mapCaches.Stack
+      );
     });
 
     QUnit.test('should overwrite primitives with source object clones', function(assert) {

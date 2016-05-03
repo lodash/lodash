@@ -2631,7 +2631,7 @@
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
-      'array-like-objects': { '0': 'a', '1': '', 'length': 3 },
+      'array-like objects': { '0': 'a', '1': '', 'length': 3 },
       'booleans': false,
       'boolean objects': Object(false),
       'date objects': new Date,

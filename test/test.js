@@ -4494,7 +4494,7 @@
       assert.expect(1);
 
       var object = { 'a': { 'b': 2 }, 'd': 4 },
-          source = { 'a': { 'b': 1, 'c': 3 }, 'e': 5 },
+          source = { 'a': { 'b': 3, 'c': 3 }, 'e': 5 },
           expected = { 'a': { 'b': 2, 'c': 3 }, 'd': 4, 'e': 5 };
 
       assert.deepEqual(_.defaultsDeep(object, source), expected);
@@ -10416,9 +10416,9 @@
       assert.expect(1);
 
       function Foo() {}
-      Foo.a = { 'b': 1, 'c': 2 };
+      Foo.a = { 'b': 2, 'c': 3 };
 
-      assert.strictEqual(_.isMatch(Foo, { 'a': { 'b': 1 } }), true);
+      assert.strictEqual(_.isMatch(Foo, { 'a': { 'b': 2 } }), true);
     });
 
     QUnit.test('should work with a function for `source`', function(assert) {
@@ -10443,8 +10443,8 @@
 
       function Foo(object) { lodashStable.assign(this, object); }
 
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) });
-      assert.strictEqual(_.isMatch(object, { 'a': { 'b': 1 } }), true);
+      var object = new Foo({ 'a': new Foo({ 'b': 2, 'c': 3 }) });
+      assert.strictEqual(_.isMatch(object, { 'a': { 'b': 2 } }), true);
     });
 
     QUnit.test('should partial match arrays', function(assert) {
@@ -10580,7 +10580,7 @@
 
       assert.deepEqual(actual, expected);
 
-      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 2 } }, { 'a': { 'b': 2, 'c': 3 } }, { 'a': { 'b': 2, 'c': undefined } }];
       source = { 'a': { 'c': undefined } };
       actual = lodashStable.map(objects, predicate);
 
@@ -12322,7 +12322,7 @@
 
       if (!isModularize) {
         _.iteratee = getPropB;
-        assert.deepEqual(_.mapKeys({ 'a': { 'b': 1 } }), { '1':  { 'b': 1 } });
+        assert.deepEqual(_.mapKeys({ 'a': { 'b': 2 } }), { '2':  { 'b': 2 } });
         _.iteratee = iteratee;
       }
       else {
@@ -12335,7 +12335,7 @@
 
       if (!isModularize) {
         _.iteratee = getPropB;
-        assert.deepEqual(_.mapValues({ 'a': { 'b': 1 } }), { 'a': 1 });
+        assert.deepEqual(_.mapValues({ 'a': { 'b': 2 } }), { 'a': 2 });
         _.iteratee = iteratee;
       }
       else {
@@ -13471,8 +13471,8 @@
     QUnit.test('should work with `_.property` shorthands', function(assert) {
       assert.expect(1);
 
-      var actual = _.mapValues({ 'a': { 'b': 1 } }, 'b');
-      assert.deepEqual(actual, { 'a': 1 });
+      var actual = _.mapValues({ 'a': { 'b': 2 } }, 'b');
+      assert.deepEqual(actual, { 'a': 2 });
     });
 
     QUnit.test('should use `_.identity` when `iteratee` is nullish', function(assert) {
@@ -13637,9 +13637,9 @@
       assert.expect(1);
 
       function Foo() {}
-      Foo.a = { 'b': 1, 'c': 2 };
+      Foo.a = { 'b': 2, 'c': 3 };
 
-      var matches = _.matches({ 'a': { 'b': 1 } });
+      var matches = _.matches({ 'a': { 'b': 2 } });
       assert.strictEqual(matches(Foo), true);
     });
 
@@ -13662,8 +13662,8 @@
 
       function Foo(object) { lodashStable.assign(this, object); }
 
-      var object = new Foo({ 'a': new Foo({ 'b': 1, 'c': 2 }) }),
-          matches = _.matches({ 'a': { 'b': 1 } });
+      var object = new Foo({ 'a': new Foo({ 'b': 2, 'c': 3 }) }),
+          matches = _.matches({ 'a': { 'b': 2 } });
 
       assert.strictEqual(matches(object), true);
     });
@@ -13777,7 +13777,7 @@
 
       assert.deepEqual(actual, expected);
 
-      objects = [{ 'a': { 'b': 1 } }, { 'a': { 'b': 1, 'c': 1 } }, { 'a': { 'b': 1, 'c': undefined } }];
+      objects = [{ 'a': { 'b': 2 } }, { 'a': { 'b': 2, 'c': 3 } }, { 'a': { 'b': 2, 'c': undefined } }];
       actual = lodashStable.map(objects, _.matches({ 'a': { 'c': undefined } }));
 
       assert.deepEqual(actual, expected);
@@ -14706,25 +14706,19 @@
       assert.strictEqual(Foo.a, 1);
     });
 
-    QUnit.test('should not merge onto nested function values', function(assert) {
+    QUnit.test('should not merge onto function values of sources', function(assert) {
       assert.expect(3);
 
       var source1 = { 'a': function() {} },
-          source2 = { 'a': { 'b': 1 } },
-          actual = _.merge({}, source1, source2),
-          expected = { 'a': { 'b': 1 } };
+          source2 = { 'a': { 'b': 2 } },
+          actual = _.merge({}, source1, source2);
 
-      assert.deepEqual(actual, expected);
-
-      source1 = { 'a': function() {} };
-      source2 = { 'a': { 'b': 1 } };
-
-      expected = { 'a': function() {} };
-      expected.a.b = 1;
+      assert.deepEqual(actual, { 'a': { 'b': 2 } });
 
       actual = _.merge(source1, source2);
+
       assert.strictEqual(typeof actual.a, 'function');
-      assert.strictEqual(actual.a.b, 1);
+      assert.strictEqual(actual.a.b, 2);
     });
 
     QUnit.test('should merge onto non-plain `object` values', function(assert) {
@@ -15038,7 +15032,7 @@
 
       var actual;
 
-      _.mergeWith({}, { 'a': { 'b': 1 } }, function() {
+      _.mergeWith({}, { 'a': { 'b': 2 } }, function() {
         actual = _.last(arguments);
       });
 
@@ -17126,9 +17120,9 @@
     QUnit.test('should work as a deep `_.defaults`', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': { 'b': 1 } },
-          source = { 'a': { 'b': 2, 'c': 3 } },
-          expected = { 'a': { 'b': 1, 'c': 3 } };
+      var object = { 'a': { 'b': 2 } },
+          source = { 'a': { 'b': 3, 'c': 3 } },
+          expected = { 'a': { 'b': 2, 'c': 3 } };
 
       var defaultsDeep = _.partialRight(_.mergeWith, function deep(value, other) {
         return lodashStable.isObject(value) ? _.mergeWith(value, other, deep) : value;

@@ -3055,7 +3055,7 @@
         assert.deepEqual(argsList, isDeep ? [[object], [1, 'a', object]] : [[object]]);
       });
 
-      QUnit.test('`_.' + methodName + '` should handle cloning if `customizer` returns `undefined`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should handle cloning when `customizer` returns `undefined`', function(assert) {
         assert.expect(1);
 
         var actual = func({ 'a': { 'b': 'c' } }, noop);
@@ -9853,7 +9853,7 @@
       assert.deepEqual(argsList, expected);
     });
 
-    QUnit.test('should handle comparisons if `customizer` returns `undefined`', function(assert) {
+    QUnit.test('should handle comparisons when `customizer` returns `undefined`', function(assert) {
       assert.expect(3);
 
       assert.strictEqual(_.isEqualWith('a', 'a', noop), true);
@@ -9861,7 +9861,7 @@
       assert.strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'a' }, noop), true);
     });
 
-    QUnit.test('should not handle comparisons if `customizer` returns `true`', function(assert) {
+    QUnit.test('should not handle comparisons when `customizer` returns `true`', function(assert) {
       assert.expect(3);
 
       var customizer = function(value) {
@@ -9873,7 +9873,7 @@
       assert.strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'b' }, customizer), true);
     });
 
-    QUnit.test('should not handle comparisons if `customizer` returns `false`', function(assert) {
+    QUnit.test('should not handle comparisons when `customizer` returns `false`', function(assert) {
       assert.expect(3);
 
       var customizer = function(value) {
@@ -9885,7 +9885,7 @@
       assert.strictEqual(_.isEqualWith({ '0': 'a' }, { '0': 'a' }, customizer), false);
     });
 
-    QUnit.test('should return a boolean value even if `customizer` does not', function(assert) {
+    QUnit.test('should return a boolean value even when `customizer` does not', function(assert) {
       assert.expect(2);
 
       var actual = _.isEqualWith('a', 'b', alwaysC);
@@ -10711,13 +10711,13 @@
       assert.deepEqual(argsList, expected);
     });
 
-    QUnit.test('should handle comparisons if `customizer` returns `undefined`', function(assert) {
+    QUnit.test('should handle comparisons when `customizer` returns `undefined`', function(assert) {
       assert.expect(1);
 
       assert.strictEqual(_.isMatchWith({ 'a': 1 }, { 'a': 1 }, noop), true);
     });
 
-    QUnit.test('should not handle comparisons if `customizer` returns `true`', function(assert) {
+    QUnit.test('should not handle comparisons when `customizer` returns `true`', function(assert) {
       assert.expect(2);
 
       var customizer = function(value) {
@@ -10728,7 +10728,7 @@
       assert.strictEqual(_.isMatchWith({ '0': 'a' }, { '0': 'b' }, customizer), true);
     });
 
-    QUnit.test('should not handle comparisons if `customizer` returns `false`', function(assert) {
+    QUnit.test('should not handle comparisons when `customizer` returns `false`', function(assert) {
       assert.expect(2);
 
       var customizer = function(value) {
@@ -10739,7 +10739,7 @@
       assert.strictEqual(_.isMatchWith({ '0': 'a' }, { '0': 'a' }, customizer), false);
     });
 
-    QUnit.test('should return a boolean value even if `customizer` does not', function(assert) {
+    QUnit.test('should return a boolean value even when `customizer` does not', function(assert) {
       assert.expect(2);
 
       var object = { 'a': 1 },
@@ -14993,7 +14993,7 @@
   QUnit.module('lodash.mergeWith');
 
   (function() {
-    QUnit.test('should handle merging if `customizer` returns `undefined`', function(assert) {
+    QUnit.test('should handle merging when `customizer` returns `undefined`', function(assert) {
       assert.expect(2);
 
       var actual = _.mergeWith({ 'a': { 'b': [1, 1] } }, { 'a': { 'b': [0] } }, noop);
@@ -15003,7 +15003,17 @@
       assert.deepEqual(actual, [undefined]);
     });
 
-    QUnit.test('should defer to `customizer` when it returns a non `undefined` value', function(assert) {
+    QUnit.test('should clone sources when `customizer` returns `undefined`', function(assert) {
+      assert.expect(1);
+
+      var source1 = { 'a': { 'b': { 'c': 1 } } },
+          source2 = { 'a': { 'b': { 'd': 2 } } };
+
+      _.mergeWith({}, source1, source2, noop);
+      assert.deepEqual(source1.a.b, { 'c': 1 });
+    });
+
+    QUnit.test('should defer to `customizer` for non `undefined` results', function(assert) {
       assert.expect(1);
 
       var actual = _.mergeWith({ 'a': { 'b': [0, 1] } }, { 'a': { 'b': [2] } }, function(a, b) {
@@ -15021,16 +15031,6 @@
       });
 
       assert.deepEqual(actual, { 'a': { 'b': ['c'] } });
-    });
-
-    QUnit.test('should clone sources when `customizer` result is `undefined`', function(assert) {
-      assert.expect(1);
-
-      var source1 = { 'a': { 'b': { 'c': 1 } } },
-          source2 = { 'a': { 'b': { 'd': 2 } } };
-
-      _.mergeWith({}, source1, source2, noop);
-      assert.deepEqual(source1.a.b, { 'c': 1 });
     });
 
     QUnit.test('should pop the stack of sources for each sibling property', function(assert) {

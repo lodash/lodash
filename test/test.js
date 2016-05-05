@@ -22994,7 +22994,7 @@
 
   QUnit.module('number coercion methods');
 
-  lodashStable.each(['toInteger', 'toNumber', 'toSafeInteger'], function(methodName) {
+  lodashStable.each(['toFinite', 'toInteger', 'toNumber', 'toSafeInteger'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
@@ -23016,8 +23016,9 @@
     });
   });
 
-  lodashStable.each(['toInteger', 'toLength', 'toNumber', 'toSafeInteger'], function(methodName) {
+  lodashStable.each(['toFinite', 'toInteger', 'toLength', 'toNumber', 'toSafeInteger'], function(methodName) {
     var func = _[methodName],
+        isToFinite = methodName == 'toFinite',
         isToLength = methodName == 'toLength',
         isToNumber = methodName == 'toNumber',
         isToSafeInteger = methodName == 'toSafeInteger';
@@ -23055,7 +23056,7 @@
 
       var expected = lodashStable.map(values, function(value) {
         if (!isToNumber) {
-          if (value == 1.2) {
+          if (!isToFinite && value == 1.2) {
             value = 1;
           }
           else if (value == Infinity) {
@@ -23094,13 +23095,13 @@
       var expected = lodashStable.map(values, function(value) {
         var n = +value;
         if (!isToNumber) {
-          if (n == 1.234567890) {
+          if (!isToFinite && n == 1.234567890) {
             n = 1;
           }
           else if (n == Infinity) {
             n = MAX_INTEGER;
           }
-          else if (n == Number.MIN_VALUE || n !== n) {
+          else if ((!isToFinite && n == Number.MIN_VALUE) || n !== n) {
             n = 0;
           }
           if (isToLength || isToSafeInteger) {
@@ -23216,20 +23217,29 @@
       ];
 
       var expected = [
-        NaN,   0,   1,   NaN,
-        NaN,  2.2,  1.1, 1.1,
+        NaN,  0,   1,   NaN,
+        NaN,  2.2, 1.1, 1.1,
         NaN,  NaN,
         5349, 5349,
         42,   42
       ];
 
-      if (!isToNumber) {
+      if (isToFinite) {
         expected = [
-          0, 0, 1, 0,
-          0, 2, 1, 1,
-          0, 0,
+          0,    0,    1,   0,
+          0,    2.2,  1.1, 1.1,
+          0,    0,
           5349, 5349,
-          42, 42
+          42,   42
+        ];
+      }
+      else if (!isToNumber) {
+        expected = [
+          0,    0,    1, 0,
+          0,    2,    1, 1,
+          0,    0,
+          5349, 5349,
+          42,   42
         ];
       }
       var actual = lodashStable.map(values, func);
@@ -25946,6 +25956,7 @@
       'startsWith',
       'subtract',
       'sum',
+      'toFinite',
       'toInteger',
       'toLower',
       'toNumber',
@@ -26203,7 +26214,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(308);
+      assert.expect(309);
 
       var emptyArrays = lodashStable.map(falsey, alwaysEmptyArray);
 

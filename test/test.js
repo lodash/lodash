@@ -6813,6 +6813,15 @@
       assert.deepEqual(func({}, new Foo), expected);
     });
 
+    QUnit.test('`_.' + methodName + '` should not skip a trailing function source', function(assert) {
+      assert.expect(1);
+
+      function fn() {}
+      fn.b = 2;
+
+      assert.deepEqual(func({}, { 'a': 1 }, fn), { 'a': 1, 'b': 2 });
+    });
+
     QUnit.test('`_.' + methodName + '` should not error on nullish sources', function(assert) {
       assert.expect(1);
 
@@ -6850,14 +6859,13 @@
       var array = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
           expected = { 'a': isDefaults ? 0 : 1, 'b': 2, 'c': 3 };
 
-      assert.deepEqual(lodashStable.reduce(array, func, { 'a': 0 }), expected);
-
-      var fn = function() {};
+      function fn() {};
       fn.a = array[0];
       fn.b = array[1];
       fn.c = array[2];
 
-      assert.deepEqual(_.reduce(fn, func, { 'a': 0 }), expected);
+      assert.deepEqual(lodashStable.reduce(array, func, { 'a': 0 }), expected);
+      assert.deepEqual(lodashStable.reduce(fn, func, { 'a': 0 }), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should not return the existing wrapped value when chaining', function(assert) {

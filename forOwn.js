@@ -30,7 +30,7 @@ var baseForOwn = require('./_baseForOwn'),
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, baseIteratee(iteratee));
+  return object && baseForOwn(object, baseIteratee(iteratee, 3));
 }
 
 module.exports = forOwn;

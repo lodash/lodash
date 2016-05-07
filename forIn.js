@@ -33,7 +33,7 @@ var baseFor = require('./_baseFor'),
 function forIn(object, iteratee) {
   return object == null
     ? object
-    : baseFor(object, baseIteratee(iteratee), keysIn);
+    : baseFor(object, baseIteratee(iteratee, 3), keysIn);
 }
 
 module.exports = forIn;

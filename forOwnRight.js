@@ -28,7 +28,7 @@ var baseForOwnRight = require('./_baseForOwnRight'),
  * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, baseIteratee(iteratee));
+  return object && baseForOwnRight(object, baseIteratee(iteratee, 3));
 }
 
 module.exports = forOwnRight;

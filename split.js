@@ -28,7 +28,7 @@ var nativeSplit = stringProto.split;
  * @param {string} [string=''] The string to split.
  * @param {RegExp|string} separator The separator pattern to split by.
  * @param {number} [limit] The length to truncate results to.
- * @returns {Array} Returns the new array of string segments.
+ * @returns {Array} Returns the string segments.
  * @example
  *
  * _.split('a-b-c', '-', 2);

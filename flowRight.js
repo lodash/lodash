@@ -9,7 +9,7 @@ var createFlow = require('./_createFlow');
  * @memberOf _
  * @category Util
  * @param {...(Function|Function[])} [funcs] Functions to invoke.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new composite function.
  * @see _.flow
  * @example
  *

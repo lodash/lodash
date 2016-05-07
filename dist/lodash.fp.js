@@ -269,25 +269,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!isFunction(func)) {
 	          return mixin(func, Object(source));
 	        }
-	        var methods = [],
-	            methodNames = [];
-
+	        var pairs = [];
 	        each(keys(source), function(key) {
-	          var value = source[key];
-	          if (isFunction(value)) {
-	            methodNames.push(key);
-	            methods.push(func.prototype[key]);
+	          if (isFunction(source[key])) {
+	            pairs.push([key, func.prototype[key]]);
 	          }
 	        });
 
 	        mixin(func, Object(source));
 
-	        each(methodNames, function(methodName, index) {
-	          var method = methods[index];
-	          if (isFunction(method)) {
-	            func.prototype[methodName] = method;
+	        each(pairs, function(pair) {
+	          var value = pair[1];
+	          if (isFunction(value)) {
+	            func.prototype[pair[0]] = value;
 	          } else {
-	            delete func.prototype[methodName];
+	            delete func.prototype[pair[0]];
 	          }
 	        });
 	        return func;
@@ -315,6 +311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var index = -1,
 	        length = path.length,
+	        lastIndex = length - 1,
 	        result = clone(Object(object)),
 	        nested = result;
 
@@ -323,7 +320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          value = nested[key];
 
 	      if (value != null) {
-	        nested[key] = clone(Object(value));
+	        nested[path[index]] = clone(index == lastIndex ? value : Object(value));
 	      }
 	      nested = nested[key];
 	    }
@@ -619,7 +616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
 	    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
 	    'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith',
-	    'eq', 'every', 'filter', 'find', 'find', 'findIndex', 'findKey', 'findLast',
+	    'eq', 'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast',
 	    'findLastIndex', 'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth',
 	    'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight',
 	    'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',

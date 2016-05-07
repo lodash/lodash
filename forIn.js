@@ -33,7 +33,7 @@ import keysIn from './keysIn';
 function forIn(object, iteratee) {
   return object == null
     ? object
-    : baseFor(object, baseIteratee(iteratee), keysIn);
+    : baseFor(object, baseIteratee(iteratee, 3), keysIn);
 }
 
 export default forIn;

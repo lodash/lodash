@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.2 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -74,6 +74,7 @@ export { default as findKey } from './findKey';
 export { default as findLast } from './findLast';
 export { default as findLastIndex } from './findLastIndex';
 export { default as findLastKey } from './findLastKey';
+export { default as first } from './first';
 export { default as flatMap } from './flatMap';
 export { default as flatMapDeep } from './flatMapDeep';
 export { default as flatMapDepth } from './flatMapDepth';
@@ -262,6 +263,7 @@ export { default as throttle } from './throttle';
 export { default as thru } from './thru';
 export { default as times } from './times';
 export { default as toArray } from './toArray';
+export { default as toFinite } from './toFinite';
 export { default as toInteger } from './toInteger';
 export { default as toIterator } from './toIterator';
 export { default as toJSON } from './toJSON';

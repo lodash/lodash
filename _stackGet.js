@@ -1,5 +1,3 @@
-import assocGet from './_assocGet';
-
 /**
  * Gets the stack value for `key`.
  *
@@ -10,10 +8,7 @@ import assocGet from './_assocGet';
  * @returns {*} Returns the entry value.
  */
 function stackGet(key) {
-  var data = this.__data__,
-      array = data.array;
-
-  return array ? assocGet(array, key) : data.map.get(key);
+  return this.__data__.get(key);
 }
 
 export default stackGet;

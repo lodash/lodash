@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash 4.11.2 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -44,7 +44,7 @@ import toInteger from './toInteger';
 import lodash from './wrapperLodash';
 
 /** Used as the semantic version number. */
-var VERSION = '4.11.2';
+var VERSION = '4.12.0';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_KEY_FLAG = 2;
@@ -373,6 +373,7 @@ lodash.sum = math.sum;
 lodash.sumBy = math.sumBy;
 lodash.template = string.template;
 lodash.times = util.times;
+lodash.toFinite = lang.toFinite;
 lodash.toInteger = toInteger;
 lodash.toLength = lang.toLength;
 lodash.toLower = string.toLower;

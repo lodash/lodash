@@ -1,5 +1,5 @@
 import createWrapper from './_createWrapper';
-import getPlaceholder from './_getPlaceholder';
+import getHolder from './_getHolder';
 import replaceHolders from './_replaceHolders';
 import rest from './rest';
 
@@ -45,7 +45,7 @@ var BIND_FLAG = 1,
 var bind = rest(function(func, thisArg, partials) {
   var bitmask = BIND_FLAG;
   if (partials.length) {
-    var holders = replaceHolders(partials, getPlaceholder(bind));
+    var holders = replaceHolders(partials, getHolder(bind));
     bitmask |= PARTIAL_FLAG;
   }
   return createWrapper(func, bitmask, thisArg, partials, holders);

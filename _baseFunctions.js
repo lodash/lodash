@@ -8,7 +8,7 @@ import isFunction from './isFunction';
  * @private
  * @param {Object} object The object to inspect.
  * @param {Array} props The property names to filter.
- * @returns {Array} Returns the new array of filtered property names.
+ * @returns {Array} Returns the function names.
  */
 function baseFunctions(object, props) {
   return arrayFilter(props, function(key) {

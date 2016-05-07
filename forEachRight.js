@@ -24,9 +24,8 @@ import isArray from './isArray';
  * // => Logs `2` then `1`.
  */
 function forEachRight(collection, iteratee) {
-  return (typeof iteratee == 'function' && isArray(collection))
-    ? arrayEachRight(collection, iteratee)
-    : baseEachRight(collection, baseIteratee(iteratee));
+  var func = isArray(collection) ? arrayEachRight : baseEachRight;
+  return func(collection, baseIteratee(iteratee, 3));
 }
 
 export default forEachRight;

@@ -12,7 +12,7 @@ import rest from './rest';
  *
  * @private
  * @param {Function} arrayFunc The function to iterate over iteratees.
- * @returns {Function} Returns the new invoker function.
+ * @returns {Function} Returns the new over function.
  */
 function createOver(arrayFunc) {
   return rest(function(iteratees) {

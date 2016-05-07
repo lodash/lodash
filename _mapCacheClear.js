@@ -1,4 +1,5 @@
 import Hash from './_Hash';
+import ListCache from './_ListCache';
 import Map from './_Map';
 
 /**
@@ -8,12 +9,12 @@ import Map from './_Map';
  * @name clear
  * @memberOf MapCache
  */
-function mapClear() {
+function mapCacheClear() {
   this.__data__ = {
     'hash': new Hash,
-    'map': Map ? new Map : [],
+    'map': new (Map || ListCache),
     'string': new Hash
   };
 }
 
-export default mapClear;
+export default mapCacheClear;

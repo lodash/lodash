@@ -11,6 +11,7 @@ export { default as dropWhile } from './dropWhile';
 export { default as fill } from './fill';
 export { default as findIndex } from './findIndex';
 export { default as findLastIndex } from './findLastIndex';
+export { default as first } from './first';
 export { default as flatten } from './flatten';
 export { default as flattenDeep } from './flattenDeep';
 export { default as flattenDepth } from './flattenDepth';

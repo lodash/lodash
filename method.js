@@ -11,7 +11,7 @@ import rest from './rest';
  * @category Util
  * @param {Array|string} path The path of the method to invoke.
  * @param {...*} [args] The arguments to invoke the method with.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new invoker function.
  * @example
  *
  * var objects = [

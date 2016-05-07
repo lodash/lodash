@@ -3,7 +3,7 @@ import composeArgsRight from './_composeArgsRight';
 import countHolders from './_countHolders';
 import createCtorWrapper from './_createCtorWrapper';
 import createRecurryWrapper from './_createRecurryWrapper';
-import getPlaceholder from './_getPlaceholder';
+import getHolder from './_getHolder';
 import reorder from './_reorder';
 import replaceHolders from './_replaceHolders';
 import root from './_root';
@@ -46,14 +46,14 @@ function createHybridWrapper(func, bitmask, thisArg, partials, holders, partials
 
   function wrapper() {
     var length = arguments.length,
-        index = length,
-        args = Array(length);
+        args = Array(length),
+        index = length;
 
     while (index--) {
       args[index] = arguments[index];
     }
     if (isCurried) {
-      var placeholder = getPlaceholder(wrapper),
+      var placeholder = getHolder(wrapper),
           holdersCount = countHolders(args, placeholder);
     }
     if (partials) {

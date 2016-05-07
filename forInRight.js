@@ -31,7 +31,7 @@ import keysIn from './keysIn';
 function forInRight(object, iteratee) {
   return object == null
     ? object
-    : baseForRight(object, baseIteratee(iteratee), keysIn);
+    : baseForRight(object, baseIteratee(iteratee, 3), keysIn);
 }
 
 export default forInRight;

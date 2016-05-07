@@ -1,5 +1,5 @@
 import createWrapper from './_createWrapper';
-import getPlaceholder from './_getPlaceholder';
+import getHolder from './_getHolder';
 import replaceHolders from './_replaceHolders';
 import rest from './rest';
 
@@ -40,7 +40,7 @@ var PARTIAL_FLAG = 32;
  * // => 'hi fred'
  */
 var partial = rest(function(func, partials) {
-  var holders = replaceHolders(partials, getPlaceholder(partial));
+  var holders = replaceHolders(partials, getHolder(partial));
   return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
 });
 

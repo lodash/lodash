@@ -30,7 +30,7 @@ import baseIteratee from './_baseIteratee';
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, baseIteratee(iteratee));
+  return object && baseForOwn(object, baseIteratee(iteratee, 3));
 }
 
 export default forOwn;

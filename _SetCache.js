@@ -1,9 +1,10 @@
 import MapCache from './_MapCache';
-import cachePush from './_cachePush';
+import setCacheAdd from './_setCacheAdd';
+import setCacheHas from './_setCacheHas';
 
 /**
  *
- * Creates a set cache object to store unique values.
+ * Creates an array cache object to store unique values.
  *
  * @private
  * @constructor
@@ -15,11 +16,12 @@ function SetCache(values) {
 
   this.__data__ = new MapCache;
   while (++index < length) {
-    this.push(values[index]);
+    this.add(values[index]);
   }
 }
 
 // Add methods to `SetCache`.
-SetCache.prototype.push = cachePush;
+SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+SetCache.prototype.has = setCacheHas;
 
 export default SetCache;

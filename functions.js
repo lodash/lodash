@@ -10,7 +10,7 @@ import keys from './keys';
  * @memberOf _
  * @category Object
  * @param {Object} object The object to inspect.
- * @returns {Array} Returns the new array of property names.
+ * @returns {Array} Returns the function names.
  * @see _.functionsIn
  * @example
  *

@@ -2,7 +2,7 @@ import apply from './_apply';
 import createCtorWrapper from './_createCtorWrapper';
 import createHybridWrapper from './_createHybridWrapper';
 import createRecurryWrapper from './_createRecurryWrapper';
-import getPlaceholder from './_getPlaceholder';
+import getHolder from './_getHolder';
 import replaceHolders from './_replaceHolders';
 import root from './_root';
 
@@ -23,7 +23,7 @@ function createCurryWrapper(func, bitmask, arity) {
     var length = arguments.length,
         args = Array(length),
         index = length,
-        placeholder = getPlaceholder(wrapper);
+        placeholder = getHolder(wrapper);
 
     while (index--) {
       args[index] = arguments[index];

@@ -46,6 +46,7 @@ import isWeakSet from './isWeakSet';
 import lt from './lt';
 import lte from './lte';
 import toArray from './toArray';
+import toFinite from './toFinite';
 import toInteger from './toInteger';
 import toLength from './toLength';
 import toNumber from './toNumber';
@@ -63,6 +64,6 @@ export default {
   isNil, isNull, isNumber, isObject, isObjectLike,
   isPlainObject, isRegExp, isSafeInteger, isSet, isString,
   isSymbol, isTypedArray, isUndefined, isWeakMap, isWeakSet,
-  lt, lte, toArray, toInteger, toLength,
-  toNumber, toPlainObject, toSafeInteger, toString
+  lt, lte, toArray, toFinite, toInteger,
+  toLength, toNumber, toPlainObject, toSafeInteger, toString
 };

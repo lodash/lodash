@@ -46,6 +46,7 @@ export { default as isWeakSet } from './isWeakSet';
 export { default as lt } from './lt';
 export { default as lte } from './lte';
 export { default as toArray } from './toArray';
+export { default as toFinite } from './toFinite';
 export { default as toInteger } from './toInteger';
 export { default as toLength } from './toLength';
 export { default as toNumber } from './toNumber';

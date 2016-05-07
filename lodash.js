@@ -13004,7 +13004,7 @@
      * Foo.prototype.c = 3;
      *
      * _.toPairsIn(new Foo);
-     * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
+     * // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
      */
     var toPairsIn = createToPairs(keysIn);
 

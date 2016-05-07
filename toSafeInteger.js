@@ -15,7 +15,7 @@ define(['./_baseClamp', './toInteger'], function(baseClamp, toInteger) {
    * @returns {number} Returns the converted integer.
    * @example
    *
-   * _.toSafeInteger(3);
+   * _.toSafeInteger(3.2);
    * // => 3
    *
    * _.toSafeInteger(Number.MIN_VALUE);
@@ -24,7 +24,7 @@ define(['./_baseClamp', './toInteger'], function(baseClamp, toInteger) {
    * _.toSafeInteger(Infinity);
    * // => 9007199254740991
    *
-   * _.toSafeInteger('3');
+   * _.toSafeInteger('3.2');
    * // => 3
    */
   function toSafeInteger(value) {

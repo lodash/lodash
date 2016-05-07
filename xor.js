@@ -11,7 +11,7 @@ define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], functi
    * @since 2.4.0
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
-   * @returns {Array} Returns the new array of values.
+   * @returns {Array} Returns the new array of filtered values.
    * @see _.difference, _.without
    * @example
    *

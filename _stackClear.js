@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_ListCache'], function(ListCache) {
 
   /**
    * Removes all key-value entries from the stack.
@@ -8,7 +8,7 @@ define([], function() {
    * @memberOf Stack
    */
   function stackClear() {
-    this.__data__ = { 'array': [], 'map': null };
+    this.__data__ = new ListCache;
   }
 
   return stackClear;

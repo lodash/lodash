@@ -31,9 +31,8 @@ define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function
    * // => Logs 'a' then 'b' (iteration order is not guaranteed).
    */
   function forEach(collection, iteratee) {
-    return (typeof iteratee == 'function' && isArray(collection))
-      ? arrayEach(collection, iteratee)
-      : baseEach(collection, baseIteratee(iteratee));
+    var func = isArray(collection) ? arrayEach : baseEach;
+    return func(collection, baseIteratee(iteratee, 3));
   }
 
   return forEach;

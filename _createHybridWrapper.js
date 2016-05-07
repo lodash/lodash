@@ -1,4 +1,4 @@
-define(['./_composeArgs', './_composeArgsRight', './_countHolders', './_createCtorWrapper', './_createRecurryWrapper', './_getPlaceholder', './_reorder', './_replaceHolders', './_root'], function(composeArgs, composeArgsRight, countHolders, createCtorWrapper, createRecurryWrapper, getPlaceholder, reorder, replaceHolders, root) {
+define(['./_composeArgs', './_composeArgsRight', './_countHolders', './_createCtorWrapper', './_createRecurryWrapper', './_getHolder', './_reorder', './_replaceHolders', './_root'], function(composeArgs, composeArgsRight, countHolders, createCtorWrapper, createRecurryWrapper, getHolder, reorder, replaceHolders, root) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -41,14 +41,14 @@ define(['./_composeArgs', './_composeArgsRight', './_countHolders', './_createCt
 
     function wrapper() {
       var length = arguments.length,
-          index = length,
-          args = Array(length);
+          args = Array(length),
+          index = length;
 
       while (index--) {
         args[index] = arguments[index];
       }
       if (isCurried) {
-        var placeholder = getPlaceholder(wrapper),
+        var placeholder = getHolder(wrapper),
             holdersCount = countHolders(args, placeholder);
       }
       if (partials) {

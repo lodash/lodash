@@ -1,4 +1,4 @@
-define(['./_arrayConcat', './_baseFlatten', './castArray', './_copyArray'], function(arrayConcat, baseFlatten, castArray, copyArray) {
+define(['./_arrayPush', './_baseFlatten', './_copyArray', './isArray'], function(arrayPush, baseFlatten, copyArray, isArray) {
 
   /**
    * Creates a new array concatenating `array` with any additional arrays
@@ -24,16 +24,16 @@ define(['./_arrayConcat', './_baseFlatten', './castArray', './_copyArray'], func
    */
   function concat() {
     var length = arguments.length,
-        array = castArray(arguments[0]);
+        args = Array(length ? length - 1 : 0),
+        array = arguments[0],
+        index = length;
 
-    if (length < 2) {
-      return length ? copyArray(array) : [];
+    while (index--) {
+      args[index - 1] = arguments[index];
     }
-    var args = Array(length - 1);
-    while (length--) {
-      args[length - 1] = arguments[length];
-    }
-    return arrayConcat(array, baseFlatten(args, 1));
+    return length
+      ? arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1))
+      : [];
   }
 
   return concat;

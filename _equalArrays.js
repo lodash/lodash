@@ -1,4 +1,4 @@
-define(['./_arraySome'], function(arraySome) {
+define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -22,9 +22,7 @@ define(['./_arraySome'], function(arraySome) {
    * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
    */
   function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
-    var index = -1,
-        isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-        isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
+    var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
         arrLength = array.length,
         othLength = other.length;
 
@@ -36,7 +34,10 @@ define(['./_arraySome'], function(arraySome) {
     if (stacked) {
       return stacked == other;
     }
-    var result = true;
+    var index = -1,
+        result = true,
+        seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
+
     stack.set(array, other);
 
     // Ignore non-index properties.
@@ -57,10 +58,12 @@ define(['./_arraySome'], function(arraySome) {
         break;
       }
       // Recursively compare arrays (susceptible to call stack limits).
-      if (isUnordered) {
-        if (!arraySome(other, function(othValue) {
-              return arrValue === othValue ||
-                equalFunc(arrValue, othValue, customizer, bitmask, stack);
+      if (seen) {
+        if (!arraySome(other, function(othValue, othIndex) {
+              if (!seen.has(othIndex) &&
+                  (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
+                return seen.add(othIndex);
+              }
             })) {
           result = false;
           break;

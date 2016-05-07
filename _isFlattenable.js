@@ -1,4 +1,4 @@
-define(['./isArguments', './isArray', './isArrayLikeObject'], function(isArguments, isArray, isArrayLikeObject) {
+define(['./isArguments', './isArray'], function(isArguments, isArray) {
 
   /**
    * Checks if `value` is a flattenable `arguments` object or array.
@@ -8,7 +8,7 @@ define(['./isArguments', './isArray', './isArrayLikeObject'], function(isArgumen
    * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
    */
   function isFlattenable(value) {
-    return isArrayLikeObject(value) && (isArray(value) || isArguments(value));
+    return isArray(value) || isArguments(value);
   }
 
   return isFlattenable;

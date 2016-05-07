@@ -1,4 +1,4 @@
-define(['./_MapCache', './_assocSet'], function(MapCache, assocSet) {
+define(['./_ListCache', './_MapCache'], function(ListCache, MapCache) {
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -14,21 +14,11 @@ define(['./_MapCache', './_assocSet'], function(MapCache, assocSet) {
    * @returns {Object} Returns the stack cache instance.
    */
   function stackSet(key, value) {
-    var data = this.__data__,
-        array = data.array;
-
-    if (array) {
-      if (array.length < (LARGE_ARRAY_SIZE - 1)) {
-        assocSet(array, key, value);
-      } else {
-        data.array = null;
-        data.map = new MapCache(array);
-      }
+    var cache = this.__data__;
+    if (cache instanceof ListCache && cache.__data__.length == LARGE_ARRAY_SIZE) {
+      cache = this.__data__ = new MapCache(cache.__data__);
     }
-    var map = data.map;
-    if (map) {
-      map.set(key, value);
-    }
+    cache.set(key, value);
     return this;
   }
 

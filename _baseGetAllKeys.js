@@ -13,9 +13,7 @@ define(['./_arrayPush', './isArray'], function(arrayPush, isArray) {
    */
   function baseGetAllKeys(object, keysFunc, symbolsFunc) {
     var result = keysFunc(object);
-    return isArray(object)
-      ? result
-      : arrayPush(result, symbolsFunc(object));
+    return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
   }
 
   return baseGetAllKeys;

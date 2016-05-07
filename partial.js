@@ -1,4 +1,4 @@
-define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'], function(createWrapper, getPlaceholder, replaceHolders, rest) {
+define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], function(createWrapper, getHolder, replaceHolders, rest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -40,7 +40,7 @@ define(['./_createWrapper', './_getPlaceholder', './_replaceHolders', './rest'],
    * // => 'hi fred'
    */
   var partial = rest(function(func, partials) {
-    var holders = replaceHolders(partials, getPlaceholder(partial));
+    var holders = replaceHolders(partials, getHolder(partial));
     return createWrapper(func, PARTIAL_FLAG, undefined, partials, holders);
   });
 

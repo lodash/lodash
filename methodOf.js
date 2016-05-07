@@ -11,7 +11,7 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    * @category Util
    * @param {Object} object The object to query.
    * @param {...*} [args] The arguments to invoke the method with.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new invoker function.
    * @example
    *
    * var array = _.times(3, _.constant),

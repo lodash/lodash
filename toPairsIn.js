@@ -1,8 +1,9 @@
-define(['./_baseToPairs', './keysIn'], function(baseToPairs, keysIn) {
+define(['./_createToPairs', './keysIn'], function(createToPairs, keysIn) {
 
   /**
    * Creates an array of own and inherited enumerable string keyed-value pairs
-   * for `object` which can be consumed by `_.fromPairs`.
+   * for `object` which can be consumed by `_.fromPairs`. If `object` is a map
+   * or set, its entries are returned.
    *
    * @static
    * @memberOf _
@@ -10,7 +11,7 @@ define(['./_baseToPairs', './keysIn'], function(baseToPairs, keysIn) {
    * @alias entriesIn
    * @category Object
    * @param {Object} object The object to query.
-   * @returns {Array} Returns the new array of key-value pairs.
+   * @returns {Array} Returns the key-value pairs.
    * @example
    *
    * function Foo() {
@@ -21,11 +22,9 @@ define(['./_baseToPairs', './keysIn'], function(baseToPairs, keysIn) {
    * Foo.prototype.c = 3;
    *
    * _.toPairsIn(new Foo);
-   * // => [['a', 1], ['b', 2], ['c', 1]] (iteration order is not guaranteed)
+   * // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
    */
-  function toPairsIn(object) {
-    return baseToPairs(object, keysIn(object));
-  }
+  var toPairsIn = createToPairs(keysIn);
 
   return toPairsIn;
 });

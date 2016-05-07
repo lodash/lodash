@@ -8,7 +8,7 @@ define([], function() {
    *
    * @private
    * @param {string} key The key of the property to get.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new accessor function.
    */
   function baseProperty(key) {
     return function(object) {

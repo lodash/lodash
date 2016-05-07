@@ -1,4 +1,4 @@
-define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_createRecurryWrapper', './_getPlaceholder', './_replaceHolders', './_root'], function(apply, createCtorWrapper, createHybridWrapper, createRecurryWrapper, getPlaceholder, replaceHolders, root) {
+define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_createRecurryWrapper', './_getHolder', './_replaceHolders', './_root'], function(apply, createCtorWrapper, createHybridWrapper, createRecurryWrapper, getHolder, replaceHolders, root) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -20,7 +20,7 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
       var length = arguments.length,
           args = Array(length),
           index = length,
-          placeholder = getPlaceholder(wrapper);
+          placeholder = getHolder(wrapper);
 
       while (index--) {
         args[index] = arguments[index];

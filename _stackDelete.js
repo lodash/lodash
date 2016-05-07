@@ -1,4 +1,4 @@
-define(['./_assocDelete'], function(assocDelete) {
+define([], function() {
 
   /**
    * Removes `key` and its value from the stack.
@@ -10,10 +10,7 @@ define(['./_assocDelete'], function(assocDelete) {
    * @returns {boolean} Returns `true` if the entry was removed, else `false`.
    */
   function stackDelete(key) {
-    var data = this.__data__,
-        array = data.array;
-
-    return array ? assocDelete(array, key) : data.map['delete'](key);
+    return this.__data__['delete'](key);
   }
 
   return stackDelete;

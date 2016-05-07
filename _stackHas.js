@@ -1,4 +1,4 @@
-define(['./_assocHas'], function(assocHas) {
+define([], function() {
 
   /**
    * Checks if a stack value for `key` exists.
@@ -10,10 +10,7 @@ define(['./_assocHas'], function(assocHas) {
    * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
    */
   function stackHas(key) {
-    var data = this.__data__,
-        array = data.array;
-
-    return array ? assocHas(array, key) : data.map.has(key);
+    return this.__data__.has(key);
   }
 
   return stackHas;

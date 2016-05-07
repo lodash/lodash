@@ -16,7 +16,7 @@ define(['./_arrayFilter', './_baseIteratee', './_baseXor', './isArrayLikeObject'
    * @param {...Array} [arrays] The arrays to inspect.
    * @param {Array|Function|Object|string} [iteratee=_.identity]
    *  The iteratee invoked per element.
-   * @returns {Array} Returns the new array of values.
+   * @returns {Array} Returns the new array of filtered values.
    * @example
    *
    * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);

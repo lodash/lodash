@@ -29,7 +29,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
    * // => Logs 'a' then 'b' (iteration order is not guaranteed).
    */
   function forOwn(object, iteratee) {
-    return object && baseForOwn(object, baseIteratee(iteratee));
+    return object && baseForOwn(object, baseIteratee(iteratee, 3));
   }
 
   return forOwn;

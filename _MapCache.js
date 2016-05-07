@@ -1,29 +1,29 @@
-define(['./_mapClear', './_mapDelete', './_mapGet', './_mapHas', './_mapSet'], function(mapClear, mapDelete, mapGet, mapHas, mapSet) {
+define(['./_mapCacheClear', './_mapCacheDelete', './_mapCacheGet', './_mapCacheHas', './_mapCacheSet'], function(mapCacheClear, mapCacheDelete, mapCacheGet, mapCacheHas, mapCacheSet) {
 
   /**
    * Creates a map cache object to store key-value pairs.
    *
    * @private
    * @constructor
-   * @param {Array} [values] The values to cache.
+   * @param {Array} [entries] The key-value pairs to cache.
    */
-  function MapCache(values) {
+  function MapCache(entries) {
     var index = -1,
-        length = values ? values.length : 0;
+        length = entries ? entries.length : 0;
 
     this.clear();
     while (++index < length) {
-      var entry = values[index];
+      var entry = entries[index];
       this.set(entry[0], entry[1]);
     }
   }
 
   // Add methods to `MapCache`.
-  MapCache.prototype.clear = mapClear;
-  MapCache.prototype['delete'] = mapDelete;
-  MapCache.prototype.get = mapGet;
-  MapCache.prototype.has = mapHas;
-  MapCache.prototype.set = mapSet;
+  MapCache.prototype.clear = mapCacheClear;
+  MapCache.prototype['delete'] = mapCacheDelete;
+  MapCache.prototype.get = mapCacheGet;
+  MapCache.prototype.has = mapCacheHas;
+  MapCache.prototype.set = mapCacheSet;
 
   return MapCache;
 });

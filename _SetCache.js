@@ -1,8 +1,8 @@
-define(['./_MapCache', './_cachePush'], function(MapCache, cachePush) {
+define(['./_MapCache', './_setCacheAdd', './_setCacheHas'], function(MapCache, setCacheAdd, setCacheHas) {
 
   /**
    *
-   * Creates a set cache object to store unique values.
+   * Creates an array cache object to store unique values.
    *
    * @private
    * @constructor
@@ -14,12 +14,13 @@ define(['./_MapCache', './_cachePush'], function(MapCache, cachePush) {
 
     this.__data__ = new MapCache;
     while (++index < length) {
-      this.push(values[index]);
+      this.add(values[index]);
     }
   }
 
   // Add methods to `SetCache`.
-  SetCache.prototype.push = cachePush;
+  SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+  SetCache.prototype.has = setCacheHas;
 
   return SetCache;
 });

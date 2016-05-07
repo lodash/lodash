@@ -1,21 +1,14 @@
-define(['./_stackClear', './_stackDelete', './_stackGet', './_stackHas', './_stackSet'], function(stackClear, stackDelete, stackGet, stackHas, stackSet) {
+define(['./_ListCache', './_stackClear', './_stackDelete', './_stackGet', './_stackHas', './_stackSet'], function(ListCache, stackClear, stackDelete, stackGet, stackHas, stackSet) {
 
   /**
    * Creates a stack cache object to store key-value pairs.
    *
    * @private
    * @constructor
-   * @param {Array} [values] The values to cache.
+   * @param {Array} [entries] The key-value pairs to cache.
    */
-  function Stack(values) {
-    var index = -1,
-        length = values ? values.length : 0;
-
-    this.clear();
-    while (++index < length) {
-      var entry = values[index];
-      this.set(entry[0], entry[1]);
-    }
+  function Stack(entries) {
+    this.__data__ = new ListCache(entries);
   }
 
   // Add methods to `Stack`.

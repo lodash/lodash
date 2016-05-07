@@ -13,7 +13,7 @@ define(['./_baseClone', './_baseMatchesProperty'], function(baseClone, baseMatch
    * @category Util
    * @param {Array|string} path The path of the property to get.
    * @param {*} srcValue The value to match.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new spec function.
    * @example
    *
    * var users = [

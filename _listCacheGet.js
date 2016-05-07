@@ -4,17 +4,20 @@ define(['./_assocIndexOf'], function(assocIndexOf) {
   var undefined;
 
   /**
-   * Gets the associative array value for `key`.
+   * Gets the list cache value for `key`.
    *
    * @private
-   * @param {Array} array The array to query.
+   * @name get
+   * @memberOf ListCache
    * @param {string} key The key of the value to get.
    * @returns {*} Returns the entry value.
    */
-  function assocGet(array, key) {
-    var index = assocIndexOf(array, key);
-    return index < 0 ? undefined : array[index][1];
+  function listCacheGet(key) {
+    var data = this.__data__,
+        index = assocIndexOf(data, key);
+
+    return index < 0 ? undefined : data[index][1];
   }
 
-  return assocGet;
+  return listCacheGet;
 });

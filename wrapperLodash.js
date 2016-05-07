@@ -78,10 +78,10 @@ define(['./_LazyWrapper', './_LodashWrapper', './_baseLodash', './isArray', './i
    * `floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
    * `forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,
    * `includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,
-   * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isBuffer`,
-   * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,
-   * `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`, `isMatch`,
-   * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
+   * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
+   * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
+   * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
+   * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
    * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
    * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
    * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
@@ -90,9 +90,9 @@ define(['./_LazyWrapper', './_LodashWrapper', './_baseLodash', './isArray', './i
    * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
    * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
    * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-   * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toInteger`,
-   * `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`, `toString`,
-   * `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
+   * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toFinite`,
+   * `toInteger`, `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`,
+   * `toString`, `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
    * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
    *
    * @name _

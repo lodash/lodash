@@ -21,13 +21,13 @@ define(['./_root'], function(root) {
    * _.isFinite(3);
    * // => true
    *
-   * _.isFinite(Number.MAX_VALUE);
-   * // => true
-   *
-   * _.isFinite(3.14);
+   * _.isFinite(Number.MIN_VALUE);
    * // => true
    *
    * _.isFinite(Infinity);
+   * // => false
+   *
+   * _.isFinite('3');
    * // => false
    */
   function isFinite(value) {

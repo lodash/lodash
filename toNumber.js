@@ -29,8 +29,8 @@ define(['./isFunction', './isObject', './isSymbol'], function(isFunction, isObje
    * @returns {number} Returns the number.
    * @example
    *
-   * _.toNumber(3);
-   * // => 3
+   * _.toNumber(3.2);
+   * // => 3.2
    *
    * _.toNumber(Number.MIN_VALUE);
    * // => 5e-324
@@ -38,8 +38,8 @@ define(['./isFunction', './isObject', './isSymbol'], function(isFunction, isObje
    * _.toNumber(Infinity);
    * // => Infinity
    *
-   * _.toNumber('3');
-   * // => 3
+   * _.toNumber('3.2');
+   * // => 3.2
    */
   function toNumber(value) {
     if (typeof value == 'number') {

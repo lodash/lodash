@@ -13,7 +13,7 @@ define(['./_baseIsEqual', './get', './hasIn', './_isKey', './_isStrictComparable
    * @private
    * @param {string} path The path of the property to get.
    * @param {*} srcValue The value to match.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new spec function.
    */
   function baseMatchesProperty(path, srcValue) {
     if (isKey(path) && isStrictComparable(srcValue)) {

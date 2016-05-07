@@ -1,4 +1,4 @@
-define(['./_Hash', './_Map'], function(Hash, Map) {
+define(['./_Hash', './_ListCache', './_Map'], function(Hash, ListCache, Map) {
 
   /**
    * Removes all key-value entries from the map.
@@ -7,13 +7,13 @@ define(['./_Hash', './_Map'], function(Hash, Map) {
    * @name clear
    * @memberOf MapCache
    */
-  function mapClear() {
+  function mapCacheClear() {
     this.__data__ = {
       'hash': new Hash,
-      'map': Map ? new Map : [],
+      'map': new (Map || ListCache),
       'string': new Hash
     };
   }
 
-  return mapClear;
+  return mapCacheClear;
 });

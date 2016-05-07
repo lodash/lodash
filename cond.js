@@ -14,7 +14,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
    * @since 4.0.0
    * @category Util
    * @param {Array} pairs The predicate-function pairs.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new composite function.
    * @example
    *
    * var func = _.cond([

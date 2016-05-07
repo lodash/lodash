@@ -11,7 +11,7 @@ define(['./_createWrapper'], function(createWrapper) {
    * @since 4.0.0
    * @category Function
    * @param {Function} func The function to flip arguments for.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new flipped function.
    * @example
    *
    * var flipped = _.flip(function() {

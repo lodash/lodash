@@ -31,7 +31,7 @@ define(['./_baseFor', './_baseIteratee', './keysIn'], function(baseFor, baseIter
   function forIn(object, iteratee) {
     return object == null
       ? object
-      : baseFor(object, baseIteratee(iteratee), keysIn);
+      : baseFor(object, baseIteratee(iteratee, 3), keysIn);
   }
 
   return forIn;

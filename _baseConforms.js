@@ -8,7 +8,7 @@ define(['./keys'], function(keys) {
    *
    * @private
    * @param {Object} source The object of property predicates to conform to.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new spec function.
    */
   function baseConforms(source) {
     var props = keys(source),

@@ -6849,7 +6849,7 @@
     }
 
     /**
-     * Gets the element at `n` index of `array`. If `n` is negative, the nth
+     * Gets the element at index `n` of `array`. If `n` is negative, the nth
      * element from the end is returned.
      *
      * @static
@@ -14978,7 +14978,7 @@
     }
 
     /**
-     * Creates a function that gets the argument at `n` index. If `n` is negative,
+     * Creates a function that gets the argument at index `n`. If `n` is negative,
      * the nth argument from the end is returned.
      *
      * @static

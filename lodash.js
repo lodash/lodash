@@ -717,12 +717,13 @@
    * @private
    * @param {Array} array The array to search.
    * @param {Function} predicate The function invoked per iteration.
+   * @param {number} fromIndex The index to search from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
-  function baseFindIndex(array, predicate, fromRight) {
+  function baseFindIndex(array, predicate, fromIndex, fromRight) {
     var length = array.length,
-        index = fromRight ? length : -1;
+        index = fromIndex + (fromRight ? 1 : -1);
 
     while ((fromRight ? index-- : ++index < length)) {
       if (predicate(array[index], index, array)) {
@@ -1040,7 +1041,7 @@
    */
   function indexOfNaN(array, fromIndex, fromRight) {
     var length = array.length,
-        index = fromIndex + (fromRight ? 0 : -1);
+        index = fromIndex + (fromRight ? 1 : -1);
 
     while ((fromRight ? index-- : ++index < length)) {
       var other = array[index];
@@ -6428,6 +6429,7 @@
      * @param {Array} array The array to search.
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
+     * @param {number} [fromIndex=0] The index to search from.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
@@ -6452,10 +6454,16 @@
      * _.findIndex(users, 'active');
      * // => 2
      */
-    function findIndex(array, predicate) {
-      return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate, 3))
-        : -1;
+    function findIndex(array, predicate, fromIndex) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return -1;
+      }
+      var index = fromIndex == null ? 0 : toInteger(fromIndex);
+      if (index < 0) {
+        index = nativeMax(length + index, 0);
+      }
+      return baseFindIndex(array, getIteratee(predicate, 3), index);
     }
 
     /**
@@ -6469,6 +6477,7 @@
      * @param {Array} array The array to search.
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
+     * @param {number} [fromIndex=array.length-1] The index to search from.
      * @returns {number} Returns the index of the found element, else `-1`.
      * @example
      *
@@ -6493,10 +6502,19 @@
      * _.findLastIndex(users, 'active');
      * // => 0
      */
-    function findLastIndex(array, predicate) {
-      return (array && array.length)
-        ? baseFindIndex(array, getIteratee(predicate, 3), true)
-        : -1;
+    function findLastIndex(array, predicate, fromIndex) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return -1;
+      }
+      var index = length - 1;
+      if (fromIndex !== undefined) {
+        index = toInteger(fromIndex);
+        index = fromIndex < 0
+          ? nativeMax(length + index, 0)
+          : nativeMin(index, length - 1);
+      }
+      return baseFindIndex(array, getIteratee(predicate, 3), index, true);
     }
 
     /**
@@ -6643,11 +6661,11 @@
       if (!length) {
         return -1;
       }
-      fromIndex = toInteger(fromIndex);
-      if (fromIndex < 0) {
-        fromIndex = nativeMax(length + fromIndex, 0);
+      var index = fromIndex == null ? 0 : toInteger(fromIndex);
+      if (index < 0) {
+        index = nativeMax(length + index, 0);
       }
-      return baseIndexOf(array, value, fromIndex);
+      return baseIndexOf(array, value, index);
     }
 
     /**
@@ -6838,7 +6856,7 @@
         ) + 1;
       }
       if (value !== value) {
-        return indexOfNaN(array, index, true);
+        return indexOfNaN(array, index - 1, true);
       }
       while (index--) {
         if (array[index] === value) {
@@ -8414,7 +8432,7 @@
     function find(collection, predicate) {
       predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
-        var index = baseFindIndex(collection, predicate);
+        var index = baseFindIndex(collection, predicate, 0);
         return index > -1 ? collection[index] : undefined;
       }
       return baseFind(collection, predicate, baseEach);
@@ -8442,7 +8460,7 @@
     function findLast(collection, predicate) {
       predicate = getIteratee(predicate, 3);
       if (isArray(collection)) {
-        var index = baseFindIndex(collection, predicate, true);
+        var index = baseFindIndex(collection, predicate, collection.length - 1, true);
         return index > -1 ? collection[index] : undefined;
       }
       return baseFind(collection, predicate, baseEachRight);

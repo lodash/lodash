@@ -3490,21 +3490,18 @@
 
       var object = { 'a': 1 },
           values = Array(2).concat(empties, true, 1, 'a'),
-          constant = _.constant(object),
-          expected = lodashStable.map(values, mockTrue);
+          constant = _.constant(object);
 
-      var actual = lodashStable.map(values, function(value, index) {
-        if (index == 0) {
-          var result = constant();
-        } else if (index == 1) {
-          result = constant.call({});
-        } else {
-          result = constant(value);
+      var results = lodashStable.map(values, function(value, index) {
+        if (index < 2) {
+          return index ? constant.call({}) : constant();
         }
-        return result === object;
+        return constant(value);
       });
 
-      assert.deepEqual(actual, expected);
+      assert.ok(lodashStable.map(results, function(result) {
+        return result === object;
+      }));
     });
 
     QUnit.test('should work with falsey values', function(assert) {

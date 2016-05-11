@@ -16270,10 +16270,10 @@
     var expected = { 'b': 2, 'd': 4 },
         func = _[methodName],
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        prop = lodashStable.nthArg(1);
+        resolve = lodashStable.nthArg(1);
 
     if (methodName == 'omitBy') {
-      prop = function(object, props) {
+      resolve = function(object, props) {
         props = lodashStable.castArray(props);
         return function(value) {
           return lodashStable.some(props, function(key) {
@@ -16286,8 +16286,8 @@
     QUnit.test('`_.' + methodName + '` should create an object with omitted string keyed properties', function(assert) {
       assert.expect(2);
 
-      assert.deepEqual(func(object, prop(object, 'a')), { 'b': 2, 'c': 3, 'd': 4 });
-      assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
+      assert.deepEqual(func(object, resolve(object, 'a')), { 'b': 2, 'c': 3, 'd': 4 });
+      assert.deepEqual(func(object, resolve(object, ['a', 'c'])), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should include inherited string keyed properties', function(assert) {
@@ -16296,7 +16296,7 @@
       function Foo() {}
       Foo.prototype = object;
 
-      assert.deepEqual(func(new Foo, prop(object, ['a', 'c'])), expected);
+      assert.deepEqual(func(new Foo, resolve(object, ['a', 'c'])), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
@@ -16307,7 +16307,7 @@
           expected = [{ '0': 'b' }, { '0': 'b' }, { '-0': 'a' }, { '-0': 'a' }];
 
       var actual = lodashStable.map(props, function(key) {
-        return func(object, prop(object, key));
+        return func(object, resolve(object, key));
       });
 
       assert.deepEqual(actual, expected);
@@ -16326,7 +16326,7 @@
         Foo.prototype[symbol2] = 2;
 
         var foo = new Foo,
-            actual = func(foo, prop(foo, 'a'));
+            actual = func(foo, resolve(foo, 'a'));
 
         assert.strictEqual(actual[symbol], 1);
         assert.strictEqual(actual[symbol2], 2);
@@ -16349,13 +16349,13 @@
         Foo.prototype[symbol2] = 2;
 
         var foo = new Foo,
-            actual = func(foo, prop(foo, symbol));
+            actual = func(foo, resolve(foo, symbol));
 
         assert.strictEqual(actual.a, 0);
         assert.strictEqual(actual[symbol], undefined);
         assert.strictEqual(actual[symbol2], 2);
 
-        actual = func(foo, prop(foo, symbol2));
+        actual = func(foo, resolve(foo, symbol2));
 
         assert.strictEqual(actual.a, 0);
         assert.strictEqual(actual[symbol], 1);
@@ -16370,7 +16370,7 @@
       assert.expect(1);
 
       var array = [1, 2, 3];
-      assert.deepEqual(func(array, prop(array, ['0', '2'])), { '1': 2 });
+      assert.deepEqual(func(array, resolve(array, ['0', '2'])), { '1': 2 });
     });
   });
 
@@ -17498,10 +17498,10 @@
     var expected = { 'a': 1, 'c': 3 },
         func = _[methodName],
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
-        prop = lodashStable.nthArg(1);
+        resolve = lodashStable.nthArg(1);
 
     if (methodName == 'pickBy') {
-      prop = function(object, props) {
+      resolve = function(object, props) {
         props = lodashStable.castArray(props);
         return function(value) {
           return lodashStable.some(props, function(key) {
@@ -17514,8 +17514,8 @@
     QUnit.test('`_.' + methodName + '` should create an object of picked string keyed properties', function(assert) {
       assert.expect(2);
 
-      assert.deepEqual(func(object, prop(object, 'a')), { 'a': 1 });
-      assert.deepEqual(func(object, prop(object, ['a', 'c'])), expected);
+      assert.deepEqual(func(object, resolve(object, 'a')), { 'a': 1 });
+      assert.deepEqual(func(object, resolve(object, ['a', 'c'])), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should pick inherited string keyed properties', function(assert) {
@@ -17525,7 +17525,7 @@
       Foo.prototype = object;
 
       var foo = new Foo;
-      assert.deepEqual(func(foo, prop(foo, ['a', 'c'])), expected);
+      assert.deepEqual(func(foo, resolve(foo, ['a', 'c'])), expected);
     });
 
     QUnit.test('`_.' + methodName + '` should preserve the sign of `0`', function(assert) {
@@ -17536,7 +17536,7 @@
           expected = [{ '-0': 'a' }, { '-0': 'a' }, { '0': 'b' }, { '0': 'b' }];
 
       var actual = lodashStable.map(props, function(key) {
-        return func(object, prop(object, key));
+        return func(object, resolve(object, key));
       });
 
       assert.deepEqual(actual, expected);
@@ -17554,7 +17554,7 @@
         Foo.prototype[symbol2] = 2;
 
         var foo = new Foo,
-            actual = func(foo, prop(foo, [symbol, symbol2]));
+            actual = func(foo, resolve(foo, [symbol, symbol2]));
 
         assert.strictEqual(actual[symbol], 1);
         assert.strictEqual(actual[symbol2], 2);
@@ -17568,7 +17568,7 @@
       assert.expect(1);
 
       var array = [1, 2, 3];
-      assert.deepEqual(func(array, prop(array, '1')), { '1': 2 });
+      assert.deepEqual(func(array, resolve(array, '1')), { '1': 2 });
     });
   });
 

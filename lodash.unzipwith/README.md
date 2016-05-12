@@ -1,4 +1,4 @@
-# lodash.unzipwith v4.2.0
+# lodash.unzipwith v4.3.0
 
 The [lodash](https://lodash.com/) method `_.unzipWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var unzipWith = require('lodash.unzipwith');
 ```
 
-See the [documentation](https://lodash.com/docs#unzipWith) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.unzipwith) for more details.
+See the [documentation](https://lodash.com/docs#unzipWith) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.unzipwith) for more details.

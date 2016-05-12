@@ -1,4 +1,4 @@
-# lodash.concat v4.2.0
+# lodash.concat v4.3.0
 
 The [lodash](https://lodash.com/) method `_.concat` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var concat = require('lodash.concat');
 ```
 
-See the [documentation](https://lodash.com/docs#concat) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.concat) for more details.
+See the [documentation](https://lodash.com/docs#concat) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.concat) for more details.

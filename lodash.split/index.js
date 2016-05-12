@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -7,6 +7,7 @@
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseSlice = require('lodash._baseslice'),
+    baseToString = require('lodash._basetostring'),
     toString = require('lodash.tostring');
 
 /** Used as references for various `Number` constants. */
@@ -53,20 +54,6 @@ var reComplexSymbol = RegExp(rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 
 var reHasComplexSymbol = RegExp('[' + rsZWJ + rsAstralRange  + rsComboMarksRange + rsComboSymbolsRange + rsVarRange + ']');
 
 /**
- * Checks if `value` is a valid array-like index.
- *
- * @private
- * @param {*} value The value to check.
- * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
- * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
- */
-function isIndex(value, length) {
-  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-  length = length == null ? MAX_SAFE_INTEGER : length;
-  return value > -1 && value % 1 == 0 && value < length;
-}
-
-/**
  * Converts `string` to an array.
  *
  * @private
@@ -96,7 +83,7 @@ var nativeSplit = stringProto.split;
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -131,6 +118,21 @@ function castSlice(array, start, end) {
  * @returns {*} Returns the "length" value.
  */
 var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
 
 /**
  * Checks if the given arguments are from an iteratee call.
@@ -344,7 +346,7 @@ function isRegExp(value) {
  * @param {string} [string=''] The string to split.
  * @param {RegExp|string} separator The separator pattern to split by.
  * @param {number} [limit] The length to truncate results to.
- * @returns {Array} Returns the new array of string segments.
+ * @returns {Array} Returns the string segments.
  * @example
  *
  * _.split('a-b-c', '-', 2);
@@ -363,7 +365,7 @@ function split(string, separator, limit) {
         typeof separator == 'string' ||
         (separator != null && !isRegExp(separator))
       )) {
-    separator += '';
+    separator = baseToString(separator);
     if (separator == '' && reHasComplexSymbol.test(string)) {
       return castSlice(stringToArray(string), 0, limit);
     }

@@ -1,15 +1,16 @@
 /**
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseIteratee = require('lodash._baseiteratee');
 
 /**
- * The base implementation of `_.sum` without support for iteratee shorthands.
+ * The base implementation of `_.sum` and `_.sumBy` without support for
+ * iteratee shorthands.
  *
  * @private
  * @param {Array} array The array to iterate over.
@@ -37,9 +38,11 @@ function baseSum(array, iteratee) {
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.
- * @param {Function|Object|string} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Array|Function|Object|string} [iteratee=_.identity]
+ *  The iteratee invoked per element.
  * @returns {number} Returns the sum.
  * @example
  *

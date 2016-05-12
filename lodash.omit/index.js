@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -10,6 +10,9 @@ var baseDifference = require('lodash._basedifference'),
     baseFlatten = require('lodash._baseflatten'),
     keysIn = require('lodash.keysin'),
     rest = require('lodash.rest');
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
 
 /** `Object#toString` result references. */
 var symbolTag = '[object Symbol]';
@@ -107,9 +110,7 @@ var nativeGetPrototype = Object.getPrototypeOf;
  */
 function baseGetAllKeys(object, keysFunc, symbolsFunc) {
   var result = keysFunc(object);
-  return isArray(object)
-    ? result
-    : arrayPush(result, symbolsFunc(object));
+  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
 }
 
 /**
@@ -198,8 +199,12 @@ var getSymbolsIn = !getOwnPropertySymbols ? getSymbols : function(object) {
  * @param {*} value The value to inspect.
  * @returns {string|symbol} Returns the key.
  */
-function toKey(key) {
-  return (typeof key == 'string' || isSymbol(key)) ? key : (key + '');
+function toKey(value) {
+  if (typeof value == 'string' || isSymbol(value)) {
+    return value;
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 
 /**

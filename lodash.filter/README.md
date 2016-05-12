@@ -1,4 +1,4 @@
-# lodash.filter v4.2.2
+# lodash.filter v4.3.0
 
 The [lodash](https://lodash.com/) method `_.filter` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var filter = require('lodash.filter');
 ```
 
-See the [documentation](https://lodash.com/docs#filter) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.filter) for more details.
+See the [documentation](https://lodash.com/docs#filter) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.filter) for more details.

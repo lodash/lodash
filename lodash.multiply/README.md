@@ -1,4 +1,4 @@
-# lodash.multiply v4.8.0
+# lodash.multiply v4.9.0
 
 The [lodash](https://lodash.com/) method `_.multiply` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var multiply = require('lodash.multiply');
 ```
 
-See the [documentation](https://lodash.com/docs#multiply) or [package source](https://github.com/lodash/lodash/blob/4.8.0-npm-packages/lodash.multiply) for more details.
+See the [documentation](https://lodash.com/docs#multiply) or [package source](https://github.com/lodash/lodash/blob/4.9.0-npm-packages/lodash.multiply) for more details.

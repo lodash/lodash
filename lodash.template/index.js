@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.4 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -119,20 +119,6 @@ function escapeStringChar(chr) {
   return '\\' + stringEscapes[chr];
 }
 
-/**
- * Checks if `value` is a valid array-like index.
- *
- * @private
- * @param {*} value The value to check.
- * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
- * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
- */
-function isIndex(value, length) {
-  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-  length = length == null ? MAX_SAFE_INTEGER : length;
-  return value > -1 && value % 1 == 0 && value < length;
-}
-
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -169,7 +155,7 @@ function assignInDefaults(objValue, srcValue, key, object) {
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -189,6 +175,21 @@ function baseProperty(key) {
  * @returns {*} Returns the "length" value.
  */
 var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
 
 /**
  * Checks if the given arguments are from an iteratee call.
@@ -486,12 +487,6 @@ function isObjectLike(value) {
  * compiled({ 'user': 'pebbles' });
  * // => 'hello pebbles!'
  *
- * // Use custom template delimiters.
- * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
- * var compiled = _.template('hello {{ user }}!');
- * compiled({ 'user': 'mustache' });
- * // => 'hello mustache!'
- *
  * // Use backslashes to treat delimiters as plain text.
  * var compiled = _.template('<%= "\\<%- value %\\>" %>');
  * compiled({ 'value': 'ignored' });
@@ -517,9 +512,15 @@ function isObjectLike(value) {
  * //   return __p;
  * // }
  *
+ * // Use custom template delimiters.
+ * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+ * var compiled = _.template('hello {{ user }}!');
+ * compiled({ 'user': 'mustache' });
+ * // => 'hello mustache!'
+ *
  * // Use the `source` property to inline compiled templates for meaningful
  * // line numbers in error messages and stack traces.
- * fs.writeFileSync(path.join(cwd, 'jst.js'), '\
+ * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
  *   var JST = {\
  *     "main": ' + _.template(mainText).source + '\
  *   };\

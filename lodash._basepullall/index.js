@@ -1,5 +1,5 @@
 /**
- * lodash 4.1.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -52,6 +52,41 @@ function baseIndexOf(array, value, fromIndex) {
 }
 
 /**
+ * This function is like `baseIndexOf` except that it accepts a comparator.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {*} value The value to search for.
+ * @param {number} fromIndex The index to search from.
+ * @param {Function} comparator The comparator invoked per element.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseIndexOfWith(array, value, fromIndex, comparator) {
+  var index = fromIndex - 1,
+      length = array.length;
+
+  while (++index < length) {
+    if (comparator(array[index], value)) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The base implementation of `_.unary` without support for storing wrapper metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
+/**
  * Gets the index at which the first occurrence of `NaN` is found in `array`.
  *
  * @private
@@ -87,22 +122,24 @@ var splice = arrayProto.splice;
  * @param {Array} array The array to modify.
  * @param {Array} values The values to remove.
  * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns `array`.
  */
-function basePullAllBy(array, values, iteratee) {
-  var index = -1,
+function basePullAll(array, values, iteratee, comparator) {
+  var indexOf = comparator ? baseIndexOfWith : baseIndexOf,
+      index = -1,
       length = values.length,
       seen = array;
 
   if (iteratee) {
-    seen = arrayMap(array, function(value) { return iteratee(value); });
+    seen = arrayMap(array, baseUnary(iteratee));
   }
   while (++index < length) {
     var fromIndex = 0,
         value = values[index],
         computed = iteratee ? iteratee(value) : value;
 
-    while ((fromIndex = baseIndexOf(seen, computed, fromIndex)) > -1) {
+    while ((fromIndex = indexOf(seen, computed, fromIndex, comparator)) > -1) {
       if (seen !== array) {
         splice.call(seen, fromIndex, 1);
       }
@@ -112,4 +149,4 @@ function basePullAllBy(array, values, iteratee) {
   return array;
 }
 
-module.exports = basePullAllBy;
+module.exports = basePullAll;

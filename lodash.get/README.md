@@ -1,4 +1,4 @@
-# lodash.get v4.0.2
+# lodash.get v4.1.0
 
 The [lodash](https://lodash.com/) method `_.get` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var get = require('lodash.get');
 ```
 
-See the [documentation](https://lodash.com/docs#get) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.get) for more details.
+See the [documentation](https://lodash.com/docs#get) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.get) for more details.

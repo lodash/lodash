@@ -1,4 +1,4 @@
-# lodash.map v4.0.2
+# lodash.map v4.1.0
 
 The [lodash](https://lodash.com/) method `_.map` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var map = require('lodash.map');
 ```
 
-See the [documentation](https://lodash.com/docs#map) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.map) for more details.
+See the [documentation](https://lodash.com/docs#map) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.map) for more details.

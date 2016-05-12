@@ -1,6 +1,6 @@
 {
   "name": "lodash.matchesproperty",
-  "version": "4.0.4",
+  "version": "4.1.0",
   "description": "The lodash method `_.matchesProperty` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -18,6 +18,7 @@
     "lodash._arrayeach": "^3.0.0",
     "lodash._basefor": "^3.0.0",
     "lodash._baseisequal": "^4.0.0",
+    "lodash._root": "^3.0.0",
     "lodash._stack": "^4.0.0",
     "lodash.get": "^4.0.0",
     "lodash.hasin": "^4.0.0",

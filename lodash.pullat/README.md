@@ -1,4 +1,4 @@
-# lodash.pullat v4.0.0
+# lodash.pullat v4.1.0
 
 The [lodash](https://lodash.com/) method `_.pullAt` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var pullAt = require('lodash.pullat');
 ```
 
-See the [documentation](https://lodash.com/docs#pullAt) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.pullat) for more details.
+See the [documentation](https://lodash.com/docs#pullAt) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.pullat) for more details.

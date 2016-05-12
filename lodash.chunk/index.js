@@ -6,7 +6,6 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var baseSlice = require('lodash._baseslice');
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
@@ -37,6 +36,19 @@ var reIsUint = /^(?:0|[1-9]\d*)$/;
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -52,16 +64,33 @@ var nativeCeil = Math.ceil,
     nativeMax = Math.max;
 
 /**
- * The base implementation of `_.property` without support for deep paths.
+ * The base implementation of `_.slice` without an iteratee call guard.
  *
  * @private
- * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new accessor function.
+ * @param {Array} array The array to slice.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the slice of `array`.
  */
-function baseProperty(key) {
-  return function(object) {
-    return object == null ? undefined : object[key];
-  };
+function baseSlice(array, start, end) {
+  var index = -1,
+      length = array.length;
+
+  if (start < 0) {
+    start = -start > length ? 0 : (length + start);
+  }
+  end = end > length ? length : end;
+  if (end < 0) {
+    end += length;
+  }
+  length = start > end ? 0 : ((end - start) >>> 0);
+  start >>>= 0;
+
+  var result = Array(length);
+  while (++index < length) {
+    result[index] = array[index + start];
+  }
+  return result;
 }
 
 /**
@@ -171,8 +200,8 @@ function chunk(array, size, guard) {
  * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
  * @example
  *
- * var object = { 'user': 'fred' };
- * var other = { 'user': 'fred' };
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
  *
  * _.eq(object, object);
  * // => true
@@ -230,8 +259,7 @@ function isArrayLike(value) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -346,8 +374,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -399,7 +426,7 @@ function toFinite(value) {
 /**
  * Converts `value` to an integer.
  *
- * **Note:** This function is loosely based on
+ * **Note:** This method is loosely based on
  * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
  *
  * @static

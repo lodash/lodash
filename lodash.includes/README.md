@@ -1,4 +1,4 @@
-# lodash.includes v4.0.1
+# lodash.includes v4.1.0
 
 The [lodash](https://lodash.com/) method `_.includes` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var includes = require('lodash.includes');
 ```
 
-See the [documentation](https://lodash.com/docs#includes) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.includes) for more details.
+See the [documentation](https://lodash.com/docs#includes) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.includes) for more details.

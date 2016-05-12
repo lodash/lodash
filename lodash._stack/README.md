@@ -1,4 +1,4 @@
-# lodash._stack v4.0.2
+# lodash._stack v4.1.0
 
 The internal [lodash](https://lodash.com/) function `Stack` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var Stack = require('lodash._stack');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash._stack) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash._stack) for more details.

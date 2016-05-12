@@ -1,4 +1,4 @@
-# lodash._basepullallby v4.0.1
+# lodash._basepullallby v4.1.0
 
 The internal [lodash](https://lodash.com/) function `basePullAllBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var basePullAllBy = require('lodash._basepullallby');
 ```
 
-See the [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash._basepullallby) for more details.
+See the [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash._basepullallby) for more details.

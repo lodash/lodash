@@ -6,10 +6,10 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var baseSortedIndexBy = require('lodash._basesortedindexby');
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = 4294967295,
+    MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
     HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
 /** `Object#toString` result references. */
@@ -20,10 +20,14 @@ var objectProto = Object.prototype;
 
 /**
  * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeFloor = Math.floor,
+    nativeMin = Math.min;
 
 /**
  * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` which
@@ -59,6 +63,59 @@ function baseSortedIndex(array, value, retHighest) {
 }
 
 /**
+ * The base implementation of `_.sortedIndexBy` and `_.sortedLastIndexBy`
+ * which invokes `iteratee` for `value` and each element of `array` to compute
+ * their sort ranking. The iteratee is invoked with one argument; (value).
+ *
+ * @private
+ * @param {Array} array The sorted array to inspect.
+ * @param {*} value The value to evaluate.
+ * @param {Function} iteratee The iteratee invoked per element.
+ * @param {boolean} [retHighest] Specify returning the highest qualified index.
+ * @returns {number} Returns the index at which `value` should be inserted
+ *  into `array`.
+ */
+function baseSortedIndexBy(array, value, iteratee, retHighest) {
+  value = iteratee(value);
+
+  var low = 0,
+      high = array ? array.length : 0,
+      valIsNaN = value !== value,
+      valIsNull = value === null,
+      valIsSymbol = isSymbol(value),
+      valIsUndefined = value === undefined;
+
+  while (low < high) {
+    var mid = nativeFloor((low + high) / 2),
+        computed = iteratee(array[mid]),
+        othIsDefined = computed !== undefined,
+        othIsNull = computed === null,
+        othIsReflexive = computed === computed,
+        othIsSymbol = isSymbol(computed);
+
+    if (valIsNaN) {
+      var setLow = retHighest || othIsReflexive;
+    } else if (valIsUndefined) {
+      setLow = othIsReflexive && (retHighest || othIsDefined);
+    } else if (valIsNull) {
+      setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull);
+    } else if (valIsSymbol) {
+      setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol);
+    } else if (othIsNull || othIsSymbol) {
+      setLow = false;
+    } else {
+      setLow = retHighest ? (computed <= value) : (computed < value);
+    }
+    if (setLow) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  return nativeMin(high, MAX_ARRAY_INDEX);
+}
+
+/**
  * This method is like `_.lastIndexOf` except that it performs a binary
  * search on a sorted `array`.
  *
@@ -66,12 +123,12 @@ function baseSortedIndex(array, value, retHighest) {
  * @memberOf _
  * @since 4.0.0
  * @category Array
- * @param {Array} array The array to search.
+ * @param {Array} array The array to inspect.
  * @param {*} value The value to search for.
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * _.sortedLastIndexOf([1, 1, 2, 2], 2);
+ * _.sortedLastIndexOf([4, 5, 5, 5, 6], 5);
  * // => 3
  */
 function sortedLastIndexOf(array, value) {
@@ -87,7 +144,7 @@ function sortedLastIndexOf(array, value) {
 
 /**
  * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * comparison between two values to determine if they are equivalent.
  *
  * @static
@@ -99,8 +156,8 @@ function sortedLastIndexOf(array, value) {
  * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
  * @example
  *
- * var object = { 'user': 'fred' };
- * var other = { 'user': 'fred' };
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
  *
  * _.eq(object, object);
  * // => true
@@ -157,8 +214,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);
@@ -173,7 +229,7 @@ function isSymbol(value) {
 }
 
 /**
- * This method returns the first argument given to it.
+ * This method returns the first argument it receives.
  *
  * @static
  * @since 0.1.0
@@ -183,9 +239,9 @@ function isSymbol(value) {
  * @returns {*} Returns `value`.
  * @example
  *
- * var object = { 'user': 'fred' };
+ * var object = { 'a': 1 };
  *
- * _.identity(object) === object;
+ * console.log(_.identity(object) === object);
  * // => true
  */
 function identity(value) {

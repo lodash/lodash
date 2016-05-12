@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -58,7 +58,7 @@ var concat = rest(function(array, values) {
   if (!isArray(array)) {
     array = array == null ? [] : [Object(array)];
   }
-  values = baseFlatten(values);
+  values = baseFlatten(values, 1);
   return arrayConcat(array, values);
 });
 
@@ -67,7 +67,7 @@ var concat = rest(function(array, values) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

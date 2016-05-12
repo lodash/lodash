@@ -1,4 +1,4 @@
-# lodash.mapvalues v4.0.2
+# lodash.mapvalues v4.1.0
 
 The [lodash](https://lodash.com/) method `_.mapValues` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var mapValues = require('lodash.mapvalues');
 ```
 
-See the [documentation](https://lodash.com/docs#mapValues) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.mapvalues) for more details.
+See the [documentation](https://lodash.com/docs#mapValues) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.mapvalues) for more details.

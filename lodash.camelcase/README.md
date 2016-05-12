@@ -1,4 +1,4 @@
-# lodash.camelcase v4.0.1
+# lodash.camelcase v4.1.0
 
 The [lodash](https://lodash.com/) method `_.camelCase` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var camelCase = require('lodash.camelcase');
 ```
 
-See the [documentation](https://lodash.com/docs#camelCase) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.camelcase) for more details.
+See the [documentation](https://lodash.com/docs#camelCase) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.camelcase) for more details.

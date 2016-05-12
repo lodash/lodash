@@ -1,4 +1,4 @@
-# lodash.sample v4.0.1
+# lodash.sample v4.1.0
 
 The [lodash](https://lodash.com/) method `_.sample` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var sample = require('lodash.sample');
 ```
 
-See the [documentation](https://lodash.com/docs#sample) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.sample) for more details.
+See the [documentation](https://lodash.com/docs#sample) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.sample) for more details.

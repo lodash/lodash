@@ -1,4 +1,4 @@
-# lodash.toupper v4.0.2
+# lodash.toupper v4.1.0
 
 The [lodash](https://lodash.com/) method `_.toUpper` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var toUpper = require('lodash.toupper');
 ```
 
-See the [documentation](https://lodash.com/docs#toUpper) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.toupper) for more details.
+See the [documentation](https://lodash.com/docs#toUpper) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.toupper) for more details.

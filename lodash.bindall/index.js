@@ -1,15 +1,35 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayEach = require('lodash._arrayeach'),
-    baseFlatten = require('lodash._baseflatten'),
+var baseFlatten = require('lodash._baseflatten'),
     bind = require('lodash.bind'),
     rest = require('lodash.rest');
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
 
 /**
  * Binds methods of an object to the object itself, overwriting the existing
@@ -38,7 +58,7 @@ var arrayEach = require('lodash._arrayeach'),
  * // => logs 'clicked docs' when clicked
  */
 var bindAll = rest(function(object, methodNames) {
-  arrayEach(baseFlatten(methodNames), function(key) {
+  arrayEach(baseFlatten(methodNames, 1), function(key) {
     object[key] = bind(object[key], object);
   });
   return object;

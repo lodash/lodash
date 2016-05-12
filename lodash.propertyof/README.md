@@ -1,4 +1,4 @@
-# lodash.propertyof v4.0.2
+# lodash.propertyof v4.1.0
 
 The [lodash](https://lodash.com/) method `_.propertyOf` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var propertyOf = require('lodash.propertyof');
 ```
 
-See the [documentation](https://lodash.com/docs#propertyOf) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.propertyof) for more details.
+See the [documentation](https://lodash.com/docs#propertyOf) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.propertyof) for more details.

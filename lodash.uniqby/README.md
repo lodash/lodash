@@ -1,4 +1,4 @@
-# lodash.uniqby v4.0.3
+# lodash.uniqby v4.1.0
 
 The [lodash](https://lodash.com/) method `_.uniqBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var uniqBy = require('lodash.uniqby');
 ```
 
-See the [documentation](https://lodash.com/docs#uniqBy) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.uniqby) for more details.
+See the [documentation](https://lodash.com/docs#uniqBy) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.uniqby) for more details.

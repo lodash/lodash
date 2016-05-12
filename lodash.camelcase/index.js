@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -18,7 +18,8 @@ var capitalize = require('lodash.capitalize'),
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
- * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
+ * @param {boolean} [initAccum] Specify using the first element of `array` as
+ *  the initial value.
  * @returns {*} Returns the accumulated value.
  */
 function arrayReduce(array, iteratee, accumulator, initAccum) {
@@ -52,6 +53,7 @@ function createCompounder(callback) {
  *
  * @static
  * @memberOf _
+ * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the camel cased string.
@@ -60,10 +62,10 @@ function createCompounder(callback) {
  * _.camelCase('Foo Bar');
  * // => 'fooBar'
  *
- * _.camelCase('--foo-bar');
+ * _.camelCase('--foo-bar--');
  * // => 'fooBar'
  *
- * _.camelCase('__foo_bar__');
+ * _.camelCase('__FOO_BAR__');
  * // => 'fooBar'
  */
 var camelCase = createCompounder(function(result, word, index) {

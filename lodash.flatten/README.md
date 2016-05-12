@@ -1,4 +1,4 @@
-# lodash.flatten v4.0.0
+# lodash.flatten v4.1.0
 
 The [lodash](https://lodash.com/) method `_.flatten` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var flatten = require('lodash.flatten');
 ```
 
-See the [documentation](https://lodash.com/docs#flatten) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.flatten) for more details.
+See the [documentation](https://lodash.com/docs#flatten) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.flatten) for more details.

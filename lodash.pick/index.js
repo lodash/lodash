@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -70,7 +70,7 @@ function basePick(object, props) {
  * // => { 'a': 1, 'c': 3 }
  */
 var pick = rest(function(object, props) {
-  return object == null ? {} : basePick(object, baseFlatten(props));
+  return object == null ? {} : basePick(object, baseFlatten(props, 1));
 });
 
 module.exports = pick;

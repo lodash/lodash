@@ -1,14 +1,16 @@
 /**
- * lodash 4.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+var rest = require('lodash.rest');
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,
+    MAX_SAFE_INTEGER = 9007199254740991,
     MAX_INTEGER = 1.7976931348623157e+308,
     NAN = 0 / 0;
 
@@ -29,8 +31,25 @@ var reIsBinary = /^0b[01]+$/i;
 /** Used to detect octal string values. */
 var reIsOctal = /^0o[0-7]+$/i;
 
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return value > -1 && value % 1 == 0 && value < length;
+}
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -41,6 +60,23 @@ var objectProto = Object.prototype;
  * of values.
  */
 var objectToString = objectProto.toString;
+
+/**
+ * The base implementation of `_.nth` which doesn't coerce `n` to an integer.
+ *
+ * @private
+ * @param {Array} array The array to query.
+ * @param {number} n The index of the element to return.
+ * @returns {*} Returns the nth element of `array`.
+ */
+function baseNth(array, n) {
+  var length = array.length;
+  if (!length) {
+    return;
+  }
+  n += n < 0 ? length : 0;
+  return isIndex(n, length) ? array[n] : undefined;
+}
 
 /**
  * Checks if `value` is classified as a `Function` object.
@@ -233,7 +269,8 @@ function toNumber(value) {
 }
 
 /**
- * Creates a function that returns its nth argument.
+ * Creates a function that returns its nth argument. If `n` is negative,
+ * the nth argument from the end is returned.
  *
  * @static
  * @memberOf _
@@ -244,15 +281,18 @@ function toNumber(value) {
  * @example
  *
  * var func = _.nthArg(1);
- *
- * func('a', 'b', 'c');
+ * func('a', 'b', 'c', 'd');
  * // => 'b'
+ *
+ * var func = _.nthArg(-2);
+ * func('a', 'b', 'c', 'd');
+ * // => 'c'
  */
 function nthArg(n) {
   n = toInteger(n);
-  return function() {
-    return arguments[n];
-  };
+  return rest(function(args) {
+    return baseNth(args, n);
+  });
 }
 
 module.exports = nthArg;

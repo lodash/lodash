@@ -1,24 +1,14 @@
 /**
- * lodash 4.0.2 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseFor = require('lodash._basefor'),
+    baseIteratee = require('lodash._baseiteratee'),
     keys = require('lodash.keys');
-
-/**
- * Casts `value` to `identity` if it's not a function.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the array-like object.
- */
-function baseCastFunction(value) {
-  return typeof value == 'function' ? value : identity;
-}
 
 /**
  * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -33,13 +23,14 @@ function baseForOwn(object, iteratee) {
 }
 
 /**
- * Iterates over own enumerable properties of an object invoking `iteratee`
- * for each property. The iteratee is invoked with three arguments:
- * (value, key, object). Iteratee functions may exit iteration early by
- * explicitly returning `false`.
+ * Iterates over own enumerable string keyed properties of an object and
+ * invokes `iteratee` for each property. The iteratee is invoked with three
+ * arguments: (value, key, object). Iteratee functions may exit iteration
+ * early by explicitly returning `false`.
  *
  * @static
  * @memberOf _
+ * @since 0.3.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
@@ -56,29 +47,10 @@ function baseForOwn(object, iteratee) {
  * _.forOwn(new Foo, function(value, key) {
  *   console.log(key);
  * });
- * // => logs 'a' then 'b' (iteration order is not guaranteed)
+ * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, baseCastFunction(iteratee));
-}
-
-/**
- * This method returns the first argument given to it.
- *
- * @static
- * @memberOf _
- * @category Util
- * @param {*} value Any value.
- * @returns {*} Returns `value`.
- * @example
- *
- * var object = { 'user': 'fred' };
- *
- * _.identity(object) === object;
- * // => true
- */
-function identity(value) {
-  return value;
+  return object && baseForOwn(object, baseIteratee(iteratee));
 }
 
 module.exports = forOwn;

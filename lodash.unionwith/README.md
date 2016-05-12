@@ -1,4 +1,4 @@
-# lodash.unionwith v4.0.2
+# lodash.unionwith v4.1.0
 
 The [lodash](https://lodash.com/) method `_.unionWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var unionWith = require('lodash.unionwith');
 ```
 
-See the [documentation](https://lodash.com/docs#unionWith) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.unionwith) for more details.
+See the [documentation](https://lodash.com/docs#unionWith) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.unionwith) for more details.

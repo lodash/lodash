@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -36,7 +36,7 @@ var REARG_FLAG = 256;
  * // => ['a', 'b', 'c']
  */
 var rearg = rest(function(func, indexes) {
-  return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes));
+  return createWrapper(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes, 1));
 });
 
 module.exports = rearg;

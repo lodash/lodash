@@ -1,6 +1,6 @@
 {
   "name": "lodash.set",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "The lodash method `_.set` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,6 +15,6 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._baseset": "~4.1.0"
+    "lodash._baseset": "~4.2.0"
   }
 }

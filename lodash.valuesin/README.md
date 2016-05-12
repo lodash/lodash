@@ -1,4 +1,4 @@
-# lodash.valuesin v4.0.0
+# lodash.valuesin v4.1.0
 
 The [lodash](https://lodash.com/) method `_.valuesIn` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var valuesIn = require('lodash.valuesin');
 ```
 
-See the [documentation](https://lodash.com/docs#valuesIn) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.valuesin) for more details.
+See the [documentation](https://lodash.com/docs#valuesIn) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.valuesin) for more details.

@@ -1,12 +1,13 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var rest = require('lodash.rest');
+var baseSlice = require('lodash._baseslice'),
+    rest = require('lodash.rest');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -90,6 +91,21 @@ var objectToString = objectProto.toString;
 var nativeMax = Math.max;
 
 /**
+ * Casts `array` to a slice if it's needed.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {number} start The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the cast slice.
+ */
+function castSlice(array, start, end) {
+  var length = array.length;
+  end = end === undefined ? length : end;
+  return (!start && end >= length) ? array : baseSlice(array, start, end);
+}
+
+/**
  * Creates a function that invokes `func` with the `this` binding of the
  * create function and an array of arguments much like
  * [`Function#apply`](http://www.ecma-international.org/ecma-262/6.0/#sec-function.prototype.apply).
@@ -130,7 +146,7 @@ function spread(func, start) {
   start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
   return rest(function(args) {
     var array = args[start],
-        otherArgs = args.slice(0, start);
+        otherArgs = castSlice(args, 0, start);
 
     if (array) {
       arrayPush(otherArgs, array);

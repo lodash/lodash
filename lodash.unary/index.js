@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -14,9 +14,10 @@ var ary = require('lodash.ary');
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Function
  * @param {Function} func The function to cap arguments for.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new capped function.
  * @example
  *
  * _.map(['6', '8', '10'], _.unary(parseInt));

@@ -1,6 +1,6 @@
 {
   "name": "lodash.intersectionwith",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "The lodash method `_.intersectionWith` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,11 +15,7 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._arrayincludes": "^4.0.0",
-    "lodash._arrayincludeswith": "^4.0.0",
-    "lodash._arraymap": "^3.0.0",
-    "lodash._cachehas": "^4.0.0",
-    "lodash._setcache": "^4.0.0",
+    "lodash._baseintersection": "^4.0.0",
     "lodash.rest": "^4.0.0"
   }
 }

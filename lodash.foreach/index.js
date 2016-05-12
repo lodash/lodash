@@ -1,22 +1,42 @@
 /**
- * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayEach = require('lodash._arrayeach'),
-    baseEach = require('lodash._baseeach');
+var baseEach = require('lodash._baseeach');
 
 /**
- * Converts `value` to a function if it's not one.
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
  *
  * @private
- * @param {*} value The value to process.
- * @returns {Function} Returns the function.
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
  */
-function toFunction(value) {
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
+}
+
+/**
+ * Casts `value` to `identity` if it's not a function.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the array-like object.
+ */
+function baseCastFunction(value) {
   return typeof value == 'function' ? value : identity;
 }
 
@@ -51,7 +71,7 @@ function toFunction(value) {
 function forEach(collection, iteratee) {
   return (typeof iteratee == 'function' && isArray(collection))
     ? arrayEach(collection, iteratee)
-    : baseEach(collection, toFunction(iteratee));
+    : baseEach(collection, baseCastFunction(iteratee));
 }
 
 /**
@@ -59,7 +79,7 @@ function forEach(collection, iteratee) {
  *
  * @static
  * @memberOf _
- * @type Function
+ * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.

@@ -1,4 +1,4 @@
-# lodash.isequal v4.0.0
+# lodash.isequal v4.1.0
 
 The [lodash](https://lodash.com/) method `_.isEqual` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isEqual = require('lodash.isequal');
 ```
 
-See the [documentation](https://lodash.com/docs#isEqual) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.isequal) for more details.
+See the [documentation](https://lodash.com/docs#isEqual) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.isequal) for more details.

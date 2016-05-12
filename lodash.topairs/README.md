@@ -1,4 +1,4 @@
-# lodash.topairs v4.0.0
+# lodash.topairs v4.1.0
 
 The [lodash](https://lodash.com/) method `_.toPairs` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var toPairs = require('lodash.topairs');
 ```
 
-See the [documentation](https://lodash.com/docs#toPairs) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.topairs) for more details.
+See the [documentation](https://lodash.com/docs#toPairs) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.topairs) for more details.

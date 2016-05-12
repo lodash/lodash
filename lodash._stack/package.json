@@ -1,6 +1,6 @@
 {
   "name": "lodash._stack",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "The internal lodash function `Stack` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -12,8 +12,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._mapcache": "^4.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

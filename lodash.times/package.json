@@ -1,6 +1,6 @@
 {
   "name": "lodash.times",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "The lodash method `_.times` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -9,9 +9,12 @@
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Blaine Bublitz <blaine@iceddev.com> (https://github.com/phated)",
+    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
+  "dependencies": {
+    "lodash._baseiteratee": "~4.6.0"
+  }
 }

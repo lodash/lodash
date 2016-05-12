@@ -1,4 +1,4 @@
-# lodash.ismatchwith v4.0.0
+# lodash.ismatchwith v4.1.0
 
 The [lodash](https://lodash.com/) method `_.isMatchWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var isMatchWith = require('lodash.ismatchwith');
 ```
 
-See the [documentation](https://lodash.com/docs#isMatchWith) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.ismatchwith) for more details.
+See the [documentation](https://lodash.com/docs#isMatchWith) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.ismatchwith) for more details.

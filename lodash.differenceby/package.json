@@ -1,6 +1,6 @@
 {
   "name": "lodash.differenceby",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "The lodash method `_.differenceBy` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -22,6 +22,7 @@
     "lodash._baseisequal": "^4.0.0",
     "lodash._baseismatch": "^4.0.0",
     "lodash._cachehas": "^4.0.0",
+    "lodash._root": "^3.0.0",
     "lodash._setcache": "^4.0.0",
     "lodash.get": "^4.0.0",
     "lodash.hasin": "^4.0.0",

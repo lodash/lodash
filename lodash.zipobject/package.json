@@ -1,11 +1,11 @@
 {
   "name": "lodash.zipobject",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "The lodash method `_.zipObject` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
-  "keywords": "lodash, lodash-modularized, stdlib, util, zipobject",
+  "keywords": "lodash-modularized, zipobject",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
@@ -13,8 +13,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._baseset": "^4.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

@@ -1,54 +1,67 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var keys = require('lodash.keys');
+var baseFor = require('lodash._basefor'),
+    keys = require('lodash.keys');
 
 /**
- * A specialized version of `_.reduce` for arrays without support for
- * iteratee shorthands.
+ * The base implementation of `_.forOwn` without support for iteratee shorthands.
  *
  * @private
- * @param {Array} array The array to iterate over.
+ * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @param {*} [accumulator] The initial value.
- * @param {boolean} [initAccum] Specify using the first element of `array` as the initial value.
- * @returns {*} Returns the accumulated value.
+ * @returns {Object} Returns `object`.
  */
-function arrayReduce(array, iteratee, accumulator, initAccum) {
-  var index = -1,
-      length = array.length;
+function baseForOwn(object, iteratee) {
+  return object && baseFor(object, iteratee, keys);
+}
 
-  if (initAccum && length) {
-    accumulator = array[++index];
-  }
-  while (++index < length) {
-    accumulator = iteratee(accumulator, array[index], index, array);
-  }
+/**
+ * The base implementation of `_.invert` and `_.invertBy` which inverts
+ * `object` with values transformed by `iteratee` and set by `setter`.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} setter The function to set `accumulator` values.
+ * @param {Function} iteratee The iteratee to transform values.
+ * @param {Object} accumulator The initial inverted object.
+ * @returns {Function} Returns `accumulator`.
+ */
+function baseInverter(object, setter, iteratee, accumulator) {
+  baseForOwn(object, function(value, key, object) {
+    setter(accumulator, iteratee(value), key, object);
+  });
   return accumulator;
 }
 
-/** Used for built-in method references. */
-var objectProto = global.Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+/**
+ * Creates a function like `_.invertBy`.
+ *
+ * @private
+ * @param {Function} setter The function to set accumulator values.
+ * @param {Function} toIteratee The function to resolve iteratees.
+ * @returns {Function} Returns the new inverter function.
+ */
+function createInverter(setter, toIteratee) {
+  return function(object, iteratee) {
+    return baseInverter(object, setter, toIteratee(iteratee), {});
+  };
+}
 
 /**
  * Creates an object composed of the inverted keys and values of `object`.
  * If `object` contains duplicate values, subsequent values overwrite property
- * assignments of previous values unless `multiVal` is `true`.
+ * assignments of previous values.
  *
  * @static
  * @memberOf _
  * @category Object
  * @param {Object} object The object to invert.
- * @param {boolean} [multiVal] Allow multiple values per key.
- * @param- {Object} [guard] Enables use as an iteratee for functions like `_.map`.
  * @returns {Object} Returns the new inverted object.
  * @example
  *
@@ -56,26 +69,50 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  *
  * _.invert(object);
  * // => { '1': 'c', '2': 'b' }
- *
- * // with `multiVal`
- * _.invert(object, true);
- * // => { '1': ['a', 'c'], '2': ['b'] }
  */
-function invert(object, multiVal, guard) {
-  return arrayReduce(keys(object), function(result, key) {
-    var value = object[key];
-    if (multiVal && !guard) {
-      if (hasOwnProperty.call(result, value)) {
-        result[value].push(key);
-      } else {
-        result[value] = [key];
-      }
-    }
-    else {
-      result[value] = key;
-    }
-    return result;
-  }, {});
+var invert = createInverter(function(result, value, key) {
+  result[value] = key;
+}, constant(identity));
+
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @category Util
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var getter = _.constant(object);
+ *
+ * getter() === object;
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+
+/**
+ * This method returns the first argument given to it.
+ *
+ * @static
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
 }
 
 module.exports = invert;

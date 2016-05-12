@@ -1,4 +1,4 @@
-# lodash.templatesettings v4.0.1
+# lodash.templatesettings v4.1.0
 
 The [lodash](https://lodash.com/) method `_.templateSettings` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var templateSettings = require('lodash.templatesettings');
 ```
 
-See the [documentation](https://lodash.com/docs#templateSettings) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.templatesettings) for more details.
+See the [documentation](https://lodash.com/docs#templateSettings) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.templatesettings) for more details.

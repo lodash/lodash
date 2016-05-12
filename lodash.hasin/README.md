@@ -1,4 +1,4 @@
-# lodash.hasin v4.0.3
+# lodash.hasin v4.1.0
 
 The [lodash](https://lodash.com/) method `_.hasIn` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var hasIn = require('lodash.hasin');
 ```
 
-See the [documentation](https://lodash.com/docs#hasIn) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.hasin) for more details.
+See the [documentation](https://lodash.com/docs#hasIn) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.hasin) for more details.

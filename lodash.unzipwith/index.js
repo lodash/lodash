@@ -1,13 +1,12 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var arrayMap = require('lodash._arraymap'),
-    unzip = require('lodash.unzip');
+var unzip = require('lodash.unzip');
 
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
@@ -16,7 +15,7 @@ var arrayMap = require('lodash._arraymap'),
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} args The arguments to invoke `func` with.
+ * @param {Array} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
@@ -31,15 +30,37 @@ function apply(func, thisArg, args) {
 }
 
 /**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+/**
  * This method is like `_.unzip` except that it accepts `iteratee` to specify
  * how regrouped values should be combined. The iteratee is invoked with the
  * elements of each group: (...group).
  *
  * @static
  * @memberOf _
+ * @since 3.8.0
  * @category Array
  * @param {Array} array The array of grouped elements to process.
- * @param {Function} [iteratee=_.identity] The function to combine regrouped values.
+ * @param {Function} [iteratee=_.identity] The function to combine
+ *  regrouped values.
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *

@@ -1,4 +1,4 @@
-# lodash.unary v4.0.0
+# lodash.unary v4.1.0
 
 The [lodash](https://lodash.com/) method `_.unary` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var unary = require('lodash.unary');
 ```
 
-See the [documentation](https://lodash.com/docs#unary) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.unary) for more details.
+See the [documentation](https://lodash.com/docs#unary) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.unary) for more details.

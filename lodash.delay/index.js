@@ -6,7 +6,6 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
-var rest = require('lodash.rest');
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -34,6 +33,26 @@ var reIsOctal = /^0o[0-7]+$/i;
 /** Built-in method references without a dependency on `root`. */
 var freeParseInt = parseInt;
 
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -44,14 +63,17 @@ var objectProto = Object.prototype;
  */
 var objectToString = objectProto.toString;
 
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
 /**
- * The base implementation of `_.delay` and `_.defer` which accepts an array
- * of `func` arguments.
+ * The base implementation of `_.delay` and `_.defer` which accepts `args`
+ * to provide to `func`.
  *
  * @private
  * @param {Function} func The function to delay.
  * @param {number} wait The number of milliseconds to delay invocation.
- * @param {Object} args The arguments to provide to `func`.
+ * @param {Array} args The arguments to provide to `func`.
  * @returns {number} Returns the timer id.
  */
 function baseDelay(func, wait, args) {
@@ -59,6 +81,35 @@ function baseDelay(func, wait, args) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return setTimeout(function() { func.apply(undefined, args); }, wait);
+}
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = array;
+    return apply(func, this, otherArgs);
+  };
 }
 
 /**
@@ -80,7 +131,7 @@ function baseDelay(func, wait, args) {
  * }, 1000, 'later');
  * // => Logs 'later' after one second.
  */
-var delay = rest(function(func, wait, args) {
+var delay = baseRest(function(func, wait, args) {
   return baseDelay(func, toNumber(wait) || 0, args);
 });
 
@@ -92,8 +143,7 @@ var delay = rest(function(func, wait, args) {
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
  * _.isFunction(_);
@@ -176,8 +226,7 @@ function isObjectLike(value) {
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
  * _.isSymbol(Symbol.iterator);

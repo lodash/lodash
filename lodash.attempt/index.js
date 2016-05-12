@@ -1,5 +1,5 @@
 /**
- * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,6 +7,9 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var rest = require('lodash.rest');
+
+/** `Object#toString` result references. */
+var errorTag = '[object Error]';
 
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
@@ -29,32 +32,66 @@ function apply(func, thisArg, args) {
   return func.apply(thisArg, args);
 }
 
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
 /**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+ * `SyntaxError`, `TypeError`, or `URIError` object.
  *
  * @static
  * @memberOf _
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
  * @example
  *
- * _.isObject({});
+ * _.isError(new Error);
  * // => true
  *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
+ * _.isError(Error);
  * // => false
  */
-function isObject(value) {
-  var type = typeof value;
-  return !!value && (type == 'object' || type == 'function');
+function isError(value) {
+  if (!isObjectLike(value)) {
+    return false;
+  }
+  var Ctor = value.constructor;
+  return (objectToString.call(value) == errorTag) ||
+    (typeof Ctor == 'function' && objectToString.call(Ctor.prototype) == errorTag);
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
 }
 
 /**
@@ -81,7 +118,7 @@ var attempt = rest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
-    return isObject(e) ? e : new Error(e);
+    return isError(e) ? e : new Error(e);
   }
 });
 

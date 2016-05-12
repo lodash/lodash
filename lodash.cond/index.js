@@ -1,10 +1,10 @@
 /**
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseIteratee = require('lodash._baseiteratee'),
     rest = require('lodash.rest');
@@ -19,7 +19,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} args The arguments to invoke `func` with.
+ * @param {Array} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
@@ -54,16 +54,17 @@ function arrayMap(array, iteratee) {
 }
 
 /**
- * Creates a function that iterates over `pairs` invoking the corresponding
+ * Creates a function that iterates over `pairs` and invokes the corresponding
  * function of the first predicate to return truthy. The predicate-function
  * pairs are invoked with the `this` binding and arguments of the created
  * function.
  *
  * @static
  * @memberOf _
+ * @since 4.0.0
  * @category Util
  * @param {Array} pairs The predicate-function pairs.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new composite function.
  * @example
  *
  * var func = _.cond([
@@ -82,13 +83,14 @@ function arrayMap(array, iteratee) {
  * // => 'no match'
  */
 function cond(pairs) {
-  var length = pairs ? pairs.length : 0;
+  var length = pairs ? pairs.length : 0,
+      toIteratee = baseIteratee;
 
   pairs = !length ? [] : arrayMap(pairs, function(pair) {
     if (typeof pair[1] != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
-    return [baseIteratee(pair[0]), pair[1]];
+    return [toIteratee(pair[0]), pair[1]];
   });
 
   return rest(function(args) {

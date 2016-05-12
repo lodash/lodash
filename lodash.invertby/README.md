@@ -1,4 +1,4 @@
-# lodash.invertby v4.2.1
+# lodash.invertby v4.3.0
 
 The [lodash](https://lodash.com/) method `_.invertBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var invertBy = require('lodash.invertby');
 ```
 
-See the [documentation](https://lodash.com/docs#invertBy) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.invertby) for more details.
+See the [documentation](https://lodash.com/docs#invertBy) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.invertby) for more details.

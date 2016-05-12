@@ -1,4 +1,4 @@
-# lodash.at v4.2.0
+# lodash.at v4.3.0
 
 The [lodash](https://lodash.com/) method `_.at` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var at = require('lodash.at');
 ```
 
-See the [documentation](https://lodash.com/docs#at) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.at) for more details.
+See the [documentation](https://lodash.com/docs#at) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.at) for more details.

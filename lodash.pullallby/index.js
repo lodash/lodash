@@ -1,5 +1,5 @@
 /**
- * lodash 4.2.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
  * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,12 +7,12 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseIteratee = require('lodash._baseiteratee'),
-    basePullAllBy = require('lodash._basepullallby');
+    basePullAll = require('lodash._basepullall');
 
 /**
  * This method is like `_.pullAll` except that it accepts `iteratee` which is
  * invoked for each element of `array` and `values` to generate the criterion
- * by which uniqueness is computed. The iteratee is invoked with one argument: (value).
+ * by which they're compared. The iteratee is invoked with one argument: (value).
  *
  * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
  *
@@ -33,7 +33,7 @@ var baseIteratee = require('lodash._baseiteratee'),
  */
 function pullAllBy(array, values, iteratee) {
   return (array && array.length && values && values.length)
-    ? basePullAllBy(array, values, baseIteratee(iteratee))
+    ? basePullAll(array, values, baseIteratee(iteratee))
     : array;
 }
 

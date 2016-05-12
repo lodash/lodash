@@ -1,4 +1,4 @@
-# lodash.orderby v4.2.2
+# lodash.orderby v4.3.0
 
 The [lodash](https://lodash.com/) method `_.orderBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var orderBy = require('lodash.orderby');
 ```
 
-See the [documentation](https://lodash.com/docs#orderBy) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.orderby) for more details.
+See the [documentation](https://lodash.com/docs#orderBy) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.orderby) for more details.

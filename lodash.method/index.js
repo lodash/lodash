@@ -1,22 +1,21 @@
 /**
- * lodash 4.2.1 (Custom Build) <https://lodash.com/>
+ * lodash 4.3.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
- * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
 var baseSlice = require('lodash._baseslice'),
     rest = require('lodash.rest'),
-    toString = require('lodash.tostring');
+    stringToPath = require('lodash._stringtopath');
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
-    reIsPlainProp = /^\w*$/,
-    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]/g;
-
-/** Used to match backslashes in property paths. */
-var reEscapeChar = /\\(\\)?/g;
+    reIsPlainProp = /^\w*$/;
 
 /**
  * A faster alternative to `Function#apply`, this function invokes `func`
@@ -25,7 +24,7 @@ var reEscapeChar = /\\(\\)?/g;
  * @private
  * @param {Function} func The function to invoke.
  * @param {*} thisArg The `this` binding of `func`.
- * @param {...*} args The arguments to invoke `func` with.
+ * @param {Array} args The arguments to invoke `func` with.
  * @returns {*} Returns the result of `func`.
  */
 function apply(func, thisArg, args) {
@@ -39,16 +38,15 @@ function apply(func, thisArg, args) {
   return func.apply(thisArg, args);
 }
 
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
 /**
- * Casts `value` to a path array if it's not one.
- *
- * @private
- * @param {*} value The value to inspect.
- * @returns {Array} Returns the cast property path array.
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
  */
-function baseCastPath(value) {
-  return isArray(value) ? value : stringToPath(value);
-}
+var objectToString = objectProto.toString;
 
 /**
  * The base implementation of `_.get` without support for default values.
@@ -59,7 +57,7 @@ function baseCastPath(value) {
  * @returns {*} Returns the resolved value.
  */
 function baseGet(object, path) {
-  path = isKey(path, object) ? [path + ''] : baseCastPath(path);
+  path = isKey(path, object) ? [path] : castPath(path);
 
   var index = 0,
       length = path.length;
@@ -82,12 +80,23 @@ function baseGet(object, path) {
  */
 function baseInvoke(object, path, args) {
   if (!isKey(path, object)) {
-    path = baseCastPath(path);
+    path = castPath(path);
     object = parent(object, path);
     path = last(path);
   }
   var func = object == null ? object : object[path];
   return func == null ? undefined : apply(func, object, args);
+}
+
+/**
+ * Casts `value` to a path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast property path array.
+ */
+function castPath(value) {
+  return isArray(value) ? value : stringToPath(value);
 }
 
 /**
@@ -99,11 +108,12 @@ function baseInvoke(object, path, args) {
  * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
  */
 function isKey(value, object) {
-  if (typeof value == 'number') {
+  var type = typeof value;
+  if (type == 'number' || type == 'symbol') {
     return true;
   }
   return !isArray(value) &&
-    (reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
+    (isSymbol(value) || reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||
       (object != null && value in Object(object)));
 }
 
@@ -116,22 +126,7 @@ function isKey(value, object) {
  * @returns {*} Returns the parent value.
  */
 function parent(object, path) {
-  return path.length == 1 ? object : get(object, baseSlice(path, 0, -1));
-}
-
-/**
- * Converts `string` to a property path array.
- *
- * @private
- * @param {string} string The string to convert.
- * @returns {Array} Returns the property path array.
- */
-function stringToPath(string) {
-  var result = [];
-  toString(string).replace(rePropName, function(match, number, quote, string) {
-    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
-  });
-  return result;
+  return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
 }
 
 /**
@@ -139,6 +134,7 @@ function stringToPath(string) {
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @category Array
  * @param {Array} array The array to query.
  * @returns {*} Returns the last element of `array`.
@@ -157,10 +153,12 @@ function last(array) {
  *
  * @static
  * @memberOf _
+ * @since 0.1.0
  * @type {Function}
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
  * @example
  *
  * _.isArray([1, 2, 3]);
@@ -178,32 +176,54 @@ function last(array) {
 var isArray = Array.isArray;
 
 /**
- * Gets the value at `path` of `object`. If the resolved value is
- * `undefined` the `defaultValue` is used in its place.
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
  *
  * @static
  * @memberOf _
- * @category Object
- * @param {Object} object The object to query.
- * @param {Array|string} path The path of the property to get.
- * @param {*} [defaultValue] The value returned if the resolved value is `undefined`.
- * @returns {*} Returns the resolved value.
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * _.isObjectLike({});
+ * // => true
  *
- * _.get(object, 'a[0].b.c');
- * // => 3
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
  *
- * _.get(object, ['a', '0', 'b', 'c']);
- * // => 3
+ * _.isObjectLike(_.noop);
+ * // => false
  *
- * _.get(object, 'a.b.c', 'default');
- * // => 'default'
+ * _.isObjectLike(null);
+ * // => false
  */
-function get(object, path, defaultValue) {
-  var result = object == null ? undefined : baseGet(object, path);
-  return result === undefined ? defaultValue : result;
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
 }
 
 /**
@@ -212,6 +232,7 @@ function get(object, path, defaultValue) {
  *
  * @static
  * @memberOf _
+ * @since 3.7.0
  * @category Util
  * @param {Array|string} path The path of the method to invoke.
  * @param {...*} [args] The arguments to invoke the method with.
@@ -219,15 +240,15 @@ function get(object, path, defaultValue) {
  * @example
  *
  * var objects = [
- *   { 'a': { 'b': { 'c': _.constant(2) } } },
- *   { 'a': { 'b': { 'c': _.constant(1) } } }
+ *   { 'a': { 'b': _.constant(2) } },
+ *   { 'a': { 'b': _.constant(1) } }
  * ];
  *
- * _.map(objects, _.method('a.b.c'));
+ * _.map(objects, _.method('a.b'));
  * // => [2, 1]
  *
- * _.invokeMap(_.sortBy(objects, _.method(['a', 'b', 'c'])), 'a.b.c');
- * // => [1, 2]
+ * _.map(objects, _.method(['a', 'b']));
+ * // => [2, 1]
  */
 var method = rest(function(path, args) {
   return function(object) {

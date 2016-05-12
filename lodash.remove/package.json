@@ -1,6 +1,6 @@
 {
   "name": "lodash.remove",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "The lodash method `_.remove` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -15,7 +15,7 @@
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
-    "lodash._baseiteratee": "~4.5.0",
-    "lodash._basepullat": "~4.2.0"
+    "lodash._baseiteratee": "~4.6.0",
+    "lodash._basepullat": "~4.3.0"
   }
 }

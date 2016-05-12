@@ -1,6 +1,6 @@
 {
   "name": "lodash.invoke",
-  "version": "4.2.1",
+  "version": "4.3.0",
   "description": "The lodash method `_.invoke` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -16,7 +16,7 @@
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
   "dependencies": {
     "lodash._baseslice": "~4.0.0",
-    "lodash.rest": "^4.0.0",
-    "lodash.tostring": "^4.0.0"
+    "lodash._stringtopath": "~4.7.0",
+    "lodash.rest": "^4.0.0"
   }
 }

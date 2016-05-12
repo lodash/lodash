@@ -1,4 +1,4 @@
-# lodash.has v4.2.2
+# lodash.has v4.3.0
 
 The [lodash](https://lodash.com/) method `_.has` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var has = require('lodash.has');
 ```
 
-See the [documentation](https://lodash.com/docs#has) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.has) for more details.
+See the [documentation](https://lodash.com/docs#has) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.has) for more details.

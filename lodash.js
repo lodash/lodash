@@ -687,23 +687,21 @@
   }
 
   /**
-   * The base implementation of methods like `_.find` and `_.findKey`, without
-   * support for iteratee shorthands, which iterates over `collection` using
-   * `eachFunc`.
+   * The base implementation of methods like `_.findKey` and `_.findLastKey`,
+   * without support for iteratee shorthands, which iterates over `collection`
+   * using `eachFunc`.
    *
    * @private
    * @param {Array|Object} collection The collection to search.
    * @param {Function} predicate The function invoked per iteration.
    * @param {Function} eachFunc The function to iterate over `collection`.
-   * @param {boolean} [retKey] Specify returning the key of the found element
-   *  instead of the element itself.
    * @returns {*} Returns the found element or its key, else `undefined`.
    */
-  function baseFind(collection, predicate, eachFunc, retKey) {
+  function baseFindKey(collection, predicate, eachFunc) {
     var result;
     eachFunc(collection, function(value, key, collection) {
       if (predicate(value, key, collection)) {
-        result = retKey ? key : value;
+        result = key;
         return false;
       }
     });
@@ -8405,6 +8403,7 @@
      * @param {Array|Object} collection The collection to search.
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
+     * @param {number} [fromIndex=0] The index to search from.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
@@ -8429,13 +8428,10 @@
      * _.find(users, 'active');
      * // => object for 'barney'
      */
-    function find(collection, predicate) {
-      predicate = getIteratee(predicate, 3);
-      if (isArray(collection)) {
-        var index = baseFindIndex(collection, predicate, 0);
-        return index > -1 ? collection[index] : undefined;
-      }
-      return baseFind(collection, predicate, baseEach);
+    function find(collection, predicate, fromIndex) {
+      collection = isArrayLike(collection) ? collection : values(collection);
+      var index = findIndex(collection, predicate, fromIndex);
+      return index > -1 ? collection[index] : undefined;
     }
 
     /**
@@ -8449,6 +8445,7 @@
      * @param {Array|Object} collection The collection to search.
      * @param {Array|Function|Object|string} [predicate=_.identity]
      *  The function invoked per iteration.
+     * @param {number} [fromIndex=collection.length-1] The index to search from.
      * @returns {*} Returns the matched element, else `undefined`.
      * @example
      *
@@ -8457,13 +8454,10 @@
      * });
      * // => 3
      */
-    function findLast(collection, predicate) {
-      predicate = getIteratee(predicate, 3);
-      if (isArray(collection)) {
-        var index = baseFindIndex(collection, predicate, collection.length - 1, true);
-        return index > -1 ? collection[index] : undefined;
-      }
-      return baseFind(collection, predicate, baseEachRight);
+    function findLast(collection, predicate, fromIndex) {
+      collection = isArrayLike(collection) ? collection : values(collection);
+      var index = findLastIndex(collection, predicate, fromIndex);
+      return index > -1 ? collection[index] : undefined;
     }
 
     /**
@@ -12131,7 +12125,7 @@
      * // => 'barney'
      */
     function findKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate, 3), baseForOwn, true);
+      return baseFindKey(object, getIteratee(predicate, 3), baseForOwn);
     }
 
     /**
@@ -12171,7 +12165,7 @@
      * // => 'pebbles'
      */
     function findLastKey(object, predicate) {
-      return baseFind(object, getIteratee(predicate, 3), baseForOwnRight, true);
+      return baseFindKey(object, getIteratee(predicate, 3), baseForOwnRight);
     }
 
     /**

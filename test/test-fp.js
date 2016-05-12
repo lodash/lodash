@@ -1262,6 +1262,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.indexOfFrom methods');
+
+  var indexOfTestCases = {
+    indexOfFrom: [
+      {fromIndex: 0, expected: 1},
+      {fromIndex: 2, expected: 3}
+    ],
+    lastIndexOfFrom: [
+      {fromIndex: -1, expected: 3},
+      {fromIndex: 2, expected: 1}
+    ]
+  };
+
+  _.each(indexOfTestCases, function(testCases, methodName) {
+    QUnit.test('`fp.' + methodName + '` should have an argument order of `value`, `fromIndex` then `array`', function(assert) {
+      assert.expect(testCases.length);
+
+      var array = [100, 0, 100, 0];
+
+      _.each(testCases, function(testCase) {
+        assert.deepEqual(fp[methodName](0)(testCase.fromIndex)(array), testCase.expected);
+      });
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.inRange');
 
   (function() {

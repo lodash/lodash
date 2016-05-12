@@ -84,12 +84,12 @@ exports.aryMethod = {
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
-    'findIndexFrom', 'findLastIndexFrom', 'getOr', 'inRange', 'intersectionBy',
-    'intersectionWith', 'invokeArgs', 'invokeArgsMap', 'isEqualWith', 'isMatchWith',
-    'flatMapDepth', 'mergeWith', 'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart',
-    'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
-    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
-    'update', 'xorBy', 'xorWith', 'zipWith'
+    'findIndexFrom', 'findLastIndexFrom', 'getOr', 'indexOfFrom', 'inRange',
+    'intersectionBy', 'intersectionWith', 'invokeArgs', 'invokeArgsMap', 'isEqualWith',
+    'isMatchWith', 'flatMapDepth', 'lastIndexOfFrom', 'mergeWith', 'orderBy', 'padChars',
+    'padCharsEnd', 'padCharsStart', 'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight',
+    'replace', 'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform',
+    'unionBy', 'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith', 'updateWith'
@@ -238,8 +238,10 @@ exports.remap = {
   'findIndexFrom': 'findIndex',
   'findLastIndexFrom': 'findLastIndex',
   'getOr': 'get',
+  'indexOfFrom': 'indexOf',
   'invokeArgs': 'invoke',
   'invokeArgsMap': 'invokeMap',
+  'lastIndexOfFrom': 'lastIndexOf',
   'padChars': 'pad',
   'padCharsEnd': 'padEnd',
   'padCharsStart': 'padStart',

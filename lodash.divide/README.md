@@ -1,4 +1,4 @@
-# lodash.divide v4.8.0
+# lodash.divide v4.9.0
 
 The [lodash](https://lodash.com/) method `_.divide` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var divide = require('lodash.divide');
 ```
 
-See the [documentation](https://lodash.com/docs#divide) or [package source](https://github.com/lodash/lodash/blob/4.8.0-npm-packages/lodash.divide) for more details.
+See the [documentation](https://lodash.com/docs#divide) or [package source](https://github.com/lodash/lodash/blob/4.9.0-npm-packages/lodash.divide) for more details.

@@ -1,6 +1,6 @@
 {
   "name": "lodash._baseiteratee",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "The internal lodash function `baseIteratee` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -12,11 +12,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._baseslice": "^4.0.0",
-    "lodash._root": "^3.0.0",
-    "lodash._stack": "^4.0.0",
-    "lodash.tostring": "^4.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

@@ -1,4 +1,4 @@
-# lodash.takewhile v4.4.0
+# lodash.takewhile v4.5.0
 
 The [lodash](https://lodash.com/) method `_.takeWhile` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var takeWhile = require('lodash.takewhile');
 ```
 
-See the [documentation](https://lodash.com/docs#takeWhile) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.takewhile) for more details.
+See the [documentation](https://lodash.com/docs#takeWhile) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.takewhile) for more details.

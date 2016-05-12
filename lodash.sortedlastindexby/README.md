@@ -1,4 +1,4 @@
-# lodash.sortedlastindexby v4.4.0
+# lodash.sortedlastindexby v4.5.0
 
 The [lodash](https://lodash.com/) method `_.sortedLastIndexBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var sortedLastIndexBy = require('lodash.sortedlastindexby');
 ```
 
-See the [documentation](https://lodash.com/docs#sortedLastIndexBy) or [package source](https://github.com/lodash/lodash/blob/4.4.0-npm-packages/lodash.sortedlastindexby) for more details.
+See the [documentation](https://lodash.com/docs#sortedLastIndexBy) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.sortedlastindexby) for more details.

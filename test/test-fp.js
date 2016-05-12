@@ -1097,6 +1097,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.findIndexFrom methods');
+
+  var findIndexTestCases = {
+    'findIndexFrom': [
+      { 'fromIndex': 0, 'expected': 1 },
+      { 'fromIndex': 2, 'expected': 3 }
+    ],
+    'findLastIndexFrom': [
+      { 'fromIndex': -1, 'expected': 3 },
+      { 'fromIndex': 2,  'expected': 1 }
+    ]
+  };
+
+  _.forOwn(findIndexTestCases, function(testCases, methodName) {
+    QUnit.test('`fp.' + methodName + '` should have an argument order of `predicate`, `fromIndex` then `array`', function(assert) {
+      assert.expect(testCases.length);
+
+      var array = [100, 0, 100, 0];
+
+      _.each(testCases, function(testCase) {
+        assert.deepEqual(fp[methodName](fp.eq(0))(testCase.fromIndex)(array), testCase.expected);
+      });
+    });
+
+    QUnit.test('`fp.' + methodName + '` should have its iteratee capped at 1 argument', function(assert) {
+      assert.expect(2);
+
+      var array = [100, 100];
+
+      var iteratee = function(value, index) {
+        assert.equal(value, 100);
+        assert.equal(index, undefined, 'iteratee is not capped');
+        return true;
+      };
+
+      fp[methodName](iteratee)(1)(array);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.flatMapDepth');
 
   (function() {
@@ -1216,6 +1257,33 @@
       assert.expect(1);
 
       assert.strictEqual(func(2)(1), true);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.indexOfFrom methods');
+
+  var indexOfTestCases = {
+    indexOfFrom: [
+      {fromIndex: 0, expected: 1},
+      {fromIndex: 2, expected: 3}
+    ],
+    lastIndexOfFrom: [
+      {fromIndex: -1, expected: 3},
+      {fromIndex: 2, expected: 1}
+    ]
+  };
+
+  _.each(indexOfTestCases, function(testCases, methodName) {
+    QUnit.test('`fp.' + methodName + '` should have an argument order of `value`, `fromIndex` then `array`', function(assert) {
+      assert.expect(testCases.length);
+
+      var array = [100, 0, 100, 0];
+
+      _.each(testCases, function(testCase) {
+        assert.deepEqual(fp[methodName](0)(testCase.fromIndex)(array), testCase.expected);
+      });
     });
   });
 

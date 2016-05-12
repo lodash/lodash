@@ -1,4 +1,4 @@
-# lodash v4.6.2
+# lodash v4.7.0
 
 The [lodash](https://lodash.com/) library exported as [npm packages](https://www.npmjs.com/browse/keyword/lodash-modularized) per method.
 

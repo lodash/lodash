@@ -1,4 +1,4 @@
-# lodash.updatewith v4.6.1
+# lodash.updatewith v4.7.0
 
 The [lodash](https://lodash.com/) method `_.updateWith` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var updateWith = require('lodash.updatewith');
 ```
 
-See the [documentation](https://lodash.com/docs#updateWith) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.updatewith) for more details.
+See the [documentation](https://lodash.com/docs#updateWith) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.updatewith) for more details.

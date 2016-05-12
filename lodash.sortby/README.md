@@ -1,4 +1,4 @@
-# lodash.sortby v4.6.1
+# lodash.sortby v4.7.0
 
 The [lodash](https://lodash.com/) method `_.sortBy` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var sortBy = require('lodash.sortby');
 ```
 
-See the [documentation](https://lodash.com/docs#sortBy) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.sortby) for more details.
+See the [documentation](https://lodash.com/docs#sortBy) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.sortby) for more details.

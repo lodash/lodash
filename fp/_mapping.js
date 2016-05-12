@@ -84,10 +84,10 @@ exports.aryMethod = {
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
-    'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'invokeArgs',
-    'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith',
-    'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy',
-    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
+    'findIndexFrom', 'findLastIndexFrom', 'getOr', 'inRange', 'intersectionBy',
+    'intersectionWith', 'invokeArgs', 'invokeArgsMap', 'isEqualWith', 'isMatchWith',
+    'flatMapDepth', 'mergeWith', 'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart',
+    'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
     'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
     'update', 'xorBy', 'xorWith', 'zipWith'
   ],
@@ -235,6 +235,8 @@ exports.realToAlias = (function() {
 exports.remap = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
+  'findIndexFrom': 'findIndex',
+  'findLastIndexFrom': 'findLastIndex',
   'getOr': 'get',
   'invokeArgs': 'invoke',
   'invokeArgsMap': 'invokeMap',

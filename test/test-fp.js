@@ -1097,6 +1097,47 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.findIndexFrom methods');
+
+  var findIndexTestCases = {
+    findIndexFrom: [
+      {fromIndex: 0, expected: 1},
+      {fromIndex: 2, expected: 3}
+    ],
+    findLastIndexFrom: [
+      {fromIndex: -1, expected: 3},
+      {fromIndex: 2, expected: 1}
+    ]
+  };
+
+  _.each(findIndexTestCases, function(testCases, methodName) {
+    QUnit.test('`fp.' + methodName + '` should have an argument order of `predicate`, `fromIndex` then `array`', function(assert) {
+      assert.expect(testCases.length);
+
+      var array = [100, 0, 100, 0];
+
+      _.each(testCases, function(testCase) {
+        assert.deepEqual(fp[methodName](fp.eq(0))(testCase.fromIndex)(array), testCase.expected);
+      });
+    });
+
+    QUnit.test('`fp.' + methodName + '` should have its iteratee capped at 1 argument', function(assert) {
+      assert.expect(2);
+
+      var array = [100, 100];
+
+      var iteratee = function(value, index) {
+        assert.equal(value, 100);
+        assert.equal(index, undefined, 'iteratee is not capped');
+        return true;
+      };
+
+      fp[methodName](iteratee)(1)(array);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.flatMapDepth');
 
   (function() {

@@ -15260,7 +15260,7 @@
      * @returns {boolean} Returns `false`.
      * @example
      *
-     * _.times(2 _.stubFalse);
+     * _.times(2, _.stubFalse);
      * // => [false, false]
      */
     var stubFalse = constant(false);

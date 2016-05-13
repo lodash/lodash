@@ -84,13 +84,13 @@ exports.aryMethod = {
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
-    'findIndexFrom', 'findLastIndexFrom', 'getOr', 'indexOfFrom', 'inRange',
-    'intersectionBy', 'intersectionWith', 'invokeArgs', 'invokeArgsMap',
-    'isEqualWith', 'isMatchWith', 'flatMapDepth', 'lastIndexOfFrom', 'mergeWith',
-    'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy',
-    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
-    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
-    'update', 'xorBy', 'xorWith', 'zipWith'
+    'findFrom', 'findIndexFrom', 'findLastFrom', 'findLastIndexFrom', 'getOr',
+    'includesFrom', 'indexOfFrom', 'inRange', 'intersectionBy', 'intersectionWith',
+    'invokeArgs', 'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth',
+    'lastIndexOfFrom', 'mergeWith', 'orderBy', 'padChars', 'padCharsEnd',
+    'padCharsStart', 'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace',
+    'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
+    'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
   ],
   '4': [
     'fill', 'setWith', 'updateWith'
@@ -111,10 +111,14 @@ exports.iterateeAry = {
   'every': 1,
   'filter': 1,
   'find': 1,
+  'findFrom': 1,
   'findIndex': 1,
+  'findIndexFrom': 1,
   'findKey': 1,
   'findLast': 1,
+  'findLastFrom': 1,
   'findLastIndex': 1,
+  'findLastIndexFrom': 1,
   'findLastKey': 1,
   'flatMap': 1,
   'flatMapDeep': 1,
@@ -236,9 +240,12 @@ exports.realToAlias = (function() {
 exports.remap = {
   'curryN': 'curry',
   'curryRightN': 'curryRight',
+  'findFrom': 'find',
   'findIndexFrom': 'findIndex',
+  'findLastFrom': 'findLast',
   'findLastIndexFrom': 'findLastIndex',
   'getOr': 'get',
+  'includesFrom': 'includes',
   'indexOfFrom': 'indexOf',
   'invokeArgs': 'invoke',
   'invokeArgsMap': 'invokeMap',

@@ -1255,6 +1255,14 @@
         objectProto = context.Object.prototype,
         stringProto = context.String.prototype;
 
+    /** Used to detect methods masquerading as native. */
+    var fakeSrcKey = (function() {
+      var shared = context['__core-js_shared__'],
+          uid = /[^.]+$/.exec(shared && shared.keys && shared.keys.IE_PROTO || '');
+
+      return uid ? ('Symbol(src)_1.' + uid) : '';
+    }());
+
     /** Used to resolve the decompiled source of functions. */
     var funcToString = context.Function.prototype.toString;
 
@@ -11170,7 +11178,7 @@
      * // => false
      */
     function isNative(value) {
-      if (!isObject(value)) {
+      if (!isObject(value) || (fakeSrcKey && fakeSrcKey in value)) {
         return false;
       }
       var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;

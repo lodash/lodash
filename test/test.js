@@ -7632,58 +7632,6 @@
         assert.strictEqual(_.includes(collection, 5), false);
       });
 
-      QUnit.test('should work with ' + key + ' and a positive `fromIndex`', function(assert) {
-        assert.expect(2);
-
-        assert.strictEqual(_.includes(collection, values[2], 2), true);
-        assert.strictEqual(_.includes(collection, values[1], 2), false);
-      });
-
-      QUnit.test('should work with ' + key + ' and a `fromIndex` >= `collection.length`', function(assert) {
-        assert.expect(12);
-
-        lodashStable.each([4, 6, Math.pow(2, 32), Infinity], function(fromIndex) {
-          assert.strictEqual(_.includes(collection, 1, fromIndex), false);
-          assert.strictEqual(_.includes(collection, undefined, fromIndex), false);
-          assert.strictEqual(_.includes(collection, '', fromIndex), (isStr && fromIndex == length));
-        });
-      });
-
-      QUnit.test('should work with ' + key + ' and treat falsey `fromIndex` values as `0`', function(assert) {
-        assert.expect(1);
-
-        var expected = lodashStable.map(falsey, stubTrue);
-
-        var actual = lodashStable.map(falsey, function(fromIndex) {
-          return _.includes(collection, values[0], fromIndex);
-        });
-
-        assert.deepEqual(actual, expected);
-      });
-
-      QUnit.test('should work with ' + key + ' and coerce non-integer `fromIndex` values to integers', function(assert) {
-        assert.expect(3);
-
-        assert.strictEqual(_.includes(collection, values[0], '1'), false);
-        assert.strictEqual(_.includes(collection, values[0], 0.1), true);
-        assert.strictEqual(_.includes(collection, values[0], NaN), true);
-      });
-
-      QUnit.test('should work with ' + key + ' and a negative `fromIndex`', function(assert) {
-        assert.expect(2);
-
-        assert.strictEqual(_.includes(collection, values[2], -2), true);
-        assert.strictEqual(_.includes(collection, values[1], -2), false);
-      });
-
-      QUnit.test('should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', function(assert) {
-        assert.expect(3);
-
-        lodashStable.each([-4, -6, -Infinity], function(fromIndex) {
-          assert.strictEqual(_.includes(collection, values[0], fromIndex), true);
-        });
-      });
-
       QUnit.test('should work with ' + key + ' and floor `position` values', function(assert) {
         assert.expect(1);
 
@@ -7762,6 +7710,122 @@
       assert.ok(lodashStable.every(array1, lodashStable.partial(_.includes, array2)));
     });
   }(1, 2, 3, 4));
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.includes and lodash.find');
+
+  lodashStable.each(['includes', 'find'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3, 4)),
+        func = _[methodName],
+        isIncludes = methodName == 'includes',
+        resolve = methodName == 'find' ? lodashStable.curry(lodashStable.eq) : identity;
+
+    lodashStable.each({
+      'an `arguments` object': args,
+      'an array': [1, 2, 3, 4]
+    },
+    function(collection, key) {
+      var values = lodashStable.toArray(collection),
+          length = values.length;
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a positive `fromIndex`', function(assert) {
+        assert.expect(1);
+
+        var expected = [
+          isIncludes || values[2],
+          isIncludes ? false : undefined
+        ];
+
+        var actual = [
+          func(collection, resolve(values[2]), 2),
+          func(collection, resolve(values[1]), 2)
+        ];
+
+        assert.deepEqual(actual, expected);
+      });
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a `fromIndex` >= `collection.length`', function(assert) {
+        assert.expect(1);
+
+        var indexes = [4, 6, Math.pow(2, 32), Infinity];
+
+        var expected = lodashStable.map(indexes, function() {
+          var result = isIncludes ? false : undefined;
+          return [result, result, result];
+        });
+
+        var actual = lodashStable.map(indexes, function(fromIndex) {
+          return [
+            func(collection, resolve(1), fromIndex),
+            func(collection, resolve(undefined), fromIndex),
+            func(collection, resolve(''), fromIndex)
+          ];
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and treat falsey `fromIndex` values as `0`', function(assert) {
+        assert.expect(1);
+
+        var expected = lodashStable.map(falsey, lodashStable.constant(isIncludes || values[0]));
+
+        var actual = lodashStable.map(falsey, function(fromIndex) {
+          return func(collection, resolve(values[0]), fromIndex);
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and coerce non-integer `fromIndex` values to integers', function(assert) {
+        assert.expect(1);
+
+        var expected = [
+          isIncludes || values[0],
+          isIncludes || values[0],
+          isIncludes ? false : undefined
+        ];
+
+        var actual = [
+          func(collection, resolve(values[0]), 0.1),
+          func(collection, resolve(values[0]), NaN),
+          func(collection, resolve(values[0]), '1')
+        ];
+
+        assert.deepEqual(actual, expected);
+      });
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex`', function(assert) {
+        assert.expect(1);
+
+        var expected = [
+          isIncludes || values[2],
+          isIncludes ? false : undefined
+        ];
+
+        var actual = [
+          func(collection, resolve(values[2]), -2),
+          func(collection, resolve(values[1]), -2)
+        ];
+
+        assert.deepEqual(actual, expected);
+      });
+
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', function(assert) {
+        assert.expect(1);
+
+        var indexes = [-4, -6, -Infinity],
+            expected = lodashStable.map(indexes, lodashStable.constant(isIncludes || values[0]));
+
+        var actual = lodashStable.map(indexes, function(fromIndex) {
+          return func(collection, resolve(values[0]), fromIndex);
+        });
+
+        assert.deepEqual(actual, expected);
+      });
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

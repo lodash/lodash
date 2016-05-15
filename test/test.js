@@ -209,7 +209,7 @@
     'buildPath': filePath,
     'loaderPath': '',
     'isModularize': /\b(?:amd|commonjs|es|node|npm|(index|main)\.js)\b/.test(filePath),
-    'isStrict': /\bes\b/.test(filePath),
+    'isStrict': /\bes\b/.test(filePath) || 'default' in require(filePath),
     'urlParams': {}
   });
 
@@ -295,19 +295,14 @@
     });
   } catch (e) {}
 
-  /** Use a single "load" function. */
-  var load = (!amd && typeof require == 'function')
-    ? require
-    : noop;
-
   /** Load QUnit and extras. */
-  var QUnit = root.QUnit || load('qunit-extras');
+  var QUnit = root.QUnit || require('qunit-extras');
 
   /** Load stable Lodash. */
   var lodashStable = root.lodashStable;
   if (!lodashStable) {
     try {
-      lodashStable = load('../node_modules/lodash/lodash.js');
+      lodashStable = interopRequire('../node_modules/lodash/lodash.js');
     } catch (e) {
       console.log('Error: The stable lodash dev dependency should be at least a version behind master branch.');
       return;
@@ -318,8 +313,7 @@
 
   /** The `lodash` function to test. */
   var _ = root._ || (root._ = (
-    _ = load(filePath),
-    _ = _._ || (isStrict = ui.isStrict = isStrict || 'default' in _, _['default']) || _,
+    _ = interopRequire(filePath),
     (_.runInContext ? _.runInContext(root) : _)
   ));
 
@@ -418,6 +412,19 @@
       result = action.func.apply(action.thisArg, args);
     }
     return result;
+  }
+
+  /**
+   * Loads the module of `id`. If the module has an `exports.default`, the
+   * exported default value is returned as the resolved module.
+   *
+   * @private
+   * @param {string} id The identifier of the module to resolve.
+   * @returns {*} Returns the resolved module.
+   */
+  function interopRequire(id) {
+    var result = require(id);
+    return 'default' in result ? result['default'] : result;
   }
 
   /**
@@ -545,7 +552,7 @@
     emptyObject(require.cache);
 
     // Load lodash and expose it to the bad extensions/shims.
-    lodashBizarro = (lodashBizarro = require(filePath))._ || lodashBizarro['default'] || lodashBizarro;
+    lodashBizarro = interopRequire(filePath);
     root._ = oldDash;
 
     // Restore built-in methods.
@@ -704,8 +711,7 @@
         'isIndex',
         'isIterateeCall'
       ], function(funcName) {
-        var func = require(path.join(basePath, '_' + funcName));
-        _['_' + funcName] = func[funcName] || func['default'] || func;
+        _['_' + funcName] = interopRequire(path.join(basePath, '_' + funcName));
       });
     }
   });
@@ -11043,7 +11049,7 @@
         root[coreKey] = { 'keys': { 'IE_PROTO': 'Symbol(IE_PROTO)_3.' + uid } };
         emptyObject(require.cache);
 
-        var baseIsNative = require(path.join(basePath, '_baseIsNative'));
+        var baseIsNative = interopRequire(path.join(basePath, '_baseIsNative'));
         assert.strictEqual(baseIsNative(slice), true);
 
         slice[fakeSrcKey] = slice + '';

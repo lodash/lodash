@@ -1233,11 +1233,12 @@
         objectProto = context.Object.prototype,
         stringProto = context.String.prototype;
 
-    /** Used to detect methods masquerading as native. */
-    var fakeSrcKey = (function() {
-      var shared = context['__core-js_shared__'],
-          uid = /[^.]+$/.exec(shared && shared.keys && shared.keys.IE_PROTO || '');
+    /** Used to detect overreaching core-js shims. */
+    var coreJsData = context['__core-js_shared__'];
 
+    /** Used to detect methods masquerading as native. */
+    var maskSrcKey = (function() {
+      var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
       return uid ? ('Symbol(src)_1.' + uid) : '';
     }());
 
@@ -2992,6 +2993,22 @@
         }
       }
       return true;
+    }
+
+    /**
+     * The base implementation of `_.isNative` without bad shim checks.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a native function,
+     *  else `false`.
+     */
+    function baseIsNative(value) {
+      if (!isObject(value) || isMasked(value)) {
+        return false;
+      }
+      var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+      return pattern.test(toSource(value));
     }
 
     /**
@@ -5377,7 +5394,7 @@
      */
     function getNative(object, key) {
       var value = object[key];
-      return isNative(value) ? value : undefined;
+      return (isMaskable(value) ? baseIsNative : isNative)(value) ? value : undefined;
     }
 
     /**
@@ -5736,6 +5753,28 @@
       }
       var data = getData(other);
       return !!data && func === data[0];
+    }
+
+    /**
+     * Checks if `func` has its source masked.
+     *
+     * @private
+     * @param {Function} func The function to check.
+     * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+     */
+    function isMasked(func) {
+      return maskSrcKey in func;
+    }
+
+    /**
+     * Checks if `func` is capable of being masked.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `func` is maskable, else `false`.
+     */
+    function isMaskable(value) {
+      return !!coreJsData && isFunction(value);
     }
 
     /**
@@ -11138,7 +11177,7 @@
     }
 
     /**
-     * Checks if `value` is a native function.
+     * Checks if `value` is a pristine native function.
      *
      * @static
      * @memberOf _
@@ -11156,11 +11195,10 @@
      * // => false
      */
     function isNative(value) {
-      if (!isObject(value) || (fakeSrcKey && fakeSrcKey in value)) {
-        return false;
+      if (isMaskable(value)) {
+        throw Error('This method is not supported with core-js. Try https://github.com/es-shims.');
       }
-      var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
-      return pattern.test(toSource(value));
+      return baseIsNative(value);
     }
 
     /**

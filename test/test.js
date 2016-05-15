@@ -11014,6 +11014,48 @@
         skipAssert(assert);
       }
     });
+
+    QUnit.test('should throw an error if core-js is detected', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var lodash = _.runInContext({
+          '__core-js_shared__': {}
+        });
+
+        assert.raises(function() { lodash.isNative(noop); });
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should detect methods masquerading as native', function(assert) {
+      assert.expect(2);
+
+      if (_._baseEach) {
+        var path = require('path'),
+            basePath = path.dirname(filePath),
+            uid = 'e0gvgyrad1jor',
+            coreKey = '__core-js_shared__',
+            fakeSrcKey = 'Symbol(src)_1.' + uid;
+
+        root[coreKey] = { 'keys': { 'IE_PROTO': 'Symbol(IE_PROTO)_3.' + uid } };
+        emptyObject(require.cache);
+
+        var baseIsNative = require(path.join(basePath, '_baseIsNative'));
+        assert.strictEqual(baseIsNative(slice), true);
+
+        slice[fakeSrcKey] = slice + '';
+        assert.strictEqual(baseIsNative(slice), false);
+
+        delete slice[fakeSrcKey];
+        delete root[coreKey];
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/

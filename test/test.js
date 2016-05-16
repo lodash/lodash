@@ -7622,10 +7622,6 @@
       'a string': '1234'
     },
     function(collection, key) {
-      var isStr = typeof collection == 'string',
-          values = lodashStable.toArray(collection),
-          length = values.length;
-
       QUnit.test('should work with ' + key + ' and  return `true` for  matched values', function(assert) {
         assert.expect(1);
 
@@ -7732,8 +7728,7 @@
       'an array': [1, 2, 3, 4]
     },
     function(collection, key) {
-      var values = lodashStable.toArray(collection),
-          length = values.length;
+      var values = lodashStable.toArray(collection);
 
       QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a positive `fromIndex`', function(assert) {
         assert.expect(1);

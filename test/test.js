@@ -22635,6 +22635,38 @@
         done();
       }, 192);
     });
+
+    QUnit.test('should work with a system time of `0`', function(assert) {
+      assert.expect(3);
+
+      var done = assert.async();
+
+      var callCount = 0,
+          dateCount = 0;
+
+      var lodash = _.runInContext({
+        'Date': {
+          'now': function() {
+            return ++dateCount < 2 ? 0 : +new Date;
+          }
+        }
+      });
+
+      var throttled = _.throttle(function(value) {
+        callCount++;
+        return value;
+      }, 32);
+
+      var actual = [throttled('a'), throttled('b'), throttled('c')];
+
+      assert.strictEqual(callCount, 1);
+      assert.deepEqual(actual, ['a', 'a', 'a']);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 64);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

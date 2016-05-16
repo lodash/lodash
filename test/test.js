@@ -7768,7 +7768,7 @@
         assert.deepEqual(actual, expected);
       });
 
-      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a `fromIndex` >= `collection.length`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a `fromIndex` >= `length`', function(assert) {
         assert.expect(1);
 
         var indexes = [4, 6, Math.pow(2, 32), Infinity];
@@ -7835,7 +7835,7 @@
         assert.deepEqual(actual, expected);
       });
 
-      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex` <= negative `collection.length`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex` <= `-length`', function(assert) {
         assert.expect(1);
 
         var indexes = [-4, -6, -Infinity],
@@ -7871,7 +7871,7 @@
       assert.strictEqual(func(array, resolve(1), 2), 3);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `array.length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `length`', function(assert) {
       assert.expect(1);
 
       var values = [6, 8, Math.pow(2, 32), Infinity],
@@ -7894,7 +7894,7 @@
       assert.strictEqual(func(array, resolve(2), -3), 4);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with a negative `fromIndex` <= `-array.length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a negative `fromIndex` <= `-length`', function(assert) {
       assert.expect(1);
 
       var values = [-6, -8, -Infinity],
@@ -13261,7 +13261,7 @@
       assert.strictEqual(func(array, resolve(1), 2), 0);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `array.length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `length`', function(assert) {
       assert.expect(1);
 
       var values = [6, 8, Math.pow(2, 32), Infinity],
@@ -13284,7 +13284,7 @@
       assert.strictEqual(func(array, resolve(2), -3), 1);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with a negative `fromIndex` <= `-array.length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a negative `fromIndex` <= `-length`', function(assert) {
       assert.expect(1);
 
       var values = [-6, -8, -Infinity],

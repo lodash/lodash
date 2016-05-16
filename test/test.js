@@ -3071,15 +3071,13 @@
 
       lodashStable.forOwn(uncloneable, function(value, key) {
         QUnit.test('`_.' + methodName + '` should work with a `customizer` callback and ' + key, function(assert) {
-          assert.expect(4);
+          assert.expect(3);
 
           var customizer = function(value) {
             return lodashStable.isPlainObject(value) ? undefined : value;
           };
 
           var actual = func(value, customizer);
-
-          assert.deepEqual(actual, value);
           assert.strictEqual(actual, value);
 
           var object = { 'a': value, 'b': { 'c': value } };
@@ -3505,7 +3503,7 @@
         return constant(value);
       });
 
-      assert.ok(lodashStable.map(results, function(result) {
+      assert.ok(lodashStable.every(results, function(result) {
         return result === object;
       }));
     });
@@ -5302,7 +5300,7 @@
 
       lodashStable.each([-1, -3, -Infinity], function(position) {
         assert.ok(lodashStable.every(string, function(chr) {
-          return _.endsWith(string, chr, position) === false;
+          return !_.endsWith(string, chr, position);
         }));
         assert.strictEqual(_.endsWith(string, '', position), true);
       });
@@ -5692,8 +5690,8 @@
             actual = wrapped.value();
 
         assert.ok(wrapped instanceof _);
-        assert.deepEqual(actual, ['a', 'a', 'a']);
         assert.strictEqual(actual, array);
+        assert.deepEqual(actual, ['a', 'a', 'a']);
       }
       else {
         skipAssert(assert, 3);
@@ -18019,8 +18017,8 @@
       var array = [1, 2, 3],
           actual = pull(array, [1, 3]);
 
+      assert.strictEqual(actual, array);
       assert.deepEqual(array, [2]);
-      assert.ok(actual === array);
     });
 
     QUnit.test('`_.' + methodName + '` should preserve holes in arrays', function(assert) {
@@ -18220,7 +18218,7 @@
       var min = 5,
           max = 10;
 
-      assert.ok(_.some(array, function() {
+      assert.ok(lodashStable.some(array, function() {
         var result = _.random(min, max);
         return result >= min && result <= max;
       }));
@@ -18232,7 +18230,7 @@
       var min = 0,
           max = 5;
 
-      assert.ok(_.some(array, function() {
+      assert.ok(lodashStable.some(array, function() {
         var result = _.random(max);
         return result >= min && result <= max;
       }));
@@ -18263,8 +18261,8 @@
         return result >= min && result <= max;
       }));
 
-      assert.ok(_.some(array, function() {
-        return _.random(MAX_INTEGER) > 0;
+      assert.ok(lodashStable.some(array, function() {
+        return _.random(MAX_INTEGER);
       }));
     });
 
@@ -19331,8 +19329,8 @@
       var array = [1, 2, 3],
           actual = _.reverse(array);
 
-      assert.deepEqual(array, [3, 2, 1]);
       assert.strictEqual(actual, array);
+      assert.deepEqual(array, [3, 2, 1]);
     });
 
     QUnit.test('should return the wrapped reversed `array`', function(assert) {
@@ -22416,7 +22414,7 @@
       throttled();
 
       var lastCount = callCount;
-      assert.ok(callCount > 0);
+      assert.ok(callCount);
 
       setTimeout(function() {
         assert.ok(callCount > lastCount);
@@ -24373,9 +24371,8 @@
       });
 
       var actual = func(largeArray, String);
-
-      assert.deepEqual(actual, [[1, 2]]);
       assert.strictEqual(actual[0], largeArray[0]);
+      assert.deepEqual(actual, [[1, 2]]);
     });
 
     QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
@@ -25659,8 +25656,8 @@
         assert.strictEqual(wrapped.pop(), 1);
 
         var actual = wrapped.value();
-        assert.deepEqual(actual, []);
         assert.strictEqual(actual, array);
+        assert.deepEqual(actual, []);
       }
       else {
         skipAssert(assert, 5);
@@ -25747,8 +25744,8 @@
         assert.strictEqual(wrapped.shift(), 2);
 
         var actual = wrapped.value();
-        assert.deepEqual(actual, []);
         assert.strictEqual(actual, array);
+        assert.deepEqual(actual, []);
       }
       else {
         skipAssert(assert, 5);
@@ -25835,8 +25832,8 @@
         assert.deepEqual(wrapped.splice(0, 2).value(), [1, 3]);
 
         var actual = wrapped.value();
-        assert.deepEqual(actual, []);
         assert.strictEqual(actual, array);
+        assert.deepEqual(actual, []);
       }
       else {
         skipAssert(assert, 5);

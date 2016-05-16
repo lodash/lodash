@@ -22454,19 +22454,13 @@
         var callCount = 0,
             dateCount = 0;
 
-        var getTime = function() {
-          return ++dateCount == 5
-            ? Infinity
-            : +new Date;
-        };
-
-        var lodash = _.runInContext(lodashStable.assign({}, root, {
-          'Date': lodashStable.assign(function() {
-            return { 'getTime': getTime };
-          }, {
-            'now': Date.now
-          })
-        }));
+        var lodash = _.runInContext({
+          'Date': {
+            'now': function() {
+              return ++dateCount == 5 ? Infinity : +new Date;
+            }
+          }
+        });
 
         var throttled = lodash.throttle(function() { callCount++; }, 32);
 
@@ -22647,7 +22641,7 @@
       var lodash = _.runInContext({
         'Date': {
           'now': function() {
-            return ++dateCount < 2 ? 0 : +new Date;
+            return ++dateCount == 1 ? 0 : +new Date;
           }
         }
       });
@@ -22766,19 +22760,15 @@
         var callCount = 0,
             dateCount = 0;
 
-        var getTime = function() {
-          return ++dateCount === 4
-            ? +new Date(2012, 3, 23, 23, 27, 18)
-            : +new Date;
-        };
-
-        var lodash = _.runInContext(lodashStable.assign({}, root, {
-          'Date': lodashStable.assign(function() {
-            return { 'getTime': getTime, 'valueOf': getTime };
-          }, {
-            'now': Date.now
-          })
-        }));
+        var lodash = _.runInContext({
+          'Date': {
+            'now': function() {
+              return ++dateCount == 4
+                ? +new Date(2012, 3, 23, 23, 27, 18)
+                : +new Date;
+            }
+          }
+        });
 
         var funced = lodash[methodName](function() {
           callCount++;

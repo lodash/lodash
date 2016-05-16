@@ -4114,15 +4114,15 @@
         return value;
       }, 32);
 
-      var actual = [debounced(0), debounced(1), debounced(2)];
-      assert.deepEqual(actual, [undefined, undefined, undefined]);
+      var results = [debounced(0), debounced(1), debounced(2)];
+      assert.deepEqual(results, [undefined, undefined, undefined]);
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
         assert.strictEqual(callCount, 1);
 
-        var actual = [debounced(3), debounced(4), debounced(5)];
-        assert.deepEqual(actual, [2, 2, 2]);
+        var results = [debounced(3), debounced(4), debounced(5)];
+        assert.deepEqual(results, [2, 2, 2]);
         assert.strictEqual(callCount, 1);
       }, 128);
 
@@ -4223,13 +4223,13 @@
       var done = assert.async();
 
       var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
-          result = [debounced('x'), debounced('y')];
+          results = [debounced('x'), debounced('y')];
 
-      assert.deepEqual(result, ['x', 'x']);
+      assert.deepEqual(results, ['x', 'x']);
 
       setTimeout(function() {
-        var result = [debounced('a'), debounced('b')];
-        assert.deepEqual(result, ['a', 'a']);
+        var results = [debounced('a'), debounced('b')];
+        assert.deepEqual(results, ['a', 'a']);
         done();
       }, 64);
     });
@@ -22430,17 +22430,17 @@
       var done = assert.async();
 
       var throttled = _.throttle(identity, 32),
-          result = [throttled('a'), throttled('b')];
+          results = [throttled('a'), throttled('b')];
 
-      assert.deepEqual(result, ['a', 'a']);
+      assert.deepEqual(results, ['a', 'a']);
 
       setTimeout(function() {
-        var result = [throttled('x'), throttled('y')];
-        assert.notEqual(result[0], 'a');
-        assert.notStrictEqual(result[0], undefined);
+        var results = [throttled('x'), throttled('y')];
+        assert.notEqual(results[0], 'a');
+        assert.notStrictEqual(results[0], undefined);
 
-        assert.notEqual(result[1], 'y');
-        assert.notStrictEqual(result[1], undefined);
+        assert.notEqual(results[1], 'y');
+        assert.notStrictEqual(results[1], undefined);
         done();
       }, 64);
     });
@@ -22652,10 +22652,9 @@
           return value;
         }, 32);
 
-        var actual = [throttled('a'), throttled('b'), throttled('c')];
-
+        var results = [throttled('a'), throttled('b'), throttled('c')];
+        assert.deepEqual(results, ['a', 'a', 'a']);
         assert.strictEqual(callCount, 1);
-        assert.deepEqual(actual, ['a', 'a', 'a']);
 
         setTimeout(function() {
           assert.strictEqual(callCount, 2);

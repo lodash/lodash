@@ -7690,6 +7690,28 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should work with a string and a `fromIndex` >= `string.length`', function(assert) {
+      assert.expect(1);
+
+      var string = '1234',
+          length = string.length,
+          indexes = [4, 6, Math.pow(2, 32), Infinity];
+
+      var expected = lodashStable.map(indexes, function(index) {
+        return [false, false, index == length];
+      });
+
+      var actual = lodashStable.map(indexes, function(fromIndex) {
+        return [
+          _.includes(string, 1, fromIndex),
+          _.includes(string, undefined, fromIndex),
+          _.includes(string, '', fromIndex)
+        ];
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should match `NaN`', function(assert) {
       assert.expect(1);
 

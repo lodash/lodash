@@ -22635,31 +22635,37 @@
 
       var done = assert.async();
 
-      var callCount = 0,
-          dateCount = 0;
+      if (!isModularize) {
+        var callCount = 0,
+            dateCount = 0;
 
-      var lodash = _.runInContext({
-        'Date': {
-          'now': function() {
-            return ++dateCount == 1 ? 0 : +new Date;
+        var lodash = _.runInContext({
+          'Date': {
+            'now': function() {
+              return ++dateCount == 1 ? 0 : +new Date;
+            }
           }
-        }
-      });
+        });
 
-      var throttled = _.throttle(function(value) {
-        callCount++;
-        return value;
-      }, 32);
+        var throttled = _.throttle(function(value) {
+          callCount++;
+          return value;
+        }, 32);
 
-      var actual = [throttled('a'), throttled('b'), throttled('c')];
+        var actual = [throttled('a'), throttled('b'), throttled('c')];
 
-      assert.strictEqual(callCount, 1);
-      assert.deepEqual(actual, ['a', 'a', 'a']);
+        assert.strictEqual(callCount, 1);
+        assert.deepEqual(actual, ['a', 'a', 'a']);
 
-      setTimeout(function() {
-        assert.strictEqual(callCount, 2);
+        setTimeout(function() {
+          assert.strictEqual(callCount, 2);
+          done();
+        }, 64);
+      }
+      else {
+        skipAssert(assert, 3);
         done();
-      }, 64);
+      }
     });
   }());
 

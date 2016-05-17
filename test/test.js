@@ -22640,12 +22640,12 @@
         var lodash = _.runInContext({
           'Date': {
             'now': function() {
-              return ++dateCount == 1 ? 0 : +new Date;
+              return ++dateCount < 4 ? 0 : +new Date;
             }
           }
         });
 
-        var throttled = _.throttle(function(value) {
+        var throttled = lodash.throttle(function(value) {
           callCount++;
           return value;
         }, 32);

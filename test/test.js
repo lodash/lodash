@@ -4948,7 +4948,7 @@
       });
     });
 
-    QUnit.test('should return an empty array when `n` >= `array.length`', function(assert) {
+    QUnit.test('should return an empty array when `n` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
@@ -5036,7 +5036,7 @@
       });
     });
 
-    QUnit.test('should return an empty array when `n` >= `array.length`', function(assert) {
+    QUnit.test('should return an empty array when `n` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
@@ -5275,7 +5275,7 @@
       assert.strictEqual(_.endsWith(string, 'b', 2), true);
     });
 
-    QUnit.test('should work with `position` >= `string.length`', function(assert) {
+    QUnit.test('should work with `position` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
@@ -5539,7 +5539,7 @@
   QUnit.module('lodash.fill');
 
   (function() {
-    QUnit.test('should use a default `start` of `0` and a default `end` of `array.length`', function(assert) {
+    QUnit.test('should use a default `start` of `0` and a default `end` of `length`', function(assert) {
       assert.expect(1);
 
       var array = [1, 2, 3];
@@ -5565,7 +5565,7 @@
       assert.deepEqual(_.fill(array, 'a', 1), [1, 'a', 'a']);
     });
 
-    QUnit.test('should work with a `start` >= `array.length`', function(assert) {
+    QUnit.test('should work with a `start` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(start) {
@@ -5594,7 +5594,7 @@
       assert.deepEqual(_.fill(array, 'a', -1), [1, 2, 'a']);
     });
 
-    QUnit.test('should work with a negative `start` <= negative `array.length`', function(assert) {
+    QUnit.test('should work with a negative `start` <= negative `length`', function(assert) {
       assert.expect(3);
 
       lodashStable.each([-3, -4, -Infinity], function(start) {
@@ -5619,7 +5619,7 @@
       assert.deepEqual(_.fill(array, 'a', 0, 1), ['a', 2, 3]);
     });
 
-    QUnit.test('should work with a `end` >= `array.length`', function(assert) {
+    QUnit.test('should work with a `end` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(end) {
@@ -5650,7 +5650,7 @@
       assert.deepEqual(_.fill(array, 'a', 0, -1), ['a', 'a', 3]);
     });
 
-    QUnit.test('should work with a negative `end` <= negative `array.length`', function(assert) {
+    QUnit.test('should work with a negative `end` <= negative `length`', function(assert) {
       assert.expect(3);
 
       lodashStable.each([-3, -4, -Infinity], function(end) {
@@ -6726,7 +6726,7 @@
           isSome = methodName == 'some',
           isReduce = /^reduce/.test(methodName);
 
-      QUnit.test('`_.' + methodName + '` should ignore changes to `array.length`', function(assert) {
+      QUnit.test('`_.' + methodName + '` should ignore changes to `length`', function(assert) {
         assert.expect(1);
 
         if (func) {
@@ -7688,7 +7688,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work with a string and a `fromIndex` >= `string.length`', function(assert) {
+    QUnit.test('should work with a string and a `fromIndex` >= `length`', function(assert) {
       assert.expect(1);
 
       var string = '1234',
@@ -7799,7 +7799,7 @@
         assert.deepEqual(actual, expected);
       });
 
-      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and coerce non-integer `fromIndex` values to integers', function(assert) {
+      QUnit.test('`_.' + methodName + '` should work with ' + key + ' and coerce `fromIndex` to an integer', function(assert) {
         assert.expect(1);
 
         var expected = [
@@ -7869,7 +7869,7 @@
       assert.strictEqual(func(array, resolve(1), 2), 3);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a `fromIndex` >= `length`', function(assert) {
       assert.expect(1);
 
       var values = [6, 8, Math.pow(2, 32), Infinity],
@@ -13259,7 +13259,7 @@
       assert.strictEqual(func(array, resolve(1), 2), 0);
     });
 
-    QUnit.test('`_.' + methodName + '` should work with `fromIndex` >= `length`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a `fromIndex` >= `length`', function(assert) {
       assert.expect(1);
 
       var values = [6, 8, Math.pow(2, 32), Infinity],
@@ -19655,7 +19655,7 @@
       });
     });
 
-    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
+    QUnit.test('should return all elements when `n` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
@@ -20105,7 +20105,7 @@
   (function() {
     var array = [1, 2, 3];
 
-    QUnit.test('should use a default `start` of `0` and a default `end` of `array.length`', function(assert) {
+    QUnit.test('should use a default `start` of `0` and a default `end` of `length`', function(assert) {
       assert.expect(2);
 
       var actual = _.slice(array);
@@ -20120,7 +20120,7 @@
       assert.deepEqual(_.slice(array, 1, 3), [2, 3]);
     });
 
-    QUnit.test('should work with a `start` >= `array.length`', function(assert) {
+    QUnit.test('should work with a `start` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(start) {
@@ -20146,7 +20146,7 @@
       assert.deepEqual(_.slice(array, -1), [3]);
     });
 
-    QUnit.test('should work with a negative `start` <= negative `array.length`', function(assert) {
+    QUnit.test('should work with a negative `start` <= negative `length`', function(assert) {
       assert.expect(3);
 
       lodashStable.each([-3, -4, -Infinity], function(start) {
@@ -20168,7 +20168,7 @@
       assert.deepEqual(_.slice(array, 0, 1), [1]);
     });
 
-    QUnit.test('should work with a `end` >= `array.length`', function(assert) {
+    QUnit.test('should work with a `end` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(end) {
@@ -20196,7 +20196,7 @@
       assert.deepEqual(_.slice(array, 0, -1), [1, 2]);
     });
 
-    QUnit.test('should work with a negative `end` <= negative `array.length`', function(assert) {
+    QUnit.test('should work with a negative `end` <= negative `length`', function(assert) {
       assert.expect(3);
 
       lodashStable.each([-3, -4, -Infinity], function(end) {
@@ -20895,7 +20895,7 @@
       assert.strictEqual(_.startsWith(string, 'b', 1), true);
     });
 
-    QUnit.test('should work with `position` >= `string.length`', function(assert) {
+    QUnit.test('should work with `position` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
@@ -21326,7 +21326,7 @@
       });
     });
 
-    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
+    QUnit.test('should return all elements when `n` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {
@@ -21408,7 +21408,7 @@
       });
     });
 
-    QUnit.test('should return all elements when `n` >= `array.length`', function(assert) {
+    QUnit.test('should return all elements when `n` >= `length`', function(assert) {
       assert.expect(4);
 
       lodashStable.each([3, 4, Math.pow(2, 32), Infinity], function(n) {

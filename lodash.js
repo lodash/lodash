@@ -417,7 +417,7 @@
    * A specialized version of `baseAggregator` for arrays.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} setter The function to set `accumulator` values.
    * @param {Function} iteratee The iteratee to transform keys.
    * @param {Object} accumulator The initial aggregated object.
@@ -425,7 +425,7 @@
    */
   function arrayAggregator(array, setter, iteratee, accumulator) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       var value = array[index];
@@ -439,13 +439,13 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @returns {Array} Returns `array`.
    */
   function arrayEach(array, iteratee) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (iteratee(array[index], index, array) === false) {
@@ -460,12 +460,12 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @returns {Array} Returns `array`.
    */
   function arrayEachRight(array, iteratee) {
-    var length = array.length;
+    var length = array ? array.length : 0;
 
     while (length--) {
       if (iteratee(array[length], length, array) === false) {
@@ -480,14 +480,14 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
    * @returns {boolean} Returns `true` if all elements pass the predicate check,
    *  else `false`.
    */
   function arrayEvery(array, predicate) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (!predicate(array[index], index, array)) {
@@ -502,13 +502,13 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
    * @returns {Array} Returns the new filtered array.
    */
   function arrayFilter(array, predicate) {
     var index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         resIndex = 0,
         result = [];
 
@@ -526,26 +526,27 @@
    * specifying an index to search from.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} [array] The array to search.
    * @param {*} target The value to search for.
    * @returns {boolean} Returns `true` if `target` is found, else `false`.
    */
   function arrayIncludes(array, value) {
-    return !!array.length && baseIndexOf(array, value, 0) > -1;
+    var length = array ? array.length : 0;
+    return !!length && baseIndexOf(array, value, 0) > -1;
   }
 
   /**
    * This function is like `arrayIncludes` except that it accepts a comparator.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} [array] The array to search.
    * @param {*} target The value to search for.
    * @param {Function} comparator The comparator invoked per element.
    * @returns {boolean} Returns `true` if `target` is found, else `false`.
    */
   function arrayIncludesWith(array, value, comparator) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (comparator(value, array[index])) {
@@ -560,13 +561,13 @@
    * shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @returns {Array} Returns the new mapped array.
    */
   function arrayMap(array, iteratee) {
     var index = -1,
-        length = array.length,
+        length = array ? array.length : 0,
         result = Array(length);
 
     while (++index < length) {
@@ -599,7 +600,7 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
    * @param {boolean} [initAccum] Specify using the first element of `array` as
@@ -608,7 +609,7 @@
    */
   function arrayReduce(array, iteratee, accumulator, initAccum) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     if (initAccum && length) {
       accumulator = array[++index];
@@ -624,7 +625,7 @@
    * iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
    * @param {boolean} [initAccum] Specify using the last element of `array` as
@@ -632,7 +633,7 @@
    * @returns {*} Returns the accumulated value.
    */
   function arrayReduceRight(array, iteratee, accumulator, initAccum) {
-    var length = array.length;
+    var length = array ? array.length : 0;
     if (initAccum && length) {
       accumulator = array[--length];
     }
@@ -647,14 +648,14 @@
    * shorthands.
    *
    * @private
-   * @param {Array} array The array to iterate over.
+   * @param {Array} [array] The array to iterate over.
    * @param {Function} predicate The function invoked per iteration.
    * @returns {boolean} Returns `true` if any element passes the predicate check,
    *  else `false`.
    */
   function arraySome(array, predicate) {
     var index = -1,
-        length = array.length;
+        length = array ? array.length : 0;
 
     while (++index < length) {
       if (predicate(array[index], index, array)) {
@@ -1010,12 +1011,12 @@
    * Gets the value at `key` of `object`.
    *
    * @private
-   * @param {Object} object The object to query.
+   * @param {Object} [object] The object to query.
    * @param {string} key The key of the property to get.
    * @returns {*} Returns the property value.
    */
   function getValue(object, key) {
-    return object[key];
+    return object == null ? undefined : object[key];
   }
 
   /**
@@ -2732,7 +2733,7 @@
      * The base implementation of `_.has` without support for deep paths.
      *
      * @private
-     * @param {Object} object The object to query.
+     * @param {Object} [object] The object to query.
      * @param {Array|string} key The key to check.
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
@@ -2740,20 +2741,21 @@
       // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
       // that are composed entirely of index properties, return `false` for
       // `hasOwnProperty` checks of them.
-      return hasOwnProperty.call(object, key) ||
-        (typeof object == 'object' && key in object && getPrototype(object) === null);
+      return object != null &&
+        (hasOwnProperty.call(object, key) ||
+          (typeof object == 'object' && key in object && getPrototype(object) === null));
     }
 
     /**
      * The base implementation of `_.hasIn` without support for deep paths.
      *
      * @private
-     * @param {Object} object The object to query.
+     * @param {Object} [object] The object to query.
      * @param {Array|string} key The key to check.
      * @returns {boolean} Returns `true` if `key` exists, else `false`.
      */
     function baseHasIn(object, key) {
-      return key in Object(object);
+      return object != null && key in Object(object);
     }
 
     /**

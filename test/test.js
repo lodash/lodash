@@ -4112,15 +4112,15 @@
         return value;
       }, 32);
 
-      var results = [debounced(0), debounced(1), debounced(2)];
+      var results = [debounced('a'), debounced('b'), debounced('c')];
       assert.deepEqual(results, [undefined, undefined, undefined]);
       assert.strictEqual(callCount, 0);
 
       setTimeout(function() {
         assert.strictEqual(callCount, 1);
 
-        var results = [debounced(3), debounced(4), debounced(5)];
-        assert.deepEqual(results, [2, 2, 2]);
+        var results = [debounced('d'), debounced('e'), debounced('f')];
+        assert.deepEqual(results, ['c', 'c', 'c']);
         assert.strictEqual(callCount, 1);
       }, 128);
 
@@ -4136,14 +4136,14 @@
       var done = assert.async();
 
       var debounced = _.debounce(identity, 32);
-      debounced('x');
+      debounced('a');
 
       setTimeout(function() {
-        assert.notEqual(debounced('y'), 'y');
+        assert.notEqual(debounced('b'), 'b');
       }, 64);
 
       setTimeout(function() {
-        assert.notEqual(debounced('z'), 'z');
+        assert.notEqual(debounced('c'), 'c');
         done();
       }, 128);
     });
@@ -4221,13 +4221,13 @@
       var done = assert.async();
 
       var debounced = _.debounce(identity, 32, { 'leading': true, 'trailing': false }),
-          results = [debounced('x'), debounced('y')];
+          results = [debounced('a'), debounced('b')];
 
-      assert.deepEqual(results, ['x', 'x']);
+      assert.deepEqual(results, ['a', 'a']);
 
       setTimeout(function() {
-        var results = [debounced('a'), debounced('b')];
-        assert.deepEqual(results, ['a', 'a']);
+        var results = [debounced('c'), debounced('d')];
+        assert.deepEqual(results, ['c', 'c']);
         done();
       }, 64);
     });
@@ -22433,11 +22433,11 @@
       assert.deepEqual(results, ['a', 'a']);
 
       setTimeout(function() {
-        var results = [throttled('x'), throttled('y')];
+        var results = [throttled('c'), throttled('d')];
         assert.notEqual(results[0], 'a');
         assert.notStrictEqual(results[0], undefined);
 
-        assert.notEqual(results[1], 'y');
+        assert.notEqual(results[1], 'd');
         assert.notStrictEqual(results[1], undefined);
         done();
       }, 64);

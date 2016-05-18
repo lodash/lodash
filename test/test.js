@@ -5748,12 +5748,12 @@
       ];
 
       var expected = ({
-        'find': [objects[1], undefined, objects[2], objects[1]],
-        'findLast': [objects[2], undefined, objects[2], objects[2]],
-        'findIndex': [1, -1, 2, 1],
-        'findLastIndex': [2, -1, 2, 2],
-        'findKey': ['1', undefined, '2', '1'],
-        'findLastKey': ['2', undefined, '2', '2']
+        'find': [objects[1], undefined, objects[2]],
+        'findLast': [objects[2], undefined, objects[2]],
+        'findIndex': [1, -1, 2],
+        'findLastIndex': [2, -1, 2],
+        'findKey': ['1', undefined, '2'],
+        'findLastKey': ['2', undefined, '2']
       })[methodName];
 
       QUnit.test('`_.' + methodName + '` should return the found value', function(assert) {
@@ -5783,7 +5783,7 @@
       QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
         assert.expect(1);
 
-        assert.strictEqual(func(objects, 'b'), expected[3]);
+        assert.strictEqual(func(objects, 'b'), expected[0]);
       });
 
       QUnit.test('`_.' + methodName + '` should return `' + expected[1] + '` for empty collections', function(assert) {
@@ -5805,17 +5805,17 @@
     (function() {
       var array = [1, 2, 3, 4];
 
-      var expected = ({
-        'find': 1,
-        'findLast': 4,
-        'findIndex': 0,
-        'findLastIndex': 3,
-        'findKey': '0',
-        'findLastKey': '3'
-      })[methodName];
-
       QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
         assert.expect(1);
+
+        var expected = ({
+          'find': 1,
+          'findLast': 4,
+          'findIndex': 0,
+          'findLastIndex': 3,
+          'findKey': '0',
+          'findLastKey': '3'
+        })[methodName];
 
         if (!isNpm) {
           assert.strictEqual(_(array)[methodName](), expected);

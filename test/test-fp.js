@@ -1099,40 +1099,55 @@
 
   QUnit.module('fp.findIndexFrom methods');
 
-  var findIndexTestCases = {
-    'findIndexFrom': [
-      { 'fromIndex': 0, 'expected': 1 },
-      { 'fromIndex': 2, 'expected': 3 }
-    ],
-    'findLastIndexFrom': [
-      { 'fromIndex': -1, 'expected': 3 },
-      { 'fromIndex': 2,  'expected': 1 }
-    ]
-  };
+  _.each(['findIndexFrom', 'findLastIndexFrom'], function(methodName) {
+    var func = fp[methodName];
 
-  _.forOwn(findIndexTestCases, function(testCases, methodName) {
-    QUnit.test('`fp.' + methodName + '` should have an argument order of `predicate`, `fromIndex` then `array`', function(assert) {
-      assert.expect(testCases.length);
+    QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments', function(assert) {
+      assert.expect(1);
 
-      var array = [100, 0, 100, 0];
+      var args;
 
-      _.each(testCases, function(testCase) {
-        assert.deepEqual(fp[methodName](fp.eq(0))(testCase.fromIndex)(array), testCase.expected);
-      });
+      func(function() {
+        args || (args = slice.call(arguments));
+      })(1)([1, 2, 3]);
+
+      assert.deepEqual(args, [2]);
     });
+  });
 
-    QUnit.test('`fp.' + methodName + '` should have its iteratee capped at 1 argument', function(assert) {
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.findIndexFrom and fp.indexOfFrom');
+
+  _.each(['findIndexFrom', 'indexOfFrom'], function(methodName) {
+    var func = fp[methodName],
+        resolve = methodName == 'findIndexFrom' ? fp.eq : _.identity;
+
+    QUnit.test('`_.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
       assert.expect(2);
 
-      var array = [100, 100];
+      var array = [1, 2, 3, 1, 2, 3];
 
-      var iteratee = function(value, index) {
-        assert.equal(value, 100);
-        assert.equal(index, undefined, 'iteratee is not capped');
-        return true;
-      };
+      assert.deepEqual(func(resolve(1))(2)(array), 3);
+      assert.deepEqual(func(resolve(2))(-3)(array), 4);
+    });
+  });
 
-      fp[methodName](iteratee)(1)(array);
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.findLastIndexFrom and fp.lastIndexOfFrom');
+
+  _.each(['findLastIndexFrom', 'lastIndexOfFrom'], function(methodName) {
+    var func = fp[methodName],
+        resolve = methodName == 'findLastIndexFrom' ? fp.eq : _.identity;
+
+    QUnit.test('`_.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
+      assert.expect(2);
+
+      var array = [1, 2, 3, 1, 2, 3];
+
+      assert.deepEqual(func(resolve(2))(3)(array), 1);
+      assert.deepEqual(func(resolve(3))(-3)(array), 2);
     });
   });
 
@@ -1257,33 +1272,6 @@
       assert.expect(1);
 
       assert.strictEqual(func(2)(1), true);
-    });
-  });
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('fp.indexOfFrom methods');
-
-  var indexOfTestCases = {
-    indexOfFrom: [
-      {fromIndex: 0, expected: 1},
-      {fromIndex: 2, expected: 3}
-    ],
-    lastIndexOfFrom: [
-      {fromIndex: -1, expected: 3},
-      {fromIndex: 2, expected: 1}
-    ]
-  };
-
-  _.each(indexOfTestCases, function(testCases, methodName) {
-    QUnit.test('`fp.' + methodName + '` should have an argument order of `value`, `fromIndex` then `array`', function(assert) {
-      assert.expect(testCases.length);
-
-      var array = [100, 0, 100, 0];
-
-      _.each(testCases, function(testCase) {
-        assert.deepEqual(fp[methodName](0)(testCase.fromIndex)(array), testCase.expected);
-      });
     });
   });
 

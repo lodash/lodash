@@ -1,35 +1,41 @@
-import attempt from './attempt';
-import bindAll from './bindAll';
-import cond from './cond';
-import conforms from './conforms';
-import constant from './constant';
-import flow from './flow';
-import flowRight from './flowRight';
-import identity from './identity';
-import iteratee from './iteratee';
-import matches from './matches';
-import matchesProperty from './matchesProperty';
-import method from './method';
-import methodOf from './methodOf';
-import mixin from './mixin';
-import noop from './noop';
-import nthArg from './nthArg';
-import over from './over';
-import overEvery from './overEvery';
-import overSome from './overSome';
-import property from './property';
-import propertyOf from './propertyOf';
-import range from './range';
-import rangeRight from './rangeRight';
-import times from './times';
-import toPath from './toPath';
-import uniqueId from './uniqueId';
+import attempt from './attempt.js';
+import bindAll from './bindAll.js';
+import cond from './cond.js';
+import conforms from './conforms.js';
+import constant from './constant.js';
+import flow from './flow.js';
+import flowRight from './flowRight.js';
+import identity from './identity.js';
+import iteratee from './iteratee.js';
+import matches from './matches.js';
+import matchesProperty from './matchesProperty.js';
+import method from './method.js';
+import methodOf from './methodOf.js';
+import mixin from './mixin.js';
+import noop from './noop.js';
+import nthArg from './nthArg.js';
+import over from './over.js';
+import overEvery from './overEvery.js';
+import overSome from './overSome.js';
+import property from './property.js';
+import propertyOf from './propertyOf.js';
+import range from './range.js';
+import rangeRight from './rangeRight.js';
+import stubArray from './stubArray.js';
+import stubFalse from './stubFalse.js';
+import stubObject from './stubObject.js';
+import stubString from './stubString.js';
+import stubTrue from './stubTrue.js';
+import times from './times.js';
+import toPath from './toPath.js';
+import uniqueId from './uniqueId.js';
 
 export default {
   attempt, bindAll, cond, conforms, constant,
   flow, flowRight, identity, iteratee, matches,
   matchesProperty, method, methodOf, mixin, noop,
   nthArg, over, overEvery, overSome, property,
-  propertyOf, range, rangeRight, times, toPath,
+  propertyOf, range, rangeRight, stubArray, stubFalse,
+  stubObject, stubString, stubTrue, times, toPath,
   uniqueId
 };

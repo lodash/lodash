@@ -1,5 +1,5 @@
-import baseSlice from './_baseSlice';
-import toInteger from './toInteger';
+import baseSlice from './_baseSlice.js';
+import toInteger from './toInteger.js';
 
 /**
  * Creates a slice of `array` with `n` elements dropped from the end.

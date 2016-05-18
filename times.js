@@ -1,6 +1,6 @@
-import baseIteratee from './_baseIteratee';
-import baseTimes from './_baseTimes';
-import toInteger from './toInteger';
+import baseIteratee from './_baseIteratee.js';
+import baseTimes from './_baseTimes.js';
+import toInteger from './toInteger.js';
 
 /** Used as references for various `Number` constants. */
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -27,8 +27,8 @@ var nativeMin = Math.min;
  * _.times(3, String);
  * // => ['0', '1', '2']
  *
- *  _.times(4, _.constant(true));
- * // => [true, true, true, true]
+ *  _.times(4, _.constant(0));
+ * // => [0, 0, 0, 0]
  */
 function times(n, iteratee) {
   n = toInteger(n);

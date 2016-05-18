@@ -1,4 +1,4 @@
-import baseClone from './_baseClone';
+import baseClone from './_baseClone.js';
 
 /**
  * This method is like `_.clone` except that it accepts `customizer` which

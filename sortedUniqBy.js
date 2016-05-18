@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import baseSortedUniq from './_baseSortedUniq';
+import baseIteratee from './_baseIteratee.js';
+import baseSortedUniq from './_baseSortedUniq.js';
 
 /**
  * This method is like `_.uniqBy` except that it's designed and optimized

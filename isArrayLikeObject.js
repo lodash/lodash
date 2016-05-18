@@ -1,5 +1,5 @@
-import isArrayLike from './isArrayLike';
-import isObjectLike from './isObjectLike';
+import isArrayLike from './isArrayLike.js';
+import isObjectLike from './isObjectLike.js';
 
 /**
  * This method is like `_.isArrayLike` except that it also checks if `value`

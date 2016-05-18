@@ -1,5 +1,5 @@
-import isArray from './isArray';
-import isObjectLike from './isObjectLike';
+import isArray from './isArray.js';
+import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
 var stringTag = '[object String]';

@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import baseMean from './_baseMean';
+import baseIteratee from './_baseIteratee.js';
+import baseMean from './_baseMean.js';
 
 /**
  * This method is like `_.mean` except that it accepts `iteratee` which is

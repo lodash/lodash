@@ -1,5 +1,5 @@
-import baseCreate from './_baseCreate';
-import baseLodash from './_baseLodash';
+import baseCreate from './_baseCreate.js';
+import baseLodash from './_baseLodash.js';
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = 4294967295;

@@ -1,5 +1,5 @@
-import baseGt from './_baseGt';
-import createRelationalOperation from './_createRelationalOperation';
+import baseGt from './_baseGt.js';
+import createRelationalOperation from './_createRelationalOperation.js';
 
 /**
  * Checks if `value` is greater than `other`.

@@ -1,5 +1,5 @@
-import debounce from './debounce';
-import isObject from './isObject';
+import debounce from './debounce.js';
+import isObject from './isObject.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

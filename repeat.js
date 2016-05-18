@@ -1,7 +1,7 @@
-import baseRepeat from './_baseRepeat';
-import isIterateeCall from './_isIterateeCall';
-import toInteger from './toInteger';
-import toString from './toString';
+import baseRepeat from './_baseRepeat.js';
+import isIterateeCall from './_isIterateeCall.js';
+import toInteger from './toInteger.js';
+import toString from './toString.js';
 
 /**
  * Repeats the given string `n` times.

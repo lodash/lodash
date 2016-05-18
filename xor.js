@@ -1,7 +1,7 @@
-import arrayFilter from './_arrayFilter';
-import baseXor from './_baseXor';
-import isArrayLikeObject from './isArrayLikeObject';
-import rest from './rest';
+import arrayFilter from './_arrayFilter.js';
+import baseXor from './_baseXor.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import rest from './rest.js';
 
 /**
  * Creates an array of unique values that is the
@@ -18,8 +18,8 @@ import rest from './rest';
  * @see _.difference, _.without
  * @example
  *
- * _.xor([2, 1], [4, 2]);
- * // => [1, 4]
+ * _.xor([2, 1], [2, 3]);
+ * // => [1, 3]
  */
 var xor = rest(function(arrays) {
   return baseXor(arrayFilter(arrays, isArrayLikeObject));

@@ -1,5 +1,5 @@
-import baseFor from './_baseFor';
-import keys from './keys';
+import baseFor from './_baseFor.js';
+import keys from './keys.js';
 
 /**
  * The base implementation of `_.forOwn` without support for iteratee shorthands.

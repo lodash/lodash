@@ -1,6 +1,6 @@
-import baseForRight from './_baseForRight';
-import baseIteratee from './_baseIteratee';
-import keysIn from './keysIn';
+import baseForRight from './_baseForRight.js';
+import baseIteratee from './_baseIteratee.js';
+import keysIn from './keysIn.js';
 
 /**
  * This method is like `_.forIn` except that it iterates over properties of

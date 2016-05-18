@@ -1,4 +1,4 @@
-import baseEach from './_baseEach';
+import baseEach from './_baseEach.js';
 
 /**
  * The base implementation of `_.some` without support for iteratee shorthands.

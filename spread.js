@@ -1,8 +1,8 @@
-import apply from './_apply';
-import arrayPush from './_arrayPush';
-import castSlice from './_castSlice';
-import rest from './rest';
-import toInteger from './toInteger';
+import apply from './_apply.js';
+import arrayPush from './_arrayPush.js';
+import castSlice from './_castSlice.js';
+import rest from './rest.js';
+import toInteger from './toInteger.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

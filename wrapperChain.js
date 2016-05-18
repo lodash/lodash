@@ -1,4 +1,4 @@
-import chain from './chain';
+import chain from './chain.js';
 
 /**
  * Creates a `lodash` wrapper instance with explicit method chain sequences enabled.

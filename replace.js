@@ -1,4 +1,4 @@
-import toString from './toString';
+import toString from './toString.js';
 
 /** Used for built-in method references. */
 var stringProto = String.prototype;

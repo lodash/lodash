@@ -1,4 +1,4 @@
-import getMapData from './_getMapData';
+import getMapData from './_getMapData.js';
 
 /**
  * Sets the map `key` to `value`.

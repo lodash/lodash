@@ -1,10 +1,10 @@
-import apply from './_apply';
-import createCtorWrapper from './_createCtorWrapper';
-import createHybridWrapper from './_createHybridWrapper';
-import createRecurryWrapper from './_createRecurryWrapper';
-import getHolder from './_getHolder';
-import replaceHolders from './_replaceHolders';
-import root from './_root';
+import apply from './_apply.js';
+import createCtorWrapper from './_createCtorWrapper.js';
+import createHybridWrapper from './_createHybridWrapper.js';
+import createRecurryWrapper from './_createRecurryWrapper.js';
+import getHolder from './_getHolder.js';
+import replaceHolders from './_replaceHolders.js';
+import root from './_root.js';
 
 /**
  * Creates a function that wraps `func` to enable currying.

@@ -1,5 +1,5 @@
-import baseFunctions from './_baseFunctions';
-import keysIn from './keysIn';
+import baseFunctions from './_baseFunctions.js';
+import keysIn from './keysIn.js';
 
 /**
  * Creates an array of function property names from own and inherited

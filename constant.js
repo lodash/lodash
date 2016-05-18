@@ -9,10 +9,12 @@
  * @returns {Function} Returns the new constant function.
  * @example
  *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
+ * var objects = _.times(2, _.constant({ 'a': 1 }));
  *
- * getter() === object;
+ * console.log(objects);
+ * // => [{ 'a': 1 }, { 'a': 1 }]
+ *
+ * console.log(objects[0] === objects[1]);
  * // => true
  */
 function constant(value) {

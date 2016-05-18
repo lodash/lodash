@@ -1,6 +1,6 @@
-import arrayPush from './_arrayPush';
-import getPrototype from './_getPrototype';
-import getSymbols from './_getSymbols';
+import arrayPush from './_arrayPush.js';
+import getPrototype from './_getPrototype.js';
+import getSymbols from './_getSymbols.js';
 
 /** Built-in value references. */
 var getOwnPropertySymbols = Object.getOwnPropertySymbols;

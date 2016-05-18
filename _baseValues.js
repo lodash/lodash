@@ -1,4 +1,4 @@
-import arrayMap from './_arrayMap';
+import arrayMap from './_arrayMap.js';
 
 /**
  * The base implementation of `_.values` and `_.valuesIn` which creates an

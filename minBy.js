@@ -1,6 +1,6 @@
-import baseExtremum from './_baseExtremum';
-import baseIteratee from './_baseIteratee';
-import baseLt from './_baseLt';
+import baseExtremum from './_baseExtremum.js';
+import baseIteratee from './_baseIteratee.js';
+import baseLt from './_baseLt.js';
 
 /**
  * This method is like `_.min` except that it accepts `iteratee` which is

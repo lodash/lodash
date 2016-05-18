@@ -1,6 +1,6 @@
-import baseFor from './_baseFor';
-import baseIteratee from './_baseIteratee';
-import keysIn from './keysIn';
+import baseFor from './_baseFor.js';
+import baseIteratee from './_baseIteratee.js';
+import keysIn from './keysIn.js';
 
 /**
  * Iterates over own and inherited enumerable string keyed properties of an

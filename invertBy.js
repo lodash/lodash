@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import createInverter from './_createInverter';
+import baseIteratee from './_baseIteratee.js';
+import createInverter from './_createInverter.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

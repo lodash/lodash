@@ -1,4 +1,4 @@
-import realNames from './_realNames';
+import realNames from './_realNames.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

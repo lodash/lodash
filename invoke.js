@@ -1,5 +1,5 @@
-import baseInvoke from './_baseInvoke';
-import rest from './rest';
+import baseInvoke from './_baseInvoke.js';
+import rest from './rest.js';
 
 /**
  * Invokes the method at `path` of `object`.

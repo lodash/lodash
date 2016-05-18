@@ -1,5 +1,5 @@
-import baseMerge from './_baseMerge';
-import createAssigner from './_createAssigner';
+import baseMerge from './_baseMerge.js';
+import createAssigner from './_createAssigner.js';
 
 /**
  * This method is like `_.merge` except that it accepts `customizer` which

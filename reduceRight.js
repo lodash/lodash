@@ -1,8 +1,8 @@
-import arrayReduceRight from './_arrayReduceRight';
-import baseEachRight from './_baseEachRight';
-import baseIteratee from './_baseIteratee';
-import baseReduce from './_baseReduce';
-import isArray from './isArray';
+import arrayReduceRight from './_arrayReduceRight.js';
+import baseEachRight from './_baseEachRight.js';
+import baseIteratee from './_baseIteratee.js';
+import baseReduce from './_baseReduce.js';
+import isArray from './isArray.js';
 
 /**
  * This method is like `_.reduce` except that it iterates over elements of

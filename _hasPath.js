@@ -1,11 +1,11 @@
-import castPath from './_castPath';
-import isArguments from './isArguments';
-import isArray from './isArray';
-import isIndex from './_isIndex';
-import isKey from './_isKey';
-import isLength from './isLength';
-import isString from './isString';
-import toKey from './_toKey';
+import castPath from './_castPath.js';
+import isArguments from './isArguments.js';
+import isArray from './isArray.js';
+import isIndex from './_isIndex.js';
+import isKey from './_isKey.js';
+import isLength from './isLength.js';
+import isString from './isString.js';
+import toKey from './_toKey.js';
 
 /**
  * Checks if `path` exists on `object`.

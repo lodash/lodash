@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import basePullAt from './_basePullAt';
+import baseIteratee from './_baseIteratee.js';
+import basePullAt from './_basePullAt.js';
 
 /**
  * Removes all elements from `array` that `predicate` returns truthy for

@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import basePullAll from './_basePullAll';
+import baseIteratee from './_baseIteratee.js';
+import basePullAll from './_basePullAll.js';
 
 /**
  * This method is like `_.pullAll` except that it accepts `iteratee` which is

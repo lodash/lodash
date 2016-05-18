@@ -1,8 +1,8 @@
-import listCacheClear from './_listCacheClear';
-import listCacheDelete from './_listCacheDelete';
-import listCacheGet from './_listCacheGet';
-import listCacheHas from './_listCacheHas';
-import listCacheSet from './_listCacheSet';
+import listCacheClear from './_listCacheClear.js';
+import listCacheDelete from './_listCacheDelete.js';
+import listCacheGet from './_listCacheGet.js';
+import listCacheHas from './_listCacheHas.js';
+import listCacheSet from './_listCacheSet.js';
 
 /**
  * Creates an list cache object.

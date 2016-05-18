@@ -1,18 +1,18 @@
-import add from './add';
-import ceil from './ceil';
-import divide from './divide';
-import floor from './floor';
-import max from './max';
-import maxBy from './maxBy';
-import mean from './mean';
-import meanBy from './meanBy';
-import min from './min';
-import minBy from './minBy';
-import multiply from './multiply';
-import round from './round';
-import subtract from './subtract';
-import sum from './sum';
-import sumBy from './sumBy';
+import add from './add.js';
+import ceil from './ceil.js';
+import divide from './divide.js';
+import floor from './floor.js';
+import max from './max.js';
+import maxBy from './maxBy.js';
+import mean from './mean.js';
+import meanBy from './meanBy.js';
+import min from './min.js';
+import minBy from './minBy.js';
+import multiply from './multiply.js';
+import round from './round.js';
+import subtract from './subtract.js';
+import sum from './sum.js';
+import sumBy from './sumBy.js';
 
 export default {
   add, ceil, divide, floor, max,

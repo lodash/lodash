@@ -1,10 +1,10 @@
-import cloneArrayBuffer from './_cloneArrayBuffer';
-import cloneDataView from './_cloneDataView';
-import cloneMap from './_cloneMap';
-import cloneRegExp from './_cloneRegExp';
-import cloneSet from './_cloneSet';
-import cloneSymbol from './_cloneSymbol';
-import cloneTypedArray from './_cloneTypedArray';
+import cloneArrayBuffer from './_cloneArrayBuffer.js';
+import cloneDataView from './_cloneDataView.js';
+import cloneMap from './_cloneMap.js';
+import cloneRegExp from './_cloneRegExp.js';
+import cloneSet from './_cloneSet.js';
+import cloneSymbol from './_cloneSymbol.js';
+import cloneTypedArray from './_cloneTypedArray.js';
 
 /** `Object#toString` result references. */
 var boolTag = '[object Boolean]',

@@ -1,5 +1,5 @@
-import baseDelay from './_baseDelay';
-import rest from './rest';
+import baseDelay from './_baseDelay.js';
+import rest from './rest.js';
 
 /**
  * Defers invoking the `func` until the current call stack has cleared. Any

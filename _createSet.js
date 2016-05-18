@@ -1,6 +1,6 @@
-import Set from './_Set';
-import noop from './noop';
-import setToArray from './_setToArray';
+import Set from './_Set.js';
+import noop from './noop.js';
+import setToArray from './_setToArray.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;

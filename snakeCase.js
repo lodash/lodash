@@ -1,4 +1,4 @@
-import createCompounder from './_createCompounder';
+import createCompounder from './_createCompounder.js';
 
 /**
  * Converts `string` to

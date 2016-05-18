@@ -1,5 +1,5 @@
-import baseForRight from './_baseForRight';
-import keys from './keys';
+import baseForRight from './_baseForRight.js';
+import keys from './keys.js';
 
 /**
  * The base implementation of `_.forOwnRight` without support for iteratee shorthands.

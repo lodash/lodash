@@ -1,7 +1,7 @@
-import baseClamp from './_baseClamp';
-import baseToString from './_baseToString';
-import toInteger from './toInteger';
-import toString from './toString';
+import baseClamp from './_baseClamp.js';
+import baseToString from './_baseToString.js';
+import toInteger from './toInteger.js';
+import toString from './toString.js';
 
 /**
  * Checks if `string` ends with the given target string.
@@ -12,7 +12,7 @@ import toString from './toString';
  * @category String
  * @param {string} [string=''] The string to search.
  * @param {string} [target] The string to search for.
- * @param {number} [position=string.length] The position to search from.
+ * @param {number} [position=string.length] The position to search up to.
  * @returns {boolean} Returns `true` if `string` ends with `target`,
  *  else `false`.
  * @example

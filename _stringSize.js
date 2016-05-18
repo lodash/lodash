@@ -1,4 +1,4 @@
-import reHasComplexSymbol from './_reHasComplexSymbol';
+import reHasComplexSymbol from './_reHasComplexSymbol.js';
 
 /** Used to compose unicode character classes. */
 var rsAstralRange = '\\ud800-\\udfff',

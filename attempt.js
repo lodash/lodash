@@ -1,6 +1,6 @@
-import apply from './_apply';
-import isError from './isError';
-import rest from './rest';
+import apply from './_apply.js';
+import isError from './isError.js';
+import rest from './rest.js';
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error

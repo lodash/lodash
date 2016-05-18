@@ -1,4 +1,4 @@
-import LazyWrapper from './_LazyWrapper';
+import LazyWrapper from './_LazyWrapper.js';
 
 /**
  * Reverses the direction of lazy iteration.

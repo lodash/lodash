@@ -1,5 +1,5 @@
-import isLaziable from './_isLaziable';
-import setData from './_setData';
+import isLaziable from './_isLaziable.js';
+import setData from './_setData.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,

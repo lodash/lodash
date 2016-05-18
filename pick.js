@@ -1,8 +1,8 @@
-import arrayMap from './_arrayMap';
-import baseFlatten from './_baseFlatten';
-import basePick from './_basePick';
-import rest from './rest';
-import toKey from './_toKey';
+import arrayMap from './_arrayMap.js';
+import baseFlatten from './_baseFlatten.js';
+import basePick from './_basePick.js';
+import rest from './rest.js';
+import toKey from './_toKey.js';
 
 /**
  * Creates an object composed of the picked `object` properties.

@@ -1,11 +1,11 @@
-import Stack from './_Stack';
-import equalArrays from './_equalArrays';
-import equalByTag from './_equalByTag';
-import equalObjects from './_equalObjects';
-import getTag from './_getTag';
-import isArray from './isArray';
-import isHostObject from './_isHostObject';
-import isTypedArray from './isTypedArray';
+import Stack from './_Stack.js';
+import equalArrays from './_equalArrays.js';
+import equalByTag from './_equalByTag.js';
+import equalObjects from './_equalObjects.js';
+import getTag from './_getTag.js';
+import isArray from './isArray.js';
+import isHostObject from './_isHostObject.js';
+import isTypedArray from './isTypedArray.js';
 
 /** Used to compose bitmasks for comparison styles. */
 var PARTIAL_COMPARE_FLAG = 2;

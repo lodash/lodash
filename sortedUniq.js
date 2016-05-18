@@ -1,4 +1,4 @@
-import baseSortedUniq from './_baseSortedUniq';
+import baseSortedUniq from './_baseSortedUniq.js';
 
 /**
  * This method is like `_.uniq` except that it's designed and optimized

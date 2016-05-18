@@ -1,4 +1,4 @@
-import baseSet from './_baseSet';
+import baseSet from './_baseSet.js';
 
 /**
  * This method is like `_.set` except that it accepts `customizer` which is

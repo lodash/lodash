@@ -1,1 +1,1 @@
-export { default } from './assignInWith'
+export { default } from './assignInWith.js'

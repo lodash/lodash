@@ -1,7 +1,7 @@
-import createWrapper from './_createWrapper';
-import getHolder from './_getHolder';
-import replaceHolders from './_replaceHolders';
-import rest from './rest';
+import createWrapper from './_createWrapper.js';
+import getHolder from './_getHolder.js';
+import replaceHolders from './_replaceHolders.js';
+import rest from './rest.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,
@@ -14,7 +14,7 @@ var BIND_FLAG = 1,
  * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
  * may be used as a placeholder for partially applied arguments.
  *
- * **Note:** Unlike native `Function#bind` this method doesn't set the "length"
+ * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
  * property of bound functions.
  *
  * @static

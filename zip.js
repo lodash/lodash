@@ -1,5 +1,5 @@
-import rest from './rest';
-import unzip from './unzip';
+import rest from './rest.js';
+import unzip from './unzip.js';
 
 /**
  * Creates an array of grouped elements, the first of which contains the

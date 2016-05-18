@@ -1,4 +1,4 @@
-import isArray from './isArray';
+import isArray from './isArray.js';
 
 /**
  * Casts `value` as an array if it's not one.

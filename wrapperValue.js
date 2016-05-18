@@ -1,4 +1,4 @@
-import baseWrapperValue from './_baseWrapperValue';
+import baseWrapperValue from './_baseWrapperValue.js';
 
 /**
  * Executes the chain sequence to resolve the unwrapped value.

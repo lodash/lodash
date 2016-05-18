@@ -1,6 +1,6 @@
-import baseGetAllKeys from './_baseGetAllKeys';
-import getSymbols from './_getSymbols';
-import keys from './keys';
+import baseGetAllKeys from './_baseGetAllKeys.js';
+import getSymbols from './_getSymbols.js';
+import keys from './keys.js';
 
 /**
  * Creates an array of own enumerable property names and symbols of `object`.

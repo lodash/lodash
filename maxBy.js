@@ -1,6 +1,6 @@
-import baseExtremum from './_baseExtremum';
-import baseGt from './_baseGt';
-import baseIteratee from './_baseIteratee';
+import baseExtremum from './_baseExtremum.js';
+import baseGt from './_baseGt.js';
+import baseIteratee from './_baseIteratee.js';
 
 /**
  * This method is like `_.max` except that it accepts `iteratee` which is

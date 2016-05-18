@@ -1,8 +1,8 @@
-import baseIndexOf from './_baseIndexOf';
-import isArrayLike from './isArrayLike';
-import isString from './isString';
-import toInteger from './toInteger';
-import values from './values';
+import baseIndexOf from './_baseIndexOf.js';
+import isArrayLike from './isArrayLike.js';
+import isString from './isString.js';
+import toInteger from './toInteger.js';
+import values from './values.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;

@@ -1,6 +1,6 @@
-import baseFind from './_baseFind';
-import baseForOwn from './_baseForOwn';
-import baseIteratee from './_baseIteratee';
+import baseFindKey from './_baseFindKey.js';
+import baseForOwn from './_baseForOwn.js';
+import baseIteratee from './_baseIteratee.js';
 
 /**
  * This method is like `_.find` except that it returns the key of the first
@@ -39,7 +39,7 @@ import baseIteratee from './_baseIteratee';
  * // => 'barney'
  */
 function findKey(object, predicate) {
-  return baseFind(object, baseIteratee(predicate, 3), baseForOwn, true);
+  return baseFindKey(object, baseIteratee(predicate, 3), baseForOwn);
 }
 
 export default findKey;

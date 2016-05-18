@@ -1,5 +1,5 @@
-import arrayPush from './_arrayPush';
-import isArray from './isArray';
+import arrayPush from './_arrayPush.js';
+import isArray from './isArray.js';
 
 /**
  * The base implementation of `getAllKeys` and `getAllKeysIn` which uses

@@ -1,4 +1,4 @@
-import baseInverter from './_baseInverter';
+import baseInverter from './_baseInverter.js';
 
 /**
  * Creates a function like `_.invertBy`.

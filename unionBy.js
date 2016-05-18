@@ -1,9 +1,9 @@
-import baseFlatten from './_baseFlatten';
-import baseIteratee from './_baseIteratee';
-import baseUniq from './_baseUniq';
-import isArrayLikeObject from './isArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import baseFlatten from './_baseFlatten.js';
+import baseIteratee from './_baseIteratee.js';
+import baseUniq from './_baseUniq.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.union` except that it accepts `iteratee` which is
@@ -21,8 +21,8 @@ import rest from './rest';
  * @returns {Array} Returns the new array of combined values.
  * @example
  *
- * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
- * // => [2.1, 1.2, 4.3]
+ * _.unionBy([2.1], [1.2, 2.3], Math.floor);
+ * // => [2.1, 1.2]
  *
  * // The `_.property` iteratee shorthand.
  * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');

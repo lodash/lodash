@@ -1,4 +1,4 @@
-import before from './before';
+import before from './before.js';
 
 /**
  * Creates a function that is restricted to invoking `func` once. Repeat calls

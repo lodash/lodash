@@ -1,5 +1,5 @@
-import copyObject from './_copyObject';
-import keysIn from './keysIn';
+import copyObject from './_copyObject.js';
+import keysIn from './keysIn.js';
 
 /**
  * Converts `value` to a plain object flattening inherited enumerable string

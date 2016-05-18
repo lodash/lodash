@@ -1,10 +1,10 @@
-import arrayMap from './_arrayMap';
-import baseAt from './_baseAt';
-import baseFlatten from './_baseFlatten';
-import basePullAt from './_basePullAt';
-import compareAscending from './_compareAscending';
-import isIndex from './_isIndex';
-import rest from './rest';
+import arrayMap from './_arrayMap.js';
+import baseAt from './_baseAt.js';
+import baseFlatten from './_baseFlatten.js';
+import basePullAt from './_basePullAt.js';
+import compareAscending from './_compareAscending.js';
+import isIndex from './_isIndex.js';
+import rest from './rest.js';
 
 /**
  * Removes elements from `array` corresponding to `indexes` and returns an
@@ -21,14 +21,14 @@ import rest from './rest';
  * @returns {Array} Returns the new array of removed elements.
  * @example
  *
- * var array = [5, 10, 15, 20];
- * var evens = _.pullAt(array, 1, 3);
+ * var array = ['a', 'b', 'c', 'd'];
+ * var pulled = _.pullAt(array, [1, 3]);
  *
  * console.log(array);
- * // => [5, 15]
+ * // => ['a', 'c']
  *
- * console.log(evens);
- * // => [10, 20]
+ * console.log(pulled);
+ * // => ['b', 'd']
  */
 var pullAt = rest(function(array, indexes) {
   indexes = baseFlatten(indexes, 1);

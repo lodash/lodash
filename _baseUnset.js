@@ -1,9 +1,9 @@
-import baseHas from './_baseHas';
-import castPath from './_castPath';
-import isKey from './_isKey';
-import last from './last';
-import parent from './_parent';
-import toKey from './_toKey';
+import baseHas from './_baseHas.js';
+import castPath from './_castPath.js';
+import isKey from './_isKey.js';
+import last from './last.js';
+import parent from './_parent.js';
+import toKey from './_toKey.js';
 
 /**
  * The base implementation of `_.unset`.

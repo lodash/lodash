@@ -1,8 +1,8 @@
-import baseNth from './_baseNth';
-import toInteger from './toInteger';
+import baseNth from './_baseNth.js';
+import toInteger from './toInteger.js';
 
 /**
- * Gets the element at `n` index of `array`. If `n` is negative, the nth
+ * Gets the element at index `n` of `array`. If `n` is negative, the nth
  * element from the end is returned.
  *
  * @static

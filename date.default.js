@@ -1,4 +1,4 @@
-import now from './now';
+import now from './now.js';
 
 export default {
   now

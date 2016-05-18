@@ -1,4 +1,4 @@
-import createBaseFor from './_createBaseFor';
+import createBaseFor from './_createBaseFor.js';
 
 /**
  * The base implementation of `baseForOwn` which iterates over `object`

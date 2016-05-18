@@ -1,10 +1,10 @@
-import arrayEach from './_arrayEach';
-import arrayPush from './_arrayPush';
-import baseFunctions from './_baseFunctions';
-import copyArray from './_copyArray';
-import isFunction from './isFunction';
-import isObject from './isObject';
-import keys from './keys';
+import arrayEach from './_arrayEach.js';
+import arrayPush from './_arrayPush.js';
+import baseFunctions from './_baseFunctions.js';
+import copyArray from './_copyArray.js';
+import isFunction from './isFunction.js';
+import isObject from './isObject.js';
+import keys from './keys.js';
 
 /**
  * Adds all own enumerable string keyed function properties of a source

@@ -1,5 +1,5 @@
-import isStrictComparable from './_isStrictComparable';
-import toPairs from './toPairs';
+import isStrictComparable from './_isStrictComparable.js';
+import keys from './keys.js';
 
 /**
  * Gets the property names, values, and compare flags of `object`.
@@ -9,11 +9,14 @@ import toPairs from './toPairs';
  * @returns {Array} Returns the match data of `object`.
  */
 function getMatchData(object) {
-  var result = toPairs(object),
+  var result = keys(object),
       length = result.length;
 
   while (length--) {
-    result[length][2] = isStrictComparable(result[length][1]);
+    var key = result[length],
+        value = object[key];
+
+    result[length] = [key, value, isStrictComparable(value)];
   }
   return result;
 }

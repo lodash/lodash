@@ -1,9 +1,9 @@
-import getTag from './_getTag';
-import isArrayLike from './isArrayLike';
-import isObjectLike from './isObjectLike';
-import isString from './isString';
-import keys from './keys';
-import stringSize from './_stringSize';
+import getTag from './_getTag.js';
+import isArrayLike from './isArrayLike.js';
+import isObjectLike from './isObjectLike.js';
+import isString from './isString.js';
+import keys from './keys.js';
+import stringSize from './_stringSize.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',

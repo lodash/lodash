@@ -1,6 +1,6 @@
-import getLength from './_getLength';
-import isFunction from './isFunction';
-import isLength from './isLength';
+import getLength from './_getLength.js';
+import isFunction from './isFunction.js';
+import isLength from './isLength.js';
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's

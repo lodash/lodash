@@ -1,4 +1,4 @@
-import baseFlatten from './_baseFlatten';
+import baseFlatten from './_baseFlatten.js';
 
 /**
  * Flattens `array` a single level deep.

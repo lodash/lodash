@@ -1,6 +1,6 @@
-import baseExtremum from './_baseExtremum';
-import baseGt from './_baseGt';
-import identity from './identity';
+import baseExtremum from './_baseExtremum.js';
+import baseGt from './_baseGt.js';
+import identity from './identity.js';
 
 /**
  * Computes the maximum value of `array`. If `array` is empty or falsey,

@@ -1,4 +1,4 @@
-import baseSum from './_baseSum';
+import baseSum from './_baseSum.js';
 
 /** Used as references for various `Number` constants. */
 var NAN = 0 / 0;

@@ -1,4 +1,4 @@
-import nativeCreate from './_nativeCreate';
+import nativeCreate from './_nativeCreate.js';
 
 /** Used to stand-in for `undefined` hash values. */
 var HASH_UNDEFINED = '__lodash_hash_undefined__';

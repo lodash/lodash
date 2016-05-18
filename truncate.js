@@ -1,12 +1,12 @@
-import baseToString from './_baseToString';
-import castSlice from './_castSlice';
-import isObject from './isObject';
-import isRegExp from './isRegExp';
-import reHasComplexSymbol from './_reHasComplexSymbol';
-import stringSize from './_stringSize';
-import stringToArray from './_stringToArray';
-import toInteger from './toInteger';
-import toString from './toString';
+import baseToString from './_baseToString.js';
+import castSlice from './_castSlice.js';
+import isObject from './isObject.js';
+import isRegExp from './isRegExp.js';
+import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import stringSize from './_stringSize.js';
+import stringToArray from './_stringToArray.js';
+import toInteger from './toInteger.js';
+import toString from './toString.js';
 
 /** Used as default options for `_.truncate`. */
 var DEFAULT_TRUNC_LENGTH = 30,

@@ -1,5 +1,5 @@
-import apply from './_apply';
-import toInteger from './toInteger';
+import apply from './_apply.js';
+import toInteger from './toInteger.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

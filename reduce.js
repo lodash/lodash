@@ -1,8 +1,8 @@
-import arrayReduce from './_arrayReduce';
-import baseEach from './_baseEach';
-import baseIteratee from './_baseIteratee';
-import baseReduce from './_baseReduce';
-import isArray from './isArray';
+import arrayReduce from './_arrayReduce.js';
+import baseEach from './_baseEach.js';
+import baseIteratee from './_baseIteratee.js';
+import baseReduce from './_baseReduce.js';
+import isArray from './isArray.js';
 
 /**
  * Reduces `collection` to a value which is the accumulated result of running

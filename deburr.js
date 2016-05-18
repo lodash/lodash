@@ -1,5 +1,5 @@
-import deburrLetter from './_deburrLetter';
-import toString from './toString';
+import deburrLetter from './_deburrLetter.js';
+import toString from './toString.js';
 
 /** Used to match latin-1 supplementary letters (excluding mathematical operators). */
 var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;

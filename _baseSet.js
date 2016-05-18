@@ -1,9 +1,9 @@
-import assignValue from './_assignValue';
-import castPath from './_castPath';
-import isIndex from './_isIndex';
-import isKey from './_isKey';
-import isObject from './isObject';
-import toKey from './_toKey';
+import assignValue from './_assignValue.js';
+import castPath from './_castPath.js';
+import isIndex from './_isIndex.js';
+import isKey from './_isKey.js';
+import isObject from './isObject.js';
+import toKey from './_toKey.js';
 
 /**
  * The base implementation of `_.set`.

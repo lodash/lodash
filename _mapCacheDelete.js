@@ -1,4 +1,4 @@
-import getMapData from './_getMapData';
+import getMapData from './_getMapData.js';
 
 /**
  * Removes `key` and its value from the map.

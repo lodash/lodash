@@ -1,6 +1,6 @@
-import MapCache from './_MapCache';
-import setCacheAdd from './_setCacheAdd';
-import setCacheHas from './_setCacheHas';
+import MapCache from './_MapCache.js';
+import setCacheAdd from './_setCacheAdd.js';
+import setCacheHas from './_setCacheHas.js';
 
 /**
  *

@@ -1,6 +1,6 @@
-import isFunction from './isFunction';
-import isObject from './isObject';
-import isSymbol from './isSymbol';
+import isFunction from './isFunction.js';
+import isObject from './isObject.js';
+import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
 var NAN = 0 / 0;

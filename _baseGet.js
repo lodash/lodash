@@ -1,6 +1,6 @@
-import castPath from './_castPath';
-import isKey from './_isKey';
-import toKey from './_toKey';
+import castPath from './_castPath.js';
+import isKey from './_isKey.js';
+import toKey from './_toKey.js';
 
 /**
  * The base implementation of `_.get` without support for default values.

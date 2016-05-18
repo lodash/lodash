@@ -1,6 +1,6 @@
-import baseSlice from './_baseSlice';
-import isIterateeCall from './_isIterateeCall';
-import toInteger from './toInteger';
+import baseSlice from './_baseSlice.js';
+import isIterateeCall from './_isIterateeCall.js';
+import toInteger from './toInteger.js';
 
 /**
  * Creates a slice of `array` from `start` up to, but not including, `end`.

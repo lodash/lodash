@@ -1,5 +1,5 @@
-import isArray from './isArray';
-import isSymbol from './isSymbol';
+import isArray from './isArray.js';
+import isSymbol from './isSymbol.js';
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,

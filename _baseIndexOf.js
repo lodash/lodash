@@ -1,4 +1,4 @@
-import indexOfNaN from './_indexOfNaN';
+import indexOfNaN from './_indexOfNaN.js';
 
 /**
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.

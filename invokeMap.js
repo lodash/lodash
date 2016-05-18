@@ -1,9 +1,9 @@
-import apply from './_apply';
-import baseEach from './_baseEach';
-import baseInvoke from './_baseInvoke';
-import isArrayLike from './isArrayLike';
-import isKey from './_isKey';
-import rest from './rest';
+import apply from './_apply.js';
+import baseEach from './_baseEach.js';
+import baseInvoke from './_baseInvoke.js';
+import isArrayLike from './isArrayLike.js';
+import isKey from './_isKey.js';
+import rest from './rest.js';
 
 /**
  * Invokes the method at `path` of each element in `collection`, returning

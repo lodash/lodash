@@ -1,4 +1,4 @@
-import isSymbol from './isSymbol';
+import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;

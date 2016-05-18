@@ -1,4 +1,4 @@
-import keys from './keys';
+import keys from './keys.js';
 
 /**
  * The base implementation of `_.conforms` which doesn't clone `source`.

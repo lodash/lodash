@@ -1,7 +1,7 @@
-import arrayEachRight from './_arrayEachRight';
-import baseEachRight from './_baseEachRight';
-import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
+import arrayEachRight from './_arrayEachRight.js';
+import baseEachRight from './_baseEachRight.js';
+import baseIteratee from './_baseIteratee.js';
+import isArray from './isArray.js';
 
 /**
  * This method is like `_.forEach` except that it iterates over elements of

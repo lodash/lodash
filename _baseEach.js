@@ -1,5 +1,5 @@
-import baseForOwn from './_baseForOwn';
-import createBaseEach from './_createBaseEach';
+import baseForOwn from './_baseForOwn.js';
+import createBaseEach from './_createBaseEach.js';
 
 /**
  * The base implementation of `_.forEach` without support for iteratee shorthands.

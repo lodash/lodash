@@ -1,4 +1,4 @@
-import isObject from './isObject';
+import isObject from './isObject.js';
 
 /** `Object#toString` result references. */
 var regexpTag = '[object RegExp]';

@@ -1,6 +1,6 @@
-import baseRandom from './_baseRandom';
-import isIterateeCall from './_isIterateeCall';
-import toNumber from './toNumber';
+import baseRandom from './_baseRandom.js';
+import isIterateeCall from './_isIterateeCall.js';
+import toNumber from './toNumber.js';
 
 /** Built-in method references without a dependency on `root`. */
 var freeParseFloat = parseFloat;

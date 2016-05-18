@@ -1,6 +1,6 @@
-import baseFlatten from './_baseFlatten';
-import createWrapper from './_createWrapper';
-import rest from './rest';
+import baseFlatten from './_baseFlatten.js';
+import createWrapper from './_createWrapper.js';
+import rest from './rest.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var REARG_FLAG = 256;
@@ -22,7 +22,7 @@ var REARG_FLAG = 256;
  *
  * var rearged = _.rearg(function(a, b, c) {
  *   return [a, b, c];
- * }, 2, 0, 1);
+ * }, [2, 0, 1]);
  *
  * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']

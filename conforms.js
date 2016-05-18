@@ -1,5 +1,5 @@
-import baseClone from './_baseClone';
-import baseConforms from './_baseConforms';
+import baseClone from './_baseClone.js';
+import baseConforms from './_baseConforms.js';
 
 /**
  * Creates a function that invokes the predicate properties of `source` with
@@ -19,7 +19,7 @@ import baseConforms from './_baseConforms';
  *   { 'user': 'fred',   'age': 40 }
  * ];
  *
- * _.filter(users, _.conforms({ 'age': _.partial(_.gt, _, 38) }));
+ * _.filter(users, _.conforms({ 'age': function(n) { return n > 38; } }));
  * // => [{ 'user': 'fred', 'age': 40 }]
  */
 function conforms(source) {

@@ -1,4 +1,4 @@
-import baseGet from './_baseGet';
+import baseGet from './_baseGet.js';
 
 /**
  * The opposite of `_.property`; this method creates a function that returns

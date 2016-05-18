@@ -1,7 +1,7 @@
-import escape from './escape';
-import reEscape from './_reEscape';
-import reEvaluate from './_reEvaluate';
-import reInterpolate from './_reInterpolate';
+import escape from './escape.js';
+import reEscape from './_reEscape.js';
+import reEvaluate from './_reEvaluate.js';
+import reInterpolate from './_reInterpolate.js';
 
 /**
  * By default, the template delimiters used by lodash are like those in

@@ -1,6 +1,6 @@
-import LazyWrapper from './_LazyWrapper';
-import LodashWrapper from './_LodashWrapper';
-import copyArray from './_copyArray';
+import LazyWrapper from './_LazyWrapper.js';
+import LodashWrapper from './_LodashWrapper.js';
+import copyArray from './_copyArray.js';
 
 /**
  * Creates a clone of `wrapper`.

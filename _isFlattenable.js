@@ -1,5 +1,5 @@
-import isArguments from './isArguments';
-import isArray from './isArray';
+import isArguments from './isArguments.js';
+import isArray from './isArray.js';
 
 /**
  * Checks if `value` is a flattenable `arguments` object or array.

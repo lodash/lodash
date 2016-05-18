@@ -1,8 +1,8 @@
-import mapCacheClear from './_mapCacheClear';
-import mapCacheDelete from './_mapCacheDelete';
-import mapCacheGet from './_mapCacheGet';
-import mapCacheHas from './_mapCacheHas';
-import mapCacheSet from './_mapCacheSet';
+import mapCacheClear from './_mapCacheClear.js';
+import mapCacheDelete from './_mapCacheDelete.js';
+import mapCacheGet from './_mapCacheGet.js';
+import mapCacheHas from './_mapCacheHas.js';
+import mapCacheSet from './_mapCacheSet.js';
 
 /**
  * Creates a map cache object to store key-value pairs.

@@ -1,5 +1,5 @@
-import baseSortedIndex from './_baseSortedIndex';
-import eq from './eq';
+import baseSortedIndex from './_baseSortedIndex.js';
+import eq from './eq.js';
 
 /**
  * This method is like `_.lastIndexOf` except that it performs a binary
@@ -14,7 +14,7 @@ import eq from './eq';
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * _.sortedLastIndexOf([1, 1, 2, 2], 2);
+ * _.sortedLastIndexOf([4, 5, 5, 5, 6], 5);
  * // => 3
  */
 function sortedLastIndexOf(array, value) {

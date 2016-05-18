@@ -1,4 +1,4 @@
-import drop from './drop';
+import drop from './drop.js';
 
 /**
  * Gets all but the first element of `array`.

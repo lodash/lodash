@@ -1,8 +1,8 @@
-import baseFlatten from './_baseFlatten';
-import baseUniq from './_baseUniq';
-import isArrayLikeObject from './isArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import baseFlatten from './_baseFlatten.js';
+import baseUniq from './_baseUniq.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.union` except that it accepts `comparator` which

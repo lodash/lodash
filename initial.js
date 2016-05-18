@@ -1,4 +1,4 @@
-import dropRight from './dropRight';
+import dropRight from './dropRight.js';
 
 /**
  * Gets all but the last element of `array`.

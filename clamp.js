@@ -1,5 +1,5 @@
-import baseClamp from './_baseClamp';
-import toNumber from './toNumber';
+import baseClamp from './_baseClamp.js';
+import toNumber from './toNumber.js';
 
 /**
  * Clamps `number` within the inclusive `lower` and `upper` bounds.

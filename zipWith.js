@@ -1,5 +1,5 @@
-import rest from './rest';
-import unzipWith from './unzipWith';
+import rest from './rest.js';
+import unzipWith from './unzipWith.js';
 
 /**
  * This method is like `_.zip` except that it accepts `iteratee` to specify

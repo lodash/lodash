@@ -1,5 +1,5 @@
-import copyArray from './_copyArray';
-import isIndex from './_isIndex';
+import copyArray from './_copyArray.js';
+import isIndex from './_isIndex.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMin = Math.min;

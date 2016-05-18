@@ -1,13 +1,13 @@
-import Symbol from './_Symbol';
-import copyArray from './_copyArray';
-import getTag from './_getTag';
-import isArrayLike from './isArrayLike';
-import isString from './isString';
-import iteratorToArray from './_iteratorToArray';
-import mapToArray from './_mapToArray';
-import setToArray from './_setToArray';
-import stringToArray from './_stringToArray';
-import values from './values';
+import Symbol from './_Symbol.js';
+import copyArray from './_copyArray.js';
+import getTag from './_getTag.js';
+import isArrayLike from './isArrayLike.js';
+import isString from './isString.js';
+import iteratorToArray from './_iteratorToArray.js';
+import mapToArray from './_mapToArray.js';
+import setToArray from './_setToArray.js';
+import stringToArray from './_stringToArray.js';
+import values from './values.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',

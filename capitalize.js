@@ -1,5 +1,5 @@
-import toString from './toString';
-import upperFirst from './upperFirst';
+import toString from './toString.js';
+import upperFirst from './upperFirst.js';
 
 /**
  * Converts the first character of `string` to upper case and the remaining

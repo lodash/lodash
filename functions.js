@@ -1,5 +1,5 @@
-import baseFunctions from './_baseFunctions';
-import keys from './keys';
+import baseFunctions from './_baseFunctions.js';
+import keys from './keys.js';
 
 /**
  * Creates an array of function property names from own enumerable properties

@@ -1,8 +1,6 @@
-import baseEachRight from './_baseEachRight';
-import baseFind from './_baseFind';
-import baseFindIndex from './_baseFindIndex';
-import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
+import findLastIndex from './findLastIndex.js';
+import isArrayLike from './isArrayLike.js';
+import values from './values.js';
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -15,6 +13,7 @@ import isArray from './isArray';
  * @param {Array|Object} collection The collection to search.
  * @param {Array|Function|Object|string} [predicate=_.identity]
  *  The function invoked per iteration.
+ * @param {number} [fromIndex=collection.length-1] The index to search from.
  * @returns {*} Returns the matched element, else `undefined`.
  * @example
  *
@@ -23,13 +22,10 @@ import isArray from './isArray';
  * });
  * // => 3
  */
-function findLast(collection, predicate) {
-  predicate = baseIteratee(predicate, 3);
-  if (isArray(collection)) {
-    var index = baseFindIndex(collection, predicate, true);
-    return index > -1 ? collection[index] : undefined;
-  }
-  return baseFind(collection, predicate, baseEachRight);
+function findLast(collection, predicate, fromIndex) {
+  collection = isArrayLike(collection) ? collection : values(collection);
+  var index = findLastIndex(collection, predicate, fromIndex);
+  return index > -1 ? collection[index] : undefined;
 }
 
 export default findLast;

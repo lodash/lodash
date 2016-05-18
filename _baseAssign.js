@@ -1,5 +1,5 @@
-import copyObject from './_copyObject';
-import keys from './keys';
+import copyObject from './_copyObject.js';
+import keys from './keys.js';
 
 /**
  * The base implementation of `_.assign` without support for multiple sources

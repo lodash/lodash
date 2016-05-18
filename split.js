@@ -1,10 +1,10 @@
-import baseToString from './_baseToString';
-import castSlice from './_castSlice';
-import isIterateeCall from './_isIterateeCall';
-import isRegExp from './isRegExp';
-import reHasComplexSymbol from './_reHasComplexSymbol';
-import stringToArray from './_stringToArray';
-import toString from './toString';
+import baseToString from './_baseToString.js';
+import castSlice from './_castSlice.js';
+import isIterateeCall from './_isIterateeCall.js';
+import isRegExp from './isRegExp.js';
+import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import stringToArray from './_stringToArray.js';
+import toString from './toString.js';
 
 /** Used as references for the maximum length and index of an array. */
 var MAX_ARRAY_LENGTH = 4294967295;

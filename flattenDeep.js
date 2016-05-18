@@ -1,4 +1,4 @@
-import baseFlatten from './_baseFlatten';
+import baseFlatten from './_baseFlatten.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;

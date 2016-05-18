@@ -1,4 +1,4 @@
-import toNumber from './toNumber';
+import toNumber from './toNumber.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0,

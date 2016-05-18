@@ -1,26 +1,27 @@
-import arrayEach from './_arrayEach';
-import baseCreate from './_baseCreate';
-import baseForOwn from './_baseForOwn';
-import baseIteratee from './_baseIteratee';
-import getPrototype from './_getPrototype';
-import isArray from './isArray';
-import isFunction from './isFunction';
-import isObject from './isObject';
-import isTypedArray from './isTypedArray';
+import arrayEach from './_arrayEach.js';
+import baseCreate from './_baseCreate.js';
+import baseForOwn from './_baseForOwn.js';
+import baseIteratee from './_baseIteratee.js';
+import getPrototype from './_getPrototype.js';
+import isArray from './isArray.js';
+import isFunction from './isFunction.js';
+import isObject from './isObject.js';
+import isTypedArray from './isTypedArray.js';
 
 /**
  * An alternative to `_.reduce`; this method transforms `object` to a new
  * `accumulator` object which is the result of running each of its own
  * enumerable string keyed properties thru `iteratee`, with each invocation
- * potentially mutating the `accumulator` object. The iteratee is invoked
- * with four arguments: (accumulator, value, key, object). Iteratee functions
- * may exit iteration early by explicitly returning `false`.
+ * potentially mutating the `accumulator` object. If `accumulator` is not
+ * provided, a new object with the same `[[Prototype]]` will be used. The
+ * iteratee is invoked with four arguments: (accumulator, value, key, object).
+ * Iteratee functions may exit iteration early by explicitly returning `false`.
  *
  * @static
  * @memberOf _
  * @since 1.3.0
  * @category Object
- * @param {Array|Object} object The object to iterate over.
+ * @param {Object} object The object to iterate over.
  * @param {Function} [iteratee=_.identity] The function invoked per iteration.
  * @param {*} [accumulator] The custom accumulator value.
  * @returns {*} Returns the accumulated value.

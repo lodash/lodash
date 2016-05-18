@@ -1,5 +1,5 @@
-import Reflect from './_Reflect';
-import iteratorToArray from './_iteratorToArray';
+import Reflect from './_Reflect.js';
+import iteratorToArray from './_iteratorToArray.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

@@ -1,5 +1,5 @@
-import baseGet from './_baseGet';
-import baseSlice from './_baseSlice';
+import baseGet from './_baseGet.js';
+import baseSlice from './_baseSlice.js';
 
 /**
  * Gets the parent value at `path` of `object`.

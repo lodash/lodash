@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import baseSum from './_baseSum';
+import baseIteratee from './_baseIteratee.js';
+import baseSum from './_baseSum.js';
 
 /**
  * This method is like `_.sum` except that it accepts `iteratee` which is

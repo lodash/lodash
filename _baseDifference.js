@@ -1,9 +1,9 @@
-import SetCache from './_SetCache';
-import arrayIncludes from './_arrayIncludes';
-import arrayIncludesWith from './_arrayIncludesWith';
-import arrayMap from './_arrayMap';
-import baseUnary from './_baseUnary';
-import cacheHas from './_cacheHas';
+import SetCache from './_SetCache.js';
+import arrayIncludes from './_arrayIncludes.js';
+import arrayIncludesWith from './_arrayIncludesWith.js';
+import arrayMap from './_arrayMap.js';
+import baseUnary from './_baseUnary.js';
+import cacheHas from './_cacheHas.js';
 
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;

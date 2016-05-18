@@ -1,4 +1,4 @@
-import nativeCreate from './_nativeCreate';
+import nativeCreate from './_nativeCreate.js';
 
 /**
  * Removes all key-value entries from the hash.

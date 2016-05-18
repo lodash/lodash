@@ -1,5 +1,5 @@
-import createCompounder from './_createCompounder';
-import upperFirst from './upperFirst';
+import createCompounder from './_createCompounder.js';
+import upperFirst from './upperFirst.js';
 
 /**
  * Converts `string` to

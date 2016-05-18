@@ -1,4 +1,4 @@
-import isArrayLikeObject from './isArrayLikeObject';
+import isArrayLikeObject from './isArrayLikeObject.js';
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]';

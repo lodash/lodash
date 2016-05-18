@@ -1,9 +1,9 @@
-import ListCache from './_ListCache';
-import stackClear from './_stackClear';
-import stackDelete from './_stackDelete';
-import stackGet from './_stackGet';
-import stackHas from './_stackHas';
-import stackSet from './_stackSet';
+import ListCache from './_ListCache.js';
+import stackClear from './_stackClear.js';
+import stackDelete from './_stackDelete.js';
+import stackGet from './_stackGet.js';
+import stackHas from './_stackHas.js';
+import stackSet from './_stackSet.js';
 
 /**
  * Creates a stack cache object to store key-value pairs.

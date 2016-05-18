@@ -1,4 +1,4 @@
-import createAggregator from './_createAggregator';
+import createAggregator from './_createAggregator.js';
 
 /**
  * Creates an object composed of keys generated from the results of running

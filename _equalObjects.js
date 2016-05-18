@@ -1,5 +1,5 @@
-import baseHas from './_baseHas';
-import keys from './keys';
+import baseHas from './_baseHas.js';
+import keys from './keys.js';
 
 /** Used to compose bitmasks for comparison styles. */
 var PARTIAL_COMPARE_FLAG = 2;

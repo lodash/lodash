@@ -1,5 +1,5 @@
-import isArray from './isArray';
-import isFunction from './isFunction';
+import isArray from './isArray.js';
+import isFunction from './isFunction.js';
 
 /**
  * Checks if `value` is a flattenable array and not a `_.matchesProperty`

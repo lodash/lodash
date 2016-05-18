@@ -1,5 +1,5 @@
-import baseEach from './_baseEach';
-import isArrayLike from './isArrayLike';
+import baseEach from './_baseEach.js';
+import isArrayLike from './isArrayLike.js';
 
 /**
  * The base implementation of `_.map` without support for iteratee shorthands.

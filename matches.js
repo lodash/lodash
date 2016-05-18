@@ -1,5 +1,5 @@
-import baseClone from './_baseClone';
-import baseMatches from './_baseMatches';
+import baseClone from './_baseClone.js';
+import baseMatches from './_baseMatches.js';
 
 /**
  * Creates a function that performs a partial deep comparison between a given

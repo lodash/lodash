@@ -1,4 +1,4 @@
-import createAggregator from './_createAggregator';
+import createAggregator from './_createAggregator.js';
 
 /**
  * Creates an array of elements split into two groups, the first of which

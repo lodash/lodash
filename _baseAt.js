@@ -1,4 +1,4 @@
-import get from './get';
+import get from './get.js';
 
 /**
  * The base implementation of `_.at` without support for individual paths.

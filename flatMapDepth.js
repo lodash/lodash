@@ -1,6 +1,6 @@
-import baseFlatten from './_baseFlatten';
-import map from './map';
-import toInteger from './toInteger';
+import baseFlatten from './_baseFlatten.js';
+import map from './map.js';
+import toInteger from './toInteger.js';
 
 /**
  * This method is like `_.flatMap` except that it recursively flattens the

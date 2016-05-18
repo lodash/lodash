@@ -1,4 +1,4 @@
-import toArray from './toArray';
+import toArray from './toArray.js';
 
 /**
  * Gets the next value on a wrapped object following the

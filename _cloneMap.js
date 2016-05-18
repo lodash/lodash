@@ -1,6 +1,6 @@
-import addMapEntry from './_addMapEntry';
-import arrayReduce from './_arrayReduce';
-import mapToArray from './_mapToArray';
+import addMapEntry from './_addMapEntry.js';
+import arrayReduce from './_arrayReduce.js';
+import mapToArray from './_mapToArray.js';
 
 /**
  * Creates a clone of `map`.

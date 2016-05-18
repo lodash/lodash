@@ -1,11 +1,11 @@
-import apply from './_apply';
-import arrayMap from './_arrayMap';
-import baseFlatten from './_baseFlatten';
-import baseIteratee from './_baseIteratee';
-import baseUnary from './_baseUnary';
-import isArray from './isArray';
-import isFlattenableIteratee from './_isFlattenableIteratee';
-import rest from './rest';
+import apply from './_apply.js';
+import arrayMap from './_arrayMap.js';
+import baseFlatten from './_baseFlatten.js';
+import baseIteratee from './_baseIteratee.js';
+import baseUnary from './_baseUnary.js';
+import isArray from './isArray.js';
+import isFlattenableIteratee from './_isFlattenableIteratee.js';
+import rest from './rest.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMin = Math.min;
@@ -34,7 +34,7 @@ var nativeMin = Math.min;
  *
  * var func = _.overArgs(function(x, y) {
  *   return [x, y];
- * }, square, doubled);
+ * }, [square, doubled]);
  *
  * func(9, 3);
  * // => [81, 6]

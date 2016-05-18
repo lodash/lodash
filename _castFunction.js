@@ -1,4 +1,4 @@
-import identity from './identity';
+import identity from './identity.js';
 
 /**
  * Casts `value` to `identity` if it's not a function.

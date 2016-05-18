@@ -1,10 +1,10 @@
-import LazyWrapper from './_LazyWrapper';
-import LodashWrapper from './_LodashWrapper';
-import baseAt from './_baseAt';
-import baseFlatten from './_baseFlatten';
-import isIndex from './_isIndex';
-import rest from './rest';
-import thru from './thru';
+import LazyWrapper from './_LazyWrapper.js';
+import LodashWrapper from './_LodashWrapper.js';
+import baseAt from './_baseAt.js';
+import baseFlatten from './_baseFlatten.js';
+import isIndex from './_isIndex.js';
+import rest from './rest.js';
+import thru from './thru.js';
 
 /**
  * This method is the wrapper version of `_.at`.
@@ -21,9 +21,6 @@ import thru from './thru';
  *
  * _(object).at(['a[0].b.c', 'a[1]']).value();
  * // => [3, 4]
- *
- * _(['a', 'b', 'c']).at(0, 2).value();
- * // => ['a', 'c']
  */
 var wrapperAt = rest(function(paths) {
   paths = baseFlatten(paths, 1);

@@ -1,5 +1,5 @@
-import baseOrderBy from './_baseOrderBy';
-import isArray from './isArray';
+import baseOrderBy from './_baseOrderBy.js';
+import isArray from './isArray.js';
 
 /**
  * This method is like `_.sortBy` except that it allows specifying the sort

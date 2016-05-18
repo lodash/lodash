@@ -1,7 +1,7 @@
-import arrayEach from './_arrayEach';
-import baseEach from './_baseEach';
-import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
+import arrayEach from './_arrayEach.js';
+import baseEach from './_baseEach.js';
+import baseIteratee from './_baseIteratee.js';
+import isArray from './isArray.js';
 
 /**
  * Iterates over elements of `collection` and invokes `iteratee` for each element.

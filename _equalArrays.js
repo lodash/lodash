@@ -1,5 +1,5 @@
-import SetCache from './_SetCache';
-import arraySome from './_arraySome';
+import SetCache from './_SetCache.js';
+import arraySome from './_arraySome.js';
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,

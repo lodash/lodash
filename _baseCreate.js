@@ -1,4 +1,4 @@
-import isObject from './isObject';
+import isObject from './isObject.js';
 
 /** Built-in value references. */
 var objectCreate = Object.create;

@@ -1,9 +1,9 @@
-import arrayFilter from './_arrayFilter';
-import baseIteratee from './_baseIteratee';
-import baseXor from './_baseXor';
-import isArrayLikeObject from './isArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import arrayFilter from './_arrayFilter.js';
+import baseIteratee from './_baseIteratee.js';
+import baseXor from './_baseXor.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.xor` except that it accepts `iteratee` which is
@@ -21,8 +21,8 @@ import rest from './rest';
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
- * // => [1.2, 4.3]
+ * _.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+ * // => [1.2, 3.4]
  *
  * // The `_.property` iteratee shorthand.
  * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');

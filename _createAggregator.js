@@ -1,7 +1,7 @@
-import arrayAggregator from './_arrayAggregator';
-import baseAggregator from './_baseAggregator';
-import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
+import arrayAggregator from './_arrayAggregator.js';
+import baseAggregator from './_baseAggregator.js';
+import baseIteratee from './_baseIteratee.js';
+import isArray from './isArray.js';
 
 /**
  * Creates a function like `_.groupBy`.

@@ -1,5 +1,5 @@
-import root from './_root';
-import toString from './toString';
+import root from './_root.js';
+import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */
 var reTrim = /^\s+|\s+$/g;

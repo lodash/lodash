@@ -1,14 +1,14 @@
-import assignMergeValue from './_assignMergeValue';
-import baseClone from './_baseClone';
-import copyArray from './_copyArray';
-import isArguments from './isArguments';
-import isArray from './isArray';
-import isArrayLikeObject from './isArrayLikeObject';
-import isFunction from './isFunction';
-import isObject from './isObject';
-import isPlainObject from './isPlainObject';
-import isTypedArray from './isTypedArray';
-import toPlainObject from './toPlainObject';
+import assignMergeValue from './_assignMergeValue.js';
+import baseClone from './_baseClone.js';
+import copyArray from './_copyArray.js';
+import isArguments from './isArguments.js';
+import isArray from './isArray.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import isFunction from './isFunction.js';
+import isObject from './isObject.js';
+import isPlainObject from './isPlainObject.js';
+import isTypedArray from './isTypedArray.js';
+import toPlainObject from './toPlainObject.js';
 
 /**
  * A specialized version of `baseMerge` for arrays and objects which performs

@@ -1,8 +1,8 @@
-import baseClamp from './_baseClamp';
-import baseRandom from './_baseRandom';
-import isIterateeCall from './_isIterateeCall';
-import toArray from './toArray';
-import toInteger from './toInteger';
+import baseClamp from './_baseClamp.js';
+import baseRandom from './_baseRandom.js';
+import isIterateeCall from './_isIterateeCall.js';
+import toArray from './toArray.js';
+import toInteger from './toInteger.js';
 
 /**
  * Gets `n` random elements at unique keys from `collection` up to the

@@ -1,9 +1,9 @@
-import baseHas from './_baseHas';
-import baseKeys from './_baseKeys';
-import indexKeys from './_indexKeys';
-import isArrayLike from './isArrayLike';
-import isIndex from './_isIndex';
-import isPrototype from './_isPrototype';
+import baseHas from './_baseHas.js';
+import baseKeys from './_baseKeys.js';
+import indexKeys from './_indexKeys.js';
+import isArrayLike from './isArrayLike.js';
+import isIndex from './_isIndex.js';
+import isPrototype from './_isPrototype.js';
 
 /**
  * Creates an array of the own enumerable property names of `object`.

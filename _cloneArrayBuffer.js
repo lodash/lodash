@@ -1,4 +1,4 @@
-import Uint8Array from './_Uint8Array';
+import Uint8Array from './_Uint8Array.js';
 
 /**
  * Creates a clone of `arrayBuffer`.

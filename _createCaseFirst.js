@@ -1,7 +1,7 @@
-import castSlice from './_castSlice';
-import reHasComplexSymbol from './_reHasComplexSymbol';
-import stringToArray from './_stringToArray';
-import toString from './toString';
+import castSlice from './_castSlice.js';
+import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import stringToArray from './_stringToArray.js';
+import toString from './toString.js';
 
 /**
  * Creates a function like `_.lowerFirst`.

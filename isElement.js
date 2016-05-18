@@ -1,5 +1,5 @@
-import isObjectLike from './isObjectLike';
-import isPlainObject from './isPlainObject';
+import isObjectLike from './isObjectLike.js';
+import isPlainObject from './isPlainObject.js';
 
 /**
  * Checks if `value` is likely a DOM element.

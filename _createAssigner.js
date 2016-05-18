@@ -1,5 +1,5 @@
-import isIterateeCall from './_isIterateeCall';
-import rest from './rest';
+import isIterateeCall from './_isIterateeCall.js';
+import rest from './rest.js';
 
 /**
  * Creates a function like `_.assign`.

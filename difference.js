@@ -1,7 +1,7 @@
-import baseDifference from './_baseDifference';
-import baseFlatten from './_baseFlatten';
-import isArrayLikeObject from './isArrayLikeObject';
-import rest from './rest';
+import baseDifference from './_baseDifference.js';
+import baseFlatten from './_baseFlatten.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import rest from './rest.js';
 
 /**
  * Creates an array of unique `array` values not included in the other given
@@ -19,8 +19,8 @@ import rest from './rest';
  * @see _.without, _.xor
  * @example
  *
- * _.difference([3, 2, 1], [4, 2]);
- * // => [3, 1]
+ * _.difference([2, 1], [2, 3]);
+ * // => [1]
  */
 var difference = rest(function(array, values) {
   return isArrayLikeObject(array)

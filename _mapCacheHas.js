@@ -1,4 +1,4 @@
-import getMapData from './_getMapData';
+import getMapData from './_getMapData.js';
 
 /**
  * Checks if a map value for `key` exists.

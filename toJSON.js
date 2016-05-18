@@ -1,1 +1,1 @@
-export { default } from './wrapperValue'
+export { default } from './wrapperValue.js'

@@ -1,12 +1,12 @@
-import baseSetData from './_baseSetData';
-import createBaseWrapper from './_createBaseWrapper';
-import createCurryWrapper from './_createCurryWrapper';
-import createHybridWrapper from './_createHybridWrapper';
-import createPartialWrapper from './_createPartialWrapper';
-import getData from './_getData';
-import mergeData from './_mergeData';
-import setData from './_setData';
-import toInteger from './toInteger';
+import baseSetData from './_baseSetData.js';
+import createBaseWrapper from './_createBaseWrapper.js';
+import createCurryWrapper from './_createCurryWrapper.js';
+import createHybridWrapper from './_createHybridWrapper.js';
+import createPartialWrapper from './_createPartialWrapper.js';
+import getData from './_getData.js';
+import mergeData from './_mergeData.js';
+import setData from './_setData.js';
+import toInteger from './toInteger.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

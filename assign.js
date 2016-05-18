@@ -1,9 +1,9 @@
-import assignValue from './_assignValue';
-import copyObject from './_copyObject';
-import createAssigner from './_createAssigner';
-import isArrayLike from './isArrayLike';
-import isPrototype from './_isPrototype';
-import keys from './keys';
+import assignValue from './_assignValue.js';
+import copyObject from './_copyObject.js';
+import createAssigner from './_createAssigner.js';
+import isArrayLike from './isArrayLike.js';
+import isPrototype from './_isPrototype.js';
+import keys from './keys.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

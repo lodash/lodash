@@ -1,8 +1,8 @@
-import baseToString from './_baseToString';
-import castSlice from './_castSlice';
-import charsEndIndex from './_charsEndIndex';
-import stringToArray from './_stringToArray';
-import toString from './toString';
+import baseToString from './_baseToString.js';
+import castSlice from './_castSlice.js';
+import charsEndIndex from './_charsEndIndex.js';
+import stringToArray from './_stringToArray.js';
+import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */
 var reTrimEnd = /\s+$/;

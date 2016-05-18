@@ -1,7 +1,7 @@
-import apply from './_apply';
-import arrayMap from './_arrayMap';
-import baseIteratee from './_baseIteratee';
-import rest from './rest';
+import apply from './_apply.js';
+import arrayMap from './_arrayMap.js';
+import baseIteratee from './_baseIteratee.js';
+import rest from './rest.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';

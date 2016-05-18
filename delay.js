@@ -1,6 +1,6 @@
-import baseDelay from './_baseDelay';
-import rest from './rest';
-import toNumber from './toNumber';
+import baseDelay from './_baseDelay.js';
+import rest from './rest.js';
+import toNumber from './toNumber.js';
 
 /**
  * Invokes `func` after `wait` milliseconds. Any additional arguments are

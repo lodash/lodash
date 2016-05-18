@@ -1,4 +1,4 @@
-import toString from './toString';
+import toString from './toString.js';
 
 /** Used to generate unique IDs. */
 var idCounter = 0;

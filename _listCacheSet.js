@@ -1,4 +1,4 @@
-import assocIndexOf from './_assocIndexOf';
+import assocIndexOf from './_assocIndexOf.js';
 
 /**
  * Sets the list cache `key` to `value`.

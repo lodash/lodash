@@ -1,14 +1,14 @@
-import assignInDefaults from './_assignInDefaults';
-import assignInWith from './assignInWith';
-import attempt from './attempt';
-import baseValues from './_baseValues';
-import escapeStringChar from './_escapeStringChar';
-import isError from './isError';
-import isIterateeCall from './_isIterateeCall';
-import keys from './keys';
-import reInterpolate from './_reInterpolate';
-import templateSettings from './templateSettings';
-import toString from './toString';
+import assignInDefaults from './_assignInDefaults.js';
+import assignInWith from './assignInWith.js';
+import attempt from './attempt.js';
+import baseValues from './_baseValues.js';
+import escapeStringChar from './_escapeStringChar.js';
+import isError from './isError.js';
+import isIterateeCall from './_isIterateeCall.js';
+import keys from './keys.js';
+import reInterpolate from './_reInterpolate.js';
+import templateSettings from './templateSettings.js';
+import toString from './toString.js';
 
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,

@@ -1,4 +1,4 @@
-import isObjectLike from './isObjectLike';
+import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
 var errorTag = '[object Error]';

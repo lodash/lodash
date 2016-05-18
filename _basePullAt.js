@@ -1,9 +1,9 @@
-import castPath from './_castPath';
-import isIndex from './_isIndex';
-import isKey from './_isKey';
-import last from './last';
-import parent from './_parent';
-import toKey from './_toKey';
+import castPath from './_castPath.js';
+import isIndex from './_isIndex.js';
+import isKey from './_isKey.js';
+import last from './last.js';
+import parent from './_parent.js';
+import toKey from './_toKey.js';
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype;

@@ -1,5 +1,5 @@
-import baseClone from './_baseClone';
-import baseIteratee from './_baseIteratee';
+import baseClone from './_baseClone.js';
+import baseIteratee from './_baseIteratee.js';
 
 /**
  * Creates a function that invokes `func` with the arguments of the created

@@ -1,4 +1,4 @@
-import root from './_root';
+import root from './_root.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeIsFinite = root.isFinite;

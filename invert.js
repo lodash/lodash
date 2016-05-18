@@ -1,6 +1,6 @@
-import constant from './constant';
-import createInverter from './_createInverter';
-import identity from './identity';
+import constant from './constant.js';
+import createInverter from './_createInverter.js';
+import identity from './identity.js';
 
 /**
  * Creates an object composed of the inverted keys and values of `object`.

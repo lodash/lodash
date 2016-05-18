@@ -1,5 +1,5 @@
-import baseIndexOf from './_baseIndexOf';
-import toInteger from './toInteger';
+import baseIndexOf from './_baseIndexOf.js';
+import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;
@@ -32,11 +32,11 @@ function indexOf(array, value, fromIndex) {
   if (!length) {
     return -1;
   }
-  fromIndex = toInteger(fromIndex);
-  if (fromIndex < 0) {
-    fromIndex = nativeMax(length + fromIndex, 0);
+  var index = fromIndex == null ? 0 : toInteger(fromIndex);
+  if (index < 0) {
+    index = nativeMax(length + index, 0);
   }
-  return baseIndexOf(array, value, fromIndex);
+  return baseIndexOf(array, value, index);
 }
 
 export default indexOf;

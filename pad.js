@@ -1,7 +1,7 @@
-import createPadding from './_createPadding';
-import stringSize from './_stringSize';
-import toInteger from './toInteger';
-import toString from './toString';
+import createPadding from './_createPadding.js';
+import stringSize from './_stringSize.js';
+import toInteger from './toInteger.js';
+import toString from './toString.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeCeil = Math.ceil,

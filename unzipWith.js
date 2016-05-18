@@ -1,6 +1,6 @@
-import apply from './_apply';
-import arrayMap from './_arrayMap';
-import unzip from './unzip';
+import apply from './_apply.js';
+import arrayMap from './_arrayMap.js';
+import unzip from './unzip.js';
 
 /**
  * This method is like `_.unzip` except that it accepts `iteratee` to specify

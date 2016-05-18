@@ -1,6 +1,6 @@
-import baseIsEqualDeep from './_baseIsEqualDeep';
-import isObject from './isObject';
-import isObjectLike from './isObjectLike';
+import baseIsEqualDeep from './_baseIsEqualDeep.js';
+import isObject from './isObject.js';
+import isObjectLike from './isObjectLike.js';
 
 /**
  * The base implementation of `_.isEqual` which supports partial comparisons

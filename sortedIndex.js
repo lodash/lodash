@@ -1,4 +1,4 @@
-import baseSortedIndex from './_baseSortedIndex';
+import baseSortedIndex from './_baseSortedIndex.js';
 
 /**
  * Uses a binary search to determine the lowest index at which `value`
@@ -16,9 +16,6 @@ import baseSortedIndex from './_baseSortedIndex';
  *
  * _.sortedIndex([30, 50], 40);
  * // => 1
- *
- * _.sortedIndex([4, 5], 4);
- * // => 0
  */
 function sortedIndex(array, value) {
   return baseSortedIndex(array, value);

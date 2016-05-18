@@ -1,7 +1,7 @@
-import baseKeysIn from './_baseKeysIn';
-import indexKeys from './_indexKeys';
-import isIndex from './_isIndex';
-import isPrototype from './_isPrototype';
+import baseKeysIn from './_baseKeysIn.js';
+import indexKeys from './_indexKeys.js';
+import isIndex from './_isIndex.js';
+import isPrototype from './_isPrototype.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

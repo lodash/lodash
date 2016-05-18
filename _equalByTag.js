@@ -1,8 +1,8 @@
-import Symbol from './_Symbol';
-import Uint8Array from './_Uint8Array';
-import equalArrays from './_equalArrays';
-import mapToArray from './_mapToArray';
-import setToArray from './_setToArray';
+import Symbol from './_Symbol.js';
+import Uint8Array from './_Uint8Array.js';
+import equalArrays from './_equalArrays.js';
+import mapToArray from './_mapToArray.js';
+import setToArray from './_setToArray.js';
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,

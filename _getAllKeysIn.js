@@ -1,6 +1,6 @@
-import baseGetAllKeys from './_baseGetAllKeys';
-import getSymbolsIn from './_getSymbolsIn';
-import keysIn from './keysIn';
+import baseGetAllKeys from './_baseGetAllKeys.js';
+import getSymbolsIn from './_getSymbolsIn.js';
+import keysIn from './keysIn.js';
 
 /**
  * Creates an array of own and inherited enumerable property names and

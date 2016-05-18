@@ -1,5 +1,5 @@
-import metaMap from './_metaMap';
-import noop from './noop';
+import metaMap from './_metaMap.js';
+import noop from './noop.js';
 
 /**
  * Gets metadata for `func`.

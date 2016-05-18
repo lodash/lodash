@@ -1,4 +1,4 @@
-import assocIndexOf from './_assocIndexOf';
+import assocIndexOf from './_assocIndexOf.js';
 
 /**
  * Gets the list cache value for `key`.

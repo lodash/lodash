@@ -1,4 +1,4 @@
-import getMapData from './_getMapData';
+import getMapData from './_getMapData.js';
 
 /**
  * Gets the map value for `key`.

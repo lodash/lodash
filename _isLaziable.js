@@ -1,7 +1,7 @@
-import LazyWrapper from './_LazyWrapper';
-import getData from './_getData';
-import getFuncName from './_getFuncName';
-import lodash from './wrapperLodash';
+import LazyWrapper from './_LazyWrapper.js';
+import getData from './_getData.js';
+import getFuncName from './_getFuncName.js';
+import lodash from './wrapperLodash.js';
 
 /**
  * Checks if `func` has a lazy counterpart.

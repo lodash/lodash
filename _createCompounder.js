@@ -1,6 +1,6 @@
-import arrayReduce from './_arrayReduce';
-import deburr from './deburr';
-import words from './words';
+import arrayReduce from './_arrayReduce.js';
+import deburr from './deburr.js';
+import words from './words.js';
 
 /** Used to compose unicode capture groups. */
 var rsApos = "['\u2019]";

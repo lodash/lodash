@@ -1,6 +1,6 @@
-import baseRandom from './_baseRandom';
-import isArrayLike from './isArrayLike';
-import values from './values';
+import baseRandom from './_baseRandom.js';
+import isArrayLike from './isArrayLike.js';
+import values from './values.js';
 
 /**
  * Gets a random element from `collection`.

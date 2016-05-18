@@ -1,10 +1,10 @@
-import LodashWrapper from './_LodashWrapper';
-import baseFlatten from './_baseFlatten';
-import getData from './_getData';
-import getFuncName from './_getFuncName';
-import isArray from './isArray';
-import isLaziable from './_isLaziable';
-import rest from './rest';
+import LodashWrapper from './_LodashWrapper.js';
+import baseFlatten from './_baseFlatten.js';
+import getData from './_getData.js';
+import getFuncName from './_getFuncName.js';
+import isArray from './isArray.js';
+import isLaziable from './_isLaziable.js';
+import rest from './rest.js';
 
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;

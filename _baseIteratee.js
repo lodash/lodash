@@ -1,8 +1,8 @@
-import baseMatches from './_baseMatches';
-import baseMatchesProperty from './_baseMatchesProperty';
-import identity from './identity';
-import isArray from './isArray';
-import property from './property';
+import baseMatches from './_baseMatches.js';
+import baseMatchesProperty from './_baseMatchesProperty.js';
+import identity from './identity.js';
+import isArray from './isArray.js';
+import property from './property.js';
 
 /**
  * The base implementation of `_.iteratee`.

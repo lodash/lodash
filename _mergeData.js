@@ -1,6 +1,6 @@
-import composeArgs from './_composeArgs';
-import composeArgsRight from './_composeArgsRight';
-import replaceHolders from './_replaceHolders';
+import composeArgs from './_composeArgs.js';
+import composeArgsRight from './_composeArgsRight.js';
+import replaceHolders from './_replaceHolders.js';
 
 /** Used as the internal argument placeholder. */
 var PLACEHOLDER = '__lodash_placeholder__';

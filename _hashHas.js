@@ -1,4 +1,4 @@
-import nativeCreate from './_nativeCreate';
+import nativeCreate from './_nativeCreate.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

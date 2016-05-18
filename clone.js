@@ -1,4 +1,4 @@
-import baseClone from './_baseClone';
+import baseClone from './_baseClone.js';
 
 /**
  * Creates a shallow clone of `value`.

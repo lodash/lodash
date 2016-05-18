@@ -1,5 +1,5 @@
-import baseHas from './_baseHas';
-import hasPath from './_hasPath';
+import baseHas from './_baseHas.js';
+import hasPath from './_hasPath.js';
 
 /**
  * Checks if `path` is a direct property of `object`.

@@ -1,5 +1,5 @@
-import createToPairs from './_createToPairs';
-import keysIn from './keysIn';
+import createToPairs from './_createToPairs.js';
+import keysIn from './keysIn.js';
 
 /**
  * Creates an array of own and inherited enumerable string keyed-value pairs

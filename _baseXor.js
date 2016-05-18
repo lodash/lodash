@@ -1,6 +1,6 @@
-import arrayPush from './_arrayPush';
-import baseDifference from './_baseDifference';
-import baseUniq from './_baseUniq';
+import arrayPush from './_arrayPush.js';
+import baseDifference from './_baseDifference.js';
+import baseUniq from './_baseUniq.js';
 
 /**
  * The base implementation of methods like `_.xor`, without support for

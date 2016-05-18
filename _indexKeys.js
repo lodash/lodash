@@ -1,8 +1,8 @@
-import baseTimes from './_baseTimes';
-import isArguments from './isArguments';
-import isArray from './isArray';
-import isLength from './isLength';
-import isString from './isString';
+import baseTimes from './_baseTimes.js';
+import isArguments from './isArguments.js';
+import isArray from './isArray.js';
+import isLength from './isLength.js';
+import isString from './isString.js';
 
 /**
  * Creates an array of index keys for `object` values of arrays,

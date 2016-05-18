@@ -1,7 +1,7 @@
-import arrayMap from './_arrayMap';
-import baseIntersection from './_baseIntersection';
-import castArrayLikeObject from './_castArrayLikeObject';
-import rest from './rest';
+import arrayMap from './_arrayMap.js';
+import baseIntersection from './_baseIntersection.js';
+import castArrayLikeObject from './_castArrayLikeObject.js';
+import rest from './rest.js';
 
 /**
  * Creates an array of unique values that are included in all given arrays
@@ -17,7 +17,7 @@ import rest from './rest';
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * _.intersection([2, 1], [4, 2], [1, 2]);
+ * _.intersection([2, 1], [2, 3]);
  * // => [2]
  */
 var intersection = rest(function(arrays) {

@@ -1,4 +1,4 @@
-import baseSortedIndex from './_baseSortedIndex';
+import baseSortedIndex from './_baseSortedIndex.js';
 
 /**
  * This method is like `_.sortedIndex` except that it returns the highest
@@ -15,8 +15,8 @@ import baseSortedIndex from './_baseSortedIndex';
  *  into `array`.
  * @example
  *
- * _.sortedLastIndex([4, 5], 4);
- * // => 1
+ * _.sortedLastIndex([4, 5, 5, 5, 6], 5);
+ * // => 4
  */
 function sortedLastIndex(array, value) {
   return baseSortedIndex(array, value, true);

@@ -1,6 +1,6 @@
-import addSetEntry from './_addSetEntry';
-import arrayReduce from './_arrayReduce';
-import setToArray from './_setToArray';
+import addSetEntry from './_addSetEntry.js';
+import arrayReduce from './_arrayReduce.js';
+import setToArray from './_setToArray.js';
 
 /**
  * Creates a clone of `set`.

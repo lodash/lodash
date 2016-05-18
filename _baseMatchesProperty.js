@@ -1,10 +1,10 @@
-import baseIsEqual from './_baseIsEqual';
-import get from './get';
-import hasIn from './hasIn';
-import isKey from './_isKey';
-import isStrictComparable from './_isStrictComparable';
-import matchesStrictComparable from './_matchesStrictComparable';
-import toKey from './_toKey';
+import baseIsEqual from './_baseIsEqual.js';
+import get from './get.js';
+import hasIn from './hasIn.js';
+import isKey from './_isKey.js';
+import isStrictComparable from './_isStrictComparable.js';
+import matchesStrictComparable from './_matchesStrictComparable.js';
+import toKey from './_toKey.js';
 
 /** Used to compose bitmasks for comparison styles. */
 var UNORDERED_COMPARE_FLAG = 1,

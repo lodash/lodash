@@ -1,7 +1,7 @@
-import apply from './_apply';
-import mergeDefaults from './_mergeDefaults';
-import mergeWith from './mergeWith';
-import rest from './rest';
+import apply from './_apply.js';
+import mergeDefaults from './_mergeDefaults.js';
+import mergeWith from './mergeWith.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.defaults` except that it recursively assigns

@@ -1,4 +1,4 @@
-import ListCache from './_ListCache';
+import ListCache from './_ListCache.js';
 
 /**
  * Removes all key-value entries from the stack.

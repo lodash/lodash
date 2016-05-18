@@ -1,5 +1,5 @@
-import Symbol from './_Symbol';
-import isSymbol from './isSymbol';
+import Symbol from './_Symbol.js';
+import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;

@@ -1,6 +1,6 @@
-import getPrototype from './_getPrototype';
-import isHostObject from './_isHostObject';
-import isObjectLike from './isObjectLike';
+import getPrototype from './_getPrototype.js';
+import isHostObject from './_isHostObject.js';
+import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
 var objectTag = '[object Object]';

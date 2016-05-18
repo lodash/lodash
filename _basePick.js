@@ -1,4 +1,4 @@
-import arrayReduce from './_arrayReduce';
+import arrayReduce from './_arrayReduce.js';
 
 /**
  * The base implementation of `_.pick` without support for individual

@@ -1,12 +1,12 @@
-import composeArgs from './_composeArgs';
-import composeArgsRight from './_composeArgsRight';
-import countHolders from './_countHolders';
-import createCtorWrapper from './_createCtorWrapper';
-import createRecurryWrapper from './_createRecurryWrapper';
-import getHolder from './_getHolder';
-import reorder from './_reorder';
-import replaceHolders from './_replaceHolders';
-import root from './_root';
+import composeArgs from './_composeArgs.js';
+import composeArgsRight from './_composeArgsRight.js';
+import countHolders from './_countHolders.js';
+import createCtorWrapper from './_createCtorWrapper.js';
+import createRecurryWrapper from './_createRecurryWrapper.js';
+import getHolder from './_getHolder.js';
+import reorder from './_reorder.js';
+import replaceHolders from './_replaceHolders.js';
+import root from './_root.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1,

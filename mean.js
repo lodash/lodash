@@ -1,5 +1,5 @@
-import baseMean from './_baseMean';
-import identity from './identity';
+import baseMean from './_baseMean.js';
+import identity from './identity.js';
 
 /**
  * Computes the mean of the values in `array`.

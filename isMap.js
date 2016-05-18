@@ -1,5 +1,5 @@
-import getTag from './_getTag';
-import isObjectLike from './isObjectLike';
+import getTag from './_getTag.js';
+import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]';

@@ -1,7 +1,7 @@
-import arrayFilter from './_arrayFilter';
-import baseFilter from './_baseFilter';
-import baseIteratee from './_baseIteratee';
-import isArray from './isArray';
+import arrayFilter from './_arrayFilter.js';
+import baseFilter from './_baseFilter.js';
+import baseIteratee from './_baseIteratee.js';
+import isArray from './isArray.js';
 
 /**
  * The opposite of `_.filter`; this method returns the elements of `collection`

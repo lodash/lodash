@@ -1,5 +1,5 @@
-import baseCreate from './_baseCreate';
-import baseLodash from './_baseLodash';
+import baseCreate from './_baseCreate.js';
+import baseLodash from './_baseLodash.js';
 
 /**
  * The base constructor for creating `lodash` wrapper objects.

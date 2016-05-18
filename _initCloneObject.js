@@ -1,6 +1,6 @@
-import baseCreate from './_baseCreate';
-import getPrototype from './_getPrototype';
-import isPrototype from './_isPrototype';
+import baseCreate from './_baseCreate.js';
+import getPrototype from './_getPrototype.js';
+import isPrototype from './_isPrototype.js';
 
 /**
  * Initializes an object clone.

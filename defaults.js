@@ -1,7 +1,7 @@
-import apply from './_apply';
-import assignInDefaults from './_assignInDefaults';
-import assignInWith from './assignInWith';
-import rest from './rest';
+import apply from './_apply.js';
+import assignInDefaults from './_assignInDefaults.js';
+import assignInWith from './assignInWith.js';
+import rest from './rest.js';
 
 /**
  * Assigns own and inherited enumerable string keyed properties of source

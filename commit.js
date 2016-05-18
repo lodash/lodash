@@ -1,4 +1,4 @@
-import LodashWrapper from './_LodashWrapper';
+import LodashWrapper from './_LodashWrapper.js';
 
 /**
  * Executes the chain sequence and returns the wrapped result.

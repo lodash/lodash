@@ -1,7 +1,7 @@
-import arrayMap from './_arrayMap';
-import baseIteratee from './_baseIteratee';
-import baseMap from './_baseMap';
-import isArray from './isArray';
+import arrayMap from './_arrayMap.js';
+import baseIteratee from './_baseIteratee.js';
+import baseMap from './_baseMap.js';
+import isArray from './isArray.js';
 
 /**
  * Creates an array of values by running each element in `collection` thru

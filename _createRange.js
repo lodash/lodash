@@ -1,6 +1,6 @@
-import baseRange from './_baseRange';
-import isIterateeCall from './_isIterateeCall';
-import toNumber from './toNumber';
+import baseRange from './_baseRange.js';
+import isIterateeCall from './_isIterateeCall.js';
+import toNumber from './toNumber.js';
 
 /**
  * Creates a `_.range` or `_.rangeRight` function.

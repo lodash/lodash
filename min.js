@@ -1,6 +1,6 @@
-import baseExtremum from './_baseExtremum';
-import baseLt from './_baseLt';
-import identity from './identity';
+import baseExtremum from './_baseExtremum.js';
+import baseLt from './_baseLt.js';
+import identity from './identity.js';
 
 /**
  * Computes the minimum value of `array`. If `array` is empty or falsey,

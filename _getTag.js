@@ -1,9 +1,9 @@
-import DataView from './_DataView';
-import Map from './_Map';
-import Promise from './_Promise';
-import Set from './_Set';
-import WeakMap from './_WeakMap';
-import toSource from './_toSource';
+import DataView from './_DataView.js';
+import Map from './_Map.js';
+import Promise from './_Promise.js';
+import Set from './_Set.js';
+import WeakMap from './_WeakMap.js';
+import toSource from './_toSource.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',

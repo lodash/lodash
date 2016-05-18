@@ -1,4 +1,4 @@
-import lodash from './wrapperLodash';
+import lodash from './wrapperLodash.js';
 
 /**
  * Creates a `lodash` wrapper instance that wraps `value` with explicit method

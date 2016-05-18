@@ -1,9 +1,9 @@
-import arrayMap from './_arrayMap';
-import copyArray from './_copyArray';
-import isArray from './isArray';
-import isSymbol from './isSymbol';
-import stringToPath from './_stringToPath';
-import toKey from './_toKey';
+import arrayMap from './_arrayMap.js';
+import copyArray from './_copyArray.js';
+import isArray from './isArray.js';
+import isSymbol from './isSymbol.js';
+import stringToPath from './_stringToPath.js';
+import toKey from './_toKey.js';
 
 /**
  * Converts `value` to a property path array.
@@ -21,15 +21,6 @@ import toKey from './_toKey';
  *
  * _.toPath('a[0].b.c');
  * // => ['a', '0', 'b', 'c']
- *
- * var path = ['a', 'b', 'c'],
- *     newPath = _.toPath(path);
- *
- * console.log(newPath);
- * // => ['a', 'b', 'c']
- *
- * console.log(path === newPath);
- * // => false
  */
 function toPath(value) {
   if (isArray(value)) {

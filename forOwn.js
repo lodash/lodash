@@ -1,5 +1,5 @@
-import baseForOwn from './_baseForOwn';
-import baseIteratee from './_baseIteratee';
+import baseForOwn from './_baseForOwn.js';
+import baseIteratee from './_baseIteratee.js';
 
 /**
  * Iterates over own enumerable string keyed properties of an object and

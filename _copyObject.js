@@ -1,4 +1,4 @@
-import assignValue from './_assignValue';
+import assignValue from './_assignValue.js';
 
 /**
  * Copies properties of `source` to `object`.

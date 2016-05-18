@@ -1,5 +1,5 @@
-import LazyWrapper from './_LazyWrapper';
-import copyArray from './_copyArray';
+import LazyWrapper from './_LazyWrapper.js';
+import copyArray from './_copyArray.js';
 
 /**
  * Creates a clone of the lazy wrapper object.

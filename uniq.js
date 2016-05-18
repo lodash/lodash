@@ -1,4 +1,4 @@
-import baseUniq from './_baseUniq';
+import baseUniq from './_baseUniq.js';
 
 /**
  * Creates a duplicate-free version of an array, using

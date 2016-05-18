@@ -1,9 +1,9 @@
-import baseRepeat from './_baseRepeat';
-import baseToString from './_baseToString';
-import castSlice from './_castSlice';
-import reHasComplexSymbol from './_reHasComplexSymbol';
-import stringSize from './_stringSize';
-import stringToArray from './_stringToArray';
+import baseRepeat from './_baseRepeat.js';
+import baseToString from './_baseToString.js';
+import castSlice from './_castSlice.js';
+import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import stringSize from './_stringSize.js';
+import stringToArray from './_stringToArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeCeil = Math.ceil;

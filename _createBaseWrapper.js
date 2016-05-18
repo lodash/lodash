@@ -1,5 +1,5 @@
-import createCtorWrapper from './_createCtorWrapper';
-import root from './_root';
+import createCtorWrapper from './_createCtorWrapper.js';
+import root from './_root.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1;

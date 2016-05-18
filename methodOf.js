@@ -1,5 +1,5 @@
-import baseInvoke from './_baseInvoke';
-import rest from './rest';
+import baseInvoke from './_baseInvoke.js';
+import rest from './rest.js';
 
 /**
  * The opposite of `_.method`; this method creates a function that invokes

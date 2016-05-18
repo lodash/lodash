@@ -1,4 +1,4 @@
-import baseUniq from './_baseUniq';
+import baseUniq from './_baseUniq.js';
 
 /**
  * This method is like `_.uniq` except that it accepts `comparator` which
@@ -14,7 +14,7 @@ import baseUniq from './_baseUniq';
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
- * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }];
+ * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
  *
  * _.uniqWith(objects, _.isEqual);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]

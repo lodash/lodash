@@ -1,5 +1,5 @@
-import baseFlatten from './_baseFlatten';
-import map from './map';
+import baseFlatten from './_baseFlatten.js';
+import map from './map.js';
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;

@@ -1,4 +1,4 @@
-import createFlow from './_createFlow';
+import createFlow from './_createFlow.js';
 
 /**
  * Creates a function that returns the result of invoking the given functions
@@ -18,7 +18,7 @@ import createFlow from './_createFlow';
  *   return n * n;
  * }
  *
- * var addSquare = _.flow(_.add, square);
+ * var addSquare = _.flow([_.add, square]);
  * addSquare(1, 2);
  * // => 9
  */

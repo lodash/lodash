@@ -1,7 +1,7 @@
-import eq from './eq';
-import isArrayLike from './isArrayLike';
-import isIndex from './_isIndex';
-import isObject from './isObject';
+import eq from './eq.js';
+import isArrayLike from './isArrayLike.js';
+import isIndex from './_isIndex.js';
+import isObject from './isObject.js';
 
 /**
  * Checks if the given arguments are from an iteratee call.

@@ -1,9 +1,9 @@
-import baseDifference from './_baseDifference';
-import baseFlatten from './_baseFlatten';
-import baseIteratee from './_baseIteratee';
-import isArrayLikeObject from './isArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import baseDifference from './_baseDifference.js';
+import baseFlatten from './_baseFlatten.js';
+import baseIteratee from './_baseIteratee.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.difference` except that it accepts `iteratee` which
@@ -22,8 +22,8 @@ import rest from './rest';
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
- * // => [3.1, 1.3]
+ * _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+ * // => [1.2]
  *
  * // The `_.property` iteratee shorthand.
  * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');

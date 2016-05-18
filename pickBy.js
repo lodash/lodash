@@ -1,5 +1,5 @@
-import baseIteratee from './_baseIteratee';
-import basePickBy from './_basePickBy';
+import baseIteratee from './_baseIteratee.js';
+import basePickBy from './_basePickBy.js';
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns

@@ -1,1 +1,1 @@
-export { default } from './toPairs'
+export { default } from './toPairs.js'

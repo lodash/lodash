@@ -1,7 +1,8 @@
-import arrayMap from './_arrayMap';
-import baseIndexOf from './_baseIndexOf';
-import baseIndexOfWith from './_baseIndexOfWith';
-import baseUnary from './_baseUnary';
+import arrayMap from './_arrayMap.js';
+import baseIndexOf from './_baseIndexOf.js';
+import baseIndexOfWith from './_baseIndexOfWith.js';
+import baseUnary from './_baseUnary.js';
+import copyArray from './_copyArray.js';
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype;
@@ -26,6 +27,9 @@ function basePullAll(array, values, iteratee, comparator) {
       length = values.length,
       seen = array;
 
+  if (array === values) {
+    values = copyArray(values);
+  }
   if (iteratee) {
     seen = arrayMap(array, baseUnary(iteratee));
   }

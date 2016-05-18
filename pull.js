@@ -1,5 +1,5 @@
-import pullAll from './pullAll';
-import rest from './rest';
+import pullAll from './pullAll.js';
+import rest from './rest.js';
 
 /**
  * Removes all given values from `array` using
@@ -18,11 +18,11 @@ import rest from './rest';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = [1, 2, 3, 1, 2, 3];
+ * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
  *
- * _.pull(array, 2, 3);
+ * _.pull(array, 'a', 'c');
  * console.log(array);
- * // => [1, 1]
+ * // => ['b', 'b']
  */
 var pull = rest(pullAll);
 

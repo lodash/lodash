@@ -1,5 +1,5 @@
-import baseSum from './_baseSum';
-import identity from './identity';
+import baseSum from './_baseSum.js';
+import identity from './identity.js';
 
 /**
  * Computes the sum of the values in `array`.

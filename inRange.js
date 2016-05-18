@@ -1,5 +1,5 @@
-import baseInRange from './_baseInRange';
-import toNumber from './toNumber';
+import baseInRange from './_baseInRange.js';
+import toNumber from './toNumber.js';
 
 /**
  * Checks if `n` is between `start` and up to, but not including, `end`. If

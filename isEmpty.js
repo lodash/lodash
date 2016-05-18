@@ -1,12 +1,12 @@
-import getTag from './_getTag';
-import isArguments from './isArguments';
-import isArray from './isArray';
-import isArrayLike from './isArrayLike';
-import isBuffer from './isBuffer';
-import isFunction from './isFunction';
-import isObjectLike from './isObjectLike';
-import isString from './isString';
-import keys from './keys';
+import getTag from './_getTag.js';
+import isArguments from './isArguments.js';
+import isArray from './isArray.js';
+import isArrayLike from './isArrayLike.js';
+import isBuffer from './isBuffer.js';
+import isFunction from './isFunction.js';
+import isObjectLike from './isObjectLike.js';
+import isString from './isString.js';
+import keys from './keys.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',

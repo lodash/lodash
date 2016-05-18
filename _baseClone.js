@@ -1,20 +1,20 @@
-import Stack from './_Stack';
-import arrayEach from './_arrayEach';
-import assignValue from './_assignValue';
-import baseAssign from './_baseAssign';
-import cloneBuffer from './_cloneBuffer';
-import copyArray from './_copyArray';
-import copySymbols from './_copySymbols';
-import getAllKeys from './_getAllKeys';
-import getTag from './_getTag';
-import initCloneArray from './_initCloneArray';
-import initCloneByTag from './_initCloneByTag';
-import initCloneObject from './_initCloneObject';
-import isArray from './isArray';
-import isBuffer from './isBuffer';
-import isHostObject from './_isHostObject';
-import isObject from './isObject';
-import keys from './keys';
+import Stack from './_Stack.js';
+import arrayEach from './_arrayEach.js';
+import assignValue from './_assignValue.js';
+import baseAssign from './_baseAssign.js';
+import cloneBuffer from './_cloneBuffer.js';
+import copyArray from './_copyArray.js';
+import copySymbols from './_copySymbols.js';
+import getAllKeys from './_getAllKeys.js';
+import getTag from './_getTag.js';
+import initCloneArray from './_initCloneArray.js';
+import initCloneByTag from './_initCloneByTag.js';
+import initCloneObject from './_initCloneObject.js';
+import isArray from './isArray.js';
+import isBuffer from './isBuffer.js';
+import isHostObject from './_isHostObject.js';
+import isObject from './isObject.js';
+import keys from './keys.js';
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',

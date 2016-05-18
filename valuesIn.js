@@ -1,5 +1,5 @@
-import baseValues from './_baseValues';
-import keysIn from './keysIn';
+import baseValues from './_baseValues.js';
+import keysIn from './keysIn.js';
 
 /**
  * Creates an array of the own and inherited enumerable string keyed property

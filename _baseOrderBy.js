@@ -1,10 +1,10 @@
-import arrayMap from './_arrayMap';
-import baseIteratee from './_baseIteratee';
-import baseMap from './_baseMap';
-import baseSortBy from './_baseSortBy';
-import baseUnary from './_baseUnary';
-import compareMultiple from './_compareMultiple';
-import identity from './identity';
+import arrayMap from './_arrayMap.js';
+import baseIteratee from './_baseIteratee.js';
+import baseMap from './_baseMap.js';
+import baseSortBy from './_baseSortBy.js';
+import baseUnary from './_baseUnary.js';
+import compareMultiple from './_compareMultiple.js';
+import identity from './identity.js';
 
 /**
  * The base implementation of `_.orderBy` without param guards.

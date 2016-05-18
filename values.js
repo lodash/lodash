@@ -1,5 +1,5 @@
-import baseValues from './_baseValues';
-import keys from './keys';
+import baseValues from './_baseValues.js';
+import keys from './keys.js';
 
 /**
  * Creates an array of the own enumerable string keyed property values of `object`.

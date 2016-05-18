@@ -1,4 +1,4 @@
-import arrayMap from './_arrayMap';
+import arrayMap from './_arrayMap.js';
 
 /**
  * The base implementation of `_.toPairs` and `_.toPairsIn` which creates an array

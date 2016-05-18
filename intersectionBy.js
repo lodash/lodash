@@ -1,9 +1,9 @@
-import arrayMap from './_arrayMap';
-import baseIntersection from './_baseIntersection';
-import baseIteratee from './_baseIteratee';
-import castArrayLikeObject from './_castArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import arrayMap from './_arrayMap.js';
+import baseIntersection from './_baseIntersection.js';
+import baseIteratee from './_baseIteratee.js';
+import castArrayLikeObject from './_castArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.intersection` except that it accepts `iteratee`
@@ -21,7 +21,7 @@ import rest from './rest';
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+ * _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
  * // => [2.1]
  *
  * // The `_.property` iteratee shorthand.

@@ -1,9 +1,9 @@
-import baseNth from './_baseNth';
-import rest from './rest';
-import toInteger from './toInteger';
+import baseNth from './_baseNth.js';
+import rest from './rest.js';
+import toInteger from './toInteger.js';
 
 /**
- * Creates a function that gets the argument at `n` index. If `n` is negative,
+ * Creates a function that gets the argument at index `n`. If `n` is negative,
  * the nth argument from the end is returned.
  *
  * @static

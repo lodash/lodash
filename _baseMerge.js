@@ -1,11 +1,11 @@
-import Stack from './_Stack';
-import arrayEach from './_arrayEach';
-import assignMergeValue from './_assignMergeValue';
-import baseMergeDeep from './_baseMergeDeep';
-import isArray from './isArray';
-import isObject from './isObject';
-import isTypedArray from './isTypedArray';
-import keysIn from './keysIn';
+import Stack from './_Stack.js';
+import arrayEach from './_arrayEach.js';
+import assignMergeValue from './_assignMergeValue.js';
+import baseMergeDeep from './_baseMergeDeep.js';
+import isArray from './isArray.js';
+import isObject from './isObject.js';
+import isTypedArray from './isTypedArray.js';
+import keysIn from './keysIn.js';
 
 /**
  * The base implementation of `_.merge` without support for multiple sources.

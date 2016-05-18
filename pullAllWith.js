@@ -1,4 +1,4 @@
-import basePullAll from './_basePullAll';
+import basePullAll from './_basePullAll.js';
 
 /**
  * This method is like `_.pullAll` except that it accepts `comparator` which

@@ -1,4 +1,4 @@
-import createCaseFirst from './_createCaseFirst';
+import createCaseFirst from './_createCaseFirst.js';
 
 /**
  * Converts the first character of `string` to lower case.

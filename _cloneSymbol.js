@@ -1,4 +1,4 @@
-import Symbol from './_Symbol';
+import Symbol from './_Symbol.js';
 
 /** Used to convert symbols to primitives and strings. */
 var symbolProto = Symbol ? Symbol.prototype : undefined,

@@ -1,5 +1,5 @@
-import baseUpdate from './_baseUpdate';
-import castFunction from './_castFunction';
+import baseUpdate from './_baseUpdate.js';
+import castFunction from './_castFunction.js';
 
 /**
  * This method is like `_.update` except that it accepts `customizer` which is

@@ -1,4 +1,4 @@
-import cloneArrayBuffer from './_cloneArrayBuffer';
+import cloneArrayBuffer from './_cloneArrayBuffer.js';
 
 /**
  * Creates a clone of `typedArray`.

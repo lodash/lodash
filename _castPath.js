@@ -1,5 +1,5 @@
-import isArray from './isArray';
-import stringToPath from './_stringToPath';
+import isArray from './isArray.js';
+import stringToPath from './_stringToPath.js';
 
 /**
  * Casts `value` to a path array if it's not one.

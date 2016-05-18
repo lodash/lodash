@@ -1,6 +1,6 @@
-import copyObject from './_copyObject';
-import createAssigner from './_createAssigner';
-import keysIn from './keysIn';
+import copyObject from './_copyObject.js';
+import createAssigner from './_createAssigner.js';
+import keysIn from './keysIn.js';
 
 /**
  * This method is like `_.assignIn` except that it accepts `customizer`

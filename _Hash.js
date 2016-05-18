@@ -1,8 +1,8 @@
-import hashClear from './_hashClear';
-import hashDelete from './_hashDelete';
-import hashGet from './_hashGet';
-import hashHas from './_hashHas';
-import hashSet from './_hashSet';
+import hashClear from './_hashClear.js';
+import hashDelete from './_hashDelete.js';
+import hashGet from './_hashGet.js';
+import hashHas from './_hashHas.js';
+import hashSet from './_hashSet.js';
 
 /**
  * Creates a hash object.

@@ -1,8 +1,8 @@
-import arrayFilter from './_arrayFilter';
-import arrayMap from './_arrayMap';
-import baseProperty from './_baseProperty';
-import baseTimes from './_baseTimes';
-import isArrayLikeObject from './isArrayLikeObject';
+import arrayFilter from './_arrayFilter.js';
+import arrayMap from './_arrayMap.js';
+import baseProperty from './_baseProperty.js';
+import baseTimes from './_baseTimes.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;

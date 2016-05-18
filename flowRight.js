@@ -1,4 +1,4 @@
-import createFlow from './_createFlow';
+import createFlow from './_createFlow.js';
 
 /**
  * This method is like `_.flow` except that it creates a function that
@@ -17,7 +17,7 @@ import createFlow from './_createFlow';
  *   return n * n;
  * }
  *
- * var addSquare = _.flowRight(square, _.add);
+ * var addSquare = _.flowRight([square, _.add]);
  * addSquare(1, 2);
  * // => 9
  */

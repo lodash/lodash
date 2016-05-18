@@ -1,7 +1,7 @@
-import LazyWrapper from './_LazyWrapper';
-import LodashWrapper from './_LodashWrapper';
-import reverse from './reverse';
-import thru from './thru';
+import LazyWrapper from './_LazyWrapper.js';
+import LodashWrapper from './_LodashWrapper.js';
+import reverse from './reverse.js';
+import thru from './thru.js';
 
 /**
  * This method is the wrapper version of `_.reverse`.

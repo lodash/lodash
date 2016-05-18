@@ -1,8 +1,8 @@
-import baseDifference from './_baseDifference';
-import baseFlatten from './_baseFlatten';
-import isArrayLikeObject from './isArrayLikeObject';
-import last from './last';
-import rest from './rest';
+import baseDifference from './_baseDifference.js';
+import baseFlatten from './_baseFlatten.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import last from './last.js';
+import rest from './rest.js';
 
 /**
  * This method is like `_.difference` except that it accepts `comparator`

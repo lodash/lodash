@@ -1,5 +1,5 @@
-import baseForOwn from './_baseForOwn';
-import baseIteratee from './_baseIteratee';
+import baseForOwn from './_baseForOwn.js';
+import baseIteratee from './_baseIteratee.js';
 
 /**
  * Creates an object with the same keys as `object` and values generated

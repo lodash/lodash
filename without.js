@@ -1,6 +1,6 @@
-import baseDifference from './_baseDifference';
-import isArrayLikeObject from './isArrayLikeObject';
-import rest from './rest';
+import baseDifference from './_baseDifference.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import rest from './rest.js';
 
 /**
  * Creates an array excluding all given values using
@@ -17,7 +17,7 @@ import rest from './rest';
  * @see _.difference, _.xor
  * @example
  *
- * _.without([1, 2, 1, 3], 1, 2);
+ * _.without([2, 1, 2, 3], 1, 2);
  * // => [3]
  */
 var without = rest(function(array, values) {

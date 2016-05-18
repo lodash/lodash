@@ -1,4 +1,4 @@
-import isSymbol from './isSymbol';
+import isSymbol from './isSymbol.js';
 
 /**
  * The base implementation of methods like `_.max` and `_.min` which accepts a

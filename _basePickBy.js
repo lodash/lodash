@@ -1,4 +1,4 @@
-import getAllKeysIn from './_getAllKeysIn';
+import getAllKeysIn from './_getAllKeysIn.js';
 
 /**
  * The base implementation of  `_.pickBy` without support for iteratee shorthands.

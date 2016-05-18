@@ -1,4 +1,4 @@
-import createAggregator from './_createAggregator';
+import createAggregator from './_createAggregator.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;

@@ -1,5 +1,5 @@
-import arrayEvery from './_arrayEvery';
-import createOver from './_createOver';
+import arrayEvery from './_arrayEvery.js';
+import createOver from './_createOver.js';
 
 /**
  * Creates a function that checks if **all** of the `predicates` return
@@ -14,7 +14,7 @@ import createOver from './_createOver';
  * @returns {Function} Returns the new function.
  * @example
  *
- * var func = _.overEvery(Boolean, isFinite);
+ * var func = _.overEvery([Boolean, isFinite]);
  *
  * func('1');
  * // => true

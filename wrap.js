@@ -1,5 +1,5 @@
-import identity from './identity';
-import partial from './partial';
+import identity from './identity.js';
+import partial from './partial.js';
 
 /**
  * Creates a function that provides `value` to the wrapper function as its

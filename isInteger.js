@@ -1,4 +1,4 @@
-import toInteger from './toInteger';
+import toInteger from './toInteger.js';
 
 /**
  * Checks if `value` is an integer.

@@ -1,7 +1,7 @@
-import castPath from './_castPath';
-import isFunction from './isFunction';
-import isKey from './_isKey';
-import toKey from './_toKey';
+import castPath from './_castPath.js';
+import isFunction from './isFunction.js';
+import isKey from './_isKey.js';
+import toKey from './_toKey.js';
 
 /**
  * This method is like `_.get` except that if the resolved value is a

@@ -1,6 +1,6 @@
-import apply from './_apply';
-import createCtorWrapper from './_createCtorWrapper';
-import root from './_root';
+import apply from './_apply.js';
+import createCtorWrapper from './_createCtorWrapper.js';
+import root from './_root.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var BIND_FLAG = 1;

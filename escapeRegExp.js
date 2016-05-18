@@ -1,4 +1,4 @@
-import toString from './toString';
+import toString from './toString.js';
 
 /**
  * Used to match `RegExp`

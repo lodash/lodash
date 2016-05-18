@@ -1,7 +1,7 @@
-import baseFlatten from './_baseFlatten';
-import baseUniq from './_baseUniq';
-import isArrayLikeObject from './isArrayLikeObject';
-import rest from './rest';
+import baseFlatten from './_baseFlatten.js';
+import baseUniq from './_baseUniq.js';
+import isArrayLikeObject from './isArrayLikeObject.js';
+import rest from './rest.js';
 
 /**
  * Creates an array of unique values, in order, from all given arrays using
@@ -16,8 +16,8 @@ import rest from './rest';
  * @returns {Array} Returns the new array of combined values.
  * @example
  *
- * _.union([2, 1], [4, 2], [1, 2]);
- * // => [2, 1, 4]
+ * _.union([2], [1, 2]);
+ * // => [2, 1]
  */
 var union = rest(function(arrays) {
   return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));

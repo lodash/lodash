@@ -1,5 +1,5 @@
-import capitalize from './capitalize';
-import createCompounder from './_createCompounder';
+import capitalize from './capitalize.js';
+import createCompounder from './_createCompounder.js';
 
 /**
  * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).

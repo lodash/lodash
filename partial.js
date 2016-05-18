@@ -1,7 +1,7 @@
-import createWrapper from './_createWrapper';
-import getHolder from './_getHolder';
-import replaceHolders from './_replaceHolders';
-import rest from './rest';
+import createWrapper from './_createWrapper.js';
+import getHolder from './_getHolder.js';
+import replaceHolders from './_replaceHolders.js';
+import rest from './rest.js';
 
 /** Used to compose bitmasks for wrapper metadata. */
 var PARTIAL_FLAG = 32;

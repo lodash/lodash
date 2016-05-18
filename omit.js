@@ -1,10 +1,10 @@
-import arrayMap from './_arrayMap';
-import baseDifference from './_baseDifference';
-import baseFlatten from './_baseFlatten';
-import basePick from './_basePick';
-import getAllKeysIn from './_getAllKeysIn';
-import rest from './rest';
-import toKey from './_toKey';
+import arrayMap from './_arrayMap.js';
+import baseDifference from './_baseDifference.js';
+import baseFlatten from './_baseFlatten.js';
+import basePick from './_basePick.js';
+import getAllKeysIn from './_getAllKeysIn.js';
+import rest from './rest.js';
+import toKey from './_toKey.js';
 
 /**
  * The opposite of `_.pick`; this method creates an object composed of the

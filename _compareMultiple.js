@@ -1,4 +1,4 @@
-import compareAscending from './_compareAscending';
+import compareAscending from './_compareAscending.js';
 
 /**
  * Used by `_.orderBy` to compare multiple properties of a value to another

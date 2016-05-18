@@ -1,4 +1,4 @@
-import toNumber from './toNumber';
+import toNumber from './toNumber.js';
 
 /**
  * Creates a function that performs a relational operation on two values.

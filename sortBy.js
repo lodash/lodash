@@ -1,9 +1,9 @@
-import baseFlatten from './_baseFlatten';
-import baseOrderBy from './_baseOrderBy';
-import isArray from './isArray';
-import isFlattenableIteratee from './_isFlattenableIteratee';
-import isIterateeCall from './_isIterateeCall';
-import rest from './rest';
+import baseFlatten from './_baseFlatten.js';
+import baseOrderBy from './_baseOrderBy.js';
+import isArray from './isArray.js';
+import isFlattenableIteratee from './_isFlattenableIteratee.js';
+import isIterateeCall from './_isIterateeCall.js';
+import rest from './rest.js';
 
 /**
  * Creates an array of elements, sorted in ascending order by the results of

@@ -1,4 +1,4 @@
-import baseProperty from './_baseProperty';
+import baseProperty from './_baseProperty.js';
 
 /**
  * Gets the "length" property value of `object`.

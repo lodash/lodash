@@ -1,5 +1,5 @@
-import baseClone from './_baseClone';
-import baseMatchesProperty from './_baseMatchesProperty';
+import baseClone from './_baseClone.js';
+import baseMatchesProperty from './_baseMatchesProperty.js';
 
 /**
  * Creates a function that performs a partial deep comparison between the

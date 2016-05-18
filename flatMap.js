@@ -1,5 +1,5 @@
-import baseFlatten from './_baseFlatten';
-import map from './map';
+import baseFlatten from './_baseFlatten.js';
+import map from './map.js';
 
 /**
  * Creates a flattened array of values by running each element in `collection`

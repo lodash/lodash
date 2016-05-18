@@ -1,5 +1,5 @@
-import arrayFilter from './_arrayFilter';
-import isFunction from './isFunction';
+import arrayFilter from './_arrayFilter.js';
+import isFunction from './isFunction.js';
 
 /**
  * The base implementation of `_.functions` which creates an array of

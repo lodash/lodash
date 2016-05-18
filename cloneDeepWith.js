@@ -1,4 +1,4 @@
-import baseClone from './_baseClone';
+import baseClone from './_baseClone.js';
 
 /**
  * This method is like `_.cloneWith` except that it recursively clones `value`.

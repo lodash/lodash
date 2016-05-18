@@ -1288,13 +1288,13 @@
         Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
-        clearTimeout = context.clearTimeout,
+        clearTimeout = function(id) { return context.clearTimeout.call(root, id); },
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getOwnPropertySymbols = Object.getOwnPropertySymbols,
         iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
         objectCreate = Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        setTimeout = context.setTimeout,
+        setTimeout = function(func, wait) { return context.setTimeout.call(root, func, wait); },
         splice = arrayProto.splice;
 
     /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -9254,7 +9254,6 @@
      * @static
      * @memberOf _
      * @since 2.4.0
-     * @type {Function}
      * @category Date
      * @returns {number} Returns the timestamp.
      * @example
@@ -9264,7 +9263,9 @@
      * }, _.now());
      * // => Logs the number of milliseconds it took for the deferred function to be invoked.
      */
-    var now = Date.now;
+    function now() {
+      return Date.now();
+    }
 
     /*------------------------------------------------------------------------*/
 

@@ -4641,11 +4641,8 @@
 
       var done = assert.async();
 
-      var pass = true;
-
-      var timerId = _.defer(function() {
-        pass = false;
-      });
+      var pass = true,
+          timerId = _.defer(function() { pass = false; });
 
       clearTimeout(timerId);
 
@@ -4702,10 +4699,7 @@
       var done = assert.async();
 
       var pass = false;
-
-      _.delay(function() {
-        pass = true;
-      });
+      _.delay(function() { pass = true; });
 
       assert.notOk(pass);
 
@@ -4720,11 +4714,8 @@
 
       var done = assert.async();
 
-      var pass = true;
-
-      var timerId = _.delay(function() {
-        pass = false;
-      }, 32);
+      var pass = true,
+          timerId = _.delay(function() { pass = false; }, 32);
 
       clearTimeout(timerId);
 
@@ -4741,10 +4732,7 @@
           setTimeout = root.setTimeout;
 
       root.setTimeout = function(func) { func(); };
-
-      _.delay(function() {
-        pass = true;
-      }, 32);
+      _.delay(function() { pass = true; }, 32);
 
       assert.ok(pass);
       root.setTimeout = setTimeout;

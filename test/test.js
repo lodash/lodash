@@ -4733,6 +4733,22 @@
         done();
       }, 64);
     });
+
+    QUnit.test('should work with mocked `setTimeout`', function(assert) {
+      assert.expect(1);
+
+      var pass = false,
+          setTimeout = root.setTimeout;
+
+      root.setTimeout = function(func) { func(); };
+
+      _.delay(function() {
+        pass = true;
+      }, 32);
+
+      assert.ok(pass);
+      root.setTimeout = setTimeout;
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -16244,6 +16260,18 @@
         done();
       }, 32);
     });
+
+    QUnit.test('should work with mocked `Date.now`', function(assert) {
+      assert.expect(1);
+
+      var now = Date.now;
+      Date.now = stubA;
+
+      var actual = _.now();
+      Date.now = now;
+
+      assert.strictEqual(actual, 'a');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -19648,9 +19676,7 @@
 
       if (!isModularize) {
         var lodash = _.runInContext({
-          'setTimeout': function(callback) {
-            callback();
-          }
+          'setTimeout': function(func) { func(); }
         });
 
         var pass = false;

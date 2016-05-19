@@ -1288,14 +1288,16 @@
         Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
-        clearTimeout = function(id) { return context.clearTimeout.call(root, id); },
         enumerate = Reflect ? Reflect.enumerate : undefined,
         getOwnPropertySymbols = Object.getOwnPropertySymbols,
         iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
         objectCreate = Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
-        setTimeout = function(func, wait) { return context.setTimeout.call(root, func, wait); },
         splice = arrayProto.splice;
+
+    /** Built-in method references that are mockable. */
+    var clearTimeout = function(id) { return context.clearTimeout.call(root, id); },
+        setTimeout = function(func, wait) { return context.setTimeout.call(root, func, wait); };
 
     /* Built-in method references for those with the same name as other `lodash` methods. */
     var nativeCeil = Math.ceil,

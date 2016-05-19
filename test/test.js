@@ -309,7 +309,6 @@
     }
     lodashStable = lodashStable.noConflict();
   }
-  lodashStable = lodashStable.runInContext(root);
 
   /** The `lodash` function to test. */
   var _ = root._ || (root._ = interopRequire(filePath));
@@ -4725,14 +4724,19 @@
     QUnit.test('should work with mocked `setTimeout`', function(assert) {
       assert.expect(1);
 
-      var pass = false,
-          setTimeout = root.setTimeout;
+      if (!isPhantom) {
+        var pass = false,
+            setTimeout = root.setTimeout;
 
-      root.setTimeout = function(func) { func(); };
-      _.delay(function() { pass = true; }, 32);
+        root.setTimeout = function(func) { func(); };
+        _.delay(function() { pass = true; }, 32);
+        root.setTimeout = setTimeout;
 
-      assert.ok(pass);
-      root.setTimeout = setTimeout;
+        assert.ok(pass);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
   }());
 

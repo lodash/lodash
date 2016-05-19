@@ -4728,9 +4728,9 @@
         var pass = false,
             setTimeout = root.setTimeout;
 
-        root.setTimeout = function(func) { func(); };
+        setProperty(root, 'setTimeout', function(func) { func(); });
         _.delay(function() { pass = true; }, 32);
-        root.setTimeout = setTimeout;
+        setProperty(root, 'setTimeout', setTimeout);
 
         assert.ok(pass);
       }

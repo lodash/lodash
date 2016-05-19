@@ -312,10 +312,7 @@
   lodashStable = lodashStable.runInContext(root);
 
   /** The `lodash` function to test. */
-  var _ = root._ || (root._ = (
-    _ = interopRequire(filePath),
-    (_.runInContext ? _.runInContext(root) : _)
-  ));
+  var _ = root._ || (root._ = interopRequire(filePath));
 
   /** Used to test pseudo private map caches. */
   var mapCaches = (function() {

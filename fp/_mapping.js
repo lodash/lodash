@@ -153,7 +153,11 @@ exports.iterateeRearg = {
 exports.methodRearg = {
   'assignInWith': [1, 2, 0],
   'assignWith': [1, 2, 0],
+  'differenceBy': [1, 2, 0],
+  'differenceWith': [1, 2, 0],
   'getOr': [2, 1, 0],
+  'intersectionBy': [1, 2, 0],
+  'intersectionWith': [1, 2, 0],
   'isEqualWith': [1, 2, 0],
   'isMatchWith': [2, 1, 0],
   'mergeWith': [1, 2, 0],
@@ -165,7 +169,11 @@ exports.methodRearg = {
   'setWith': [3, 1, 2, 0],
   'sortedIndexBy': [2, 1, 0],
   'sortedLastIndexBy': [2, 1, 0],
+  'unionBy': [1, 2, 0],
+  'unionWith': [1, 2, 0],
   'updateWith': [3, 1, 2, 0],
+  'xorBy': [1, 2, 0],
+  'xorWith': [1, 2, 0],
   'zipWith': [1, 2, 0]
 };
 

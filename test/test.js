@@ -19273,10 +19273,10 @@
       assert.strictEqual(func(object, ['a', 'b', 'c']), 4);
     });
 
-    QUnit.test('`_.' + methodName + '` should ignore empty brackets', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not ignore empty brackets', function(assert) {
       assert.expect(1);
 
-      var object = { 'a': 1 };
+      var object = { 'a': { '': 1 } };
       assert.strictEqual(func(object, 'a[]'), 1);
     });
 
@@ -19962,13 +19962,13 @@
       assert.strictEqual(object.a.b.c, value);
     });
 
-    QUnit.test('`_.' + methodName + '` should ignore empty brackets', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not ignore empty brackets', function(assert) {
       assert.expect(1);
 
       var object = {};
 
       func(object, 'a[]', updater);
-      assert.deepEqual(object, { 'a': value });
+      assert.deepEqual(object, { 'a': { '': value } });
     });
 
     QUnit.test('`_.' + methodName + '` should handle empty paths', function(assert) {
@@ -23723,14 +23723,14 @@
       assert.deepEqual(actual, ['a', '-1.23', '["b"]', 'c', "['d']", '\ne\n', 'f', 'g']);
     });
 
-    QUnit.test('should ignore consecutive brackets and dots', function(assert) {
+    QUnit.test('should not ignore consecutive brackets and dots', function(assert) {
       assert.expect(4);
 
-      var expected = ['a'];
+      var expected = ['a', ''];
       assert.deepEqual(_.toPath('a.'), expected);
       assert.deepEqual(_.toPath('a[]'), expected);
 
-      expected = ['a', 'b'];
+      expected = ['a', '', 'b'];
       assert.deepEqual(_.toPath('a..b'), expected);
       assert.deepEqual(_.toPath('a[][]b'), expected);
     });

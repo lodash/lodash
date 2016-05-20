@@ -1,3 +1,7 @@
+'use strict';
+
+delete global['__core-js_shared__'];
+
 var _ = require('./lodash.js');
 
 function mockQuery() {
@@ -41,4 +45,4 @@ module.exports = {
     'process': process,
     'setImmediate': setImmediate
   }
-}
+};

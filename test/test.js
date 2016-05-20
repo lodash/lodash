@@ -7025,23 +7025,18 @@
       assert.expect(4);
 
       lodashStable.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
-        if (defineProperty) {
-          var object = {},
-              pass = true;
+        var object = {},
+            pass = true;
 
-          defineProperty(object, 'a', {
-            'enumerable': true,
-            'configurable': true,
-            'get': lodashStable.constant(value),
-            'set': function() { pass = false; }
-          });
+        defineProperty(object, 'a', {
+          'enumerable': true,
+          'configurable': true,
+          'get': lodashStable.constant(value),
+          'set': function() { pass = false; }
+        });
 
-          func(object, { 'a': value });
-          assert.ok(pass);
-        }
-        else {
-          skipAssert(assert);
-        }
+        func(object, { 'a': value });
+        assert.ok(pass);
       });
     });
   });
@@ -15196,23 +15191,18 @@
     QUnit.test('should skip merging when `object` and `source` are the same value', function(assert) {
       assert.expect(1);
 
-      if (defineProperty) {
-        var object = {},
-            pass = true;
+      var object = {},
+          pass = true;
 
-        defineProperty(object, 'a', {
-          'enumerable': true,
-          'configurable': true,
-          'get': function() { pass = false; },
-          'set': function() { pass = false; }
-        });
+      defineProperty(object, 'a', {
+        'enumerable': true,
+        'configurable': true,
+        'get': function() { pass = false; },
+        'set': function() { pass = false; }
+      });
 
-        _.merge(object, object);
-        assert.ok(pass);
-      }
-      else {
-        skipAssert(assert);
-      }
+      _.merge(object, object);
+      assert.ok(pass);
     });
 
     QUnit.test('should convert values to arrays when merging arrays of `source`', function(assert) {
@@ -20081,24 +20071,19 @@
       assert.expect(4);
 
       lodashStable.each(['a', ['a'], { 'a': 1 }, NaN], function(value) {
-        if (defineProperty) {
-          var object = {},
-              pass = true,
-              updater = isUpdate ? lodashStable.constant(value) : value;
+        var object = {},
+            pass = true,
+            updater = isUpdate ? lodashStable.constant(value) : value;
 
-          defineProperty(object, 'a', {
-            'enumerable': true,
-            'configurable': true,
-            'get': lodashStable.constant(value),
-            'set': function() { pass = false; }
-          });
+        defineProperty(object, 'a', {
+          'enumerable': true,
+          'configurable': true,
+          'get': lodashStable.constant(value),
+          'set': function() { pass = false; }
+        });
 
-          func(object, 'a', updater);
-          assert.ok(pass);
-        }
-        else {
-          skipAssert(assert);
-        }
+        func(object, 'a', updater);
+        assert.ok(pass);
       });
     });
   });
@@ -24906,7 +24891,7 @@
 
       var object = {};
 
-      if (!isStrict && defineProperty) {
+      if (!isStrict) {
         defineProperty(object, 'a', {
           'configurable': false,
           'enumerable': true,

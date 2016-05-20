@@ -636,12 +636,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ],
 	  '3': [
 	    'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
-	    'getOr', 'inRange', 'intersectionBy', 'intersectionWith', 'invokeArgs',
-	    'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth', 'mergeWith',
-	    'orderBy', 'padChars', 'padCharsEnd', 'padCharsStart', 'pullAllBy',
-	    'pullAllWith', 'reduce', 'reduceRight', 'replace', 'set', 'slice',
-	    'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith',
-	    'update', 'xorBy', 'xorWith', 'zipWith'
+	    'findFrom', 'findIndexFrom', 'findLastFrom', 'findLastIndexFrom', 'getOr',
+	    'includesFrom', 'indexOfFrom', 'inRange', 'intersectionBy', 'intersectionWith',
+	    'invokeArgs', 'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth',
+	    'lastIndexOfFrom', 'mergeWith', 'orderBy', 'padChars', 'padCharsEnd',
+	    'padCharsStart', 'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace',
+	    'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
+	    'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
 	  ],
 	  '4': [
 	    'fill', 'setWith', 'updateWith'
@@ -662,10 +663,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'every': 1,
 	  'filter': 1,
 	  'find': 1,
+	  'findFrom': 1,
 	  'findIndex': 1,
+	  'findIndexFrom': 1,
 	  'findKey': 1,
 	  'findLast': 1,
+	  'findLastFrom': 1,
 	  'findLastIndex': 1,
+	  'findLastIndexFrom': 1,
 	  'findLastKey': 1,
 	  'flatMap': 1,
 	  'flatMapDeep': 1,
@@ -700,7 +705,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.methodRearg = {
 	  'assignInWith': [1, 2, 0],
 	  'assignWith': [1, 2, 0],
+	  'differenceBy': [1, 2, 0],
+	  'differenceWith': [1, 2, 0],
 	  'getOr': [2, 1, 0],
+	  'intersectionBy': [1, 2, 0],
+	  'intersectionWith': [1, 2, 0],
 	  'isEqualWith': [1, 2, 0],
 	  'isMatchWith': [2, 1, 0],
 	  'mergeWith': [1, 2, 0],
@@ -712,7 +721,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'setWith': [3, 1, 2, 0],
 	  'sortedIndexBy': [2, 1, 0],
 	  'sortedLastIndexBy': [2, 1, 0],
+	  'unionBy': [1, 2, 0],
+	  'unionWith': [1, 2, 0],
 	  'updateWith': [3, 1, 2, 0],
+	  'xorBy': [1, 2, 0],
+	  'xorWith': [1, 2, 0],
 	  'zipWith': [1, 2, 0]
 	};
 
@@ -787,9 +800,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.remap = {
 	  'curryN': 'curry',
 	  'curryRightN': 'curryRight',
+	  'findFrom': 'find',
+	  'findIndexFrom': 'findIndex',
+	  'findLastFrom': 'findLast',
+	  'findLastIndexFrom': 'findLastIndex',
 	  'getOr': 'get',
+	  'includesFrom': 'includes',
+	  'indexOfFrom': 'indexOf',
 	  'invokeArgs': 'invoke',
 	  'invokeArgsMap': 'invokeMap',
+	  'lastIndexOfFrom': 'lastIndexOf',
 	  'padChars': 'pad',
 	  'padCharsEnd': 'padEnd',
 	  'padCharsStart': 'padStart',
@@ -836,7 +856,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'range': true,
 	  'rangeRight': true,
 	  'subtract': true,
-	  'without': true,
 	  'zip': true,
 	  'zipObject': true
 	};

@@ -1,6 +1,7 @@
 /**
  * @license
- * lodash <https://lodash.com/>
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -12,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.12.0';
+  var VERSION = '4.13.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -46,9 +47,6 @@
   var reUnescapedHtml = /[&<>"'`]/g,
       reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
-  /** Used to detect unsigned integer values. */
-  var reIsUint = /^(?:0|[1-9]\d*)$/;
-
   /** Used to map characters to HTML entities. */
   var htmlEscapes = {
     '&': '&amp;',
@@ -59,48 +57,23 @@
     '`': '&#96;'
   };
 
-  /** Used to determine if values are of the language type `Object`. */
-  var objectTypes = {
-    'function': true,
-    'object': true
-  };
-
   /** Detect free variable `exports`. */
-  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
-    ? exports
-    : undefined;
+  var freeExports = typeof exports == 'object' && exports;
 
   /** Detect free variable `module`. */
-  var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
-    ? module
-    : undefined;
-
-  /** Detect the popular CommonJS extension `module.exports`. */
-  var moduleExports = (freeModule && freeModule.exports === freeExports)
-    ? freeExports
-    : undefined;
+  var freeModule = freeExports && typeof module == 'object' && module;
 
   /** Detect free variable `global` from Node.js. */
-  var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+  var freeGlobal = checkGlobal(typeof global == 'object' && global);
 
   /** Detect free variable `self`. */
-  var freeSelf = checkGlobal(objectTypes[typeof self] && self);
-
-  /** Detect free variable `window`. */
-  var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+  var freeSelf = checkGlobal(typeof self == 'object' && self);
 
   /** Detect `this` as the global object. */
-  var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+  var thisGlobal = checkGlobal(typeof this == 'object' && this);
 
-  /**
-   * Used as a reference to the global object.
-   *
-   * The `this` value is used if it's the global object to avoid Greasemonkey's
-   * restricted `window` object, otherwise the `window` object is used.
-   */
-  var root = freeGlobal ||
-    ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
-      freeSelf || thisGlobal || Function('return this')();
+  /** Used as a reference to the global object. */
+  var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
 
   /*--------------------------------------------------------------------------*/
 
@@ -118,27 +91,26 @@
   }
 
   /**
-   * The base implementation of methods like `_.find` and `_.findKey`, without
-   * support for iteratee shorthands, which iterates over `collection` using
-   * `eachFunc`.
+   * The base implementation of `_.findIndex` and `_.findLastIndex` without
+   * support for iteratee shorthands.
    *
    * @private
-   * @param {Array|Object} collection The collection to search.
+   * @param {Array} array The array to search.
    * @param {Function} predicate The function invoked per iteration.
-   * @param {Function} eachFunc The function to iterate over `collection`.
-   * @param {boolean} [retKey] Specify returning the key of the found element
-   *  instead of the element itself.
-   * @returns {*} Returns the found element or its key, else `undefined`.
+   * @param {number} fromIndex The index to search from.
+   * @param {boolean} [fromRight] Specify iterating from right to left.
+   * @returns {number} Returns the index of the matched value, else `-1`.
    */
-  function baseFind(collection, predicate, eachFunc, retKey) {
-    var result;
-    eachFunc(collection, function(value, key, collection) {
-      if (predicate(value, key, collection)) {
-        result = retKey ? key : value;
-        return false;
+  function baseFindIndex(array, predicate, fromIndex, fromRight) {
+    var length = array.length,
+        index = fromIndex + (fromRight ? 1 : -1);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (predicate(array[index], index, array)) {
+        return index;
       }
-    });
-    return result;
+    }
+    return -1;
   }
 
   /**
@@ -161,25 +133,6 @@
         : iteratee(accumulator, value, index, collection);
     });
     return accumulator;
-  }
-
-  /**
-   * The base implementation of `_.times` without support for iteratee shorthands
-   * or max array length checks.
-   *
-   * @private
-   * @param {number} n The number of times to invoke `iteratee`.
-   * @param {Function} iteratee The function invoked per iteration.
-   * @returns {Array} Returns the array of results.
-   */
-  function baseTimes(n, iteratee) {
-    var index = -1,
-        result = Array(n);
-
-    while (++index < n) {
-      result[index] = iteratee(index);
-    }
-    return result;
   }
 
   /**
@@ -227,33 +180,8 @@
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
    */
-  function isHostObject(value) {
-    // Many host objects are `Object` objects that can coerce to strings
-    // despite having improperly defined `toString` methods.
-    var result = false;
-    if (value != null && typeof value.toString != 'function') {
-      try {
-        result = !!(value + '');
-      } catch (e) {}
-    }
-    return result;
-  }
-
-  /**
-   * Converts `iterator` to an array.
-   *
-   * @private
-   * @param {Object} iterator The iterator to convert.
-   * @returns {Array} Returns the converted array.
-   */
-  function iteratorToArray(iterator) {
-    var data,
-        result = [];
-
-    while (!(data = iterator.next()).done) {
-      result.push(data.value);
-    }
-    return result;
+  function isHostObject() {
+    return false;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -279,11 +207,7 @@
   var oldDash = root._;
 
   /** Built-in value references. */
-  var Reflect = root.Reflect,
-      Symbol = root.Symbol,
-      Uint8Array = root.Uint8Array,
-      enumerate = Reflect ? Reflect.enumerate : undefined,
-      objectCreate = Object.create,
+  var objectCreate = Object.create,
       propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -368,19 +292,21 @@
    * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
    * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
    * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
-   * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
-   * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
-   * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
-   * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
-   * `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,
-   * `noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,
-   * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
-   * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
-   * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-   * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toFinite`,
-   * `toInteger`, `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`,
-   * `toString`, `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
-   * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
+   * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+   * `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
+   * `isSafeInteger`, `isSet`, `isString`, `isUndefined`, `isTypedArray`,
+   * `isWeakMap`, `isWeakSet`, `join`, `kebabCase`, `last`, `lastIndexOf`,
+   * `lowerCase`, `lowerFirst`, `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`,
+   * `min`, `minBy`, `multiply`, `noConflict`, `noop`, `now`, `nth`, `pad`,
+   * `padEnd`, `padStart`, `parseInt`, `pop`, `random`, `reduce`, `reduceRight`,
+   * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
+   * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
+   * `sortedLastIndexBy`, `startCase`, `startsWith`, `stubArray`, `stubFalse`,
+   * `stubObject`, `stubString`, `stubTrue`, `subtract`, `sum`, `sumBy`,
+   * `template`, `times`, `toFinite`, `toInteger`, `toJSON`, `toLength`,
+   * `toLower`, `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`,
+   * `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
+   * `upperFirst`, `value`, and `words`
    *
    * @name _
    * @constructor
@@ -726,7 +652,7 @@
     }
     stack.push([object, other]);
     if (isSameTag && !objIsObj) {
-      var result = (objIsArr || isTypedArray(object))
+      var result = (objIsArr)
         ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
         : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
       stack.pop();
@@ -798,13 +724,6 @@
       result.push(key);
     }
     return result;
-  }
-
-  // Fallback for IE < 9 with es6-shim.
-  if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-    baseKeysIn = function(object) {
-      return iteratorToArray(enumerate(object));
-    };
   }
 
   /**
@@ -1370,23 +1289,6 @@
   var getLength = baseProperty('length');
 
   /**
-   * Creates an array of index keys for `object` values of arrays,
-   * `arguments` objects, and strings, otherwise `null` is returned.
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @returns {Array|null} Returns index keys, else `null`.
-   */
-  function indexKeys(object) {
-    var length = object ? object.length : undefined;
-    if (isLength(length) &&
-        (isArray(object) || isString(object) || isArguments(object))) {
-      return baseTimes(length, String);
-    }
-    return null;
-  }
-
-  /**
    * Checks if `value` is a flattenable `arguments` object or array.
    *
    * @private
@@ -1395,35 +1297,6 @@
    */
   function isFlattenable(value) {
     return isArray(value) || isArguments(value);
-  }
-
-  /**
-   * Checks if `value` is a valid array-like index.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-   */
-  function isIndex(value, length) {
-    length = length == null ? MAX_SAFE_INTEGER : length;
-    return !!length &&
-      (typeof value == 'number' || reIsUint.test(value)) &&
-      (value > -1 && value % 1 == 0 && value < length);
-  }
-
-  /**
-   * Checks if `value` is likely a prototype object.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
-   */
-  function isPrototype(value) {
-    var Ctor = value && value.constructor,
-        proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
-
-    return value === proto;
   }
 
   /**
@@ -1490,6 +1363,54 @@
     return length
       ? arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1))
       : [];
+  }
+
+  /**
+   * This method is like `_.find` except that it returns the index of the first
+   * element `predicate` returns truthy for instead of the element itself.
+   *
+   * @static
+   * @memberOf _
+   * @since 1.1.0
+   * @category Array
+   * @param {Array} array The array to search.
+   * @param {Array|Function|Object|string} [predicate=_.identity]
+   *  The function invoked per iteration.
+   * @param {number} [fromIndex=0] The index to search from.
+   * @returns {number} Returns the index of the found element, else `-1`.
+   * @example
+   *
+   * var users = [
+   *   { 'user': 'barney',  'active': false },
+   *   { 'user': 'fred',    'active': false },
+   *   { 'user': 'pebbles', 'active': true }
+   * ];
+   *
+   * _.findIndex(users, function(o) { return o.user == 'barney'; });
+   * // => 0
+   *
+   * // The `_.matches` iteratee shorthand.
+   * _.findIndex(users, { 'user': 'fred', 'active': false });
+   * // => 1
+   *
+   * // The `_.matchesProperty` iteratee shorthand.
+   * _.findIndex(users, ['active', false]);
+   * // => 0
+   *
+   * // The `_.property` iteratee shorthand.
+   * _.findIndex(users, 'active');
+   * // => 2
+   */
+  function findIndex(array, predicate, fromIndex) {
+    var length = array ? array.length : 0;
+    if (!length) {
+      return -1;
+    }
+    var index = fromIndex == null ? 0 : toInteger(fromIndex);
+    if (index < 0) {
+      index = nativeMax(length + index, 0);
+    }
+    return baseFindIndex(array, baseIteratee(predicate, 3), index);
   }
 
   /**
@@ -1873,6 +1794,7 @@
    * @param {Array|Object} collection The collection to search.
    * @param {Array|Function|Object|string} [predicate=_.identity]
    *  The function invoked per iteration.
+   * @param {number} [fromIndex=0] The index to search from.
    * @returns {*} Returns the matched element, else `undefined`.
    * @example
    *
@@ -1897,8 +1819,10 @@
    * _.find(users, 'active');
    * // => object for 'barney'
    */
-  function find(collection, predicate) {
-    return baseFind(collection, baseIteratee(predicate), baseEach);
+  function find(collection, predicate, fromIndex) {
+    collection = isArrayLike(collection) ? collection : values(collection);
+    var index = findIndex(collection, predicate, fromIndex);
+    return index > -1 ? collection[index] : undefined;
   }
 
   /**
@@ -2182,7 +2106,7 @@
    * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
    * may be used as a placeholder for partially applied arguments.
    *
-   * **Note:** Unlike native `Function#bind` this method doesn't set the "length"
+   * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
    * property of bound functions.
    *
    * @static
@@ -2993,7 +2917,7 @@
   /**
    * Converts `value` to an integer.
    *
-   * **Note:** This function is loosely based on
+   * **Note:** This method is loosely based on
    * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
    *
    * @static
@@ -3301,25 +3225,7 @@
    * _.keys('hi');
    * // => ['0', '1']
    */
-  function keys(object) {
-    var isProto = isPrototype(object);
-    if (!(isProto || isArrayLike(object))) {
-      return baseKeys(object);
-    }
-    var indexes = indexKeys(object),
-        skipIndexes = !!indexes,
-        result = indexes || [],
-        length = result.length;
-
-    for (var key in object) {
-      if (hasOwnProperty.call(object, key) &&
-          !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-          !(isProto && key == 'constructor')) {
-        result.push(key);
-      }
-    }
-    return result;
-  }
+  var keys = baseKeys;
 
   /**
    * Creates an array of the own and inherited enumerable property names of `object`.
@@ -3344,25 +3250,7 @@
    * _.keysIn(new Foo);
    * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
    */
-  function keysIn(object) {
-    var index = -1,
-        isProto = isPrototype(object),
-        props = baseKeysIn(object),
-        propsLength = props.length,
-        indexes = indexKeys(object),
-        skipIndexes = !!indexes,
-        result = indexes || [],
-        length = result.length;
-
-    while (++index < propsLength) {
-      var key = props[index];
-      if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-          !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-        result.push(key);
-      }
-    }
-    return result;
-  }
+  var keysIn = baseKeysIn;
 
   /**
    * Creates an object composed of the picked `object` properties.
@@ -3510,7 +3398,7 @@
    *
    * var object = { 'user': 'fred' };
    *
-   * _.identity(object) === object;
+   * console.log(_.identity(object) === object);
    * // => true
    */
   function identity(value) {
@@ -3682,8 +3570,7 @@
   }
 
   /**
-   * A no-operation function that returns `undefined` regardless of the
-   * arguments it receives.
+   * A method that returns `undefined`.
    *
    * @static
    * @memberOf _
@@ -3691,10 +3578,8 @@
    * @category Util
    * @example
    *
-   * var object = { 'user': 'fred' };
-   *
-   * _.noop(object) === undefined;
-   * // => true
+   * _.times(2, _.noop);
+   * // => [undefined, undefined]
    */
   function noop() {
     // No operation performed.
@@ -3900,7 +3785,7 @@
   // also prevents errors in cases where Lodash is loaded by a script tag in the
   // presence of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch
   // for more details. Use `_.noConflict` to remove Lodash from the global object.
-  (freeWindow || freeSelf || {})._ = lodash;
+  (freeSelf || {})._ = lodash;
 
   // Some AMD build optimizers like r.js check for condition patterns like the following:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
@@ -3911,11 +3796,9 @@
     });
   }
   // Check for `exports` after `define` in case a build optimizer adds an `exports` object.
-  else if (freeExports && freeModule) {
+  else if (freeModule) {
     // Export for Node.js.
-    if (moduleExports) {
-      (freeModule.exports = lodash)._ = lodash;
-    }
+    (freeModule.exports = lodash)._ = lodash;
     // Export for CommonJS support.
     freeExports._ = lodash;
   }

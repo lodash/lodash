@@ -19661,6 +19661,20 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('`_.' + methodName + '` should not return `NaN` for large `precision` values', function(assert) {
+      assert.expect(1);
+
+      var results = [
+        _.round(10.0000001, 1000),
+        _.round(MAX_SAFE_INTEGER, 293)
+      ];
+
+      var expected = lodashStable.map(results, stubFalse),
+          actual = lodashStable.map(results, lodashStable.isNaN);
+
+      assert.deepEqual(actual, expected);
+    });
   });
 
   /*--------------------------------------------------------------------------*/

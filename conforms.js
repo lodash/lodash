@@ -19,7 +19,7 @@ var baseClone = require('./_baseClone'),
  *   { 'user': 'fred',   'age': 40 }
  * ];
  *
- * _.filter(users, _.conforms({ 'age': _.partial(_.gt, _, 38) }));
+ * _.filter(users, _.conforms({ 'age': function(n) { return n > 38; } }));
  * // => [{ 'user': 'fred', 'age': 40 }]
  */
 function conforms(source) {

@@ -1,4 +1,4 @@
-# lodash v4.12.0
+# lodash v4.13.0
 
 The [Lodash](https://lodash.com/) library exported as [Node.js](https://nodejs.org/) modules.
 
@@ -28,7 +28,7 @@ var chunk = require('lodash/chunk');
 var extend = require('lodash/fp/extend');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.12.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.13.0-npm) for more details.
 
 **Note:**<br>
 Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` in the Node.js < 6 REPL.<br>

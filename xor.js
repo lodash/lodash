@@ -18,8 +18,8 @@ var arrayFilter = require('./_arrayFilter'),
  * @see _.difference, _.without
  * @example
  *
- * _.xor([2, 1], [4, 2]);
- * // => [1, 4]
+ * _.xor([2, 1], [2, 3]);
+ * // => [1, 3]
  */
 var xor = rest(function(arrays) {
   return baseXor(arrayFilter(arrays, isArrayLikeObject));

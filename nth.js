@@ -2,7 +2,7 @@ var baseNth = require('./_baseNth'),
     toInteger = require('./toInteger');
 
 /**
- * Gets the element at `n` index of `array`. If `n` is negative, the nth
+ * Gets the element at index `n` of `array`. If `n` is negative, the nth
  * element from the end is returned.
  *
  * @static

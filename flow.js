@@ -18,7 +18,7 @@ var createFlow = require('./_createFlow');
  *   return n * n;
  * }
  *
- * var addSquare = _.flow(_.add, square);
+ * var addSquare = _.flow([_.add, square]);
  * addSquare(1, 2);
  * // => 9
  */

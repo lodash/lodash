@@ -26,7 +26,7 @@ var arrayEach = require('./_arrayEach'),
  *   }
  * };
  *
- * _.bindAll(view, 'onClick');
+ * _.bindAll(view, ['onClick']);
  * jQuery(element).on('click', view.onClick);
  * // => Logs 'clicked docs' when clicked.
  */

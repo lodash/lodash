@@ -18,9 +18,6 @@ var baseAt = require('./_baseAt'),
  *
  * _.at(object, ['a[0].b.c', 'a[1]']);
  * // => [3, 4]
- *
- * _.at(['a', 'b', 'c'], 0, 2);
- * // => ['a', 'c']
  */
 var at = rest(function(object, paths) {
   return baseAt(object, baseFlatten(paths, 1));

@@ -496,7 +496,7 @@
       actual = fp.uniqBy(_.identity, other);
       assert.deepEqual(actual, ['b', 'd'], 'fp.uniqBy');
 
-      actual = fp.without(array)(other);
+      actual = fp.without(other)(array);
       assert.deepEqual(actual, ['a', 'c'], 'fp.without');
 
       actual = fp.xor(other)(array);

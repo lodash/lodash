@@ -39,7 +39,7 @@
     "fs-extra": "~0.30.0",
     "glob": "^7.0.3",
     "istanbul": "0.4.3",
-    "jquery": "^2.2.3",
+    "jquery": "^2.2.4",
     "jscs": "^3.0.1",
     "lodash": "4.11.2",
     "markdown-doctest": "^0.6.0",
@@ -50,6 +50,6 @@
     "requirejs": "^2.2.0",
     "sauce-tunnel": "^2.4.0",
     "uglify-js": "2.6.2",
-    "webpack": "^1.12.15"
+    "webpack": "^1.13.1"
   }
 }

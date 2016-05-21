@@ -14,7 +14,7 @@ define(['./_arrayMap', './_baseIntersection', './_castArrayLikeObject', './rest'
    * @returns {Array} Returns the new array of intersecting values.
    * @example
    *
-   * _.intersection([2, 1], [4, 2], [1, 2]);
+   * _.intersection([2, 1], [2, 3]);
    * // => [2]
    */
   var intersection = rest(function(arrays) {

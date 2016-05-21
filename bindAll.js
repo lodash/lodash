@@ -22,7 +22,7 @@ define(['./_arrayEach', './_baseFlatten', './bind', './rest', './_toKey'], funct
    *   }
    * };
    *
-   * _.bindAll(view, 'onClick');
+   * _.bindAll(view, ['onClick']);
    * jQuery(element).on('click', view.onClick);
    * // => Logs 'clicked docs' when clicked.
    */

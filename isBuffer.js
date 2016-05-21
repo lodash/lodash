@@ -1,28 +1,16 @@
-define(['./constant', './_root'], function(constant, root) {
+define(['./_root', './stubFalse'], function(root, stubFalse) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to determine if values are of the language type `Object`. */
-  var objectTypes = {
-    'function': true,
-    'object': true
-  };
-
   /** Detect free variable `exports`. */
-  var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
-    ? exports
-    : undefined;
+  var freeExports = typeof exports == 'object' && exports;
 
   /** Detect free variable `module`. */
-  var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
-    ? module
-    : undefined;
+  var freeModule = freeExports && typeof module == 'object' && module;
 
   /** Detect the popular CommonJS extension `module.exports`. */
-  var moduleExports = (freeModule && freeModule.exports === freeExports)
-    ? freeExports
-    : undefined;
+  var moduleExports = freeModule && freeModule.exports === freeExports;
 
   /** Built-in value references. */
   var Buffer = moduleExports ? root.Buffer : undefined;
@@ -44,7 +32,7 @@ define(['./constant', './_root'], function(constant, root) {
    * _.isBuffer(new Uint8Array(2));
    * // => false
    */
-  var isBuffer = !Buffer ? constant(false) : function(value) {
+  var isBuffer = !Buffer ? stubFalse : function(value) {
     return value instanceof Buffer;
   };
 

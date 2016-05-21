@@ -1,4 +1,4 @@
-define(['./isNative'], function(isNative) {
+define(['./_baseIsNative', './_getValue'], function(baseIsNative, getValue) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -12,8 +12,8 @@ define(['./isNative'], function(isNative) {
    * @returns {*} Returns the function if it's native, else `undefined`.
    */
   function getNative(object, key) {
-    var value = object[key];
-    return isNative(value) ? value : undefined;
+    var value = getValue(object, key);
+    return baseIsNative(value) ? value : undefined;
   }
 
   return getNative;

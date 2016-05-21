@@ -13,7 +13,7 @@ define([], function() {
    *
    * var object = { 'user': 'fred' };
    *
-   * _.identity(object) === object;
+   * console.log(_.identity(object) === object);
    * // => true
    */
   function identity(value) {

@@ -16,15 +16,6 @@ define(['./_arrayMap', './_copyArray', './isArray', './isSymbol', './_stringToPa
    *
    * _.toPath('a[0].b.c');
    * // => ['a', '0', 'b', 'c']
-   *
-   * var path = ['a', 'b', 'c'],
-   *     newPath = _.toPath(path);
-   *
-   * console.log(newPath);
-   * // => ['a', 'b', 'c']
-   *
-   * console.log(path === newPath);
-   * // => false
    */
   function toPath(value) {
     if (isArray(value)) {

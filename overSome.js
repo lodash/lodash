@@ -13,7 +13,7 @@ define(['./_arraySome', './_createOver'], function(arraySome, createOver) {
    * @returns {Function} Returns the new function.
    * @example
    *
-   * var func = _.overSome(Boolean, isFinite);
+   * var func = _.overSome([Boolean, isFinite]);
    *
    * func('1');
    * // => true

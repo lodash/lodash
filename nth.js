@@ -4,7 +4,7 @@ define(['./_baseNth', './toInteger'], function(baseNth, toInteger) {
   var undefined;
 
   /**
-   * Gets the element at `n` index of `array`. If `n` is negative, the nth
+   * Gets the element at index `n` of `array`. If `n` is negative, the nth
    * element from the end is returned.
    *
    * @static

@@ -15,7 +15,7 @@ define(['./_baseDifference', './isArrayLikeObject', './rest'], function(baseDiff
    * @see _.difference, _.xor
    * @example
    *
-   * _.without([1, 2, 1, 3], 1, 2);
+   * _.without([2, 1, 2, 3], 1, 2);
    * // => [3]
    */
   var without = rest(function(array, values) {

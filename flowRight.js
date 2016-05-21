@@ -17,7 +17,7 @@ define(['./_createFlow'], function(createFlow) {
    *   return n * n;
    * }
    *
-   * var addSquare = _.flowRight(square, _.add);
+   * var addSquare = _.flowRight([square, _.add]);
    * addSquare(1, 2);
    * // => 9
    */

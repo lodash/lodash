@@ -66,7 +66,7 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
         maxWait,
         result,
         timerId,
-        lastCallTime = 0,
+        lastCallTime,
         lastInvokeTime = 0,
         leading = false,
         maxing = false,
@@ -117,7 +117,7 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
       // Either this is the first call, activity has stopped and we're at the
       // trailing edge, the system time has gone backwards and we're treating
       // it as the trailing edge, or we've hit the `maxWait` limit.
-      return (!lastCallTime || (timeSinceLastCall >= wait) ||
+      return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
         (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
     }
 
@@ -131,7 +131,6 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
     }
 
     function trailingEdge(time) {
-      clearTimeout(timerId);
       timerId = undefined;
 
       // Only invoke if we have `lastArgs` which means `func` has been
@@ -144,11 +143,8 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
     }
 
     function cancel() {
-      if (timerId !== undefined) {
-        clearTimeout(timerId);
-      }
-      lastCallTime = lastInvokeTime = 0;
-      lastArgs = lastThis = timerId = undefined;
+      lastInvokeTime = 0;
+      lastArgs = lastCallTime = lastThis = timerId = undefined;
     }
 
     function flush() {
@@ -169,7 +165,6 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
         }
         if (maxing) {
           // Handle invocations in a tight loop.
-          clearTimeout(timerId);
           timerId = setTimeout(timerExpired, wait);
           return invokeFunc(lastCallTime);
         }

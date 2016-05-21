@@ -18,9 +18,6 @@ define(['./_LazyWrapper', './_LodashWrapper', './_baseAt', './_baseFlatten', './
    *
    * _(object).at(['a[0].b.c', 'a[1]']).value();
    * // => [3, 4]
-   *
-   * _(['a', 'b', 'c']).at(0, 2).value();
-   * // => ['a', 'c']
    */
   var wrapperAt = rest(function(paths) {
     paths = baseFlatten(paths, 1);

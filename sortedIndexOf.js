@@ -13,8 +13,8 @@ define(['./_baseSortedIndex', './eq'], function(baseSortedIndex, eq) {
    * @returns {number} Returns the index of the matched value, else `-1`.
    * @example
    *
-   * _.sortedIndexOf([1, 1, 2, 2], 2);
-   * // => 2
+   * _.sortedIndexOf([4, 5, 5, 5, 6], 5);
+   * // => 1
    */
   function sortedIndexOf(array, value) {
     var length = array ? array.length : 0;

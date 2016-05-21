@@ -1,4 +1,4 @@
-define([], function() {
+define(['./stubArray'], function(stubArray) {
 
   /** Built-in value references. */
   var getOwnPropertySymbols = Object.getOwnPropertySymbols;
@@ -18,9 +18,7 @@ define([], function() {
 
   // Fallback for IE < 11.
   if (!getOwnPropertySymbols) {
-    getSymbols = function() {
-      return [];
-    };
+    getSymbols = stubArray;
   }
 
   return getSymbols;

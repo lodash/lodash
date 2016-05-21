@@ -1,4 +1,4 @@
-define(['./_baseEach', './_baseFind', './_baseFindIndex', './_baseIteratee', './isArray'], function(baseEach, baseFind, baseFindIndex, baseIteratee, isArray) {
+define(['./findIndex', './isArrayLike', './values'], function(findIndex, isArrayLike, values) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -15,6 +15,7 @@ define(['./_baseEach', './_baseFind', './_baseFindIndex', './_baseIteratee', './
    * @param {Array|Object} collection The collection to search.
    * @param {Array|Function|Object|string} [predicate=_.identity]
    *  The function invoked per iteration.
+   * @param {number} [fromIndex=0] The index to search from.
    * @returns {*} Returns the matched element, else `undefined`.
    * @example
    *
@@ -39,13 +40,10 @@ define(['./_baseEach', './_baseFind', './_baseFindIndex', './_baseIteratee', './
    * _.find(users, 'active');
    * // => object for 'barney'
    */
-  function find(collection, predicate) {
-    predicate = baseIteratee(predicate, 3);
-    if (isArray(collection)) {
-      var index = baseFindIndex(collection, predicate);
-      return index > -1 ? collection[index] : undefined;
-    }
-    return baseFind(collection, predicate, baseEach);
+  function find(collection, predicate, fromIndex) {
+    collection = isArrayLike(collection) ? collection : values(collection);
+    var index = findIndex(collection, predicate, fromIndex);
+    return index > -1 ? collection[index] : undefined;
   }
 
   return find;

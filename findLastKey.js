@@ -1,4 +1,4 @@
-define(['./_baseFind', './_baseForOwnRight', './_baseIteratee'], function(baseFind, baseForOwnRight, baseIteratee) {
+define(['./_baseFindKey', './_baseForOwnRight', './_baseIteratee'], function(baseFindKey, baseForOwnRight, baseIteratee) {
 
   /**
    * This method is like `_.findKey` except that it iterates over elements of
@@ -37,7 +37,7 @@ define(['./_baseFind', './_baseForOwnRight', './_baseIteratee'], function(baseFi
    * // => 'pebbles'
    */
   function findLastKey(object, predicate) {
-    return baseFind(object, baseIteratee(predicate, 3), baseForOwnRight, true);
+    return baseFindKey(object, baseIteratee(predicate, 3), baseForOwnRight);
   }
 
   return findLastKey;

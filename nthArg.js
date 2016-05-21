@@ -1,7 +1,7 @@
 define(['./_baseNth', './rest', './toInteger'], function(baseNth, rest, toInteger) {
 
   /**
-   * Creates a function that gets the argument at `n` index. If `n` is negative,
+   * Creates a function that gets the argument at index `n`. If `n` is negative,
    * the nth argument from the end is returned.
    *
    * @static

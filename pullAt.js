@@ -15,14 +15,14 @@ define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_compa
    * @returns {Array} Returns the new array of removed elements.
    * @example
    *
-   * var array = [5, 10, 15, 20];
-   * var evens = _.pullAt(array, 1, 3);
+   * var array = ['a', 'b', 'c', 'd'];
+   * var pulled = _.pullAt(array, [1, 3]);
    *
    * console.log(array);
-   * // => [5, 15]
+   * // => ['a', 'c']
    *
-   * console.log(evens);
-   * // => [10, 20]
+   * console.log(pulled);
+   * // => ['b', 'd']
    */
   var pullAt = rest(function(array, indexes) {
     indexes = baseFlatten(indexes, 1);

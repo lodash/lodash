@@ -1,4 +1,4 @@
-define(['./attempt', './bindAll', './cond', './conforms', './constant', './flow', './flowRight', './identity', './iteratee', './matches', './matchesProperty', './method', './methodOf', './mixin', './noop', './nthArg', './over', './overEvery', './overSome', './property', './propertyOf', './range', './rangeRight', './times', './toPath', './uniqueId'], function(attempt, bindAll, cond, conforms, constant, flow, flowRight, identity, iteratee, matches, matchesProperty, method, methodOf, mixin, noop, nthArg, over, overEvery, overSome, property, propertyOf, range, rangeRight, times, toPath, uniqueId) {
+define(['./attempt', './bindAll', './cond', './conforms', './constant', './flow', './flowRight', './identity', './iteratee', './matches', './matchesProperty', './method', './methodOf', './mixin', './noop', './nthArg', './over', './overEvery', './overSome', './property', './propertyOf', './range', './rangeRight', './stubArray', './stubFalse', './stubObject', './stubString', './stubTrue', './times', './toPath', './uniqueId'], function(attempt, bindAll, cond, conforms, constant, flow, flowRight, identity, iteratee, matches, matchesProperty, method, methodOf, mixin, noop, nthArg, over, overEvery, overSome, property, propertyOf, range, rangeRight, stubArray, stubFalse, stubObject, stubString, stubTrue, times, toPath, uniqueId) {
   return {
     'attempt': attempt,
     'bindAll': bindAll,
@@ -23,6 +23,11 @@ define(['./attempt', './bindAll', './cond', './conforms', './constant', './flow'
     'propertyOf': propertyOf,
     'range': range,
     'rangeRight': rangeRight,
+    'stubArray': stubArray,
+    'stubFalse': stubFalse,
+    'stubObject': stubObject,
+    'stubString': stubString,
+    'stubTrue': stubTrue,
     'times': times,
     'toPath': toPath,
     'uniqueId': uniqueId

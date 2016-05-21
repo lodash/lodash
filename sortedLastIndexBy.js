@@ -17,8 +17,13 @@ define(['./_baseIteratee', './_baseSortedIndexBy'], function(baseIteratee, baseS
    *  into `array`.
    * @example
    *
+   * var objects = [{ 'x': 4 }, { 'x': 5 }];
+   *
+   * _.sortedLastIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+   * // => 1
+   *
    * // The `_.property` iteratee shorthand.
-   * _.sortedLastIndexBy([{ 'x': 4 }, { 'x': 5 }], { 'x': 4 }, 'x');
+   * _.sortedLastIndexBy(objects, { 'x': 4 }, 'x');
    * // => 1
    */
   function sortedLastIndexBy(array, value, iteratee) {

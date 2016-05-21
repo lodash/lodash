@@ -1,4 +1,4 @@
-define(['./_baseFind', './_baseForOwn', './_baseIteratee'], function(baseFind, baseForOwn, baseIteratee) {
+define(['./_baseFindKey', './_baseForOwn', './_baseIteratee'], function(baseFindKey, baseForOwn, baseIteratee) {
 
   /**
    * This method is like `_.find` except that it returns the key of the first
@@ -37,7 +37,7 @@ define(['./_baseFind', './_baseForOwn', './_baseIteratee'], function(baseFind, b
    * // => 'barney'
    */
   function findKey(object, predicate) {
-    return baseFind(object, baseIteratee(predicate, 3), baseForOwn, true);
+    return baseFindKey(object, baseIteratee(predicate, 3), baseForOwn);
   }
 
   return findKey;

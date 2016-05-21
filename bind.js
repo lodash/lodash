@@ -11,7 +11,7 @@ define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], func
    * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
    * may be used as a placeholder for partially applied arguments.
    *
-   * **Note:** Unlike native `Function#bind` this method doesn't set the "length"
+   * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
    * property of bound functions.
    *
    * @static

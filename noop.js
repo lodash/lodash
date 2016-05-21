@@ -1,8 +1,7 @@
 define([], function() {
 
   /**
-   * A no-operation function that returns `undefined` regardless of the
-   * arguments it receives.
+   * A method that returns `undefined`.
    *
    * @static
    * @memberOf _
@@ -10,10 +9,8 @@ define([], function() {
    * @category Util
    * @example
    *
-   * var object = { 'user': 'fred' };
-   *
-   * _.noop(object) === undefined;
-   * // => true
+   * _.times(2, _.noop);
+   * // => [undefined, undefined]
    */
   function noop() {
     // No operation performed.

@@ -43,7 +43,7 @@ define(['./_indexOfNaN', './toInteger'], function(indexOfNaN, toInteger) {
       ) + 1;
     }
     if (value !== value) {
-      return indexOfNaN(array, index, true);
+      return indexOfNaN(array, index - 1, true);
     }
     while (index--) {
       if (array[index] === value) {

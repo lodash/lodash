@@ -15306,7 +15306,9 @@
      * _.times(2, _.stubFalse);
      * // => [false, false]
      */
-    var stubFalse = constant(false);
+    function stubFalse() {
+      return false;
+    }
 
     /**
      * A method that returns a new empty object.
@@ -15343,7 +15345,9 @@
      * _.times(2, _.stubString);
      * // => ['', '']
      */
-    var stubString = constant('');
+    function stubString() {
+      return '';
+    }
 
     /**
      * A method that returns `true`.
@@ -15358,7 +15362,9 @@
      * _.times(2, _.stubTrue);
      * // => [true, true]
      */
-    var stubTrue = constant(true);
+    function stubTrue() {
+      return true;
+    }
 
     /**
      * Invokes the iteratee `n` times, returning an array of the results of

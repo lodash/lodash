@@ -5415,7 +5415,7 @@
      */
     function getNative(object, key) {
       var value = getValue(object, key);
-      return (isMaskable(value) ? baseIsNative : isNative)(value) ? value : undefined;
+      return baseIsNative(value) ? value : undefined;
     }
 
     /**

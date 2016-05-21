@@ -5784,7 +5784,7 @@
      * @returns {boolean} Returns `true` if `func` is masked, else `false`.
      */
     function isMasked(func) {
-      return maskSrcKey in func;
+      return !!maskSrcKey && (maskSrcKey in func);
     }
 
     /**
@@ -5794,9 +5794,7 @@
      * @param {*} value The value to check.
      * @returns {boolean} Returns `true` if `func` is maskable, else `false`.
      */
-    function isMaskable(value) {
-      return !!coreJsData && isFunction(value);
-    }
+    var isMaskable = !coreJsData ? stubFalse : isFunction;
 
     /**
      * Checks if `value` is likely a prototype object.

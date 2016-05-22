@@ -1097,9 +1097,9 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.findIndexFrom methods');
+  QUnit.module('fp.findFrom methods');
 
-  _.each(['findIndexFrom', 'findLastIndexFrom'], function(methodName) {
+  _.each(['findFrom', 'findIndexFrom', 'findLastFrom', 'findLastIndexFrom'], function(methodName) {
     var func = fp[methodName];
 
     QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments', function(assert) {
@@ -1114,6 +1114,44 @@
       assert.deepEqual(args, [2]);
     });
   });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.findFrom');
+
+  (function() {
+    function resolve(value) {
+      return fp.flow(fp.property('a'), fp.eq(value));
+    }
+
+    QUnit.test('should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }, { 'a': 2 }];
+
+      assert.strictEqual(fp.findFrom(resolve(1))(1)(objects), objects[2]);
+      assert.strictEqual(fp.findFrom(resolve(2))(-2)(objects), objects[3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.findLastFrom');
+
+  (function() {
+    function resolve(value) {
+      return fp.flow(fp.property('a'), fp.eq(value));
+    }
+
+    QUnit.test('should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }, { 'a': 2 }];
+
+      assert.strictEqual(fp.findLastFrom(resolve(1))(1)(objects), objects[0]);
+      assert.strictEqual(fp.findLastFrom(resolve(2))(-2)(objects), objects[1]);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

@@ -839,7 +839,58 @@
     QUnit.test('should return the elements of the first array not included in the second array', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(fp.difference([1, 2])([2, 3]), [1]);
+      var actual = fp.difference([2, 1], [2, 3]);
+      assert.deepEqual(actual, [1]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.differenceBy');
+
+  (function() {
+    QUnit.test('should have an argument order of `iteratee`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.differenceBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+      assert.deepEqual(actual, [1.2]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.differenceBy(function() {
+        args || (args = slice.call(arguments));
+      })([2.1, 1.2], [2.3, 3.4]);
+
+      assert.deepEqual(args, [2.3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.differenceWith');
+
+  (function() {
+    QUnit.test('should have an argument order of `comparator`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.differenceWith(fp.eq)([2, 1])([2, 3]);
+      assert.deepEqual(actual, [1]);
+    });
+
+    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.differenceWith(function() {
+        args || (args = slice.call(arguments));
+      })([2, 1])([2, 3]);
+
+      assert.deepEqual(args, [2, 2]);
     });
   }());
 

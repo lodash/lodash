@@ -18997,11 +18997,8 @@
     QUnit.test('should modify the array and return removed elements', function(assert) {
       assert.expect(2);
 
-      var array = [1, 2, 3, 4];
-
-      var actual = _.remove(array, function(n) {
-        return n % 2 == 0;
-      });
+      var array = [1, 2, 3, 4],
+          actual = _.remove(array, isEven);
 
       assert.deepEqual(array, [1, 3]);
       assert.deepEqual(actual, [2, 4]);

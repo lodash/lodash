@@ -5817,6 +5817,32 @@
     (function() {
       var array = [1, 2, 3, 4];
 
+      var expected = ({
+        'find': [0, 1, 2, 3],
+        'findLast': [3, 2, 1, 0],
+        'findIndex': [0, 1, 2, 3],
+        'findLastIndex': [3, 2, 1, 0]
+      })[methodName];
+
+      if (expected != null) {
+        QUnit.test('`_.' + methodName + '` should pass the index as the second argument for `iteratee`', function(assert) {
+          assert.expect(1);
+
+          var actual = [];
+
+          func(array, function(n, index) {
+            actual.push(index);
+            return false;
+          });
+
+          assert.deepEqual(actual, expected);
+        });
+      }
+    }());
+
+    (function() {
+      var array = [1, 2, 3, 4];
+
       QUnit.test('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function(assert) {
         assert.expect(1);
 

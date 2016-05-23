@@ -6192,8 +6192,8 @@
      * @see _.without, _.xor
      * @example
      *
-     * _.difference([3, 2, 1], [4, 2]);
-     * // => [3, 1]
+     * _.difference([2, 1], [2, 3]);
+     * // => [1]
      */
     var difference = rest(function(array, values) {
       return isArrayLikeObject(array)
@@ -6218,8 +6218,8 @@
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
-     * _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
-     * // => [3.1, 1.3]
+     * _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+     * // => [1.2]
      *
      * // The `_.property` iteratee shorthand.
      * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
@@ -6742,7 +6742,7 @@
      * @returns {Array} Returns the new array of intersecting values.
      * @example
      *
-     * _.intersection([2, 1], [4, 2], [1, 2]);
+     * _.intersection([2, 1], [2, 3]);
      * // => [2]
      */
     var intersection = rest(function(arrays) {
@@ -6768,7 +6768,7 @@
      * @returns {Array} Returns the new array of intersecting values.
      * @example
      *
-     * _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+     * _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
      * // => [2.1]
      *
      * // The `_.property` iteratee shorthand.
@@ -7572,8 +7572,8 @@
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
-     * _.union([2, 1], [4, 2], [1, 2]);
-     * // => [2, 1, 4]
+     * _.union([2], [1, 2]);
+     * // => [2, 1]
      */
     var union = rest(function(arrays) {
       return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
@@ -7595,8 +7595,8 @@
      * @returns {Array} Returns the new array of combined values.
      * @example
      *
-     * _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-     * // => [2.1, 1.2, 4.3]
+     * _.unionBy([2.1], [1.2, 2.3], Math.floor);
+     * // => [2.1, 1.2]
      *
      * // The `_.property` iteratee shorthand.
      * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
@@ -7798,7 +7798,7 @@
      * @see _.difference, _.xor
      * @example
      *
-     * _.without([1, 2, 1, 3], 1, 2);
+     * _.without([2, 1, 2, 3], 1, 2);
      * // => [3]
      */
     var without = rest(function(array, values) {
@@ -7822,8 +7822,8 @@
      * @see _.difference, _.without
      * @example
      *
-     * _.xor([2, 1], [4, 2]);
-     * // => [1, 4]
+     * _.xor([2, 1], [2, 3]);
+     * // => [1, 3]
      */
     var xor = rest(function(arrays) {
       return baseXor(arrayFilter(arrays, isArrayLikeObject));
@@ -7845,8 +7845,8 @@
      * @returns {Array} Returns the new array of filtered values.
      * @example
      *
-     * _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-     * // => [1.2, 4.3]
+     * _.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+     * // => [1.2, 3.4]
      *
      * // The `_.property` iteratee shorthand.
      * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');

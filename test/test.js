@@ -4751,14 +4751,18 @@
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` should return the difference of the given arrays', function(assert) {
-      assert.expect(2);
+    QUnit.test('`_.' + methodName + '` should return the difference of two arrays', function(assert) {
+      assert.expect(1);
 
-      var actual = func([1, 2, 3, 4, 5], [5, 2, 10]);
-      assert.deepEqual(actual, [1, 3, 4]);
+      var actual = func([2, 1], [2, 3]);
+      assert.deepEqual(actual, [1]);
+    });
 
-      actual = func([1, 2, 3, 4, 5], [5, 2, 10], [8, 4]);
-      assert.deepEqual(actual, [1, 3]);
+    QUnit.test('`_.' + methodName + '` should return the difference of multiple arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([2, 1, 2, 3], [3, 4], [3, 2]);
+      assert.deepEqual(actual, [1]);
     });
 
     QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
@@ -4850,8 +4854,8 @@
     QUnit.test('should accept an `iteratee` argument', function(assert) {
       assert.expect(2);
 
-      var actual = _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], Math.floor);
-      assert.deepEqual(actual, [3.1, 1.3]);
+      var actual = _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+      assert.deepEqual(actual, [1.2]);
 
       actual = _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
       assert.deepEqual(actual, [{ 'x': 2 }]);
@@ -4862,11 +4866,11 @@
 
       var args;
 
-      _.differenceBy([3.1, 2.2, 1.3], [4.4, 2.5], function() {
+      _.differenceBy([2.1, 1.2], [2.3, 3.4], function() {
         args || (args = slice.call(arguments));
       });
 
-      assert.deepEqual(args, [4.4]);
+      assert.deepEqual(args, [2.3]);
     });
   }());
 
@@ -8185,23 +8189,17 @@
         func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should return the intersection of two arrays', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      var actual = func([1, 3, 2], [5, 2, 1, 4]);
-      assert.deepEqual(actual, [1, 2]);
-
-      actual = func([5, 2, 1, 4], [1, 3, 2]);
-      assert.deepEqual(actual, [2, 1]);
+      var actual = func([2, 1], [2, 3]);
+      assert.deepEqual(actual, [2]);
     });
 
     QUnit.test('`_.' + methodName + '` should return the intersection of multiple arrays', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
-      assert.deepEqual(actual, [1, 2]);
-
-      actual = func([5, 2, 1, 4], [2, 1], [1, 3, 2]);
-      assert.deepEqual(actual, [2, 1]);
+      var actual = func([2, 1, 2, 3], [3, 4], [3, 2]);
+      assert.deepEqual(actual, [3]);
     });
 
     QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {
@@ -8310,7 +8308,7 @@
     QUnit.test('should accept an `iteratee` argument', function(assert) {
       assert.expect(2);
 
-      var actual = _.intersectionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
+      var actual = _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
       assert.deepEqual(actual, [2.1]);
 
       actual = _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
@@ -8322,11 +8320,11 @@
 
       var args;
 
-      _.intersectionBy([2.1, 1.2], [4.3, 2.4], function() {
+      _.intersectionBy([2.1, 1.2], [2.3, 3.4], function() {
         args || (args = slice.call(arguments));
       });
 
-      assert.deepEqual(args, [4.3]);
+      assert.deepEqual(args, [2.3]);
     });
   }());
 
@@ -24391,14 +24389,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('union methods');
+
+  lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {
+    var args = (function() { return arguments; }(1, 2, 3)),
+        func = _[methodName];
+
+    QUnit.test('`_.' + methodName + '` should return the union of two arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([2], [1, 2]);
+      assert.deepEqual(actual, [2, 1]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return the union of multiple arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([2], [1, 2], [2, 3]);
+      assert.deepEqual(actual, [2, 1, 3]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should not flatten nested arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([1, 3, 2], [1, [5]], [2, [4]]);
+      assert.deepEqual(actual, [1, 3, 2, [5], [4]]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
+      assert.expect(3);
+
+      var array = [0];
+      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
+      assert.deepEqual(func(null, array, null, [2, 1]), [0, 2, 1]);
+      assert.deepEqual(func(array, null, args, null), [0, 1, 2, 3]);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.unionBy');
 
   (function() {
     QUnit.test('should accept an `iteratee` argument', function(assert) {
       assert.expect(2);
 
-      var actual = _.unionBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-      assert.deepEqual(actual, [2.1, 1.2, 4.3]);
+      var actual = _.unionBy([2.1], [1.2, 2.3], Math.floor);
+      assert.deepEqual(actual, [2.1, 1.2]);
 
       actual = _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
       assert.deepEqual(actual, [{ 'x': 1 }, { 'x': 2 }]);
@@ -24409,7 +24446,7 @@
 
       var args;
 
-      _.unionBy([2.1, 1.2], [4.3, 2.4], function() {
+      _.unionBy([2.1], [1.2, 2.3], function() {
         args || (args = slice.call(arguments));
       });
 
@@ -24435,33 +24472,150 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('union methods');
+  QUnit.module('uniq methods');
 
-  lodashStable.each(['union', 'unionBy', 'unionWith'], function(methodName) {
-    var args = (function() { return arguments; }(1, 2, 3)),
-        func = _[methodName];
+  lodashStable.each(['uniq', 'uniqBy', 'uniqWith', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
+    var func = _[methodName],
+        isSorted = /^sorted/.test(methodName),
+        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
-    QUnit.test('`_.' + methodName + '` should return the union of the given arrays', function(assert) {
+    if (isSorted) {
+      objects = _.sortBy(objects, 'a');
+    }
+    else {
+      QUnit.test('`_.' + methodName + '` should return unique values of an unsorted array', function(assert) {
+        assert.expect(1);
+
+        var array = [2, 1, 2];
+        assert.deepEqual(func(array), [2, 1]);
+      });
+    }
+    QUnit.test('`_.' + methodName + '` should return unique values of a sorted array', function(assert) {
       assert.expect(1);
 
-      var actual = func([1, 3, 2], [5, 2, 1, 4], [2, 1]);
-      assert.deepEqual(actual, [1, 3, 2, 5, 4]);
+      var array = [1, 2, 2];
+      assert.deepEqual(func(array), [1, 2]);
     });
 
-    QUnit.test('`_.' + methodName + '` should not flatten nested arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should treat object instances as unique', function(assert) {
       assert.expect(1);
 
-      var actual = func([1, 3, 2], [1, [5]], [2, [4]]);
-      assert.deepEqual(actual, [1, 3, 2, [5], [4]]);
+      assert.deepEqual(func(objects), objects);
     });
 
-    QUnit.test('`_.' + methodName + '` should ignore values that are not arrays or `arguments` objects', function(assert) {
-      assert.expect(3);
+    QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
+      assert.expect(1);
 
-      var array = [0];
-      assert.deepEqual(func(array, 3, { '0': 1 }, null), array);
-      assert.deepEqual(func(null, array, null, [2, 1]), [0, 2, 1]);
-      assert.deepEqual(func(array, null, args, null), [0, 1, 2, 3]);
+      var actual = lodashStable.map(func([-0, 0]), lodashStable.toString);
+      assert.deepEqual(actual, ['0']);
+    });
+
+    QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(func([NaN, NaN]), [NaN]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with large arrays', function(assert) {
+      assert.expect(1);
+
+      var largeArray = [],
+          expected = [0, {}, 'a'],
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+
+      lodashStable.each(expected, function(value) {
+        lodashStable.times(count, function() {
+          largeArray.push(value);
+        });
+      });
+
+      assert.deepEqual(func(largeArray), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
+      assert.expect(1);
+
+      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+        return isEven(index) ? -0 : 0;
+      });
+
+      var actual = lodashStable.map(func(largeArray), lodashStable.toString);
+      assert.deepEqual(actual, ['0']);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with large arrays of boolean, `NaN`, and nullish values', function(assert) {
+      assert.expect(1);
+
+      var largeArray = [],
+          expected = [null, undefined, false, true, NaN],
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+
+      lodashStable.each(expected, function(value) {
+        lodashStable.times(count, function() {
+          largeArray.push(value);
+        });
+      });
+
+      assert.deepEqual(func(largeArray), expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with large arrays of symbols', function(assert) {
+      assert.expect(1);
+
+      if (Symbol) {
+        var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, Symbol);
+        assert.deepEqual(func(largeArray), largeArray);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with large arrays of well-known symbols', function(assert) {
+      assert.expect(1);
+
+      // See http://www.ecma-international.org/ecma-262/6.0/#sec-well-known-symbols.
+      if (Symbol) {
+        var expected = [
+          Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
+          Symbol.match, Symbol.replace, Symbol.search, Symbol.species,
+          Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, Symbol.unscopables
+        ];
+
+        var largeArray = [],
+            count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+
+        expected = lodashStable.map(expected, function(symbol) {
+          return symbol || {};
+        });
+
+        lodashStable.each(expected, function(value) {
+          lodashStable.times(count, function() {
+            largeArray.push(value);
+          });
+        });
+
+        assert.deepEqual(func(largeArray), expected);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('`_.' + methodName + '` should distinguish between numbers and numeric strings', function(assert) {
+      assert.expect(1);
+
+      var largeArray = [],
+          expected = ['2', 2, Object('2'), Object(2)],
+          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
+
+      lodashStable.each(expected, function(value) {
+        lodashStable.times(count, function() {
+          largeArray.push(value);
+        });
+      });
+
+      assert.deepEqual(func(largeArray), expected);
     });
   });
 
@@ -24593,155 +24747,6 @@
       assert.deepEqual(actual, expected);
     });
   }());
-
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('uniq methods');
-
-  lodashStable.each(['uniq', 'uniqBy', 'uniqWith', 'sortedUniq', 'sortedUniqBy'], function(methodName) {
-    var func = _[methodName],
-        isSorted = /^sorted/.test(methodName),
-        objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
-
-    if (isSorted) {
-      objects = _.sortBy(objects, 'a');
-    }
-    else {
-      QUnit.test('`_.' + methodName + '` should return unique values of an unsorted array', function(assert) {
-        assert.expect(1);
-
-        var array = [2, 3, 1, 2, 3, 1];
-        assert.deepEqual(func(array), [2, 3, 1]);
-      });
-    }
-    QUnit.test('`_.' + methodName + '` should return unique values of a sorted array', function(assert) {
-      assert.expect(1);
-
-      var array = [1, 1, 2, 2, 3];
-      assert.deepEqual(func(array), [1, 2, 3]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should treat object instances as unique', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(func(objects), objects);
-    });
-
-    QUnit.test('`_.' + methodName + '` should treat `-0` as `0`', function(assert) {
-      assert.expect(1);
-
-      var actual = lodashStable.map(func([-0, 0]), lodashStable.toString);
-      assert.deepEqual(actual, ['0']);
-    });
-
-    QUnit.test('`_.' + methodName + '` should match `NaN`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(func([NaN, NaN]), [NaN]);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with large arrays', function(assert) {
-      assert.expect(1);
-
-      var largeArray = [],
-          expected = [0, {}, 'a'],
-          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
-
-      lodashStable.each(expected, function(value) {
-        lodashStable.times(count, function() {
-          largeArray.push(value);
-        });
-      });
-
-      assert.deepEqual(func(largeArray), expected);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function(assert) {
-      assert.expect(1);
-
-      var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
-        return isEven(index) ? -0 : 0;
-      });
-
-      var actual = lodashStable.map(func(largeArray), lodashStable.toString);
-      assert.deepEqual(actual, ['0']);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with large arrays of boolean, `NaN`, and nullish values', function(assert) {
-      assert.expect(1);
-
-      var largeArray = [],
-          expected = [null, undefined, false, true, NaN],
-          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
-
-      lodashStable.each(expected, function(value) {
-        lodashStable.times(count, function() {
-          largeArray.push(value);
-        });
-      });
-
-      assert.deepEqual(func(largeArray), expected);
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with large arrays of symbols', function(assert) {
-      assert.expect(1);
-
-      if (Symbol) {
-        var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, Symbol);
-        assert.deepEqual(func(largeArray), largeArray);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('`_.' + methodName + '` should work with large arrays of well-known symbols', function(assert) {
-      assert.expect(1);
-
-      // See http://www.ecma-international.org/ecma-262/6.0/#sec-well-known-symbols.
-      if (Symbol) {
-        var expected = [
-          Symbol.hasInstance, Symbol.isConcatSpreadable, Symbol.iterator,
-          Symbol.match, Symbol.replace, Symbol.search, Symbol.species,
-          Symbol.split, Symbol.toPrimitive, Symbol.toStringTag, Symbol.unscopables
-        ];
-
-        var largeArray = [],
-            count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
-
-        expected = lodashStable.map(expected, function(symbol) {
-          return symbol || {};
-        });
-
-        lodashStable.each(expected, function(value) {
-          lodashStable.times(count, function() {
-            largeArray.push(value);
-          });
-        });
-
-        assert.deepEqual(func(largeArray), expected);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('`_.' + methodName + '` should distinguish between numbers and numeric strings', function(assert) {
-      assert.expect(1);
-
-      var largeArray = [],
-          expected = ['2', 2, Object('2'), Object(2)],
-          count = Math.ceil(LARGE_ARRAY_SIZE / expected.length);
-
-      lodashStable.each(expected, function(value) {
-        lodashStable.times(count, function() {
-          largeArray.push(value);
-        });
-      });
-
-      assert.deepEqual(func(largeArray), expected);
-    });
-  });
 
   /*--------------------------------------------------------------------------*/
 
@@ -25099,6 +25104,13 @@
   QUnit.module('lodash.without');
 
   (function() {
+    QUnit.test('should return the difference of values', function(assert) {
+      assert.expect(1);
+
+      var actual = _.without([2, 1, 2, 3], 1, 2);
+      assert.deepEqual(actual, [3]);
+    });
+
     QUnit.test('should use strict equality to determine the values to reject', function(assert) {
       assert.expect(2);
 
@@ -25284,11 +25296,18 @@
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName];
 
-    QUnit.test('`_.' + methodName + '` should return the symmetric difference of the given arrays', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return the symmetric difference of two arrays', function(assert) {
       assert.expect(1);
 
-      var actual = func([1, 2, 5], [2, 3, 5], [3, 4, 5]);
-      assert.deepEqual(actual, [1, 4, 5]);
+      var actual = func([2, 1], [2, 3]);
+      assert.deepEqual(actual, [1, 3]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return the symmetric difference of multiple arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = func([2, 1], [2, 3], [3, 4]);
+      assert.deepEqual(actual, [1, 4]);
     });
 
     QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {
@@ -25363,8 +25382,8 @@
     QUnit.test('should accept an `iteratee` argument', function(assert) {
       assert.expect(2);
 
-      var actual = _.xorBy([2.1, 1.2], [4.3, 2.4], Math.floor);
-      assert.deepEqual(actual, [1.2, 4.3]);
+      var actual = _.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+      assert.deepEqual(actual, [1.2, 3.4]);
 
       actual = _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
       assert.deepEqual(actual, [{ 'x': 2 }]);
@@ -25375,11 +25394,11 @@
 
       var args;
 
-      _.xorBy([2.1, 1.2], [4.3, 2.4], function() {
+      _.xorBy([2.1, 1.2], [2.3, 3.4], function() {
         args || (args = slice.call(arguments));
       });
 
-      assert.deepEqual(args, [4.3]);
+      assert.deepEqual(args, [2.3]);
     });
   }());
 

@@ -1,6 +1,5 @@
+import createFind from './_createFind.js';
 import findLastIndex from './findLastIndex.js';
-import isArrayLike from './isArrayLike.js';
-import values from './values.js';
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -22,10 +21,6 @@ import values from './values.js';
  * });
  * // => 3
  */
-function findLast(collection, predicate, fromIndex) {
-  collection = isArrayLike(collection) ? collection : values(collection);
-  var index = findLastIndex(collection, predicate, fromIndex);
-  return index > -1 ? collection[index] : undefined;
-}
+var findLast = createFind(findLastIndex);
 
 export default findLast;

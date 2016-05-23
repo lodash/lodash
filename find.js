@@ -1,6 +1,5 @@
+import createFind from './_createFind.js';
 import findIndex from './findIndex.js';
-import isArrayLike from './isArrayLike.js';
-import values from './values.js';
 
 /**
  * Iterates over elements of `collection`, returning the first element
@@ -39,10 +38,6 @@ import values from './values.js';
  * _.find(users, 'active');
  * // => object for 'barney'
  */
-function find(collection, predicate, fromIndex) {
-  collection = isArrayLike(collection) ? collection : values(collection);
-  var index = findIndex(collection, predicate, fromIndex);
-  return index > -1 ? collection[index] : undefined;
-}
+var find = createFind(findIndex);
 
 export default find;

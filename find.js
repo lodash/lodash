@@ -1,7 +1,4 @@
-define(['./findIndex', './isArrayLike', './values'], function(findIndex, isArrayLike, values) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_createFind', './findIndex'], function(createFind, findIndex) {
 
   /**
    * Iterates over elements of `collection`, returning the first element
@@ -40,11 +37,7 @@ define(['./findIndex', './isArrayLike', './values'], function(findIndex, isArray
    * _.find(users, 'active');
    * // => object for 'barney'
    */
-  function find(collection, predicate, fromIndex) {
-    collection = isArrayLike(collection) ? collection : values(collection);
-    var index = findIndex(collection, predicate, fromIndex);
-    return index > -1 ? collection[index] : undefined;
-  }
+  var find = createFind(findIndex);
 
   return find;
 });

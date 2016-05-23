@@ -7,7 +7,7 @@ define(['./_coreJsData', './isFunction', './stubFalse'], function(coreJsData, is
    * @param {*} value The value to check.
    * @returns {boolean} Returns `true` if `func` is maskable, else `false`.
    */
-  var isMaskable = !coreJsData ? stubFalse : isFunction;
+  var isMaskable = coreJsData ? isFunction : stubFalse;
 
   return isMaskable;
 });

@@ -1,7 +1,4 @@
-define(['./findLastIndex', './isArrayLike', './values'], function(findLastIndex, isArrayLike, values) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_createFind', './findLastIndex'], function(createFind, findLastIndex) {
 
   /**
    * This method is like `_.find` except that it iterates over elements of
@@ -23,11 +20,7 @@ define(['./findLastIndex', './isArrayLike', './values'], function(findLastIndex,
    * });
    * // => 3
    */
-  function findLast(collection, predicate, fromIndex) {
-    collection = isArrayLike(collection) ? collection : values(collection);
-    var index = findLastIndex(collection, predicate, fromIndex);
-    return index > -1 ? collection[index] : undefined;
-  }
+  var findLast = createFind(findLastIndex);
 
   return findLast;
 });

@@ -1186,6 +1186,56 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.intersectionBy');
+
+  (function() {
+    QUnit.test('should have an argument order of `iteratee`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.intersectionBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+      assert.deepEqual(actual, [2.1]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.intersectionBy(function() {
+        args || (args = slice.call(arguments));
+      })([2.1, 1.2], [2.3, 3.4]);
+
+      assert.deepEqual(args, [2.3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.intersectionWith');
+
+  (function() {
+    QUnit.test('should have an argument order of `comparator`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.intersectionWith(fp.eq)([2, 1])([2, 3]);
+      assert.deepEqual(actual, [2]);
+    });
+
+    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.intersectionWith(function() {
+        args || (args = slice.call(arguments));
+      })([2, 1])([2, 3]);
+
+      assert.deepEqual(args, [2, 2]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.invoke');
 
   (function() {

@@ -880,18 +880,6 @@
       var actual = fp.differenceWith(fp.eq)([2, 1])([2, 3]);
       assert.deepEqual(actual, [1]);
     });
-
-    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      fp.differenceWith(function() {
-        args || (args = slice.call(arguments));
-      })([2, 1])([2, 3]);
-
-      assert.deepEqual(args, [2, 2]);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -1219,18 +1207,6 @@
 
       var actual = fp.intersectionWith(fp.eq)([2, 1])([2, 3]);
       assert.deepEqual(actual, [2]);
-    });
-
-    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      fp.intersectionWith(function() {
-        args || (args = slice.call(arguments));
-      })([2, 1])([2, 3]);
-
-      assert.deepEqual(args, [2, 2]);
     });
   }());
 
@@ -1917,6 +1893,56 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.unionBy');
+
+  (function() {
+    QUnit.test('should have an argument order of `iteratee`, `array`, then `other`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.unionBy(Math.floor, [2.1], [1.2, 2.3]);
+      assert.deepEqual(actual, [2.1, 1.2]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.unionBy(function() {
+        args || (args = slice.call(arguments));
+      })([2.1], [1.2, 2.3]);
+
+      assert.deepEqual(args, [2.1]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.unionWith');
+
+  (function() {
+    QUnit.test('should have an argument order of `comparator`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.unionWith(fp.eq)([2, 1])([2, 3]);
+      assert.deepEqual(actual, [2, 1, 3]);
+    });
+
+    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.unionWith(function() {
+        args || (args = slice.call(arguments));
+      })([2, 1])([2, 3]);
+
+      assert.deepEqual(args, [1, 2]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.uniqBy');
 
   (function() {
@@ -1944,6 +1970,31 @@
       })(objects);
 
       assert.deepEqual(args, [objects[0]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.uniqWith');
+
+  (function() {
+    QUnit.test('should have an argument order of `comparator`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.uniqWith(fp.eq)([2, 1, 2]);
+      assert.deepEqual(actual, [2, 1]);
+    });
+
+    QUnit.test('should provide the correct `comparator` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.uniqWith(function() {
+        args || (args = slice.call(arguments));
+      })([2, 1, 2]);
+
+      assert.deepEqual(args, [1, 2]);
     });
   }());
 
@@ -2011,6 +2062,64 @@
       assert.deepEqual(actual, { 'a': { 'c': 3 } });
     });
   }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.xorBy');
+
+  (function() {
+    QUnit.test('should have an argument order of `iteratee`, `array`, then `other`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.xorBy(Math.floor, [2.1, 1.2], [2.3, 3.4]);
+      assert.deepEqual(actual, [1.2, 3.4]);
+    });
+
+    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      fp.xorBy(function() {
+        args || (args = slice.call(arguments));
+      })([2.1, 1.2], [2.3, 3.4]);
+
+      assert.deepEqual(args, [2.3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.xorWith');
+
+  (function() {
+    QUnit.test('should have an argument order of `comparator`, `array`, then `values`', function(assert) {
+      assert.expect(1);
+
+      var actual = fp.xorWith(fp.eq)([2, 1])([2, 3]);
+      assert.deepEqual(actual, [1, 3]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('with methods');
+
+  _.each(['differenceWith', 'intersectionWith', 'xorWith'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should provide the correct `comparator` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      func(function() {
+        args || (args = slice.call(arguments));
+      })([2, 1])([2, 3]);
+
+      assert.deepEqual(args, [2, 2]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

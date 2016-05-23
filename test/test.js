@@ -9777,9 +9777,10 @@
       var date = new Date(2012, 4, 23);
 
       assert.strictEqual(_.isEqual(date, new Date(2012, 4, 23)), true);
+      assert.strictEqual(_.isEqual(new Date('a'), new Date('b')), true);
+
       assert.strictEqual(_.isEqual(date, new Date(2013, 3, 25)), false);
       assert.strictEqual(_.isEqual(date, { 'getTime': lodashStable.constant(+date) }), false);
-      assert.strictEqual(_.isEqual(new Date('a'), new Date('a')), false);
     });
 
     QUnit.test('should compare error objects', function(assert) {

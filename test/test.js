@@ -5900,6 +5900,30 @@
         });
       }
     }());
+
+    (function() {
+      var expected = ({
+        'find': ['a', 'b', 'c'],
+        'findLast': ['c', 'b', 'a'],
+        'findKey': ['a', 'b', 'c'],
+        'findLastKey': ['c', 'b', 'a']
+      })[methodName];
+
+      if (expected != null) {
+        QUnit.test('`_.' + methodName + '` should pass the key as the second argument for `iteratee`', function(assert) {
+          assert.expect(1);
+
+          var actual = [];
+
+          func({ 'a': 1, 'b': 2, 'c': 3 }, function(n, key) {
+            actual.push(key);
+            return false;
+          });
+
+          assert.deepEqual(actual, expected);
+        });
+      }
+    }());
   });
 
   /*--------------------------------------------------------------------------*/

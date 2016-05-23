@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.13.0';
+  var VERSION = '4.13.1';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -1065,6 +1065,31 @@
   }
 
   /**
+   * Creates a `_.find` or `_.findLast` function.
+   *
+   * @private
+   * @param {Function} findIndexFunc The function to find the collection index.
+   * @returns {Function} Returns the new find function.
+   */
+  function createFind(findIndexFunc) {
+    return function(collection, predicate, fromIndex) {
+      var iterable = Object(collection);
+      predicate = baseIteratee(predicate, 3);
+      if (!isArrayLike(collection)) {
+        var props = keys(collection);
+      }
+      var index = findIndexFunc(props || collection, function(value, key) {
+        if (props) {
+          key = value;
+          value = iterable[key];
+        }
+        return predicate(value, key, iterable);
+      }, fromIndex);
+      return index > -1 ? collection[props ? props[index] : index] : undefined;
+    };
+  }
+
+  /**
    * Creates a function that wraps `func` to invoke it with the `this` binding
    * of `thisArg` and `partials` prepended to the arguments it receives.
    *
@@ -1819,11 +1844,7 @@
    * _.find(users, 'active');
    * // => object for 'barney'
    */
-  function find(collection, predicate, fromIndex) {
-    collection = isArrayLike(collection) ? collection : values(collection);
-    var index = findIndex(collection, predicate, fromIndex);
-    return index > -1 ? collection[index] : undefined;
-  }
+  var find = createFind(findIndex);
 
   /**
    * Iterates over elements of `collection` and invokes `iteratee` for each element.

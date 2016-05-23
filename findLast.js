@@ -1,6 +1,5 @@
-var findLastIndex = require('./findLastIndex'),
-    isArrayLike = require('./isArrayLike'),
-    values = require('./values');
+var createFind = require('./_createFind'),
+    findLastIndex = require('./findLastIndex');
 
 /**
  * This method is like `_.find` except that it iterates over elements of
@@ -22,10 +21,6 @@ var findLastIndex = require('./findLastIndex'),
  * });
  * // => 3
  */
-function findLast(collection, predicate, fromIndex) {
-  collection = isArrayLike(collection) ? collection : values(collection);
-  var index = findLastIndex(collection, predicate, fromIndex);
-  return index > -1 ? collection[index] : undefined;
-}
+var findLast = createFind(findLastIndex);
 
 module.exports = findLast;

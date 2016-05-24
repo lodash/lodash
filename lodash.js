@@ -14713,11 +14713,17 @@
      * console.log(_.defaultTo(undefined, 10));
      * // => 10
      *
-     * console.log(_.defaultTo([1,2,3,], 10));
-     * // => [1,2,3,]
+     * // Inside flow (FP only)
+     * var findOrDefault = _.flow([
+     *   _.find(function(number) { number > 5; }),
+     *   _.defaultTo(0)
+     * ]);
+     *
+     * findOrDefault([1,2,3]);
+     * // => 0
      */
-    function defaultTo(input, defaultValue) {
-      return input === undefined ? defaultValue : input;
+    function defaultTo(value, defaultValue) {
+      return value === undefined ? defaultValue : value;
     }
 
     /**

@@ -833,6 +833,25 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.defaultTo');
+
+  (function() {
+    QUnit.test('should return a default value if input is undefined', function(assert) {
+      assert.expect(2);
+
+      var actual = fp.defaultTo(0)(undefined);
+      assert.deepEqual(actual, 0);
+
+      var actual = fp.flow(
+        fp.find(function(a) { return a > 5; }),
+        fp.defaultTo(0)
+      )([1,2,3,4,5]);
+      assert.deepEqual(actual, 0);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.difference');
 
   (function() {

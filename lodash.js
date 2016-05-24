@@ -2122,7 +2122,7 @@
      */
     function stackSet(key, value) {
       var cache = this.__data__;
-      if (cache instanceof ListCache && cache.__data__.length == LARGE_ARRAY_SIZE) {
+      if (Map && cache instanceof ListCache && cache.__data__.length == LARGE_ARRAY_SIZE) {
         cache = this.__data__ = new MapCache(cache.__data__);
       }
       cache.set(key, value);

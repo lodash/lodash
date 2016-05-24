@@ -44,4 +44,4 @@ export { default as update } from './update.js';
 export { default as updateWith } from './updateWith.js';
 export { default as values } from './values.js';
 export { default as valuesIn } from './valuesIn.js';
-export { default as default } from './object.default';
+export { default as default } from './object.default.js';

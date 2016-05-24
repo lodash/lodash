@@ -53,4 +53,4 @@ export { default as toNumber } from './toNumber.js';
 export { default as toPlainObject } from './toPlainObject.js';
 export { default as toSafeInteger } from './toSafeInteger.js';
 export { default as toString } from './toString.js';
-export { default as default } from './lang.default';
+export { default as default } from './lang.default.js';

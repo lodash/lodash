@@ -27,4 +27,4 @@ export { default as shuffle } from './shuffle.js';
 export { default as size } from './size.js';
 export { default as some } from './some.js';
 export { default as sortBy } from './sortBy.js';
-export { default as default } from './collection.default';
+export { default as default } from './collection.default.js';

@@ -29,4 +29,4 @@ export { default as stubTrue } from './stubTrue.js';
 export { default as times } from './times.js';
 export { default as toPath } from './toPath.js';
 export { default as uniqueId } from './uniqueId.js';
-export { default as default } from './util.default';
+export { default as default } from './util.default.js';

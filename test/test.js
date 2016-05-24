@@ -3045,7 +3045,7 @@
       var func = _[methodName],
           isDeep = methodName == 'cloneDeepWith';
 
-      QUnit.test('`_.' + methodName + '` should provide the correct `customizer` arguments', function(assert) {
+      QUnit.test('`_.' + methodName + '` should provide correct `customizer` arguments', function(assert) {
         assert.expect(1);
 
         var argsList = [],
@@ -4861,7 +4861,7 @@
       assert.deepEqual(actual, [{ 'x': 2 }]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -5124,7 +5124,7 @@
       assert.deepEqual(actual, [1, 2]);
     });
 
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -5194,7 +5194,7 @@
       assert.deepEqual(actual, [3, 4]);
     });
 
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -6849,7 +6849,7 @@
           isOmitPick = /^(?:omit|pick)By$/.test(methodName),
           isSome = methodName == 'some';
 
-      QUnit.test('`_.' + methodName + '` should provide the correct iteratee arguments', function(assert) {
+      QUnit.test('`_.' + methodName + '` should provide correct iteratee arguments', function(assert) {
         assert.expect(1);
 
         if (func) {
@@ -7265,7 +7265,7 @@
     var func = _[methodName],
         isMergeWith = methodName == 'mergeWith';
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `customizer` arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide correct `customizer` arguments', function(assert) {
       assert.expect(3);
 
       var args,
@@ -8340,7 +8340,7 @@
       assert.deepEqual(actual, [{ 'x': 1 }]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -10053,7 +10053,7 @@
   QUnit.module('lodash.isEqualWith');
 
   (function() {
-    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
+    QUnit.test('should provide correct `customizer` arguments', function(assert) {
       assert.expect(1);
 
       var argsList = [],
@@ -10911,7 +10911,7 @@
   QUnit.module('lodash.isMatchWith');
 
   (function() {
-    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
+    QUnit.test('should provide correct `customizer` arguments', function(assert) {
       assert.expect(1);
 
       var argsList = [],
@@ -13635,7 +13635,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -14680,7 +14680,7 @@
       assert.deepEqual(actual, 2);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -18128,7 +18128,7 @@
       assert.deepEqual(actual, [{ 'x': 2 }]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args,
@@ -18668,7 +18668,7 @@
       assert.strictEqual(_.reduce(array), 1);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments when iterating an array', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments when iterating an array', function(assert) {
       assert.expect(2);
 
       var args;
@@ -18687,7 +18687,7 @@
       assert.deepEqual(args, [1, 2, 1, array]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments when iterating an object', function(assert) {
       assert.expect(2);
 
       var args,
@@ -18730,7 +18730,7 @@
       assert.strictEqual(_.reduceRight(array), 3);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments when iterating an array', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments when iterating an array', function(assert) {
       assert.expect(2);
 
       var args;
@@ -18749,7 +18749,7 @@
       assert.deepEqual(args, [3, 2, 1, array]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments when iterating an object', function(assert) {
       assert.expect(2);
 
       var args,
@@ -18965,7 +18965,7 @@
       }
     });
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -19028,7 +19028,7 @@
       assert.deepEqual(actual, [2, 4]);
     });
 
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var argsList = [],
@@ -20812,7 +20812,7 @@
     var func = _[methodName],
         isSortedIndexBy = methodName == 'sortedIndexBy';
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -20979,7 +20979,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should provide the correct `func` arguments', function(assert) {
+    QUnit.test('should provide correct `func` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -21291,7 +21291,7 @@
       assert.deepEqual(actual, 6);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -21643,7 +21643,7 @@
       assert.deepEqual(actual, [3, 4]);
     });
 
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -21691,7 +21691,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -21758,7 +21758,7 @@
       assert.deepEqual(actual, [1, 2]);
     });
 
-    QUnit.test('should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -21824,7 +21824,7 @@
       }
     });
 
-    QUnit.test('should provide the correct `predicate` arguments in a lazy sequence', function(assert) {
+    QUnit.test('should provide correct `predicate` arguments in a lazy sequence', function(assert) {
       assert.expect(5);
 
       if (!isNpm) {
@@ -23057,7 +23057,7 @@
       assert.deepEqual(actual, [0, 1]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -24018,7 +24018,7 @@
       'object': { 'a': 1, 'b': 2, 'c': 3 }
     },
     function(object, key) {
-      QUnit.test('should provide the correct `iteratee` arguments when transforming an ' + key, function(assert) {
+      QUnit.test('should provide correct `iteratee` arguments when transforming an ' + key, function(assert) {
         assert.expect(2);
 
         var args;
@@ -24467,7 +24467,7 @@
       assert.deepEqual(actual, [{ 'x': 1 }, { 'x': 2 }]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -24696,7 +24696,7 @@
       assert.deepEqual(actual, [[1, 2]]);
     });
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('`_.' + methodName + '` should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -24965,7 +24965,7 @@
       assert.deepEqual(actual, [6, 15]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -25275,7 +25275,7 @@
       assert.strictEqual(p('fred, barney, & pebbles'), '<p>fred, barney, &amp; pebbles</p>');
     });
 
-    QUnit.test('should provide the correct `wrapper` arguments', function(assert) {
+    QUnit.test('should provide correct `wrapper` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -25415,7 +25415,7 @@
       assert.deepEqual(actual, [{ 'x': 2 }]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -25522,7 +25522,7 @@
       assert.deepEqual(actual, [1, 2, 3]);
     });
 
-    QUnit.test('should provide the correct `iteratee` arguments', function(assert) {
+    QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 
       var args;

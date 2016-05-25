@@ -833,6 +833,42 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.defaultTo');
+
+  (function() {
+    QUnit.test('should return a default value if input is undefined', function(assert) {
+      assert.expect(4);
+
+      // default (inverse params)
+      var actual = fp.defaultTo(0, fp.find(function(a) { return a > 1; }, [1,2,3]));
+      assert.deepEqual(actual, 2);
+
+      var actual = fp.defaultTo(0, fp.find(function(a) { return a > 5; }, [1,2,3]));
+      assert.deepEqual(actual, 0);
+
+      // curried
+      var actual = fp.defaultTo(0)(fp.find(function(a) { return a > 1; })([1,2,3]));
+      assert.deepEqual(actual, 2);
+
+      var actual = fp.defaultTo(0)(fp.find(function(a) { return a > 5; })([1,2,3]));
+      assert.deepEqual(actual, 0);
+    });
+
+    QUnit.test('should work in a flow', function(assert) {
+      assert.expect(2);
+
+      var actual = fp.flow([
+        fp.find(function(a) { return a > 3 }),
+        fp.defaultTo(0)
+      ]);
+
+      assert.deepEqual(actual([1,2,3]), 0);
+      assert.deepEqual(actual([3,4,5]), 4);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.difference');
 
   (function() {

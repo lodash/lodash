@@ -4601,6 +4601,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.defaultTo');
+
+  (function() {
+    QUnit.test('should return a default value if the input is undefined', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.defaultTo(1, 0), 1);
+      assert.strictEqual(_.defaultTo(undefined, 0), 0);
+
+      var actual = _.defaultTo(_.find([1,2,3], function(n) { return n > 5; }), 0);
+
+      assert.strictEqual(actual, 0);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.defer');
 
   (function() {
@@ -26246,6 +26263,7 @@
       'ceil',
       'clone',
       'deburr',
+      'defaultTo',
       'divide',
       'endsWith',
       'escape',
@@ -26576,7 +26594,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(314);
+      assert.expect(315);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

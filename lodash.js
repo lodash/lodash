@@ -14706,6 +14706,34 @@
     }
 
     /**
+     * Returns a default value if the input is `undefined`.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.13.2
+     * @category Util
+     * @param {*} input The value to be checked if it is `undefined`.
+     * @param {*} defaultValue The default value that gets returned if the input is `undefined`.
+     * @returns {*} Returns the input or if it's `undefined`, the default value.
+     * @example
+     *
+     * console.log(_.defaultTo(undefined, 10));
+     * // => 10
+     *
+     * // Inside flow (FP only)
+     * var findOrDefault = _.flow([
+     *   _.find(function(number) { number > 5; }),
+     *   _.defaultTo(0)
+     * ]);
+     *
+     * findOrDefault([1,2,3]);
+     * // => 0
+     */
+    function defaultTo(value, defaultValue) {
+      return value === undefined ? defaultValue : value;
+    }
+
+    /**
      * Creates a function that returns the result of invoking the given functions
      * with the `this` binding of the created function, where each successive
      * invocation is supplied the return value of the previous.
@@ -15979,6 +16007,7 @@
     lodash.cloneDeepWith = cloneDeepWith;
     lodash.cloneWith = cloneWith;
     lodash.deburr = deburr;
+    lodash.defaultTo = defaultTo;
     lodash.divide = divide;
     lodash.endsWith = endsWith;
     lodash.eq = eq;

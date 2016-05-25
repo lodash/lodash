@@ -4604,15 +4604,18 @@
   QUnit.module('lodash.defaultTo');
 
   (function() {
-    QUnit.test('should return a default value if the input is undefined', function(assert) {
-      assert.expect(3);
+    QUnit.test('should return a default value if `value` is `undefined`', function(assert) {
+      assert.expect(1);
 
-      assert.strictEqual(_.defaultTo(1, 0), 1);
-      assert.strictEqual(_.defaultTo(undefined, 0), 0);
+      var expected = lodashStable.map(falsey, function(value) {
+        return value === undefined ? 1 : value;
+      });
 
-      var actual = _.defaultTo(_.find([1,2,3], function(n) { return n > 5; }), 0);
+      var actual = lodashStable.map(falsey, function(value) {
+        return _.defaultTo(value, 1);
+      });
 
-      assert.strictEqual(actual, 0);
+      assert.deepEqual(actual, expected);
     });
   }());
 

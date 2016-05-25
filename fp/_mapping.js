@@ -62,9 +62,9 @@ exports.aryMethod = {
   '2': [
     'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
     'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
-    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'defaultTo', 'delay', 'difference',
-    'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith',
-    'eq', 'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast',
+    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'defaultTo', 'delay',
+    'difference', 'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile',
+    'endsWith', 'eq', 'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast',
     'findLastIndex', 'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth',
     'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight',
     'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',

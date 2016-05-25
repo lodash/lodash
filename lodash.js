@@ -1399,13 +1399,13 @@
      *
      * The wrapper methods that are **not** chainable by default are:
      * `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
-     * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `divide`, `each`,
-     * `eachRight`, `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`, `find`,
-     * `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`,
-     * `floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
-     * `forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,
-     * `includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,
-     * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
+     * `cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `defaultTo`, `divide`,
+     * `each`, `eachRight`, `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`,
+     * `find`, `findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`,
+     * `first`, `floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`,
+     * `forOwn`, `forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`,
+     * `identity`, `includes`, `indexOf`, `inRange`, `invoke`, `isArguments`,
+     * `isArray`, `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
      * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
      * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
      * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
@@ -12404,7 +12404,7 @@
 
     /**
      * Gets the value at `path` of `object`. If the resolved value is
-     * `undefined`, the `defaultValue` is used in its place.
+     * `undefined`, the `defaultValue` is returned in its place.
      *
      * @static
      * @memberOf _
@@ -14706,28 +14706,23 @@
     }
 
     /**
-     * Returns a default value if the input is `undefined`.
+     * Checks `value` to determine if a default value should be returned.
+     * If `value` is `undefined`, the `defaultValue` is returned in its place.
      *
      * @static
      * @memberOf _
-     * @since 4.13.2
+     * @since 4.14.0
      * @category Util
-     * @param {*} input The value to be checked if it is `undefined`.
-     * @param {*} defaultValue The default value that gets returned if the input is `undefined`.
-     * @returns {*} Returns the input or if it's `undefined`, the default value.
+     * @param {*} value The value to check.
+     * @param {*} defaultValue The default value.
+     * @returns {*} Returns the resolved value.
      * @example
      *
-     * console.log(_.defaultTo(undefined, 10));
+     * _.defaultTo(1, 10);
+     * // => 1
+     *
+     * _.defaultTo(undefined, 10);
      * // => 10
-     *
-     * // Inside flow (FP only)
-     * var findOrDefault = _.flow([
-     *   _.find(function(number) { number > 5; }),
-     *   _.defaultTo(0)
-     * ]);
-     *
-     * findOrDefault([1,2,3]);
-     * // => 0
      */
     function defaultTo(value, defaultValue) {
       return value === undefined ? defaultValue : value;

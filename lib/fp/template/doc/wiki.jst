@@ -14,15 +14,15 @@ In a browser:
 <script>
 // Loading `lodash.fp.js` converts `_` to its fp variant.
 _.defaults({ 'a': 2, 'b': 2 })({ 'a': 1 });
-// → { 'a: 1, 'b': 2 }
+// ➜ { 'a: 1, 'b': 2 }
 
 // Use `noConflict` to restore the pre-fp variant.
 var fp = _.noConflict();
 
 _.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 });
-// → { 'a: 1, 'b': 2 }
+// ➜ { 'a: 1, 'b': 2 }
 fp.defaults({ 'a': 2, 'b': 2 })({ 'a': 1 });
-// → { 'a: 1, 'b': 2 }
+// ➜ { 'a: 1, 'b': 2 }
 </script>
 ```
 
@@ -51,12 +51,12 @@ Iteratee arguments are capped to avoid gotchas with variadic iteratees.
 // The `lodash/map` iteratee receives three arguments:
 // (value, index|key, collection)
 _.map(['6', '8', '10'], parseInt);
-// → [6, NaN, 2]
+// ➜ [6, NaN, 2]
 
 // The `lodash/fp/map` iteratee is capped at one argument:
 // (value)
 fp.map(parseInt)(['6', '8', '10']);
-// → [6, 8, 10]
+// ➜ [6, 8, 10]
 ```
 
 Methods that cap iteratees to one argument:<br>
@@ -73,13 +73,13 @@ Methods have fixed arities to support auto-currying.
 ```js
 // `lodash/padStart` accepts an optional `chars` param.
 _.padStart('a', 3, '-')
-// → '--a'
+// ➜ '--a'
 
 // `lodash/fp/padStart` does not.
 fp.padStart(3)('a');
-// → '  a'
+// ➜ '  a'
 fp.padCharsStart('-')(3)('a');
-// → '--a'
+// ➜ '--a'
 ```
 
 Methods with a fixed arity of one:<br>
@@ -102,13 +102,13 @@ Method arguments are rearranged to make composition easier.
 // (collection, iteratee)
 var compact = _.partial(_.filter, _, Boolean);
 compact(['a', null, 'c']);
-// → ['a', 'c']
+// ➜ ['a', 'c']
 
 // `lodash/fp/filter` is iteratee-first data-last:
 // (iteratee, collection)
 var compact = fp.filter(Boolean);
 compact(['a', null, 'c']);
-// → ['a', 'c']
+// ➜ ['a', 'c']
 ```
 
 ##### Most methods follow these rules
@@ -161,11 +161,11 @@ arguments of the curried returned function.
 ```js
 // The equivalent of `2 > 5`.
 _.gt(2)(5);
-// → false
+// ➜ false
 
 // The equivalent of `_.gt(5, 2)` or `5 > 2`.
 _.gt(_, 2)(5);
-// → true
+// ➜ true
 ```
 
 ## Chaining

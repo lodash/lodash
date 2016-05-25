@@ -14706,8 +14706,9 @@
     }
 
     /**
-     * Checks `value` to determine if a default value should be returned.
-     * If `value` is `undefined`, the `defaultValue` is returned in its place.
+     * Checks `value` to determine whether a default value should be returned in
+     * its place. The `defaultValue` is returned if `value` is `NaN`, `null`,
+     * or `undefined`.
      *
      * @static
      * @memberOf _
@@ -14725,7 +14726,7 @@
      * // => 10
      */
     function defaultTo(value, defaultValue) {
-      return value === undefined ? defaultValue : value;
+      return (value == null || value !== value) ? defaultValue : value;
     }
 
     /**

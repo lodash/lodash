@@ -4604,11 +4604,11 @@
   QUnit.module('lodash.defaultTo');
 
   (function() {
-    QUnit.test('should return a default value if `value` is `undefined`', function(assert) {
+    QUnit.test('should return a default value if `value` is `NaN` or nullish', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(falsey, function(value) {
-        return value === undefined ? 1 : value;
+        return (value == null || value !== value) ? 1 : value;
       });
 
       var actual = lodashStable.map(falsey, function(value) {

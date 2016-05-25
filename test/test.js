@@ -24770,7 +24770,7 @@
     QUnit.test('should work with a `comparator` argument', function(assert) {
       assert.expect(1);
 
-      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 },  { 'x': 1, 'y': 2 }],
+      var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }],
           actual = _.uniqWith(objects, lodashStable.isEqual);
 
       assert.deepEqual(actual, [objects[0], objects[1]]);

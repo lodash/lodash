@@ -19454,7 +19454,7 @@
       assert.deepEqual(rest(1, 2, 3, 4), [1, [2, 3, 4]]);
     });
 
-    QUnit.test('should treat `start` as `0` for negative or `NaN` values', function(assert) {
+    QUnit.test('should treat `start` as `0` for `NaN` or negative values', function(assert) {
       assert.expect(1);
 
       var values = [-1, NaN, 'a'],
@@ -20593,7 +20593,7 @@
       assert.deepEqual(actual, [3, 1, 2]);
     });
 
-    QUnit.test('should move symbol, `null`, `undefined`, and `NaN` values to the end', function(assert) {
+    QUnit.test('should move `NaN`, nullish, and symbol values to the end', function(assert) {
       assert.expect(2);
 
       var symbol1 = Symbol ? Symbol('a') : null,

@@ -5461,16 +5461,11 @@
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of symbols.
      */
-    function getSymbols(object) {
+    var getSymbols = !getOwnPropertySymbols ? stubArray : function(object) {
       // Coerce `object` to an object to avoid non-object errors in V8.
       // See https://bugs.chromium.org/p/v8/issues/detail?id=3443 for more details.
       return getOwnPropertySymbols(Object(object));
-    }
-
-    // Fallback for IE < 11.
-    if (!getOwnPropertySymbols) {
-      getSymbols = stubArray;
-    }
+    };
 
     /**
      * Creates an array of the own and inherited enumerable symbol properties

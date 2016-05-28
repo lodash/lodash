@@ -310,12 +310,11 @@ function baseConvert(util, name, func, options) {
   }
 
   /**
-   * Creates a function that invokes `func` with its first argument passed
-   * thru `transform`.
+   * Creates a function that invokes `func` with its first argument transformed.
    *
    * @private
    * @param {Function} func The function to wrap.
-   * @param {...Function} transform The functions to transform the first argument.
+   * @param {Function} transform The argument transform.
    * @returns {Function} Returns the new function.
    */
   function overArg(func, transform) {

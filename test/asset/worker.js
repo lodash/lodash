@@ -1,3 +1,5 @@
+'use strict';
+
 self.console || (self.console = { 'log': function() {} });
 
 addEventListener('message', function(e) {

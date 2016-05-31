@@ -1,4 +1,5 @@
 ;(function() {
+  'use strict';
 
   /** Used to access the Firebug Lite panel (set by `run`). */
   var fbPanel;

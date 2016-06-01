@@ -12,6 +12,8 @@ exports.aliasToReal = {
 
   // Ramda aliases.
   '__': 'placeholder',
+  'F': 'stubFalse',
+  'T': 'stubTrue',
   'all': 'every',
   'allPass': 'overEvery',
   'always': 'constant',
@@ -27,6 +29,7 @@ exports.aliasToReal = {
   'dissocPath': 'unset',
   'equals': 'isEqual',
   'identical': 'eq',
+  'indexBy': 'keyBy',
   'init': 'initial',
   'invertObj': 'invert',
   'juxt': 'over',
@@ -43,6 +46,9 @@ exports.aliasToReal = {
   'propEq': 'matchesProperty',
   'propOr': 'getOr',
   'props': 'at',
+  'symmetricDifference': 'xor',
+  'symmetricDifferenceBy': 'xorBy',
+  'symmetricDifferenceWith': 'xorWith',
   'unapply': 'rest',
   'unnest': 'flatten',
   'useWith': 'overArgs',

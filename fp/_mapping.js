@@ -58,7 +58,7 @@ exports.aliasToReal = {
   'unnest': 'flatten',
   'useWith': 'overArgs',
   'where': 'conforms',
-  'whereEq': 'filter',
+  'whereEq': 'isMatch',
   'zipObj': 'zipObject'
 };
 

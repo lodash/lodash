@@ -11,6 +11,9 @@ exports.aliasToReal = {
   'extendWith': 'assignInWith',
   'first': 'head',
 
+  // Methods that are curried variants of others.
+  'matches': 'isMatch',
+
   // Ramda aliases.
   '__': 'placeholder',
   'F': 'stubFalse',

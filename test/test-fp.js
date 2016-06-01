@@ -728,6 +728,20 @@
     });
   });
 
+  _.each(['assignAll', 'assignInAll', 'defaultsAll', 'defaultsDeepAll', 'mergeAll'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 1 }, { 'b': 2 }],
+          actual = func(objects);
+
+      assert.deepEqual(objects[0], { 'a': 1 });
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 });
+    });
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('assignWith methods');

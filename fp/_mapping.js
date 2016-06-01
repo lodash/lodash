@@ -7,6 +7,7 @@ exports.aliasToReal = {
   'entries': 'toPairs',
   'entriesIn': 'toPairsIn',
   'extend': 'assignIn',
+  'extendAll': 'assignInAll',
   'extendWith': 'assignInWith',
   'first': 'head',
 
@@ -59,11 +60,12 @@ exports.aliasToReal = {
 /** Used to map ary to method names. */
 exports.aryMethod = {
   '1': [
-    'attempt', 'castArray', 'ceil', 'create', 'curry', 'curryRight', 'floor',
-    'flow', 'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
-    'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest', 'reverse',
-    'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
-    'uniqueId', 'words'
+    'assignAll', 'assignInAll', 'attempt', 'castArray', 'ceil', 'create',
+    'curry', 'curryRight', 'defaultsAll', 'defaultsDeepAll', 'floor', 'flow',
+    'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
+    'mergeAll', 'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest',
+    'reverse', 'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd',
+    'trimStart', 'uniqueId', 'words'
   ],
   '2': [
     'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
@@ -185,8 +187,13 @@ exports.methodRearg = {
 
 /** Used to map method names to spread configs. */
 exports.methodSpread = {
+  'assignAll': 0,
+  'assignInAll': 0,
+  'defaultsAll': 0,
+  'defaultsDeepAll': 0,
   'invokeArgs': 2,
   'invokeArgsMap': 2,
+  'mergeAll': 0,
   'partial': 1,
   'partialRight': 1,
   'without': 1
@@ -206,12 +213,17 @@ exports.mutate = {
   },
   'object': {
     'assign': true,
+    'assignAll': true,
     'assignIn': true,
+    'assignInAll': true,
     'assignInWith': true,
     'assignWith': true,
     'defaults': true,
+    'defaultsAll': true,
     'defaultsDeep': true,
+    'defaultsDeepAll': true,
     'merge': true,
+    'mergeAll': true,
     'mergeWith': true
   },
   'set': {
@@ -252,8 +264,12 @@ exports.realToAlias = (function() {
 
 /** Used to map method names to other names. */
 exports.remap = {
+  'assignAll': 'assign',
+  'assignInAll': 'assignIn',
   'curryN': 'curry',
   'curryRightN': 'curryRight',
+  'defaultsAll': 'defaults',
+  'defaultsDeepAll': 'defaultsDeep',
   'findFrom': 'find',
   'findIndexFrom': 'findIndex',
   'findLastFrom': 'findLast',
@@ -264,6 +280,7 @@ exports.remap = {
   'invokeArgs': 'invoke',
   'invokeArgsMap': 'invokeMap',
   'lastIndexOfFrom': 'lastIndexOf',
+  'mergeAll': 'merge',
   'padChars': 'pad',
   'padCharsEnd': 'padEnd',
   'padCharsStart': 'padStart',

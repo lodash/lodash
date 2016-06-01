@@ -28,6 +28,8 @@ exports.aliasToReal = {
   'contains': 'includes',
   'dissoc': 'unset',
   'dissocPath': 'unset',
+  'dropLast': 'dropRight',
+  'dropLastWhile': 'dropRightWhile',
   'equals': 'isEqual',
   'identical': 'eq',
   'indexBy': 'keyBy',
@@ -50,9 +52,12 @@ exports.aliasToReal = {
   'symmetricDifference': 'xor',
   'symmetricDifferenceBy': 'xorBy',
   'symmetricDifferenceWith': 'xorWith',
+  'takeLast': 'takeRight',
+  'takeLastWhile': 'takeRightWhile',
   'unapply': 'rest',
   'unnest': 'flatten',
   'useWith': 'overArgs',
+  'where': 'conforms',
   'whereEq': 'filter',
   'zipObj': 'zipObject'
 };

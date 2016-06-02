@@ -357,13 +357,6 @@
   /** Detect free variable `process` from Node.js. */
   var freeProcess = freeGlobal && freeGlobal.process;
 
-  /** Used to access faster C++ helpers. */
-  var nodeUtil = (function() {
-    try {
-      return freeProcess && freeProcess.binding('util');
-    } catch (e) {}
-  }());
-
   /** Detect free variable `self`. */
   var freeSelf = checkGlobal(typeof self == 'object' && self);
 
@@ -372,6 +365,21 @@
 
   /** Used as a reference to the global object. */
   var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
+
+  /** Used to access faster Node.js helpers. */
+  var nodeUtil = (function() {
+    try {
+      return freeProcess && freeProcess.binding('util');
+    } catch (e) {}
+  }());
+
+  /* Node.js helper references. */
+  var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer,
+      nodeIsDate = nodeUtil && nodeUtil.isDate,
+      nodeIsMap = nodeUtil && nodeUtil.isMap,
+      nodeIsRegExp = nodeUtil && nodeUtil.isRegExp,
+      nodeIsSet = nodeUtil && nodeUtil.isSet,
+      nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
 
   /*--------------------------------------------------------------------------*/
 
@@ -10615,7 +10623,7 @@
      * _.isArrayBuffer(new Array(2));
      * // => false
      */
-    var isArrayBuffer = (nodeUtil && nodeUtil.isArrayBuffer) || function(value) {
+    var isArrayBuffer = (nodeIsArrayBuffer && baseUnary(nodeIsArrayBuffer)) || function(value) {
       return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
     };
 
@@ -10737,7 +10745,7 @@
      * _.isDate('Mon April 23 2012');
      * // => false
      */
-    var isDate = (nodeUtil && nodeUtil.isDate) || function(value) {
+    var isDate = (nodeIsDate && baseUnary(nodeIsDate)) || function(value) {
       return isObjectLike(value) && objectToString.call(value) == dateTag;
     };
 
@@ -11108,7 +11116,7 @@
      * _.isMap(new WeakMap);
      * // => false
      */
-    var isMap = (nodeUtil && nodeUtil.isMap) || function(value) {
+    var isMap = (nodeIsMap && baseUnary(nodeIsMap)) || function(value) {
       return isObjectLike(value) && getTag(value) == mapTag;
     };
 
@@ -11381,7 +11389,7 @@
      * _.isRegExp('/abc/');
      * // => false
      */
-    var isRegExp = (nodeUtil && nodeUtil.isRegExp) || function(value) {
+    var isRegExp = (nodeIsRegExp && baseUnary(nodeIsRegExp)) || function(value) {
       return isObject(value) && objectToString.call(value) == regexpTag;
     };
 
@@ -11434,7 +11442,7 @@
      * _.isSet(new WeakSet);
      * // => false
      */
-    var isSet = (nodeUtil && nodeUtil.isSet) || function(value) {
+    var isSet = (nodeIsSet && baseUnary(nodeIsSet)) || function(value) {
       return isObjectLike(value) && getTag(value) == setTag;
     };
 
@@ -11499,7 +11507,7 @@
      * _.isTypedArray([]);
      * // => false
      */
-    var isTypedArray = (nodeUtil && nodeUtil.isTypedArray) || function(value) {
+    var isTypedArray = (nodeIsTypedArray && baseUnary(nodeIsTypedArray)) || function(value) {
       return isObjectLike(value) &&
         isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
     };

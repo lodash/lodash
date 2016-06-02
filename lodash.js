@@ -354,6 +354,16 @@
   /** Detect free variable `global` from Node.js. */
   var freeGlobal = checkGlobal(typeof global == 'object' && global);
 
+  /** Detect free variable `process` from Node.js. */
+  var freeProcess = freeGlobal && freeGlobal.process;
+
+  /** Used to access faster C++ helpers. */
+  var nodeUtil = (function() {
+    try {
+      return freeProcess && freeProcess.binding('util');
+    } catch (e) {}
+  }());
+
   /** Detect free variable `self`. */
   var freeSelf = checkGlobal(typeof self == 'object' && self);
 
@@ -10605,9 +10615,9 @@
      * _.isArrayBuffer(new Array(2));
      * // => false
      */
-    function isArrayBuffer(value) {
+    var isArrayBuffer = (nodeUtil && nodeUtil.isArrayBuffer) || function(value) {
       return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
-    }
+    };
 
     /**
      * Checks if `value` is array-like. A value is considered array-like if it's
@@ -10727,9 +10737,9 @@
      * _.isDate('Mon April 23 2012');
      * // => false
      */
-    function isDate(value) {
+    var isDate = (nodeUtil && nodeUtil.isDate) || function(value) {
       return isObjectLike(value) && objectToString.call(value) == dateTag;
-    }
+    };
 
     /**
      * Checks if `value` is likely a DOM element.
@@ -11098,9 +11108,9 @@
      * _.isMap(new WeakMap);
      * // => false
      */
-    function isMap(value) {
+    var isMap = (nodeUtil && nodeUtil.isMap) || function(value) {
       return isObjectLike(value) && getTag(value) == mapTag;
-    }
+    };
 
     /**
      * Performs a partial deep comparison between `object` and `source` to
@@ -11371,9 +11381,9 @@
      * _.isRegExp('/abc/');
      * // => false
      */
-    function isRegExp(value) {
+    var isRegExp = (nodeUtil && nodeUtil.isRegExp) || function(value) {
       return isObject(value) && objectToString.call(value) == regexpTag;
-    }
+    };
 
     /**
      * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
@@ -11424,9 +11434,9 @@
      * _.isSet(new WeakSet);
      * // => false
      */
-    function isSet(value) {
+    var isSet = (nodeUtil && nodeUtil.isSet) || function(value) {
       return isObjectLike(value) && getTag(value) == setTag;
-    }
+    };
 
     /**
      * Checks if `value` is classified as a `String` primitive or object.
@@ -11489,10 +11499,10 @@
      * _.isTypedArray([]);
      * // => false
      */
-    function isTypedArray(value) {
+    var isTypedArray = (nodeUtil && nodeUtil.isTypedArray) || function(value) {
       return isObjectLike(value) &&
         isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
-    }
+    };
 
     /**
      * Checks if `value` is `undefined`.

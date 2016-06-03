@@ -342,20 +342,8 @@
   var freeParseFloat = parseFloat,
       freeParseInt = parseInt;
 
-  /** Detect free variable `exports`. */
-  var freeExports = typeof exports == 'object' && exports;
-
-  /** Detect free variable `module`. */
-  var freeModule = freeExports && typeof module == 'object' && module;
-
-  /** Detect the popular CommonJS extension `module.exports`. */
-  var moduleExports = freeModule && freeModule.exports === freeExports;
-
   /** Detect free variable `global` from Node.js. */
   var freeGlobal = checkGlobal(typeof global == 'object' && global);
-
-  /** Detect free variable `process` from Node.js. */
-  var freeProcess = freeGlobal && freeGlobal.process;
 
   /** Detect free variable `self`. */
   var freeSelf = checkGlobal(typeof self == 'object' && self);
@@ -365,6 +353,18 @@
 
   /** Used as a reference to the global object. */
   var root = freeGlobal || freeSelf || thisGlobal || Function('return this')();
+
+  /** Detect free variable `exports`. */
+  var freeExports = freeGlobal && typeof exports == 'object' && exports;
+
+  /** Detect free variable `module`. */
+  var freeModule = freeExports && typeof module == 'object' && module;
+
+  /** Detect the popular CommonJS extension `module.exports`. */
+  var moduleExports = freeModule && freeModule.exports === freeExports;
+
+  /** Detect free variable `process` from Node.js. */
+  var freeProcess = moduleExports && freeGlobal.process;
 
   /** Used to access faster Node.js helpers. */
   var nodeUtil = (function() {

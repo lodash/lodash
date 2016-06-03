@@ -16392,15 +16392,14 @@
   // Export lodash.
   var _ = runInContext();
 
-  // Expose Lodash on the free variable `self` so it's globally accessible,
-  // even when bundled with Browserify, Webpack, etc. This also prevents errors
-  // when Lodash is loaded by a script tag in the presence of an AMD loader.
-  // See http://requirejs.org/docs/errors.html#mismatch for more details.
-  // Use `_.noConflict` to remove Lodash from the global object.
-  (freeSelf || {})._ = _;
-
   // Some AMD build optimizers, like r.js, check for condition patterns like:
   if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+    // Expose Lodash on the global object to prevent errors when Lodash is
+    // loaded by a script tag in the presence of an AMD loader.
+    // See http://requirejs.org/docs/errors.html#mismatch for more details.
+    // Use `_.noConflict` to remove Lodash from the global object.
+    root._ = _;
+
     // Define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module.
     define(function() {

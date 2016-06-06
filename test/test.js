@@ -21217,12 +21217,13 @@
   QUnit.module('math operator methods');
 
   lodashStable.each(['add', 'divide', 'multiply', 'subtract'], function(methodName) {
-    var func = _[methodName];
+    var func = _[methodName],
+        isAddSub = methodName == 'add' || methodName == 'subtract';
 
-    QUnit.test('`_.' + methodName + '` should return `0` when no arguments are given', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `' + (isAddSub ? 0 : 1) + '` when no arguments are given', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(func(), 0);
+      assert.strictEqual(func(), isAddSub ? 0 : 1);
     });
 
     QUnit.test('`_.' + methodName + '` should work with only one defined argument', function(assert) {

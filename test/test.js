@@ -2745,14 +2745,12 @@
       var func = _[methodName],
           isDeep = methodName == 'cloneDeep';
 
-      lodashStable.forOwn(objects, function(object, key) {
-        QUnit.test('`_.' + methodName + '` should clone ' + key, function(assert) {
+      lodashStable.forOwn(objects, function(object, kind) {
+        QUnit.test('`_.' + methodName + '` should clone ' + kind, function(assert) {
           assert.expect(2);
 
-          var isEqual = (key == 'maps' || key == 'sets') ? _.isEqual : lodashStable.isEqual,
-              actual = func(object);
-
-          assert.ok(isEqual(actual, object));
+          var actual = func(object);
+          assert.ok(lodashStable.isEqual(actual, object));
 
           if (lodashStable.isObject(object)) {
             assert.notStrictEqual(actual, object);

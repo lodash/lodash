@@ -1022,21 +1022,24 @@
       return [key, keys[lastIndex - index]];
     });
 
-    var largeStack = new mapCaches.Stack(pairs);
+    function createCaches(pairs) {
+      var largeStack = new mapCaches.Stack(pairs),
+          length = pairs ? pairs.length : 0;
 
-    lodashStable.times(LARGE_ARRAY_SIZE - pairs.length + 1, function() {
-      largeStack.set({}, {});
-    });
+      lodashStable.times(LARGE_ARRAY_SIZE - length + 1, function() {
+        largeStack.set({}, {});
+      });
 
-    var caches = {
-      'hashes': new mapCaches.Hash(pairs),
-      'list caches': new mapCaches.ListCache(pairs),
-      'map caches': new mapCaches.MapCache(pairs),
-      'stack caches': new mapCaches.Stack(pairs),
-      'large stacks': largeStack
-    };
+      return {
+        'hashes': new mapCaches.Hash(pairs),
+        'list caches': new mapCaches.ListCache(pairs),
+        'map caches': new mapCaches.MapCache(pairs),
+        'stack caches': new mapCaches.Stack(pairs),
+        'large stacks': largeStack
+      };
+    }
 
-    lodashStable.forOwn(caches, function(cache, kind) {
+    lodashStable.forOwn(createCaches(pairs), function(cache, kind) {
       QUnit.test('should implement a `Map` interface for ' + kind, function(assert) {
         assert.expect(82);
 
@@ -1058,7 +1061,9 @@
           return !cache.has(key);
         }));
       });
+    });
 
+    lodashStable.forOwn(createCaches(), function(cache, kind) {
       QUnit.test('should support changing values of ' + kind, function(assert) {
         assert.expect(10);
 
@@ -1067,7 +1072,6 @@
           cache.set(key, 2);
 
           assert.strictEqual(cache.get(key), 2);
-          cache.clear();
         });
       });
     });

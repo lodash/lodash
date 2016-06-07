@@ -764,13 +764,10 @@
     QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
       assert.expect(2);
 
-      var object = { 'a': 1 };
+      var objects = [{ 'a': 1 }, { 'b': 2 }],
+          actual = func(_.nthArg(1))(objects[0])(objects[1]);
 
-      var actual = func(function(objValue, srcValue) {
-        return srcValue;
-      })(object)({ 'b': 2 });
-
-      assert.deepEqual(object, { 'a': 1 });
+      assert.deepEqual(objects[0], { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
     });
   });
@@ -793,11 +790,8 @@
     QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
       assert.expect(2);
 
-      var objects = [{ 'a': 1 }, { 'b': 2 }];
-
-      var actual = func(function(objValue, srcValue) {
-        return srcValue;
-      })(objects);
+      var objects = [{ 'a': 1 }, { 'b': 2 }],
+          actual = func(_.nthArg(1))(objects);
 
       assert.deepEqual(objects[0], { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
@@ -2008,11 +2002,8 @@
     QUnit.test('should work with an `iteratee` argument', function(assert) {
       assert.expect(1);
 
-      var expected = objects.slice(0, 3);
-
-      var actual = fp.uniqBy(function(object) {
-        return object.a;
-      })(objects);
+      var expected = objects.slice(0, 3),
+          actual = fp.uniqBy(_.property('a'))(objects);
 
       assert.deepEqual(actual, expected);
     });

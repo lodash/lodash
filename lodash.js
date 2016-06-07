@@ -2167,7 +2167,7 @@
       var cache = this.__data__;
       if (cache instanceof ListCache) {
         var pairs = cache.__data__;
-        if (!Map || pairs.length < LARGE_ARRAY_SIZE) {
+        if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
           pairs.push([key, value]);
           return this;
         }

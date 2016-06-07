@@ -1026,7 +1026,7 @@
       var largeStack = new mapCaches.Stack(pairs),
           length = pairs ? pairs.length : 0;
 
-      lodashStable.times(LARGE_ARRAY_SIZE - length + 1, function() {
+      lodashStable.times(LARGE_ARRAY_SIZE - length, function() {
         largeStack.set({}, {});
       });
 

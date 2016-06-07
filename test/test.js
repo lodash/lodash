@@ -1231,11 +1231,30 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should work when given less than the capped number of arguments', function(assert) {
+    QUnit.test('should not force a minimum argument count', function(assert) {
       assert.expect(1);
 
-      var capped = _.ary(fn, 3);
-      assert.deepEqual(capped('a'), ['a']);
+      var capped = _.ary(fn, 3),
+          args = ['a', 'b', 'c'];
+
+      var expected = lodashStable.map(args, function(arg, index) {
+        return args.slice(0, index);
+      });
+
+      var actual = lodashStable.map(expected, function(array) {
+        return capped.apply(undefined, array);
+      });
+
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should use `this` binding of function', function(assert) {
+      assert.expect(1);
+
+      var capped = _.ary(function(a, b) { return this; }, 1),
+          object = { 'capped': capped };
+
+      assert.strictEqual(object.capped(), object);
     });
 
     QUnit.test('should use the existing `ary` if smaller', function(assert) {
@@ -24384,11 +24403,20 @@
       assert.deepEqual(actual, [6, 8, 10]);
     });
 
-    QUnit.test('should work when provided less than the capped number of arguments', function(assert) {
+    QUnit.test('should not force a minimum argument count', function(assert) {
       assert.expect(1);
 
       var capped = _.unary(fn);
       assert.deepEqual(capped(), []);
+    });
+
+    QUnit.test('should use `this` binding of function', function(assert) {
+      assert.expect(1);
+
+      var capped = _.unary(function(a, b) { return this; }),
+          object = { 'capped': capped };
+
+      assert.strictEqual(object.capped(), object);
     });
   }());
 

@@ -1460,11 +1460,11 @@
 
       var args,
           stack = { '__data__': { '__data__': [] } },
-          expected = [[1], [2, 3], 'a', { 'a': [1] }, { 'a': [2, 3] }, stack];
+          expected = [[1, 2], [3], 'a', { 'a': [1, 2] }, { 'a': [3] }, stack];
 
       fp.mergeWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      })({ 'a': [1] })({ 'a': [2, 3] });
+      })({ 'a': [1, 2] })({ 'a': [3] });
 
       args[5] = _.omitBy(args[5], _.isFunction);
       args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
@@ -1475,17 +1475,44 @@
     QUnit.test('should not mutate values', function(assert) {
       assert.expect(2);
 
-      var object = { 'a': { 'b': 2, 'c': 3 } };
-      object.a.b = [1];
+      var objects = [{ 'a': [1, 2] }, { 'a': [3] }],
+          actual = fp.mergeWith(_.noop, objects[0], objects[1]);
 
-      var actual = fp.mergeWith(function(objValue, srcValue) {
-        if (_.isArray(objValue)) {
-          return objValue.concat(srcValue);
-        }
-      }, object, { 'a': { 'b': [2, 3] } });
+      assert.deepEqual(objects[0], { 'a': [1, 2] });
+      assert.deepEqual(actual, { 'a': [3, 2] });
+    });
+  }());
 
-      assert.deepEqual(object, { 'a': { 'b': [1], 'c': 3 } });
-      assert.deepEqual(actual, { 'a': { 'b': [1, 2, 3], 'c': 3 } });
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('fp.mergeAllWith');
+
+  (function() {
+    QUnit.test('should provide the correct `customizer` arguments', function(assert) {
+      assert.expect(1);
+
+      var args,
+          stack = { '__data__': { '__data__': [] } },
+          expected = [[1, 2], [3], 'a', { 'a': [1, 2] }, { 'a': [3] }, stack];
+
+      fp.mergeAllWith(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      })([{ 'a': [1, 2] }, { 'a': [3] }]);
+
+      args[5] = _.omitBy(args[5], _.isFunction);
+      args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
+
+      assert.deepEqual(args, expected);
+    });
+
+    QUnit.test('should not mutate values', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': [1, 2] }, { 'a': [3] }],
+          actual = fp.mergeAllWith(_.noop, objects);
+
+      assert.deepEqual(objects[0], { 'a': [1, 2] });
+      assert.deepEqual(actual, { 'a': [3, 2] });
     });
   }());
 

@@ -1036,8 +1036,8 @@
       'large stacks': largeStack
     };
 
-    lodashStable.forOwn(caches, function(cache, key) {
-      QUnit.test('should implement a `Map` interface for ' + key, function(assert) {
+    lodashStable.forOwn(caches, function(cache, kind) {
+      QUnit.test('should implement a `Map` interface for ' + kind, function(assert) {
         assert.expect(82);
 
         lodashStable.each(keys, function(key, index) {
@@ -1057,6 +1057,18 @@
         assert.ok(lodashStable.every(keys, function(key) {
           return !cache.has(key);
         }));
+      });
+
+      QUnit.test('should support changing values of ' + kind, function(assert) {
+        assert.expect(10);
+
+        lodashStable.each(keys, function(key) {
+          cache.set(key, 1);
+          cache.set(key, 2);
+
+          assert.strictEqual(cache.get(key), 2);
+          cache.clear();
+        });
       });
     });
   }());

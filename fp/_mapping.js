@@ -8,6 +8,7 @@ exports.aliasToReal = {
   'entriesIn': 'toPairsIn',
   'extend': 'assignIn',
   'extendAll': 'assignInAll',
+  'extendAllWith': 'assignInAllWith',
   'extendWith': 'assignInWith',
   'first': 'head',
 
@@ -76,27 +77,27 @@ exports.aryMethod = {
     'trimStart', 'uniqueId', 'words'
   ],
   '2': [
-    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
-    'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
-    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'defaultTo', 'delay',
-    'difference', 'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile',
-    'endsWith', 'eq', 'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast',
-    'findLastIndex', 'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth',
-    'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight',
-    'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',
-    'intersection', 'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch',
-    'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues',
-    'matchesProperty', 'maxBy', 'meanBy', 'merge', 'minBy', 'multiply', 'nth',
-    'omit', 'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt',
-    'partial', 'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
-    'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
-    'repeat', 'restFrom', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
-    'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
-    'split', 'spreadFrom', 'startsWith', 'subtract', 'sumBy', 'take', 'takeRight',
-    'takeRightWhile', 'takeWhile', 'tap', 'throttle', 'thru', 'times', 'trimChars',
-    'trimCharsEnd', 'trimCharsStart', 'truncate', 'union', 'uniqBy', 'uniqWith',
-    'unset', 'unzipWith', 'without', 'wrap', 'xor', 'zip', 'zipObject',
-    'zipObjectDeep'
+    'add', 'after', 'ary', 'assign', 'assignAllWith', 'assignIn', 'assignInAllWith',
+    'at', 'before', 'bind', 'bindAll', 'bindKey', 'chunk', 'cloneDeepWith',
+    'cloneWith', 'concat', 'countBy', 'curryN', 'curryRightN', 'debounce',
+    'defaults', 'defaultsDeep', 'defaultTo', 'delay', 'difference', 'divide',
+    'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith', 'eq', 'every',
+    'filter', 'find', 'findIndex', 'findKey', 'findLast', 'findLastIndex',
+    'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth', 'forEach',
+    'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get',
+    'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
+    'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy',
+    'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty',
+    'maxBy', 'meanBy', 'merge', 'minBy', 'multiply', 'nth', 'omit', 'omitBy',
+    'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial', 'partialRight',
+    'partition', 'pick', 'pickBy', 'pull', 'pullAll', 'pullAt', 'random', 'range',
+    'rangeRight', 'rearg', 'reject', 'remove', 'repeat', 'restFrom', 'result',
+    'sampleSize', 'some', 'sortBy', 'sortedIndex', 'sortedIndexOf', 'sortedLastIndex',
+    'sortedLastIndexOf', 'sortedUniqBy', 'split', 'spreadFrom', 'startsWith',
+    'subtract', 'sumBy', 'take', 'takeRight', 'takeRightWhile', 'takeWhile', 'tap',
+    'throttle', 'thru', 'times', 'trimChars', 'trimCharsEnd', 'trimCharsStart',
+    'truncate', 'union', 'uniqBy', 'uniqWith', 'unset', 'unzipWith', 'without',
+    'wrap', 'xor', 'zip', 'zipObject', 'zipObjectDeep'
   ],
   '3': [
     'assignInWith', 'assignWith', 'clamp', 'differenceBy', 'differenceWith',
@@ -167,7 +168,9 @@ exports.iterateeRearg = {
 
 /** Used to map method names to rearg configs. */
 exports.methodRearg = {
+  'assignInAllWith': [1, 2, 0],
   'assignInWith': [1, 2, 0],
+  'assignAllWith': [1, 2, 0],
   'assignWith': [1, 2, 0],
   'differenceBy': [1, 2, 0],
   'differenceWith': [1, 2, 0],
@@ -176,6 +179,7 @@ exports.methodRearg = {
   'intersectionWith': [1, 2, 0],
   'isEqualWith': [1, 2, 0],
   'isMatchWith': [2, 1, 0],
+  'mergeAllWith': [1, 2, 0],
   'mergeWith': [1, 2, 0],
   'padChars': [2, 1, 0],
   'padCharsEnd': [2, 1, 0],
@@ -195,16 +199,19 @@ exports.methodRearg = {
 
 /** Used to map method names to spread configs. */
 exports.methodSpread = {
-  'assignAll': 0,
-  'assignInAll': 0,
-  'defaultsAll': 0,
-  'defaultsDeepAll': 0,
-  'invokeArgs': 2,
-  'invokeArgsMap': 2,
-  'mergeAll': 0,
-  'partial': 1,
-  'partialRight': 1,
-  'without': 1
+  'assignAll': { 'start': 0 },
+  'assignAllWith': { 'afterRearg': true, 'start': 1 },
+  'assignInAll': { 'start': 0 },
+  'assignInAllWith': { 'afterRearg': true, 'start': 1 },
+  'defaultsAll': { 'start': 0 },
+  'defaultsDeepAll': { 'start': 0 },
+  'invokeArgs': { 'start': 2 },
+  'invokeArgsMap': { 'start': 2 },
+  'mergeAll': { 'start': 0 },
+  'mergeAllWith': { 'afterRearg': true, 'start': 1 },
+  'partial': { 'start': 1 },
+  'partialRight': { 'start': 1 },
+  'without': { 'start': 1 }
 };
 
 /** Used to identify methods which mutate arrays or objects. */
@@ -222,8 +229,10 @@ exports.mutate = {
   'object': {
     'assign': true,
     'assignAll': true,
+    'assignAllWith': true,
     'assignIn': true,
     'assignInAll': true,
+    'assignInAllWith': true,
     'assignInWith': true,
     'assignWith': true,
     'defaults': true,
@@ -232,7 +241,8 @@ exports.mutate = {
     'defaultsDeepAll': true,
     'merge': true,
     'mergeAll': true,
-    'mergeWith': true
+    'mergeAllWith': true,
+    'mergeWith': true,
   },
   'set': {
     'set': true,
@@ -273,7 +283,9 @@ exports.realToAlias = (function() {
 /** Used to map method names to other names. */
 exports.remap = {
   'assignAll': 'assign',
+  'assignAllWith': 'assignWith',
   'assignInAll': 'assignIn',
+  'assignInAllWith': 'assignInWith',
   'curryN': 'curry',
   'curryRightN': 'curryRight',
   'defaultsAll': 'defaults',
@@ -289,6 +301,7 @@ exports.remap = {
   'invokeArgsMap': 'invokeMap',
   'lastIndexOfFrom': 'lastIndexOf',
   'mergeAll': 'merge',
+  'mergeAllWith': 'mergeWith',
   'padChars': 'pad',
   'padCharsEnd': 'padEnd',
   'padCharsStart': 'padStart',

@@ -414,7 +414,7 @@
         'wrap'
       ];
 
-      var exceptions = _.difference(funcMethods.concat('matchesProperty'), ['cloneDeepWith', 'cloneWith', 'delay']),
+      var exceptions = _.without(funcMethods.concat('matchesProperty'), 'delay'),
           expected = _.map(mapping.aryMethod[2], _.constant(true));
 
       var actual = _.map(mapping.aryMethod[2], function(methodName) {
@@ -771,6 +771,35 @@
       })(object)({ 'b': 2 });
 
       assert.deepEqual(object, { 'a': 1 });
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 });
+    });
+  });
+
+  _.each(['assignAllWith', 'assignInAllWith', 'extendAllWith'], function(methodName) {
+    var func = fp[methodName];
+
+    QUnit.test('`fp.' + methodName + '` should provide the correct `customizer` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      func(function() {
+        args || (args = _.map(arguments, _.cloneDeep));
+      })([{ 'a': 1 }, { 'b': 2 }]);
+
+      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }]);
+    });
+
+    QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
+      assert.expect(2);
+
+      var objects = [{ 'a': 1 }, { 'b': 2 }];
+
+      var actual = func(function(objValue, srcValue) {
+        return srcValue;
+      })(objects);
+
+      assert.deepEqual(objects[0], { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
     });
   });

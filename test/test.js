@@ -1167,7 +1167,7 @@
       assert.strictEqual(after(NaN, 1), 1);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(2);
 
       var after = _.after(1, function(assert) { return ++this.count; }),
@@ -1700,7 +1700,7 @@
       assert.strictEqual(before(NaN, 1), 0);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(2);
 
       var before = _.before(2, function(assert) { return ++this.count; }),
@@ -3838,7 +3838,7 @@
       assert.strictEqual(new curried(true), object);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(9);
 
       var fn = function(a, b, c) {
@@ -3997,7 +3997,7 @@
       assert.strictEqual(new curried(true), object);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(9);
 
       var fn = function(a, b, c) {
@@ -25323,7 +25323,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(1);
 
       var p = _.wrap(_.escape, function(func) {
@@ -26684,7 +26684,7 @@
       });
     });
 
-    QUnit.test('should not set a `this` binding', function(assert) {
+    QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(30);
 
       lodashStable.each(noBinding, function(methodName) {

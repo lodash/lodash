@@ -2948,6 +2948,28 @@
     }
 
     /**
+     * The base implementation of `_.isArrayBuffer` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
+     */
+    function baseIsArrayBuffer(value) {
+      return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
+    }
+
+    /**
+     * The base implementation of `_.isDate` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
+     */
+    function baseIsDate(value) {
+      return isObjectLike(value) && objectToString.call(value) == dateTag;
+    }
+
+    /**
      * The base implementation of `_.isEqual` which supports partial comparisons
      * and tracks traversed objects.
      *
@@ -3031,6 +3053,17 @@
     }
 
     /**
+     * The base implementation of `_.isMap` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a map, else `false`.
+     */
+    function baseIsMap(value) {
+      return isObjectLike(value) && getTag(value) == mapTag;
+    }
+
+    /**
      * The base implementation of `_.isMatch` without support for iteratee shorthands.
      *
      * @private
@@ -3098,6 +3131,40 @@
       }
       var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
       return pattern.test(toSource(value));
+    }
+
+    /**
+     * The base implementation of `_.isRegExp` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
+     */
+    function baseIsRegExp(value) {
+      return isObject(value) && objectToString.call(value) == regexpTag;
+    }
+
+    /**
+     * The base implementation of `_.isSet` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a set, else `false`.
+     */
+    function baseIsSet(value) {
+      return isObjectLike(value) && getTag(value) == setTag;
+    }
+
+    /**
+     * The base implementation of `_.isTypedArray` without Node.js optimizations.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+     */
+    function baseIsTypedArray(value) {
+      return isObjectLike(value) &&
+        isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
     }
 
     /**
@@ -10667,9 +10734,7 @@
      * _.isArrayBuffer(new Array(2));
      * // => false
      */
-    var isArrayBuffer = (nodeIsArrayBuffer && baseUnary(nodeIsArrayBuffer)) || function(value) {
-      return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
-    };
+    var isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
 
     /**
      * Checks if `value` is array-like. A value is considered array-like if it's
@@ -10787,9 +10852,7 @@
      * _.isDate('Mon April 23 2012');
      * // => false
      */
-    var isDate = (nodeIsDate && baseUnary(nodeIsDate)) || function(value) {
-      return isObjectLike(value) && objectToString.call(value) == dateTag;
-    };
+    var isDate = nodeIsDate ? baseUnary(nodeIsDate) : baseIsDate;
 
     /**
      * Checks if `value` is likely a DOM element.
@@ -11158,9 +11221,7 @@
      * _.isMap(new WeakMap);
      * // => false
      */
-    var isMap = (nodeIsMap && baseUnary(nodeIsMap)) || function(value) {
-      return isObjectLike(value) && getTag(value) == mapTag;
-    };
+    var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
 
     /**
      * Performs a partial deep comparison between `object` and `source` to
@@ -11431,9 +11492,7 @@
      * _.isRegExp('/abc/');
      * // => false
      */
-    var isRegExp = (nodeIsRegExp && baseUnary(nodeIsRegExp)) || function(value) {
-      return isObject(value) && objectToString.call(value) == regexpTag;
-    };
+    var isRegExp = nodeIsRegExp ? baseUnary(nodeIsRegExp) : baseIsRegExp;
 
     /**
      * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
@@ -11484,9 +11543,7 @@
      * _.isSet(new WeakSet);
      * // => false
      */
-    var isSet = (nodeIsSet && baseUnary(nodeIsSet)) || function(value) {
-      return isObjectLike(value) && getTag(value) == setTag;
-    };
+    var isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
 
     /**
      * Checks if `value` is classified as a `String` primitive or object.
@@ -11549,10 +11606,7 @@
      * _.isTypedArray([]);
      * // => false
      */
-    var isTypedArray = (nodeIsTypedArray && baseUnary(nodeIsTypedArray)) || function(value) {
-      return isObjectLike(value) &&
-        isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
-    };
+    var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
 
     /**
      * Checks if `value` is `undefined`.

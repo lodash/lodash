@@ -25,7 +25,7 @@ module.exports = {
     'batchLog': _.noop,
     'calculateLayout': _.noop,
     'createApplication': _.noop,
-    'data': { 'user': 'mock'},
+    'data': { 'user': 'mock' },
     'mainText': '',
     'renewToken': _.noop,
     'sendMail': _.noop,

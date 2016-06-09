@@ -1779,6 +1779,30 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.rearg');
+
+  (function() {
+    function fn(a, b, c) {
+      return [a, b, c];
+    }
+
+    QUnit.test('should be curried', function(assert) {
+      assert.expect(1);
+
+      var rearged = fp.rearg([1, 2, 0])(fn);
+      assert.deepEqual(rearged('c', 'a', 'b'), ['a', 'b', 'c']);
+    });
+
+    QUnit.test('should curry the rearged function', function(assert) {
+      assert.expect(1);
+
+      var rearged = fp.rearg([1, 2, 0], fn);
+      assert.deepEqual(rearged('c')('a')('b'), ['a', 'b', 'c']);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('reduce methods');
 
   _.each(['reduce', 'reduceRight'], function(methodName) {

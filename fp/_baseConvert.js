@@ -209,6 +209,12 @@ function baseConvert(util, name, func, options) {
         return func;
       };
     },
+    'rearg': function(rearg) {
+      return function(func, indexes) {
+        var n = indexes ? indexes.length : 0;
+        return curry(rearg(func, indexes), n);
+      };
+    },
     'runInContext': function(runInContext) {
       return function(context) {
         return baseConvert(util, runInContext(context), options);

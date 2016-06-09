@@ -321,6 +321,7 @@ exports.skipFixed = {
   'flowRight': true,
   'iteratee': true,
   'mixin': true,
+  'rearg': true,
   'runInContext': true
 };
 

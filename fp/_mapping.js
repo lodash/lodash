@@ -13,6 +13,7 @@ exports.aliasToReal = {
   'first': 'head',
 
   // Methods that are curried variants of others.
+  'conforms': 'conformsTo',
   'matches': 'isMatch',
 
   // Ramda aliases.
@@ -61,7 +62,7 @@ exports.aliasToReal = {
   'unapply': 'rest',
   'unnest': 'flatten',
   'useWith': 'overArgs',
-  'where': 'conforms',
+  'where': 'conformsTo',
   'whereEq': 'isMatch',
   'zipObj': 'zipObject'
 };

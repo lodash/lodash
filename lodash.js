@@ -145,7 +145,8 @@
 
   /** Used to match wrap detail comments. */
   var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/,
-      reWrapDetails = /\{\n\/\* \[wrapped with (.+)\] \*/;
+      reWrapDetails = /\{\n\/\* \[wrapped with (.+)\] \*/,
+      reSplitDetails = /,? & /;
 
   /** Used to match non-compound words composed of alphanumeric characters. */
   var reBasicWord = /[a-zA-Z0-9]+/g;
@@ -6166,29 +6167,36 @@
      * @returns {Function} Returns `wrapper`.
      */
     var setWrapToString = !defineProperty ? identity : function(wrapper, ref, bitmask) {
-      var string = (ref + ''),
-          match = string.match(reWrapDetails),
-          details = match ? match[1].split(/, (?:& )| & /) : [];
-
-      arrayEach(wrapFlags, function(pair) {
-        if ((bitmask & pair[1]) && !arrayIncludes(details, '_.'+ pair[0])) {
-          details.push('_.' + pair[0]);
-        }
+      var source = (ref + '');
+      return defineProperty(wrapper, 'toString', {
+        'configurable': true,
+        'enumerable': false,
+        'value': constant(insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)))
       });
+    };
 
+    function getWrapDetails(source) {
+      var match = source.match(reWrapDetails);
+      return match ? match[1].split(reSplitDetails) : [];
+    }
+
+    function insertWrapDetails(source, details) {
       var length = details.length,
           lastIndex = length - 1;
 
       details[lastIndex] = (length > 1 ? '& ' : '') + details[lastIndex];
       details = details.join(length > 2 ? ', ' : ' ');
-      string = string.replace(reWrapComment, '{\n/* [wrapped with ' + details + '] */\n');
+      return source.replace(reWrapComment, '{\n/* [wrapped with ' + details + '] */\n');
+    }
 
-      return defineProperty(wrapper, 'toString', {
-        'configurable': true,
-        'enumerable': false,
-        'value': constant(string)
+    function updateWrapDetails(details, bitmask) {
+      arrayEach(wrapFlags, function(pair) {
+        if ((bitmask & pair[1]) && !arrayIncludes(details, '_.'+ pair[0])) {
+          details.push('_.' + pair[0]);
+        }
       });
-    };
+      return details.sort();
+    }
 
     /**
      * Converts `string` to a property path array.

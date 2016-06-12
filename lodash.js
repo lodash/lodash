@@ -1277,7 +1277,8 @@
     context = context ? _.defaults({}, context, _.pick(root, contextProps)) : root;
 
     /** Built-in constructor references. */
-    var Date = context.Date,
+    var Array = context.Array,
+        Date = context.Date,
         Error = context.Error,
         Math = context.Math,
         RegExp = context.RegExp,
@@ -1332,7 +1333,7 @@
         Uint8Array = context.Uint8Array,
         enumerate = Reflect ? Reflect.enumerate : undefined,
         iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined,
-        objectCreate = Object.create,
+        objectCreate = context.Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         splice = arrayProto.splice;
 
@@ -1363,7 +1364,7 @@
         Promise = getNative(context, 'Promise'),
         Set = getNative(context, 'Set'),
         WeakMap = getNative(context, 'WeakMap'),
-        nativeCreate = getNative(Object, 'create');
+        nativeCreate = getNative(context.Object, 'create');
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;

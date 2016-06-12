@@ -294,7 +294,7 @@ function optionToArray(name, string) {
 function optionToValue(name, string) {
   var result = string.match(RegExp('^' + name + '(?:=([\\s\\S]+))?$'));
   if (result) {
-    result = _.result(result, 1);
+    result = _.get(result, 1);
     result = result ? _.trim(result) : true;
   }
   if (result === 'false') {
@@ -366,8 +366,8 @@ function onJobStart(error, res, body) {
   if (this.stopping) {
     return;
   }
-  var statusCode = _.result(res, 'statusCode'),
-      taskId = _.first(_.result(body, 'js tests'));
+  var statusCode = _.get(res, 'statusCode'),
+      taskId = _.first(_.get(body, 'js tests'));
 
   if (error || !taskId || statusCode != 200) {
     if (this.attempts < this.retries) {
@@ -408,19 +408,19 @@ function onJobStatus(error, res, body) {
   if (!this.running || this.stopping) {
     return;
   }
-  var completed = _.result(body, 'completed', false),
-      data = _.first(_.result(body, 'js tests')),
+  var completed = _.get(body, 'completed', false),
+      data = _.first(_.get(body, 'js tests')),
       elapsed = (_.now() - this.timestamp) / 1000,
-      jobId = _.result(data, 'job_id', null),
-      jobResult = _.result(data, 'result', null),
-      jobStatus = _.result(data, 'status', ''),
-      jobUrl = _.result(data, 'url', null),
+      jobId = _.get(data, 'job_id', null),
+      jobResult = _.get(data, 'result', null),
+      jobStatus = _.get(data, 'status', ''),
+      jobUrl = _.get(data, 'url', null),
       expired = (elapsed >= queueTimeout && !_.includes(jobStatus, 'in progress')),
       options = this.options,
       platform = options.platforms[0];
 
   if (_.isObject(jobResult)) {
-    var message = _.result(jobResult, 'message');
+    var message = _.get(jobResult, 'message');
   } else {
     if (typeof jobResult == 'string') {
       message = jobResult;
@@ -442,7 +442,7 @@ function onJobStatus(error, res, body) {
   }
   var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + _.startCase(platform[0]),
       errored = !jobResult || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
-      failures = _.result(jobResult, 'failed'),
+      failures = _.get(jobResult, 'failed'),
       label = options.name + ':',
       tunnel = this.tunnel;
 

@@ -18579,6 +18579,17 @@
       assert.deepEqual(func(21, 10, -3), resolve([21, 18, 15, 12]));
     });
 
+    QUnit.test('`_.' + methodName + '` should work with a `step` function', function(assert) {
+      assert.expect(2);
+
+      assert.deepEqual(func(0, 10, function(current) {
+        return current + 1;
+      }), resolve([0, 1, 3, 7]));
+      assert.deepEqual(func(100, 88, function(current, start, end) {
+        return ((start - end) / -2) + 1;
+      }), resolve([100, 95, 90]));
+    });
+
     QUnit.test('`_.' + methodName + '` should support `start` of `-0`', function(assert) {
       assert.expect(1);
 

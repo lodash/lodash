@@ -3639,6 +3639,31 @@
     }
 
     /**
+     * The base implementation of `_.range` and `_.rangeRight` which doesn't
+     * coerce arguments, with step as a function.
+     *
+     * @private
+     * @param {number} start The start of the range.
+     * @param {number} end The end of the range.
+     * @param {Function} step The function which returns the value to increment
+     *  or decrement by.
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Array} Returns the range of numbers.
+     */
+    function baseRangeStepFunc(start, end, step, fromRight) {
+      var sign = (end - start) / Math.abs(end - start),
+          current = start,
+          operation = fromRight ? 'unshift' : 'push',
+          result = [];
+
+      while ((end - current) * sign > 0) {
+        result[operation](current);
+        current += step(current, start, end);
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `_.repeat` which doesn't coerce arguments.
      *
      * @private
@@ -5002,6 +5027,9 @@
           start = 0;
         } else {
           end = toNumber(end) || 0;
+        }
+        if (typeof step == 'function') {
+          return baseRangeStepFunc(start, end, step, fromRight);
         }
         step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
         return baseRange(start, end, step, fromRight);
@@ -15371,7 +15399,8 @@
      * Creates an array of numbers (positive and/or negative) progressing from
      * `start` up to, but not including, `end`. A step of `-1` is used if a negative
      * `start` is specified without an `end` or `step`. If `end` is not specified,
-     * it's set to `start` with `start` then set to `0`.
+     * it's set to `start` with `start` then set to `0`. If `step` is a function,
+     * it is invoked with three arguments: (current, start, end).
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
@@ -15382,7 +15411,7 @@
      * @category Util
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
+     * @param {number|Function} [step=1] The value to increment or decrement by.
      * @returns {Array} Returns the range of numbers.
      * @see _.inRange, _.rangeRight
      * @example
@@ -15407,6 +15436,9 @@
      *
      * _.range(0);
      * // => []
+     *
+     * _.range(0, 10, function(c) { return c + 1; });
+     * // => [0, 1, 3, 7]
      */
     var range = createRange();
 
@@ -15420,7 +15452,7 @@
      * @category Util
      * @param {number} [start=0] The start of the range.
      * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
+     * @param {number|Function} [step=1] The value to increment or decrement by.
      * @returns {Array} Returns the range of numbers.
      * @see _.inRange, _.range
      * @example
@@ -15445,6 +15477,9 @@
      *
      * _.rangeRight(0);
      * // => []
+     *
+     * _.rangeRight(0, 10, function(c) { return c + 1; });
+     * // => [7, 3, 1, 0]
      */
     var rangeRight = createRange(true);
 

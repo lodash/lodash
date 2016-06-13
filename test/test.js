@@ -16164,7 +16164,7 @@
     QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(1);
 
-      var over = _.overArgs(fn, ['b', 1], [['a', 1]]);
+      var over = _.overArgs(fn, [['b', 1], ['a', 1]]);
       assert.deepEqual(over({ 'b': 2 }, { 'a': 1 }), [false, true]);
     });
 
@@ -16753,7 +16753,7 @@
     QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
-      var over = _.over(['b', 2], [['a', 2]]);
+      var over = _.over([['b', 2], ['a', 2]]);
 
       assert.deepEqual(over({ 'a': 1, 'b': 2 }), [true, false]);
       assert.deepEqual(over({ 'a': 2, 'b': 1 }), [false, true]);
@@ -16847,7 +16847,7 @@
     QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
-      var over = _.overEvery(['b', 2], [['a', 1]]);
+      var over = _.overEvery([['b', 2], ['a', 1]]);
 
       assert.strictEqual(over({ 'a': 1, 'b': 2 }), true);
       assert.strictEqual(over({ 'a': 0, 'b': 2 }), false);
@@ -16968,7 +16968,7 @@
     QUnit.test('should work with `_.matchesProperty` shorthands', function(assert) {
       assert.expect(2);
 
-      var over = _.overSome(['a', 1], [['b', 2]]);
+      var over = _.overSome([['b', 2], ['a', 1]]);
 
       assert.strictEqual(over({ 'a': 0, 'b': 2 }), true);
       assert.strictEqual(over({ 'a': 0, 'b': 0 }), false);

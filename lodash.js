@@ -6179,8 +6179,9 @@
 
     function updateWrapDetails(details, bitmask) {
       arrayEach(wrapFlags, function(pair) {
-        if ((bitmask & pair[1]) && !arrayIncludes(details, '_.'+ pair[0])) {
-          details.push('_.' + pair[0]);
+        var value = '_.' + pair[0];
+        if ((bitmask & pair[1]) && !arrayIncludes(details, value)) {
+          details.push(value);
         }
       });
       return details.sort();

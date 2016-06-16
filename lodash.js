@@ -10114,7 +10114,7 @@
      * @memberOf _
      * @category Function
      * @param {Function} func The function to wrap.
-     * @param {...(Function|Function[])} [transforms[_.identity]]
+     * @param {...(Function|Function[])} [transforms=[_.identity]]
      *  The argument transforms.
      * @returns {Function} Returns the new function.
      * @example

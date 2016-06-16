@@ -1454,7 +1454,7 @@
     QUnit.test('`_.' + methodName + '` should work with a `customizer` that returns `undefined`', function(assert) {
       assert.expect(1);
 
-      var expected = { 'a': undefined };
+      var expected = { 'a': 1 };
       assert.deepEqual(func({}, expected, noop), expected);
     });
   });

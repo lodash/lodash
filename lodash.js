@@ -5682,7 +5682,7 @@
     }
 
     /**
-     * Extracts the wrapper details from the `source` body comment.
+     * Extracts wrapper details from the `source` body comment.
      *
      * @private
      * @param {string} source The source to inspect.
@@ -5823,7 +5823,7 @@
     }
 
     /**
-     * Inserts the wrapper `details` in a comment at the top of the `source` body.
+     * Inserts wrapper `details` in a comment at the top of the `source` body.
      *
      * @private
      * @param {string} source The source to modify.
@@ -6174,17 +6174,17 @@
     }());
 
     /**
-     * Sets the `toString` method of `wrapper` to mimic the source of `ref`
+     * Sets the `toString` method of `wrapper` to mimic the source of `reference`
      * with wrapper details in a comment at the top of the source body.
      *
      * @private
      * @param {Function} wrapper The function to modify.
-     * @param {Function} ref The reference function.
+     * @param {Function} reference The reference function.
      * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
      * @returns {Function} Returns `wrapper`.
      */
-    var setWrapToString = !defineProperty ? identity : function(wrapper, ref, bitmask) {
-      var source = (ref + '');
+    var setWrapToString = !defineProperty ? identity : function(wrapper, reference, bitmask) {
+      var source = (reference + '');
       return defineProperty(wrapper, 'toString', {
         'configurable': true,
         'enumerable': false,
@@ -6242,10 +6242,10 @@
     }
 
     /**
-     * Updates the wrapper `details` base on the `bitmask` flags.
+     * Updates wrapper `details` based on `bitmask` flags.
      *
      * @private
-     * @returns {Array} details The details to insert.
+     * @returns {Array} details The details to modify.
      * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
      * @returns {Array} Returns `details`.
      */

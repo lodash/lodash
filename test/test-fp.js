@@ -1699,6 +1699,21 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.propertyOf');
+
+  (function() {
+    QUnit.test('should be curried', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 1 };
+
+      assert.strictEqual(fp.propertyOf(object, 'a'), 1);
+      assert.strictEqual(fp.propertyOf(object)('a'), 1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.pull');
 
   (function() {

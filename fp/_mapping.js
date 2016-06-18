@@ -15,6 +15,7 @@ exports.aliasToReal = {
   // Methods that are curried variants of others.
   'conforms': 'conformsTo',
   'matches': 'isMatch',
+  'property': 'get',
 
   // Ramda aliases.
   '__': 'placeholder',

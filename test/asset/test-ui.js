@@ -59,8 +59,8 @@
         setTimeout(init, 15);
         return;
       }
-      toolbar.appendChild(span1);
-      toolbar.appendChild(span2);
+      toolbar.insertBefore(span2, toolbar.lastChild);
+      toolbar.insertBefore(span1, span2);
 
       buildList.selectedIndex = (function() {
         switch (build) {
@@ -89,7 +89,6 @@
     }
 
     var span1 = document.createElement('span');
-    span1.style.cssText = 'float:right';
     span1.innerHTML =
       '<label for="qunit-build">Build: </label>' +
       '<select id="qunit-build">' +
@@ -100,7 +99,6 @@
       '</select>';
 
     var span2 = document.createElement('span');
-    span2.style.cssText = 'float:right';
     span2.innerHTML =
       '<label for="qunit-loader">Loader: </label>' +
       '<select id="qunit-loader">' +
@@ -109,6 +107,12 @@
       '<option value="dojo">Dojo</option>' +
       '<option value="requirejs">RequireJS</option>' +
       '</select>';
+
+    span1.style.cssText =
+    span2.style.cssText = 'display:inline-block;float:right;line-height:2.1em;margin-left:1em;margin-top:0;';
+
+    span1.firstChild.style.cssText =
+    span2.firstChild.style.cssText = 'display:inline-block;margin-right:.5em;';
 
     var buildList = span1.lastChild,
         loaderList = span2.lastChild;

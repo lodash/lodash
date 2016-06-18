@@ -7475,6 +7475,43 @@
     }
 
     /**
+     * This method is like '_.sortedIndexOf' except that it accepts `iteratee`
+     * which is invoked for `value` and each element of `array` to compute their
+     # sort ranking. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @since 4.0.0
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to search for.
+     * @param {Function} [iteratee=_.identity]
+     *  The iteratee invoked per element.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * var objects = [{ 'x': 4 }, { 'x': 5 }];
+     *
+     * _.sortedFindBy(objects, { 'x': 4 }, function(o) { return o.x; });
+     * // => 0
+     *
+     * // The `_.property` iteratee shorthand.
+     * _.sortedFindBy(objects, { 'x': 4 }, 'x');
+     * // => 0
+     */
+    function sortedFindBy(array, value, iteratee) {
+      value = iteratee(value);
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = baseSortedIndex(array, value);
+        if (index < length && eq(array[index], value)) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    /**
      * This method is like `_.sortedIndex` except that it returns the highest
      * index at which `value` should be inserted into `array` in order to
      * maintain its sort order.
@@ -7543,6 +7580,43 @@
      * // => 3
      */
     function sortedLastIndexOf(array, value) {
+      var length = array ? array.length : 0;
+      if (length) {
+        var index = baseSortedIndex(array, value, true) - 1;
+        if (eq(array[index], value)) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    /**
+     * This method is like '_.sortedLastIndexOf' except that it accepts `iteratee`
+     * which is invoked for `value` and each element of `array` to compute their
+     # sort ranking. The iteratee is invoked with one argument: (value).
+     *
+     * @static
+     * @memberOf _
+     * @since 4.0.0
+     * @category Array
+     * @param {Array} array The sorted array to inspect.
+     * @param {*} value The value to search for.
+     * @param {Function} [iteratee=_.identity]
+     *  The iteratee invoked per element.
+     * @returns {number} Returns the index of the matched value, else `-1`.
+     * @example
+     *
+     * var objects = [{ 'x': 4 }, { 'x': 4 }, { 'x': 5 }];
+     *
+     * _.sortedLastFindBy(objects, { 'x': 4 }, function(o) { return o.x; });
+     * // => 1
+     *
+     * // The `_.property` iteratee shorthand.
+     * _.sortedLastFindBy(objects, { 'x': 4 }, 'x');
+     * // => 0
+     */
+    function sortedLastFindBy(array, value, iteratee) {
+      value = iteratee(value);
       var length = array ? array.length : 0;
       if (length) {
         var index = baseSortedIndex(array, value, true) - 1;

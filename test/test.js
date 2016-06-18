@@ -12840,6 +12840,21 @@
       }
     });
 
+    QUnit.test('`_.sortedFindBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var objects = [{ 'a': 40 }, { 'a': 50 }];
+
+        _.iteratee = getPropA;
+        assert.strictEqual(_.sortedFindBy(objects, { 'a': 40 }), 0);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('`_.sortedLastIndexBy` should use `_.iteratee` internally', function(assert) {
       assert.expect(1);
 
@@ -12848,6 +12863,21 @@
 
         _.iteratee = getPropA;
         assert.strictEqual(_.sortedLastIndexBy(objects, { 'a': 40 }), 1);
+        _.iteratee = iteratee;
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('`_.sortedLastFindBy` should use `_.iteratee` internally', function(assert) {
+      assert.expect(1);
+
+      if (!isModularize) {
+        var objects = [{ 'a': 40 }, { 'a': 50 }];
+
+        _.iteratee = getPropA;
+        assert.strictEqual(_.sortedLastFindBy(objects, { 'a': 40 }), 1);
         _.iteratee = iteratee;
       }
       else {
@@ -20933,6 +20963,69 @@
 
       var sorted = [4, 4, 5, 5, 6, 6];
       assert.deepEqual(func(sorted, 5), isSortedIndexOf ? 2 : 3);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('sortedFindBy methods');
+
+  lodashStable.each(['sortedFindBy', 'sortedLastFindBy'], function(methodName) {
+    var func = _[methodName],
+        isSortedFindBy = methodName == 'sortedFindBy';
+
+    QUnit.test('`_.' + methodName + '` should provide correct `iteratee` arguments', function(assert) {
+      assert.expect(1);
+
+      var args;
+
+      func([40, 50], 40, function(assert) {
+        args || (args = slice.call(arguments));
+      });
+
+      assert.deepEqual(args, [40]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with `_.property` shorthands', function(assert) {
+      assert.expect(1);
+
+      var objects = [{ 'x': 40 }, { 'x': 50 }],
+          actual = func(objects, { 'x': 40 }, 'x');
+
+      assert.strictEqual(actual, 1);
+    });
+
+    QUnit.test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', function(assert) {
+      assert.expect(12);
+
+      lodashStable.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length) {
+        var array = [],
+            values = [MAX_ARRAY_LENGTH, NaN, undefined];
+
+        array.length = length;
+
+        lodashStable.each(values, function(value) {
+          var steps = 0;
+
+          var actual = func(array, value, function(value) {
+            steps++;
+            return value;
+          });
+
+          var expected = (isSortedFindBy ? !lodashStable.isNaN(value) : lodashStable.isFinite(value))
+            ? 0
+            : Math.min(length, MAX_ARRAY_INDEX);
+
+          // Avoid false fails in older Firefox.
+          if (array.length == length) {
+            assert.ok(steps == 32 || steps == 33);
+            assert.strictEqual(actual, expected);
+          }
+          else {
+            skipAssert(assert, 2);
+          }
+        });
+      });
     });
   });
 

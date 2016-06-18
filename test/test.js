@@ -26785,6 +26785,8 @@
   if (!document) {
     QUnit.config.noglobals = true;
     QUnit.load();
-    QUnit.start();
+    if (!QUnit.init) {
+      QUnit.start();
+    }
   }
 }.call(this));

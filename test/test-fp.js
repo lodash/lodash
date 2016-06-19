@@ -947,10 +947,9 @@
 
       var object = { 'a': 1 },
           extend = convert('extend', _.extend),
-          value = _.clone(object),
-          actual = extend(value)(new Foo);
+          actual = extend(object)(new Foo);
 
-      assert.deepEqual(value, object);
+      assert.deepEqual(object, { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
     });
   }());
@@ -1049,8 +1048,8 @@
 
       var array = [1, 2, 3, 1, 2, 3];
 
-      assert.deepEqual(func(resolve(1))(2)(array), 3);
-      assert.deepEqual(func(resolve(2))(-3)(array), 4);
+      assert.strictEqual(func(resolve(1))(2)(array), 3);
+      assert.strictEqual(func(resolve(2))(-3)(array), 4);
     });
   });
 
@@ -1067,8 +1066,8 @@
 
       var array = [1, 2, 3, 1, 2, 3];
 
-      assert.deepEqual(func(resolve(2))(3)(array), 1);
-      assert.deepEqual(func(resolve(3))(-3)(array), 2);
+      assert.strictEqual(func(resolve(2))(3)(array), 1);
+      assert.strictEqual(func(resolve(3))(-3)(array), 2);
     });
   });
 
@@ -1579,11 +1578,11 @@
       Foo.mixin = object.mixin;
       Foo.mixin(source);
 
-      assert.strictEqual(typeof Foo.a, 'function');
+      assert.ok('a' in Foo);
       assert.notOk('a' in Foo.prototype);
 
       object.mixin(source);
-      assert.strictEqual(typeof object.a, 'function');
+      assert.ok('a' in object);
     });
   }());
 

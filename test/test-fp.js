@@ -23,6 +23,7 @@
   /** Math helpers. */
   var add = function(x, y) { return x + y; },
       isEven = function(n) { return n % 2 == 0; },
+      isEvenIndex = function(n, index) { return isEven(index); },
       square = function(n) { return n * n; };
 
   // Leak to avoid sporadic `noglobals` fails on Edge in Sauce Labs.
@@ -141,11 +142,8 @@
 
       if (!document) {
         var array = [1, 2, 3, 4],
-            lodash = convert({ 'remove': _.remove }, allFalseOptions);
-
-        var actual = lodash.remove(array, function(n, index) {
-          return isEven(index);
-        });
+            lodash = convert({ 'remove': _.remove }, allFalseOptions),
+            actual = lodash.remove(array, isEvenIndex);
 
         assert.deepEqual(array, [2, 4]);
         assert.deepEqual(actual, [1, 3]);
@@ -160,11 +158,8 @@
       assert.expect(3);
 
       var array = [1, 2, 3, 4],
-          lodash = convert(_.runInContext(), allFalseOptions);
-
-      var actual = lodash.remove(array, function(n, index) {
-        return isEven(index);
-      });
+          lodash = convert(_.runInContext(), allFalseOptions),
+          actual = lodash.remove(array, isEvenIndex);
 
       assert.deepEqual(array, [2, 4]);
       assert.deepEqual(actual, [1, 3]);
@@ -176,11 +171,8 @@
 
       var array = [1, 2, 3, 4],
           runInContext = convert('runInContext', _.runInContext, allFalseOptions),
-          lodash = runInContext();
-
-      var actual = lodash.remove(array, function(n, index) {
-        return isEven(index);
-      });
+          lodash = runInContext(),
+          actual = lodash.remove(array, isEvenIndex);
 
       assert.deepEqual(array, [2, 4]);
       assert.deepEqual(actual, [1, 3]);
@@ -193,7 +185,7 @@
       var array = [1, 2, 3, 4],
           value = _.clone(array),
           remove = convert('remove', _.remove, { 'cap': false }),
-          actual = remove(function(n, index) { return isEven(index); })(value);
+          actual = remove(isEvenIndex)(value);
 
       assert.deepEqual(value, [1, 2, 3, 4]);
       assert.deepEqual(actual, [2, 4]);
@@ -296,11 +288,8 @@
 
       var array = [1, 2, 3, 4],
           lodash = func(allFalseOptions),
-          remove = isFp ? lodash.remove : lodash;
-
-      var actual = remove(array, function(n, index) {
-        return isEven(index);
-      });
+          remove = isFp ? lodash.remove : lodash,
+          actual = remove(array, isEvenIndex);
 
       assert.deepEqual(array, [2, 4]);
       assert.deepEqual(actual, [1, 3]);
@@ -312,11 +301,8 @@
 
       var array = [1, 2, 3, 4],
           lodash = func({ 'cap': false }),
-          remove = (isFp ? lodash.remove : lodash).convert({ 'rearg': false });
-
-      var actual = remove(array)(function(n, index) {
-        return isEven(index);
-      });
+          remove = (isFp ? lodash.remove : lodash).convert({ 'rearg': false }),
+          actual = remove(array)(isEvenIndex);
 
       assert.deepEqual(array, [1, 2, 3, 4]);
       assert.deepEqual(actual, [2, 4]);

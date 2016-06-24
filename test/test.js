@@ -7923,63 +7923,70 @@
       assert.deepEqual(actual, [1, 4, 7]);
     });
 
+    QUnit.test('should be aliased', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.first, _.head);
+    });
+
     QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.strictEqual(_(array).head(), 1);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        assert.ok(_(array).chain().head() instanceof _);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('should not execute immediately when explicitly chaining', function(assert) {
-      assert.expect(1);
-
-      if (!isNpm) {
-        var wrapped = _(array).chain().head();
-        assert.strictEqual(wrapped.__wrapped__, array);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('should work in a lazy sequence', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
-        var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
-            smallArray = array;
-
-        lodashStable.times(2, function(index) {
-          var array = index ? largeArray : smallArray,
-              wrapped = _(array).filter(isEven);
-
-          assert.strictEqual(wrapped.head(), _.head(_.filter(array, isEven)));
-        });
+        var wrapped = _(array);
+        assert.strictEqual(wrapped.head(), 1);
+        assert.strictEqual(wrapped.first(), 1);
       }
       else {
         skipAssert(assert, 2);
       }
     });
 
-    QUnit.test('should be aliased', function(assert) {
-      assert.expect(1);
+    QUnit.test('should return a wrapped value when explicitly chaining', function(assert) {
+      assert.expect(2);
 
-      assert.strictEqual(_.first, _.head);
+      if (!isNpm) {
+        var wrapped = _(array).chain();
+        assert.ok(wrapped.head() instanceof _);
+        assert.ok(wrapped.first() instanceof _);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
+    QUnit.test('should not execute immediately when explicitly chaining', function(assert) {
+      assert.expect(2);
+
+      if (!isNpm) {
+        var wrapped = _(array).chain();
+        assert.strictEqual(wrapped.head().__wrapped__, array);
+        assert.strictEqual(wrapped.first().__wrapped__, array);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
+
+    QUnit.test('should work in a lazy sequence', function(assert) {
+      assert.expect(4);
+
+      if (!isNpm) {
+        var largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
+            smallArray = array;
+
+        lodashStable.each(['head', 'first'], function(methodName) {
+          lodashStable.times(2, function(index) {
+            var array = index ? largeArray : smallArray,
+                actual = _(array).filter(isEven)[methodName]();
+
+            assert.strictEqual(actual, _[methodName](_.filter(array, isEven)));
+          });
+        });
+      }
+      else {
+        skipAssert(assert, 4);
+      }
     });
   }());
 

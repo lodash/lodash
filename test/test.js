@@ -3350,32 +3350,59 @@
   QUnit.module('lodash.conforms');
 
   (function() {
-    var objects = [
-      { 'a': 1, 'b': 8 },
-      { 'a': 2, 'b': 4 },
-      { 'a': 3, 'b': 16 }
-    ];
-
-    QUnit.test('should create a function that checks if a given object conforms to `source`', function(assert) {
+    QUnit.test('should not change behavior if `source` is modified', function(assert) {
       assert.expect(2);
 
-      var conforms = _.conforms({
+      var object = { 'a': 2 },
+          source = { 'a': function(value) { return value > 1; } },
+          par = _.conforms(source);
+
+      assert.strictEqual(par(object), true);
+
+      source.a = function(value) { return value < 2; };
+      assert.strictEqual(par(object), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('conforms methods');
+
+  lodashStable.each(['conforms', 'conformsTo'], function(methodName) {
+    var isConforms = methodName == 'conforms';
+
+    function conforms(source) {
+      return isConforms ? _.conforms(source) : function(object) {
+        return _.conformsTo(object, source);
+      };
+    }
+
+    QUnit.test('`_.' + methodName + '` should check if `object` conforms to `source`', function(assert) {
+      assert.expect(2);
+
+      var objects = [
+        { 'a': 1, 'b': 8 },
+        { 'a': 2, 'b': 4 },
+        { 'a': 3, 'b': 16 }
+      ];
+
+      var par = conforms({
         'b': function(value) { return value > 4; }
       });
 
-      var actual = lodashStable.filter(objects, conforms);
+      var actual = lodashStable.filter(objects, par);
       assert.deepEqual(actual, [objects[0], objects[2]]);
 
-      conforms = _.conforms({
+      par = conforms({
         'b': function(value) { return value > 8; },
         'a': function(value) { return value > 1; }
       });
 
-      actual = lodashStable.filter(objects, conforms);
+      actual = lodashStable.filter(objects, par);
       assert.deepEqual(actual, [objects[2]]);
     });
 
-    QUnit.test('should not match by inherited `source` properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not match by inherited `source` properties', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -3387,26 +3414,32 @@
         return value > 8;
       };
 
-      var conforms = _.conforms(new Foo),
-          actual = lodashStable.filter(objects, conforms);
+      var objects = [
+        { 'a': 1, 'b': 8 },
+        { 'a': 2, 'b': 4 },
+        { 'a': 3, 'b': 16 }
+      ];
+
+      var par = conforms(new Foo),
+          actual = lodashStable.filter(objects, par);
 
       assert.deepEqual(actual, [objects[1], objects[2]]);
     });
 
-    QUnit.test('should not invoke `source` predicates for missing `object` properties', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not invoke `source` predicates for missing `object` properties', function(assert) {
       assert.expect(2);
 
       var count = 0;
 
-      var conforms = _.conforms({
+      var par = conforms({
         'a': function() { count++; return true; }
       });
 
-      assert.strictEqual(conforms({}), false);
+      assert.strictEqual(par({}), false);
       assert.strictEqual(count, 0);
     });
 
-    QUnit.test('should work with a function for `object`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a function for `object`', function(assert) {
       assert.expect(2);
 
       function Foo() {}
@@ -3415,27 +3448,27 @@
       function Bar() {}
       Bar.a = 2;
 
-      var conforms = _.conforms({
+      var par = conforms({
         'a': function(value) { return value > 1; }
       });
 
-      assert.strictEqual(conforms(Foo), false);
-      assert.strictEqual(conforms(Bar), true);
+      assert.strictEqual(par(Foo), false);
+      assert.strictEqual(par(Bar), true);
     });
 
-    QUnit.test('should work with a function for `source`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a function for `source`', function(assert) {
       assert.expect(1);
 
       function Foo() {}
       Foo.a = function(value) { return value > 1; };
 
       var objects = [{ 'a': 1 }, { 'a': 2 }],
-          actual = lodashStable.filter(objects, _.conforms(Foo));
+          actual = lodashStable.filter(objects, conforms(Foo));
 
       assert.deepEqual(actual, [objects[1]]);
     });
 
-    QUnit.test('should work with a non-plain `object`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should work with a non-plain `object`', function(assert) {
       assert.expect(1);
 
       function Foo() {
@@ -3443,78 +3476,62 @@
       }
       Foo.prototype.b = 2;
 
-      var conforms = _.conforms({
+      var par = conforms({
         'b': function(value) { return value > 1; }
       });
 
-      assert.strictEqual(conforms(new Foo), true);
+      assert.strictEqual(par(new Foo), true);
     });
 
-    QUnit.test('should return `false` when `object` is nullish', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `false` when `object` is nullish', function(assert) {
       assert.expect(1);
 
       var values = [, null, undefined],
           expected = lodashStable.map(values, stubFalse);
 
-      var conforms = _.conforms({
+      var par = conforms({
         'a': function(value) { return value > 1; }
       });
 
       var actual = lodashStable.map(values, function(value, index) {
         try {
-          return index ? conforms(value) : conforms();
+          return index ? par(value) : par();
         } catch (e) {}
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return `true` when comparing an empty `source` to a nullish `object`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `true` when comparing an empty `source` to a nullish `object`', function(assert) {
       assert.expect(1);
 
       var values = [, null, undefined],
           expected = lodashStable.map(values, stubTrue),
-          conforms = _.conforms({});
+          par = conforms({});
 
       var actual = lodashStable.map(values, function(value, index) {
         try {
-          return index ? conforms(value) : conforms();
+          return index ? par(value) : par();
         } catch (e) {}
       });
 
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should return `true` when comparing an empty `source`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `true` when comparing an empty `source`', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1 },
           expected = lodashStable.map(empties, stubTrue);
 
       var actual = lodashStable.map(empties, function(value) {
-        var conforms = _.conforms(value);
-        return conforms(object);
+        var par = conforms(value);
+        return par(object);
       });
 
       assert.deepEqual(actual, expected);
     });
-
-    QUnit.test('should not change behavior if `source` is modified', function(assert) {
-      assert.expect(2);
-
-      var source = {
-        'a': function(value) { return value > 1; }
-      };
-
-      var object = { 'a': 2 },
-          conforms = _.conforms(source);
-
-      assert.strictEqual(conforms(object), true);
-
-      source.a = function(value) { return value < 2; };
-      assert.strictEqual(conforms(object), true);
-    });
-  }());
+  });
 
   /*--------------------------------------------------------------------------*/
 

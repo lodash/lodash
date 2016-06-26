@@ -2567,6 +2567,35 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.chunkBy');
+
+  (function() {
+    QUnit.test('should return chunked arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = _.chunkBy([8, 2, 4, 1, 3, 5], function(value) {
+        return value % 2;
+      });
+      assert.deepEqual(actual, [[8, 2, 4], [1, 3, 5]]);
+    });
+
+    QUnit.test('should use `_.identity` when `iteratee` is `undefined`', function(assert) {
+      assert.expect(1);
+
+      var actual = _.chunkBy(['a', 'a', 'b', 'c', 'c']);
+      assert.deepEqual(actual, [['a', 'a'], ['b'], ['c', 'c']]);
+    });
+
+    QUnit.test('should work with `_.property` shorthands', function(assert) {
+      assert.expect(1);
+
+      var actual = _.chunkBy(['one', 'two', 'three'], 'length');
+      assert.deepEqual(actual, [['one', 'two'], ['three']]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.clamp');
 
   (function() {
@@ -26629,6 +26658,7 @@
     var returnArrays = [
       'at',
       'chunk',
+      'chunkBy',
       'compact',
       'difference',
       'drop',
@@ -26667,7 +26697,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(318);
 
       var arrays = lodashStable.map(falsey, stubArray);
 
@@ -26705,7 +26735,7 @@
     });
 
     QUnit.test('should return an array', function(assert) {
-      assert.expect(70);
+      assert.expect(72);
 
       var array = [1, 2, 3];
 

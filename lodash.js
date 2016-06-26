@@ -6321,6 +6321,59 @@
     }
 
     /**
+     * Creates an array of elements split into groups based on the result of
+     * `iteratee`. Consecutive elements that return the same value will be
+     * placed in the same group. The iteratee is invoked with one argument:
+     * (value).
+     *
+     * @static
+     * @memberOf _
+     * @since 4.15.0
+     * @category Array
+     * @param {Array} array The array to process.
+     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+     * @returns {Array} Returns the new array of chunks.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney',  'age': 36, 'active': true },
+     *   { 'user': 'fred',    'age': 40, 'active': false },
+     *   { 'user': 'pebbles', 'age': 1,  'active': false }
+     * ];
+     *
+     * _.chunkBy(users, function(o) { return o.age > 30; });
+     * // => objects for [['barney', 'fred'], ['pebbles']]
+     *
+     * // The `_.property` iteratee shorthand.
+     * _.chunkBy(users, 'active');
+     * // => objects for [['barney'], ['fred', 'pebbles']]
+     */
+    function chunkBy(array, iteratee, guard) {
+      var length = array ? array.length : 0;
+      if (!length) {
+        return [];
+      }
+      var index = 1,
+          newIteratee = getIteratee(iteratee),
+          firstElement = array[0],
+          currentValue = newIteratee(firstElement),
+          result = [[firstElement]];
+
+      while (index < length) {
+        var nextElement = array[index],
+            nextValue = newIteratee(nextElement);
+        if (baseIsEqual(currentValue, nextValue)) {
+          last(result).push(nextElement);
+        } else {
+          currentValue = nextValue;
+          result.push([nextElement]);
+        }
+        index++;
+      }
+      return result;
+    }
+
+    /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are falsey.
      *
@@ -16008,6 +16061,7 @@
     lodash.castArray = castArray;
     lodash.chain = chain;
     lodash.chunk = chunk;
+    lodash.chunkBy = chunkBy;
     lodash.compact = compact;
     lodash.concat = concat;
     lodash.cond = cond;

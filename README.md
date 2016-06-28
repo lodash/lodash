@@ -43,4 +43,4 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
  * [lodash-es](https://www.npmjs.com/package/lodash-es) & [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
- * [lodash/fp](https://github.com/lodash/lodash/tree/4.14.0-npm/fp)
+ * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)

@@ -41,7 +41,7 @@
     "glob": "^7.0.5",
     "istanbul": "0.4.4",
     "jquery": "^3.0.0",
-    "jscs": "^3.0.5",
+    "jscs": "^3.0.6",
     "lodash": "4.13.1",
     "markdown-doctest": "^0.8.1",
     "marky-markdown": "^7.0.1",

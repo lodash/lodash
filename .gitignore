@@ -2,3 +2,4 @@
 *.log
 coverage
 node_modules
+doc/*.html

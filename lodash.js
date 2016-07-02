@@ -6392,6 +6392,8 @@
      * for equality comparisons. The order of result values is determined by the
      * order they occur in the first array.
      *
+     * **Note:** Unlike `_.pullAll`, this method returns a new array.
+     *
      * @static
      * @memberOf _
      * @since 0.1.0
@@ -6416,6 +6418,8 @@
      * is invoked for each element of `array` and `values` to generate the criterion
      * by which they're compared. Result values are chosen from the first array.
      * The iteratee is invoked with one argument: (value).
+     *
+     * **Note:** Unlike `_.pullAllBy`, this method returns a new array.
      *
      * @static
      * @memberOf _
@@ -6449,6 +6453,8 @@
      * which is invoked to compare elements of `array` to `values`. Result values
      * are chosen from the first array. The comparator is invoked with two arguments:
      * (arrVal, othVal).
+     *
+     * **Note:** Unlike `_.pullAllWith`, this method returns a new array.
      *
      * @static
      * @memberOf _
@@ -7996,6 +8002,8 @@
      * Creates an array excluding all given values using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
+	 *
+     * **Note:** Unlike `_.pull`, this method returns a new array.
      *
      * @static
      * @memberOf _
@@ -8607,6 +8615,8 @@
      * Iterates over elements of `collection`, returning an array of all elements
      * `predicate` returns truthy for. The predicate is invoked with three
      * arguments: (value, index|key, collection).
+     *
+     * **Note:** Unlike `_.remove`, this method returns a new collection.
      *
      * @static
      * @memberOf _
@@ -12214,6 +12224,8 @@
 
     /**
      * Creates an array of values corresponding to `paths` of `object`.
+     *
+     * **Note:** Unlike `_.pullAt`, this method returns a new object.
      *
      * @static
      * @memberOf _

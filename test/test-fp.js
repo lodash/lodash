@@ -1309,7 +1309,7 @@
       var args,
           iteration = 0,
           objects = [{ 'a': 1 }, { 'a': 2 }],
-          stack = { '__data__': { '__data__': [objects] } },
+          stack = { '__data__': { '__data__': [objects, objects.slice().reverse()] } },
           expected = [1, 2, 'a', objects[0], objects[1], stack];
 
       fp.isEqualWith(function() {

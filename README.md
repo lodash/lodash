@@ -3,7 +3,7 @@
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
-[Contributing](https://github.com/lodash/lodash/blob/4.14.0/.github/CONTRIBUTING.md) |
+[Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
 [Code of Conduct](https://jquery.org/conduct/) |
 [Twitter](https://twitter.com/bestiejs) |

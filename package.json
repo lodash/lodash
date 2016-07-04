@@ -44,7 +44,6 @@
     "jscs": "^3.0.6",
     "lodash": "4.13.1",
     "markdown-doctest": "^0.8.1",
-    "marky-markdown": "^7.0.1",
     "platform": "^1.3.1",
     "qunit-extras": "^2.0.1",
     "qunitjs": "^1.23.1",
@@ -53,5 +52,8 @@
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.0",
     "webpack": "^1.13.1"
+  },
+  "optionalDependencies": {
+    "marky-markdown": "^7.0.1"
   }
 }

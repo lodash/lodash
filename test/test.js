@@ -10145,11 +10145,7 @@
         [object1.a, object2.a, 'a', object1, object2],
         [object1.a[0], object2.a[0], 0, object1.a, object2.a],
         [object1.a[1], object2.a[1], 1, object1.a, object2.a],
-        [object1.b, object2.b, 'b', object1.b, object2.b],
-        [object1.b.a, object2.b.a, 'a', object1.b, object2.b],
-        [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a],
-        [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a],
-        [object1.b.b, object2.b.b, 'b', object1.b.b, object2.b.b]
+        [object1.b, object2.b, 'b', object1.b, object2.b]
       ];
 
       _.isEqualWith(object1, object2, function(assert) {
@@ -10666,11 +10662,7 @@
         [object1.b.a, object2.b.a, 'a', object1.b, object2.b],
         [object1.b.a[0], object2.b.a[0], 0, object1.b.a, object2.b.a],
         [object1.b.a[1], object2.b.a[1], 1, object1.b.a, object2.b.a],
-        [object1.b.b, object2.b.b, 'b', object1.b, object2.b],
-        [object1.b.b.a, object2.b.b.a, 'a', object1.b.b, object2.b.b],
-        [object1.b.b.a[0], object2.b.b.a[0], 0, object1.b.b.a, object2.b.b.a],
-        [object1.b.b.a[1], object2.b.b.a[1], 1, object1.b.b.a, object2.b.b.a],
-        [object1.b.b.b, object2.b.b.b, 'b', object1.b.b, object2.b.b]
+        [object1.b.b, object2.b.b, 'b', object1.b, object2.b]
       ];
 
       _.isMatchWith(object1, object2, function(assert) {

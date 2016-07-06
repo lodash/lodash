@@ -180,7 +180,7 @@
     var done = assert.async();
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);
-    setTimeout(function(){ assert.ok(!delayed, "didn't delay the function quite yet"); }, 50);
+    setTimeout(function(){ assert.notOk(delayed, "didn't delay the function quite yet"); }, 50);
     setTimeout(function(){ assert.ok(delayed, 'delayed the function'); done(); }, 150);
   });
 
@@ -694,6 +694,43 @@
       assert.deepEqual(_.toArray(cb(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)), _.range(1, 11));
     });
 
+    // Test custom iteratee
+    var builtinIteratee = _.iteratee;
+    _.iteratee = function(value) {
+      // RegEx values return a function that returns the number of matches
+      if (_.isRegExp(value)) return function(obj) {
+        return (obj.match(value) || []).length;
+      };
+      return value;
+    };
+
+    var collection = ['foo', 'bar', 'bbiz'];
+
+    // Test all methods that claim to be transformed through `_.iteratee`
+    assert.deepEqual(_.countBy(collection, /b/g), {0: 1, 1: 1, 2: 1});
+    assert.equal(_.every(collection, /b/g), false);
+    assert.deepEqual(_.filter(collection, /b/g), ['bar', 'bbiz']);
+    assert.equal(_.find(collection, /b/g), 'bar');
+    assert.equal(_.findIndex(collection, /b/g), 1);
+    assert.equal(_.findKey(collection, /b/g), 1);
+    assert.equal(_.findLastIndex(collection, /b/g), 2);
+    assert.deepEqual(_.groupBy(collection, /b/g), {0: ['foo'], 1: ['bar'], 2: ['bbiz']});
+    assert.deepEqual(_.indexBy(collection, /b/g), {0: 'foo', 1: 'bar', 2: 'bbiz'});
+    assert.deepEqual(_.map(collection, /b/g), [0, 1, 2]);
+    assert.equal(_.max(collection, /b/g), 'bbiz');
+    assert.equal(_.min(collection, /b/g), 'foo');
+    assert.deepEqual(_.partition(collection, /b/g), [['bar', 'bbiz'], ['foo']]);
+    assert.deepEqual(_.reject(collection, /b/g), ['foo']);
+    assert.equal(_.some(collection, /b/g), true);
+    assert.deepEqual(_.sortBy(collection, /b/g), ['foo', 'bar', 'bbiz']);
+    assert.equal(_.sortedIndex(collection, 'blah', /b/g), 1);
+    assert.deepEqual(_.uniq(collection, /b/g), ['foo', 'bar', 'bbiz']);
+
+    var objCollection = {a: 'foo', b: 'bar', c: 'bbiz'};
+    assert.deepEqual(_.mapObject(objCollection, /b/g), {a: 0, b: 1, c: 2});
+
+    // Restore the builtin iteratee
+    _.iteratee = builtinIteratee;
   });
 
   QUnit.test('restArgs', function(assert) {

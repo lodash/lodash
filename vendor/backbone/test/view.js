@@ -1,13 +1,13 @@
-(function() {
+(function(QUnit) {
 
   var view;
 
   QUnit.module('Backbone.View', {
 
-    beforeEach: function(assert) {
+    beforeEach: function() {
       $('#qunit-fixture').append(
         '<div id="testElement"><h1>Test</h1></div>'
-      );
+     );
 
       view = new Backbone.View({
         id: 'test-view',
@@ -61,6 +61,28 @@
     assert.strictEqual(new View().one, 1);
   });
 
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    var View = Backbone.View.extend({
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+
+    assert.strictEqual(new View().one, 1);
+  });
+
+  QUnit.test('preinitialize occurs before the view is set up', function(assert) {
+    assert.expect(2);
+    var View = Backbone.View.extend({
+      preinitialize: function() {
+        assert.equal(this.el, undefined);
+      }
+    });
+    var _view = new View({});
+    assert.notEqual(_view.el, undefined);
+  });
+
   QUnit.test('render', function(assert) {
     assert.expect(1);
     var myView = new Backbone.View;
@@ -72,8 +94,8 @@
     var counter1 = 0, counter2 = 0;
 
     var myView = new Backbone.View({el: '#testElement'});
-    myView.increment = function(){ counter1++; };
-    myView.$el.on('click', function(){ counter2++; });
+    myView.increment = function() { counter1++; };
+    myView.$el.on('click', function() { counter2++; });
 
     var events = {'click h1': 'increment'};
 
@@ -129,11 +151,10 @@
     assert.equal(myView.counter, 3);
   });
 
-
   QUnit.test('delegateEvents ignore undefined methods', function(assert) {
     assert.expect(0);
     var myView = new Backbone.View({el: '<p></p>'});
-    myView.delegateEvents({'click': 'undefinedMethod'});
+    myView.delegateEvents({click: 'undefinedMethod'});
     myView.$el.trigger('click');
   });
 
@@ -142,8 +163,8 @@
     var counter1 = 0, counter2 = 0;
 
     var myView = new Backbone.View({el: '#testElement'});
-    myView.increment = function(){ counter1++; };
-    myView.$el.on('click', function(){ counter2++; });
+    myView.increment = function() { counter1++; };
+    myView.$el.on('click', function() { counter2++; });
 
     var events = {'click h1': 'increment'};
 
@@ -203,7 +224,7 @@
     assert.expect(2);
     var myView = new Backbone.View({el: '#testElement'});
     myView.delegate('click', function() { assert.ok(true); });
-    var handler = function(){ assert.ok(false); };
+    var handler = function() { assert.ok(false); };
     myView.delegate('click', 'h1', handler);
     myView.undelegate('click', 'h1', handler);
     myView.$('h1').trigger('click');
@@ -405,8 +426,8 @@
     assert.expect(0);
     var View = Backbone.View.extend({
       initialize: function() {
-        this.listenTo(this.model, 'all x', function(){ assert.ok(false); });
-        this.listenTo(this.collection, 'all x', function(){ assert.ok(false); });
+        this.listenTo(this.model, 'all x', function() { assert.ok(false); });
+        this.listenTo(this.collection, 'all x', function() { assert.ok(false); });
       }
     });
 
@@ -492,4 +513,4 @@
     assert.notEqual($oldEl, myView.$el);
   });
 
-})();
+})(QUnit);

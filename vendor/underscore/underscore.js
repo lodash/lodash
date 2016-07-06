@@ -84,18 +84,23 @@
     };
   };
 
+  var builtinIteratee;
+
   // An internal function to generate callbacks that can be applied to each
   // element in a collection, returning the desired result — either `identity`,
   // an arbitrary callback, a property matcher, or a property accessor.
   var cb = function(value, context, argCount) {
+    if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
     if (value == null) return _.identity;
     if (_.isFunction(value)) return optimizeCb(value, context, argCount);
     if (_.isObject(value)) return _.matcher(value);
     return _.property(value);
   };
 
-  // An external wrapper for the internal callback generator.
-  _.iteratee = function(value, context) {
+  // External wrapper for our callback generator. Users may customize
+  // `_.iteratee` if they want additional predicate/iteratee shorthand styles.
+  // This abstraction hides the internal-only argCount argument.
+  _.iteratee = builtinIteratee = function(value, context) {
     return cb(value, context, Infinity);
   };
 
@@ -439,7 +444,7 @@
       // Keep surrogate pair characters together
       return obj.match(reStrSymbol);
     }
-    if (isArrayLike(obj)) return _.map(obj);
+    if (isArrayLike(obj)) return _.map(obj, _.identity);
     return _.values(obj);
   };
 
@@ -462,7 +467,7 @@
   // values in the array. Aliased as `head` and `take`. The **guard** check
   // allows it to work with `_.map`.
   _.first = _.head = _.take = function(array, n, guard) {
-    if (array == null) return void 0;
+    if (array == null || array.length < 1) return void 0;
     if (n == null || guard) return array[0];
     return _.initial(array, array.length - n);
   };
@@ -477,7 +482,7 @@
   // Get the last element of an array. Passing **n** will return the last N
   // values in the array.
   _.last = function(array, n, guard) {
-    if (array == null) return void 0;
+    if (array == null || array.length < 1) return void 0;
     if (n == null || guard) return array[array.length - 1];
     return _.rest(array, Math.max(0, array.length - n));
   };
@@ -491,7 +496,7 @@
 
   // Trim out all falsy values from an array.
   _.compact = function(array) {
-    return _.filter(array);
+    return _.filter(array, Boolean);
   };
 
   // Internal implementation of a recursive `flatten` function.
@@ -1094,7 +1099,7 @@
     return result;
   });
 
-   // Return a copy of the object without the blacklisted properties.
+  // Return a copy of the object without the blacklisted properties.
   _.omit = restArgs(function(obj, keys) {
     var iteratee = keys[0], context;
     if (_.isFunction(iteratee)) {
@@ -1403,7 +1408,7 @@
     return new Date().getTime();
   };
 
-   // List of HTML entities for escaping.
+  // List of HTML entities for escaping.
   var escapeMap = {
     '&': '&amp;',
     '<': '&lt;',
@@ -1568,6 +1573,7 @@
         return chainResult(this, func.apply(_, args));
       };
     });
+    return _;
   };
 
   // Add all of the Underscore functions to the wrapper object.
@@ -1602,7 +1608,7 @@
   _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
 
   _.prototype.toString = function() {
-    return '' + this._wrapped;
+    return String(this._wrapped);
   };
 
   // AMD registration happens at the end for compatibility with AMD loaders

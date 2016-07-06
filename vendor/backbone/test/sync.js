@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var Library = Backbone.Collection.extend({
     url: function() { return '/library'; }
@@ -158,7 +158,7 @@
 
   QUnit.test('Backbone.ajax', function(assert) {
     assert.expect(1);
-    Backbone.ajax = function(settings){
+    Backbone.ajax = function(settings) {
       assert.strictEqual(settings.url, '/test');
     };
     var model = new Backbone.Model();
@@ -236,4 +236,4 @@
     this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
   });
 
-})();
+})(QUnit);

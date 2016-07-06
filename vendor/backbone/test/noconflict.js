@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   QUnit.module('Backbone.noConflict');
 
@@ -10,4 +10,4 @@
     assert.equal(window.Backbone, noconflictBackbone, 'Backbone is still pointing to the original Backbone');
   });
 
-})();
+})(QUnit);

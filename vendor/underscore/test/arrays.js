@@ -15,6 +15,10 @@
     result = _.map([[1, 2, 3], [1, 2, 3]], _.first);
     assert.deepEqual(result, [1, 1], 'works well with _.map');
     assert.equal(_.first(null), void 0, 'returns undefined when called on null');
+
+    Array.prototype[0] = 'boo';
+    assert.equal(_.first([]), void 0, 'return undefined when called on a empty array');
+    delete Array.prototype[0];
   });
 
   QUnit.test('head', function(assert) {
@@ -66,6 +70,10 @@
     result = _.map([[1, 2, 3], [1, 2, 3]], _.last);
     assert.deepEqual(result, [3, 3], 'works well with _.map');
     assert.equal(_.last(null), void 0, 'returns undefined when called on null');
+
+    var arr = [];
+    arr[-1] = 'boo';
+    assert.equal(_.last(arr), void 0, 'return undefined when called on a empty array');
   });
 
   QUnit.test('compact', function(assert) {

@@ -52,8 +52,8 @@
   QUnit.test('#750 - Return _ instance.', function(assert) {
     assert.expect(2);
     var instance = _([]);
-    assert.ok(_(instance) === instance);
-    assert.ok(new _(instance) === instance);
+    assert.strictEqual(_(instance), instance);
+    assert.strictEqual(new _(instance), instance);
   });
 
   QUnit.test('identity', function(assert) {
@@ -137,11 +137,12 @@
   });
 
   QUnit.test('mixin', function(assert) {
-    _.mixin({
+    var ret = _.mixin({
       myReverse: function(string) {
         return string.split('').reverse().join('');
       }
     });
+    assert.equal(ret, _, 'returns the _ object to facilitate chaining');
     assert.equal(_.myReverse('panacea'), 'aecanap', 'mixed in a function to _');
     assert.equal(_('champ').myReverse(), 'pmahc', 'mixed in a function to the OOP wrapper');
   });
@@ -188,7 +189,7 @@
     var str = 'some string & another string & yet another';
     var escaped = _.escape(str);
 
-    assert.ok(escaped.indexOf('&') !== -1, 'handles & aka &amp;');
+    assert.notStrictEqual(escaped.indexOf('&'), -1, 'handles & aka &amp;');
     assert.equal(_.unescape(str), str, 'can unescape &amp;');
   });
 
@@ -370,9 +371,9 @@
   });
 
   QUnit.test('#547 - _.templateSettings is unchanged by custom settings.', function(assert) {
-    assert.ok(!_.templateSettings.variable);
+    assert.notOk(_.templateSettings.variable);
     _.template('', {}, {variable: 'x'});
-    assert.ok(!_.templateSettings.variable);
+    assert.notOk(_.templateSettings.variable);
   });
 
   QUnit.test('#556 - undefined template variables.', function(assert) {
@@ -397,11 +398,11 @@
     assert.expect(2);
     var count = 0;
     var template = _.template('<%= f() %>');
-    template({f: function(){ assert.ok(!count++); }});
+    template({f: function(){ assert.notOk(count++); }});
 
     var countEscaped = 0;
     var templateEscaped = _.template('<%- f() %>');
-    templateEscaped({f: function(){ assert.ok(!countEscaped++); }});
+    templateEscaped({f: function(){ assert.notOk(countEscaped++); }});
   });
 
   QUnit.test('#746 - _.template settings are not modified.', function(assert) {

@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var ProxyModel = Backbone.Model.extend();
   var Klass = Backbone.Collection.extend({
@@ -61,6 +61,36 @@
     });
     var model = new Model({value: 1}, {parse: true});
     assert.equal(model.get('value'), 2);
+  });
+
+
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(2);
+    var Model = Backbone.Model.extend({
+
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+    var model = new Model({}, {collection: collection});
+    assert.equal(model.one, 1);
+    assert.equal(model.collection, collection);
+  });
+
+  QUnit.test('preinitialize occurs before the model is set up', function(assert) {
+    assert.expect(6);
+    var Model = Backbone.Model.extend({
+
+      preinitialize: function() {
+        assert.equal(this.collection, undefined);
+        assert.equal(this.cid, undefined);
+        assert.equal(this.id, undefined);
+      }
+    });
+    var model = new Model({id: 'foo'}, {collection: collection});
+    assert.equal(model.collection, collection);
+    assert.equal(model.id, 'foo');
+    assert.notEqual(model.cid, undefined);
   });
 
   QUnit.test('parse can return null', function(assert) {
@@ -1415,4 +1445,4 @@
     assert.equal(model.id, 3);
   });
 
-})();
+})(QUnit);

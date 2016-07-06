@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   QUnit.module('Backbone.Events');
 
@@ -703,4 +703,4 @@
     two.trigger('y', 2);
   });
 
-})();
+})(QUnit);

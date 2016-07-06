@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -593,7 +593,7 @@
       assert.equal(error, 'fail');
       assert.equal(options.validationError, 'fail');
     });
-    assert.equal(collection.create({'foo': 'bar'}, {validate: true}), false);
+    assert.equal(collection.create({foo: 'bar'}, {validate: true}), false);
   });
 
   QUnit.test('create will pass extra options to success callback', function(assert) {
@@ -659,6 +659,31 @@
     });
     var coll = new Collection;
     assert.equal(coll.one, 1);
+  });
+
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+    var coll = new Collection;
+    assert.equal(coll.one, 1);
+  });
+
+  QUnit.test('preinitialize occurs before the collection is set up', function(assert) {
+    assert.expect(2);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        assert.notEqual(this.model, FooModel);
+      }
+    });
+    var FooModel = Backbone.Model.extend({id: 'foo'});
+    var coll = new Collection({}, {
+      model: FooModel
+    });
+    assert.equal(coll.model, FooModel);
   });
 
   QUnit.test('toJSON', function(assert) {
@@ -1724,10 +1749,10 @@
         return new M(attrs);
       }
     });
-    var c2 = new C2({'_id': 1});
+    var c2 = new C2({_id: 1});
     assert.equal(c2.get(1), void 0);
     assert.equal(c2.modelId(c2.at(0).attributes), void 0);
-    var m = new M({'_id': 2});
+    var m = new M({_id: 2});
     c2.add(m);
     assert.equal(c2.get(2), void 0);
     assert.equal(c2.modelId(m.attributes), void 0);
@@ -1995,4 +2020,4 @@
     assert.equal(fired, false);
   });
 
-})();
+})(QUnit);

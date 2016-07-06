@@ -35,7 +35,7 @@
 
   QUnit.test('isEqual', function(assert) {
 
-    assert.ok(!_.isEqual(iNumber, 101));
+    assert.notOk(_.isEqual(iNumber, 101));
     assert.ok(_.isEqual(iNumber, 100));
 
     // Objects from another frame.
@@ -46,13 +46,13 @@
   });
 
   QUnit.test('isEmpty', function(assert) {
-    assert.ok(!_([iNumber]).isEmpty(), '[1] is not empty');
-    assert.ok(!_.isEmpty(iArray), '[] is empty');
+    assert.notOk(_([iNumber]).isEmpty(), '[1] is not empty');
+    assert.notOk(_.isEmpty(iArray), '[] is empty');
     assert.ok(_.isEmpty(iObject), '{} is empty');
   });
 
   QUnit.test('isElement', function(assert) {
-    assert.ok(!_.isElement('div'), 'strings are not dom elements');
+    assert.notOk(_.isElement('div'), 'strings are not dom elements');
     assert.ok(_.isElement(document.body), 'the body tag is a DOM element');
     assert.ok(_.isElement(iElement), 'even from another frame');
   });
@@ -113,12 +113,12 @@
   if (typeof ActiveXObject != 'undefined') {
     QUnit.test('IE host objects', function(assert) {
       var xml = new ActiveXObject('Msxml2.DOMDocument.3.0');
-      assert.ok(!_.isNumber(xml));
-      assert.ok(!_.isBoolean(xml));
-      assert.ok(!_.isNaN(xml));
-      assert.ok(!_.isFunction(xml));
-      assert.ok(!_.isNull(xml));
-      assert.ok(!_.isUndefined(xml));
+      assert.notOk(_.isNumber(xml));
+      assert.notOk(_.isBoolean(xml));
+      assert.notOk(_.isNaN(xml));
+      assert.notOk(_.isFunction(xml));
+      assert.notOk(_.isNull(xml));
+      assert.notOk(_.isUndefined(xml));
     });
 
     QUnit.test('#1621 IE 11 compat mode DOM elements are not functions', function(assert) {

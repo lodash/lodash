@@ -54,6 +54,6 @@
     "webpack": "^1.13.1"
   },
   "optionalDependencies": {
-    "marky-markdown": "^7.0.1"
+    "marky-markdown": "^7.0.2"
   }
 }

@@ -76,7 +76,7 @@ exports.aryMethod = {
     'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
     'mergeAll', 'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest',
     'reverse', 'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd',
-    'trimStart', 'uniqueId', 'words'
+    'trimStart', 'uniqueId', 'words', 'zipAll'
   ],
   '2': [
     'add', 'after', 'ary', 'assign', 'assignAllWith', 'assignIn', 'assignInAllWith',
@@ -214,7 +214,8 @@ exports.methodSpread = {
   'mergeAllWith': { 'afterRearg': true, 'start': 1 },
   'partial': { 'start': 1 },
   'partialRight': { 'start': 1 },
-  'without': { 'start': 1 }
+  'without': { 'start': 1 },
+  'zipAll': { 'start': 0 }
 };
 
 /** Used to identify methods which mutate arrays or objects. */
@@ -313,7 +314,8 @@ exports.remap = {
   'spreadFrom': 'spread',
   'trimChars': 'trim',
   'trimCharsEnd': 'trimEnd',
-  'trimCharsStart': 'trimStart'
+  'trimCharsStart': 'trimStart',
+  'zipAll': 'zip'
 };
 
 /** Used to track methods that skip fixing their arity. */

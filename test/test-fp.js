@@ -2234,6 +2234,18 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.zipAll');
+
+  (function() {
+    QUnit.test('should zip together an array of arrays', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(fp.zipAll([[1, 2], [3, 4], [5, 6]]), [[1, 3, 5], [2, 4, 6]]);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.zipObject');
 
   (function() {

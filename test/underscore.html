@@ -216,8 +216,9 @@
         'Functions': {
           'debounce asap': true,
           'debounce asap cancel': true,
-          'debounce after system time is set backwards': true,
           'debounce asap recursively': true,
+          'debounce after system time is set backwards': true,
+          'debounce re-entrant': true,
           'throttle repeatedly with results': true,
           'more throttle does not trigger leading call when leading is set to false': true,
           'throttle does not trigger trailing call when trailing is set to false': true,
@@ -230,6 +231,9 @@
           ],
           'bindAll': [
             'throws an error for bindAll with no functions named'
+          ],
+          'debounce': [
+            'incr was debounced'
           ],
           'iteratee': [
             '"bbiz"',

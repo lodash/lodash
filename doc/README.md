@@ -76,6 +76,7 @@
 <!-- div -->
 
 ## `Collection`
+* <a href="#_somecollection-predicate_identity" class="alias">`_.any` -> `some`</a>
 * <a href="#_countbycollection-iteratee_identity">`_.countBy`</a>
 * <a href="#_foreachcollection-iteratee_identity" class="alias">`_.each` -> `forEach`</a>
 * <a href="#_foreachrightcollection-iteratee_identity" class="alias">`_.eachRight` -> `forEachRight`</a>
@@ -3288,6 +3289,9 @@ invoked with three arguments: *(value, index|key, collection)*.
 
 #### Since
 0.1.0
+#### Aliases
+*_.any*
+
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
 2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.

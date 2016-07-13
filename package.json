@@ -28,11 +28,11 @@
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {
-    "async": "^1.5.2",
+    "async": "^2.0.0",
     "benchmark": "^2.1.0",
     "chalk": "^1.1.3",
     "codecov.io": "~0.1.6",
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.11.11",
     "curl-amd": "~0.8.12",
     "docdown": "~0.5.1",
     "dojo": "^1.11.2",

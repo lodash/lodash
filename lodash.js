@@ -14977,10 +14977,16 @@
 
     /**
      * Creates a function that invokes `func` with the arguments of the created
-     * function. If `func` is a property name, the created function returns the
-     * property value for a given element. If `func` is an array or object, the
-     * created function returns `true` for elements that contain the equivalent
-     * source properties, otherwise it returns `false`.
+     * function.
+     * 
+     * If `func` is a property name, the created function returns the property
+     * value for a given element.
+     * 
+     * If `func` is an object, the created function returns `true` for elements
+     * that contain the equivalent source properties, otherwise it returns `false`.
+     * 
+     * If `func` is an array, the first two elements are passed as arguments to
+     * `_.matchesProperty`, and the resulting callback is returned.
      *
      * @static
      * @since 4.0.0
@@ -15977,6 +15983,9 @@
      * This method is like `_.sum` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the value to be summed.
      * The iteratee is invoked with one argument: (value).
+     * 
+     * If an object or array is provided as the iteratee, the number of matches
+     * is returned. See `_.iteratee` for the default matching behaviour.
      *
      * @static
      * @memberOf _

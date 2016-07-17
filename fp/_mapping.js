@@ -357,5 +357,6 @@ exports.skipRearg = {
   'rangeRight': true,
   'subtract': true,
   'zip': true,
-  'zipObject': true
+  'zipObject': true,
+  'zipObjectDeep': true
 };

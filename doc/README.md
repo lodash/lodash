@@ -4911,13 +4911,12 @@ _.isElement('<body>');
 Checks if `value` is an empty object, collection, map, or set.
 <br>
 <br>
-Objects are considered empty if they have no own enumerable string keyed
-properties.
-<br>
-<br>
 Array-like values such as `arguments` objects, arrays, buffers, strings, or
 jQuery-like collections are considered empty if they have a `length` of `0`.
 Similarly, maps and sets are considered empty if they have a `size` of `0`.
+<br>
+<br>
+Other objects are considered empty if they have no own enumerable properties.
 
 #### Since
 0.1.0

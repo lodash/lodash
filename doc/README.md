@@ -1,4 +1,4 @@
-# <a href="https://lodash.com/">lodash</a> <span>v4.13.1</span>
+# <a href="https://lodash.com/">lodash</a> <span>v4.14.0</span>
 
 <!-- div class="toc-container" -->
 
@@ -131,7 +131,7 @@
 * <a href="#_memoizefunc-resolver">`_.memoize`</a>
 * <a href="#_negatepredicate">`_.negate`</a>
 * <a href="#_oncefunc">`_.once`</a>
-* <a href="#_overargsfunc">`_.overArgs`</a>
+* <a href="#_overargsfunc-transforms_identity">`_.overArgs`</a>
 * <a href="#_partialfunc-partials">`_.partial`</a>
 * <a href="#_partialrightfunc-partials">`_.partialRight`</a>
 * <a href="#_reargfunc-indexes">`_.rearg`</a>
@@ -151,6 +151,7 @@
 * <a href="#_clonedeepvalue">`_.cloneDeep`</a>
 * <a href="#_clonedeepwithvalue-customizer">`_.cloneDeepWith`</a>
 * <a href="#_clonewithvalue-customizer">`_.cloneWith`</a>
+* <a href="#_conformstoobject-source">`_.conformsTo`</a>
 * <a href="#_eqvalue-other">`_.eq`</a>
 * <a href="#_gtvalue-other">`_.gt`</a>
 * <a href="#_gtevalue-other">`_.gte`</a>
@@ -351,6 +352,7 @@
 * <a href="#_condpairs">`_.cond`</a>
 * <a href="#_conformssource">`_.conforms`</a>
 * <a href="#_constantvalue">`_.constant`</a>
+* <a href="#_defaulttovalue-defaultvalue">`_.defaultTo`</a>
 * <a href="#_flowfuncs">`_.flow`</a>
 * <a href="#_flowrightfuncs">`_.flowRight`</a>
 * <a href="#_identityvalue">`_.identity`</a>
@@ -413,7 +415,7 @@
 <!-- div -->
 
 ### <a id="_chunkarray-size1"></a>`_.chunk(array, [size=1])`
-<a href="#_chunkarray-size1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6118 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.chunk "See the npm package")
+[#](#_chunkarray-size1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6318) [npm package](https://www.npmjs.com/package/lodash.chunk) [&#x24C9;][1]
 
 Creates an array of elements split into groups the length of `size`.
 If `array` can't be split evenly, the final chunk will be the remaining
@@ -436,14 +438,14 @@ _.chunk(['a', 'b', 'c', 'd'], 2);
 _.chunk(['a', 'b', 'c', 'd'], 3);
 // => [['a', 'b', 'c'], ['d']]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_compactarray"></a>`_.compact(array)`
-<a href="#_compactarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6153 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.compact "See the npm package")
+[#](#_compactarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6353) [npm package](https://www.npmjs.com/package/lodash.compact) [&#x24C9;][1]
 
 Creates an array with all falsey values removed. The values `false`, `null`,
 `0`, `""`, `undefined`, and `NaN` are falsey.
@@ -461,14 +463,14 @@ Creates an array with all falsey values removed. The values `false`, `null`,
 _.compact([0, 1, false, 2, '', 3]);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_concatarray-values"></a>`_.concat(array, [values])`
-<a href="#_concatarray-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6190 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.concat "See the npm package")
+[#](#_concatarray-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6390) [npm package](https://www.npmjs.com/package/lodash.concat) [&#x24C9;][1]
 
 Creates a new array concatenating `array` with any additional arrays
 and/or values.
@@ -493,19 +495,22 @@ console.log(other);
 console.log(array);
 // => [1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_differencearray-values"></a>`_.difference(array, [values])`
-<a href="#_differencearray-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6223 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.difference "See the npm package")
+[#](#_differencearray-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6425) [npm package](https://www.npmjs.com/package/lodash.difference) [&#x24C9;][1]
 
-Creates an array of unique `array` values not included in the other given
-arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+Creates an array of `array` values not included in the other given arrays
+using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 for equality comparisons. The order of result values is determined by the
 order they occur in the first array.
+<br>
+<br>
+**Note:** Unlike `_.pullAll`, this method returns a new array.
 
 #### Since
 0.1.0
@@ -521,26 +526,29 @@ order they occur in the first array.
 _.difference([2, 1], [2, 3]);
 // => [1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_differencebyarray-values-iteratee_identity"></a>`_.differenceBy(array, [values], [iteratee=_.identity])`
-<a href="#_differencebyarray-values-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6253 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.differenceby "See the npm package")
+[#](#_differencebyarray-values-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6456) [npm package](https://www.npmjs.com/package/lodash.differenceby) [&#x24C9;][1]
 
 This method is like `_.difference` except that it accepts `iteratee` which
 is invoked for each element of `array` and `values` to generate the criterion
 by which they're compared. Result values are chosen from the first array.
 The iteratee is invoked with one argument: *(value)*.
+<br>
+<br>
+**Note:** Unlike `_.pullAllBy`, this method returns a new array.
 
 #### Since
 4.0.0
 #### Arguments
 1. `array` *(Array)*: The array to inspect.
 2. `[values]` *(...Array)*: The values to exclude.
-3. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+3. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns the new array of filtered values.
@@ -554,19 +562,22 @@ _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
 _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
 // => [{ 'x': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_differencewitharray-values-comparator"></a>`_.differenceWith(array, [values], [comparator])`
-<a href="#_differencewitharray-values-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6284 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.differencewith "See the npm package")
+[#](#_differencewitharray-values-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6489) [npm package](https://www.npmjs.com/package/lodash.differencewith) [&#x24C9;][1]
 
 This method is like `_.difference` except that it accepts `comparator`
 which is invoked to compare elements of `array` to `values`. Result values
 are chosen from the first array. The comparator is invoked with two arguments:<br>
 *(arrVal, othVal)*.
+<br>
+<br>
+**Note:** Unlike `_.pullAllWith`, this method returns a new array.
 
 #### Since
 4.0.0
@@ -585,14 +596,14 @@ var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
 _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
 // => [{ 'x': 2, 'y': 1 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_droparray-n1"></a>`_.drop(array, [n=1])`
-<a href="#_droparray-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6319 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.drop "See the npm package")
+[#](#_droparray-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6524) [npm package](https://www.npmjs.com/package/lodash.drop) [&#x24C9;][1]
 
 Creates a slice of `array` with `n` elements dropped from the beginning.
 
@@ -619,14 +630,14 @@ _.drop([1, 2, 3], 5);
 _.drop([1, 2, 3], 0);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_droprightarray-n1"></a>`_.dropRight(array, [n=1])`
-<a href="#_droprightarray-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6353 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.dropright "See the npm package")
+[#](#_droprightarray-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6558) [npm package](https://www.npmjs.com/package/lodash.dropright) [&#x24C9;][1]
 
 Creates a slice of `array` with `n` elements dropped from the end.
 
@@ -653,14 +664,14 @@ _.dropRight([1, 2, 3], 5);
 _.dropRight([1, 2, 3], 0);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_droprightwhilearray-predicate_identity"></a>`_.dropRightWhile(array, [predicate=_.identity])`
-<a href="#_droprightwhilearray-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6399 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.droprightwhile "See the npm package")
+[#](#_droprightwhilearray-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6603) [npm package](https://www.npmjs.com/package/lodash.droprightwhile) [&#x24C9;][1]
 
 Creates a slice of `array` excluding elements dropped from the end.
 Elements are dropped until `predicate` returns falsey. The predicate is
@@ -670,7 +681,7 @@ invoked with three arguments: *(value, index, array)*.
 3.0.0
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the slice of `array`.
@@ -698,14 +709,14 @@ _.dropRightWhile(users, ['active', false]);
 _.dropRightWhile(users, 'active');
 // => objects for ['barney', 'fred', 'pebbles']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_dropwhilearray-predicate_identity"></a>`_.dropWhile(array, [predicate=_.identity])`
-<a href="#_dropwhilearray-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6441 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.dropwhile "See the npm package")
+[#](#_dropwhilearray-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6645) [npm package](https://www.npmjs.com/package/lodash.dropwhile) [&#x24C9;][1]
 
 Creates a slice of `array` excluding elements dropped from the beginning.
 Elements are dropped until `predicate` returns falsey. The predicate is
@@ -715,7 +726,7 @@ invoked with three arguments: *(value, index, array)*.
 3.0.0
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the slice of `array`.
@@ -743,14 +754,14 @@ _.dropWhile(users, ['active', false]);
 _.dropWhile(users, 'active');
 // => objects for ['barney', 'fred', 'pebbles']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_fillarray-value-start0-endarraylength"></a>`_.fill(array, value, [start=0], [end=array.length])`
-<a href="#_fillarray-value-start0-endarraylength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6476 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.fill "See the npm package")
+[#](#_fillarray-value-start0-endarraylength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6680) [npm package](https://www.npmjs.com/package/lodash.fill) [&#x24C9;][1]
 
 Fills elements of `array` with `value` from `start` up to, but not
 including, `end`.
@@ -783,14 +794,14 @@ _.fill(Array(3), 2);
 _.fill([4, 6, 8, 10], '*', 1, 3);
 // => [4, '*', '*', 10]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findindexarray-predicate_identity-fromindex0"></a>`_.findIndex(array, [predicate=_.identity], [fromIndex=0])`
-<a href="#_findindexarray-predicate_identity-fromindex0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6524 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.findindex "See the npm package")
+[#](#_findindexarray-predicate_identity-fromindex0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6728) [npm package](https://www.npmjs.com/package/lodash.findindex) [&#x24C9;][1]
 
 This method is like `_.find` except that it returns the index of the first
 element `predicate` returns truthy for instead of the element itself.
@@ -799,7 +810,7 @@ element `predicate` returns truthy for instead of the element itself.
 1.1.0
 #### Arguments
 1. `array` *(Array)*: The array to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 3. `[fromIndex=0]` *(number)*: The index to search from.
 
 #### Returns
@@ -828,14 +839,14 @@ _.findIndex(users, ['active', false]);
 _.findIndex(users, 'active');
 // => 2
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findlastindexarray-predicate_identity-fromindexarraylength-1"></a>`_.findLastIndex(array, [predicate=_.identity], [fromIndex=array.length-1])`
-<a href="#_findlastindexarray-predicate_identity-fromindexarraylength-1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6572 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.findlastindex "See the npm package")
+[#](#_findlastindexarray-predicate_identity-fromindexarraylength-1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6776) [npm package](https://www.npmjs.com/package/lodash.findlastindex) [&#x24C9;][1]
 
 This method is like `_.findIndex` except that it iterates over elements
 of `collection` from right to left.
@@ -844,7 +855,7 @@ of `collection` from right to left.
 2.0.0
 #### Arguments
 1. `array` *(Array)*: The array to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 3. `[fromIndex=array.length-1]` *(number)*: The index to search from.
 
 #### Returns
@@ -873,14 +884,14 @@ _.findLastIndex(users, ['active', false]);
 _.findLastIndex(users, 'active');
 // => 0
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flattenarray"></a>`_.flatten(array)`
-<a href="#_flattenarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6601 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flatten "See the npm package")
+[#](#_flattenarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6805) [npm package](https://www.npmjs.com/package/lodash.flatten) [&#x24C9;][1]
 
 Flattens `array` a single level deep.
 
@@ -897,14 +908,14 @@ Flattens `array` a single level deep.
 _.flatten([1, [2, [3, [4]], 5]]);
 // => [1, 2, [3, [4]], 5]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flattendeeparray"></a>`_.flattenDeep(array)`
-<a href="#_flattendeeparray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6620 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flattendeep "See the npm package")
+[#](#_flattendeeparray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6824) [npm package](https://www.npmjs.com/package/lodash.flattendeep) [&#x24C9;][1]
 
 Recursively flattens `array`.
 
@@ -921,14 +932,14 @@ Recursively flattens `array`.
 _.flattenDeep([1, [2, [3, [4]], 5]]);
 // => [1, 2, 3, 4, 5]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flattendeptharray-depth1"></a>`_.flattenDepth(array, [depth=1])`
-<a href="#_flattendeptharray-depth1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6645 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flattendepth "See the npm package")
+[#](#_flattendeptharray-depth1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6849) [npm package](https://www.npmjs.com/package/lodash.flattendepth) [&#x24C9;][1]
 
 Recursively flatten `array` up to `depth` times.
 
@@ -951,14 +962,14 @@ _.flattenDepth(array, 1);
 _.flattenDepth(array, 2);
 // => [1, 2, 3, [4], 5]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_frompairspairs"></a>`_.fromPairs(pairs)`
-<a href="#_frompairspairs">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6669 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.frompairs "See the npm package")
+[#](#_frompairspairs) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6873) [npm package](https://www.npmjs.com/package/lodash.frompairs) [&#x24C9;][1]
 
 The inverse of `_.toPairs`; this method returns an object composed
 from key-value `pairs`.
@@ -973,17 +984,17 @@ from key-value `pairs`.
 
 #### Example
 ```js
-_.fromPairs([['fred', 30], ['barney', 40]]);
-// => { 'fred': 30, 'barney': 40 }
+_.fromPairs([['a', 1], ['b', 2]]);
+// => { 'a': 1, 'b': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_headarray"></a>`_.head(array)`
-<a href="#_headarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6699 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.head "See the npm package")
+[#](#_headarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6903) [npm package](https://www.npmjs.com/package/lodash.head) [&#x24C9;][1]
 
 Gets the first element of `array`.
 
@@ -1006,14 +1017,14 @@ _.head([1, 2, 3]);
 _.head([]);
 // => undefined
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_indexofarray-value-fromindex0"></a>`_.indexOf(array, value, [fromIndex=0])`
-<a href="#_indexofarray-value-fromindex0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6726 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.indexof "See the npm package")
+[#](#_indexofarray-value-fromindex0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6930) [npm package](https://www.npmjs.com/package/lodash.indexof) [&#x24C9;][1]
 
 Gets the index at which the first occurrence of `value` is found in `array`
 using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -1039,14 +1050,14 @@ _.indexOf([1, 2, 1, 2], 2);
 _.indexOf([1, 2, 1, 2], 2, 2);
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_initialarray"></a>`_.initial(array)`
-<a href="#_initialarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6752 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.initial "See the npm package")
+[#](#_initialarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6956) [npm package](https://www.npmjs.com/package/lodash.initial) [&#x24C9;][1]
 
 Gets all but the last element of `array`.
 
@@ -1063,14 +1074,14 @@ Gets all but the last element of `array`.
 _.initial([1, 2, 3]);
 // => [1, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_intersectionarrays"></a>`_.intersection([arrays])`
-<a href="#_intersectionarrays">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6773 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.intersection "See the npm package")
+[#](#_intersectionarrays) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L6977) [npm package](https://www.npmjs.com/package/lodash.intersection) [&#x24C9;][1]
 
 Creates an array of unique values that are included in all given arrays
 using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -1090,14 +1101,14 @@ order they occur in the first array.
 _.intersection([2, 1], [2, 3]);
 // => [2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_intersectionbyarrays-iteratee_identity"></a>`_.intersectionBy([arrays], [iteratee=_.identity])`
-<a href="#_intersectionbyarrays-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6803 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.intersectionby "See the npm package")
+[#](#_intersectionbyarrays-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7006) [npm package](https://www.npmjs.com/package/lodash.intersectionby) [&#x24C9;][1]
 
 This method is like `_.intersection` except that it accepts `iteratee`
 which is invoked for each element of each `arrays` to generate the criterion
@@ -1108,7 +1119,7 @@ The iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `[arrays]` *(...Array)*: The arrays to inspect.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns the new array of intersecting values.
@@ -1122,14 +1133,14 @@ _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
 _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
 // => [{ 'x': 1 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_intersectionwitharrays-comparator"></a>`_.intersectionWith([arrays], [comparator])`
-<a href="#_intersectionwitharrays-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6838 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.intersectionwith "See the npm package")
+[#](#_intersectionwitharrays-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7041) [npm package](https://www.npmjs.com/package/lodash.intersectionwith) [&#x24C9;][1]
 
 This method is like `_.intersection` except that it accepts `comparator`
 which is invoked to compare elements of `arrays`. Result values are chosen
@@ -1153,14 +1164,14 @@ var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
 _.intersectionWith(objects, others, _.isEqual);
 // => [{ 'x': 1, 'y': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_joinarray-separator-"></a>`_.join(array, [separator=','])`
-<a href="#_joinarray-separator-">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6867 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.join "See the npm package")
+[#](#_joinarray-separator-) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7070) [npm package](https://www.npmjs.com/package/lodash.join) [&#x24C9;][1]
 
 Converts all elements in `array` into a string separated by `separator`.
 
@@ -1178,14 +1189,14 @@ Converts all elements in `array` into a string separated by `separator`.
 _.join(['a', 'b', 'c'], '~');
 // => 'a~b~c'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_lastarray"></a>`_.last(array)`
-<a href="#_lastarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6885 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.last "See the npm package")
+[#](#_lastarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7088) [npm package](https://www.npmjs.com/package/lodash.last) [&#x24C9;][1]
 
 Gets the last element of `array`.
 
@@ -1202,14 +1213,14 @@ Gets the last element of `array`.
 _.last([1, 2, 3]);
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_lastindexofarray-value-fromindexarraylength-1"></a>`_.lastIndexOf(array, value, [fromIndex=array.length-1])`
-<a href="#_lastindexofarray-value-fromindexarraylength-1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6911 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.lastindexof "See the npm package")
+[#](#_lastindexofarray-value-fromindexarraylength-1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7114) [npm package](https://www.npmjs.com/package/lodash.lastindexof) [&#x24C9;][1]
 
 This method is like `_.indexOf` except that it iterates over elements of
 `array` from right to left.
@@ -1233,14 +1244,14 @@ _.lastIndexOf([1, 2, 1, 2], 2);
 _.lastIndexOf([1, 2, 1, 2], 2, 2);
 // => 1
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ntharray-n0"></a>`_.nth(array, [n=0])`
-<a href="#_ntharray-n0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6957 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.nth "See the npm package")
+[#](#_ntharray-n0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7160) [npm package](https://www.npmjs.com/package/lodash.nth) [&#x24C9;][1]
 
 Gets the element at index `n` of `array`. If `n` is negative, the nth
 element from the end is returned.
@@ -1264,14 +1275,14 @@ _.nth(array, 1);
 _.nth(array, -2);
 // => 'c';
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pullarray-values"></a>`_.pull(array, [values])`
-<a href="#_pullarray-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L6984 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pull "See the npm package")
+[#](#_pullarray-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7187) [npm package](https://www.npmjs.com/package/lodash.pull) [&#x24C9;][1]
 
 Removes all given values from `array` using
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -1298,14 +1309,14 @@ _.pull(array, 'a', 'c');
 console.log(array);
 // => ['b', 'b']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pullallarray-values"></a>`_.pullAll(array, values)`
-<a href="#_pullallarray-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7006 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pullall "See the npm package")
+[#](#_pullallarray-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7209) [npm package](https://www.npmjs.com/package/lodash.pullall) [&#x24C9;][1]
 
 This method is like `_.pull` except that it accepts an array of values to remove.
 <br>
@@ -1329,14 +1340,14 @@ _.pullAll(array, ['a', 'c']);
 console.log(array);
 // => ['b', 'b']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pullallbyarray-values-iteratee_identity"></a>`_.pullAllBy(array, values, [iteratee=_.identity])`
-<a href="#_pullallbyarray-values-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7036 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pullallby "See the npm package")
+[#](#_pullallbyarray-values-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7239) [npm package](https://www.npmjs.com/package/lodash.pullallby) [&#x24C9;][1]
 
 This method is like `_.pullAll` except that it accepts `iteratee` which is
 invoked for each element of `array` and `values` to generate the criterion
@@ -1350,7 +1361,7 @@ by which they're compared. The iteratee is invoked with one argument: *(value)*.
 #### Arguments
 1. `array` *(Array)*: The array to modify.
 2. `values` *(Array)*: The values to remove.
-3. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+3. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns `array`.
@@ -1363,14 +1374,14 @@ _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
 console.log(array);
 // => [{ 'x': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pullallwitharray-values-comparator"></a>`_.pullAllWith(array, values, [comparator])`
-<a href="#_pullallwitharray-values-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7065 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pullallwith "See the npm package")
+[#](#_pullallwitharray-values-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7268) [npm package](https://www.npmjs.com/package/lodash.pullallwith) [&#x24C9;][1]
 
 This method is like `_.pullAll` except that it accepts `comparator` which
 is invoked to compare elements of `array` to `values`. The comparator is
@@ -1397,14 +1408,14 @@ _.pullAllWith(array, [{ 'x': 3, 'y': 4 }], _.isEqual);
 console.log(array);
 // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pullatarray-indexes"></a>`_.pullAt(array, [indexes])`
-<a href="#_pullatarray-indexes">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7095 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pullat "See the npm package")
+[#](#_pullatarray-indexes) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7298) [npm package](https://www.npmjs.com/package/lodash.pullat) [&#x24C9;][1]
 
 Removes elements from `array` corresponding to `indexes` and returns an
 array of removed elements.
@@ -1432,14 +1443,14 @@ console.log(array);
 console.log(pulled);
 // => ['b', 'd']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_removearray-predicate_identity"></a>`_.remove(array, [predicate=_.identity])`
-<a href="#_removearray-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7137 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.remove "See the npm package")
+[#](#_removearray-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7340) [npm package](https://www.npmjs.com/package/lodash.remove) [&#x24C9;][1]
 
 Removes all elements from `array` that `predicate` returns truthy for
 and returns an array of the removed elements. The predicate is invoked
@@ -1453,7 +1464,7 @@ to pull elements from an array by value.
 2.0.0
 #### Arguments
 1. `array` *(Array)*: The array to modify.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new array of removed elements.
@@ -1471,14 +1482,14 @@ console.log(array);
 console.log(evens);
 // => [2, 4]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_reversearray"></a>`_.reverse(array)`
-<a href="#_reversearray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7181 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.reverse "See the npm package")
+[#](#_reversearray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7384) [npm package](https://www.npmjs.com/package/lodash.reverse) [&#x24C9;][1]
 
 Reverses `array` so that the first element becomes the last, the second
 element becomes the second to last, and so on.
@@ -1505,14 +1516,14 @@ _.reverse(array);
 console.log(array);
 // => [3, 2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_slicearray-start0-endarraylength"></a>`_.slice(array, [start=0], [end=array.length])`
-<a href="#_slicearray-start0-endarraylength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7201 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.slice "See the npm package")
+[#](#_slicearray-start0-endarraylength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7404) [npm package](https://www.npmjs.com/package/lodash.slice) [&#x24C9;][1]
 
 Creates a slice of `array` from `start` up to, but not including, `end`.
 <br>
@@ -1531,14 +1542,14 @@ returned.
 #### Returns
 *(Array)*: Returns the slice of `array`.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedindexarray-value"></a>`_.sortedIndex(array, value)`
-<a href="#_sortedindexarray-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7234 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedindex "See the npm package")
+[#](#_sortedindexarray-value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7437) [npm package](https://www.npmjs.com/package/lodash.sortedindex) [&#x24C9;][1]
 
 Uses a binary search to determine the lowest index at which `value`
 should be inserted into `array` in order to maintain its sort order.
@@ -1557,14 +1568,14 @@ should be inserted into `array` in order to maintain its sort order.
 _.sortedIndex([30, 50], 40);
 // => 1
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedindexbyarray-value-iteratee_identity"></a>`_.sortedIndexBy(array, value, [iteratee=_.identity])`
-<a href="#_sortedindexbyarray-value-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7264 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedindexby "See the npm package")
+[#](#_sortedindexbyarray-value-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7467) [npm package](https://www.npmjs.com/package/lodash.sortedindexby) [&#x24C9;][1]
 
 This method is like `_.sortedIndex` except that it accepts `iteratee`
 which is invoked for `value` and each element of `array` to compute their
@@ -1575,7 +1586,7 @@ sort ranking. The iteratee is invoked with one argument: *(value)*.
 #### Arguments
 1. `array` *(Array)*: The sorted array to inspect.
 2. `value` *(&#42;)*: The value to evaluate.
-3. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+3. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(number)*: Returns the index at which `value` should be inserted into `array`.
@@ -1591,14 +1602,14 @@ _.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
 _.sortedIndexBy(objects, { 'x': 4 }, 'x');
 // => 0
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedindexofarray-value"></a>`_.sortedIndexOf(array, value)`
-<a href="#_sortedindexofarray-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7284 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedindexof "See the npm package")
+[#](#_sortedindexofarray-value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7487) [npm package](https://www.npmjs.com/package/lodash.sortedindexof) [&#x24C9;][1]
 
 This method is like `_.indexOf` except that it performs a binary
 search on a sorted `array`.
@@ -1617,14 +1628,14 @@ search on a sorted `array`.
 _.sortedIndexOf([4, 5, 5, 5, 6], 5);
 // => 1
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedlastindexarray-value"></a>`_.sortedLastIndex(array, value)`
-<a href="#_sortedlastindexarray-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7313 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedlastindex "See the npm package")
+[#](#_sortedlastindexarray-value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7516) [npm package](https://www.npmjs.com/package/lodash.sortedlastindex) [&#x24C9;][1]
 
 This method is like `_.sortedIndex` except that it returns the highest
 index at which `value` should be inserted into `array` in order to
@@ -1644,14 +1655,14 @@ maintain its sort order.
 _.sortedLastIndex([4, 5, 5, 5, 6], 5);
 // => 4
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedlastindexbyarray-value-iteratee_identity"></a>`_.sortedLastIndexBy(array, value, [iteratee=_.identity])`
-<a href="#_sortedlastindexbyarray-value-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7343 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedlastindexby "See the npm package")
+[#](#_sortedlastindexbyarray-value-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7546) [npm package](https://www.npmjs.com/package/lodash.sortedlastindexby) [&#x24C9;][1]
 
 This method is like `_.sortedLastIndex` except that it accepts `iteratee`
 which is invoked for `value` and each element of `array` to compute their
@@ -1662,7 +1673,7 @@ sort ranking. The iteratee is invoked with one argument: *(value)*.
 #### Arguments
 1. `array` *(Array)*: The sorted array to inspect.
 2. `value` *(&#42;)*: The value to evaluate.
-3. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+3. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(number)*: Returns the index at which `value` should be inserted into `array`.
@@ -1678,14 +1689,14 @@ _.sortedLastIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
 _.sortedLastIndexBy(objects, { 'x': 4 }, 'x');
 // => 1
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortedlastindexofarray-value"></a>`_.sortedLastIndexOf(array, value)`
-<a href="#_sortedlastindexofarray-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7363 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortedlastindexof "See the npm package")
+[#](#_sortedlastindexofarray-value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7566) [npm package](https://www.npmjs.com/package/lodash.sortedlastindexof) [&#x24C9;][1]
 
 This method is like `_.lastIndexOf` except that it performs a binary
 search on a sorted `array`.
@@ -1704,14 +1715,14 @@ search on a sorted `array`.
 _.sortedLastIndexOf([4, 5, 5, 5, 6], 5);
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sorteduniqarray"></a>`_.sortedUniq(array)`
-<a href="#_sorteduniqarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7389 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sorteduniq "See the npm package")
+[#](#_sorteduniqarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7592) [npm package](https://www.npmjs.com/package/lodash.sorteduniq) [&#x24C9;][1]
 
 This method is like `_.uniq` except that it's designed and optimized
 for sorted arrays.
@@ -1729,14 +1740,14 @@ for sorted arrays.
 _.sortedUniq([1, 1, 2]);
 // => [1, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sorteduniqbyarray-iteratee"></a>`_.sortedUniqBy(array, [iteratee])`
-<a href="#_sorteduniqbyarray-iteratee">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7411 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sorteduniqby "See the npm package")
+[#](#_sorteduniqbyarray-iteratee) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7614) [npm package](https://www.npmjs.com/package/lodash.sorteduniqby) [&#x24C9;][1]
 
 This method is like `_.uniqBy` except that it's designed and optimized
 for sorted arrays.
@@ -1755,14 +1766,14 @@ for sorted arrays.
 _.sortedUniqBy([1.1, 1.2, 2.3, 2.4], Math.floor);
 // => [1.1, 2.3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tailarray"></a>`_.tail(array)`
-<a href="#_tailarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7431 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tail "See the npm package")
+[#](#_tailarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7634) [npm package](https://www.npmjs.com/package/lodash.tail) [&#x24C9;][1]
 
 Gets all but the first element of `array`.
 
@@ -1779,14 +1790,14 @@ Gets all but the first element of `array`.
 _.tail([1, 2, 3]);
 // => [2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_takearray-n1"></a>`_.take(array, [n=1])`
-<a href="#_takearray-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7460 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.take "See the npm package")
+[#](#_takearray-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7663) [npm package](https://www.npmjs.com/package/lodash.take) [&#x24C9;][1]
 
 Creates a slice of `array` with `n` elements taken from the beginning.
 
@@ -1813,14 +1824,14 @@ _.take([1, 2, 3], 5);
 _.take([1, 2, 3], 0);
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_takerightarray-n1"></a>`_.takeRight(array, [n=1])`
-<a href="#_takerightarray-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7493 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.takeright "See the npm package")
+[#](#_takerightarray-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7696) [npm package](https://www.npmjs.com/package/lodash.takeright) [&#x24C9;][1]
 
 Creates a slice of `array` with `n` elements taken from the end.
 
@@ -1847,14 +1858,14 @@ _.takeRight([1, 2, 3], 5);
 _.takeRight([1, 2, 3], 0);
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_takerightwhilearray-predicate_identity"></a>`_.takeRightWhile(array, [predicate=_.identity])`
-<a href="#_takerightwhilearray-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7539 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.takerightwhile "See the npm package")
+[#](#_takerightwhilearray-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7742) [npm package](https://www.npmjs.com/package/lodash.takerightwhile) [&#x24C9;][1]
 
 Creates a slice of `array` with elements taken from the end. Elements are
 taken until `predicate` returns falsey. The predicate is invoked with
@@ -1864,7 +1875,7 @@ three arguments: *(value, index, array)*.
 3.0.0
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the slice of `array`.
@@ -1892,14 +1903,14 @@ _.takeRightWhile(users, ['active', false]);
 _.takeRightWhile(users, 'active');
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_takewhilearray-predicate_identity"></a>`_.takeWhile(array, [predicate=_.identity])`
-<a href="#_takewhilearray-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7581 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.takewhile "See the npm package")
+[#](#_takewhilearray-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7784) [npm package](https://www.npmjs.com/package/lodash.takewhile) [&#x24C9;][1]
 
 Creates a slice of `array` with elements taken from the beginning. Elements
 are taken until `predicate` returns falsey. The predicate is invoked with
@@ -1909,7 +1920,7 @@ three arguments: *(value, index, array)*.
 3.0.0
 #### Arguments
 1. `array` *(Array)*: The array to query.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the slice of `array`.
@@ -1937,14 +1948,14 @@ _.takeWhile(users, ['active', false]);
 _.takeWhile(users, 'active');
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unionarrays"></a>`_.union([arrays])`
-<a href="#_unionarrays">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7603 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.union "See the npm package")
+[#](#_unionarrays) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7806) [npm package](https://www.npmjs.com/package/lodash.union) [&#x24C9;][1]
 
 Creates an array of unique values, in order, from all given arrays using
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -1963,25 +1974,26 @@ for equality comparisons.
 _.union([2], [1, 2]);
 // => [2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unionbyarrays-iteratee_identity"></a>`_.unionBy([arrays], [iteratee=_.identity])`
-<a href="#_unionbyarrays-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7630 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unionby "See the npm package")
+[#](#_unionbyarrays-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7834) [npm package](https://www.npmjs.com/package/lodash.unionby) [&#x24C9;][1]
 
 This method is like `_.union` except that it accepts `iteratee` which is
 invoked for each element of each `arrays` to generate the criterion by
-which uniqueness is computed. The iteratee is invoked with one argument:<br>
+which uniqueness is computed. Result values are chosen from the first
+array in which the value occurs. The iteratee is invoked with one argument:<br>
 *(value)*.
 
 #### Since
 4.0.0
 #### Arguments
 1. `[arrays]` *(...Array)*: The arrays to inspect.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns the new array of combined values.
@@ -1995,17 +2007,18 @@ _.unionBy([2.1], [1.2, 2.3], Math.floor);
 _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
 // => [{ 'x': 1 }, { 'x': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unionwitharrays-comparator"></a>`_.unionWith([arrays], [comparator])`
-<a href="#_unionwitharrays-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7658 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unionwith "See the npm package")
+[#](#_unionwitharrays-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7863) [npm package](https://www.npmjs.com/package/lodash.unionwith) [&#x24C9;][1]
 
 This method is like `_.union` except that it accepts `comparator` which
-is invoked to compare elements of `arrays`. The comparator is invoked
+is invoked to compare elements of `arrays`. Result values are chosen from
+the first array in which the value occurs. The comparator is invoked
 with two arguments: *(arrVal, othVal)*.
 
 #### Since
@@ -2025,14 +2038,14 @@ var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
 _.unionWith(objects, others, _.isEqual);
 // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_uniqarray"></a>`_.uniq(array)`
-<a href="#_uniqarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7683 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.uniq "See the npm package")
+[#](#_uniqarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7888) [npm package](https://www.npmjs.com/package/lodash.uniq) [&#x24C9;][1]
 
 Creates a duplicate-free version of an array, using
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -2052,14 +2065,14 @@ element is kept.
 _.uniq([2, 1, 2]);
 // => [2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_uniqbyarray-iteratee_identity"></a>`_.uniqBy(array, [iteratee=_.identity])`
-<a href="#_uniqbyarray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7711 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.uniqby "See the npm package")
+[#](#_uniqbyarray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7916) [npm package](https://www.npmjs.com/package/lodash.uniqby) [&#x24C9;][1]
 
 This method is like `_.uniq` except that it accepts `iteratee` which is
 invoked for each element in `array` to generate the criterion by which
@@ -2069,7 +2082,7 @@ uniqueness is computed. The iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `array` *(Array)*: The array to inspect.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns the new duplicate free array.
@@ -2083,14 +2096,14 @@ _.uniqBy([2.1, 1.2, 2.3], Math.floor);
 _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
 // => [{ 'x': 1 }, { 'x': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_uniqwitharray-comparator"></a>`_.uniqWith(array, [comparator])`
-<a href="#_uniqwitharray-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7736 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.uniqwith "See the npm package")
+[#](#_uniqwitharray-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7941) [npm package](https://www.npmjs.com/package/lodash.uniqwith) [&#x24C9;][1]
 
 This method is like `_.uniq` except that it accepts `comparator` which
 is invoked to compare elements of `array`. The comparator is invoked with
@@ -2112,14 +2125,14 @@ var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
 _.uniqWith(objects, _.isEqual);
 // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unziparray"></a>`_.unzip(array)`
-<a href="#_unziparray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7761 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unzip "See the npm package")
+[#](#_unziparray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L7966) [npm package](https://www.npmjs.com/package/lodash.unzip) [&#x24C9;][1]
 
 This method is like `_.zip` except that it accepts an array of grouped
 elements and creates an array regrouping the elements to their pre-zip
@@ -2135,20 +2148,20 @@ configuration.
 
 #### Example
 ```js
-var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
-// => [['fred', 30, true], ['barney', 40, false]]
+var zipped = _.zip(['a', 'b'], [1, 2], [true, false]);
+// => [['a', 1, true], ['b', 2, false]]
 
 _.unzip(zipped);
-// => [['fred', 'barney'], [30, 40], [true, false]]
+// => [['a', 'b'], [1, 2], [true, false]]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unzipwitharray-iteratee_identity"></a>`_.unzipWith(array, [iteratee=_.identity])`
-<a href="#_unzipwitharray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7798 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unzipwith "See the npm package")
+[#](#_unzipwitharray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8003) [npm package](https://www.npmjs.com/package/lodash.unzipwith) [&#x24C9;][1]
 
 This method is like `_.unzip` except that it accepts `iteratee` to specify
 how regrouped values should be combined. The iteratee is invoked with the
@@ -2171,18 +2184,21 @@ var zipped = _.zip([1, 2], [10, 20], [100, 200]);
 _.unzipWith(zipped, _.add);
 // => [3, 30, 300]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_withoutarray-values"></a>`_.without(array, [values])`
-<a href="#_withoutarray-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7829 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.without "See the npm package")
+[#](#_withoutarray-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8036) [npm package](https://www.npmjs.com/package/lodash.without) [&#x24C9;][1]
 
 Creates an array excluding all given values using
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
 for equality comparisons.
+<br>
+<br>
+**Note:** Unlike `_.pull`, this method returns a new array.
 
 #### Since
 0.1.0
@@ -2198,14 +2214,14 @@ for equality comparisons.
 _.without([2, 1, 2, 3], 1, 2);
 // => [3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_xorarrays"></a>`_.xor([arrays])`
-<a href="#_xorarrays">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7853 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.xor "See the npm package")
+[#](#_xorarrays) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8060) [npm package](https://www.npmjs.com/package/lodash.xor) [&#x24C9;][1]
 
 Creates an array of unique values that is the
 [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
@@ -2225,14 +2241,14 @@ they occur in the arrays.
 _.xor([2, 1], [2, 3]);
 // => [1, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_xorbyarrays-iteratee_identity"></a>`_.xorBy([arrays], [iteratee=_.identity])`
-<a href="#_xorbyarrays-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7880 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.xorby "See the npm package")
+[#](#_xorbyarrays-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8087) [npm package](https://www.npmjs.com/package/lodash.xorby) [&#x24C9;][1]
 
 This method is like `_.xor` except that it accepts `iteratee` which is
 invoked for each element of each `arrays` to generate the criterion by
@@ -2243,7 +2259,7 @@ which by which they're compared. The iteratee is invoked with one argument:<br>
 4.0.0
 #### Arguments
 1. `[arrays]` *(...Array)*: The arrays to inspect.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Array)*: Returns the new array of filtered values.
@@ -2257,14 +2273,14 @@ _.xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
 _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
 // => [{ 'x': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_xorwitharrays-comparator"></a>`_.xorWith([arrays], [comparator])`
-<a href="#_xorwitharrays-comparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7908 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.xorwith "See the npm package")
+[#](#_xorwitharrays-comparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8115) [npm package](https://www.npmjs.com/package/lodash.xorwith) [&#x24C9;][1]
 
 This method is like `_.xor` except that it accepts `comparator` which is
 invoked to compare elements of `arrays`. The comparator is invoked with
@@ -2287,14 +2303,14 @@ var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
 _.xorWith(objects, others, _.isEqual);
 // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ziparrays"></a>`_.zip([arrays])`
-<a href="#_ziparrays">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7932 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.zip "See the npm package")
+[#](#_ziparrays) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8139) [npm package](https://www.npmjs.com/package/lodash.zip) [&#x24C9;][1]
 
 Creates an array of grouped elements, the first of which contains the
 first elements of the given arrays, the second of which contains the
@@ -2310,17 +2326,17 @@ second elements of the given arrays, and so on.
 
 #### Example
 ```js
-_.zip(['fred', 'barney'], [30, 40], [true, false]);
-// => [['fred', 30, true], ['barney', 40, false]]
+_.zip(['a', 'b'], [1, 2], [true, false]);
+// => [['a', 1, true], ['b', 2, false]]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_zipobjectprops-values"></a>`_.zipObject([props=[]], [values=[]])`
-<a href="#_zipobjectprops-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7950 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.zipobject "See the npm package")
+[#](#_zipobjectprops-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8157) [npm package](https://www.npmjs.com/package/lodash.zipobject) [&#x24C9;][1]
 
 This method is like `_.fromPairs` except that it accepts two arrays,
 one of property identifiers and one of corresponding values.
@@ -2339,14 +2355,14 @@ one of property identifiers and one of corresponding values.
 _.zipObject(['a', 'b'], [1, 2]);
 // => { 'a': 1, 'b': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_zipobjectdeepprops-values"></a>`_.zipObjectDeep([props=[]], [values=[]])`
-<a href="#_zipobjectdeepprops-values">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7969 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.zipobjectdeep "See the npm package")
+[#](#_zipobjectdeepprops-values) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8176) [npm package](https://www.npmjs.com/package/lodash.zipobjectdeep) [&#x24C9;][1]
 
 This method is like `_.zipObject` except that it supports property paths.
 
@@ -2364,14 +2380,14 @@ This method is like `_.zipObject` except that it supports property paths.
 _.zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);
 // => { 'a': { 'b': [{ 'c': 1 }, { 'd': 2 }] } }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_zipwitharrays-iteratee_identity"></a>`_.zipWith([arrays], [iteratee=_.identity])`
-<a href="#_zipwitharrays-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L7992 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.zipwith "See the npm package")
+[#](#_zipwitharrays-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8199) [npm package](https://www.npmjs.com/package/lodash.zipwith) [&#x24C9;][1]
 
 This method is like `_.zip` except that it accepts `iteratee` to specify
 how grouped values should be combined. The iteratee is invoked with the
@@ -2393,7 +2409,7 @@ _.zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
 });
 // => [111, 222]
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -2406,7 +2422,7 @@ _.zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
 <!-- div -->
 
 ### <a id="_countbycollection-iteratee_identity"></a>`_.countBy(collection, [iteratee=_.identity])`
-<a href="#_countbycollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8373 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.countby "See the npm package")
+[#](#_countbycollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8580) [npm package](https://www.npmjs.com/package/lodash.countby) [&#x24C9;][1]
 
 Creates an object composed of keys generated from the results of running
 each element of `collection` thru `iteratee`. The corresponding value of
@@ -2417,7 +2433,7 @@ iteratee is invoked with one argument: *(value)*.
 0.5.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee to transform keys.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee to transform keys.
 
 #### Returns
 *(Object)*: Returns the composed aggregate object.
@@ -2431,14 +2447,14 @@ _.countBy([6.1, 4.2, 6.3], Math.floor);
 _.countBy(['one', 'two', 'three'], 'length');
 // => { '3': 2, '5': 1 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_everycollection-predicate_identity"></a>`_.every(collection, [predicate=_.identity])`
-<a href="#_everycollection-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8414 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.every "See the npm package")
+[#](#_everycollection-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8621) [npm package](https://www.npmjs.com/package/lodash.every) [&#x24C9;][1]
 
 Checks if `predicate` returns truthy for **all** elements of `collection`.
 Iteration is stopped once `predicate` returns falsey. The predicate is
@@ -2448,7 +2464,7 @@ invoked with three arguments: *(value, index|key, collection)*.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(boolean)*: Returns `true` if all elements pass the predicate check, else `false`.
@@ -2475,24 +2491,27 @@ _.every(users, ['active', false]);
 _.every(users, 'active');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_filtercollection-predicate_identity"></a>`_.filter(collection, [predicate=_.identity])`
-<a href="#_filtercollection-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8458 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.filter "See the npm package")
+[#](#_filtercollection-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8667) [npm package](https://www.npmjs.com/package/lodash.filter) [&#x24C9;][1]
 
 Iterates over elements of `collection`, returning an array of all elements
 `predicate` returns truthy for. The predicate is invoked with three
 arguments: *(value, index|key, collection)*.
+<br>
+<br>
+**Note:** Unlike `_.remove`, this method returns a new array.
 
 #### Since
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new filtered array.
@@ -2519,14 +2538,14 @@ _.filter(users, ['active', false]);
 _.filter(users, 'active');
 // => objects for ['barney']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findcollection-predicate_identity-fromindex0"></a>`_.find(collection, [predicate=_.identity], [fromIndex=0])`
-<a href="#_findcollection-predicate_identity-fromindex0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8500 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.find "See the npm package")
+[#](#_findcollection-predicate_identity-fromindex0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8709) [npm package](https://www.npmjs.com/package/lodash.find) [&#x24C9;][1]
 
 Iterates over elements of `collection`, returning the first element
 `predicate` returns truthy for. The predicate is invoked with three
@@ -2536,7 +2555,7 @@ arguments: *(value, index|key, collection)*.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 3. `[fromIndex=0]` *(number)*: The index to search from.
 
 #### Returns
@@ -2565,14 +2584,14 @@ _.find(users, ['active', false]);
 _.find(users, 'active');
 // => object for 'barney'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findlastcollection-predicate_identity-fromindexcollectionlength-1"></a>`_.findLast(collection, [predicate=_.identity], [fromIndex=collection.length-1])`
-<a href="#_findlastcollection-predicate_identity-fromindexcollectionlength-1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8522 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.findlast "See the npm package")
+[#](#_findlastcollection-predicate_identity-fromindexcollectionlength-1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8731) [npm package](https://www.npmjs.com/package/lodash.findlast) [&#x24C9;][1]
 
 This method is like `_.find` except that it iterates over elements of
 `collection` from right to left.
@@ -2581,7 +2600,7 @@ This method is like `_.find` except that it iterates over elements of
 2.0.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 3. `[fromIndex=collection.length-1]` *(number)*: The index to search from.
 
 #### Returns
@@ -2594,14 +2613,14 @@ _.findLast([1, 2, 3, 4], function(n) {
 });
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flatmapcollection-iteratee_identity"></a>`_.flatMap(collection, [iteratee=_.identity])`
-<a href="#_flatmapcollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8546 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flatmap "See the npm package")
+[#](#_flatmapcollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8755) [npm package](https://www.npmjs.com/package/lodash.flatmap) [&#x24C9;][1]
 
 Creates a flattened array of values by running each element in `collection`
 thru `iteratee` and flattening the mapped results. The iteratee is invoked
@@ -2611,7 +2630,7 @@ with three arguments: *(value, index|key, collection)*.
 4.0.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new flattened array.
@@ -2625,14 +2644,14 @@ function duplicate(n) {
 _.flatMap([1, 2], duplicate);
 // => [1, 1, 2, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flatmapdeepcollection-iteratee_identity"></a>`_.flatMapDeep(collection, [iteratee=_.identity])`
-<a href="#_flatmapdeepcollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8571 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flatmapdeep "See the npm package")
+[#](#_flatmapdeepcollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8780) [npm package](https://www.npmjs.com/package/lodash.flatmapdeep) [&#x24C9;][1]
 
 This method is like `_.flatMap` except that it recursively flattens the
 mapped results.
@@ -2641,7 +2660,7 @@ mapped results.
 4.7.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new flattened array.
@@ -2655,14 +2674,14 @@ function duplicate(n) {
 _.flatMapDeep([1, 2], duplicate);
 // => [1, 1, 2, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flatmapdepthcollection-iteratee_identity-depth1"></a>`_.flatMapDepth(collection, [iteratee=_.identity], [depth=1])`
-<a href="#_flatmapdepthcollection-iteratee_identity-depth1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8597 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flatmapdepth "See the npm package")
+[#](#_flatmapdepthcollection-iteratee_identity-depth1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8806) [npm package](https://www.npmjs.com/package/lodash.flatmapdepth) [&#x24C9;][1]
 
 This method is like `_.flatMap` except that it recursively flattens the
 mapped results up to `depth` times.
@@ -2671,7 +2690,7 @@ mapped results up to `depth` times.
 4.7.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 3. `[depth=1]` *(number)*: The maximum recursion depth.
 
 #### Returns
@@ -2686,14 +2705,14 @@ function duplicate(n) {
 _.flatMapDepth([1, 2], duplicate, 2);
 // => [[1, 1], [2, 2]]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_foreachcollection-iteratee_identity"></a>`_.forEach(collection, [iteratee=_.identity])`
-<a href="#_foreachcollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8632 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.foreach "See the npm package")
+[#](#_foreachcollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8841) [npm package](https://www.npmjs.com/package/lodash.foreach) [&#x24C9;][1]
 
 Iterates over elements of `collection` and invokes `iteratee` for each element.
 The iteratee is invoked with three arguments: *(value, index|key, collection)*.
@@ -2728,14 +2747,14 @@ _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
 });
 // => Logs 'a' then 'b' (iteration order is not guaranteed).
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_foreachrightcollection-iteratee_identity"></a>`_.forEachRight(collection, [iteratee=_.identity])`
-<a href="#_foreachrightcollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8657 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.foreachright "See the npm package")
+[#](#_foreachrightcollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8866) [npm package](https://www.npmjs.com/package/lodash.foreachright) [&#x24C9;][1]
 
 This method is like `_.forEach` except that it iterates over elements of
 `collection` from right to left.
@@ -2759,14 +2778,14 @@ _.forEachRight([1, 2], function(value) {
 });
 // => Logs `2` then `1`.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_groupbycollection-iteratee_identity"></a>`_.groupBy(collection, [iteratee=_.identity])`
-<a href="#_groupbycollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8686 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.groupby "See the npm package")
+[#](#_groupbycollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8895) [npm package](https://www.npmjs.com/package/lodash.groupby) [&#x24C9;][1]
 
 Creates an object composed of keys generated from the results of running
 each element of `collection` thru `iteratee`. The order of grouped values
@@ -2778,7 +2797,7 @@ key. The iteratee is invoked with one argument: *(value)*.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee to transform keys.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee to transform keys.
 
 #### Returns
 *(Object)*: Returns the composed aggregate object.
@@ -2792,14 +2811,14 @@ _.groupBy([6.1, 4.2, 6.3], Math.floor);
 _.groupBy(['one', 'two', 'three'], 'length');
 // => { '3': ['one', 'two'], '5': ['three'] }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_includescollection-value-fromindex0"></a>`_.includes(collection, value, [fromIndex=0])`
-<a href="#_includescollection-value-fromindex0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8724 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.includes "See the npm package")
+[#](#_includescollection-value-fromindex0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8933) [npm package](https://www.npmjs.com/package/lodash.includes) [&#x24C9;][1]
 
 Checks if `value` is in `collection`. If `collection` is a string, it's
 checked for a substring of `value`, otherwise
@@ -2825,25 +2844,25 @@ _.includes([1, 2, 3], 1);
 _.includes([1, 2, 3], 1, 2);
 // => false
 
-_.includes({ 'user': 'fred', 'age': 40 }, 'fred');
+_.includes({ 'a': 1, 'b': 2 }, 1);
 // => true
 
-_.includes('pebbles', 'eb');
+_.includes('abcd', 'bc');
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_invokemapcollection-path-args"></a>`_.invokeMap(collection, path, [args])`
-<a href="#_invokemapcollection-path-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8760 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.invokemap "See the npm package")
+[#](#_invokemapcollection-path-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8969) [npm package](https://www.npmjs.com/package/lodash.invokemap) [&#x24C9;][1]
 
 Invokes the method at `path` of each element in `collection`, returning
 an array of the results of each invoked method. Any additional arguments
-are provided to each invoked method. If `methodName` is a function, it's
-invoked for and `this` bound to, each element in `collection`.
+are provided to each invoked method. If `path` is a function, it's invoked
+for, and `this` bound to, each element in `collection`.
 
 #### Since
 4.0.0
@@ -2863,14 +2882,14 @@ _.invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
 _.invokeMap([123, 456], String.prototype.split, '');
 // => [['1', '2', '3'], ['4', '5', '6']]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_keybycollection-iteratee_identity"></a>`_.keyBy(collection, [iteratee=_.identity])`
-<a href="#_keybycollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8802 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.keyby "See the npm package")
+[#](#_keybycollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9011) [npm package](https://www.npmjs.com/package/lodash.keyby) [&#x24C9;][1]
 
 Creates an object composed of keys generated from the results of running
 each element of `collection` thru `iteratee`. The corresponding value of
@@ -2881,7 +2900,7 @@ iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee to transform keys.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee to transform keys.
 
 #### Returns
 *(Object)*: Returns the composed aggregate object.
@@ -2901,14 +2920,14 @@ _.keyBy(array, function(o) {
 _.keyBy(array, 'dir');
 // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mapcollection-iteratee_identity"></a>`_.map(collection, [iteratee=_.identity])`
-<a href="#_mapcollection-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8849 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.map "See the npm package")
+[#](#_mapcollection-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9057) [npm package](https://www.npmjs.com/package/lodash.map) [&#x24C9;][1]
 
 Creates an array of values by running each element in `collection` thru
 `iteratee`. The iteratee is invoked with three arguments:<br>
@@ -2929,7 +2948,7 @@ The guarded methods are:<br>
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new mapped array.
@@ -2955,14 +2974,14 @@ var users = [
 _.map(users, 'user');
 // => ['barney', 'fred']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_orderbycollection-iteratees_identity-orders"></a>`_.orderBy(collection, [iteratees=[_.identity]], [orders])`
-<a href="#_orderbycollection-iteratees_identity-orders">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8883 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.orderby "See the npm package")
+[#](#_orderbycollection-iteratees_identity-orders) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9091) [npm package](https://www.npmjs.com/package/lodash.orderby) [&#x24C9;][1]
 
 This method is like `_.sortBy` except that it allows specifying the sort
 orders of the iteratees to sort by. If `orders` is unspecified, all values
@@ -2992,14 +3011,14 @@ var users = [
 _.orderBy(users, ['user', 'age'], ['asc', 'desc']);
 // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_partitioncollection-predicate_identity"></a>`_.partition(collection, [predicate=_.identity])`
-<a href="#_partitioncollection-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8934 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.partition "See the npm package")
+[#](#_partitioncollection-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9141) [npm package](https://www.npmjs.com/package/lodash.partition) [&#x24C9;][1]
 
 Creates an array of elements split into two groups, the first of which
 contains elements `predicate` returns truthy for, the second of which
@@ -3010,7 +3029,7 @@ invoked with one argument: *(value)*.
 3.0.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the array of grouped elements.
@@ -3038,14 +3057,14 @@ _.partition(users, ['active', false]);
 _.partition(users, 'active');
 // => objects for [['fred'], ['barney', 'pebbles']]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_reducecollection-iteratee_identity-accumulator"></a>`_.reduce(collection, [iteratee=_.identity], [accumulator])`
-<a href="#_reducecollection-iteratee_identity-accumulator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8975 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.reduce "See the npm package")
+[#](#_reducecollection-iteratee_identity-accumulator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9182) [npm package](https://www.npmjs.com/package/lodash.reduce) [&#x24C9;][1]
 
 Reduces `collection` to a value which is the accumulated result of running
 each element in `collection` thru `iteratee`, where each successive
@@ -3086,14 +3105,14 @@ _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
 }, {});
 // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_reducerightcollection-iteratee_identity-accumulator"></a>`_.reduceRight(collection, [iteratee=_.identity], [accumulator])`
-<a href="#_reducerightcollection-iteratee_identity-accumulator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9004 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.reduceright "See the npm package")
+[#](#_reducerightcollection-iteratee_identity-accumulator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9211) [npm package](https://www.npmjs.com/package/lodash.reduceright) [&#x24C9;][1]
 
 This method is like `_.reduce` except that it iterates over elements of
 `collection` from right to left.
@@ -3117,14 +3136,14 @@ _.reduceRight(array, function(flattened, other) {
 }, []);
 // => [4, 5, 2, 3, 0, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_rejectcollection-predicate_identity"></a>`_.reject(collection, [predicate=_.identity])`
-<a href="#_rejectcollection-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9046 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.reject "See the npm package")
+[#](#_rejectcollection-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9252) [npm package](https://www.npmjs.com/package/lodash.reject) [&#x24C9;][1]
 
 The opposite of `_.filter`; this method returns the elements of `collection`
 that `predicate` does **not** return truthy for.
@@ -3133,7 +3152,7 @@ that `predicate` does **not** return truthy for.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Array)*: Returns the new filtered array.
@@ -3160,14 +3179,14 @@ _.reject(users, ['active', false]);
 _.reject(users, 'active');
 // => objects for ['barney']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_samplecollection"></a>`_.sample(collection)`
-<a href="#_samplecollection">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9068 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sample "See the npm package")
+[#](#_samplecollection) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9271) [npm package](https://www.npmjs.com/package/lodash.sample) [&#x24C9;][1]
 
 Gets a random element from `collection`.
 
@@ -3184,14 +3203,14 @@ Gets a random element from `collection`.
 _.sample([1, 2, 3, 4]);
 // => 2
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_samplesizecollection-n1"></a>`_.sampleSize(collection, [n=1])`
-<a href="#_samplesizecollection-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9095 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.samplesize "See the npm package")
+[#](#_samplesizecollection-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9298) [npm package](https://www.npmjs.com/package/lodash.samplesize) [&#x24C9;][1]
 
 Gets `n` random elements at unique keys from `collection` up to the
 size of `collection`.
@@ -3213,14 +3232,14 @@ _.sampleSize([1, 2, 3], 2);
 _.sampleSize([1, 2, 3], 4);
 // => [2, 3, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_shufflecollection"></a>`_.shuffle(collection)`
-<a href="#_shufflecollection">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9132 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.shuffle "See the npm package")
+[#](#_shufflecollection) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9335) [npm package](https://www.npmjs.com/package/lodash.shuffle) [&#x24C9;][1]
 
 Creates an array of shuffled values, using a version of the
 [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
@@ -3238,14 +3257,14 @@ Creates an array of shuffled values, using a version of the
 _.shuffle([1, 2, 3, 4]);
 // => [4, 1, 3, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sizecollection"></a>`_.size(collection)`
-<a href="#_sizecollection">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9157 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.size "See the npm package")
+[#](#_sizecollection) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9360) [npm package](https://www.npmjs.com/package/lodash.size) [&#x24C9;][1]
 
 Gets the size of `collection` by returning its length for array-like
 values or the number of own enumerable string keyed properties for objects.
@@ -3269,14 +3288,14 @@ _.size({ 'a': 1, 'b': 2 });
 _.size('pebbles');
 // => 7
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_somecollection-predicate_identity"></a>`_.some(collection, [predicate=_.identity])`
-<a href="#_somecollection-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9211 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.some "See the npm package")
+[#](#_somecollection-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9413) [npm package](https://www.npmjs.com/package/lodash.some) [&#x24C9;][1]
 
 Checks if `predicate` returns truthy for **any** element of `collection`.
 Iteration is stopped once `predicate` returns truthy. The predicate is
@@ -3286,7 +3305,7 @@ invoked with three arguments: *(value, index|key, collection)*.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(boolean)*: Returns `true` if any element passes the predicate check, else `false`.
@@ -3313,14 +3332,14 @@ _.some(users, ['active', false]);
 _.some(users, 'active');
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sortbycollection-iteratees_identity"></a>`_.sortBy(collection, [iteratees=[_.identity]])`
-<a href="#_sortbycollection-iteratees_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9253 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sortby "See the npm package")
+[#](#_sortbycollection-iteratees_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9455) [npm package](https://www.npmjs.com/package/lodash.sortby) [&#x24C9;][1]
 
 Creates an array of elements, sorted in ascending order by the results of
 running each element in a collection thru each iteratee. This method
@@ -3331,7 +3350,7 @@ equal elements. The iteratees are invoked with one argument: *(value)*.
 0.1.0
 #### Arguments
 1. `collection` *(Array|Object)*: The collection to iterate over.
-2. `[iteratees=[_.identity]]` *(...(Array|Array&#91;&#93;|Function|Function&#91;&#93;|Object|Object&#91;&#93;|string|string&#91;&#93;))*: The iteratees to sort by.
+2. `[iteratees=[_.identity]]` *(...(Function|Function&#91;&#93;))*: The iteratees to sort by.
 
 #### Returns
 *(Array)*: Returns the new sorted array.
@@ -3356,7 +3375,7 @@ _.sortBy(users, 'user', function(o) {
 });
 // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -3369,7 +3388,7 @@ _.sortBy(users, 'user', function(o) {
 <!-- div -->
 
 ### <a id="_now"></a>`_.now()`
-<a href="#_now">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9288 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.now "See the npm package")
+[#](#_now) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9486) [npm package](https://www.npmjs.com/package/lodash.now) [&#x24C9;][1]
 
 Gets the timestamp of the number of milliseconds that have elapsed since
 the Unix epoch *(1 January `1970 00`:00:00 UTC)*.
@@ -3386,7 +3405,7 @@ _.defer(function(stamp) {
 }, _.now());
 // => Logs the number of milliseconds it took for the deferred invocation.
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -3399,7 +3418,7 @@ _.defer(function(stamp) {
 <!-- div -->
 
 ### <a id="_aftern-func"></a>`_.after(n, func)`
-<a href="#_aftern-func">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9318 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.after "See the npm package")
+[#](#_aftern-func) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9516) [npm package](https://www.npmjs.com/package/lodash.after) [&#x24C9;][1]
 
 The opposite of `_.before`; this method creates a function that invokes
 `func` once it's called `n` or more times.
@@ -3426,14 +3445,14 @@ _.forEach(saves, function(type) {
 });
 // => Logs 'done saving!' after the two async saves have completed.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_aryfunc-nfunclength"></a>`_.ary(func, [n=func.length])`
-<a href="#_aryfunc-nfunclength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9347 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ary "See the npm package")
+[#](#_aryfunc-nfunclength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9545) [npm package](https://www.npmjs.com/package/lodash.ary) [&#x24C9;][1]
 
 Creates a function that invokes `func`, with up to `n` arguments,
 ignoring any additional arguments.
@@ -3452,14 +3471,14 @@ ignoring any additional arguments.
 _.map(['6', '8', '10'], _.ary(parseInt, 1));
 // => [6, 8, 10]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_beforen-func"></a>`_.before(n, func)`
-<a href="#_beforen-func">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9370 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.before "See the npm package")
+[#](#_beforen-func) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9568) [npm package](https://www.npmjs.com/package/lodash.before) [&#x24C9;][1]
 
 Creates a function that invokes `func`, with the `this` binding and arguments
 of the created function, while it's called less than `n` times. Subsequent
@@ -3477,16 +3496,16 @@ calls to the created function return the result of the last `func` invocation.
 #### Example
 ```js
 jQuery(element).on('click', _.before(5, addContactToList));
-// => allows adding up to 4 contacts to the list
+// => Allows adding up to 4 contacts to the list.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_bindfunc-thisarg-partials"></a>`_.bind(func, thisArg, [partials])`
-<a href="#_bindfunc-thisarg-partials">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9422 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.bind "See the npm package")
+[#](#_bindfunc-thisarg-partials) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9620) [npm package](https://www.npmjs.com/package/lodash.bind) [&#x24C9;][1]
 
 Creates a function that invokes `func` with the `this` binding of `thisArg`
 and `partials` prepended to the arguments it receives.
@@ -3511,9 +3530,9 @@ property of bound functions.
 
 #### Example
 ```js
-var greet = function(greeting, punctuation) {
+function greet(greeting, punctuation) {
   return greeting + ' ' + this.user + punctuation;
-};
+}
 
 var object = { 'user': 'fred' };
 
@@ -3526,14 +3545,14 @@ var bound = _.bind(greet, object, _, '!');
 bound('hi');
 // => 'hi fred!'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_bindkeyobject-key-partials"></a>`_.bindKey(object, key, [partials])`
-<a href="#_bindkeyobject-key-partials">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9476 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.bindkey "See the npm package")
+[#](#_bindkeyobject-key-partials) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9674) [npm package](https://www.npmjs.com/package/lodash.bindkey) [&#x24C9;][1]
 
 Creates a function that invokes the method at `object[key]` with `partials`
 prepended to the arguments it receives.
@@ -3583,14 +3602,14 @@ var bound = _.bindKey(object, 'greet', _, '!');
 bound('hi');
 // => 'hiya fred!'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_curryfunc-arityfunclength"></a>`_.curry(func, [arity=func.length])`
-<a href="#_curryfunc-arityfunclength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9526 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.curry "See the npm package")
+[#](#_curryfunc-arityfunclength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9724) [npm package](https://www.npmjs.com/package/lodash.curry) [&#x24C9;][1]
 
 Creates a function that accepts arguments of `func` and either invokes
 `func` returning its result, if at least `arity` number of arguments have
@@ -3635,14 +3654,14 @@ curried(1, 2, 3);
 curried(1)(_, 3)(2);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_curryrightfunc-arityfunclength"></a>`_.curryRight(func, [arity=func.length])`
-<a href="#_curryrightfunc-arityfunclength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9571 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.curryright "See the npm package")
+[#](#_curryrightfunc-arityfunclength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9769) [npm package](https://www.npmjs.com/package/lodash.curryright) [&#x24C9;][1]
 
 This method is like `_.curry` except that arguments are applied to `func`
 in the manner of `_.partialRight` instead of `_.partial`.
@@ -3684,14 +3703,14 @@ curried(1, 2, 3);
 curried(3)(1, _)(2);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_debouncefunc-wait0-options-optionsleadingfalse-optionsmaxwait-optionstrailingtrue"></a>`_.debounce(func, [wait=0], [options={}], [options.leading=false], [options.maxWait], [options.trailing=true])`
-<a href="#_debouncefunc-wait0-options-optionsleadingfalse-optionsmaxwait-optionstrailingtrue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9628 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.debounce "See the npm package")
+[#](#_debouncefunc-wait0-options-optionsleadingfalse-optionsmaxwait-optionstrailingtrue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9826) [npm package](https://www.npmjs.com/package/lodash.debounce) [&#x24C9;][1]
 
 Creates a debounced function that delays invoking `func` until after `wait`
 milliseconds have elapsed since the last time the debounced function was
@@ -3743,14 +3762,14 @@ jQuery(source).on('message', debounced);
 // Cancel the trailing debounced invocation.
 jQuery(window).on('popstate', debounced.cancel);
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_deferfunc-args"></a>`_.defer(func, [args])`
-<a href="#_deferfunc-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9765 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.defer "See the npm package")
+[#](#_deferfunc-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9966) [npm package](https://www.npmjs.com/package/lodash.defer) [&#x24C9;][1]
 
 Defers invoking the `func` until the current call stack has cleared. Any
 additional arguments are provided to `func` when it's invoked.
@@ -3771,14 +3790,14 @@ _.defer(function(text) {
 }, 'deferred');
 // => Logs 'deferred' after one or more milliseconds.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_delayfunc-wait-args"></a>`_.delay(func, wait, [args])`
-<a href="#_delayfunc-wait-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9788 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.delay "See the npm package")
+[#](#_delayfunc-wait-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L9989) [npm package](https://www.npmjs.com/package/lodash.delay) [&#x24C9;][1]
 
 Invokes `func` after `wait` milliseconds. Any additional arguments are
 provided to `func` when it's invoked.
@@ -3800,14 +3819,14 @@ _.delay(function(text) {
 }, 1000, 'later');
 // => Logs 'later' after one second.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flipfunc"></a>`_.flip(func)`
-<a href="#_flipfunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9810 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flip "See the npm package")
+[#](#_flipfunc) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10011) [npm package](https://www.npmjs.com/package/lodash.flip) [&#x24C9;][1]
 
 Creates a function that invokes `func` with arguments reversed.
 
@@ -3828,14 +3847,14 @@ var flipped = _.flip(function() {
 flipped('a', 'b', 'c', 'd');
 // => ['d', 'c', 'b', 'a']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_memoizefunc-resolver"></a>`_.memoize(func, [resolver])`
-<a href="#_memoizefunc-resolver">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9858 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.memoize "See the npm package")
+[#](#_memoizefunc-resolver) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10059) [npm package](https://www.npmjs.com/package/lodash.memoize) [&#x24C9;][1]
 
 Creates a function that memoizes the result of `func`. If `resolver` is
 provided, it determines the cache key for storing the result based on the
@@ -3883,14 +3902,14 @@ values(object);
 // Replace `_.memoize.Cache`.
 _.memoize.Cache = WeakMap;
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_negatepredicate"></a>`_.negate(predicate)`
-<a href="#_negatepredicate">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9901 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.negate "See the npm package")
+[#](#_negatepredicate) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10102) [npm package](https://www.npmjs.com/package/lodash.negate) [&#x24C9;][1]
 
 Creates a function that negates the result of the predicate `func`. The
 `func` predicate is invoked with the `this` binding and arguments of the
@@ -3913,14 +3932,14 @@ function isEven(n) {
 _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
 // => [1, 3, 5]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_oncefunc"></a>`_.once(func)`
-<a href="#_oncefunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9928 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.once "See the npm package")
+[#](#_oncefunc) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10136) [npm package](https://www.npmjs.com/package/lodash.once) [&#x24C9;][1]
 
 Creates a function that is restricted to invoking `func` once. Repeat calls
 to the function return the value of the first invocation. The `func` is
@@ -3939,24 +3958,24 @@ invoked with the `this` binding and arguments of the created function.
 var initialize = _.once(createApplication);
 initialize();
 initialize();
-// `initialize` invokes `createApplication` once
+// => `createApplication` is invoked once
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
-### <a id="_overargsfunc"></a>`_.overArgs(func)`
-<a href="#_overargsfunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L9964 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.overargs "See the npm package")
+### <a id="_overargsfunc-transforms_identity"></a>`_.overArgs(func, [transforms=[_.identity]])`
+[#](#_overargsfunc-transforms_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10171) [npm package](https://www.npmjs.com/package/lodash.overargs) [&#x24C9;][1]
 
-Creates a function that invokes `func` with arguments transformed by
-corresponding `transforms`.
+Creates a function that invokes `func` with its arguments transformed.
 
 #### Since
 4.0.0
 #### Arguments
 1. `func` *(Function)*: The function to wrap.
+2. `[transforms=[_.identity]]` *(...(Function|Function&#91;&#93;))*: The argument transforms.
 
 #### Returns
 *(Function)*: Returns the new function.
@@ -3981,14 +4000,14 @@ func(9, 3);
 func(10, 5);
 // => [100, 10]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_partialfunc-partials"></a>`_.partial(func, [partials])`
-<a href="#_partialfunc-partials">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10014 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.partial "See the npm package")
+[#](#_partialfunc-partials) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10221) [npm package](https://www.npmjs.com/package/lodash.partial) [&#x24C9;][1]
 
 Creates a function that invokes `func` with `partials` prepended to the
 arguments it receives. This method is like `_.bind` except it does **not**
@@ -4013,9 +4032,9 @@ applied functions.
 
 #### Example
 ```js
-var greet = function(greeting, name) {
+function greet(greeting, name) {
   return greeting + ' ' + name;
-};
+}
 
 var sayHelloTo = _.partial(greet, 'hello');
 sayHelloTo('fred');
@@ -4026,14 +4045,14 @@ var greetFred = _.partial(greet, _, 'fred');
 greetFred('hi');
 // => 'hi fred'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_partialrightfunc-partials"></a>`_.partialRight(func, [partials])`
-<a href="#_partialrightfunc-partials">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10051 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.partialright "See the npm package")
+[#](#_partialrightfunc-partials) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10258) [npm package](https://www.npmjs.com/package/lodash.partialright) [&#x24C9;][1]
 
 This method is like `_.partial` except that partially applied arguments
 are appended to the arguments it receives.
@@ -4057,9 +4076,9 @@ applied functions.
 
 #### Example
 ```js
-var greet = function(greeting, name) {
+function greet(greeting, name) {
   return greeting + ' ' + name;
-};
+}
 
 var greetFred = _.partialRight(greet, 'fred');
 greetFred('hi');
@@ -4070,14 +4089,14 @@ var sayHelloTo = _.partialRight(greet, 'hello', _);
 sayHelloTo('fred');
 // => 'hello fred'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_reargfunc-indexes"></a>`_.rearg(func, indexes)`
-<a href="#_reargfunc-indexes">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10078 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.rearg "See the npm package")
+[#](#_reargfunc-indexes) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10285) [npm package](https://www.npmjs.com/package/lodash.rearg) [&#x24C9;][1]
 
 Creates a function that invokes `func` with arguments arranged according
 to the specified `indexes` where the argument value at the first index is
@@ -4102,14 +4121,14 @@ var rearged = _.rearg(function(a, b, c) {
 rearged('b', 'c', 'a')
 // => ['a', 'b', 'c']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_restfunc-startfunclength-1"></a>`_.rest(func, [start=func.length-1])`
-<a href="#_restfunc-startfunclength-1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10107 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.rest "See the npm package")
+[#](#_restfunc-startfunclength-1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10314) [npm package](https://www.npmjs.com/package/lodash.rest) [&#x24C9;][1]
 
 Creates a function that invokes `func` with the `this` binding of the
 created function and arguments from `start` and beyond provided as
@@ -4138,14 +4157,14 @@ var say = _.rest(function(what, names) {
 say('hello', 'fred', 'barney', 'pebbles');
 // => 'hello fred, barney, & pebbles'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_spreadfunc-start0"></a>`_.spread(func, [start=0])`
-<a href="#_spreadfunc-start0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10170 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.spread "See the npm package")
+[#](#_spreadfunc-start0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10356) [npm package](https://www.npmjs.com/package/lodash.spread) [&#x24C9;][1]
 
 Creates a function that invokes `func` with the `this` binding of the
 create function and an array of arguments much like
@@ -4183,14 +4202,14 @@ numbers.then(_.spread(function(x, y) {
 }));
 // => a Promise of 76
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_throttlefunc-wait0-options-optionsleadingtrue-optionstrailingtrue"></a>`_.throttle(func, [wait=0], [options={}], [options.leading=true], [options.trailing=true])`
-<a href="#_throttlefunc-wait0-options-optionsleadingtrue-optionstrailingtrue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10227 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.throttle "See the npm package")
+[#](#_throttlefunc-wait0-options-optionsleadingtrue-optionstrailingtrue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10413) [npm package](https://www.npmjs.com/package/lodash.throttle) [&#x24C9;][1]
 
 Creates a throttled function that only invokes `func` at most once per
 every `wait` milliseconds. The throttled function comes with a `cancel`
@@ -4234,14 +4253,14 @@ jQuery(element).on('click', throttled);
 // Cancel the trailing throttled invocation.
 jQuery(window).on('popstate', throttled.cancel);
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unaryfunc"></a>`_.unary(func)`
-<a href="#_unaryfunc">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10260 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unary "See the npm package")
+[#](#_unaryfunc) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10446) [npm package](https://www.npmjs.com/package/lodash.unary) [&#x24C9;][1]
 
 Creates a function that accepts up to one argument, ignoring any
 additional arguments.
@@ -4259,19 +4278,19 @@ additional arguments.
 _.map(['6', '8', '10'], _.unary(parseInt));
 // => [6, 8, 10]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_wrapvalue-wrapperidentity"></a>`_.wrap(value, [wrapper=identity])`
-<a href="#_wrapvalue-wrapperidentity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10286 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.wrap "See the npm package")
+[#](#_wrapvalue-wrapperidentity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10472) [npm package](https://www.npmjs.com/package/lodash.wrap) [&#x24C9;][1]
 
-Creates a function that provides `value` to the wrapper function as its
-first argument. Any additional arguments provided to the function are
-appended to those provided to the wrapper function. The wrapper is invoked
-with the `this` binding of the created function.
+Creates a function that provides `value` to `wrapper` as its first
+argument. Any additional arguments provided to the function are appended
+to those provided to the `wrapper`. The wrapper is invoked with the `this`
+binding of the created function.
 
 #### Since
 0.1.0
@@ -4291,7 +4310,7 @@ var p = _.wrap(_.escape, function(func, text) {
 p('fred, barney, & pebbles');
 // => '<p>fred, barney, &amp; pebbles</p>'
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -4304,7 +4323,7 @@ p('fred, barney, & pebbles');
 <!-- div -->
 
 ### <a id="_castarrayvalue"></a>`_.castArray(value)`
-<a href="#_castarrayvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10326 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.castarray "See the npm package")
+[#](#_castarrayvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10512) [npm package](https://www.npmjs.com/package/lodash.castarray) [&#x24C9;][1]
 
 Casts `value` as an array if it's not one.
 
@@ -4340,14 +4359,14 @@ var array = [1, 2, 3];
 console.log(_.castArray(array) === array);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_clonevalue"></a>`_.clone(value)`
-<a href="#_clonevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10360 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.clone "See the npm package")
+[#](#_clonevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10546) [npm package](https://www.npmjs.com/package/lodash.clone) [&#x24C9;][1]
 
 Creates a shallow clone of `value`.
 <br>
@@ -4376,14 +4395,14 @@ var shallow = _.clone(objects);
 console.log(shallow[0] === objects[0]);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_clonedeepvalue"></a>`_.cloneDeep(value)`
-<a href="#_clonedeepvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10417 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.clonedeep "See the npm package")
+[#](#_clonedeepvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10603) [npm package](https://www.npmjs.com/package/lodash.clonedeep) [&#x24C9;][1]
 
 This method is like `_.clone` except that it recursively clones `value`.
 
@@ -4403,14 +4422,14 @@ var deep = _.cloneDeep(objects);
 console.log(deep[0] === objects[0]);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_clonedeepwithvalue-customizer"></a>`_.cloneDeepWith(value, [customizer])`
-<a href="#_clonedeepwithvalue-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10449 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.clonedeepwith "See the npm package")
+[#](#_clonedeepwithvalue-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10635) [npm package](https://www.npmjs.com/package/lodash.clonedeepwith) [&#x24C9;][1]
 
 This method is like `_.cloneWith` except that it recursively clones `value`.
 
@@ -4440,14 +4459,14 @@ console.log(el.nodeName);
 console.log(el.childNodes.length);
 // => 20
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_clonewithvalue-customizer"></a>`_.cloneWith(value, [customizer])`
-<a href="#_clonewithvalue-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10395 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.clonewith "See the npm package")
+[#](#_clonewithvalue-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10581) [npm package](https://www.npmjs.com/package/lodash.clonewith) [&#x24C9;][1]
 
 This method is like `_.clone` except that it accepts `customizer` which
 is invoked to produce the cloned value. If `customizer` returns `undefined`,
@@ -4480,14 +4499,46 @@ console.log(el.nodeName);
 console.log(el.childNodes.length);
 // => 0
 ```
-* * *
+---
+
+<!-- /div -->
+
+<!-- div -->
+
+### <a id="_conformstoobject-source"></a>`_.conformsTo(object, source)`
+[#](#_conformstoobject-source) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10661) [npm package](https://www.npmjs.com/package/lodash.conformsto) [&#x24C9;][1]
+
+Checks if `object` conforms to `source` by invoking the predicate properties
+of `source` with the corresponding property values of `object`. This method
+is equivalent to a `_.conforms` function when `source` is partially applied.
+
+#### Since
+4.14.0
+#### Arguments
+1. `object` *(Object)*: The object to inspect.
+2. `source` *(Object)*: The object of property predicates to conform to.
+
+#### Returns
+*(boolean)*: Returns `true` if `object` conforms, else `false`.
+
+#### Example
+```js
+var object = { 'a': 1, 'b': 2 };
+
+_.conformsTo(object, { 'b': function(n) { return n > 1; } });
+// => true
+
+_.conformsTo(object, { 'b': function(n) { return n > 2; } });
+// => false
+```
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_eqvalue-other"></a>`_.eq(value, other)`
-<a href="#_eqvalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10485 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.eq "See the npm package")
+[#](#_eqvalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10697) [npm package](https://www.npmjs.com/package/lodash.eq) [&#x24C9;][1]
 
 Performs a
 [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
@@ -4504,8 +4555,8 @@ comparison between two values to determine if they are equivalent.
 
 #### Example
 ```js
-var object = { 'user': 'fred' };
-var other = { 'user': 'fred' };
+var object = { 'a': 1 };
+var other = { 'a': 1 };
 
 _.eq(object, object);
 // => true
@@ -4522,14 +4573,14 @@ _.eq('a', Object('a'));
 _.eq(NaN, NaN);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_gtvalue-other"></a>`_.gt(value, other)`
-<a href="#_gtvalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10512 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.gt "See the npm package")
+[#](#_gtvalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10724) [npm package](https://www.npmjs.com/package/lodash.gt) [&#x24C9;][1]
 
 Checks if `value` is greater than `other`.
 
@@ -4553,14 +4604,14 @@ _.gt(3, 3);
 _.gt(1, 3);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_gtevalue-other"></a>`_.gte(value, other)`
-<a href="#_gtevalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10537 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.gte "See the npm package")
+[#](#_gtevalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10749) [npm package](https://www.npmjs.com/package/lodash.gte) [&#x24C9;][1]
 
 Checks if `value` is greater than or equal to `other`.
 
@@ -4584,14 +4635,14 @@ _.gte(3, 3);
 _.gte(1, 3);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isargumentsvalue"></a>`_.isArguments(value)`
-<a href="#_isargumentsvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10559 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isarguments "See the npm package")
+[#](#_isargumentsvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10771) [npm package](https://www.npmjs.com/package/lodash.isarguments) [&#x24C9;][1]
 
 Checks if `value` is likely an `arguments` object.
 
@@ -4601,7 +4652,7 @@ Checks if `value` is likely an `arguments` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is an `arguments` object, else `false`.
 
 #### Example
 ```js
@@ -4611,14 +4662,14 @@ _.isArguments(function() { return arguments; }());
 _.isArguments([1, 2, 3]);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isarrayvalue"></a>`_.isArray(value)`
-<a href="#_isarrayvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10590 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isarray "See the npm package")
+[#](#_isarrayvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10800) [npm package](https://www.npmjs.com/package/lodash.isarray) [&#x24C9;][1]
 
 Checks if `value` is classified as an `Array` object.
 
@@ -4628,7 +4679,7 @@ Checks if `value` is classified as an `Array` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is an array, else `false`.
 
 #### Example
 ```js
@@ -4644,14 +4695,14 @@ _.isArray('abc');
 _.isArray(_.noop);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isarraybuffervalue"></a>`_.isArrayBuffer(value)`
-<a href="#_isarraybuffervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10610 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isarraybuffer "See the npm package")
+[#](#_isarraybuffervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10819) [npm package](https://www.npmjs.com/package/lodash.isarraybuffer) [&#x24C9;][1]
 
 Checks if `value` is classified as an `ArrayBuffer` object.
 
@@ -4661,7 +4712,7 @@ Checks if `value` is classified as an `ArrayBuffer` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is an array buffer, else `false`.
 
 #### Example
 ```js
@@ -4671,14 +4722,14 @@ _.isArrayBuffer(new ArrayBuffer(2));
 _.isArrayBuffer(new Array(2));
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isarraylikevalue"></a>`_.isArrayLike(value)`
-<a href="#_isarraylikevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10639 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isarraylike "See the npm package")
+[#](#_isarraylikevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10846) [npm package](https://www.npmjs.com/package/lodash.isarraylike) [&#x24C9;][1]
 
 Checks if `value` is array-like. A value is considered array-like if it's
 not a function and has a `value.length` that's an integer greater than or
@@ -4706,14 +4757,14 @@ _.isArrayLike('abc');
 _.isArrayLike(_.noop);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isarraylikeobjectvalue"></a>`_.isArrayLikeObject(value)`
-<a href="#_isarraylikeobjectvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10668 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isarraylikeobject "See the npm package")
+[#](#_isarraylikeobjectvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10875) [npm package](https://www.npmjs.com/package/lodash.isarraylikeobject) [&#x24C9;][1]
 
 This method is like `_.isArrayLike` except that it also checks if `value`
 is an object.
@@ -4740,14 +4791,14 @@ _.isArrayLikeObject('abc');
 _.isArrayLikeObject(_.noop);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isbooleanvalue"></a>`_.isBoolean(value)`
-<a href="#_isbooleanvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10690 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isboolean "See the npm package")
+[#](#_isbooleanvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10896) [npm package](https://www.npmjs.com/package/lodash.isboolean) [&#x24C9;][1]
 
 Checks if `value` is classified as a boolean primitive or object.
 
@@ -4757,7 +4808,7 @@ Checks if `value` is classified as a boolean primitive or object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a boolean, else `false`.
 
 #### Example
 ```js
@@ -4767,14 +4818,14 @@ _.isBoolean(false);
 _.isBoolean(null);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isbuffervalue"></a>`_.isBuffer(value)`
-<a href="#_isbuffervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10712 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isbuffer "See the npm package")
+[#](#_isbuffervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10918) [npm package](https://www.npmjs.com/package/lodash.isbuffer) [&#x24C9;][1]
 
 Checks if `value` is a buffer.
 
@@ -4794,14 +4845,14 @@ _.isBuffer(new Buffer(2));
 _.isBuffer(new Uint8Array(2));
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isdatevalue"></a>`_.isDate(value)`
-<a href="#_isdatevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10734 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isdate "See the npm package")
+[#](#_isdatevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10937) [npm package](https://www.npmjs.com/package/lodash.isdate) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Date` object.
 
@@ -4811,7 +4862,7 @@ Checks if `value` is classified as a `Date` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a date object, else `false`.
 
 #### Example
 ```js
@@ -4821,14 +4872,14 @@ _.isDate(new Date);
 _.isDate('Mon April 23 2012');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_iselementvalue"></a>`_.isElement(value)`
-<a href="#_iselementvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10756 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.iselement "See the npm package")
+[#](#_iselementvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10957) [npm package](https://www.npmjs.com/package/lodash.iselement) [&#x24C9;][1]
 
 Checks if `value` is likely a DOM element.
 
@@ -4848,14 +4899,14 @@ _.isElement(document.body);
 _.isElement('<body>');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isemptyvalue"></a>`_.isEmpty(value)`
-<a href="#_isemptyvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10793 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isempty "See the npm package")
+[#](#_isemptyvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L10994) [npm package](https://www.npmjs.com/package/lodash.isempty) [&#x24C9;][1]
 
 Checks if `value` is an empty object, collection, map, or set.
 <br>
@@ -4893,14 +4944,14 @@ _.isEmpty([1, 2, 3]);
 _.isEmpty({ 'a': 1 });
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isequalvalue-other"></a>`_.isEqual(value, other)`
-<a href="#_isequalvalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10842 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isequal "See the npm package")
+[#](#_isequalvalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11043) [npm package](https://www.npmjs.com/package/lodash.isequal) [&#x24C9;][1]
 
 Performs a deep comparison between two values to determine if they are
 equivalent.
@@ -4923,8 +4974,8 @@ nodes are **not** supported.
 
 #### Example
 ```js
-var object = { 'user': 'fred' };
-var other = { 'user': 'fred' };
+var object = { 'a': 1 };
+var other = { 'a': 1 };
 
 _.isEqual(object, other);
 // => true
@@ -4932,14 +4983,14 @@ _.isEqual(object, other);
 object === other;
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isequalwithvalue-other-customizer"></a>`_.isEqualWith(value, other, [customizer])`
-<a href="#_isequalwithvalue-other-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10879 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isequalwith "See the npm package")
+[#](#_isequalwithvalue-other-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11080) [npm package](https://www.npmjs.com/package/lodash.isequalwith) [&#x24C9;][1]
 
 This method is like `_.isEqual` except that it accepts `customizer` which
 is invoked to compare values. If `customizer` returns `undefined`, comparisons
@@ -4974,14 +5025,14 @@ var other = ['hi', 'goodbye'];
 _.isEqualWith(array, other, customizer);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_iserrorvalue"></a>`_.isError(value)`
-<a href="#_iserrorvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10904 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.iserror "See the npm package")
+[#](#_iserrorvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11105) [npm package](https://www.npmjs.com/package/lodash.iserror) [&#x24C9;][1]
 
 Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
 `SyntaxError`, `TypeError`, or `URIError` object.
@@ -5002,14 +5053,14 @@ _.isError(new Error);
 _.isError(Error);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isfinitevalue"></a>`_.isFinite(value)`
-<a href="#_isfinitevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10939 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isfinite "See the npm package")
+[#](#_isfinitevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11140) [npm package](https://www.npmjs.com/package/lodash.isfinite) [&#x24C9;][1]
 
 Checks if `value` is a finite primitive number.
 <br>
@@ -5039,14 +5090,14 @@ _.isFinite(Infinity);
 _.isFinite('3');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isfunctionvalue"></a>`_.isFunction(value)`
-<a href="#_isfunctionvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10961 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isfunction "See the npm package")
+[#](#_isfunctionvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11161) [npm package](https://www.npmjs.com/package/lodash.isfunction) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Function` object.
 
@@ -5056,7 +5107,7 @@ Checks if `value` is classified as a `Function` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a function, else `false`.
 
 #### Example
 ```js
@@ -5066,14 +5117,14 @@ _.isFunction(_);
 _.isFunction(/abc/);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isintegervalue"></a>`_.isInteger(value)`
-<a href="#_isintegervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L10995 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isinteger "See the npm package")
+[#](#_isintegervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11195) [npm package](https://www.npmjs.com/package/lodash.isinteger) [&#x24C9;][1]
 
 Checks if `value` is an integer.
 <br>
@@ -5103,14 +5154,14 @@ _.isInteger(Infinity);
 _.isInteger('3');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_islengthvalue"></a>`_.isLength(value)`
-<a href="#_islengthvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11026 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.islength "See the npm package")
+[#](#_islengthvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11226) [npm package](https://www.npmjs.com/package/lodash.islength) [&#x24C9;][1]
 
 Checks if `value` is a valid array-like length.
 <br>
@@ -5140,14 +5191,14 @@ _.isLength(Infinity);
 _.isLength('3');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ismapvalue"></a>`_.isMap(value)`
-<a href="#_ismapvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11107 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ismap "See the npm package")
+[#](#_ismapvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11306) [npm package](https://www.npmjs.com/package/lodash.ismap) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Map` object.
 
@@ -5157,7 +5208,7 @@ Checks if `value` is classified as a `Map` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a map, else `false`.
 
 #### Example
 ```js
@@ -5167,14 +5218,14 @@ _.isMap(new Map);
 _.isMap(new WeakMap);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ismatchobject-source"></a>`_.isMatch(object, source)`
-<a href="#_ismatchobject-source">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11135 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ismatch "See the npm package")
+[#](#_ismatchobject-source) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11332) [npm package](https://www.npmjs.com/package/lodash.ismatch) [&#x24C9;][1]
 
 Performs a partial deep comparison between `object` and `source` to
 determine if `object` contains equivalent property values. This method is
@@ -5194,22 +5245,22 @@ equivalent to a `_.matches` function when `source` is partially applied.
 
 #### Example
 ```js
-var object = { 'user': 'fred', 'age': 40 };
+var object = { 'a': 1, 'b': 2 };
 
-_.isMatch(object, { 'age': 40 });
+_.isMatch(object, { 'b': 2 });
 // => true
 
-_.isMatch(object, { 'age': 36 });
+_.isMatch(object, { 'b': 1 });
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ismatchwithobject-source-customizer"></a>`_.isMatchWith(object, source, [customizer])`
-<a href="#_ismatchwithobject-source-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11171 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ismatchwith "See the npm package")
+[#](#_ismatchwithobject-source-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11368) [npm package](https://www.npmjs.com/package/lodash.ismatchwith) [&#x24C9;][1]
 
 This method is like `_.isMatch` except that it accepts `customizer` which
 is invoked to compare values. If `customizer` returns `undefined`, comparisons
@@ -5244,14 +5295,14 @@ var source = { 'greeting': 'hi' };
 _.isMatchWith(object, source, customizer);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isnanvalue"></a>`_.isNaN(value)`
-<a href="#_isnanvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11204 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isnan "See the npm package")
+[#](#_isnanvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11401) [npm package](https://www.npmjs.com/package/lodash.isnan) [&#x24C9;][1]
 
 Checks if `value` is `NaN`.
 <br>
@@ -5283,25 +5334,25 @@ isNaN(undefined);
 _.isNaN(undefined);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isnativevalue"></a>`_.isNative(value)`
-<a href="#_isnativevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11237 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isnative "See the npm package")
+[#](#_isnativevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11434) [npm package](https://www.npmjs.com/package/lodash.isnative) [&#x24C9;][1]
 
 Checks if `value` is a pristine native function.
 <br>
 <br>
-**Note:** This method can't reliably detect native functions in the
-presence of the `core-js` package because `core-js` circumvents this kind
-of detection. Despite multiple requests, the `core-js` maintainer has made
-it clear: any attempt to fix the detection will be obstructed. As a result,
-we're left with little choice but to throw an error. Unfortunately, this
-also affects packages, like [babel-polyfill](https://www.npmjs.com/package/babel-polyfill),
-which rely on `core-js`.
+**Note:** This method can't reliably detect native functions in the presence
+of the core-js package because core-js circumvents this kind of detection.
+Despite multiple requests, the core-js maintainer has made it clear: any
+attempt to fix the detection will be obstructed. As a result, we're left
+with little choice but to throw an error. Unfortunately, this also affects
+packages, like [babel-polyfill](https://www.npmjs.com/package/babel-polyfill),
+which rely on core-js.
 
 #### Since
 3.0.0
@@ -5319,14 +5370,14 @@ _.isNative(Array.prototype.push);
 _.isNative(_);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isnilvalue"></a>`_.isNil(value)`
-<a href="#_isnilvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11285 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isnil "See the npm package")
+[#](#_isnilvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11482) [npm package](https://www.npmjs.com/package/lodash.isnil) [&#x24C9;][1]
 
 Checks if `value` is `null` or `undefined`.
 
@@ -5349,14 +5400,14 @@ _.isNil(void 0);
 _.isNil(NaN);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isnullvalue"></a>`_.isNull(value)`
-<a href="#_isnullvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11261 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isnull "See the npm package")
+[#](#_isnullvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11458) [npm package](https://www.npmjs.com/package/lodash.isnull) [&#x24C9;][1]
 
 Checks if `value` is `null`.
 
@@ -5376,14 +5427,14 @@ _.isNull(null);
 _.isNull(void 0);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isnumbervalue"></a>`_.isNumber(value)`
-<a href="#_isnumbervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11316 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isnumber "See the npm package")
+[#](#_isnumbervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11512) [npm package](https://www.npmjs.com/package/lodash.isnumber) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Number` primitive or object.
 <br>
@@ -5397,7 +5448,7 @@ classified as numbers, use the `_.isFinite` method.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a number, else `false`.
 
 #### Example
 ```js
@@ -5413,14 +5464,14 @@ _.isNumber(Infinity);
 _.isNumber('3');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isobjectvalue"></a>`_.isObject(value)`
-<a href="#_isobjectvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11056 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isobject "See the npm package")
+[#](#_isobjectvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11256) [npm package](https://www.npmjs.com/package/lodash.isobject) [&#x24C9;][1]
 
 Checks if `value` is the
 [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
@@ -5448,14 +5499,14 @@ _.isObject(_.noop);
 _.isObject(null);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isobjectlikevalue"></a>`_.isObjectLike(value)`
-<a href="#_isobjectlikevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11085 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isobjectlike "See the npm package")
+[#](#_isobjectlikevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11285) [npm package](https://www.npmjs.com/package/lodash.isobjectlike) [&#x24C9;][1]
 
 Checks if `value` is object-like. A value is object-like if it's not `null`
 and has a `typeof` result of "object".
@@ -5482,14 +5533,14 @@ _.isObjectLike(_.noop);
 _.isObjectLike(null);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isplainobjectvalue"></a>`_.isPlainObject(value)`
-<a href="#_isplainobjectvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11350 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isplainobject "See the npm package")
+[#](#_isplainobjectvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11546) [npm package](https://www.npmjs.com/package/lodash.isplainobject) [&#x24C9;][1]
 
 Checks if `value` is a plain object, that is, an object created by the
 `Object` constructor or one with a `[[Prototype]]` of `null`.
@@ -5520,14 +5571,14 @@ _.isPlainObject({ 'x': 0, 'y': 0 });
 _.isPlainObject(Object.create(null));
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isregexpvalue"></a>`_.isRegExp(value)`
-<a href="#_isregexpvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11382 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isregexp "See the npm package")
+[#](#_isregexpvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11577) [npm package](https://www.npmjs.com/package/lodash.isregexp) [&#x24C9;][1]
 
 Checks if `value` is classified as a `RegExp` object.
 
@@ -5537,7 +5588,7 @@ Checks if `value` is classified as a `RegExp` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a regexp, else `false`.
 
 #### Example
 ```js
@@ -5547,14 +5598,14 @@ _.isRegExp(/abc/);
 _.isRegExp('/abc/');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_issafeintegervalue"></a>`_.isSafeInteger(value)`
-<a href="#_issafeintegervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11414 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.issafeinteger "See the npm package")
+[#](#_issafeintegervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11607) [npm package](https://www.npmjs.com/package/lodash.issafeinteger) [&#x24C9;][1]
 
 Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
 double precision number which isn't the result of a rounded unsafe integer.
@@ -5585,14 +5636,14 @@ _.isSafeInteger(Infinity);
 _.isSafeInteger('3');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_issetvalue"></a>`_.isSet(value)`
-<a href="#_issetvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11436 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isset "See the npm package")
+[#](#_issetvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11628) [npm package](https://www.npmjs.com/package/lodash.isset) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Set` object.
 
@@ -5602,7 +5653,7 @@ Checks if `value` is classified as a `Set` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a set, else `false`.
 
 #### Example
 ```js
@@ -5612,14 +5663,14 @@ _.isSet(new Set);
 _.isSet(new WeakSet);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isstringvalue"></a>`_.isString(value)`
-<a href="#_isstringvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11458 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isstring "See the npm package")
+[#](#_isstringvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11647) [npm package](https://www.npmjs.com/package/lodash.isstring) [&#x24C9;][1]
 
 Checks if `value` is classified as a `String` primitive or object.
 
@@ -5629,7 +5680,7 @@ Checks if `value` is classified as a `String` primitive or object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a string, else `false`.
 
 #### Example
 ```js
@@ -5639,14 +5690,14 @@ _.isString('abc');
 _.isString(1);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_issymbolvalue"></a>`_.isSymbol(value)`
-<a href="#_issymbolvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11481 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.issymbol "See the npm package")
+[#](#_issymbolvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11669) [npm package](https://www.npmjs.com/package/lodash.issymbol) [&#x24C9;][1]
 
 Checks if `value` is classified as a `Symbol` primitive or object.
 
@@ -5656,7 +5707,7 @@ Checks if `value` is classified as a `Symbol` primitive or object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a symbol, else `false`.
 
 #### Example
 ```js
@@ -5666,14 +5717,14 @@ _.isSymbol(Symbol.iterator);
 _.isSymbol('abc');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_istypedarrayvalue"></a>`_.isTypedArray(value)`
-<a href="#_istypedarrayvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11504 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.istypedarray "See the npm package")
+[#](#_istypedarrayvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11691) [npm package](https://www.npmjs.com/package/lodash.istypedarray) [&#x24C9;][1]
 
 Checks if `value` is classified as a typed array.
 
@@ -5683,7 +5734,7 @@ Checks if `value` is classified as a typed array.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a typed array, else `false`.
 
 #### Example
 ```js
@@ -5693,14 +5744,14 @@ _.isTypedArray(new Uint8Array);
 _.isTypedArray([]);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isundefinedvalue"></a>`_.isUndefined(value)`
-<a href="#_isundefinedvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11526 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isundefined "See the npm package")
+[#](#_isundefinedvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11710) [npm package](https://www.npmjs.com/package/lodash.isundefined) [&#x24C9;][1]
 
 Checks if `value` is `undefined`.
 
@@ -5720,14 +5771,14 @@ _.isUndefined(void 0);
 _.isUndefined(null);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isweakmapvalue"></a>`_.isWeakMap(value)`
-<a href="#_isweakmapvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11548 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isweakmap "See the npm package")
+[#](#_isweakmapvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11731) [npm package](https://www.npmjs.com/package/lodash.isweakmap) [&#x24C9;][1]
 
 Checks if `value` is classified as a `WeakMap` object.
 
@@ -5737,7 +5788,7 @@ Checks if `value` is classified as a `WeakMap` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a weak map, else `false`.
 
 #### Example
 ```js
@@ -5747,14 +5798,14 @@ _.isWeakMap(new WeakMap);
 _.isWeakMap(new Map);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_isweaksetvalue"></a>`_.isWeakSet(value)`
-<a href="#_isweaksetvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11570 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.isweakset "See the npm package")
+[#](#_isweaksetvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11752) [npm package](https://www.npmjs.com/package/lodash.isweakset) [&#x24C9;][1]
 
 Checks if `value` is classified as a `WeakSet` object.
 
@@ -5764,7 +5815,7 @@ Checks if `value` is classified as a `WeakSet` object.
 1. `value` *(&#42;)*: The value to check.
 
 #### Returns
-*(boolean)*: Returns `true` if `value` is correctly classified, else `false`.
+*(boolean)*: Returns `true` if `value` is a weak set, else `false`.
 
 #### Example
 ```js
@@ -5774,14 +5825,14 @@ _.isWeakSet(new WeakSet);
 _.isWeakSet(new Set);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ltvalue-other"></a>`_.lt(value, other)`
-<a href="#_ltvalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11597 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.lt "See the npm package")
+[#](#_ltvalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11779) [npm package](https://www.npmjs.com/package/lodash.lt) [&#x24C9;][1]
 
 Checks if `value` is less than `other`.
 
@@ -5805,14 +5856,14 @@ _.lt(3, 3);
 _.lt(3, 1);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ltevalue-other"></a>`_.lte(value, other)`
-<a href="#_ltevalue-other">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11622 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.lte "See the npm package")
+[#](#_ltevalue-other) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11804) [npm package](https://www.npmjs.com/package/lodash.lte) [&#x24C9;][1]
 
 Checks if `value` is less than or equal to `other`.
 
@@ -5836,14 +5887,14 @@ _.lte(3, 3);
 _.lte(3, 1);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_toarrayvalue"></a>`_.toArray(value)`
-<a href="#_toarrayvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11649 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.toarray "See the npm package")
+[#](#_toarrayvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11831) [npm package](https://www.npmjs.com/package/lodash.toarray) [&#x24C9;][1]
 
 Converts `value` to an array.
 
@@ -5869,14 +5920,14 @@ _.toArray(1);
 _.toArray(null);
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tofinitevalue"></a>`_.toFinite(value)`
-<a href="#_tofinitevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11688 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tofinite "See the npm package")
+[#](#_tofinitevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11870) [npm package](https://www.npmjs.com/package/lodash.tofinite) [&#x24C9;][1]
 
 Converts `value` to a finite number.
 
@@ -5902,14 +5953,14 @@ _.toFinite(Infinity);
 _.toFinite('3.2');
 // => 3.2
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tointegervalue"></a>`_.toInteger(value)`
-<a href="#_tointegervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11726 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tointeger "See the npm package")
+[#](#_tointegervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11908) [npm package](https://www.npmjs.com/package/lodash.tointeger) [&#x24C9;][1]
 
 Converts `value` to an integer.
 <br>
@@ -5939,14 +5990,14 @@ _.toInteger(Infinity);
 _.toInteger('3.2');
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tolengthvalue"></a>`_.toLength(value)`
-<a href="#_tolengthvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11760 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tolength "See the npm package")
+[#](#_tolengthvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11942) [npm package](https://www.npmjs.com/package/lodash.tolength) [&#x24C9;][1]
 
 Converts `value` to an integer suitable for use as the length of an
 array-like object.
@@ -5977,14 +6028,14 @@ _.toLength(Infinity);
 _.toLength('3.2');
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tonumbervalue"></a>`_.toNumber(value)`
-<a href="#_tonumbervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11787 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tonumber "See the npm package")
+[#](#_tonumbervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L11969) [npm package](https://www.npmjs.com/package/lodash.tonumber) [&#x24C9;][1]
 
 Converts `value` to a number.
 
@@ -6010,14 +6061,14 @@ _.toNumber(Infinity);
 _.toNumber('3.2');
 // => 3.2
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_toplainobjectvalue"></a>`_.toPlainObject(value)`
-<a href="#_toplainobjectvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11832 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.toplainobject "See the npm package")
+[#](#_toplainobjectvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12014) [npm package](https://www.npmjs.com/package/lodash.toplainobject) [&#x24C9;][1]
 
 Converts `value` to a plain object flattening inherited enumerable string
 keyed properties of `value` to own properties of the plain object.
@@ -6044,14 +6095,14 @@ _.assign({ 'a': 1 }, new Foo);
 _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
 // => { 'a': 1, 'b': 2, 'c': 3 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tosafeintegervalue"></a>`_.toSafeInteger(value)`
-<a href="#_tosafeintegervalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11860 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tosafeinteger "See the npm package")
+[#](#_tosafeintegervalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12042) [npm package](https://www.npmjs.com/package/lodash.tosafeinteger) [&#x24C9;][1]
 
 Converts `value` to a safe integer. A safe integer can be compared and
 represented correctly.
@@ -6078,14 +6129,14 @@ _.toSafeInteger(Infinity);
 _.toSafeInteger('3.2');
 // => 3
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tostringvalue"></a>`_.toString(value)`
-<a href="#_tostringvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11885 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tostring "See the npm package")
+[#](#_tostringvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12067) [npm package](https://www.npmjs.com/package/lodash.tostring) [&#x24C9;][1]
 
 Converts `value` to a string. An empty string is returned for `null`
 and `undefined` values. The sign of `-0` is preserved.
@@ -6109,7 +6160,7 @@ _.toString(-0);
 _.toString([1, 2, 3]);
 // => '1,2,3'
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -6122,7 +6173,7 @@ _.toString([1, 2, 3]);
 <!-- div -->
 
 ### <a id="_addaugend-addend"></a>`_.add(augend, addend)`
-<a href="#_addaugend-addend">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15481 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.add "See the npm package")
+[#](#_addaugend-addend) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15671) [npm package](https://www.npmjs.com/package/lodash.add) [&#x24C9;][1]
 
 Adds two numbers.
 
@@ -6140,14 +6191,14 @@ Adds two numbers.
 _.add(6, 4);
 // => 10
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_ceilnumber-precision0"></a>`_.ceil(number, [precision=0])`
-<a href="#_ceilnumber-precision0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15506 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ceil "See the npm package")
+[#](#_ceilnumber-precision0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15696) [npm package](https://www.npmjs.com/package/lodash.ceil) [&#x24C9;][1]
 
 Computes `number` rounded up to `precision`.
 
@@ -6171,14 +6222,14 @@ _.ceil(6.004, 2);
 _.ceil(6040, -2);
 // => 6100
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_dividedividend-divisor"></a>`_.divide(dividend, divisor)`
-<a href="#_dividedividend-divisor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15523 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.divide "See the npm package")
+[#](#_dividedividend-divisor) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15713) [npm package](https://www.npmjs.com/package/lodash.divide) [&#x24C9;][1]
 
 Divide two numbers.
 
@@ -6196,14 +6247,14 @@ Divide two numbers.
 _.divide(6, 4);
 // => 1.5
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_floornumber-precision0"></a>`_.floor(number, [precision=0])`
-<a href="#_floornumber-precision0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15548 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.floor "See the npm package")
+[#](#_floornumber-precision0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15738) [npm package](https://www.npmjs.com/package/lodash.floor) [&#x24C9;][1]
 
 Computes `number` rounded down to `precision`.
 
@@ -6227,14 +6278,14 @@ _.floor(0.046, 2);
 _.floor(4060, -2);
 // => 4000
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_maxarray"></a>`_.max(array)`
-<a href="#_maxarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15568 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.max "See the npm package")
+[#](#_maxarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15758) [npm package](https://www.npmjs.com/package/lodash.max) [&#x24C9;][1]
 
 Computes the maximum value of `array`. If `array` is empty or falsey,
 `undefined` is returned.
@@ -6255,14 +6306,14 @@ _.max([4, 2, 8, 6]);
 _.max([]);
 // => undefined
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_maxbyarray-iteratee_identity"></a>`_.maxBy(array, [iteratee=_.identity])`
-<a href="#_maxbyarray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15598 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.maxby "See the npm package")
+[#](#_maxbyarray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15787) [npm package](https://www.npmjs.com/package/lodash.maxby) [&#x24C9;][1]
 
 This method is like `_.max` except that it accepts `iteratee` which is
 invoked for each element in `array` to generate the criterion by which
@@ -6272,7 +6323,7 @@ the value is ranked. The iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `array` *(Array)*: The array to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(&#42;)*: Returns the maximum value.
@@ -6288,14 +6339,14 @@ _.maxBy(objects, function(o) { return o.n; });
 _.maxBy(objects, 'n');
 // => { 'n': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_meanarray"></a>`_.mean(array)`
-<a href="#_meanarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15618 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.mean "See the npm package")
+[#](#_meanarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15807) [npm package](https://www.npmjs.com/package/lodash.mean) [&#x24C9;][1]
 
 Computes the mean of the values in `array`.
 
@@ -6312,14 +6363,14 @@ Computes the mean of the values in `array`.
 _.mean([4, 2, 8, 6]);
 // => 5
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_meanbyarray-iteratee_identity"></a>`_.meanBy(array, [iteratee=_.identity])`
-<a href="#_meanbyarray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15646 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.meanby "See the npm package")
+[#](#_meanbyarray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15834) [npm package](https://www.npmjs.com/package/lodash.meanby) [&#x24C9;][1]
 
 This method is like `_.mean` except that it accepts `iteratee` which is
 invoked for each element in `array` to generate the value to be averaged.
@@ -6329,7 +6380,7 @@ The iteratee is invoked with one argument: *(value)*.
 4.7.0
 #### Arguments
 1. `array` *(Array)*: The array to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(number)*: Returns the mean.
@@ -6345,14 +6396,14 @@ _.meanBy(objects, function(o) { return o.n; });
 _.meanBy(objects, 'n');
 // => 5
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_minarray"></a>`_.min(array)`
-<a href="#_minarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15668 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.min "See the npm package")
+[#](#_minarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15856) [npm package](https://www.npmjs.com/package/lodash.min) [&#x24C9;][1]
 
 Computes the minimum value of `array`. If `array` is empty or falsey,
 `undefined` is returned.
@@ -6373,14 +6424,14 @@ _.min([4, 2, 8, 6]);
 _.min([]);
 // => undefined
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_minbyarray-iteratee_identity"></a>`_.minBy(array, [iteratee=_.identity])`
-<a href="#_minbyarray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15698 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.minby "See the npm package")
+[#](#_minbyarray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15885) [npm package](https://www.npmjs.com/package/lodash.minby) [&#x24C9;][1]
 
 This method is like `_.min` except that it accepts `iteratee` which is
 invoked for each element in `array` to generate the criterion by which
@@ -6390,7 +6441,7 @@ the value is ranked. The iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `array` *(Array)*: The array to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(&#42;)*: Returns the minimum value.
@@ -6406,14 +6457,14 @@ _.minBy(objects, function(o) { return o.n; });
 _.minBy(objects, 'n');
 // => { 'n': 1 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_multiplymultiplier-multiplicand"></a>`_.multiply(multiplier, multiplicand)`
-<a href="#_multiplymultiplier-multiplicand">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15719 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.multiply "See the npm package")
+[#](#_multiplymultiplier-multiplicand) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15906) [npm package](https://www.npmjs.com/package/lodash.multiply) [&#x24C9;][1]
 
 Multiply two numbers.
 
@@ -6431,14 +6482,14 @@ Multiply two numbers.
 _.multiply(6, 4);
 // => 24
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_roundnumber-precision0"></a>`_.round(number, [precision=0])`
-<a href="#_roundnumber-precision0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15744 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.round "See the npm package")
+[#](#_roundnumber-precision0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15931) [npm package](https://www.npmjs.com/package/lodash.round) [&#x24C9;][1]
 
 Computes `number` rounded to `precision`.
 
@@ -6462,14 +6513,14 @@ _.round(4.006, 2);
 _.round(4060, -2);
 // => 4100
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_subtractminuend-subtrahend"></a>`_.subtract(minuend, subtrahend)`
-<a href="#_subtractminuend-subtrahend">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15761 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.subtract "See the npm package")
+[#](#_subtractminuend-subtrahend) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15948) [npm package](https://www.npmjs.com/package/lodash.subtract) [&#x24C9;][1]
 
 Subtract two numbers.
 
@@ -6487,14 +6538,14 @@ Subtract two numbers.
 _.subtract(6, 4);
 // => 2
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sumarray"></a>`_.sum(array)`
-<a href="#_sumarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15779 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sum "See the npm package")
+[#](#_sumarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15966) [npm package](https://www.npmjs.com/package/lodash.sum) [&#x24C9;][1]
 
 Computes the sum of the values in `array`.
 
@@ -6511,14 +6562,14 @@ Computes the sum of the values in `array`.
 _.sum([4, 2, 8, 6]);
 // => 20
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_sumbyarray-iteratee_identity"></a>`_.sumBy(array, [iteratee=_.identity])`
-<a href="#_sumbyarray-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15809 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.sumby "See the npm package")
+[#](#_sumbyarray-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15995) [npm package](https://www.npmjs.com/package/lodash.sumby) [&#x24C9;][1]
 
 This method is like `_.sum` except that it accepts `iteratee` which is
 invoked for each element in `array` to generate the value to be summed.
@@ -6528,7 +6579,7 @@ The iteratee is invoked with one argument: *(value)*.
 4.0.0
 #### Arguments
 1. `array` *(Array)*: The array to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(number)*: Returns the sum.
@@ -6544,7 +6595,7 @@ _.sumBy(objects, function(o) { return o.n; });
 _.sumBy(objects, 'n');
 // => 20
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -6557,7 +6608,7 @@ _.sumBy(objects, 'n');
 <!-- div -->
 
 ### <a id="_clampnumber-lower-upper"></a>`_.clamp(number, [lower], upper)`
-<a href="#_clampnumber-lower-upper">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13306 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.clamp "See the npm package")
+[#](#_clampnumber-lower-upper) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13470) [npm package](https://www.npmjs.com/package/lodash.clamp) [&#x24C9;][1]
 
 Clamps `number` within the inclusive `lower` and `upper` bounds.
 
@@ -6579,14 +6630,14 @@ _.clamp(-10, -5, 5);
 _.clamp(10, -5, 5);
 // => 5
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_inrangenumber-start0-end"></a>`_.inRange(number, [start=0], end)`
-<a href="#_inrangenumber-start0-end">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13360 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.inrange "See the npm package")
+[#](#_inrangenumber-start0-end) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13524) [npm package](https://www.npmjs.com/package/lodash.inrange) [&#x24C9;][1]
 
 Checks if `n` is between `start` and up to, but not including, `end`. If
 `end` is not specified, it's set to `start` with `start` then set to `0`.
@@ -6626,14 +6677,14 @@ _.inRange(5.2, 4);
 _.inRange(-3, -2, -6);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_randomlower0-upper1-floating"></a>`_.random([lower=0], [upper=1], [floating])`
-<a href="#_randomlower0-upper1-floating">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13403 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.random "See the npm package")
+[#](#_randomlower0-upper1-floating) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13567) [npm package](https://www.npmjs.com/package/lodash.random) [&#x24C9;][1]
 
 Produces a random number between the inclusive `lower` and `upper` bounds.
 If only one argument is provided a number between `0` and the given number
@@ -6668,7 +6719,7 @@ _.random(5, true);
 _.random(1.2, 5.2);
 // => a floating-point number between 1.2 and 5.2
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -6681,7 +6732,7 @@ _.random(1.2, 5.2);
 <!-- div -->
 
 ### <a id="_assignobject-sources"></a>`_.assign(object, [sources])`
-<a href="#_assignobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11923 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.assign "See the npm package")
+[#](#_assignobject-sources) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12105) [npm package](https://www.npmjs.com/package/lodash.assign) [&#x24C9;][1]
 
 Assigns own enumerable string keyed properties of source objects to the
 destination object. Source objects are applied from left to right.
@@ -6703,27 +6754,27 @@ Subsequent sources overwrite property assignments of previous sources.
 #### Example
 ```js
 function Foo() {
-  this.c = 3;
+  this.a = 1;
 }
 
 function Bar() {
-  this.e = 5;
+  this.c = 3;
 }
 
-Foo.prototype.d = 4;
-Bar.prototype.f = 6;
+Foo.prototype.b = 2;
+Bar.prototype.d = 4;
 
-_.assign({ 'a': 1 }, new Foo, new Bar);
-// => { 'a': 1, 'c': 3, 'e': 5 }
+_.assign({ 'a': 0 }, new Foo, new Bar);
+// => { 'a': 1, 'c': 3 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_assigninobject-sources"></a>`_.assignIn(object, [sources])`
-<a href="#_assigninobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L11966 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.assignin "See the npm package")
+[#](#_assigninobject-sources) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12148) [npm package](https://www.npmjs.com/package/lodash.assignin) [&#x24C9;][1]
 
 This method is like `_.assign` except that it iterates over own and
 inherited source properties.
@@ -6746,27 +6797,27 @@ inherited source properties.
 #### Example
 ```js
 function Foo() {
-  this.b = 2;
+  this.a = 1;
 }
 
 function Bar() {
-  this.d = 4;
+  this.c = 3;
 }
 
-Foo.prototype.c = 3;
-Bar.prototype.e = 5;
+Foo.prototype.b = 2;
+Bar.prototype.d = 4;
 
-_.assignIn({ 'a': 1 }, new Foo, new Bar);
-// => { 'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5 }
+_.assignIn({ 'a': 0 }, new Foo, new Bar);
+// => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_assigninwithobject-sources-customizer"></a>`_.assignInWith(object, sources, [customizer])`
-<a href="#_assigninwithobject-sources-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12005 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.assigninwith "See the npm package")
+[#](#_assigninwithobject-sources-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12187) [npm package](https://www.npmjs.com/package/lodash.assigninwith) [&#x24C9;][1]
 
 This method is like `_.assignIn` except that it accepts `customizer`
 which is invoked to produce the assigned values. If `customizer` returns
@@ -6800,14 +6851,14 @@ var defaults = _.partialRight(_.assignInWith, customizer);
 defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
 // => { 'a': 1, 'b': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_assignwithobject-sources-customizer"></a>`_.assignWith(object, sources, [customizer])`
-<a href="#_assignwithobject-sources-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12037 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.assignwith "See the npm package")
+[#](#_assignwithobject-sources-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12219) [npm package](https://www.npmjs.com/package/lodash.assignwith) [&#x24C9;][1]
 
 This method is like `_.assign` except that it accepts `customizer`
 which is invoked to produce the assigned values. If `customizer` returns
@@ -6838,14 +6889,14 @@ var defaults = _.partialRight(_.assignWith, customizer);
 defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
 // => { 'a': 1, 'b': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_atobject-paths"></a>`_.at(object, [paths])`
-<a href="#_atobject-paths">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12058 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.at "See the npm package")
+[#](#_atobject-paths) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12240) [npm package](https://www.npmjs.com/package/lodash.at) [&#x24C9;][1]
 
 Creates an array of values corresponding to `paths` of `object`.
 
@@ -6865,14 +6916,14 @@ var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
 _.at(object, ['a[0].b.c', 'a[1]']);
 // => [3, 4]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_createprototype-properties"></a>`_.create(prototype, [properties])`
-<a href="#_createprototype-properties">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12096 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.create "See the npm package")
+[#](#_createprototype-properties) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12278) [npm package](https://www.npmjs.com/package/lodash.create) [&#x24C9;][1]
 
 Creates an object that inherits from the `prototype` object. If a
 `properties` object is given, its own enumerable string keyed properties
@@ -6909,14 +6960,14 @@ circle instanceof Circle;
 circle instanceof Shape;
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_defaultsobject-sources"></a>`_.defaults(object, [sources])`
-<a href="#_defaultsobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12122 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.defaults "See the npm package")
+[#](#_defaultsobject-sources) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12304) [npm package](https://www.npmjs.com/package/lodash.defaults) [&#x24C9;][1]
 
 Assigns own and inherited enumerable string keyed properties of source
 objects to the destination object for all destination properties that
@@ -6937,17 +6988,17 @@ Once a property is set, additional values of the same property are ignored.
 
 #### Example
 ```js
-_.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
-// => { 'user': 'barney', 'age': 36 }
+_.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+// => { 'a': 1, 'b': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_defaultsdeepobject-sources"></a>`_.defaultsDeep(object, [sources])`
-<a href="#_defaultsdeepobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12147 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.defaultsdeep "See the npm package")
+[#](#_defaultsdeepobject-sources) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12328) [npm package](https://www.npmjs.com/package/lodash.defaultsdeep) [&#x24C9;][1]
 
 This method is like `_.defaults` except that it recursively assigns
 default properties.
@@ -6966,17 +7017,17 @@ default properties.
 
 #### Example
 ```js
-_.defaultsDeep({ 'user': { 'name': 'barney' } }, { 'user': { 'name': 'fred', 'age': 36 } });
-// => { 'user': { 'name': 'barney', 'age': 36 } }
+_.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } });
+// => { 'a': { 'b': 2, 'c': 3 } }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findkeyobject-predicate_identity"></a>`_.findKey(object, [predicate=_.identity])`
-<a href="#_findkeyobject-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12188 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.findkey "See the npm package")
+[#](#_findkeyobject-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12368) [npm package](https://www.npmjs.com/package/lodash.findkey) [&#x24C9;][1]
 
 This method is like `_.find` except that it returns the key of the first
 element `predicate` returns truthy for instead of the element itself.
@@ -6985,7 +7036,7 @@ element `predicate` returns truthy for instead of the element itself.
 1.1.0
 #### Arguments
 1. `object` *(Object)*: The object to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(&#42;)*: Returns the key of the matched element, else `undefined`.
@@ -7013,14 +7064,14 @@ _.findKey(users, ['active', false]);
 _.findKey(users, 'active');
 // => 'barney'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_findlastkeyobject-predicate_identity"></a>`_.findLastKey(object, [predicate=_.identity])`
-<a href="#_findlastkeyobject-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12228 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.findlastkey "See the npm package")
+[#](#_findlastkeyobject-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12407) [npm package](https://www.npmjs.com/package/lodash.findlastkey) [&#x24C9;][1]
 
 This method is like `_.findKey` except that it iterates over elements of
 a collection in the opposite order.
@@ -7029,7 +7080,7 @@ a collection in the opposite order.
 2.0.0
 #### Arguments
 1. `object` *(Object)*: The object to search.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(&#42;)*: Returns the key of the matched element, else `undefined`.
@@ -7057,14 +7108,14 @@ _.findLastKey(users, ['active', false]);
 _.findLastKey(users, 'active');
 // => 'pebbles'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_forinobject-iteratee_identity"></a>`_.forIn(object, [iteratee=_.identity])`
-<a href="#_forinobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12260 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.forin "See the npm package")
+[#](#_forinobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12439) [npm package](https://www.npmjs.com/package/lodash.forin) [&#x24C9;][1]
 
 Iterates over own and inherited enumerable string keyed properties of an
 object and invokes `iteratee` for each property. The iteratee is invoked
@@ -7094,14 +7145,14 @@ _.forIn(new Foo, function(value, key) {
 });
 // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_forinrightobject-iteratee_identity"></a>`_.forInRight(object, [iteratee=_.identity])`
-<a href="#_forinrightobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12292 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.forinright "See the npm package")
+[#](#_forinrightobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12471) [npm package](https://www.npmjs.com/package/lodash.forinright) [&#x24C9;][1]
 
 This method is like `_.forIn` except that it iterates over properties of
 `object` in the opposite order.
@@ -7129,14 +7180,14 @@ _.forInRight(new Foo, function(value, key) {
 });
 // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_forownobject-iteratee_identity"></a>`_.forOwn(object, [iteratee=_.identity])`
-<a href="#_forownobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12326 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.forown "See the npm package")
+[#](#_forownobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12505) [npm package](https://www.npmjs.com/package/lodash.forown) [&#x24C9;][1]
 
 Iterates over own enumerable string keyed properties of an object and
 invokes `iteratee` for each property. The iteratee is invoked with three
@@ -7166,14 +7217,14 @@ _.forOwn(new Foo, function(value, key) {
 });
 // => Logs 'a' then 'b' (iteration order is not guaranteed).
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_forownrightobject-iteratee_identity"></a>`_.forOwnRight(object, [iteratee=_.identity])`
-<a href="#_forownrightobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12356 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.forownright "See the npm package")
+[#](#_forownrightobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12535) [npm package](https://www.npmjs.com/package/lodash.forownright) [&#x24C9;][1]
 
 This method is like `_.forOwn` except that it iterates over properties of
 `object` in the opposite order.
@@ -7201,14 +7252,14 @@ _.forOwnRight(new Foo, function(value, key) {
 });
 // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_functionsobject"></a>`_.functions(object)`
-<a href="#_functionsobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12383 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.functions "See the npm package")
+[#](#_functionsobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12562) [npm package](https://www.npmjs.com/package/lodash.functions) [&#x24C9;][1]
 
 Creates an array of function property names from own enumerable properties
 of `object`.
@@ -7233,14 +7284,14 @@ Foo.prototype.c = _.constant('c');
 _.functions(new Foo);
 // => ['a', 'b']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_functionsinobject"></a>`_.functionsIn(object)`
-<a href="#_functionsinobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12410 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.functionsin "See the npm package")
+[#](#_functionsinobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12589) [npm package](https://www.npmjs.com/package/lodash.functionsin) [&#x24C9;][1]
 
 Creates an array of function property names from own and inherited
 enumerable properties of `object`.
@@ -7265,17 +7316,17 @@ Foo.prototype.c = _.constant('c');
 _.functionsIn(new Foo);
 // => ['a', 'b', 'c']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_getobject-path-defaultvalue"></a>`_.get(object, path, [defaultValue])`
-<a href="#_getobject-path-defaultvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12439 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.get "See the npm package")
+[#](#_getobject-path-defaultvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12618) [npm package](https://www.npmjs.com/package/lodash.get) [&#x24C9;][1]
 
 Gets the value at `path` of `object`. If the resolved value is
-`undefined`, the `defaultValue` is used in its place.
+`undefined`, the `defaultValue` is returned in its place.
 
 #### Since
 3.7.0
@@ -7300,14 +7351,14 @@ _.get(object, ['a', '0', 'b', 'c']);
 _.get(object, 'a.b.c', 'default');
 // => 'default'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_hasobject-path"></a>`_.has(object, path)`
-<a href="#_hasobject-path">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12471 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.has "See the npm package")
+[#](#_hasobject-path) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12650) [npm package](https://www.npmjs.com/package/lodash.has) [&#x24C9;][1]
 
 Checks if `path` is a direct property of `object`.
 
@@ -7337,14 +7388,14 @@ _.has(object, ['a', 'b']);
 _.has(other, 'a');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_hasinobject-path"></a>`_.hasIn(object, path)`
-<a href="#_hasinobject-path">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12501 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.hasin "See the npm package")
+[#](#_hasinobject-path) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12680) [npm package](https://www.npmjs.com/package/lodash.hasin) [&#x24C9;][1]
 
 Checks if `path` is a direct or inherited property of `object`.
 
@@ -7373,14 +7424,14 @@ _.hasIn(object, ['a', 'b']);
 _.hasIn(object, 'b');
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_invertobject"></a>`_.invert(object)`
-<a href="#_invertobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12523 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.invert "See the npm package")
+[#](#_invertobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12702) [npm package](https://www.npmjs.com/package/lodash.invert) [&#x24C9;][1]
 
 Creates an object composed of the inverted keys and values of `object`.
 If `object` contains duplicate values, subsequent values overwrite
@@ -7401,14 +7452,14 @@ var object = { 'a': 1, 'b': 2, 'c': 1 };
 _.invert(object);
 // => { '1': 'c', '2': 'b' }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_invertbyobject-iteratee_identity"></a>`_.invertBy(object, [iteratee=_.identity])`
-<a href="#_invertbyobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12554 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.invertby "See the npm package")
+[#](#_invertbyobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12732) [npm package](https://www.npmjs.com/package/lodash.invertby) [&#x24C9;][1]
 
 This method is like `_.invert` except that the inverted object is generated
 from the results of running each element of `object` thru `iteratee`. The
@@ -7420,7 +7471,7 @@ with one argument: *(value)*.
 4.1.0
 #### Arguments
 1. `object` *(Object)*: The object to invert.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The iteratee invoked per element.
+2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
 *(Object)*: Returns the new inverted object.
@@ -7437,14 +7488,14 @@ _.invertBy(object, function(value) {
 });
 // => { 'group1': ['a', 'c'], 'group2': ['b'] }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_invokeobject-path-args"></a>`_.invoke(object, path, [args])`
-<a href="#_invokeobject-path-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12580 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.invoke "See the npm package")
+[#](#_invokeobject-path-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12758) [npm package](https://www.npmjs.com/package/lodash.invoke) [&#x24C9;][1]
 
 Invokes the method at `path` of `object`.
 
@@ -7465,14 +7516,14 @@ var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
 _.invoke(object, 'a[0].b.c.slice', 1, 3);
 // => [2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_keysobject"></a>`_.keys(object)`
-<a href="#_keysobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12610 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.keys "See the npm package")
+[#](#_keysobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12788) [npm package](https://www.npmjs.com/package/lodash.keys) [&#x24C9;][1]
 
 Creates an array of the own enumerable property names of `object`.
 <br>
@@ -7504,14 +7555,14 @@ _.keys(new Foo);
 _.keys('hi');
 // => ['0', '1']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_keysinobject"></a>`_.keysIn(object)`
-<a href="#_keysinobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12653 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.keysin "See the npm package")
+[#](#_keysinobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12831) [npm package](https://www.npmjs.com/package/lodash.keysin) [&#x24C9;][1]
 
 Creates an array of the own and inherited enumerable property names of `object`.
 <br>
@@ -7538,14 +7589,14 @@ Foo.prototype.c = 3;
 _.keysIn(new Foo);
 // => ['a', 'b', 'c'] (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mapkeysobject-iteratee_identity"></a>`_.mapKeys(object, [iteratee=_.identity])`
-<a href="#_mapkeysobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12695 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.mapkeys "See the npm package")
+[#](#_mapkeysobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12872) [npm package](https://www.npmjs.com/package/lodash.mapkeys) [&#x24C9;][1]
 
 The opposite of `_.mapValues`; this method creates an object with the
 same values as `object` and keys generated by running each own enumerable
@@ -7556,7 +7607,7 @@ with three arguments: *(value, key, object)*.
 3.8.0
 #### Arguments
 1. `object` *(Object)*: The object to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Object)*: Returns the new mapped object.
@@ -7568,14 +7619,14 @@ _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
 });
 // => { 'a1': 1, 'b2': 2 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mapvaluesobject-iteratee_identity"></a>`_.mapValues(object, [iteratee=_.identity])`
-<a href="#_mapvaluesobject-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12734 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.mapvalues "See the npm package")
+[#](#_mapvaluesobject-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12910) [npm package](https://www.npmjs.com/package/lodash.mapvalues) [&#x24C9;][1]
 
 Creates an object with the same keys as `object` and values generated
 by running each own enumerable string keyed property of `object` thru
@@ -7586,7 +7637,7 @@ by running each own enumerable string keyed property of `object` thru
 2.4.0
 #### Arguments
 1. `object` *(Object)*: The object to iterate over.
-2. `[iteratee=_.identity]` *(Array|Function|Object|string)*: The function invoked per iteration.
+2. `[iteratee=_.identity]` *(Function)*: The function invoked per iteration.
 
 #### Returns
 *(Object)*: Returns the new mapped object.
@@ -7605,14 +7656,14 @@ _.mapValues(users, function(o) { return o.age; });
 _.mapValues(users, 'age');
 // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mergeobject-sources"></a>`_.merge(object, [sources])`
-<a href="#_mergeobject-sources">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12775 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.merge "See the npm package")
+[#](#_mergeobject-sources) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12951) [npm package](https://www.npmjs.com/package/lodash.merge) [&#x24C9;][1]
 
 This method is like `_.assign` except that it recursively merges own and
 inherited enumerable string keyed properties of source objects into the
@@ -7636,25 +7687,25 @@ sources overwrite property assignments of previous sources.
 
 #### Example
 ```js
-var users = {
-  'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
+var object = {
+  'a': [{ 'b': 2 }, { 'd': 4 }]
 };
 
-var ages = {
-  'data': [{ 'age': 36 }, { 'age': 40 }]
+var other = {
+  'a': [{ 'c': 3 }, { 'e': 5 }]
 };
 
-_.merge(users, ages);
-// => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
+_.merge(object, other);
+// => { 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mergewithobject-sources-customizer"></a>`_.mergeWith(object, sources, customizer)`
-<a href="#_mergewithobject-sources-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12817 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.mergewith "See the npm package")
+[#](#_mergewithobject-sources-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L12986) [npm package](https://www.npmjs.com/package/lodash.mergewith) [&#x24C9;][1]
 
 This method is like `_.merge` except that it accepts `customizer` which
 is invoked to produce the merged values of the destination and source
@@ -7683,27 +7734,20 @@ function customizer(objValue, srcValue) {
   }
 }
 
-var object = {
-  'fruits': ['apple'],
-  'vegetables': ['beet']
-};
-
-var other = {
-  'fruits': ['banana'],
-  'vegetables': ['carrot']
-};
+var object = { 'a': [1], 'b': [2] };
+var other = { 'a': [3], 'b': [4] };
 
 _.mergeWith(object, other, customizer);
-// => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
+// => { 'a': [1, 3], 'b': [2, 4] }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_omitobject-props"></a>`_.omit(object, [props])`
-<a href="#_omitobject-props">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12840 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.omit "See the npm package")
+[#](#_omitobject-props) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13009) [npm package](https://www.npmjs.com/package/lodash.omit) [&#x24C9;][1]
 
 The opposite of `_.pick`; this method creates an object composed of the
 own and inherited enumerable string keyed properties of `object` that are
@@ -7725,14 +7769,14 @@ var object = { 'a': 1, 'b': '2', 'c': 3 };
 _.omit(object, ['a', 'c']);
 // => { 'b': '2' }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_omitbyobject-predicate_identity"></a>`_.omitBy(object, [predicate=_.identity])`
-<a href="#_omitbyobject-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12869 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.omitby "See the npm package")
+[#](#_omitbyobject-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13037) [npm package](https://www.npmjs.com/package/lodash.omitby) [&#x24C9;][1]
 
 The opposite of `_.pickBy`; this method creates an object composed of
 the own and inherited enumerable string keyed properties of `object` that
@@ -7743,7 +7787,7 @@ arguments: *(value, key)*.
 4.0.0
 #### Arguments
 1. `object` *(Object)*: The source object.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per property.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per property.
 
 #### Returns
 *(Object)*: Returns the new object.
@@ -7755,14 +7799,14 @@ var object = { 'a': 1, 'b': '2', 'c': 3 };
 _.omitBy(object, _.isNumber);
 // => { 'b': '2' }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pickobject-props"></a>`_.pick(object, [props])`
-<a href="#_pickobject-props">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12893 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pick "See the npm package")
+[#](#_pickobject-props) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13058) [npm package](https://www.npmjs.com/package/lodash.pick) [&#x24C9;][1]
 
 Creates an object composed of the picked `object` properties.
 
@@ -7782,14 +7826,14 @@ var object = { 'a': 1, 'b': '2', 'c': 3 };
 _.pick(object, ['a', 'c']);
 // => { 'a': 1, 'c': 3 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_pickbyobject-predicate_identity"></a>`_.pickBy(object, [predicate=_.identity])`
-<a href="#_pickbyobject-predicate_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12916 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pickby "See the npm package")
+[#](#_pickbyobject-predicate_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13080) [npm package](https://www.npmjs.com/package/lodash.pickby) [&#x24C9;][1]
 
 Creates an object composed of the `object` properties `predicate` returns
 truthy for. The predicate is invoked with two arguments: *(value, key)*.
@@ -7798,7 +7842,7 @@ truthy for. The predicate is invoked with two arguments: *(value, key)*.
 4.0.0
 #### Arguments
 1. `object` *(Object)*: The source object.
-2. `[predicate=_.identity]` *(Array|Function|Object|string)*: The function invoked per property.
+2. `[predicate=_.identity]` *(Function)*: The function invoked per property.
 
 #### Returns
 *(Object)*: Returns the new object.
@@ -7810,14 +7854,14 @@ var object = { 'a': 1, 'b': '2', 'c': 3 };
 _.pickBy(object, _.isNumber);
 // => { 'a': 1, 'c': 3 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_resultobject-path-defaultvalue"></a>`_.result(object, path, [defaultValue])`
-<a href="#_resultobject-path-defaultvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12949 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.result "See the npm package")
+[#](#_resultobject-path-defaultvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13113) [npm package](https://www.npmjs.com/package/lodash.result) [&#x24C9;][1]
 
 This method is like `_.get` except that if the resolved value is a
 function it's invoked with the `this` binding of its parent object and
@@ -7849,14 +7893,14 @@ _.result(object, 'a[0].b.c3', 'default');
 _.result(object, 'a[0].b.c3', _.constant('default'));
 // => 'default'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_setobject-path-value"></a>`_.set(object, path, value)`
-<a href="#_setobject-path-value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L12999 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.set "See the npm package")
+[#](#_setobject-path-value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13163) [npm package](https://www.npmjs.com/package/lodash.set) [&#x24C9;][1]
 
 Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
 it's created. Arrays are created for missing index properties while objects
@@ -7888,14 +7932,14 @@ _.set(object, ['x', '0', 'y', 'z'], 5);
 console.log(object.x[0].y.z);
 // => 5
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_setwithobject-path-value-customizer"></a>`_.setWith(object, path, value, [customizer])`
-<a href="#_setwithobject-path-value-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13027 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.setwith "See the npm package")
+[#](#_setwithobject-path-value-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13191) [npm package](https://www.npmjs.com/package/lodash.setwith) [&#x24C9;][1]
 
 This method is like `_.set` except that it accepts `customizer` which is
 invoked to produce the objects of `path`.  If `customizer` returns `undefined`
@@ -7923,14 +7967,14 @@ var object = {};
 _.setWith(object, '[0][1]', 'a', Object);
 // => { '0': { '1': 'a' } }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_topairsobject"></a>`_.toPairs(object)`
-<a href="#_topairsobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13056 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.topairs "See the npm package")
+[#](#_topairsobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13220) [npm package](https://www.npmjs.com/package/lodash.topairs) [&#x24C9;][1]
 
 Creates an array of own enumerable string keyed-value pairs for `object`
 which can be consumed by `_.fromPairs`. If `object` is a map or set, its
@@ -7959,14 +8003,14 @@ Foo.prototype.c = 3;
 _.toPairs(new Foo);
 // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_topairsinobject"></a>`_.toPairsIn(object)`
-<a href="#_topairsinobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13082 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.topairsin "See the npm package")
+[#](#_topairsinobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13246) [npm package](https://www.npmjs.com/package/lodash.topairsin) [&#x24C9;][1]
 
 Creates an array of own and inherited enumerable string keyed-value pairs
 for `object` which can be consumed by `_.fromPairs`. If `object` is a map
@@ -7995,14 +8039,14 @@ Foo.prototype.c = 3;
 _.toPairsIn(new Foo);
 // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_transformobject-iteratee_identity-accumulator"></a>`_.transform(object, [iteratee=_.identity], [accumulator])`
-<a href="#_transformobject-iteratee_identity-accumulator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13114 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.transform "See the npm package")
+[#](#_transformobject-iteratee_identity-accumulator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13278) [npm package](https://www.npmjs.com/package/lodash.transform) [&#x24C9;][1]
 
 An alternative to `_.reduce`; this method transforms `object` to a new
 `accumulator` object which is the result of running each of its own
@@ -8035,14 +8079,14 @@ _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
 }, {});
 // => { '1': ['a', 'c'], '2': ['b'] }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unsetobject-path"></a>`_.unset(object, path)`
-<a href="#_unsetobject-path">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13163 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unset "See the npm package")
+[#](#_unsetobject-path) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13327) [npm package](https://www.npmjs.com/package/lodash.unset) [&#x24C9;][1]
 
 Removes the property at `path` of `object`.
 <br>
@@ -8073,14 +8117,14 @@ _.unset(object, ['a', '0', 'b', 'c']);
 console.log(object);
 // => { 'a': [{ 'b': {} }] };
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_updateobject-path-updater"></a>`_.update(object, path, updater)`
-<a href="#_updateobject-path-updater">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13194 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.update "See the npm package")
+[#](#_updateobject-path-updater) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13358) [npm package](https://www.npmjs.com/package/lodash.update) [&#x24C9;][1]
 
 This method is like `_.set` except that accepts `updater` to produce the
 value to set. Use `_.updateWith` to customize `path` creation. The `updater`
@@ -8111,14 +8155,14 @@ _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
 console.log(object.x[0].y.z);
 // => 0
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_updatewithobject-path-updater-customizer"></a>`_.updateWith(object, path, updater, [customizer])`
-<a href="#_updatewithobject-path-updater-customizer">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13222 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.updatewith "See the npm package")
+[#](#_updatewithobject-path-updater-customizer) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13386) [npm package](https://www.npmjs.com/package/lodash.updatewith) [&#x24C9;][1]
 
 This method is like `_.update` except that it accepts `customizer` which is
 invoked to produce the objects of `path`.  If `customizer` returns `undefined`
@@ -8146,14 +8190,14 @@ var object = {};
 _.updateWith(object, '[0][1]', _.constant('a'), Object);
 // => { '0': { '1': 'a' } }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_valuesobject"></a>`_.values(object)`
-<a href="#_valuesobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13253 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.values "See the npm package")
+[#](#_valuesobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13417) [npm package](https://www.npmjs.com/package/lodash.values) [&#x24C9;][1]
 
 Creates an array of the own enumerable string keyed property values of `object`.
 <br>
@@ -8183,14 +8227,14 @@ _.values(new Foo);
 _.values('hi');
 // => ['h', 'i']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_valuesinobject"></a>`_.valuesIn(object)`
-<a href="#_valuesinobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13281 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.valuesin "See the npm package")
+[#](#_valuesinobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13445) [npm package](https://www.npmjs.com/package/lodash.valuesin) [&#x24C9;][1]
 
 Creates an array of the own and inherited enumerable string keyed property
 values of `object`.
@@ -8218,7 +8262,7 @@ Foo.prototype.c = 3;
 _.valuesIn(new Foo);
 // => [1, 2, 3] (iteration order is not guaranteed)
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -8231,7 +8275,7 @@ _.valuesIn(new Foo);
 <!-- div -->
 
 ### <a id="_value"></a>`_(value)`
-<a href="#_value">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1464 "View in source") [&#x24C9;][1]
+[#](#_value) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1521)  [&#x24C9;][1]
 
 Creates a `lodash` object which wraps `value` to enable implicit method
 chain sequences. Methods that operate on and return arrays, collections,
@@ -8308,16 +8352,16 @@ The chainable wrapper methods are:<br>
 <br>
 The wrapper methods that are **not** chainable by default are:<br>
 `add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,
-`cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `divide`, `each`,
-`eachRight`, `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`, `find`,
-`findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`,
-`floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
-`forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,
-`includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,
-`isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
-`isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
-`isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
-`isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
+`cloneDeep`, `cloneDeepWith`, `cloneWith`, `conformsTo`, `deburr`,
+`defaultTo`, `divide`, `each`, `eachRight`, `endsWith`, `eq`, `escape`,
+`escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
+`findLastIndex`, `findLastKey`, `first`, `floor`, `forEach`, `forEachRight`,
+`forIn`, `forInRight`, `forOwn`, `forOwnRight`, `get`, `gt`, `gte`, `has`,
+`hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`, `invoke`,
+`isArguments`, `isArray`, `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`,
+`isBoolean`, `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
+`isEqualWith`, `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`,
+`isMap`, `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`,
 `isNumber`, `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`,
 `isSafeInteger`, `isSet`, `isString`, `isUndefined`, `isTypedArray`,
 `isWeakMap`, `isWeakSet`, `join`, `kebabCase`, `last`, `lastIndexOf`,
@@ -8360,14 +8404,14 @@ _.isArray(squares);
 _.isArray(squares.value());
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_chainvalue"></a>`_.chain(value)`
-<a href="#_chainvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8031 "View in source") [&#x24C9;][1]
+[#](#_chainvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8238)  [&#x24C9;][1]
 
 Creates a `lodash` wrapper instance that wraps `value` with explicit method
 chain sequences enabled. The result of such sequences must be unwrapped
@@ -8399,14 +8443,14 @@ var youngest = _
   .value();
 // => 'pebbles is 1'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tapvalue-interceptor"></a>`_.tap(value, interceptor)`
-<a href="#_tapvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8060 "View in source") [&#x24C9;][1]
+[#](#_tapvalue-interceptor) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8267)  [&#x24C9;][1]
 
 This method invokes `interceptor` and returns `value`. The interceptor
 is invoked with one argument; *(value)*. The purpose of this method is to
@@ -8432,14 +8476,14 @@ _([1, 2, 3])
  .value();
 // => [2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_thruvalue-interceptor"></a>`_.thru(value, interceptor)`
-<a href="#_thruvalue-interceptor">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8088 "View in source") [&#x24C9;][1]
+[#](#_thruvalue-interceptor) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8295)  [&#x24C9;][1]
 
 This method is like `_.tap` except that it returns the result of `interceptor`.
 The purpose of this method is to "pass thru" values replacing intermediate
@@ -8465,14 +8509,14 @@ _('  abc  ')
  .value();
 // => ['abc']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypesymboliterator"></a>`_.prototype[Symbol.iterator]()`
-<a href="#_prototypesymboliterator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8244 "View in source") [&#x24C9;][1]
+[#](#_prototypesymboliterator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8451)  [&#x24C9;][1]
 
 Enables the wrapper to be iterable.
 
@@ -8491,14 +8535,14 @@ wrapped[Symbol.iterator]() === wrapped;
 Array.from(wrapped);
 // => [1, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypeatpaths"></a>`_.prototype.at([paths])`
-<a href="#_prototypeatpaths">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8108 "View in source") [&#x24C9;][1]
+[#](#_prototypeatpaths) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8315)  [&#x24C9;][1]
 
 This method is the wrapper version of `_.at`.
 
@@ -8517,14 +8561,14 @@ var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
 _(object).at(['a[0].b.c', 'a[1]']).value();
 // => [3, 4]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypechain"></a>`_.prototype.chain()`
-<a href="#_prototypechain">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8160 "View in source") [&#x24C9;][1]
+[#](#_prototypechain) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8367)  [&#x24C9;][1]
 
 Creates a `lodash` wrapper instance with explicit method chain sequences enabled.
 
@@ -8552,14 +8596,14 @@ _(users)
   .value();
 // => { 'user': 'barney' }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypecommit"></a>`_.prototype.commit()`
-<a href="#_prototypecommit">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8190 "View in source") [&#x24C9;][1]
+[#](#_prototypecommit) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8397)  [&#x24C9;][1]
 
 Executes the chain sequence and returns the wrapped result.
 
@@ -8586,14 +8630,14 @@ wrapped.last();
 console.log(array);
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypenext"></a>`_.prototype.next()`
-<a href="#_prototypenext">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8216 "View in source") [&#x24C9;][1]
+[#](#_prototypenext) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8423)  [&#x24C9;][1]
 
 Gets the next value on a wrapped object following the
 [iterator protocol](https://mdn.io/iteration_protocols#iterator).
@@ -8616,14 +8660,14 @@ wrapped.next();
 wrapped.next();
 // => { 'done': true, 'value': undefined }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypeplantvalue"></a>`_.prototype.plant(value)`
-<a href="#_prototypeplantvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8272 "View in source") [&#x24C9;][1]
+[#](#_prototypeplantvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8479)  [&#x24C9;][1]
 
 Creates a clone of the chain sequence planting `value` as the wrapped value.
 
@@ -8650,14 +8694,14 @@ other.value();
 wrapped.value();
 // => [1, 4]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypereverse"></a>`_.prototype.reverse()`
-<a href="#_prototypereverse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8312 "View in source") [&#x24C9;][1]
+[#](#_prototypereverse) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8519)  [&#x24C9;][1]
 
 This method is the wrapper version of `_.reverse`.
 <br>
@@ -8679,14 +8723,14 @@ _(array).reverse().value()
 console.log(array);
 // => [3, 2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_prototypevalue"></a>`_.prototype.value()`
-<a href="#_prototypevalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L8344 "View in source") [&#x24C9;][1]
+[#](#_prototypevalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L8551)  [&#x24C9;][1]
 
 Executes the chain sequence to resolve the unwrapped value.
 
@@ -8703,7 +8747,7 @@ Executes the chain sequence to resolve the unwrapped value.
 _([1, 2, 3]).value();
 // => [1, 2, 3]
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -8716,7 +8760,7 @@ _([1, 2, 3]).value();
 <!-- div -->
 
 ### <a id="_camelcasestring"></a>`_.camelCase([string=''])`
-<a href="#_camelcasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13464 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.camelcase "See the npm package")
+[#](#_camelcasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13628) [npm package](https://www.npmjs.com/package/lodash.camelcase) [&#x24C9;][1]
 
 Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
 
@@ -8739,14 +8783,14 @@ _.camelCase('--foo-bar--');
 _.camelCase('__FOO_BAR__');
 // => 'fooBar'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_capitalizestring"></a>`_.capitalize([string=''])`
-<a href="#_capitalizestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13484 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.capitalize "See the npm package")
+[#](#_capitalizestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13648) [npm package](https://www.npmjs.com/package/lodash.capitalize) [&#x24C9;][1]
 
 Converts the first character of `string` to upper case and the remaining
 to lower case.
@@ -8764,14 +8808,14 @@ to lower case.
 _.capitalize('FRED');
 // => 'Fred'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_deburrstring"></a>`_.deburr([string=''])`
-<a href="#_deburrstring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13505 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.deburr "See the npm package")
+[#](#_deburrstring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13669) [npm package](https://www.npmjs.com/package/lodash.deburr) [&#x24C9;][1]
 
 Deburrs `string` by converting
 [latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
@@ -8791,14 +8835,14 @@ to basic latin letters and removing
 _.deburr('déjà vu');
 // => 'deja vu'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_endswithstring-target-positionstringlength"></a>`_.endsWith([string=''], [target], [position=string.length])`
-<a href="#_endswithstring-target-positionstringlength">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13533 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.endswith "See the npm package")
+[#](#_endswithstring-target-positionstringlength) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13697) [npm package](https://www.npmjs.com/package/lodash.endswith) [&#x24C9;][1]
 
 Checks if `string` ends with the given target string.
 
@@ -8823,14 +8867,14 @@ _.endsWith('abc', 'b');
 _.endsWith('abc', 'b', 2);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_escapestring"></a>`_.escape([string=''])`
-<a href="#_escapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13580 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.escape "See the npm package")
+[#](#_escapestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13745) [npm package](https://www.npmjs.com/package/lodash.escape) [&#x24C9;][1]
 
 Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
 their corresponding HTML entities.
@@ -8871,14 +8915,14 @@ XSS vectors.
 _.escape('fred, barney, & pebbles');
 // => 'fred, barney, &amp; pebbles'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_escaperegexpstring"></a>`_.escapeRegExp([string=''])`
-<a href="#_escaperegexpstring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13602 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.escaperegexp "See the npm package")
+[#](#_escaperegexpstring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13767) [npm package](https://www.npmjs.com/package/lodash.escaperegexp) [&#x24C9;][1]
 
 Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
 "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
@@ -8896,14 +8940,14 @@ Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
 _.escapeRegExp('[lodash](https://lodash.com/)');
 // => '\[lodash\]\(https://lodash\.com/\)'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_kebabcasestring"></a>`_.kebabCase([string=''])`
-<a href="#_kebabcasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13630 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.kebabcase "See the npm package")
+[#](#_kebabcasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13795) [npm package](https://www.npmjs.com/package/lodash.kebabcase) [&#x24C9;][1]
 
 Converts `string` to
 [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
@@ -8927,14 +8971,14 @@ _.kebabCase('fooBar');
 _.kebabCase('__FOO_BAR__');
 // => 'foo-bar'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_lowercasestring"></a>`_.lowerCase([string=''])`
-<a href="#_lowercasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13654 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.lowercase "See the npm package")
+[#](#_lowercasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13819) [npm package](https://www.npmjs.com/package/lodash.lowercase) [&#x24C9;][1]
 
 Converts `string`, as space separated words, to lower case.
 
@@ -8957,14 +9001,14 @@ _.lowerCase('fooBar');
 _.lowerCase('__FOO_BAR__');
 // => 'foo bar'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_lowerfirststring"></a>`_.lowerFirst([string=''])`
-<a href="#_lowerfirststring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13675 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.lowerfirst "See the npm package")
+[#](#_lowerfirststring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13840) [npm package](https://www.npmjs.com/package/lodash.lowerfirst) [&#x24C9;][1]
 
 Converts the first character of `string` to lower case.
 
@@ -8984,14 +9028,14 @@ _.lowerFirst('Fred');
 _.lowerFirst('FRED');
 // => 'fRED'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_padstring-length0-chars"></a>`_.pad([string=''], [length=0], [chars=' '])`
-<a href="#_padstring-length0-chars">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13700 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.pad "See the npm package")
+[#](#_padstring-length0-chars) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13865) [npm package](https://www.npmjs.com/package/lodash.pad) [&#x24C9;][1]
 
 Pads `string` on the left and right sides if it's shorter than `length`.
 Padding characters are truncated if they can't be evenly divided by `length`.
@@ -9017,14 +9061,14 @@ _.pad('abc', 8, '_-');
 _.pad('abc', 3);
 // => 'abc'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_padendstring-length0-chars"></a>`_.padEnd([string=''], [length=0], [chars=' '])`
-<a href="#_padendstring-length0-chars">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13739 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.padend "See the npm package")
+[#](#_padendstring-length0-chars) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13904) [npm package](https://www.npmjs.com/package/lodash.padend) [&#x24C9;][1]
 
 Pads `string` on the right side if it's shorter than `length`. Padding
 characters are truncated if they exceed `length`.
@@ -9050,14 +9094,14 @@ _.padEnd('abc', 6, '_-');
 _.padEnd('abc', 3);
 // => 'abc'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_padstartstring-length0-chars"></a>`_.padStart([string=''], [length=0], [chars=' '])`
-<a href="#_padstartstring-length0-chars">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13772 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.padstart "See the npm package")
+[#](#_padstartstring-length0-chars) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13937) [npm package](https://www.npmjs.com/package/lodash.padstart) [&#x24C9;][1]
 
 Pads `string` on the left side if it's shorter than `length`. Padding
 characters are truncated if they exceed `length`.
@@ -9083,14 +9127,14 @@ _.padStart('abc', 6, '_-');
 _.padStart('abc', 3);
 // => 'abc'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_parseintstring-radix10"></a>`_.parseInt(string, [radix=10])`
-<a href="#_parseintstring-radix10">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13806 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.parseint "See the npm package")
+[#](#_parseintstring-radix10) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L13971) [npm package](https://www.npmjs.com/package/lodash.parseint) [&#x24C9;][1]
 
 Converts `string` to an integer of the specified radix. If `radix` is
 `undefined` or `0`, a `radix` of `10` is used unless `value` is a
@@ -9117,14 +9161,14 @@ _.parseInt('08');
 _.map(['6', '08', '10'], _.parseInt);
 // => [6, 8, 10]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_repeatstring-n1"></a>`_.repeat([string=''], [n=1])`
-<a href="#_repeatstring-n1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13840 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.repeat "See the npm package")
+[#](#_repeatstring-n1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14005) [npm package](https://www.npmjs.com/package/lodash.repeat) [&#x24C9;][1]
 
 Repeats the given string `n` times.
 
@@ -9148,14 +9192,14 @@ _.repeat('abc', 2);
 _.repeat('abc', 0);
 // => ''
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_replacestring-pattern-replacement"></a>`_.replace([string=''], pattern, replacement)`
-<a href="#_replacestring-pattern-replacement">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13868 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.replace "See the npm package")
+[#](#_replacestring-pattern-replacement) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14033) [npm package](https://www.npmjs.com/package/lodash.replace) [&#x24C9;][1]
 
 Replaces matches for `pattern` in `string` with `replacement`.
 <br>
@@ -9178,14 +9222,14 @@ Replaces matches for `pattern` in `string` with `replacement`.
 _.replace('Hi Fred', 'Fred', 'Barney');
 // => 'Hi Barney'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_snakecasestring"></a>`_.snakeCase([string=''])`
-<a href="#_snakecasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13896 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.snakecase "See the npm package")
+[#](#_snakecasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14061) [npm package](https://www.npmjs.com/package/lodash.snakecase) [&#x24C9;][1]
 
 Converts `string` to
 [snake case](https://en.wikipedia.org/wiki/Snake_case).
@@ -9209,14 +9253,14 @@ _.snakeCase('fooBar');
 _.snakeCase('--FOO-BAR--');
 // => 'foo_bar'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_splitstring-separator-limit"></a>`_.split([string=''], separator, [limit])`
-<a href="#_splitstring-separator-limit">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13919 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.split "See the npm package")
+[#](#_splitstring-separator-limit) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14084) [npm package](https://www.npmjs.com/package/lodash.split) [&#x24C9;][1]
 
 Splits `string` by `separator`.
 <br>
@@ -9239,14 +9283,14 @@ Splits `string` by `separator`.
 _.split('a-b-c', '-', 2);
 // => ['a', 'b']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_startcasestring"></a>`_.startCase([string=''])`
-<a href="#_startcasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13961 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.startcase "See the npm package")
+[#](#_startcasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14126) [npm package](https://www.npmjs.com/package/lodash.startcase) [&#x24C9;][1]
 
 Converts `string` to
 [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
@@ -9270,14 +9314,14 @@ _.startCase('fooBar');
 _.startCase('__FOO_BAR__');
 // => 'FOO BAR'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_startswithstring-target-position0"></a>`_.startsWith([string=''], [target], [position=0])`
-<a href="#_startswithstring-target-position0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L13988 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.startswith "See the npm package")
+[#](#_startswithstring-target-position0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14153) [npm package](https://www.npmjs.com/package/lodash.startswith) [&#x24C9;][1]
 
 Checks if `string` starts with the given target string.
 
@@ -9302,14 +9346,14 @@ _.startsWith('abc', 'b');
 _.startsWith('abc', 'b', 1);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatestring-options-optionsescape_templatesettingsescape-optionsevaluate_templatesettingsevaluate-optionsimports_templatesettingsimports-optionsinterpolate_templatesettingsinterpolate-optionssourceurllodashtemplatesourcesn-optionsvariableobj"></a>`_.template([string=''], [options={}], [options.escape=_.templateSettings.escape], [options.evaluate=_.templateSettings.evaluate], [options.imports=_.templateSettings.imports], [options.interpolate=_.templateSettings.interpolate], [options.sourceURL='lodash.templateSources[n]'], [options.variable='obj'])`
-<a href="#_templatestring-options-optionsescape_templatesettingsescape-optionsevaluate_templatesettingsevaluate-optionsimports_templatesettingsimports-optionsinterpolate_templatesettingsinterpolate-optionssourceurllodashtemplatesourcesn-optionsvariableobj">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14097 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.template "See the npm package")
+[#](#_templatestring-options-optionsescape_templatesettingsescape-optionsevaluate_templatesettingsevaluate-optionsimports_templatesettingsimports-optionsinterpolate_templatesettingsinterpolate-optionssourceurllodashtemplatesourcesn-optionsvariableobj) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14263) [npm package](https://www.npmjs.com/package/lodash.template) [&#x24C9;][1]
 
 Creates a compiled template function that can interpolate data properties
 in "interpolate" delimiters, HTML-escape interpolated data properties in
@@ -9411,14 +9455,14 @@ fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
   };\
 ');
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_tolowerstring"></a>`_.toLower([string=''])`
-<a href="#_tolowerstring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14226 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.tolower "See the npm package")
+[#](#_tolowerstring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14392) [npm package](https://www.npmjs.com/package/lodash.tolower) [&#x24C9;][1]
 
 Converts `string`, as a whole, to lower case just like
 [String#toLowerCase](https://mdn.io/toLowerCase).
@@ -9442,14 +9486,14 @@ _.toLower('fooBar');
 _.toLower('__FOO_BAR__');
 // => '__foo_bar__'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_toupperstring"></a>`_.toUpper([string=''])`
-<a href="#_toupperstring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14251 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.toupper "See the npm package")
+[#](#_toupperstring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14417) [npm package](https://www.npmjs.com/package/lodash.toupper) [&#x24C9;][1]
 
 Converts `string`, as a whole, to upper case just like
 [String#toUpperCase](https://mdn.io/toUpperCase).
@@ -9473,14 +9517,14 @@ _.toUpper('fooBar');
 _.toUpper('__foo_bar__');
 // => '__FOO_BAR__'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_trimstring-charswhitespace"></a>`_.trim([string=''], [chars=whitespace])`
-<a href="#_trimstring-charswhitespace">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14277 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.trim "See the npm package")
+[#](#_trimstring-charswhitespace) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14443) [npm package](https://www.npmjs.com/package/lodash.trim) [&#x24C9;][1]
 
 Removes leading and trailing whitespace or specified characters from `string`.
 
@@ -9504,14 +9548,14 @@ _.trim('-_-abc-_-', '_-');
 _.map(['  foo  ', '  bar  '], _.trim);
 // => ['foo', 'bar']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_trimendstring-charswhitespace"></a>`_.trimEnd([string=''], [chars=whitespace])`
-<a href="#_trimendstring-charswhitespace">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14312 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.trimend "See the npm package")
+[#](#_trimendstring-charswhitespace) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14478) [npm package](https://www.npmjs.com/package/lodash.trimend) [&#x24C9;][1]
 
 Removes trailing whitespace or specified characters from `string`.
 
@@ -9532,14 +9576,14 @@ _.trimEnd('  abc  ');
 _.trimEnd('-_-abc-_-', '_-');
 // => '-_-abc'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_trimstartstring-charswhitespace"></a>`_.trimStart([string=''], [chars=whitespace])`
-<a href="#_trimstartstring-charswhitespace">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14345 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.trimstart "See the npm package")
+[#](#_trimstartstring-charswhitespace) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14511) [npm package](https://www.npmjs.com/package/lodash.trimstart) [&#x24C9;][1]
 
 Removes leading whitespace or specified characters from `string`.
 
@@ -9560,14 +9604,14 @@ _.trimStart('  abc  ');
 _.trimStart('-_-abc-_-', '_-');
 // => 'abc-_-'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_truncatestring-options-optionslength30-optionsomission-optionsseparator"></a>`_.truncate([string=''], [options={}], [options.length=30], [options.omission='...'], [options.separator])`
-<a href="#_truncatestring-options-optionslength30-optionsomission-optionsseparator">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14396 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.truncate "See the npm package")
+[#](#_truncatestring-options-optionslength30-optionsomission-optionsseparator) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14562) [npm package](https://www.npmjs.com/package/lodash.truncate) [&#x24C9;][1]
 
 Truncates `string` if it's longer than the given maximum string length.
 The last characters of the truncated string are replaced with the omission
@@ -9607,14 +9651,14 @@ _.truncate('hi-diddly-ho there, neighborino', {
 });
 // => 'hi-diddly-ho there, neig [...]'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_unescapestring"></a>`_.unescape([string=''])`
-<a href="#_unescapestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14471 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.unescape "See the npm package")
+[#](#_unescapestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14637) [npm package](https://www.npmjs.com/package/lodash.unescape) [&#x24C9;][1]
 
 The inverse of `_.escape`; this method converts the HTML entities
 `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to
@@ -9637,14 +9681,14 @@ HTML entities use a third-party library like [_he_](https://mths.be/he).
 _.unescape('fred, barney, &amp; pebbles');
 // => 'fred, barney, & pebbles'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_uppercasestring"></a>`_.upperCase([string=''])`
-<a href="#_uppercasestring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14498 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.uppercase "See the npm package")
+[#](#_uppercasestring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14664) [npm package](https://www.npmjs.com/package/lodash.uppercase) [&#x24C9;][1]
 
 Converts `string`, as space separated words, to upper case.
 
@@ -9667,14 +9711,14 @@ _.upperCase('fooBar');
 _.upperCase('__foo_bar__');
 // => 'FOO BAR'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_upperfirststring"></a>`_.upperFirst([string=''])`
-<a href="#_upperfirststring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14519 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.upperfirst "See the npm package")
+[#](#_upperfirststring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14685) [npm package](https://www.npmjs.com/package/lodash.upperfirst) [&#x24C9;][1]
 
 Converts the first character of `string` to upper case.
 
@@ -9694,14 +9738,14 @@ _.upperFirst('fred');
 _.upperFirst('FRED');
 // => 'FRED'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_wordsstring-pattern"></a>`_.words([string=''], [pattern])`
-<a href="#_wordsstring-pattern">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14540 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.words "See the npm package")
+[#](#_wordsstring-pattern) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14706) [npm package](https://www.npmjs.com/package/lodash.words) [&#x24C9;][1]
 
 Splits `string` into an array of its words.
 
@@ -9722,7 +9766,7 @@ _.words('fred, barney, & pebbles');
 _.words('fred, barney, & pebbles', /[^, ]+/g);
 // => ['fred', 'barney', '&', 'pebbles']
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -9735,7 +9779,7 @@ _.words('fred, barney, & pebbles', /[^, ]+/g);
 <!-- div -->
 
 ### <a id="_attemptfunc-args"></a>`_.attempt(func, [args])`
-<a href="#_attemptfunc-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14574 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.attempt "See the npm package")
+[#](#_attemptfunc-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14740) [npm package](https://www.npmjs.com/package/lodash.attempt) [&#x24C9;][1]
 
 Attempts to invoke `func`, returning either the result or the caught error
 object. Any additional arguments are provided to `func` when it's invoked.
@@ -9760,14 +9804,14 @@ if (_.isError(elements)) {
   elements = [];
 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_bindallobject-methodnames"></a>`_.bindAll(object, methodNames)`
-<a href="#_bindallobject-methodnames">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14608 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.bindall "See the npm package")
+[#](#_bindallobject-methodnames) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14774) [npm package](https://www.npmjs.com/package/lodash.bindall) [&#x24C9;][1]
 
 Binds methods of an object to the object itself, overwriting the existing
 method.
@@ -9788,23 +9832,23 @@ method.
 ```js
 var view = {
   'label': 'docs',
-  'onClick': function() {
+  'click': function() {
     console.log('clicked ' + this.label);
   }
 };
 
-_.bindAll(view, ['onClick']);
-jQuery(element).on('click', view.onClick);
+_.bindAll(view, ['click']);
+jQuery(element).on('click', view.click);
 // => Logs 'clicked docs' when clicked.
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_condpairs"></a>`_.cond(pairs)`
-<a href="#_condpairs">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14645 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.cond "See the npm package")
+[#](#_condpairs) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14811) [npm package](https://www.npmjs.com/package/lodash.cond) [&#x24C9;][1]
 
 Creates a function that iterates over `pairs` and invokes the corresponding
 function of the first predicate to return truthy. The predicate-function
@@ -9824,7 +9868,7 @@ function.
 var func = _.cond([
   [_.matches({ 'a': 1 }),           _.constant('matches A')],
   [_.conforms({ 'b': _.isNumber }), _.constant('matches B')],
-  [_.constant(true),                _.constant('no match')]
+  [_.stubTrue,                      _.constant('no match')]
 ]);
 
 func({ 'a': 1, 'b': 2 });
@@ -9836,14 +9880,14 @@ func({ 'a': 0, 'b': 1 });
 func({ 'a': '1', 'b': '2' });
 // => 'no match'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_conformssource"></a>`_.conforms(source)`
-<a href="#_conformssource">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14688 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.conforms "See the npm package")
+[#](#_conformssource) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14854) [npm package](https://www.npmjs.com/package/lodash.conforms) [&#x24C9;][1]
 
 Creates a function that invokes the predicate properties of `source` with
 the corresponding property values of a given object, returning `true` if
@@ -9859,22 +9903,22 @@ all predicates return truthy, else `false`.
 
 #### Example
 ```js
-var users = [
-  { 'user': 'barney', 'age': 36 },
-  { 'user': 'fred',   'age': 40 }
+var objects = [
+  { 'a': 2, 'b': 1 },
+  { 'a': 1, 'b': 2 }
 ];
 
-_.filter(users, _.conforms({ 'age': function(n) { return n > 38; } }));
-// => [{ 'user': 'fred', 'age': 40 }]
+_.filter(objects, _.conforms({ 'b': function(n) { return n > 1; } }));
+// => [{ 'a': 1, 'b': 2 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_constantvalue"></a>`_.constant(value)`
-<a href="#_constantvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14711 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.constant "See the npm package")
+[#](#_constantvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14877) [npm package](https://www.npmjs.com/package/lodash.constant) [&#x24C9;][1]
 
 Creates a function that returns `value`.
 
@@ -9896,14 +9940,44 @@ console.log(objects);
 console.log(objects[0] === objects[1]);
 // => true
 ```
-* * *
+---
+
+<!-- /div -->
+
+<!-- div -->
+
+### <a id="_defaulttovalue-defaultvalue"></a>`_.defaultTo(value, defaultValue)`
+[#](#_defaulttovalue-defaultvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14903) [npm package](https://www.npmjs.com/package/lodash.defaultto) [&#x24C9;][1]
+
+Checks `value` to determine whether a default value should be returned in
+its place. The `defaultValue` is returned if `value` is `NaN`, `null`,
+or `undefined`.
+
+#### Since
+4.14.0
+#### Arguments
+1. `value` *(&#42;)*: The value to check.
+2. `defaultValue` *(&#42;)*: The default value.
+
+#### Returns
+*(&#42;)*: Returns the resolved value.
+
+#### Example
+```js
+_.defaultTo(1, 10);
+// => 1
+
+_.defaultTo(undefined, 10);
+// => 10
+```
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flowfuncs"></a>`_.flow([funcs])`
-<a href="#_flowfuncs">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14739 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flow "See the npm package")
+[#](#_flowfuncs) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14929) [npm package](https://www.npmjs.com/package/lodash.flow) [&#x24C9;][1]
 
 Creates a function that returns the result of invoking the given functions
 with the `this` binding of the created function, where each successive
@@ -9912,7 +9986,7 @@ invocation is supplied the return value of the previous.
 #### Since
 3.0.0
 #### Arguments
-1. `[funcs]` *(...(Function|Function&#91;&#93;))*: Functions to invoke.
+1. `[funcs]` *(...(Function|Function&#91;&#93;))*: The functions to invoke.
 
 #### Returns
 *(Function)*: Returns the new composite function.
@@ -9927,14 +10001,14 @@ var addSquare = _.flow([_.add, square]);
 addSquare(1, 2);
 // => 9
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_flowrightfuncs"></a>`_.flowRight([funcs])`
-<a href="#_flowrightfuncs">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14762 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.flowright "See the npm package")
+[#](#_flowrightfuncs) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14952) [npm package](https://www.npmjs.com/package/lodash.flowright) [&#x24C9;][1]
 
 This method is like `_.flow` except that it creates a function that
 invokes the given functions from right to left.
@@ -9942,7 +10016,7 @@ invokes the given functions from right to left.
 #### Since
 3.0.0
 #### Arguments
-1. `[funcs]` *(...(Function|Function&#91;&#93;))*: Functions to invoke.
+1. `[funcs]` *(...(Function|Function&#91;&#93;))*: The functions to invoke.
 
 #### Returns
 *(Function)*: Returns the new composite function.
@@ -9957,16 +10031,16 @@ var addSquare = _.flowRight([square, _.add]);
 addSquare(1, 2);
 // => 9
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_identityvalue"></a>`_.identity(value)`
-<a href="#_identityvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14780 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.identity "See the npm package")
+[#](#_identityvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L14970) [npm package](https://www.npmjs.com/package/lodash.identity) [&#x24C9;][1]
 
-This method returns the first argument given to it.
+This method returns the first argument it receives.
 
 #### Since
 0.1.0
@@ -9978,19 +10052,19 @@ This method returns the first argument given to it.
 
 #### Example
 ```js
-var object = { 'user': 'fred' };
+var object = { 'a': 1 };
 
 console.log(_.identity(object) === object);
 // => true
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_iterateefunc_identity"></a>`_.iteratee([func=_.identity])`
-<a href="#_iterateefunc_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14826 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.iteratee "See the npm package")
+[#](#_iterateefunc_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15016) [npm package](https://www.npmjs.com/package/lodash.iteratee) [&#x24C9;][1]
 
 Creates a function that invokes `func` with the arguments of the created
 function. If `func` is a property name, the created function returns the
@@ -10035,14 +10109,14 @@ _.iteratee = _.wrap(_.iteratee, function(iteratee, func) {
 _.filter(['abc', 'def'], /ef/);
 // => ['def']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_matchessource"></a>`_.matches(source)`
-<a href="#_matchessource">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14854 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.matches "See the npm package")
+[#](#_matchessource) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15044) [npm package](https://www.npmjs.com/package/lodash.matches) [&#x24C9;][1]
 
 Creates a function that performs a partial deep comparison between a given
 object and `source`, returning `true` if the given object has equivalent
@@ -10062,22 +10136,22 @@ property values, else `false`. The created function is equivalent to
 
 #### Example
 ```js
-var users = [
-  { 'user': 'barney', 'age': 36, 'active': true },
-  { 'user': 'fred',   'age': 40, 'active': false }
+var objects = [
+  { 'a': 1, 'b': 2, 'c': 3 },
+  { 'a': 4, 'b': 5, 'c': 6 }
 ];
 
-_.filter(users, _.matches({ 'age': 40, 'active': false }));
-// => [{ 'user': 'fred', 'age': 40, 'active': false }]
+_.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
+// => [{ 'a': 4, 'b': 5, 'c': 6 }]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_matchespropertypath-srcvalue"></a>`_.matchesProperty(path, srcValue)`
-<a href="#_matchespropertypath-srcvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14882 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.matchesproperty "See the npm package")
+[#](#_matchespropertypath-srcvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15072) [npm package](https://www.npmjs.com/package/lodash.matchesproperty) [&#x24C9;][1]
 
 Creates a function that performs a partial deep comparison between the
 value at `path` of a given object to `srcValue`, returning `true` if the
@@ -10097,22 +10171,22 @@ object value is equivalent, else `false`.
 
 #### Example
 ```js
-var users = [
-  { 'user': 'barney' },
-  { 'user': 'fred' }
+var objects = [
+  { 'a': 1, 'b': 2, 'c': 3 },
+  { 'a': 4, 'b': 5, 'c': 6 }
 ];
 
-_.find(users, _.matchesProperty('user', 'fred'));
-// => { 'user': 'fred' }
+_.find(objects, _.matchesProperty('a', 4));
+// => { 'a': 4, 'b': 5, 'c': 6 }
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_methodpath-args"></a>`_.method(path, [args])`
-<a href="#_methodpath-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14910 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.method "See the npm package")
+[#](#_methodpath-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15100) [npm package](https://www.npmjs.com/package/lodash.method) [&#x24C9;][1]
 
 Creates a function that invokes the method at `path` of a given object.
 Any additional arguments are provided to the invoked method.
@@ -10139,14 +10213,14 @@ _.map(objects, _.method('a.b'));
 _.map(objects, _.method(['a', 'b']));
 // => [2, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_methodofobject-args"></a>`_.methodOf(object, [args])`
-<a href="#_methodofobject-args">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14939 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.methodof "See the npm package")
+[#](#_methodofobject-args) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15129) [npm package](https://www.npmjs.com/package/lodash.methodof) [&#x24C9;][1]
 
 The opposite of `_.method`; this method creates a function that invokes
 the method at a given path of `object`. Any additional arguments are
@@ -10172,14 +10246,14 @@ _.map(['a[2]', 'c[0]'], _.methodOf(object));
 _.map([['a', '2'], ['c', '0']], _.methodOf(object));
 // => [2, 0]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_mixinobjectlodash-source-options-optionschaintrue"></a>`_.mixin([object=lodash], source, [options={}], [options.chain=true])`
-<a href="#_mixinobjectlodash-source-options-optionschaintrue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L14981 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.mixin "See the npm package")
+[#](#_mixinobjectlodash-source-options-optionschaintrue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15171) [npm package](https://www.npmjs.com/package/lodash.mixin) [&#x24C9;][1]
 
 Adds all own enumerable string keyed function properties of a source
 object to the destination object. If `object` is a function, then methods
@@ -10219,14 +10293,14 @@ _.mixin({ 'vowels': vowels }, { 'chain': false });
 _('fred').vowels();
 // => ['e']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_noconflict"></a>`_.noConflict()`
-<a href="#_noconflict">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15030 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.noconflict "See the npm package")
+[#](#_noconflict) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15220) [npm package](https://www.npmjs.com/package/lodash.noconflict) [&#x24C9;][1]
 
 Reverts the `_` variable to its previous value and returns a reference to
 the `lodash` function.
@@ -10240,16 +10314,16 @@ the `lodash` function.
 ```js
 var lodash = _.noConflict();
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_noop"></a>`_.noop()`
-<a href="#_noop">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15049 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.noop "See the npm package")
+[#](#_noop) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15239) [npm package](https://www.npmjs.com/package/lodash.noop) [&#x24C9;][1]
 
-A method that returns `undefined`.
+This method returns `undefined`.
 
 #### Since
 2.3.0
@@ -10258,14 +10332,14 @@ A method that returns `undefined`.
 _.times(2, _.noop);
 // => [undefined, undefined]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_nthargn0"></a>`_.nthArg([n=0])`
-<a href="#_nthargn0">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15073 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.ntharg "See the npm package")
+[#](#_nthargn0) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15263) [npm package](https://www.npmjs.com/package/lodash.ntharg) [&#x24C9;][1]
 
 Creates a function that gets the argument at index `n`. If `n` is negative,
 the nth argument from the end is returned.
@@ -10288,14 +10362,14 @@ var func = _.nthArg(-2);
 func('a', 'b', 'c', 'd');
 // => 'c'
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_overiteratees_identity"></a>`_.over([iteratees=[_.identity]])`
-<a href="#_overiteratees_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15098 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.over "See the npm package")
+[#](#_overiteratees_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15288) [npm package](https://www.npmjs.com/package/lodash.over) [&#x24C9;][1]
 
 Creates a function that invokes `iteratees` with the arguments it receives
 and returns their results.
@@ -10303,7 +10377,7 @@ and returns their results.
 #### Since
 4.0.0
 #### Arguments
-1. `[iteratees=[_.identity]]` *(...(Array|Array&#91;&#93;|Function|Function&#91;&#93;|Object|Object&#91;&#93;|string|string&#91;&#93;))*: The iteratees to invoke.
+1. `[iteratees=[_.identity]]` *(...(Function|Function&#91;&#93;))*: The iteratees to invoke.
 
 #### Returns
 *(Function)*: Returns the new function.
@@ -10315,14 +10389,14 @@ var func = _.over([Math.max, Math.min]);
 func(1, 2, 3, 4);
 // => [4, 1]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_overeverypredicates_identity"></a>`_.overEvery([predicates=[_.identity]])`
-<a href="#_overeverypredicates_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15124 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.overevery "See the npm package")
+[#](#_overeverypredicates_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15314) [npm package](https://www.npmjs.com/package/lodash.overevery) [&#x24C9;][1]
 
 Creates a function that checks if **all** of the `predicates` return
 truthy when invoked with the arguments it receives.
@@ -10330,7 +10404,7 @@ truthy when invoked with the arguments it receives.
 #### Since
 4.0.0
 #### Arguments
-1. `[predicates=[_.identity]]` *(...(Array|Array&#91;&#93;|Function|Function&#91;&#93;|Object|Object&#91;&#93;|string|string&#91;&#93;))*: The predicates to check.
+1. `[predicates=[_.identity]]` *(...(Function|Function&#91;&#93;))*: The predicates to check.
 
 #### Returns
 *(Function)*: Returns the new function.
@@ -10348,14 +10422,14 @@ func(null);
 func(NaN);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_oversomepredicates_identity"></a>`_.overSome([predicates=[_.identity]])`
-<a href="#_oversomepredicates_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15150 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.oversome "See the npm package")
+[#](#_oversomepredicates_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15340) [npm package](https://www.npmjs.com/package/lodash.oversome) [&#x24C9;][1]
 
 Creates a function that checks if **any** of the `predicates` return
 truthy when invoked with the arguments it receives.
@@ -10363,7 +10437,7 @@ truthy when invoked with the arguments it receives.
 #### Since
 4.0.0
 #### Arguments
-1. `[predicates=[_.identity]]` *(...(Array|Array&#91;&#93;|Function|Function&#91;&#93;|Object|Object&#91;&#93;|string|string&#91;&#93;))*: The predicates to check.
+1. `[predicates=[_.identity]]` *(...(Function|Function&#91;&#93;))*: The predicates to check.
 
 #### Returns
 *(Function)*: Returns the new function.
@@ -10381,14 +10455,14 @@ func(null);
 func(NaN);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_propertypath"></a>`_.property(path)`
-<a href="#_propertypath">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15174 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.property "See the npm package")
+[#](#_propertypath) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15364) [npm package](https://www.npmjs.com/package/lodash.property) [&#x24C9;][1]
 
 Creates a function that returns the value at `path` of a given object.
 
@@ -10413,14 +10487,14 @@ _.map(objects, _.property('a.b'));
 _.map(_.sortBy(objects, _.property(['a', 'b'])), 'a.b');
 // => [1, 2]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_propertyofobject"></a>`_.propertyOf(object)`
-<a href="#_propertyofobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15199 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.propertyof "See the npm package")
+[#](#_propertyofobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15389) [npm package](https://www.npmjs.com/package/lodash.propertyof) [&#x24C9;][1]
 
 The opposite of `_.property`; this method creates a function that returns
 the value at a given path of `object`.
@@ -10444,14 +10518,14 @@ _.map(['a[2]', 'c[0]'], _.propertyOf(object));
 _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
 // => [2, 0]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_rangestart0-end-step1"></a>`_.range([start=0], end, [step=1])`
-<a href="#_rangestart0-end-step1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15246 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.range "See the npm package")
+[#](#_rangestart0-end-step1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15436) [npm package](https://www.npmjs.com/package/lodash.range) [&#x24C9;][1]
 
 Creates an array of numbers *(positive and/or negative)* progressing from
 `start` up to, but not including, `end`. A step of `-1` is used if a negative
@@ -10495,14 +10569,14 @@ _.range(1, 4, 0);
 _.range(0);
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_rangerightstart0-end-step1"></a>`_.rangeRight([start=0], end, [step=1])`
-<a href="#_rangerightstart0-end-step1">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15284 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.rangeright "See the npm package")
+[#](#_rangerightstart0-end-step1) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15474) [npm package](https://www.npmjs.com/package/lodash.rangeright) [&#x24C9;][1]
 
 This method is like `_.range` except that it populates values in
 descending order.
@@ -10540,14 +10614,14 @@ _.rangeRight(1, 4, 0);
 _.rangeRight(0);
 // => []
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_runincontextcontextroot"></a>`_.runInContext([context=root])`
-<a href="#_runincontextcontextroot">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1234 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.runincontext "See the npm package")
+[#](#_runincontextcontextroot) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1279) [npm package](https://www.npmjs.com/package/lodash.runincontext) [&#x24C9;][1]
 
 Create a new pristine `lodash` function using the `context` object.
 
@@ -10586,16 +10660,16 @@ var stubbed = _.runInContext({
 // Create a suped-up `defer` in Node.js.
 var defer = _.runInContext({ 'setTimeout': setImmediate }).defer;
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_stubarray"></a>`_.stubArray()`
-<a href="#_stubarray">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15304 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.stubarray "See the npm package")
+[#](#_stubarray) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15494) [npm package](https://www.npmjs.com/package/lodash.stubarray) [&#x24C9;][1]
 
-A method that returns a new empty array.
+This method returns a new empty array.
 
 #### Since
 4.13.0
@@ -10612,16 +10686,16 @@ console.log(arrays);
 console.log(arrays[0] === arrays[1]);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_stubfalse"></a>`_.stubFalse()`
-<a href="#_stubfalse">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15321 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.stubfalse "See the npm package")
+[#](#_stubfalse) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15511) [npm package](https://www.npmjs.com/package/lodash.stubfalse) [&#x24C9;][1]
 
-A method that returns `false`.
+This method returns `false`.
 
 #### Since
 4.13.0
@@ -10633,16 +10707,16 @@ A method that returns `false`.
 _.times(2, _.stubFalse);
 // => [false, false]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_stubobject"></a>`_.stubObject()`
-<a href="#_stubobject">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15343 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.stubobject "See the npm package")
+[#](#_stubobject) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15533) [npm package](https://www.npmjs.com/package/lodash.stubobject) [&#x24C9;][1]
 
-A method that returns a new empty object.
+This method returns a new empty object.
 
 #### Since
 4.13.0
@@ -10659,16 +10733,16 @@ console.log(objects);
 console.log(objects[0] === objects[1]);
 // => false
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_stubstring"></a>`_.stubString()`
-<a href="#_stubstring">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15360 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.stubstring "See the npm package")
+[#](#_stubstring) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15550) [npm package](https://www.npmjs.com/package/lodash.stubstring) [&#x24C9;][1]
 
-A method that returns an empty string.
+This method returns an empty string.
 
 #### Since
 4.13.0
@@ -10680,16 +10754,16 @@ A method that returns an empty string.
 _.times(2, _.stubString);
 // => ['', '']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_stubtrue"></a>`_.stubTrue()`
-<a href="#_stubtrue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15377 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.stubtrue "See the npm package")
+[#](#_stubtrue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15567) [npm package](https://www.npmjs.com/package/lodash.stubtrue) [&#x24C9;][1]
 
-A method that returns `true`.
+This method returns `true`.
 
 #### Since
 4.13.0
@@ -10701,14 +10775,14 @@ A method that returns `true`.
 _.times(2, _.stubTrue);
 // => [true, true]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_timesn-iteratee_identity"></a>`_.times(n, [iteratee=_.identity])`
-<a href="#_timesn-iteratee_identity">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15400 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.times "See the npm package")
+[#](#_timesn-iteratee_identity) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15590) [npm package](https://www.npmjs.com/package/lodash.times) [&#x24C9;][1]
 
 Invokes the iteratee `n` times, returning an array of the results of
 each invocation. The iteratee is invoked with one argument; *(index)*.
@@ -10730,14 +10804,14 @@ _.times(3, String);
  _.times(4, _.constant(0));
 // => [0, 0, 0, 0]
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_topathvalue"></a>`_.toPath(value)`
-<a href="#_topathvalue">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15435 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.topath "See the npm package")
+[#](#_topathvalue) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15625) [npm package](https://www.npmjs.com/package/lodash.topath) [&#x24C9;][1]
 
 Converts `value` to a property path array.
 
@@ -10757,14 +10831,14 @@ _.toPath('a.b.c');
 _.toPath('a[0].b.c');
 // => ['a', '0', 'b', 'c']
 ```
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_uniqueidprefix"></a>`_.uniqueId([prefix=''])`
-<a href="#_uniqueidprefix">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L15459 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.uniqueid "See the npm package")
+[#](#_uniqueidprefix) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L15649) [npm package](https://www.npmjs.com/package/lodash.uniqueid) [&#x24C9;][1]
 
 Generates a unique ID. If `prefix` is given, the ID is appended to it.
 
@@ -10784,7 +10858,7 @@ _.uniqueId('contact_');
 _.uniqueId();
 // => '105'
 ```
-* * *
+---
 
 <!-- /div -->
 
@@ -10797,79 +10871,79 @@ _.uniqueId();
 <!-- div -->
 
 ### <a id="_version"></a>`_.VERSION`
-<a href="#_version">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L16152 "View in source") [&#x24C9;][1]
+[#](#_version) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L16340)  [&#x24C9;][1]
 
 (string): The semantic version number.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettings"></a>`_.templateSettings`
-<a href="#_templatesettings">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1509 "View in source") [&#x24C9;][1] [&#x24C3;](https://www.npmjs.com/package/lodash.templatesettings "See the npm package")
+[#](#_templatesettings) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1566) [npm package](https://www.npmjs.com/package/lodash.templatesettings) [&#x24C9;][1]
 
 (Object): By default, the template delimiters used by lodash are like those in
 embedded Ruby *(ERB)*. Change the following template settings to use
 alternative delimiters.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettingsescape"></a>`_.templateSettings.escape`
-<a href="#_templatesettingsescape">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1517 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsescape) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1574)  [&#x24C9;][1]
 
 (RegExp): Used to detect `data` property values to be HTML-escaped.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettingsevaluate"></a>`_.templateSettings.evaluate`
-<a href="#_templatesettingsevaluate">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1525 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsevaluate) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1582)  [&#x24C9;][1]
 
 (RegExp): Used to detect code to be evaluated.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettingsimports"></a>`_.templateSettings.imports`
-<a href="#_templatesettingsimports">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1549 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsimports) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1606)  [&#x24C9;][1]
 
 (Object): Used to import variables into the compiled template.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettingsinterpolate"></a>`_.templateSettings.interpolate`
-<a href="#_templatesettingsinterpolate">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1533 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsinterpolate) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1590)  [&#x24C9;][1]
 
 (RegExp): Used to detect `data` property values to inject.
 
-* * *
+---
 
 <!-- /div -->
 
 <!-- div -->
 
 ### <a id="_templatesettingsvariable"></a>`_.templateSettings.variable`
-<a href="#_templatesettingsvariable">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1541 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsvariable) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1598)  [&#x24C9;][1]
 
 (string): Used to reference the data object in the template text.
 
-* * *
+---
 
 <!-- /div -->
 
@@ -10882,11 +10956,11 @@ alternative delimiters.
 <!-- div -->
 
 ### <a id="_templatesettingsimports_"></a>`_.templateSettings.imports._`
-<a href="#_templatesettingsimports_">#</a> [&#x24C8;](https://github.com/lodash/lodash/blob/4.13.1/lodash.js#L1557 "View in source") [&#x24C9;][1]
+[#](#_templatesettingsimports_) [source](https://github.com/lodash/lodash/blob/4.14.0/lodash.js#L1614)  [&#x24C9;][1]
 
 A reference to the `lodash` function.
 
-* * *
+---
 
 <!-- /div -->
 

@@ -151,11 +151,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Function} cloner The function to clone arguments.
 	 * @returns {Function} Returns the new immutable function.
 	 */
-	function immutWrap(func, cloner) {
+	function wrapImmutable(func, cloner) {
 	  return function() {
 	    var length = arguments.length;
 	    if (!length) {
-	      return result;
+	      return;
 	    }
 	    var args = Array(length);
 	    while (length--) {
@@ -289,6 +289,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return func;
 	      };
 	    },
+	    'rearg': function(rearg) {
+	      return function(func, indexes) {
+	        var n = indexes ? indexes.length : 0;
+	        return curry(rearg(func, indexes), n);
+	      };
+	    },
 	    'runInContext': function(runInContext) {
 	      return function(context) {
 	        return baseConvert(util, runInContext(context), options);
@@ -297,6 +303,77 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 
 	  /*--------------------------------------------------------------------------*/
+
+	  /**
+	   * Casts `func` to a function with an arity capped iteratee if needed.
+	   *
+	   * @private
+	   * @param {string} name The name of the function to inspect.
+	   * @param {Function} func The function to inspect.
+	   * @returns {Function} Returns the cast function.
+	   */
+	  function castCap(name, func) {
+	    if (config.cap) {
+	      var indexes = mapping.iterateeRearg[name];
+	      if (indexes) {
+	        return iterateeRearg(func, indexes);
+	      }
+	      var n = !isLib && mapping.iterateeAry[name];
+	      if (n) {
+	        return iterateeAry(func, n);
+	      }
+	    }
+	    return func;
+	  }
+
+	  /**
+	   * Casts `func` to a curried function if needed.
+	   *
+	   * @private
+	   * @param {string} name The name of the function to inspect.
+	   * @param {Function} func The function to inspect.
+	   * @param {number} n The arity of `func`.
+	   * @returns {Function} Returns the cast function.
+	   */
+	  function castCurry(name, func, n) {
+	    return (forceCurry || (config.curry && n > 1))
+	      ? curry(func, n)
+	      : func;
+	  }
+
+	  /**
+	   * Casts `func` to a fixed arity function if needed.
+	   *
+	   * @private
+	   * @param {string} name The name of the function to inspect.
+	   * @param {Function} func The function to inspect.
+	   * @param {number} n The arity cap.
+	   * @returns {Function} Returns the cast function.
+	   */
+	  function castFixed(name, func, n) {
+	    if (config.fixed && (forceFixed || !mapping.skipFixed[name])) {
+	      var data = mapping.methodSpread[name],
+	          start = data && data.start;
+
+	      return start  === undefined ? ary(func, n) : spread(func, start);
+	    }
+	    return func;
+	  }
+
+	  /**
+	   * Casts `func` to an rearged function if needed.
+	   *
+	   * @private
+	   * @param {string} name The name of the function to inspect.
+	   * @param {Function} func The function to inspect.
+	   * @param {number} n The arity of `func`.
+	   * @returns {Function} Returns the cast function.
+	   */
+	  function castRearg(name, func, n) {
+	    return (config.rearg && n > 1 && (forceRearg || !mapping.skipRearg[name]))
+	      ? rearg(func, mapping.methodRearg[name] || mapping.aryRearg[n])
+	      : func;
+	  }
 
 	  /**
 	   * Creates a clone of `object` by `path`.
@@ -390,12 +467,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  /**
-	   * Creates a function that invokes `func` with its first argument passed
-	   * thru `transform`.
+	   * Creates a function that invokes `func` with its first argument transformed.
 	   *
 	   * @private
 	   * @param {Function} func The function to wrap.
-	   * @param {...Function} transform The functions to transform the first argument.
+	   * @param {Function} transform The argument transform.
 	   * @returns {Function} Returns the new function.
 	   */
 	  function overArg(func, transform) {
@@ -435,42 +511,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    else if (config.immutable) {
 	      if (mutateMap.array[name]) {
-	        wrapped = immutWrap(func, cloneArray);
+	        wrapped = wrapImmutable(func, cloneArray);
 	      }
 	      else if (mutateMap.object[name]) {
-	        wrapped = immutWrap(func, createCloner(func));
+	        wrapped = wrapImmutable(func, createCloner(func));
 	      }
 	      else if (mutateMap.set[name]) {
-	        wrapped = immutWrap(func, cloneByPath);
+	        wrapped = wrapImmutable(func, cloneByPath);
 	      }
 	    }
 	    each(aryMethodKeys, function(aryKey) {
 	      each(mapping.aryMethod[aryKey], function(otherName) {
 	        if (name == otherName) {
-	          var aryN = !isLib && mapping.iterateeAry[name],
-	              reargIndexes = mapping.iterateeRearg[name],
-	              spreadStart = mapping.methodSpread[name];
+	          var spreadData = mapping.methodSpread[name],
+	              afterRearg = spreadData && spreadData.afterRearg;
 
-	          result = wrapped;
-	          if (config.fixed && (forceFixed || !mapping.skipFixed[name])) {
-	            result = spreadStart === undefined
-	              ? ary(result, aryKey)
-	              : spread(result, spreadStart);
-	          }
-	          if (config.rearg && aryKey > 1 && (forceRearg || !mapping.skipRearg[name])) {
-	            result = rearg(result, mapping.methodRearg[name] || mapping.aryRearg[aryKey]);
-	          }
-	          if (config.cap) {
-	            if (reargIndexes) {
-	              result = iterateeRearg(result, reargIndexes);
-	            } else if (aryN) {
-	              result = iterateeAry(result, aryN);
-	            }
-	          }
-	          if (forceCurry || (config.curry && aryKey > 1)) {
-	            forceCurry  && console.log(forceCurry, name);
-	            result = curry(result, aryKey);
-	          }
+	          result = afterRearg
+	            ? castFixed(name, castRearg(name, wrapped, aryKey), aryKey)
+	            : castRearg(name, castFixed(name, wrapped, aryKey), aryKey);
+
+	          result = castCap(name, result);
+	          result = castCurry(name, result, aryKey);
 	          return false;
 	        }
 	      });
@@ -559,11 +620,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'entries': 'toPairs',
 	  'entriesIn': 'toPairsIn',
 	  'extend': 'assignIn',
+	  'extendAll': 'assignInAll',
+	  'extendAllWith': 'assignInAllWith',
 	  'extendWith': 'assignInWith',
 	  'first': 'head',
 
+	  // Methods that are curried variants of others.
+	  'conforms': 'conformsTo',
+	  'matches': 'isMatch',
+	  'property': 'get',
+
 	  // Ramda aliases.
 	  '__': 'placeholder',
+	  'F': 'stubFalse',
+	  'T': 'stubTrue',
 	  'all': 'every',
 	  'allPass': 'overEvery',
 	  'always': 'constant',
@@ -577,8 +647,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'contains': 'includes',
 	  'dissoc': 'unset',
 	  'dissocPath': 'unset',
+	  'dropLast': 'dropRight',
+	  'dropLastWhile': 'dropRightWhile',
 	  'equals': 'isEqual',
 	  'identical': 'eq',
+	  'indexBy': 'keyBy',
 	  'init': 'initial',
 	  'invertObj': 'invert',
 	  'juxt': 'over',
@@ -595,36 +668,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'propEq': 'matchesProperty',
 	  'propOr': 'getOr',
 	  'props': 'at',
+	  'symmetricDifference': 'xor',
+	  'symmetricDifferenceBy': 'xorBy',
+	  'symmetricDifferenceWith': 'xorWith',
+	  'takeLast': 'takeRight',
+	  'takeLastWhile': 'takeRightWhile',
 	  'unapply': 'rest',
 	  'unnest': 'flatten',
 	  'useWith': 'overArgs',
-	  'whereEq': 'filter',
+	  'where': 'conformsTo',
+	  'whereEq': 'isMatch',
 	  'zipObj': 'zipObject'
 	};
 
 	/** Used to map ary to method names. */
 	exports.aryMethod = {
 	  '1': [
-	    'attempt', 'castArray', 'ceil', 'create', 'curry', 'curryRight', 'floor',
-	    'flow', 'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
-	    'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest', 'reverse',
-	    'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
-	    'uniqueId', 'words'
+	    'assignAll', 'assignInAll', 'attempt', 'castArray', 'ceil', 'create',
+	    'curry', 'curryRight', 'defaultsAll', 'defaultsDeepAll', 'floor', 'flow',
+	    'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
+	    'mergeAll', 'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest',
+	    'reverse', 'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd',
+	    'trimStart', 'uniqueId', 'words', 'zipAll'
 	  ],
 	  '2': [
-	    'add', 'after', 'ary', 'assign', 'assignIn', 'at', 'before', 'bind', 'bindAll',
-	    'bindKey', 'chunk', 'cloneDeepWith', 'cloneWith', 'concat', 'countBy', 'curryN',
-	    'curryRightN', 'debounce', 'defaults', 'defaultsDeep', 'delay', 'difference',
-	    'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith',
-	    'eq', 'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast',
-	    'findLastIndex', 'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth',
-	    'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight',
-	    'get', 'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf',
-	    'intersection', 'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch',
-	    'join', 'keyBy', 'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues',
-	    'matchesProperty', 'maxBy', 'meanBy', 'merge', 'minBy', 'multiply', 'nth',
-	    'omit', 'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt',
-	    'partial', 'partialRight', 'partition', 'pick', 'pickBy', 'pull', 'pullAll',
+	    'add', 'after', 'ary', 'assign', 'assignAllWith', 'assignIn', 'assignInAllWith',
+	    'at', 'before', 'bind', 'bindAll', 'bindKey', 'chunk', 'cloneDeepWith',
+	    'cloneWith', 'concat', 'conformsTo', 'countBy', 'curryN', 'curryRightN',
+	    'debounce', 'defaults', 'defaultsDeep', 'defaultTo', 'delay', 'difference',
+	    'divide', 'drop', 'dropRight', 'dropRightWhile', 'dropWhile', 'endsWith', 'eq',
+	    'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast', 'findLastIndex',
+	    'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth', 'forEach',
+	    'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get',
+	    'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
+	    'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy',
+	    'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty',
+	    'maxBy', 'meanBy', 'merge', 'mergeAllWith', 'minBy', 'multiply', 'nth', 'omit',
+	    'omitBy', 'overArgs', 'pad', 'padEnd', 'padStart', 'parseInt', 'partial',
+	    'partialRight', 'partition', 'pick', 'pickBy', 'propertyOf', 'pull', 'pullAll',
 	    'pullAt', 'random', 'range', 'rangeRight', 'rearg', 'reject', 'remove',
 	    'repeat', 'restFrom', 'result', 'sampleSize', 'some', 'sortBy', 'sortedIndex',
 	    'sortedIndexOf', 'sortedLastIndex', 'sortedLastIndexOf', 'sortedUniqBy',
@@ -703,7 +784,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to rearg configs. */
 	exports.methodRearg = {
+	  'assignInAllWith': [1, 2, 0],
 	  'assignInWith': [1, 2, 0],
+	  'assignAllWith': [1, 2, 0],
 	  'assignWith': [1, 2, 0],
 	  'differenceBy': [1, 2, 0],
 	  'differenceWith': [1, 2, 0],
@@ -712,6 +795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'intersectionWith': [1, 2, 0],
 	  'isEqualWith': [1, 2, 0],
 	  'isMatchWith': [2, 1, 0],
+	  'mergeAllWith': [1, 2, 0],
 	  'mergeWith': [1, 2, 0],
 	  'padChars': [2, 1, 0],
 	  'padCharsEnd': [2, 1, 0],
@@ -731,11 +815,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to spread configs. */
 	exports.methodSpread = {
-	  'invokeArgs': 2,
-	  'invokeArgsMap': 2,
-	  'partial': 1,
-	  'partialRight': 1,
-	  'without': 1
+	  'assignAll': { 'start': 0 },
+	  'assignAllWith': { 'afterRearg': true, 'start': 1 },
+	  'assignInAll': { 'start': 0 },
+	  'assignInAllWith': { 'afterRearg': true, 'start': 1 },
+	  'defaultsAll': { 'start': 0 },
+	  'defaultsDeepAll': { 'start': 0 },
+	  'invokeArgs': { 'start': 2 },
+	  'invokeArgsMap': { 'start': 2 },
+	  'mergeAll': { 'start': 0 },
+	  'mergeAllWith': { 'afterRearg': true, 'start': 1 },
+	  'partial': { 'start': 1 },
+	  'partialRight': { 'start': 1 },
+	  'without': { 'start': 1 },
+	  'zipAll': { 'start': 0 }
 	};
 
 	/** Used to identify methods which mutate arrays or objects. */
@@ -752,13 +845,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  'object': {
 	    'assign': true,
+	    'assignAll': true,
+	    'assignAllWith': true,
 	    'assignIn': true,
+	    'assignInAll': true,
+	    'assignInAllWith': true,
 	    'assignInWith': true,
 	    'assignWith': true,
 	    'defaults': true,
+	    'defaultsAll': true,
 	    'defaultsDeep': true,
+	    'defaultsDeepAll': true,
 	    'merge': true,
-	    'mergeWith': true
+	    'mergeAll': true,
+	    'mergeAllWith': true,
+	    'mergeWith': true,
 	  },
 	  'set': {
 	    'set': true,
@@ -798,8 +899,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to other names. */
 	exports.remap = {
+	  'assignAll': 'assign',
+	  'assignAllWith': 'assignWith',
+	  'assignInAll': 'assignIn',
+	  'assignInAllWith': 'assignInWith',
 	  'curryN': 'curry',
 	  'curryRightN': 'curryRight',
+	  'defaultsAll': 'defaults',
+	  'defaultsDeepAll': 'defaultsDeep',
 	  'findFrom': 'find',
 	  'findIndexFrom': 'findIndex',
 	  'findLastFrom': 'findLast',
@@ -810,14 +917,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'invokeArgs': 'invoke',
 	  'invokeArgsMap': 'invokeMap',
 	  'lastIndexOfFrom': 'lastIndexOf',
+	  'mergeAll': 'merge',
+	  'mergeAllWith': 'mergeWith',
 	  'padChars': 'pad',
 	  'padCharsEnd': 'padEnd',
 	  'padCharsStart': 'padStart',
+	  'propertyOf': 'get',
 	  'restFrom': 'rest',
 	  'spreadFrom': 'spread',
 	  'trimChars': 'trim',
 	  'trimCharsEnd': 'trimEnd',
-	  'trimCharsStart': 'trimStart'
+	  'trimCharsStart': 'trimStart',
+	  'zipAll': 'zip'
 	};
 
 	/** Used to track methods that skip fixing their arity. */
@@ -827,6 +938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'flowRight': true,
 	  'iteratee': true,
 	  'mixin': true,
+	  'rearg': true,
 	  'runInContext': true
 	};
 
@@ -852,12 +964,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'overArgs': true,
 	  'partial': true,
 	  'partialRight': true,
+	  'propertyOf': true,
 	  'random': true,
 	  'range': true,
 	  'rangeRight': true,
 	  'subtract': true,
 	  'zip': true,
-	  'zipObject': true
+	  'zipObject': true,
+	  'zipObjectDeep': true
 	};
 
 

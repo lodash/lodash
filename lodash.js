@@ -8024,7 +8024,7 @@
      * Creates an array excluding all given values using
      * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
      * for equality comparisons.
-	 *
+     *
      * **Note:** Unlike `_.pull`, this method returns a new array.
      *
      * @static
@@ -8638,7 +8638,7 @@
      * `predicate` returns truthy for. The predicate is invoked with three
      * arguments: (value, index|key, collection).
      *
-     * **Note:** Unlike `_.remove`, this method returns a new collection.
+     * **Note:** Unlike `_.remove`, this method returns a new array.
      *
      * @static
      * @memberOf _
@@ -12225,8 +12225,6 @@
 
     /**
      * Creates an array of values corresponding to `paths` of `object`.
-     *
-     * **Note:** Unlike `_.pullAt`, this method returns a new object.
      *
      * @static
      * @memberOf _

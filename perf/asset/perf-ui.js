@@ -15,27 +15,8 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * Registers an event listener on an element.
-   *
-   * @private
-   * @param {Element} element The element.
-   * @param {string} eventName The name of the event.
-   * @param {Function} handler The event handler.
-   * @returns {Element} The element.
-   */
-  function addListener(element, eventName, handler) {
-    if (typeof element.addEventListener != 'undefined') {
-      element.addEventListener(eventName, handler, false);
-    } else if (typeof element.attachEvent != 'undefined') {
-      element.attachEvent('on' + eventName, handler);
-    }
-  }
-
-  /*--------------------------------------------------------------------------*/
-
   // Initialize controls.
-  addListener(window, 'load', function() {
+  addEventListener('load', function() {
     function eventHandler(event) {
       var buildIndex = buildList.selectedIndex,
           otherIndex = otherList.selectedIndex,
@@ -96,8 +77,8 @@
       return -1;
     }());
 
-    addListener(buildList, 'change', eventHandler);
-    addListener(otherList, 'change', eventHandler);
+    buildList.addEventListener('change', eventHandler);
+    otherList.addEventListener('change', eventHandler);
   });
 
   // The lodash build file path.

@@ -463,7 +463,7 @@ function onJobStatus(error, res, body) {
       return;
     }
     else {
-      if (typeof message == 'undefined') {
+      if (message === undefined) {
         message = 'Results are unavailable. ' + details;
       }
       console.error(label, description, chalk.red('failed') + ';', message);

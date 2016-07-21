@@ -6505,7 +6505,8 @@
 
   (function() {
     var args = arguments,
-        array = [1, [2, [3, [4]], 5]];
+        array = [1, [2, [3, [4]], 5]],
+        methodNames = ['flatten', 'flattenDeep', 'flattenDepth'];
 
     QUnit.test('should flatten `arguments` objects', function(assert) {
       assert.expect(3);
@@ -6525,10 +6526,32 @@
 
       expected.push(undefined, undefined, undefined);
 
-      lodashStable.each([_.flatten(array), _.flattenDeep(array), _.flattenDepth(array)], function(actual) {
+      lodashStable.each(methodNames, function(methodName) {
+        var actual = _[methodName](array);
         assert.deepEqual(actual, expected);
         assert.ok('4' in actual);
       });
+    });
+
+    QUnit.test('should flatten objects with a truthy `Symbol.isConcatSpreadable` value', function(assert) {
+      assert.expect(1);
+
+      if (Symbol && Symbol.isConcatSpreadable) {
+        var object = { '0': 'a', 'length': 1 },
+            array = [object],
+            expected = lodashStable.map(methodNames, lodashStable.constant(['a']));
+
+        object[Symbol.isConcatSpreadable] = true;
+
+        var actual = lodashStable.map(methodNames, function(methodName) {
+          return _[methodName](array);
+        });
+
+        assert.deepEqual(actual, expected);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('should work with extremely large arrays', function(assert) {
@@ -22907,7 +22930,7 @@
     QUnit.test('should convert iterables to arrays', function(assert) {
       assert.expect(1);
 
-      if (!isNpm && Symbol && Symbol.iterator) {
+      if (Symbol && Symbol.iterator) {
         var object = { '0': 'a', 'length': 1 };
         object[Symbol.iterator] = arrayProto[Symbol.iterator];
 

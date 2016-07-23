@@ -3674,11 +3674,6 @@
           array[index] = args[start + index];
         }
         index = -1;
-        switch (start) {
-          case 0: return func.call(this, array);
-          case 1: return func.call(this, args[0], array);
-          case 2: return func.call(this, args[0], args[1], array);
-        }
         var otherArgs = Array(start + 1);
         while (++index < start) {
           otherArgs[index] = args[index];

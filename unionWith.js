@@ -1,12 +1,13 @@
 import baseFlatten from './_baseFlatten.js';
+import baseRest from './_baseRest.js';
 import baseUniq from './_baseUniq.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
-import rest from './rest.js';
 
 /**
  * This method is like `_.union` except that it accepts `comparator` which
- * is invoked to compare elements of `arrays`. The comparator is invoked
+ * is invoked to compare elements of `arrays`. Result values are chosen from
+ * the first array in which the value occurs. The comparator is invoked
  * with two arguments: (arrVal, othVal).
  *
  * @static
@@ -24,7 +25,7 @@ import rest from './rest.js';
  * _.unionWith(objects, others, _.isEqual);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
-var unionWith = rest(function(arrays) {
+var unionWith = baseRest(function(arrays) {
   var comparator = last(arrays);
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;

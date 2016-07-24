@@ -1,8 +1,8 @@
 import arrayFilter from './_arrayFilter.js';
+import baseRest from './_baseRest.js';
 import baseXor from './_baseXor.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
-import rest from './rest.js';
 
 /**
  * This method is like `_.xor` except that it accepts `comparator` which is
@@ -24,7 +24,7 @@ import rest from './rest.js';
  * _.xorWith(objects, others, _.isEqual);
  * // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
-var xorWith = rest(function(arrays) {
+var xorWith = baseRest(function(arrays) {
   var comparator = last(arrays);
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;

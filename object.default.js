@@ -2,6 +2,7 @@ import assign from './assign.js';
 import assignIn from './assignIn.js';
 import assignInWith from './assignInWith.js';
 import assignWith from './assignWith.js';
+import at from './at.js';
 import create from './create.js';
 import defaults from './defaults.js';
 import defaultsDeep from './defaultsDeep.js';
@@ -46,14 +47,14 @@ import values from './values.js';
 import valuesIn from './valuesIn.js';
 
 export default {
-  assign, assignIn, assignInWith, assignWith, create,
-  defaults, defaultsDeep, entries, entriesIn, extend,
-  extendWith, findKey, findLastKey, forIn, forInRight,
-  forOwn, forOwnRight, functions, functionsIn, get,
-  has, hasIn, invert, invertBy, invoke,
-  keys, keysIn, mapKeys, mapValues, merge,
-  mergeWith, omit, omitBy, pick, pickBy,
-  result, set, setWith, toPairs, toPairsIn,
-  transform, unset, update, updateWith, values,
-  valuesIn
+  assign, assignIn, assignInWith, assignWith, at,
+  create, defaults, defaultsDeep, entries, entriesIn,
+  extend, extendWith, findKey, findLastKey, forIn,
+  forInRight, forOwn, forOwnRight, functions, functionsIn,
+  get, has, hasIn, invert, invertBy,
+  invoke, keys, keysIn, mapKeys, mapValues,
+  merge, mergeWith, omit, omitBy, pick,
+  pickBy, result, set, setWith, toPairs,
+  toPairsIn, transform, unset, update, updateWith,
+  values, valuesIn
 };

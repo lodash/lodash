@@ -1,5 +1,5 @@
+import baseRest from './_baseRest.js';
 import pullAll from './pullAll.js';
-import rest from './rest.js';
 
 /**
  * Removes all given values from `array` using
@@ -24,6 +24,6 @@ import rest from './rest.js';
  * console.log(array);
  * // => ['b', 'b']
  */
-var pull = rest(pullAll);
+var pull = baseRest(pullAll);
 
 export default pull;

@@ -27,7 +27,8 @@ import baseForOwn from './_baseForOwn.js';
 import baseFunctions from './_baseFunctions.js';
 import baseInvoke from './_baseInvoke.js';
 import baseIteratee from './_baseIteratee.js';
-import createHybridWrapper from './_createHybridWrapper.js';
+import baseRest from './_baseRest.js';
+import createHybrid from './_createHybrid.js';
 import identity from './identity.js';
 import isArray from './isArray.js';
 import isObject from './isObject.js';
@@ -37,16 +38,16 @@ import lazyClone from './_lazyClone.js';
 import lazyReverse from './_lazyReverse.js';
 import lazyValue from './_lazyValue.js';
 import _mixin from './mixin.js';
+import negate from './negate.js';
 import realNames from './_realNames.js';
-import rest from './rest.js';
 import thru from './thru.js';
 import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.13.1';
+var VERSION = '4.14.0';
 
-/** Used to compose bitmasks for wrapper metadata. */
+/** Used to compose bitmasks for function metadata. */
 var BIND_KEY_FLAG = 2;
 
 /** Used to indicate the type of lazy iteratees. */
@@ -64,7 +65,7 @@ var arrayProto = Array.prototype,
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /** Built-in value references. */
-var iteratorSymbol = typeof (iteratorSymbol = Symbol && Symbol.iterator) == 'symbol' ? iteratorSymbol : undefined;
+var iteratorSymbol = Symbol ? Symbol.iterator : undefined;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max,
@@ -95,7 +96,7 @@ lodash.assign = object.assign;
 lodash.assignIn = object.assignIn;
 lodash.assignInWith = object.assignInWith;
 lodash.assignWith = object.assignWith;
-lodash.at = collection.at;
+lodash.at = object.at;
 lodash.before = func.before;
 lodash.bind = func.bind;
 lodash.bindAll = util.bindAll;
@@ -161,7 +162,7 @@ lodash.mergeWith = object.mergeWith;
 lodash.method = util.method;
 lodash.methodOf = util.methodOf;
 lodash.mixin = mixin;
-lodash.negate = func.negate;
+lodash.negate = negate;
 lodash.nthArg = util.nthArg;
 lodash.omit = object.omit;
 lodash.omitBy = object.omitBy;
@@ -188,7 +189,7 @@ lodash.rangeRight = util.rangeRight;
 lodash.rearg = func.rearg;
 lodash.reject = collection.reject;
 lodash.remove = array.remove;
-lodash.rest = rest;
+lodash.rest = func.rest;
 lodash.reverse = array.reverse;
 lodash.sampleSize = collection.sampleSize;
 lodash.set = object.set;
@@ -259,7 +260,9 @@ lodash.clone = lang.clone;
 lodash.cloneDeep = lang.cloneDeep;
 lodash.cloneDeepWith = lang.cloneDeepWith;
 lodash.cloneWith = lang.cloneWith;
+lodash.conformsTo = lang.conformsTo;
 lodash.deburr = string.deburr;
+lodash.defaultTo = util.defaultTo;
 lodash.divide = math.divide;
 lodash.endsWith = string.endsWith;
 lodash.eq = lang.eq;
@@ -497,7 +500,7 @@ LazyWrapper.prototype.findLast = function(predicate) {
   return this.reverse().find(predicate);
 };
 
-LazyWrapper.prototype.invokeMap = rest(function(path, args) {
+LazyWrapper.prototype.invokeMap = baseRest(function(path, args) {
   if (typeof path == 'function') {
     return new LazyWrapper(this);
   }
@@ -507,10 +510,7 @@ LazyWrapper.prototype.invokeMap = rest(function(path, args) {
 });
 
 LazyWrapper.prototype.reject = function(predicate) {
-  predicate = baseIteratee(predicate, 3);
-  return this.filter(function(value) {
-    return !predicate(value);
-  });
+  return this.filter(negate(baseIteratee(predicate)));
 };
 
 LazyWrapper.prototype.slice = function(start, end) {
@@ -614,7 +614,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   }
 });
 
-realNames[createHybridWrapper(undefined, BIND_KEY_FLAG).name] = [{
+realNames[createHybrid(undefined, BIND_KEY_FLAG).name] = [{
   'name': 'wrapper',
   'func': undefined
 }];
@@ -632,6 +632,9 @@ lodash.prototype.next = seq.next;
 lodash.prototype.plant = seq.plant;
 lodash.prototype.reverse = seq.reverse;
 lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = seq.value;
+
+// Add lazy aliases.
+lodash.prototype.first = lodash.prototype.head;
 
 if (iteratorSymbol) {
   lodash.prototype[iteratorSymbol] = seq.toIterator;

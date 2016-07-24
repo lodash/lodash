@@ -17,6 +17,6 @@ import createMathOperation from './_createMathOperation.js';
  */
 var divide = createMathOperation(function(dividend, divisor) {
   return dividend / divisor;
-});
+}, 1);
 
 export default divide;

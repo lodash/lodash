@@ -1,6 +1,6 @@
-import createWrapper from './_createWrapper.js';
+import createWrap from './_createWrap.js';
 
-/** Used to compose bitmasks for wrapper metadata. */
+/** Used to compose bitmasks for function metadata. */
 var ARY_FLAG = 128;
 
 /**
@@ -23,7 +23,7 @@ var ARY_FLAG = 128;
 function ary(func, n, guard) {
   n = guard ? undefined : n;
   n = (func && n == null) ? func.length : n;
-  return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
+  return createWrap(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
 }
 
 export default ary;

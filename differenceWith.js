@@ -1,14 +1,16 @@
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
+import baseRest from './_baseRest.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
-import rest from './rest.js';
 
 /**
  * This method is like `_.difference` except that it accepts `comparator`
  * which is invoked to compare elements of `array` to `values`. Result values
  * are chosen from the first array. The comparator is invoked with two arguments:
  * (arrVal, othVal).
+ *
+ * **Note:** Unlike `_.pullAllWith`, this method returns a new array.
  *
  * @static
  * @memberOf _
@@ -25,7 +27,7 @@ import rest from './rest.js';
  * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
  * // => [{ 'x': 2, 'y': 1 }]
  */
-var differenceWith = rest(function(array, values) {
+var differenceWith = baseRest(function(array, values) {
   var comparator = last(values);
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;

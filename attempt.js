@@ -1,6 +1,6 @@
 import apply from './_apply.js';
+import baseRest from './_baseRest.js';
 import isError from './isError.js';
-import rest from './rest.js';
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error
@@ -24,7 +24,7 @@ import rest from './rest.js';
  *   elements = [];
  * }
  */
-var attempt = rest(function(func, args) {
+var attempt = baseRest(function(func, args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {

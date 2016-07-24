@@ -1,5 +1,6 @@
 import baseIteratee from './_baseIteratee.js';
 import basePickBy from './_basePickBy.js';
+import getAllKeysIn from './_getAllKeysIn.js';
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns
@@ -10,8 +11,7 @@ import basePickBy from './_basePickBy.js';
  * @since 4.0.0
  * @category Object
  * @param {Object} object The source object.
- * @param {Array|Function|Object|string} [predicate=_.identity]
- *  The function invoked per property.
+ * @param {Function} [predicate=_.identity] The function invoked per property.
  * @returns {Object} Returns the new object.
  * @example
  *
@@ -21,7 +21,7 @@ import basePickBy from './_basePickBy.js';
  * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
-  return object == null ? {} : basePickBy(object, baseIteratee(predicate));
+  return object == null ? {} : basePickBy(object, getAllKeysIn(object), baseIteratee(predicate));
 }
 
 export default pickBy;

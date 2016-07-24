@@ -3,6 +3,7 @@ import bindAll from './bindAll.js';
 import cond from './cond.js';
 import conforms from './conforms.js';
 import constant from './constant.js';
+import defaultTo from './defaultTo.js';
 import flow from './flow.js';
 import flowRight from './flowRight.js';
 import identity from './identity.js';
@@ -32,10 +33,10 @@ import uniqueId from './uniqueId.js';
 
 export default {
   attempt, bindAll, cond, conforms, constant,
-  flow, flowRight, identity, iteratee, matches,
-  matchesProperty, method, methodOf, mixin, noop,
-  nthArg, over, overEvery, overSome, property,
-  propertyOf, range, rangeRight, stubArray, stubFalse,
-  stubObject, stubString, stubTrue, times, toPath,
-  uniqueId
+  defaultTo, flow, flowRight, identity, iteratee,
+  matches, matchesProperty, method, methodOf, mixin,
+  noop, nthArg, over, overEvery, overSome,
+  property, propertyOf, range, rangeRight, stubArray,
+  stubFalse, stubObject, stubString, stubTrue, times,
+  toPath, uniqueId
 };

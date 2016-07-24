@@ -19,7 +19,7 @@ import baseSortedUniq from './_baseSortedUniq.js';
  */
 function sortedUniqBy(array, iteratee) {
   return (array && array.length)
-    ? baseSortedUniq(array, baseIteratee(iteratee))
+    ? baseSortedUniq(array, baseIteratee(iteratee, 2))
     : [];
 }
 

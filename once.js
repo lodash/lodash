@@ -16,7 +16,7 @@ import before from './before.js';
  * var initialize = _.once(createApplication);
  * initialize();
  * initialize();
- * // `initialize` invokes `createApplication` once
+ * // => `createApplication` is invoked once
  */
 function once(func) {
   return before(2, func);

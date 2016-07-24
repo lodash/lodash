@@ -29,4 +29,4 @@ export { default as unescape } from './unescape.js';
 export { default as upperCase } from './upperCase.js';
 export { default as upperFirst } from './upperFirst.js';
 export { default as words } from './words.js';
-export { default as default } from './string.default';
+export { default } from './string.default.js';

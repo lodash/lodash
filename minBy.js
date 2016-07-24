@@ -12,8 +12,7 @@ import baseLt from './_baseLt.js';
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.
- * @param {Array|Function|Object|string} [iteratee=_.identity]
- *  The iteratee invoked per element.
+ * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
  * @returns {*} Returns the minimum value.
  * @example
  *
@@ -28,7 +27,7 @@ import baseLt from './_baseLt.js';
  */
 function minBy(array, iteratee) {
   return (array && array.length)
-    ? baseExtremum(array, baseIteratee(iteratee), baseLt)
+    ? baseExtremum(array, baseIteratee(iteratee, 2), baseLt)
     : undefined;
 }
 

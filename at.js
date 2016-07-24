@@ -1,6 +1,6 @@
 import baseAt from './_baseAt.js';
 import baseFlatten from './_baseFlatten.js';
-import rest from './rest.js';
+import baseRest from './_baseRest.js';
 
 /**
  * Creates an array of values corresponding to `paths` of `object`.
@@ -19,7 +19,7 @@ import rest from './rest.js';
  * _.at(object, ['a[0].b.c', 'a[1]']);
  * // => [3, 4]
  */
-var at = rest(function(object, paths) {
+var at = baseRest(function(object, paths) {
   return baseAt(object, baseFlatten(paths, 1));
 });
 

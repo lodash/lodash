@@ -1,7 +1,7 @@
 import arrayMap from './_arrayMap.js';
 import baseFlatten from './_baseFlatten.js';
 import basePick from './_basePick.js';
-import rest from './rest.js';
+import baseRest from './_baseRest.js';
 import toKey from './_toKey.js';
 
 /**
@@ -21,7 +21,7 @@ import toKey from './_toKey.js';
  * _.pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }
  */
-var pick = rest(function(object, props) {
+var pick = baseRest(function(object, props) {
   return object == null ? {} : basePick(object, arrayMap(baseFlatten(props, 1), toKey));
 });
 

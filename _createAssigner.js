@@ -1,5 +1,5 @@
+import baseRest from './_baseRest.js';
 import isIterateeCall from './_isIterateeCall.js';
-import rest from './rest.js';
 
 /**
  * Creates a function like `_.assign`.
@@ -9,7 +9,7 @@ import rest from './rest.js';
  * @returns {Function} Returns the new assigner function.
  */
 function createAssigner(assigner) {
-  return rest(function(object, sources) {
+  return baseRest(function(object, sources) {
     var index = -1,
         length = sources.length,
         customizer = length > 1 ? sources[length - 1] : undefined,

@@ -11,7 +11,7 @@ import map from './map.js';
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Array|Function|Object|string} [iteratee=_.identity]
+ * @param {Function} [iteratee=_.identity]
  *  The function invoked per iteration.
  * @returns {Array} Returns the new flattened array.
  * @example

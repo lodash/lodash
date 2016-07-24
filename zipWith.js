@@ -1,4 +1,4 @@
-import rest from './rest.js';
+import baseRest from './_baseRest.js';
 import unzipWith from './unzipWith.js';
 
 /**
@@ -20,7 +20,7 @@ import unzipWith from './unzipWith.js';
  * });
  * // => [111, 222]
  */
-var zipWith = rest(function(arrays) {
+var zipWith = baseRest(function(arrays) {
   var length = arrays.length,
       iteratee = length > 1 ? arrays[length - 1] : undefined;
 

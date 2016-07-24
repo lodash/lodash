@@ -3,6 +3,7 @@ import clone from './clone.js';
 import cloneDeep from './cloneDeep.js';
 import cloneDeepWith from './cloneDeepWith.js';
 import cloneWith from './cloneWith.js';
+import conformsTo from './conformsTo.js';
 import eq from './eq.js';
 import gt from './gt.js';
 import gte from './gte.js';
@@ -56,14 +57,15 @@ import toString from './toString.js';
 
 export default {
   castArray, clone, cloneDeep, cloneDeepWith, cloneWith,
-  eq, gt, gte, isArguments, isArray,
-  isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean, isBuffer,
-  isDate, isElement, isEmpty, isEqual, isEqualWith,
-  isError, isFinite, isFunction, isInteger, isLength,
-  isMap, isMatch, isMatchWith, isNaN, isNative,
-  isNil, isNull, isNumber, isObject, isObjectLike,
-  isPlainObject, isRegExp, isSafeInteger, isSet, isString,
-  isSymbol, isTypedArray, isUndefined, isWeakMap, isWeakSet,
-  lt, lte, toArray, toFinite, toInteger,
-  toLength, toNumber, toPlainObject, toSafeInteger, toString
+  conformsTo, eq, gt, gte, isArguments,
+  isArray, isArrayBuffer, isArrayLike, isArrayLikeObject, isBoolean,
+  isBuffer, isDate, isElement, isEmpty, isEqual,
+  isEqualWith, isError, isFinite, isFunction, isInteger,
+  isLength, isMap, isMatch, isMatchWith, isNaN,
+  isNative, isNil, isNull, isNumber, isObject,
+  isObjectLike, isPlainObject, isRegExp, isSafeInteger, isSet,
+  isString, isSymbol, isTypedArray, isUndefined, isWeakMap,
+  isWeakSet, lt, lte, toArray, toFinite,
+  toInteger, toLength, toNumber, toPlainObject, toSafeInteger,
+  toString
 };

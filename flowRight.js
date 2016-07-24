@@ -8,7 +8,7 @@ import createFlow from './_createFlow.js';
  * @since 3.0.0
  * @memberOf _
  * @category Util
- * @param {...(Function|Function[])} [funcs] Functions to invoke.
+ * @param {...(Function|Function[])} [funcs] The functions to invoke.
  * @returns {Function} Returns the new composite function.
  * @see _.flow
  * @example

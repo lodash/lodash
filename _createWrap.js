@@ -1,17 +1,18 @@
 import baseSetData from './_baseSetData.js';
-import createBaseWrapper from './_createBaseWrapper.js';
-import createCurryWrapper from './_createCurryWrapper.js';
-import createHybridWrapper from './_createHybridWrapper.js';
-import createPartialWrapper from './_createPartialWrapper.js';
+import createBind from './_createBind.js';
+import createCurry from './_createCurry.js';
+import createHybrid from './_createHybrid.js';
+import createPartial from './_createPartial.js';
 import getData from './_getData.js';
 import mergeData from './_mergeData.js';
 import setData from './_setData.js';
+import setWrapToString from './_setWrapToString.js';
 import toInteger from './toInteger.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
-/** Used to compose bitmasks for wrapper metadata. */
+/** Used to compose bitmasks for function metadata. */
 var BIND_FLAG = 1,
     BIND_KEY_FLAG = 2,
     CURRY_FLAG = 8,
@@ -28,7 +29,7 @@ var nativeMax = Math.max;
  *
  * @private
  * @param {Function|string} func The function or method name to wrap.
- * @param {number} bitmask The bitmask of wrapper flags.
+ * @param {number} bitmask The bitmask flags.
  *  The bitmask may be composed of the following flags:
  *     1 - `_.bind`
  *     2 - `_.bindKey`
@@ -48,7 +49,7 @@ var nativeMax = Math.max;
  * @param {number} [arity] The arity of `func`.
  * @returns {Function} Returns the new wrapped function.
  */
-function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
+function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
   var isBindKey = bitmask & BIND_KEY_FLAG;
   if (!isBindKey && typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
@@ -91,16 +92,16 @@ function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, a
     bitmask &= ~(CURRY_FLAG | CURRY_RIGHT_FLAG);
   }
   if (!bitmask || bitmask == BIND_FLAG) {
-    var result = createBaseWrapper(func, bitmask, thisArg);
+    var result = createBind(func, bitmask, thisArg);
   } else if (bitmask == CURRY_FLAG || bitmask == CURRY_RIGHT_FLAG) {
-    result = createCurryWrapper(func, bitmask, arity);
+    result = createCurry(func, bitmask, arity);
   } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
-    result = createPartialWrapper(func, bitmask, thisArg, partials);
+    result = createPartial(func, bitmask, thisArg, partials);
   } else {
-    result = createHybridWrapper.apply(undefined, newData);
+    result = createHybrid.apply(undefined, newData);
   }
   var setter = data ? baseSetData : setData;
-  return setter(result, newData);
+  return setWrapToString(setter(result, newData), func, bitmask);
 }
 
-export default createWrapper;
+export default createWrap;

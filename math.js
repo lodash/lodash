@@ -13,4 +13,4 @@ export { default as round } from './round.js';
 export { default as subtract } from './subtract.js';
 export { default as sum } from './sum.js';
 export { default as sumBy } from './sumBy.js';
-export { default as default } from './math.default';
+export { default } from './math.default.js';

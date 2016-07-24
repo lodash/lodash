@@ -1,4 +1,4 @@
-import rest from './rest.js';
+import baseRest from './_baseRest.js';
 import unzip from './unzip.js';
 
 /**
@@ -14,9 +14,9 @@ import unzip from './unzip.js';
  * @returns {Array} Returns the new array of grouped elements.
  * @example
  *
- * _.zip(['fred', 'barney'], [30, 40], [true, false]);
- * // => [['fred', 30, true], ['barney', 40, false]]
+ * _.zip(['a', 'b'], [1, 2], [true, false]);
+ * // => [['a', 1, true], ['b', 2, false]]
  */
-var zip = rest(unzip);
+var zip = baseRest(unzip);
 
 export default zip;

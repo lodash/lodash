@@ -1,7 +1,7 @@
-import createCtorWrapper from './_createCtorWrapper.js';
+import createCtor from './_createCtor.js';
 import root from './_root.js';
 
-/** Used to compose bitmasks for wrapper metadata. */
+/** Used to compose bitmasks for function metadata. */
 var BIND_FLAG = 1;
 
 /**
@@ -10,14 +10,13 @@ var BIND_FLAG = 1;
  *
  * @private
  * @param {Function} func The function to wrap.
- * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
- *  for more details.
+ * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
  * @param {*} [thisArg] The `this` binding of `func`.
  * @returns {Function} Returns the new wrapped function.
  */
-function createBaseWrapper(func, bitmask, thisArg) {
+function createBind(func, bitmask, thisArg) {
   var isBind = bitmask & BIND_FLAG,
-      Ctor = createCtorWrapper(func);
+      Ctor = createCtor(func);
 
   function wrapper() {
     var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
@@ -26,4 +25,4 @@ function createBaseWrapper(func, bitmask, thisArg) {
   return wrapper;
 }
 
-export default createBaseWrapper;
+export default createBind;

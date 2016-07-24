@@ -2,8 +2,8 @@ import arrayMap from './_arrayMap.js';
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
 import basePick from './_basePick.js';
+import baseRest from './_baseRest.js';
 import getAllKeysIn from './_getAllKeysIn.js';
-import rest from './rest.js';
 import toKey from './_toKey.js';
 
 /**
@@ -25,7 +25,7 @@ import toKey from './_toKey.js';
  * _.omit(object, ['a', 'c']);
  * // => { 'b': '2' }
  */
-var omit = rest(function(object, props) {
+var omit = baseRest(function(object, props) {
   if (object == null) {
     return {};
   }

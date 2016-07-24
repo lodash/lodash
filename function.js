@@ -21,4 +21,4 @@ export { default as spread } from './spread.js';
 export { default as throttle } from './throttle.js';
 export { default as unary } from './unary.js';
 export { default as wrap } from './wrap.js';
-export { default as default } from './function.default';
+export { default } from './function.default.js';

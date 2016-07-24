@@ -1,4 +1,5 @@
-import indexOfNaN from './_indexOfNaN.js';
+import baseFindIndex from './_baseFindIndex.js';
+import baseIsNaN from './_baseIsNaN.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -41,7 +42,7 @@ function lastIndexOf(array, value, fromIndex) {
     ) + 1;
   }
   if (value !== value) {
-    return indexOfNaN(array, index - 1, true);
+    return baseFindIndex(array, baseIsNaN, index - 1, true);
   }
   while (index--) {
     if (array[index] === value) {

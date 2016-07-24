@@ -1,4 +1,5 @@
-import indexOfNaN from './_indexOfNaN.js';
+import baseFindIndex from './_baseFindIndex.js';
+import baseIsNaN from './_baseIsNaN.js';
 
 /**
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -11,7 +12,7 @@ import indexOfNaN from './_indexOfNaN.js';
  */
 function baseIndexOf(array, value, fromIndex) {
   if (value !== value) {
-    return indexOfNaN(array, fromIndex);
+    return baseFindIndex(array, baseIsNaN, fromIndex);
   }
   var index = fromIndex - 1,
       length = array.length;

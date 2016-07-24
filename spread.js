@@ -1,7 +1,7 @@
 import apply from './_apply.js';
 import arrayPush from './_arrayPush.js';
+import baseRest from './_baseRest.js';
 import castSlice from './_castSlice.js';
-import rest from './rest.js';
 import toInteger from './toInteger.js';
 
 /** Used as the `TypeError` message for "Functions" methods. */
@@ -49,7 +49,7 @@ function spread(func, start) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
-  return rest(function(args) {
+  return baseRest(function(args) {
     var array = args[start],
         otherArgs = castSlice(args, 0, start);
 

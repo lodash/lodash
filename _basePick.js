@@ -1,4 +1,4 @@
-import arrayReduce from './_arrayReduce.js';
+import basePickBy from './_basePickBy.js';
 
 /**
  * The base implementation of `_.pick` without support for individual
@@ -11,12 +11,9 @@ import arrayReduce from './_arrayReduce.js';
  */
 function basePick(object, props) {
   object = Object(object);
-  return arrayReduce(props, function(result, key) {
-    if (key in object) {
-      result[key] = object[key];
-    }
-    return result;
-  }, {});
+  return basePickBy(object, props, function(value, key) {
+    return key in object;
+  });
 }
 
 export default basePick;

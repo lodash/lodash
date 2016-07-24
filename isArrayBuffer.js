@@ -1,16 +1,9 @@
-import isObjectLike from './isObjectLike.js';
+import baseIsArrayBuffer from './_baseIsArrayBuffer.js';
+import baseUnary from './_baseUnary.js';
+import nodeUtil from './_nodeUtil.js';
 
-var arrayBufferTag = '[object ArrayBuffer]';
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objectToString = objectProto.toString;
+/* Node.js helper references. */
+var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
 
 /**
  * Checks if `value` is classified as an `ArrayBuffer` object.
@@ -20,8 +13,7 @@ var objectToString = objectProto.toString;
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is correctly classified,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
  * @example
  *
  * _.isArrayBuffer(new ArrayBuffer(2));
@@ -30,8 +22,6 @@ var objectToString = objectProto.toString;
  * _.isArrayBuffer(new Array(2));
  * // => false
  */
-function isArrayBuffer(value) {
-  return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
-}
+var isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
 
 export default isArrayBuffer;

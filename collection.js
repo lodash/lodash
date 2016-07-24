@@ -1,4 +1,3 @@
-export { default as at } from './at.js';
 export { default as countBy } from './countBy.js';
 export { default as each } from './each.js';
 export { default as eachRight } from './eachRight.js';
@@ -27,4 +26,4 @@ export { default as shuffle } from './shuffle.js';
 export { default as size } from './size.js';
 export { default as some } from './some.js';
 export { default as sortBy } from './sortBy.js';
-export { default as default } from './collection.default';
+export { default } from './collection.default.js';

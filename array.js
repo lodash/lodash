@@ -63,4 +63,4 @@ export { default as zip } from './zip.js';
 export { default as zipObject } from './zipObject.js';
 export { default as zipObjectDeep } from './zipObjectDeep.js';
 export { default as zipWith } from './zipWith.js';
-export { default as default } from './array.default';
+export { default } from './array.default.js';

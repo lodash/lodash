@@ -1,4 +1,3 @@
-import at from './at.js';
 import countBy from './countBy.js';
 import each from './each.js';
 import eachRight from './eachRight.js';
@@ -29,10 +28,10 @@ import some from './some.js';
 import sortBy from './sortBy.js';
 
 export default {
-  at, countBy, each, eachRight, every,
-  filter, find, findLast, flatMap, flatMapDeep,
-  flatMapDepth, forEach, forEachRight, groupBy, includes,
-  invokeMap, keyBy, map, orderBy, partition,
-  reduce, reduceRight, reject, sample, sampleSize,
-  shuffle, size, some, sortBy
+  countBy, each, eachRight, every, filter,
+  find, findLast, flatMap, flatMapDeep, flatMapDepth,
+  forEach, forEachRight, groupBy, includes, invokeMap,
+  keyBy, map, orderBy, partition, reduce,
+  reduceRight, reject, sample, sampleSize, shuffle,
+  size, some, sortBy
 };

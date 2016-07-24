@@ -1,7 +1,7 @@
 import apply from './_apply.js';
-import createCtorWrapper from './_createCtorWrapper.js';
-import createHybridWrapper from './_createHybridWrapper.js';
-import createRecurryWrapper from './_createRecurryWrapper.js';
+import createCtor from './_createCtor.js';
+import createHybrid from './_createHybrid.js';
+import createRecurry from './_createRecurry.js';
 import getHolder from './_getHolder.js';
 import replaceHolders from './_replaceHolders.js';
 import root from './_root.js';
@@ -11,13 +11,12 @@ import root from './_root.js';
  *
  * @private
  * @param {Function} func The function to wrap.
- * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
- *  for more details.
+ * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
  * @param {number} arity The arity of `func`.
  * @returns {Function} Returns the new wrapped function.
  */
-function createCurryWrapper(func, bitmask, arity) {
-  var Ctor = createCtorWrapper(func);
+function createCurry(func, bitmask, arity) {
+  var Ctor = createCtor(func);
 
   function wrapper() {
     var length = arguments.length,
@@ -34,8 +33,8 @@ function createCurryWrapper(func, bitmask, arity) {
 
     length -= holders.length;
     if (length < arity) {
-      return createRecurryWrapper(
-        func, bitmask, createHybridWrapper, wrapper.placeholder, undefined,
+      return createRecurry(
+        func, bitmask, createHybrid, wrapper.placeholder, undefined,
         args, holders, undefined, undefined, arity - length);
     }
     var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
@@ -44,4 +43,4 @@ function createCurryWrapper(func, bitmask, arity) {
   return wrapper;
 }
 
-export default createCurryWrapper;
+export default createCurry;

@@ -1,7 +1,7 @@
 import apply from './_apply.js';
+import baseRest from './_baseRest.js';
 import mergeDefaults from './_mergeDefaults.js';
 import mergeWith from './mergeWith.js';
-import rest from './rest.js';
 
 /**
  * This method is like `_.defaults` except that it recursively assigns
@@ -19,11 +19,10 @@ import rest from './rest.js';
  * @see _.defaults
  * @example
  *
- * _.defaultsDeep({ 'user': { 'name': 'barney' } }, { 'user': { 'name': 'fred', 'age': 36 } });
- * // => { 'user': { 'name': 'barney', 'age': 36 } }
- *
+ * _.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } });
+ * // => { 'a': { 'b': 2, 'c': 3 } }
  */
-var defaultsDeep = rest(function(args) {
+var defaultsDeep = baseRest(function(args) {
   args.push(undefined, mergeDefaults);
   return apply(mergeWith, undefined, args);
 });

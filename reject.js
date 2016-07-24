@@ -2,6 +2,7 @@ import arrayFilter from './_arrayFilter.js';
 import baseFilter from './_baseFilter.js';
 import baseIteratee from './_baseIteratee.js';
 import isArray from './isArray.js';
+import negate from './negate.js';
 
 /**
  * The opposite of `_.filter`; this method returns the elements of `collection`
@@ -12,8 +13,7 @@ import isArray from './isArray.js';
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Array|Function|Object|string} [predicate=_.identity]
- *  The function invoked per iteration.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
  * @see _.filter
  * @example
@@ -40,10 +40,7 @@ import isArray from './isArray.js';
  */
 function reject(collection, predicate) {
   var func = isArray(collection) ? arrayFilter : baseFilter;
-  predicate = baseIteratee(predicate, 3);
-  return func(collection, function(value, index, collection) {
-    return !predicate(value, index, collection);
-  });
+  return func(collection, negate(baseIteratee(predicate, 3)));
 }
 
 export default reject;

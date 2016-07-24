@@ -1,7 +1,7 @@
 import arrayFilter from './_arrayFilter.js';
+import baseRest from './_baseRest.js';
 import baseXor from './_baseXor.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
-import rest from './rest.js';
 
 /**
  * Creates an array of unique values that is the
@@ -21,7 +21,7 @@ import rest from './rest.js';
  * _.xor([2, 1], [2, 3]);
  * // => [1, 3]
  */
-var xor = rest(function(arrays) {
+var xor = baseRest(function(arrays) {
   return baseXor(arrayFilter(arrays, isArrayLikeObject));
 });
 

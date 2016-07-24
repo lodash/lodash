@@ -1,9 +1,9 @@
-import createWrapper from './_createWrapper.js';
+import baseRest from './_baseRest.js';
+import createWrap from './_createWrap.js';
 import getHolder from './_getHolder.js';
 import replaceHolders from './_replaceHolders.js';
-import rest from './rest.js';
 
-/** Used to compose bitmasks for wrapper metadata. */
+/** Used to compose bitmasks for function metadata. */
 var BIND_FLAG = 1,
     PARTIAL_FLAG = 32;
 
@@ -27,9 +27,9 @@ var BIND_FLAG = 1,
  * @returns {Function} Returns the new bound function.
  * @example
  *
- * var greet = function(greeting, punctuation) {
+ * function greet(greeting, punctuation) {
  *   return greeting + ' ' + this.user + punctuation;
- * };
+ * }
  *
  * var object = { 'user': 'fred' };
  *
@@ -42,13 +42,13 @@ var BIND_FLAG = 1,
  * bound('hi');
  * // => 'hi fred!'
  */
-var bind = rest(function(func, thisArg, partials) {
+var bind = baseRest(function(func, thisArg, partials) {
   var bitmask = BIND_FLAG;
   if (partials.length) {
     var holders = replaceHolders(partials, getHolder(bind));
     bitmask |= PARTIAL_FLAG;
   }
-  return createWrapper(func, bitmask, thisArg, partials, holders);
+  return createWrap(func, bitmask, thisArg, partials, holders);
 });
 
 // Assign default placeholders.

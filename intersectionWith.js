@@ -1,8 +1,8 @@
 import arrayMap from './_arrayMap.js';
 import baseIntersection from './_baseIntersection.js';
+import baseRest from './_baseRest.js';
 import castArrayLikeObject from './_castArrayLikeObject.js';
 import last from './last.js';
-import rest from './rest.js';
 
 /**
  * This method is like `_.intersection` except that it accepts `comparator`
@@ -25,7 +25,7 @@ import rest from './rest.js';
  * _.intersectionWith(objects, others, _.isEqual);
  * // => [{ 'x': 1, 'y': 2 }]
  */
-var intersectionWith = rest(function(arrays) {
+var intersectionWith = baseRest(function(arrays) {
   var comparator = last(arrays),
       mapped = arrayMap(arrays, castArrayLikeObject);
 

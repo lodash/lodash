@@ -2567,6 +2567,31 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.closest');
+
+  (function() {
+
+    var collection = [43,54,65,3,4,4,232,11], target = 9, failedParam = undefined;
+
+    QUnit.test('should return closest number from array', function(assert) {
+      assert.expect(2);
+
+      var result = _.closest(target, collection);
+      assert.ok(result, "Returned result is not null.");
+      assert.equal(result, 11, "Result is a number.");
+    });
+    QUnit.test('should return null when first argument is not a number or seconde one is not an array of numbers', function(assert) {
+      assert.expect(2);
+
+      var numberFailed = _.closest(failedParam, collection);
+      var arrayFailed = _.closest(target, failedParam);
+      assert.equal(numberFailed, failedParam, "Failed due to the first argument is not a number.");
+      assert.equal(arrayFailed, failedParam, "Failed due to the second argument argument is not an array of numbers.");
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.clamp');
 
   (function() {
@@ -26393,7 +26418,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

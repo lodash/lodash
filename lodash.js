@@ -6335,6 +6335,32 @@
       return result;
     }
 
+    /*
+     * Finds closest number inside input collection.
+     * @param num {number} - required digit
+     * @param arr {array} - input set of digits
+     * @returns {number} - closest item
+     */
+    function closest(num, arr) {
+
+      if (!num || !arr || isNaN(num) || arr.constructor !== Array) {
+        return null;
+      }
+
+      var element = arr[0];
+      var difference = Math.abs(num - element);
+      var len = arr.length;
+      for (var i = 0; i < len; i++) {
+        var newDifference = Math.abs (num - arr[i]);
+        if (newDifference < difference) {
+          difference = newDifference;
+          element = arr[i];
+        }
+      }
+      return element;
+
+    }
+
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are falsey.
@@ -16015,6 +16041,7 @@
     lodash.castArray = castArray;
     lodash.chain = chain;
     lodash.chunk = chunk;
+    lodash.closest = closest;
     lodash.compact = compact;
     lodash.concat = concat;
     lodash.cond = cond;

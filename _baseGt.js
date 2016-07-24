@@ -1,7 +1,7 @@
 define([], function() {
 
   /**
-   * The base implementation of `_.gt` which doesn't coerce arguments to numbers.
+   * The base implementation of `_.gt` which doesn't coerce arguments.
    *
    * @private
    * @param {*} value The value to compare.

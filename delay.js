@@ -1,4 +1,4 @@
-define(['./_baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNumber) {
+define(['./_baseDelay', './_baseRest', './toNumber'], function(baseDelay, baseRest, toNumber) {
 
   /**
    * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -19,7 +19,7 @@ define(['./_baseDelay', './rest', './toNumber'], function(baseDelay, rest, toNum
    * }, 1000, 'later');
    * // => Logs 'later' after one second.
    */
-  var delay = rest(function(func, wait, args) {
+  var delay = baseRest(function(func, wait, args) {
     return baseDelay(func, toNumber(wait) || 0, args);
   });
 

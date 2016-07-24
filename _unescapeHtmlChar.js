@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_basePropertyOf'], function(basePropertyOf) {
 
   /** Used to map HTML entities to characters. */
   var htmlUnescapes = {
@@ -17,9 +17,7 @@ define([], function() {
    * @param {string} chr The matched character to unescape.
    * @returns {string} Returns the unescaped character.
    */
-  function unescapeHtmlChar(chr) {
-    return htmlUnescapes[chr];
-  }
+  var unescapeHtmlChar = basePropertyOf(htmlUnescapes);
 
   return unescapeHtmlChar;
 });

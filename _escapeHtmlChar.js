@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_basePropertyOf'], function(basePropertyOf) {
 
   /** Used to map characters to HTML entities. */
   var htmlEscapes = {
@@ -17,9 +17,7 @@ define([], function() {
    * @param {string} chr The matched character to escape.
    * @returns {string} Returns the escaped character.
    */
-  function escapeHtmlChar(chr) {
-    return htmlEscapes[chr];
-  }
+  var escapeHtmlChar = basePropertyOf(htmlEscapes);
 
   return escapeHtmlChar;
 });

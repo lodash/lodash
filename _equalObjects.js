@@ -39,11 +39,12 @@ define(['./_baseHas', './keys'], function(baseHas, keys) {
     }
     // Assume cyclic values are equal.
     var stacked = stack.get(object);
-    if (stacked) {
+    if (stacked && stack.get(other)) {
       return stacked == other;
     }
     var result = true;
     stack.set(object, other);
+    stack.set(other, object);
 
     var skipCtor = isPartial;
     while (++index < objLength) {

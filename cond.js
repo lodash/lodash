@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply, arrayMap, baseIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseIteratee', './_baseRest'], function(apply, arrayMap, baseIteratee, baseRest) {
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -20,7 +20,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
    * var func = _.cond([
    *   [_.matches({ 'a': 1 }),           _.constant('matches A')],
    *   [_.conforms({ 'b': _.isNumber }), _.constant('matches B')],
-   *   [_.constant(true),                _.constant('no match')]
+   *   [_.stubTrue,                      _.constant('no match')]
    * ]);
    *
    * func({ 'a': 1, 'b': 2 });
@@ -43,7 +43,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './rest'], function(apply,
       return [toIteratee(pair[0]), pair[1]];
     });
 
-    return rest(function(args) {
+    return baseRest(function(args) {
       var index = -1;
       while (++index < length) {
         var pair = pairs[index];

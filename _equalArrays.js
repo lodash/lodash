@@ -31,7 +31,7 @@ define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
     }
     // Assume cyclic values are equal.
     var stacked = stack.get(array);
-    if (stacked) {
+    if (stacked && stack.get(other)) {
       return stacked == other;
     }
     var index = -1,
@@ -39,6 +39,7 @@ define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
         seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
 
     stack.set(array, other);
+    stack.set(other, array);
 
     // Ignore non-index properties.
     while (++index < arrLength) {

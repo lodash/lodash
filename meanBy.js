@@ -10,8 +10,7 @@ define(['./_baseIteratee', './_baseMean'], function(baseIteratee, baseMean) {
    * @since 4.7.0
    * @category Math
    * @param {Array} array The array to iterate over.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
-   *  The iteratee invoked per element.
+   * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
    * @returns {number} Returns the mean.
    * @example
    *
@@ -25,7 +24,7 @@ define(['./_baseIteratee', './_baseMean'], function(baseIteratee, baseMean) {
    * // => 5
    */
   function meanBy(array, iteratee) {
-    return baseMean(array, baseIteratee(iteratee));
+    return baseMean(array, baseIteratee(iteratee, 2));
   }
 
   return meanBy;

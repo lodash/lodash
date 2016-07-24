@@ -18,7 +18,7 @@ define(['./_baseIteratee', './_baseSortedUniq'], function(baseIteratee, baseSort
    */
   function sortedUniqBy(array, iteratee) {
     return (array && array.length)
-      ? baseSortedUniq(array, baseIteratee(iteratee))
+      ? baseSortedUniq(array, baseIteratee(iteratee, 2))
       : [];
   }
 

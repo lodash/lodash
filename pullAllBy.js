@@ -13,7 +13,7 @@ define(['./_baseIteratee', './_basePullAll'], function(baseIteratee, basePullAll
    * @category Array
    * @param {Array} array The array to modify.
    * @param {Array} values The values to remove.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
+   * @param {Function} [iteratee=_.identity]
    *  The iteratee invoked per element.
    * @returns {Array} Returns `array`.
    * @example
@@ -26,7 +26,7 @@ define(['./_baseIteratee', './_basePullAll'], function(baseIteratee, basePullAll
    */
   function pullAllBy(array, values, iteratee) {
     return (array && array.length && values && values.length)
-      ? basePullAll(array, values, baseIteratee(iteratee))
+      ? basePullAll(array, values, baseIteratee(iteratee, 2))
       : array;
   }
 

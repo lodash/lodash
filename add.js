@@ -17,7 +17,7 @@ define(['./_createMathOperation'], function(createMathOperation) {
    */
   var add = createMathOperation(function(augend, addend) {
     return augend + addend;
-  });
+  }, 0);
 
   return add;
 });

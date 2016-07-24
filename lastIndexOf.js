@@ -1,4 +1,4 @@
-define(['./_indexOfNaN', './toInteger'], function(indexOfNaN, toInteger) {
+define(['./_baseFindIndex', './_baseIsNaN', './toInteger'], function(baseFindIndex, baseIsNaN, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -43,7 +43,7 @@ define(['./_indexOfNaN', './toInteger'], function(indexOfNaN, toInteger) {
       ) + 1;
     }
     if (value !== value) {
-      return indexOfNaN(array, index - 1, true);
+      return baseFindIndex(array, baseIsNaN, index - 1, true);
     }
     while (index--) {
       if (array[index] === value) {

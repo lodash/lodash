@@ -1,4 +1,4 @@
-define(['./_LazyWrapper', './_LodashWrapper', './_baseAt', './_baseFlatten', './_isIndex', './rest', './thru'], function(LazyWrapper, LodashWrapper, baseAt, baseFlatten, isIndex, rest, thru) {
+define(['./_LazyWrapper', './_LodashWrapper', './_baseAt', './_baseFlatten', './_baseRest', './_isIndex', './thru'], function(LazyWrapper, LodashWrapper, baseAt, baseFlatten, baseRest, isIndex, thru) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -19,7 +19,7 @@ define(['./_LazyWrapper', './_LodashWrapper', './_baseAt', './_baseFlatten', './
    * _(object).at(['a[0].b.c', 'a[1]']).value();
    * // => [3, 4]
    */
-  var wrapperAt = rest(function(paths) {
+  var wrapperAt = baseRest(function(paths) {
     paths = baseFlatten(paths, 1);
     var length = paths.length,
         start = length ? paths[0] : 0,

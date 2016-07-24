@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_basePropertyOf'], function(basePropertyOf) {
 
   /** Used to map latin-1 supplementary letters to basic latin letters. */
   var deburredLetters = {
@@ -28,9 +28,7 @@ define([], function() {
    * @param {string} letter The matched letter to deburr.
    * @returns {string} Returns the deburred letter.
    */
-  function deburrLetter(letter) {
-    return deburredLetters[letter];
-  }
+  var deburrLetter = basePropertyOf(deburredLetters);
 
   return deburrLetter;
 });

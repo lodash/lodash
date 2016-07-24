@@ -1,4 +1,4 @@
-define(['./_baseFlatten', './_baseOrderBy', './isArray', './_isFlattenableIteratee', './_isIterateeCall', './rest'], function(baseFlatten, baseOrderBy, isArray, isFlattenableIteratee, isIterateeCall, rest) {
+define(['./_baseFlatten', './_baseOrderBy', './_baseRest', './_isIterateeCall'], function(baseFlatten, baseOrderBy, baseRest, isIterateeCall) {
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
@@ -11,8 +11,8 @@ define(['./_baseFlatten', './_baseOrderBy', './isArray', './_isFlattenableIterat
    * @since 0.1.0
    * @category Collection
    * @param {Array|Object} collection The collection to iterate over.
-   * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
-   *  [iteratees=[_.identity]] The iteratees to sort by.
+   * @param {...(Function|Function[])} [iteratees=[_.identity]]
+   *  The iteratees to sort by.
    * @returns {Array} Returns the new sorted array.
    * @example
    *
@@ -34,7 +34,7 @@ define(['./_baseFlatten', './_baseOrderBy', './isArray', './_isFlattenableIterat
    * });
    * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
    */
-  var sortBy = rest(function(collection, iteratees) {
+  var sortBy = baseRest(function(collection, iteratees) {
     if (collection == null) {
       return [];
     }
@@ -44,11 +44,7 @@ define(['./_baseFlatten', './_baseOrderBy', './isArray', './_isFlattenableIterat
     } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
       iteratees = [iteratees[0]];
     }
-    iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
-      ? iteratees[0]
-      : baseFlatten(iteratees, 1, isFlattenableIteratee);
-
-    return baseOrderBy(collection, iteratees, []);
+    return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
   });
 
   return sortBy;

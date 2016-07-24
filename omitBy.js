@@ -1,4 +1,4 @@
-define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) {
+define(['./_baseIteratee', './negate', './pickBy'], function(baseIteratee, negate, pickBy) {
 
   /**
    * The opposite of `_.pickBy`; this method creates an object composed of
@@ -11,8 +11,7 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    * @since 4.0.0
    * @category Object
    * @param {Object} object The source object.
-   * @param {Array|Function|Object|string} [predicate=_.identity]
-   *  The function invoked per property.
+   * @param {Function} [predicate=_.identity] The function invoked per property.
    * @returns {Object} Returns the new object.
    * @example
    *
@@ -22,10 +21,7 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    * // => { 'b': '2' }
    */
   function omitBy(object, predicate) {
-    predicate = baseIteratee(predicate);
-    return basePickBy(object, function(value, key) {
-      return !predicate(value, key);
-    });
+    return pickBy(object, negate(baseIteratee(predicate)));
   }
 
   return omitBy;

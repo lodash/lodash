@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_overArg'], function(overArg) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeGetPrototype = Object.getPrototypeOf;
@@ -10,9 +10,7 @@ define([], function() {
    * @param {*} value The value to query.
    * @returns {null|Object} Returns the `[[Prototype]]`.
    */
-  function getPrototype(value) {
-    return nativeGetPrototype(Object(value));
-  }
+  var getPrototype = overArg(nativeGetPrototype, Object);
 
   return getPrototype;
 });

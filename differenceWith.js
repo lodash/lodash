@@ -1,4 +1,4 @@
-define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './last', './rest'], function(baseDifference, baseFlatten, isArrayLikeObject, last, rest) {
+define(['./_baseDifference', './_baseFlatten', './_baseRest', './isArrayLikeObject', './last'], function(baseDifference, baseFlatten, baseRest, isArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -8,6 +8,8 @@ define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './last', 
    * which is invoked to compare elements of `array` to `values`. Result values
    * are chosen from the first array. The comparator is invoked with two arguments:
    * (arrVal, othVal).
+   *
+   * **Note:** Unlike `_.pullAllWith`, this method returns a new array.
    *
    * @static
    * @memberOf _
@@ -24,7 +26,7 @@ define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './last', 
    * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
    * // => [{ 'x': 2, 'y': 1 }]
    */
-  var differenceWith = rest(function(array, values) {
+  var differenceWith = baseRest(function(array, values) {
     var comparator = last(values);
     if (isArrayLikeObject(comparator)) {
       comparator = undefined;

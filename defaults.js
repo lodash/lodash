@@ -1,4 +1,4 @@
-define(['./_apply', './_assignInDefaults', './assignInWith', './rest'], function(apply, assignInDefaults, assignInWith, rest) {
+define(['./_apply', './_assignInDefaults', './assignInWith', './_baseRest'], function(apply, assignInDefaults, assignInWith, baseRest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -21,10 +21,10 @@ define(['./_apply', './_assignInDefaults', './assignInWith', './rest'], function
    * @see _.defaultsDeep
    * @example
    *
-   * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
-   * // => { 'user': 'barney', 'age': 36 }
+   * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+   * // => { 'a': 1, 'b': 2 }
    */
-  var defaults = rest(function(args) {
+  var defaults = baseRest(function(args) {
     args.push(undefined, assignInDefaults);
     return apply(assignInWith, undefined, args);
   });

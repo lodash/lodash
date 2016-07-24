@@ -1,4 +1,4 @@
-define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, rest) {
+define(['./_arrayFilter', './_baseRest', './_baseXor', './isArrayLikeObject'], function(arrayFilter, baseRest, baseXor, isArrayLikeObject) {
 
   /**
    * Creates an array of unique values that is the
@@ -18,7 +18,7 @@ define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './rest'], functi
    * _.xor([2, 1], [2, 3]);
    * // => [1, 3]
    */
-  var xor = rest(function(arrays) {
+  var xor = baseRest(function(arrays) {
     return baseXor(arrayFilter(arrays, isArrayLikeObject));
   });
 

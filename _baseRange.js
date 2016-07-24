@@ -6,7 +6,7 @@ define([], function() {
 
   /**
    * The base implementation of `_.range` and `_.rangeRight` which doesn't
-   * coerce arguments to numbers.
+   * coerce arguments.
    *
    * @private
    * @param {number} start The start of the range.

@@ -1,4 +1,4 @@
-define(['./rest', './unzip'], function(rest, unzip) {
+define(['./_baseRest', './unzip'], function(baseRest, unzip) {
 
   /**
    * Creates an array of grouped elements, the first of which contains the
@@ -13,10 +13,10 @@ define(['./rest', './unzip'], function(rest, unzip) {
    * @returns {Array} Returns the new array of grouped elements.
    * @example
    *
-   * _.zip(['fred', 'barney'], [30, 40], [true, false]);
-   * // => [['fred', 30, true], ['barney', 40, false]]
+   * _.zip(['a', 'b'], [1, 2], [true, false]);
+   * // => [['a', 1, true], ['b', 2, false]]
    */
-  var zip = rest(unzip);
+  var zip = baseRest(unzip);
 
   return zip;
 });

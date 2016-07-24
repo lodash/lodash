@@ -1,4 +1,4 @@
-define(['./_arrayFilter', './_baseIteratee', './_baseXor', './isArrayLikeObject', './last', './rest'], function(arrayFilter, baseIteratee, baseXor, isArrayLikeObject, last, rest) {
+define(['./_arrayFilter', './_baseIteratee', './_baseRest', './_baseXor', './isArrayLikeObject', './last'], function(arrayFilter, baseIteratee, baseRest, baseXor, isArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,7 +14,7 @@ define(['./_arrayFilter', './_baseIteratee', './_baseXor', './isArrayLikeObject'
    * @since 4.0.0
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
+   * @param {Function} [iteratee=_.identity]
    *  The iteratee invoked per element.
    * @returns {Array} Returns the new array of filtered values.
    * @example
@@ -26,12 +26,12 @@ define(['./_arrayFilter', './_baseIteratee', './_baseXor', './isArrayLikeObject'
    * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
    * // => [{ 'x': 2 }]
    */
-  var xorBy = rest(function(arrays) {
+  var xorBy = baseRest(function(arrays) {
     var iteratee = last(arrays);
     if (isArrayLikeObject(iteratee)) {
       iteratee = undefined;
     }
-    return baseXor(arrayFilter(arrays, isArrayLikeObject), baseIteratee(iteratee));
+    return baseXor(arrayFilter(arrays, isArrayLikeObject), baseIteratee(iteratee, 2));
   });
 
   return xorBy;

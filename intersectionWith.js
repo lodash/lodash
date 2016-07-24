@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseIntersection', './_castArrayLikeObject', './last', './rest'], function(arrayMap, baseIntersection, castArrayLikeObject, last, rest) {
+define(['./_arrayMap', './_baseIntersection', './_baseRest', './_castArrayLikeObject', './last'], function(arrayMap, baseIntersection, baseRest, castArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -24,7 +24,7 @@ define(['./_arrayMap', './_baseIntersection', './_castArrayLikeObject', './last'
    * _.intersectionWith(objects, others, _.isEqual);
    * // => [{ 'x': 1, 'y': 2 }]
    */
-  var intersectionWith = rest(function(arrays) {
+  var intersectionWith = baseRest(function(arrays) {
     var comparator = last(arrays),
         mapped = arrayMap(arrays, castArrayLikeObject);
 

@@ -1,4 +1,4 @@
-define(['./_apply', './_baseEach', './_baseInvoke', './isArrayLike', './_isKey', './rest'], function(apply, baseEach, baseInvoke, isArrayLike, isKey, rest) {
+define(['./_apply', './_baseEach', './_baseInvoke', './_baseRest', './isArrayLike', './_isKey'], function(apply, baseEach, baseInvoke, baseRest, isArrayLike, isKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -6,8 +6,8 @@ define(['./_apply', './_baseEach', './_baseInvoke', './isArrayLike', './_isKey',
   /**
    * Invokes the method at `path` of each element in `collection`, returning
    * an array of the results of each invoked method. Any additional arguments
-   * are provided to each invoked method. If `methodName` is a function, it's
-   * invoked for and `this` bound to, each element in `collection`.
+   * are provided to each invoked method. If `path` is a function, it's invoked
+   * for, and `this` bound to, each element in `collection`.
    *
    * @static
    * @memberOf _
@@ -26,7 +26,7 @@ define(['./_apply', './_baseEach', './_baseInvoke', './isArrayLike', './_isKey',
    * _.invokeMap([123, 456], String.prototype.split, '');
    * // => [['1', '2', '3'], ['4', '5', '6']]
    */
-  var invokeMap = rest(function(collection, path, args) {
+  var invokeMap = baseRest(function(collection, path, args) {
     var index = -1,
         isFunc = typeof path == 'function',
         isProp = isKey(path),

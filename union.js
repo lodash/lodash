@@ -1,4 +1,4 @@
-define(['./_baseFlatten', './_baseUniq', './isArrayLikeObject', './rest'], function(baseFlatten, baseUniq, isArrayLikeObject, rest) {
+define(['./_baseFlatten', './_baseRest', './_baseUniq', './isArrayLikeObject'], function(baseFlatten, baseRest, baseUniq, isArrayLikeObject) {
 
   /**
    * Creates an array of unique values, in order, from all given arrays using
@@ -16,7 +16,7 @@ define(['./_baseFlatten', './_baseUniq', './isArrayLikeObject', './rest'], funct
    * _.union([2], [1, 2]);
    * // => [2, 1]
    */
-  var union = rest(function(arrays) {
+  var union = baseRest(function(arrays) {
     return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
   });
 

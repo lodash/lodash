@@ -8,7 +8,7 @@ define(['./_baseCreate', './isObject'], function(baseCreate, isObject) {
    * @param {Function} Ctor The constructor to wrap.
    * @returns {Function} Returns the new wrapped function.
    */
-  function createCtorWrapper(Ctor) {
+  function createCtor(Ctor) {
     return function() {
       // Use a `switch` statement to work with class constructors. See
       // http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
@@ -33,5 +33,5 @@ define(['./_baseCreate', './isObject'], function(baseCreate, isObject) {
     };
   }
 
-  return createCtorWrapper;
+  return createCtor;
 });

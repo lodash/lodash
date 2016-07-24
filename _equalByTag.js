@@ -1,4 +1,4 @@
-define(['./_Symbol', './_Uint8Array', './_equalArrays', './_mapToArray', './_setToArray'], function(Symbol, Uint8Array, equalArrays, mapToArray, setToArray) {
+define(['./_Symbol', './_Uint8Array', './eq', './_equalArrays', './_mapToArray', './_setToArray'], function(Symbol, Uint8Array, eq, equalArrays, mapToArray, setToArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -62,17 +62,13 @@ define(['./_Symbol', './_Uint8Array', './_equalArrays', './_mapToArray', './_set
 
       case boolTag:
       case dateTag:
-        // Coerce dates and booleans to numbers, dates to milliseconds and
-        // booleans to `1` or `0` treating invalid dates coerced to `NaN` as
-        // not equal.
-        return +object == +other;
+      case numberTag:
+        // Coerce booleans to `1` or `0` and dates to milliseconds.
+        // Invalid dates are coerced to `NaN`.
+        return eq(+object, +other);
 
       case errorTag:
         return object.name == other.name && object.message == other.message;
-
-      case numberTag:
-        // Treat `NaN` vs. `NaN` as equal.
-        return (object != +object) ? other != +other : object == +other;
 
       case regexpTag:
       case stringTag:
@@ -97,10 +93,12 @@ define(['./_Symbol', './_Uint8Array', './_equalArrays', './_mapToArray', './_set
           return stacked == other;
         }
         bitmask |= UNORDERED_COMPARE_FLAG;
-        stack.set(object, other);
 
         // Recursively compare objects (susceptible to call stack limits).
-        return equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
+        stack.set(object, other);
+        var result = equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
+        stack['delete'](object);
+        return result;
 
       case symbolTag:
         if (symbolValueOf) {

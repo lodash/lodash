@@ -1,4 +1,4 @@
-define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_toSource'], function(DataView, Map, Promise, Set, WeakMap, toSource) {
+define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_baseGetTag', './_toSource'], function(DataView, Map, Promise, Set, WeakMap, baseGetTag, toSource) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -36,9 +36,7 @@ define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_toSou
    * @param {*} value The value to query.
    * @returns {string} Returns the `toStringTag`.
    */
-  function getTag(value) {
-    return objectToString.call(value);
-  }
+  var getTag = baseGetTag;
 
   // Fallback for data views, maps, sets, and weak maps in IE 11,
   // for data views in Edge, and promises in Node.js.

@@ -1,7 +1,7 @@
 define([], function() {
 
   /**
-   * This method returns the first argument given to it.
+   * This method returns the first argument it receives.
    *
    * @static
    * @since 0.1.0
@@ -11,7 +11,7 @@ define([], function() {
    * @returns {*} Returns `value`.
    * @example
    *
-   * var object = { 'user': 'fred' };
+   * var object = { 'a': 1 };
    *
    * console.log(_.identity(object) === object);
    * // => true

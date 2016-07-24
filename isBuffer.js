@@ -1,10 +1,10 @@
-define(['./_root', './stubFalse'], function(root, stubFalse) {
+define(['./_freeGlobal', './_root', './stubFalse'], function(freeGlobal, root, stubFalse) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /** Detect free variable `exports`. */
-  var freeExports = typeof exports == 'object' && exports;
+  var freeExports = freeGlobal && typeof exports == 'object' && exports;
 
   /** Detect free variable `module`. */
   var freeModule = freeExports && typeof module == 'object' && module;
@@ -14,6 +14,9 @@ define(['./_root', './stubFalse'], function(root, stubFalse) {
 
   /** Built-in value references. */
   var Buffer = moduleExports ? root.Buffer : undefined;
+
+  /* Built-in method references for those with the same name as other `lodash` methods. */
+  var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
 
   /**
    * Checks if `value` is a buffer.
@@ -32,9 +35,7 @@ define(['./_root', './stubFalse'], function(root, stubFalse) {
    * _.isBuffer(new Uint8Array(2));
    * // => false
    */
-  var isBuffer = !Buffer ? stubFalse : function(value) {
-    return value instanceof Buffer;
-  };
+  var isBuffer = nativeIsBuffer || stubFalse;
 
   return isBuffer;
 });

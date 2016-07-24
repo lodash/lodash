@@ -1,6 +1,6 @@
-define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], function(createWrapper, getHolder, replaceHolders, rest) {
+define(['./_baseRest', './_createWrap', './_getHolder', './_replaceHolders'], function(baseRest, createWrap, getHolder, replaceHolders) {
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
       PARTIAL_FLAG = 32;
@@ -50,13 +50,13 @@ define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], func
    * bound('hi');
    * // => 'hiya fred!'
    */
-  var bindKey = rest(function(object, key, partials) {
+  var bindKey = baseRest(function(object, key, partials) {
     var bitmask = BIND_FLAG | BIND_KEY_FLAG;
     if (partials.length) {
       var holders = replaceHolders(partials, getHolder(bindKey));
       bitmask |= PARTIAL_FLAG;
     }
-    return createWrapper(key, bitmask, object, partials, holders);
+    return createWrap(key, bitmask, object, partials, holders);
   });
 
   // Assign default placeholders.

@@ -12,8 +12,8 @@ define([], function() {
    * @returns {Object} Returns the new object.
    * @example
    *
-   * _.fromPairs([['fred', 30], ['barney', 40]]);
-   * // => { 'fred': 30, 'barney': 40 }
+   * _.fromPairs([['a', 1], ['b', 2]]);
+   * // => { 'a': 1, 'b': 2 }
    */
   function fromPairs(pairs) {
     var index = -1,

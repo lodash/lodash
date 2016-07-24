@@ -1,9 +1,11 @@
-define(['./_baseDifference', './isArrayLikeObject', './rest'], function(baseDifference, isArrayLikeObject, rest) {
+define(['./_baseDifference', './_baseRest', './isArrayLikeObject'], function(baseDifference, baseRest, isArrayLikeObject) {
 
   /**
    * Creates an array excluding all given values using
    * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons.
+   *
+   * **Note:** Unlike `_.pull`, this method returns a new array.
    *
    * @static
    * @memberOf _
@@ -18,7 +20,7 @@ define(['./_baseDifference', './isArrayLikeObject', './rest'], function(baseDiff
    * _.without([2, 1, 2, 3], 1, 2);
    * // => [3]
    */
-  var without = rest(function(array, values) {
+  var without = baseRest(function(array, values) {
     return isArrayLikeObject(array)
       ? baseDifference(array, values)
       : [];

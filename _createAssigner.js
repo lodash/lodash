@@ -1,4 +1,4 @@
-define(['./_isIterateeCall', './rest'], function(isIterateeCall, rest) {
+define(['./_baseRest', './_isIterateeCall'], function(baseRest, isIterateeCall) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -11,7 +11,7 @@ define(['./_isIterateeCall', './rest'], function(isIterateeCall, rest) {
    * @returns {Function} Returns the new assigner function.
    */
   function createAssigner(assigner) {
-    return rest(function(object, sources) {
+    return baseRest(function(object, sources) {
       var index = -1,
           length = sources.length,
           customizer = length > 1 ? sources[length - 1] : undefined,

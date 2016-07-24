@@ -11,8 +11,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
    * @since 3.8.0
    * @category Object
    * @param {Object} object The object to iterate over.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
-   *  The function invoked per iteration.
+   * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @returns {Object} Returns the new mapped object.
    * @see _.mapValues
    * @example

@@ -1,9 +1,9 @@
-define(['./_createWrapper'], function(createWrapper) {
+define(['./_createWrap'], function(createWrap) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var CURRY_FLAG = 8;
 
   /**
@@ -49,7 +49,7 @@ define(['./_createWrapper'], function(createWrapper) {
    */
   function curry(func, arity, guard) {
     arity = guard ? undefined : arity;
-    var result = createWrapper(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+    var result = createWrap(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
     result.placeholder = curry.placeholder;
     return result;
   }

@@ -1,4 +1,4 @@
-define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) {
+define(['./_baseIteratee', './_basePickBy', './_getAllKeysIn'], function(baseIteratee, basePickBy, getAllKeysIn) {
 
   /**
    * Creates an object composed of the `object` properties `predicate` returns
@@ -9,8 +9,7 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    * @since 4.0.0
    * @category Object
    * @param {Object} object The source object.
-   * @param {Array|Function|Object|string} [predicate=_.identity]
-   *  The function invoked per property.
+   * @param {Function} [predicate=_.identity] The function invoked per property.
    * @returns {Object} Returns the new object.
    * @example
    *
@@ -20,7 +19,7 @@ define(['./_baseIteratee', './_basePickBy'], function(baseIteratee, basePickBy) 
    * // => { 'a': 1, 'c': 3 }
    */
   function pickBy(object, predicate) {
-    return object == null ? {} : basePickBy(object, baseIteratee(predicate));
+    return object == null ? {} : basePickBy(object, getAllKeysIn(object), baseIteratee(predicate));
   }
 
   return pickBy;

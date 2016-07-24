@@ -1,4 +1,4 @@
-define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_createHybridWrapper', './_createPartialWrapper', './_getData', './_mergeData', './_setData', './toInteger'], function(baseSetData, createBaseWrapper, createCurryWrapper, createHybridWrapper, createPartialWrapper, getData, mergeData, setData, toInteger) {
+define(['./_baseSetData', './_createBind', './_createCurry', './_createHybrid', './_createPartial', './_getData', './_mergeData', './_setData', './_setWrapToString', './toInteger'], function(baseSetData, createBind, createCurry, createHybrid, createPartial, getData, mergeData, setData, setWrapToString, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -6,7 +6,7 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
       CURRY_FLAG = 8,
@@ -23,7 +23,7 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
    *
    * @private
    * @param {Function|string} func The function or method name to wrap.
-   * @param {number} bitmask The bitmask of wrapper flags.
+   * @param {number} bitmask The bitmask flags.
    *  The bitmask may be composed of the following flags:
    *     1 - `_.bind`
    *     2 - `_.bindKey`
@@ -43,7 +43,7 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
    * @param {number} [arity] The arity of `func`.
    * @returns {Function} Returns the new wrapped function.
    */
-  function createWrapper(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
+  function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
     var isBindKey = bitmask & BIND_KEY_FLAG;
     if (!isBindKey && typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
@@ -86,17 +86,17 @@ define(['./_baseSetData', './_createBaseWrapper', './_createCurryWrapper', './_c
       bitmask &= ~(CURRY_FLAG | CURRY_RIGHT_FLAG);
     }
     if (!bitmask || bitmask == BIND_FLAG) {
-      var result = createBaseWrapper(func, bitmask, thisArg);
+      var result = createBind(func, bitmask, thisArg);
     } else if (bitmask == CURRY_FLAG || bitmask == CURRY_RIGHT_FLAG) {
-      result = createCurryWrapper(func, bitmask, arity);
+      result = createCurry(func, bitmask, arity);
     } else if ((bitmask == PARTIAL_FLAG || bitmask == (BIND_FLAG | PARTIAL_FLAG)) && !holders.length) {
-      result = createPartialWrapper(func, bitmask, thisArg, partials);
+      result = createPartial(func, bitmask, thisArg, partials);
     } else {
-      result = createHybridWrapper.apply(undefined, newData);
+      result = createHybrid.apply(undefined, newData);
     }
     var setter = data ? baseSetData : setData;
-    return setter(result, newData);
+    return setWrapToString(setter(result, newData), func, bitmask);
   }
 
-  return createWrapper;
+  return createWrap;
 });

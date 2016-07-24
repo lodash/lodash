@@ -21,7 +21,7 @@ define(['./toInteger'], function(toInteger) {
    * @example
    *
    * jQuery(element).on('click', _.before(5, addContactToList));
-   * // => allows adding up to 4 contacts to the list
+   * // => Allows adding up to 4 contacts to the list.
    */
   function before(n, func) {
     var result;

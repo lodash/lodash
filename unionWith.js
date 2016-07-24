@@ -1,11 +1,12 @@
-define(['./_baseFlatten', './_baseUniq', './isArrayLikeObject', './last', './rest'], function(baseFlatten, baseUniq, isArrayLikeObject, last, rest) {
+define(['./_baseFlatten', './_baseRest', './_baseUniq', './isArrayLikeObject', './last'], function(baseFlatten, baseRest, baseUniq, isArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /**
    * This method is like `_.union` except that it accepts `comparator` which
-   * is invoked to compare elements of `arrays`. The comparator is invoked
+   * is invoked to compare elements of `arrays`. Result values are chosen from
+   * the first array in which the value occurs. The comparator is invoked
    * with two arguments: (arrVal, othVal).
    *
    * @static
@@ -23,7 +24,7 @@ define(['./_baseFlatten', './_baseUniq', './isArrayLikeObject', './last', './res
    * _.unionWith(objects, others, _.isEqual);
    * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
    */
-  var unionWith = rest(function(arrays) {
+  var unionWith = baseRest(function(arrays) {
     var comparator = last(arrays);
     if (isArrayLikeObject(comparator)) {
       comparator = undefined;

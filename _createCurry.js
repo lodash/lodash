@@ -1,4 +1,4 @@
-define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_createRecurryWrapper', './_getHolder', './_replaceHolders', './_root'], function(apply, createCtorWrapper, createHybridWrapper, createRecurryWrapper, getHolder, replaceHolders, root) {
+define(['./_apply', './_createCtor', './_createHybrid', './_createRecurry', './_getHolder', './_replaceHolders', './_root'], function(apply, createCtor, createHybrid, createRecurry, getHolder, replaceHolders, root) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -8,13 +8,12 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
    *
    * @private
    * @param {Function} func The function to wrap.
-   * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
-   *  for more details.
+   * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
    * @param {number} arity The arity of `func`.
    * @returns {Function} Returns the new wrapped function.
    */
-  function createCurryWrapper(func, bitmask, arity) {
-    var Ctor = createCtorWrapper(func);
+  function createCurry(func, bitmask, arity) {
+    var Ctor = createCtor(func);
 
     function wrapper() {
       var length = arguments.length,
@@ -31,8 +30,8 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
 
       length -= holders.length;
       if (length < arity) {
-        return createRecurryWrapper(
-          func, bitmask, createHybridWrapper, wrapper.placeholder, undefined,
+        return createRecurry(
+          func, bitmask, createHybrid, wrapper.placeholder, undefined,
           args, holders, undefined, undefined, arity - length);
       }
       var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
@@ -41,5 +40,5 @@ define(['./_apply', './_createCtorWrapper', './_createHybridWrapper', './_create
     return wrapper;
   }
 
-  return createCurryWrapper;
+  return createCurry;
 });

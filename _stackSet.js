@@ -1,4 +1,4 @@
-define(['./_ListCache', './_MapCache'], function(ListCache, MapCache) {
+define(['./_ListCache', './_Map', './_MapCache'], function(ListCache, Map, MapCache) {
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -15,8 +15,13 @@ define(['./_ListCache', './_MapCache'], function(ListCache, MapCache) {
    */
   function stackSet(key, value) {
     var cache = this.__data__;
-    if (cache instanceof ListCache && cache.__data__.length == LARGE_ARRAY_SIZE) {
-      cache = this.__data__ = new MapCache(cache.__data__);
+    if (cache instanceof ListCache) {
+      var pairs = cache.__data__;
+      if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+        pairs.push([key, value]);
+        return this;
+      }
+      cache = this.__data__ = new MapCache(pairs);
     }
     cache.set(key, value);
     return this;

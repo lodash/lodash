@@ -20,16 +20,16 @@ define(['./_baseMerge', './_createAssigner'], function(baseMerge, createAssigner
    * @returns {Object} Returns `object`.
    * @example
    *
-   * var users = {
-   *   'data': [{ 'user': 'barney' }, { 'user': 'fred' }]
+   * var object = {
+   *   'a': [{ 'b': 2 }, { 'd': 4 }]
    * };
    *
-   * var ages = {
-   *   'data': [{ 'age': 36 }, { 'age': 40 }]
+   * var other = {
+   *   'a': [{ 'c': 3 }, { 'e': 5 }]
    * };
    *
-   * _.merge(users, ages);
-   * // => { 'data': [{ 'user': 'barney', 'age': 36 }, { 'user': 'fred', 'age': 40 }] }
+   * _.merge(object, other);
+   * // => { 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] }
    */
   var merge = createAssigner(function(object, source, srcIndex) {
     baseMerge(object, source, srcIndex);

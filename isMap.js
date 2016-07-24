@@ -1,7 +1,7 @@
-define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
+define(['./_baseIsMap', './_baseUnary', './_nodeUtil'], function(baseIsMap, baseUnary, nodeUtil) {
 
-  /** `Object#toString` result references. */
-  var mapTag = '[object Map]';
+  /* Node.js helper references. */
+  var nodeIsMap = nodeUtil && nodeUtil.isMap;
 
   /**
    * Checks if `value` is classified as a `Map` object.
@@ -11,8 +11,7 @@ define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
    * @since 4.3.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is correctly classified,
-   *  else `false`.
+   * @returns {boolean} Returns `true` if `value` is a map, else `false`.
    * @example
    *
    * _.isMap(new Map);
@@ -21,9 +20,7 @@ define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
    * _.isMap(new WeakMap);
    * // => false
    */
-  function isMap(value) {
-    return isObjectLike(value) && getTag(value) == mapTag;
-  }
+  var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
 
   return isMap;
 });

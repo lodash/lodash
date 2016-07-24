@@ -1,4 +1,4 @@
-define(['./rest', './unzipWith'], function(rest, unzipWith) {
+define(['./_baseRest', './unzipWith'], function(baseRest, unzipWith) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -22,7 +22,7 @@ define(['./rest', './unzipWith'], function(rest, unzipWith) {
    * });
    * // => [111, 222]
    */
-  var zipWith = rest(function(arrays) {
+  var zipWith = baseRest(function(arrays) {
     var length = arrays.length,
         iteratee = length > 1 ? arrays[length - 1] : undefined;
 

@@ -1,9 +1,10 @@
-define(['./assign', './assignIn', './assignInWith', './assignWith', './create', './defaults', './defaultsDeep', './entries', './entriesIn', './extend', './extendWith', './findKey', './findLastKey', './forIn', './forInRight', './forOwn', './forOwnRight', './functions', './functionsIn', './get', './has', './hasIn', './invert', './invertBy', './invoke', './keys', './keysIn', './mapKeys', './mapValues', './merge', './mergeWith', './omit', './omitBy', './pick', './pickBy', './result', './set', './setWith', './toPairs', './toPairsIn', './transform', './unset', './update', './updateWith', './values', './valuesIn'], function(assign, assignIn, assignInWith, assignWith, create, defaults, defaultsDeep, entries, entriesIn, extend, extendWith, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, functionsIn, get, has, hasIn, invert, invertBy, invoke, keys, keysIn, mapKeys, mapValues, merge, mergeWith, omit, omitBy, pick, pickBy, result, set, setWith, toPairs, toPairsIn, transform, unset, update, updateWith, values, valuesIn) {
+define(['./assign', './assignIn', './assignInWith', './assignWith', './at', './create', './defaults', './defaultsDeep', './entries', './entriesIn', './extend', './extendWith', './findKey', './findLastKey', './forIn', './forInRight', './forOwn', './forOwnRight', './functions', './functionsIn', './get', './has', './hasIn', './invert', './invertBy', './invoke', './keys', './keysIn', './mapKeys', './mapValues', './merge', './mergeWith', './omit', './omitBy', './pick', './pickBy', './result', './set', './setWith', './toPairs', './toPairsIn', './transform', './unset', './update', './updateWith', './values', './valuesIn'], function(assign, assignIn, assignInWith, assignWith, at, create, defaults, defaultsDeep, entries, entriesIn, extend, extendWith, findKey, findLastKey, forIn, forInRight, forOwn, forOwnRight, functions, functionsIn, get, has, hasIn, invert, invertBy, invoke, keys, keysIn, mapKeys, mapValues, merge, mergeWith, omit, omitBy, pick, pickBy, result, set, setWith, toPairs, toPairsIn, transform, unset, update, updateWith, values, valuesIn) {
   return {
     'assign': assign,
     'assignIn': assignIn,
     'assignInWith': assignInWith,
     'assignWith': assignWith,
+    'at': at,
     'create': create,
     'defaults': defaults,
     'defaultsDeep': defaultsDeep,

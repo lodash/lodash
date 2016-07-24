@@ -1,4 +1,4 @@
-define(['./_indexOfNaN'], function(indexOfNaN) {
+define(['./_baseFindIndex', './_baseIsNaN'], function(baseFindIndex, baseIsNaN) {
 
   /**
    * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -11,7 +11,7 @@ define(['./_indexOfNaN'], function(indexOfNaN) {
    */
   function baseIndexOf(array, value, fromIndex) {
     if (value !== value) {
-      return indexOfNaN(array, fromIndex);
+      return baseFindIndex(array, baseIsNaN, fromIndex);
     }
     var index = fromIndex - 1,
         length = array.length;

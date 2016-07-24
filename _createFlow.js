@@ -1,4 +1,4 @@
-define(['./_LodashWrapper', './_baseFlatten', './_getData', './_getFuncName', './isArray', './_isLaziable', './rest'], function(LodashWrapper, baseFlatten, getData, getFuncName, isArray, isLaziable, rest) {
+define(['./_LodashWrapper', './_baseFlatten', './_baseRest', './_getData', './_getFuncName', './isArray', './_isLaziable'], function(LodashWrapper, baseFlatten, baseRest, getData, getFuncName, isArray, isLaziable) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -9,7 +9,7 @@ define(['./_LodashWrapper', './_baseFlatten', './_getData', './_getFuncName', '.
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var CURRY_FLAG = 8,
       PARTIAL_FLAG = 32,
       ARY_FLAG = 128,
@@ -23,7 +23,7 @@ define(['./_LodashWrapper', './_baseFlatten', './_getData', './_getFuncName', '.
    * @returns {Function} Returns the new flow function.
    */
   function createFlow(fromRight) {
-    return rest(function(funcs) {
+    return baseRest(function(funcs) {
       funcs = baseFlatten(funcs, 1);
 
       var length = funcs.length,

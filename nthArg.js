@@ -1,4 +1,4 @@
-define(['./_baseNth', './rest', './toInteger'], function(baseNth, rest, toInteger) {
+define(['./_baseNth', './_baseRest', './toInteger'], function(baseNth, baseRest, toInteger) {
 
   /**
    * Creates a function that gets the argument at index `n`. If `n` is negative,
@@ -22,7 +22,7 @@ define(['./_baseNth', './rest', './toInteger'], function(baseNth, rest, toIntege
    */
   function nthArg(n) {
     n = toInteger(n);
-    return rest(function(args) {
+    return baseRest(function(args) {
       return baseNth(args, n);
     });
   }

@@ -1,4 +1,4 @@
-define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
+define(['./_apply', './_baseRest', './isError'], function(apply, baseRest, isError) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -25,7 +25,7 @@ define(['./_apply', './isError', './rest'], function(apply, isError, rest) {
    *   elements = [];
    * }
    */
-  var attempt = rest(function(func, args) {
+  var attempt = baseRest(function(func, args) {
     try {
       return apply(func, undefined, args);
     } catch (e) {

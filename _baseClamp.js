@@ -4,7 +4,7 @@ define([], function() {
   var undefined;
 
   /**
-   * The base implementation of `_.clamp` which doesn't coerce arguments to numbers.
+   * The base implementation of `_.clamp` which doesn't coerce arguments.
    *
    * @private
    * @param {number} number The number to clamp.

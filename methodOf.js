@@ -1,4 +1,4 @@
-define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
+define(['./_baseInvoke', './_baseRest'], function(baseInvoke, baseRest) {
 
   /**
    * The opposite of `_.method`; this method creates a function that invokes
@@ -23,7 +23,7 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
    * // => [2, 0]
    */
-  var methodOf = rest(function(object, args) {
+  var methodOf = baseRest(function(object, args) {
     return function(path) {
       return baseInvoke(object, path, args);
     };

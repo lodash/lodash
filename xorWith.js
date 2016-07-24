@@ -1,4 +1,4 @@
-define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './last', './rest'], function(arrayFilter, baseXor, isArrayLikeObject, last, rest) {
+define(['./_arrayFilter', './_baseRest', './_baseXor', './isArrayLikeObject', './last'], function(arrayFilter, baseRest, baseXor, isArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./_arrayFilter', './_baseXor', './isArrayLikeObject', './last', './rest
    * _.xorWith(objects, others, _.isEqual);
    * // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
    */
-  var xorWith = rest(function(arrays) {
+  var xorWith = baseRest(function(arrays) {
     var comparator = last(arrays);
     if (isArrayLikeObject(comparator)) {
       comparator = undefined;

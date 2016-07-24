@@ -1,4 +1,4 @@
-define(['./pullAll', './rest'], function(pullAll, rest) {
+define(['./_baseRest', './pullAll'], function(baseRest, pullAll) {
 
   /**
    * Removes all given values from `array` using
@@ -23,7 +23,7 @@ define(['./pullAll', './rest'], function(pullAll, rest) {
    * console.log(array);
    * // => ['b', 'b']
    */
-  var pull = rest(pullAll);
+  var pull = baseRest(pullAll);
 
   return pull;
 });

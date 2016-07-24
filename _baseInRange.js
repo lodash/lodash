@@ -5,7 +5,7 @@ define([], function() {
       nativeMin = Math.min;
 
   /**
-   * The base implementation of `_.inRange` which doesn't coerce arguments to numbers.
+   * The base implementation of `_.inRange` which doesn't coerce arguments.
    *
    * @private
    * @param {number} number The number to check.

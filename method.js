@@ -1,4 +1,4 @@
-define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
+define(['./_baseInvoke', './_baseRest'], function(baseInvoke, baseRest) {
 
   /**
    * Creates a function that invokes the method at `path` of a given object.
@@ -24,7 +24,7 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    * _.map(objects, _.method(['a', 'b']));
    * // => [2, 1]
    */
-  var method = rest(function(path, args) {
+  var method = baseRest(function(path, args) {
     return function(object) {
       return baseInvoke(object, path, args);
     };

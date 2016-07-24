@@ -1,10 +1,10 @@
 define(['./identity', './partial'], function(identity, partial) {
 
   /**
-   * Creates a function that provides `value` to the wrapper function as its
-   * first argument. Any additional arguments provided to the function are
-   * appended to those provided to the wrapper function. The wrapper is invoked
-   * with the `this` binding of the created function.
+   * Creates a function that provides `value` to `wrapper` as its first
+   * argument. Any additional arguments provided to the function are appended
+   * to those provided to the `wrapper`. The wrapper is invoked with the `this`
+   * binding of the created function.
    *
    * @static
    * @memberOf _

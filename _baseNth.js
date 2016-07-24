@@ -4,7 +4,7 @@ define(['./_isIndex'], function(isIndex) {
   var undefined;
 
   /**
-   * The base implementation of `_.nth` which doesn't coerce `n` to an integer.
+   * The base implementation of `_.nth` which doesn't coerce arguments.
    *
    * @private
    * @param {Array} array The array to query.

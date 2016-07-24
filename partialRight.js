@@ -1,9 +1,9 @@
-define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], function(createWrapper, getHolder, replaceHolders, rest) {
+define(['./_baseRest', './_createWrap', './_getHolder', './_replaceHolders'], function(baseRest, createWrap, getHolder, replaceHolders) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var PARTIAL_RIGHT_FLAG = 64;
 
   /**
@@ -25,9 +25,9 @@ define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], func
    * @returns {Function} Returns the new partially applied function.
    * @example
    *
-   * var greet = function(greeting, name) {
+   * function greet(greeting, name) {
    *   return greeting + ' ' + name;
-   * };
+   * }
    *
    * var greetFred = _.partialRight(greet, 'fred');
    * greetFred('hi');
@@ -38,9 +38,9 @@ define(['./_createWrapper', './_getHolder', './_replaceHolders', './rest'], func
    * sayHelloTo('fred');
    * // => 'hello fred'
    */
-  var partialRight = rest(function(func, partials) {
+  var partialRight = baseRest(function(func, partials) {
     var holders = replaceHolders(partials, getHolder(partialRight));
-    return createWrapper(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
+    return createWrap(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
   });
 
   // Assign default placeholders.

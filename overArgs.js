@@ -1,19 +1,18 @@
-define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_baseUnary', './isArray', './_isFlattenableIteratee', './rest'], function(apply, arrayMap, baseFlatten, baseIteratee, baseUnary, isArray, isFlattenableIteratee, rest) {
+define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_baseRest', './_baseUnary', './isArray'], function(apply, arrayMap, baseFlatten, baseIteratee, baseRest, baseUnary, isArray) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
 
   /**
-   * Creates a function that invokes `func` with arguments transformed by
-   * corresponding `transforms`.
+   * Creates a function that invokes `func` with its arguments transformed.
    *
    * @static
    * @since 4.0.0
    * @memberOf _
    * @category Function
    * @param {Function} func The function to wrap.
-   * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
-   *  [transforms[_.identity]] The functions to transform.
+   * @param {...(Function|Function[])} [transforms=[_.identity]]
+   *  The argument transforms.
    * @returns {Function} Returns the new function.
    * @example
    *
@@ -35,13 +34,13 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_base
    * func(10, 5);
    * // => [100, 10]
    */
-  var overArgs = rest(function(func, transforms) {
+  var overArgs = baseRest(function(func, transforms) {
     transforms = (transforms.length == 1 && isArray(transforms[0]))
       ? arrayMap(transforms[0], baseUnary(baseIteratee))
-      : arrayMap(baseFlatten(transforms, 1, isFlattenableIteratee), baseUnary(baseIteratee));
+      : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));
 
     var funcsLength = transforms.length;
-    return rest(function(args) {
+    return baseRest(function(args) {
       var index = -1,
           length = nativeMin(args.length, funcsLength);
 

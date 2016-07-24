@@ -1,4 +1,4 @@
-define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
+define(['./_baseInvoke', './_baseRest'], function(baseInvoke, baseRest) {
 
   /**
    * Invokes the method at `path` of `object`.
@@ -18,7 +18,7 @@ define(['./_baseInvoke', './rest'], function(baseInvoke, rest) {
    * _.invoke(object, 'a[0].b.c.slice', 1, 3);
    * // => [2, 3]
    */
-  var invoke = rest(baseInvoke);
+  var invoke = baseRest(baseInvoke);
 
   return invoke;
 });

@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_castArrayLikeObject', './last', './rest'], function(arrayMap, baseIntersection, baseIteratee, castArrayLikeObject, last, rest) {
+define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_baseRest', './_castArrayLikeObject', './last'], function(arrayMap, baseIntersection, baseIteratee, baseRest, castArrayLikeObject, last) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,8 +14,7 @@ define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_castArrayLi
    * @since 4.0.0
    * @category Array
    * @param {...Array} [arrays] The arrays to inspect.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
-   *  The iteratee invoked per element.
+   * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
    * @returns {Array} Returns the new array of intersecting values.
    * @example
    *
@@ -26,7 +25,7 @@ define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_castArrayLi
    * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
    * // => [{ 'x': 1 }]
    */
-  var intersectionBy = rest(function(arrays) {
+  var intersectionBy = baseRest(function(arrays) {
     var iteratee = last(arrays),
         mapped = arrayMap(arrays, castArrayLikeObject);
 
@@ -36,7 +35,7 @@ define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_castArrayLi
       mapped.pop();
     }
     return (mapped.length && mapped[0] === arrays[0])
-      ? baseIntersection(mapped, baseIteratee(iteratee))
+      ? baseIntersection(mapped, baseIteratee(iteratee, 2))
       : [];
   });
 

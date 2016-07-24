@@ -1,7 +1,7 @@
-define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
+define(['./_baseIsSet', './_baseUnary', './_nodeUtil'], function(baseIsSet, baseUnary, nodeUtil) {
 
-  /** `Object#toString` result references. */
-  var setTag = '[object Set]';
+  /* Node.js helper references. */
+  var nodeIsSet = nodeUtil && nodeUtil.isSet;
 
   /**
    * Checks if `value` is classified as a `Set` object.
@@ -11,8 +11,7 @@ define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
    * @since 4.3.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is correctly classified,
-   *  else `false`.
+   * @returns {boolean} Returns `true` if `value` is a set, else `false`.
    * @example
    *
    * _.isSet(new Set);
@@ -21,9 +20,7 @@ define(['./_getTag', './isObjectLike'], function(getTag, isObjectLike) {
    * _.isSet(new WeakSet);
    * // => false
    */
-  function isSet(value) {
-    return isObjectLike(value) && getTag(value) == setTag;
-  }
+  var isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
 
   return isSet;
 });

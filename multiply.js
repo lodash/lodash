@@ -17,7 +17,7 @@ define(['./_createMathOperation'], function(createMathOperation) {
    */
   var multiply = createMathOperation(function(multiplier, multiplicand) {
     return multiplier * multiplicand;
-  });
+  }, 1);
 
   return multiply;
 });

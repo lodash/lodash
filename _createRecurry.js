@@ -1,9 +1,9 @@
-define(['./_isLaziable', './_setData'], function(isLaziable, setData) {
+define(['./_isLaziable', './_setData', './_setWrapToString'], function(isLaziable, setData, setWrapToString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var BIND_FLAG = 1,
       BIND_KEY_FLAG = 2,
       CURRY_BOUND_FLAG = 4,
@@ -16,8 +16,7 @@ define(['./_isLaziable', './_setData'], function(isLaziable, setData) {
    *
    * @private
    * @param {Function} func The function to wrap.
-   * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
-   *  for more details.
+   * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
    * @param {Function} wrapFunc The function to create the `func` wrapper.
    * @param {*} placeholder The placeholder value.
    * @param {*} [thisArg] The `this` binding of `func`.
@@ -29,7 +28,7 @@ define(['./_isLaziable', './_setData'], function(isLaziable, setData) {
    * @param {number} [arity] The arity of `func`.
    * @returns {Function} Returns the new wrapped function.
    */
-  function createRecurryWrapper(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
+  function createRecurry(func, bitmask, wrapFunc, placeholder, thisArg, partials, holders, argPos, ary, arity) {
     var isCurry = bitmask & CURRY_FLAG,
         newHolders = isCurry ? holders : undefined,
         newHoldersRight = isCurry ? undefined : holders,
@@ -52,8 +51,8 @@ define(['./_isLaziable', './_setData'], function(isLaziable, setData) {
       setData(result, newData);
     }
     result.placeholder = placeholder;
-    return result;
+    return setWrapToString(result, func, bitmask);
   }
 
-  return createRecurryWrapper;
+  return createRecurry;
 });

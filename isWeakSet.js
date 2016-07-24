@@ -21,8 +21,7 @@ define(['./isObjectLike'], function(isObjectLike) {
    * @since 4.3.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is correctly classified,
-   *  else `false`.
+   * @returns {boolean} Returns `true` if `value` is a weak set, else `false`.
    * @example
    *
    * _.isWeakSet(new WeakSet);

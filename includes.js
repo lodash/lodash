@@ -27,10 +27,10 @@ define(['./_baseIndexOf', './isArrayLike', './isString', './toInteger', './value
    * _.includes([1, 2, 3], 1, 2);
    * // => false
    *
-   * _.includes({ 'user': 'fred', 'age': 40 }, 'fred');
+   * _.includes({ 'a': 1, 'b': 2 }, 1);
    * // => true
    *
-   * _.includes('pebbles', 'eb');
+   * _.includes('abcd', 'bc');
    * // => true
    */
   function includes(collection, value, fromIndex, guard) {

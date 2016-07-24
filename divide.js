@@ -17,7 +17,7 @@ define(['./_createMathOperation'], function(createMathOperation) {
    */
   var divide = createMathOperation(function(dividend, divisor) {
     return dividend / divisor;
-  });
+  }, 1);
 
   return divide;
 });

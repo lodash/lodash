@@ -1,9 +1,9 @@
-define(['./_createWrapper'], function(createWrapper) {
+define(['./_createWrap'], function(createWrap) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var ARY_FLAG = 128;
 
   /**
@@ -26,7 +26,7 @@ define(['./_createWrapper'], function(createWrapper) {
   function ary(func, n, guard) {
     n = guard ? undefined : n;
     n = (func && n == null) ? func.length : n;
-    return createWrapper(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
+    return createWrap(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
   }
 
   return ary;

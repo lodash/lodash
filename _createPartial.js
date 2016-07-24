@@ -1,6 +1,6 @@
-define(['./_apply', './_createCtorWrapper', './_root'], function(apply, createCtorWrapper, root) {
+define(['./_apply', './_createCtor', './_root'], function(apply, createCtor, root) {
 
-  /** Used to compose bitmasks for wrapper metadata. */
+  /** Used to compose bitmasks for function metadata. */
   var BIND_FLAG = 1;
 
   /**
@@ -9,16 +9,15 @@ define(['./_apply', './_createCtorWrapper', './_root'], function(apply, createCt
    *
    * @private
    * @param {Function} func The function to wrap.
-   * @param {number} bitmask The bitmask of wrapper flags. See `createWrapper`
-   *  for more details.
+   * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
    * @param {*} thisArg The `this` binding of `func`.
    * @param {Array} partials The arguments to prepend to those provided to
    *  the new function.
    * @returns {Function} Returns the new wrapped function.
    */
-  function createPartialWrapper(func, bitmask, thisArg, partials) {
+  function createPartial(func, bitmask, thisArg, partials) {
     var isBind = bitmask & BIND_FLAG,
-        Ctor = createCtorWrapper(func);
+        Ctor = createCtor(func);
 
     function wrapper() {
       var argsIndex = -1,
@@ -39,5 +38,5 @@ define(['./_apply', './_createCtorWrapper', './_root'], function(apply, createCt
     return wrapper;
   }
 
-  return createPartialWrapper;
+  return createPartial;
 });

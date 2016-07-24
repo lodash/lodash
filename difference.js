@@ -1,10 +1,12 @@
-define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './rest'], function(baseDifference, baseFlatten, isArrayLikeObject, rest) {
+define(['./_baseDifference', './_baseFlatten', './_baseRest', './isArrayLikeObject'], function(baseDifference, baseFlatten, baseRest, isArrayLikeObject) {
 
   /**
-   * Creates an array of unique `array` values not included in the other given
-   * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * Creates an array of `array` values not included in the other given arrays
+   * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
    * for equality comparisons. The order of result values is determined by the
    * order they occur in the first array.
+   *
+   * **Note:** Unlike `_.pullAll`, this method returns a new array.
    *
    * @static
    * @memberOf _
@@ -19,7 +21,7 @@ define(['./_baseDifference', './_baseFlatten', './isArrayLikeObject', './rest'],
    * _.difference([2, 1], [2, 3]);
    * // => [1]
    */
-  var difference = rest(function(array, values) {
+  var difference = baseRest(function(array, values) {
     return isArrayLikeObject(array)
       ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
       : [];

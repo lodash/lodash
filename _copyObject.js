@@ -1,5 +1,8 @@
 define(['./_assignValue'], function(assignValue) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * Copies properties of `source` to `object`.
    *
@@ -21,9 +24,9 @@ define(['./_assignValue'], function(assignValue) {
 
       var newValue = customizer
         ? customizer(object[key], source[key], key, object, source)
-        : source[key];
+        : undefined;
 
-      assignValue(object, key, newValue);
+      assignValue(object, key, newValue === undefined ? source[key] : newValue);
     }
     return object;
   }

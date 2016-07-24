@@ -35,8 +35,9 @@ define(['./_baseClamp', './_baseToString', './toInteger', './toString'], functio
       ? length
       : baseClamp(toInteger(position), 0, length);
 
+    var end = position;
     position -= target.length;
-    return position >= 0 && string.indexOf(target, position) == position;
+    return position >= 0 && string.slice(position, end) == target;
   }
 
   return endsWith;

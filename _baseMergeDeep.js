@@ -63,13 +63,12 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
         isCommon = false;
       }
     }
-    stack.set(srcValue, newValue);
-
     if (isCommon) {
       // Recursively merge objects and arrays (susceptible to call stack limits).
+      stack.set(srcValue, newValue);
       mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+      stack['delete'](srcValue);
     }
-    stack['delete'](srcValue);
     assignMergeValue(object, key, newValue);
   }
 

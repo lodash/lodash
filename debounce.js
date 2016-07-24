@@ -143,6 +143,9 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
     }
 
     function cancel() {
+      if (timerId !== undefined) {
+        clearTimeout(timerId);
+      }
       lastInvokeTime = 0;
       lastArgs = lastCallTime = lastThis = timerId = undefined;
     }

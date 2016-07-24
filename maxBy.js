@@ -13,8 +13,7 @@ define(['./_baseExtremum', './_baseGt', './_baseIteratee'], function(baseExtremu
    * @since 4.0.0
    * @category Math
    * @param {Array} array The array to iterate over.
-   * @param {Array|Function|Object|string} [iteratee=_.identity]
-   *  The iteratee invoked per element.
+   * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
    * @returns {*} Returns the maximum value.
    * @example
    *
@@ -29,7 +28,7 @@ define(['./_baseExtremum', './_baseGt', './_baseIteratee'], function(baseExtremu
    */
   function maxBy(array, iteratee) {
     return (array && array.length)
-      ? baseExtremum(array, baseIteratee(iteratee), baseGt)
+      ? baseExtremum(array, baseIteratee(iteratee, 2), baseGt)
       : undefined;
   }
 

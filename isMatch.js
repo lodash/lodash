@@ -17,12 +17,12 @@ var baseIsMatch = require('./_baseIsMatch'),
  * @returns {boolean} Returns `true` if `object` is a match, else `false`.
  * @example
  *
- * var object = { 'user': 'fred', 'age': 40 };
+ * var object = { 'a': 1, 'b': 2 };
  *
- * _.isMatch(object, { 'age': 40 });
+ * _.isMatch(object, { 'b': 2 });
  * // => true
  *
- * _.isMatch(object, { 'age': 36 });
+ * _.isMatch(object, { 'b': 1 });
  * // => false
  */
 function isMatch(object, source) {

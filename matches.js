@@ -17,13 +17,13 @@ var baseClone = require('./_baseClone'),
  * @returns {Function} Returns the new spec function.
  * @example
  *
- * var users = [
- *   { 'user': 'barney', 'age': 36, 'active': true },
- *   { 'user': 'fred',   'age': 40, 'active': false }
+ * var objects = [
+ *   { 'a': 1, 'b': 2, 'c': 3 },
+ *   { 'a': 4, 'b': 5, 'c': 6 }
  * ];
  *
- * _.filter(users, _.matches({ 'age': 40, 'active': false }));
- * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
+ * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
+ * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
  */
 function matches(source) {
   return baseMatches(baseClone(source, true));

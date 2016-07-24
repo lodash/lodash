@@ -16421,10 +16421,7 @@
     });
 
     LazyWrapper.prototype.reject = function(predicate) {
-      predicate = getIteratee(predicate, 3);
-      return this.filter(function(value) {
-        return !predicate(value);
-      });
+      return this.filter(negate(getIteratee(predicate)));
     };
 
     LazyWrapper.prototype.slice = function(start, end) {

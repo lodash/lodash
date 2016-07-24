@@ -8153,10 +8153,10 @@
     QUnit.test('should work as an iteratee for methods like `_.every`', function(assert) {
       assert.expect(1);
 
-      var array1 = [1, 2, 3],
-          array2 = [2, 3, 1];
+      var array = [2, 3, 1],
+          values = [1, 2, 3];
 
-      assert.ok(lodashStable.every(array1, lodashStable.partial(_.includes, array2)));
+      assert.ok(lodashStable.every(values, lodashStable.partial(_.includes, array)));
     });
   }(1, 2, 3, 4));
 

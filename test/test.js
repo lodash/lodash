@@ -5393,14 +5393,6 @@
 
       assert.strictEqual(_.endsWith(string, 'ab', 2.2), true);
     });
-
-    QUnit.test('should return `true` when `target` is an empty string regardless of `position`', function(assert) {
-      assert.expect(1);
-
-      assert.ok(lodashStable.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
-        return _.endsWith(string, '', position, true);
-      }));
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -20885,14 +20877,6 @@
 
       assert.strictEqual(_.startsWith(string, 'bc', 1.2), true);
     });
-
-    QUnit.test('should return `true` when `target` is an empty string regardless of `position`', function(assert) {
-      assert.expect(1);
-
-      assert.ok(lodashStable.every([-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity], function(position) {
-        return _.startsWith(string, '', position, true);
-      }));
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -20924,8 +20908,19 @@
       assert.expect(2);
 
       var position = isStartsWith ? 1 : 2;
+
       assert.strictEqual(func(string, 'b', Object(position)), true);
       assert.strictEqual(func(string, 'b', { 'toString': lodashStable.constant(String(position)) }), true);
+    });
+
+    QUnit.test('should return `true` when `target` is an empty string regardless of `position`', function(assert) {
+      assert.expect(1);
+
+      var positions = [-Infinity, NaN, -3, -1, 0, 1, 2, 3, 5, MAX_SAFE_INTEGER, Infinity];
+
+      assert.ok(lodashStable.every(positions, function(position) {
+        return func(string, '', position);
+      }));
     });
   });
 

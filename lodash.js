@@ -5863,7 +5863,7 @@
      */
     function isFlattenable(value) {
       return isArray(value) || isArguments(value) ||
-        !!(spreadableSymbol && value && value[spreadableSymbol])
+        !!(spreadableSymbol && value && value[spreadableSymbol]);
     }
 
     /**

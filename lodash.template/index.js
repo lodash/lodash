@@ -1,5 +1,5 @@
 /**
- * lodash 3.3.2 (Custom Build) <https://lodash.com/>
+ * lodash 3.4.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -13,6 +13,7 @@ var baseCopy = require('lodash._basecopy'),
     reInterpolate = require('lodash._reinterpolate'),
     escape = require('lodash.escape'),
     keys = require('lodash.keys'),
+    restParam = require('lodash.restparam'),
     templateSettings = require('lodash.templatesettings');
 
 /** `Object#toString` result references. */
@@ -24,9 +25,7 @@ var reEmptyStringLeading = /\b__p \+= '';/g,
     reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
 /**
- * Used to match ES template delimiters.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components)
- * for more details.
+ * Used to match [ES template delimiters](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-template-literal-lexical-components).
  */
 var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
@@ -66,7 +65,7 @@ function escapeStringChar(chr) {
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  */
 function isObjectLike(value) {
-  return (value && typeof value == 'object') || false;
+  return !!value && typeof value == 'object';
 }
 
 /** Used for native method references. */
@@ -76,9 +75,8 @@ var objectProto = Object.prototype;
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * Used to resolve the `toStringTag` of values.
- * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
- * for more details.
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
  */
 var objToString = objectProto.toString;
 
@@ -150,7 +148,7 @@ function baseAssign(object, source, customizer) {
  * // => false
  */
 function isError(value) {
-  return (isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag) || false;
+  return isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag;
 }
 
 /**
@@ -160,9 +158,9 @@ function isError(value) {
  * properties may be accessed as free variables in the template. If a setting
  * object is provided it takes precedence over `_.templateSettings` values.
  *
- * **Note:** In the development build `_.template` utilizes sourceURLs for easier debugging.
- * See the [HTML5 Rocks article on sourcemaps](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
- * for more details.
+ * **Note:** In the development build `_.template` utilizes
+ * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+ * for easier debugging.
  *
  * For more information on precompiling templates see
  * [lodash's custom builds documentation](https://lodash.com/custom-builds).
@@ -358,7 +356,7 @@ function template(string, options, otherOptions) {
  * @static
  * @memberOf _
  * @category Utility
- * @param {*} func The function to attempt.
+ * @param {Function} func The function to attempt.
  * @returns {*} Returns the `func` result or error object.
  * @example
  *
@@ -371,19 +369,12 @@ function template(string, options, otherOptions) {
  *   elements = [];
  * }
  */
-function attempt() {
-  var func = arguments[0],
-      length = arguments.length,
-      args = Array(length ? (length - 1) : 0);
-
-  while (--length > 0) {
-    args[length - 1] = arguments[length];
-  }
+var attempt = restParam(function(func, args) {
   try {
     return func.apply(undefined, args);
   } catch(e) {
     return isError(e) ? e : new Error(e);
   }
-}
+});
 
 module.exports = template;

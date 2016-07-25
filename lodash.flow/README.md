@@ -1,4 +1,4 @@
-# lodash.flow v3.3.0
+# lodash.flow v3.4.0
 
 The [lodash](https://lodash.com/) method `_.flow` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var flow = require('lodash.flow');
 ```
 
-See the [documentation](https://lodash.com/docs#flow) or [package source](https://github.com/lodash/lodash/blob/3.3.0-npm-packages/lodash.flow) for more details.
+See the [documentation](https://lodash.com/docs#flow) or [package source](https://github.com/lodash/lodash/blob/3.4.0-npm-packages/lodash.flow) for more details.

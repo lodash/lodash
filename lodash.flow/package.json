@@ -1,6 +1,6 @@
 {
   "name": "lodash.flow",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "The lodash method `_.flow` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -13,9 +13,5 @@
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" },
-  "dependencies": {
-    "lodash._baseflatten": "~4.2.0",
-    "lodash.rest": "^4.0.0"
-  }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
 }

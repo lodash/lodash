@@ -9793,6 +9793,11 @@
      * on the trailing edge of the timeout only if the debounced function is
      * invoked more than once during the `wait` timeout.
      *
+     * If `leading` is false `func` will not be invoked immediately, even if
+     * `wait` is `0`. It will be queued to run on the next tick, similar to
+     * how `setTimeout` behaves with a timeout of `0`.  If `leading` is true,
+     * `func` can be invoked immediately.
+     *
      * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
      * for details over the differences between `_.debounce` and `_.throttle`.
      *

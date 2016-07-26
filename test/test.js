@@ -8290,10 +8290,15 @@
     QUnit.test('should coerce arguments to finite numbers', function(assert) {
       assert.expect(1);
 
-      var actual = [_.inRange(0, '0', 1), _.inRange(0, '1'), _.inRange(0, 0, '1'), _.inRange(0, NaN, 1), _.inRange(-1, -1, NaN)],
-          expected = lodashStable.map(actual, stubTrue);
+      var actual = [
+        _.inRange(0, '1'),
+        _.inRange(0, '0', 1),
+        _.inRange(0, 0, '1'),
+        _.inRange(0, NaN, 1),
+        _.inRange(-1, -1, NaN)
+      ];
 
-      assert.deepEqual(actual, expected);
+      assert.deepEqual(actual, lodashStable.map(actual, stubTrue));
     });
   }());
 
@@ -18211,10 +18216,15 @@
     });
 
     QUnit.test('should coerce arguments to finite numbers', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
-      assert.strictEqual(_.random('1', '1'), 1);
-      assert.strictEqual(_.random(NaN, NaN), 0);
+      var actual = [
+        _.random(NaN, NaN),
+        _.random('1', '1'),
+        _.random(Infinity, Infinity)
+      ];
+
+      assert.deepEqual(actual, [0, 1, MAX_INTEGER]);
     });
 
     QUnit.test('should support floats', function(assert) {
@@ -18332,7 +18342,14 @@
     QUnit.test('`_.' + methodName + '` should coerce arguments to finite numbers', function(assert) {
       assert.expect(1);
 
-      var actual = [func('0', 1), func('1'), func(0, 1, '1'), func(NaN), func(NaN, NaN)];
+      var actual = [
+        func('1'),
+        func('0', 1),
+        func(0, 1, '1'),
+        func(NaN),
+        func(NaN, NaN)
+      ];
+
       assert.deepEqual(actual, [[0], [0], [0], [], []]);
     });
 
@@ -18731,14 +18748,14 @@
 
       if (!isNpm) {
         var array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
-            predicate = function(value) { return isFilter ? isEven(value) : !isEven(value); },
-            actual = _(array).slice(1).map(square)[methodName](predicate).value();
-
-        assert.deepEqual(actual, _[methodName](lodashStable.map(array.slice(1), square), predicate));
+            predicate = function(value) { return isFilter ? isEven(value) : !isEven(value); };
 
         var object = lodashStable.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
           return ['key' + index, index];
         }));
+
+        var actual = _(array).slice(1).map(square)[methodName](predicate).value();
+        assert.deepEqual(actual, _[methodName](lodashStable.map(array.slice(1), square), predicate));
 
         actual = _(object).mapValues(square)[methodName](predicate).value();
         assert.deepEqual(actual, _[methodName](lodashStable.mapValues(object, square), predicate));
@@ -21483,8 +21500,13 @@
 
       if (!isNpm) {
         var args,
-            array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
-            expected = [square(LARGE_ARRAY_SIZE), LARGE_ARRAY_SIZE - 1, lodashStable.map(array.slice(1), square)];
+            array = lodashStable.range(LARGE_ARRAY_SIZE + 1);
+
+        var expected = [
+          square(LARGE_ARRAY_SIZE),
+          LARGE_ARRAY_SIZE - 1,
+          lodashStable.map(array.slice(1), square)
+        ];
 
         _(array).slice(1).takeRightWhile(function(value, index, array) {
           args = slice.call(arguments);
@@ -22962,14 +22984,14 @@
       assert.expect(2);
 
       if (!isNpm) {
-        var array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
-            actual = _(array).slice(1).map(String).toArray().value();
-
-        assert.deepEqual(actual, lodashStable.map(array.slice(1), String));
+        var array = lodashStable.range(LARGE_ARRAY_SIZE + 1);
 
         var object = lodashStable.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
           return ['key' + index, index];
         }));
+
+        var actual = _(array).slice(1).map(String).toArray().value();
+        assert.deepEqual(actual, lodashStable.map(array.slice(1), String));
 
         actual = _(object).toArray().slice(1).map(String).value();
         assert.deepEqual(actual, _.map(_.toArray(object).slice(1), String));

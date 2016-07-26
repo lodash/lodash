@@ -10647,9 +10647,11 @@
     }
 
     /**
-     * Checks if `object` conforms to `source` by invoking the predicate properties
-     * of `source` with the corresponding property values of `object`. This method
-     * is equivalent to a `_.conforms` function when `source` is partially applied.
+     * Checks if `object` conforms to `source` by invoking the predicate
+     * properties of `source` with the corresponding property values of `object`.
+     *
+     * **Note:** This method is equivalent to `_.conforms` when `source` is
+     * partially applied.
      *
      * @static
      * @memberOf _
@@ -11317,10 +11319,10 @@
 
     /**
      * Performs a partial deep comparison between `object` and `source` to
-     * determine if `object` contains equivalent property values. This method is
-     * equivalent to a `_.matches` function when `source` is partially applied.
+     * determine if `object` contains equivalent property values.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** This method supports comparing the same values as `_.isEqual`
+     * and is equivalent to `_.matches` when `source` is partially applied.
      *
      * @static
      * @memberOf _
@@ -14845,6 +14847,9 @@
      * the corresponding property values of a given object, returning `true` if
      * all predicates return truthy, else `false`.
      *
+     * **Note:** The created function is equivalent to `_.conformsTo` with
+     * `source` partially applied.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -15030,10 +15035,10 @@
     /**
      * Creates a function that performs a partial deep comparison between a given
      * object and `source`, returning `true` if the given object has equivalent
-     * property values, else `false`. The created function is equivalent to
-     * `_.isMatch` with a `source` partially applied.
+     * property values, else `false`.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** The created function supports comparing the same values as
+     * `_.isEqual` is equivalent to `_.isMatch` with `source` partially applied.
      *
      * @static
      * @memberOf _

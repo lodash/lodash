@@ -1,5 +1,4 @@
 .DS_Store
 *.log
-coverage
-node_modules
 doc/*.html
+node_modules

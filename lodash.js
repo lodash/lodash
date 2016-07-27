@@ -5624,7 +5624,7 @@
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of symbols.
      */
-    var getSymbolsIn = !nativeGetSymbols ? getSymbols : function(object) {
+    var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
       var result = [];
       while (object) {
         arrayPush(result, getSymbols(object));

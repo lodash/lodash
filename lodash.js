@@ -5288,6 +5288,7 @@
         }
       }
       stack['delete'](array);
+      stack['delete'](other);
       return result;
     }
 
@@ -5448,6 +5449,7 @@
         }
       }
       stack['delete'](object);
+      stack['delete'](other);
       return result;
     }
 

@@ -2671,7 +2671,7 @@
     var objects = {
       '`arguments` objects': arguments,
       'arrays': ['a', ''],
-      'array-like objects': { '0': 'a', '1': '', 'length': 3 },
+      'array-like objects': { '0': 'a', 'length': 1 },
       'booleans': false,
       'boolean objects': Object(false),
       'date objects': new Date,
@@ -6587,7 +6587,7 @@
       assert.expect(3);
 
       var expected = [],
-          nonArray = { 'a': 1 };
+          nonArray = { '0': 'a' };
 
       assert.deepEqual(_.flatten(nonArray), expected);
       assert.deepEqual(_.flattenDeep(nonArray), expected);
@@ -8979,7 +8979,7 @@
     QUnit.test('should return `true` for array-like values', function(assert) {
       assert.expect(1);
 
-      var values = [args, [1, 2, 3], { '0': 1, 'length': 1 }, 'a'],
+      var values = [args, [1, 2, 3], { '0': 'a', 'length': 1 }, 'a'],
           expected = lodashStable.map(values, stubTrue),
           actual = lodashStable.map(values, _.isArrayLike);
 
@@ -23055,8 +23055,8 @@
     QUnit.test('`_.' + methodName + '` should treat array-like objects like arrays', function(assert) {
       assert.expect(2);
 
-      var object = { '0': 'a', '1': 'b', '2': 'c', 'length': 3 };
-      assert.deepEqual(func(object), ['a', 'b', 'c']);
+      var object = { '0': 'a', 'length': 1 };
+      assert.deepEqual(func(object), ['a']);
       assert.deepEqual(func(args), array);
     });
 

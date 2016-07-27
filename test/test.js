@@ -12841,22 +12841,6 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function(assert) {
-      assert.expect(2);
-
-      var expected = lodashStable.map(primitives, function(value) {
-        return typeof value == 'string' ? ['0'] : [];
-      });
-
-      var actual = lodashStable.map(primitives, func);
-      assert.deepEqual(actual, expected);
-
-      // IE 9 doesn't box numbers in for-in loops.
-      numberProto.a = 1;
-      assert.deepEqual(func(0), isKeys ? [] : ['a']);
-      delete numberProto.a;
-    });
-
     QUnit.test('`_.' + methodName + '` should treat sparse arrays as dense', function(assert) {
       assert.expect(1);
 
@@ -12866,16 +12850,6 @@
       var actual = func(array).sort();
 
       assert.deepEqual(actual, ['0', '1', '2']);
-    });
-
-    QUnit.test('`_.' + methodName + '` should not coerce nullish values to objects', function(assert) {
-      assert.expect(2);
-
-      objectProto.a = 1;
-      lodashStable.each([null, undefined], function(value) {
-        assert.deepEqual(func(value), []);
-      });
-      delete objectProto.a;
     });
 
     QUnit.test('`_.' + methodName + '` should return keys for custom properties on arrays', function(assert) {
@@ -12977,6 +12951,41 @@
       assert.deepEqual(actual, expected);
 
       delete stringProto.a;
+    });
+
+    QUnit.test('`_.' + methodName + '` should work with array-like objects', function(assert) {
+      assert.expect(1);
+
+      var object = { '0': 'a', 'length': 1 },
+          actual = func(object).sort()
+
+      assert.deepEqual(actual, ['0', 'length']);
+    });
+
+    QUnit.test('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function(assert) {
+      assert.expect(2);
+
+      var expected = lodashStable.map(primitives, function(value) {
+        return typeof value == 'string' ? ['0'] : [];
+      });
+
+      var actual = lodashStable.map(primitives, func);
+      assert.deepEqual(actual, expected);
+
+      // IE 9 doesn't box numbers in for-in loops.
+      numberProto.a = 1;
+      assert.deepEqual(func(0), isKeys ? [] : ['a']);
+      delete numberProto.a;
+    });
+
+    QUnit.test('`_.' + methodName + '` should not coerce nullish values to objects', function(assert) {
+      assert.expect(2);
+
+      objectProto.a = 1;
+      lodashStable.each([null, undefined], function(value) {
+        assert.deepEqual(func(value), []);
+      });
+      delete objectProto.a;
     });
 
     QUnit.test('`_.' + methodName + '` skips the `constructor` property on prototype objects', function(assert) {

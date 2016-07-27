@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.14.0';
+  var VERSION = '4.14.1';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -67,10 +67,10 @@
   var root = freeGlobal || freeSelf || Function('return this')();
 
   /** Detect free variable `exports`. */
-  var freeExports = freeGlobal && typeof exports == 'object' && exports;
+  var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
   /** Detect free variable `module`. */
-  var freeModule = freeExports && typeof module == 'object' && module;
+  var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
   /*--------------------------------------------------------------------------*/
 
@@ -3467,10 +3467,10 @@
   /**
    * Creates a function that performs a partial deep comparison between a given
    * object and `source`, returning `true` if the given object has equivalent
-   * property values, else `false`. The created function is equivalent to
-   * `_.isMatch` with a `source` partially applied.
+   * property values, else `false`.
    *
-   * **Note:** This method supports comparing the same values as `_.isEqual`.
+   * **Note:** The created function supports comparing the same values as
+   * `_.isEqual` is equivalent to `_.isMatch` with `source` partially applied.
    *
    * @static
    * @memberOf _

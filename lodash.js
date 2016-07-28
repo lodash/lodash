@@ -3409,6 +3409,7 @@
         // Recursively merge objects and arrays (susceptible to call stack limits).
         stack.set(srcValue, newValue);
         mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+        stack['delete'](srcValue);
       }
       assignMergeValue(object, key, newValue);
     }

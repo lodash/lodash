@@ -1,10 +1,10 @@
 import freeGlobal from './_freeGlobal.js';
 
 /** Detect free variable `exports`. */
-var freeExports = freeGlobal && typeof exports == 'object' && exports;
+var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
 
 /** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module;
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
 
 /** Detect the popular CommonJS extension `module.exports`. */
 var moduleExports = freeModule && freeModule.exports === freeExports;

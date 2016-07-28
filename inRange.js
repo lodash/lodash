@@ -1,4 +1,5 @@
 import baseInRange from './_baseInRange.js';
+import toFinite from './toFinite.js';
 import toNumber from './toNumber.js';
 
 /**
@@ -40,12 +41,12 @@ import toNumber from './toNumber.js';
  * // => true
  */
 function inRange(number, start, end) {
-  start = toNumber(start) || 0;
+  start = toFinite(start);
   if (end === undefined) {
     end = start;
     start = 0;
   } else {
-    end = toNumber(end) || 0;
+    end = toFinite(end);
   }
   number = toNumber(number);
   return baseInRange(number, start, end);

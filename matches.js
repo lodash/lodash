@@ -4,10 +4,10 @@ var baseClone = require('./_baseClone'),
 /**
  * Creates a function that performs a partial deep comparison between a given
  * object and `source`, returning `true` if the given object has equivalent
- * property values, else `false`. The created function is equivalent to
- * `_.isMatch` with a `source` partially applied.
+ * property values, else `false`.
  *
- * **Note:** This method supports comparing the same values as `_.isEqual`.
+ * **Note:** The created function supports comparing the same values as
+ * `_.isEqual` is equivalent to `_.isMatch` with `source` partially applied.
  *
  * @static
  * @memberOf _

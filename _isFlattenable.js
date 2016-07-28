@@ -14,7 +14,7 @@ var spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
  */
 function isFlattenable(value) {
   return isArray(value) || isArguments(value) ||
-    !!(spreadableSymbol && value && value[spreadableSymbol])
+    !!(spreadableSymbol && value && value[spreadableSymbol]);
 }
 
 module.exports = isFlattenable;

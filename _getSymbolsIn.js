@@ -1,6 +1,7 @@
 var arrayPush = require('./_arrayPush'),
     getPrototype = require('./_getPrototype'),
-    getSymbols = require('./_getSymbols');
+    getSymbols = require('./_getSymbols'),
+    stubArray = require('./stubArray');
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeGetSymbols = Object.getOwnPropertySymbols;
@@ -13,7 +14,7 @@ var nativeGetSymbols = Object.getOwnPropertySymbols;
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-var getSymbolsIn = !nativeGetSymbols ? getSymbols : function(object) {
+var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
   var result = [];
   while (object) {
     arrayPush(result, getSymbols(object));

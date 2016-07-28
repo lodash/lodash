@@ -3,10 +3,10 @@ var baseIsMatch = require('./_baseIsMatch'),
 
 /**
  * Performs a partial deep comparison between `object` and `source` to
- * determine if `object` contains equivalent property values. This method is
- * equivalent to a `_.matches` function when `source` is partially applied.
+ * determine if `object` contains equivalent property values.
  *
- * **Note:** This method supports comparing the same values as `_.isEqual`.
+ * **Note:** This method supports comparing the same values as `_.isEqual`
+ * and is equivalent to `_.matches` when `source` is partially applied.
  *
  * @static
  * @memberOf _

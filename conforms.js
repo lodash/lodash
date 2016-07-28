@@ -6,6 +6,9 @@ var baseClone = require('./_baseClone'),
  * the corresponding property values of a given object, returning `true` if
  * all predicates return truthy, else `false`.
  *
+ * **Note:** The created function is equivalent to `_.conformsTo` with
+ * `source` partially applied.
+ *
  * @static
  * @memberOf _
  * @since 4.0.0

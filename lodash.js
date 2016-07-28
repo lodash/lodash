@@ -2415,9 +2415,6 @@
         // Recursively populate clone (susceptible to call stack limits).
         assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
       });
-      if (!isFull) {
-        stack['delete'](value);
-      }
       return result;
     }
 
@@ -3412,6 +3409,7 @@
         // Recursively merge objects and arrays (susceptible to call stack limits).
         stack.set(srcValue, newValue);
         mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+        stack['delete'](srcValue);
       }
       assignMergeValue(object, key, newValue);
     }
@@ -6116,6 +6114,7 @@
         // Recursively merge objects and arrays (susceptible to call stack limits).
         stack.set(srcValue, objValue);
         baseMerge(objValue, srcValue, undefined, mergeDefaults, stack);
+        stack['delete'](srcValue);
       }
       return objValue;
     }

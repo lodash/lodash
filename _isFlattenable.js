@@ -15,7 +15,7 @@ define(['./_Symbol', './isArguments', './isArray'], function(Symbol, isArguments
    */
   function isFlattenable(value) {
     return isArray(value) || isArguments(value) ||
-      !!(spreadableSymbol && value && value[spreadableSymbol])
+      !!(spreadableSymbol && value && value[spreadableSymbol]);
   }
 
   return isFlattenable;

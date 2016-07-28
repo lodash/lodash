@@ -80,6 +80,7 @@ define(['./_baseHas', './keys'], function(baseHas, keys) {
       }
     }
     stack['delete'](object);
+    stack['delete'](other);
     return result;
   }
 

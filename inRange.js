@@ -1,4 +1,4 @@
-define(['./_baseInRange', './toNumber'], function(baseInRange, toNumber) {
+define(['./_baseInRange', './toFinite', './toNumber'], function(baseInRange, toFinite, toNumber) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -42,12 +42,12 @@ define(['./_baseInRange', './toNumber'], function(baseInRange, toNumber) {
    * // => true
    */
   function inRange(number, start, end) {
-    start = toNumber(start) || 0;
+    start = toFinite(start);
     if (end === undefined) {
       end = start;
       start = 0;
     } else {
-      end = toNumber(end) || 0;
+      end = toFinite(end);
     }
     number = toNumber(number);
     return baseInRange(number, start, end);

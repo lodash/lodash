@@ -1,4 +1,4 @@
-define(['./_baseRange', './_isIterateeCall', './toNumber'], function(baseRange, isIterateeCall, toNumber) {
+define(['./_baseRange', './_isIterateeCall', './toFinite'], function(baseRange, isIterateeCall, toFinite) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -16,15 +16,14 @@ define(['./_baseRange', './_isIterateeCall', './toNumber'], function(baseRange, 
         end = step = undefined;
       }
       // Ensure the sign of `-0` is preserved.
-      start = toNumber(start);
-      start = start === start ? start : 0;
+      start = toFinite(start);
       if (end === undefined) {
         end = start;
         start = 0;
       } else {
-        end = toNumber(end) || 0;
+        end = toFinite(end);
       }
-      step = step === undefined ? (start < end ? 1 : -1) : (toNumber(step) || 0);
+      step = step === undefined ? (start < end ? 1 : -1) : toFinite(step);
       return baseRange(start, end, step, fromRight);
     };
   }

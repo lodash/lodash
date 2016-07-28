@@ -1,4 +1,4 @@
-define(['./_baseRandom', './_isIterateeCall', './toNumber'], function(baseRandom, isIterateeCall, toNumber) {
+define(['./_baseRandom', './_isIterateeCall', './toFinite'], function(baseRandom, isIterateeCall, toFinite) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -60,12 +60,12 @@ define(['./_baseRandom', './_isIterateeCall', './toNumber'], function(baseRandom
       upper = 1;
     }
     else {
-      lower = toNumber(lower) || 0;
+      lower = toFinite(lower);
       if (upper === undefined) {
         upper = lower;
         lower = 0;
       } else {
-        upper = toNumber(upper) || 0;
+        upper = toFinite(upper);
       }
     }
     if (lower > upper) {

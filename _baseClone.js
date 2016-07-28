@@ -120,9 +120,6 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_clone
       // Recursively populate clone (susceptible to call stack limits).
       assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
     });
-    if (!isFull) {
-      stack['delete'](value);
-    }
     return result;
   }
 

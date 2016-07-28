@@ -1,9 +1,11 @@
 define(['./_baseConformsTo', './keys'], function(baseConformsTo, keys) {
 
   /**
-   * Checks if `object` conforms to `source` by invoking the predicate properties
-   * of `source` with the corresponding property values of `object`. This method
-   * is equivalent to a `_.conforms` function when `source` is partially applied.
+   * Checks if `object` conforms to `source` by invoking the predicate
+   * properties of `source` with the corresponding property values of `object`.
+   *
+   * **Note:** This method is equivalent to `_.conforms` when `source` is
+   * partially applied.
    *
    * @static
    * @memberOf _

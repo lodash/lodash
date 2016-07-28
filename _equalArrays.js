@@ -78,6 +78,7 @@ define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
       }
     }
     stack['delete'](array);
+    stack['delete'](other);
     return result;
   }
 

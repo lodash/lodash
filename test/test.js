@@ -12957,7 +12957,7 @@
       assert.expect(1);
 
       var object = { '0': 'a', 'length': 1 },
-          actual = func(object).sort()
+          actual = func(object).sort();
 
       assert.deepEqual(actual, ['0', 'length']);
     });

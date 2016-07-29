@@ -14,7 +14,6 @@
     "doc:fp": "node lib/fp/build-doc",
     "doc:site": "node lib/main/build-doc site",
     "doc:sitehtml": "optional-dev-dependency marky-markdown@^7.0.2 && npm run doc:site && node lib/main/build-site",
-    "prepublish": "npm run build",
     "pretest": "npm run build",
     "style": "npm run style:main && npm run style:fp && npm run style:perf && npm run style:test",
     "style:fp": "jscs fp/*.js lib/**/*.js",

@@ -1,6 +1,6 @@
 {
   "name": "lodash.findlast",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "The modern build of lodash’s `_.findLast` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -21,6 +21,7 @@
     "lodash._baseeachright": "^3.0.0",
     "lodash._basefind": "^3.0.0",
     "lodash._basefindindex": "^3.0.0",
-    "lodash.isarray": "^3.0.0"
+    "lodash.isarray": "^3.0.0",
+    "lodash.keys": "^3.0.0"
   }
 }

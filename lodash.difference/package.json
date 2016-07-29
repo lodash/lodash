@@ -1,6 +1,6 @@
 {
   "name": "lodash.difference",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "The modern build of lodash’s `_.difference` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -19,8 +19,6 @@
   "dependencies": {
     "lodash._basedifference": "^3.0.0",
     "lodash._baseflatten": "^3.0.0",
-    "lodash.isarguments": "^3.0.0",
-    "lodash.isarray": "^3.0.0",
     "lodash.restparam": "^3.0.0"
   }
 }

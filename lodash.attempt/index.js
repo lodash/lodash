@@ -1,13 +1,12 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
-var baseSlice = require('lodash._baseslice'),
-    isError = require('lodash.iserror');
+var isError = require('lodash.iserror');
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error
@@ -29,9 +28,16 @@ var baseSlice = require('lodash._baseslice'),
  *   elements = [];
  * }
  */
-function attempt(func) {
+function attempt() {
+  var length = arguments.length,
+      func = arguments[0];
+
   try {
-    return func.apply(undefined, baseSlice(arguments, 1));
+    var args = Array(length ? length - 1 : 0);
+    while (--length > 0) {
+      args[length - 1] = arguments[length];
+    }
+    return func.apply(undefined, args);
   } catch(e) {
     return isError(e) ? e : new Error(e);
   }

@@ -1,6 +1,6 @@
 {
   "name": "lodash.merge",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "The modern build of lodash’s `_.merge` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -19,7 +19,6 @@
   "dependencies": {
     "lodash._arraycopy": "^3.0.0",
     "lodash._arrayeach": "^3.0.0",
-    "lodash._basefor": "^3.0.0",
     "lodash._createassigner": "^3.0.0",
     "lodash.isarguments": "^3.0.0",
     "lodash.isarray": "^3.0.0",

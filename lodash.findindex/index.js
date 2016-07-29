@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
@@ -7,7 +7,8 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
-    baseFindIndex = require('lodash._basefindindex');
+    baseFindIndex = require('lodash._basefindindex'),
+    isArray = require('lodash.isarray');
 
 /**
  * Creates a `_.findIndex` or `_.findLastIndex` function.

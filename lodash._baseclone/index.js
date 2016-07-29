@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -10,8 +10,8 @@ var arrayCopy = require('lodash._arraycopy'),
     arrayEach = require('lodash._arrayeach'),
     baseAssign = require('lodash._baseassign'),
     baseFor = require('lodash._basefor'),
+    getNative = require('lodash._getnative'),
     isArray = require('lodash.isarray'),
-    isNative = require('lodash.isnative'),
     keys = require('lodash.keys');
 
 /** `Object#toString` result references. */
@@ -71,10 +71,10 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 var objToString = objectProto.toString;
 
 /** Native method references. */
-var ArrayBuffer = isNative(ArrayBuffer = global.ArrayBuffer) && ArrayBuffer,
-    bufferSlice = isNative(bufferSlice = ArrayBuffer && new ArrayBuffer(0).slice) && bufferSlice,
+var ArrayBuffer = getNative(root, 'ArrayBuffer'),
+    bufferSlice = getNative(ArrayBuffer && new ArrayBuffer(0), 'slice'),
     floor = Math.floor,
-    Uint8Array = isNative(Uint8Array = global.Uint8Array) && Uint8Array;
+    Uint8Array = getNative(root, 'Uint8Array');
 
 /** Used to clone array buffers. */
 var Float64Array = (function() {
@@ -82,10 +82,10 @@ var Float64Array = (function() {
   // where the array buffer's `byteLength` is not a multiple of the typed
   // array's `BYTES_PER_ELEMENT`.
   try {
-    var func = isNative(func = global.Float64Array) && func,
+    var func = getNative(root, 'Float64Array'),
         result = new func(new ArrayBuffer(10), 0, 1) && func;
   } catch(e) {}
-  return result;
+  return result || null;
 }());
 
 /** Used as the size, in bytes, of each `Float64Array` element. */
@@ -298,7 +298,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,13 +8,14 @@
  */
 var baseIndexOf = require('lodash._baseindexof'),
     cacheIndexOf = require('lodash._cacheindexof'),
-    createCache = require('lodash._createcache');
+    createCache = require('lodash._createcache'),
+    restParam = require('lodash.restparam');
 
 /**
- * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
  */
-var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
+var MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * The base implementation of `_.property` without support for deep paths.
@@ -55,7 +56,7 @@ function isArrayLike(value) {
 /**
  * Checks if `value` is a valid array-like length.
  *
- * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
  *
  * @private
  * @param {*} value The value to check.
@@ -66,8 +67,8 @@ function isLength(value) {
 }
 
 /**
- * Creates an array of unique values in all provided arrays using
- * [`SameValueZero`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-samevaluezero)
+ * Creates an array of unique values that are included in all of the provided
+ * arrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
  * for equality comparisons.
  *
  * @static
@@ -79,27 +80,19 @@ function isLength(value) {
  * _.intersection([1, 2], [4, 2], [2, 1]);
  * // => [2]
  */
-function intersection() {
-  var args = [],
-      argsIndex = -1,
-      argsLength = arguments.length,
-      caches = [],
+var intersection = restParam(function(arrays) {
+  var othLength = arrays.length,
+      othIndex = othLength,
+      caches = Array(length),
       indexOf = baseIndexOf,
       isCommon = true,
       result = [];
 
-  while (++argsIndex < argsLength) {
-    var value = arguments[argsIndex];
-    if (isArrayLike(value)) {
-      args.push(value);
-      caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
-    }
+  while (othIndex--) {
+    var value = arrays[othIndex] = isArrayLike(value = arrays[othIndex]) ? value : [];
+    caches[othIndex] = (isCommon && value.length >= 120) ? createCache(othIndex && value) : null;
   }
-  argsLength = args.length;
-  if (argsLength < 2) {
-    return result;
-  }
-  var array = args[0],
+  var array = arrays[0],
       index = -1,
       length = array ? array.length : 0,
       seen = caches[0];
@@ -108,10 +101,10 @@ function intersection() {
   while (++index < length) {
     value = array[index];
     if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value, 0)) < 0) {
-      argsIndex = argsLength;
-      while (--argsIndex) {
-        var cache = caches[argsIndex];
-        if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value, 0)) < 0) {
+      var othIndex = othLength;
+      while (--othIndex) {
+        var cache = caches[othIndex];
+        if ((cache ? cacheIndexOf(cache, value) : indexOf(arrays[othIndex], value, 0)) < 0) {
           continue outer;
         }
       }
@@ -122,6 +115,6 @@ function intersection() {
     }
   }
   return result;
-}
+});
 
 module.exports = intersection;

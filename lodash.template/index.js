@@ -1,5 +1,5 @@
 /**
- * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
@@ -7,13 +7,15 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCopy = require('lodash._basecopy'),
-    baseToString = require('lodash._basetostring'),
+    baseSlice = require('lodash._baseslice'),
     baseValues = require('lodash._basevalues'),
     isIterateeCall = require('lodash._isiterateecall'),
     reInterpolate = require('lodash._reinterpolate'),
-    isError = require('lodash.iserror'),
     keys = require('lodash.keys'),
     templateSettings = require('lodash.templatesettings');
+
+/** `Object#toString` result references. */
+var errorTag = '[object Error]';
 
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -44,6 +46,21 @@ var stringEscapes = {
 };
 
 /**
+ * Converts `value` to a string if it is not one. An empty string is returned
+ * for `null` or `undefined` values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  if (typeof value == 'string') {
+    return value;
+  }
+  return value == null ? '' : (value + '');
+}
+
+/**
  * Used by `_.template` to escape characters for inclusion in compiled
  * string literals.
  *
@@ -55,11 +72,29 @@ function escapeStringChar(chr) {
   return '\\' + stringEscapes[chr];
 }
 
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return (value && typeof value == 'object') || false;
+}
+
 /** Used for native method references. */
 var objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the `toStringTag` of values.
+ * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * for more details.
+ */
+var objToString = objectProto.toString;
 
 /**
  * Used by `_.template` to customize its `_.assign` use.
@@ -96,7 +131,7 @@ function baseAssign(object, source, customizer) {
     return baseCopy(source, object, props);
   }
   var index = -1,
-      length = props.length
+      length = props.length;
 
   while (++index < length) {
     var key = props[index],
@@ -109,6 +144,27 @@ function baseAssign(object, source, customizer) {
     }
   }
   return object;
+}
+
+/**
+ * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+ * `SyntaxError`, `TypeError`, or `URIError` object.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
+ * @example
+ *
+ * _.isError(new Error);
+ * // => true
+ *
+ * _.isError(Error);
+ * // => false
+ */
+function isError(value) {
+  return (isObjectLike(value) && typeof value.message == 'string' && objToString.call(value) == errorTag) || false;
 }
 
 /**
@@ -310,8 +366,8 @@ function template(string, options, otherOptions) {
 }
 
 /**
- * Attempts to invoke `func`, returning either the result or the caught
- * error object.
+ * Attempts to invoke `func`, returning either the result or the caught error
+ * object. Any additional arguments are provided to `func` when it is invoked.
  *
  * @static
  * @memberOf _
@@ -321,9 +377,9 @@ function template(string, options, otherOptions) {
  * @example
  *
  * // avoid throwing errors for invalid selectors
- * var elements = _.attempt(function() {
+ * var elements = _.attempt(function(selector) {
  *   return document.querySelectorAll(selector);
- * });
+ * }, '>_>');
  *
  * if (_.isError(elements)) {
  *   elements = [];
@@ -331,9 +387,9 @@ function template(string, options, otherOptions) {
  */
 function attempt(func) {
   try {
-    return func();
+    return func.apply(undefined, baseSlice(arguments, 1));
   } catch(e) {
-    return isError(e) ? e : Error(e);
+    return isError(e) ? e : new Error(e);
   }
 }
 

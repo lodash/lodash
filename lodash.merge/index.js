@@ -1,14 +1,13 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var arrayCopy = require('lodash._arraycopy'),
     arrayEach = require('lodash._arrayeach'),
-    baseFor = require('lodash._basefor'),
     createAssigner = require('lodash._createassigner'),
     isArguments = require('lodash.isarguments'),
     isArray = require('lodash.isarray'),
@@ -30,24 +29,18 @@ function isObjectLike(value) {
   return !!value && typeof value == 'object';
 }
 
+/** Used for native method references. */
+var arrayProto = Array.prototype;
+
+/** Native method references. */
+var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
+    push = arrayProto.push;
+
 /**
  * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
  * of an array-like value.
  */
 var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
-
-/**
- * The base implementation of `_.forOwn` without support for callback
- * shorthands and `this` binding.
- *
- * @private
- * @param {Object} object The object to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Object} Returns `object`.
- */
-function baseForOwn(object, iteratee) {
-  return baseFor(object, iteratee, keys);
-}
 
 /**
  * The base implementation of `_.merge` without support for argument juggling,
@@ -59,29 +52,39 @@ function baseForOwn(object, iteratee) {
  * @param {Function} [customizer] The function to customize merging properties.
  * @param {Array} [stackA=[]] Tracks traversed source objects.
  * @param {Array} [stackB=[]] Associates values with source counterparts.
- * @returns {Object} Returns the destination object.
+ * @returns {Object} Returns `object`.
  */
 function baseMerge(object, source, customizer, stackA, stackB) {
   if (!isObject(object)) {
     return object;
   }
   var isSrcArr = isLength(source.length) && (isArray(source) || isTypedArray(source));
-  (isSrcArr ? arrayEach : baseForOwn)(source, function(srcValue, key, source) {
+  if (!isSrcArr) {
+    var props = keys(source);
+    push.apply(props, getSymbols(source));
+  }
+  arrayEach(props || source, function(srcValue, key) {
+    if (props) {
+      key = srcValue;
+      srcValue = source[key];
+    }
     if (isObjectLike(srcValue)) {
       stackA || (stackA = []);
       stackB || (stackB = []);
-      return baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
+      baseMergeDeep(object, source, key, baseMerge, customizer, stackA, stackB);
     }
-    var value = object[key],
-        result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-        isCommon = typeof result == 'undefined';
+    else {
+      var value = object[key],
+          result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
+          isCommon = result === undefined;
 
-    if (isCommon) {
-      result = srcValue;
-    }
-    if ((isSrcArr || typeof result != 'undefined') &&
-        (isCommon || (result === result ? (result !== value) : (value === value)))) {
-      object[key] = result;
+      if (isCommon) {
+        result = srcValue;
+      }
+      if ((isSrcArr || result !== undefined) &&
+          (isCommon || (result === result ? (result !== value) : (value === value)))) {
+        object[key] = result;
+      }
     }
   });
   return object;
@@ -114,14 +117,14 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
   }
   var value = object[key],
       result = customizer ? customizer(value, srcValue, key, object, source) : undefined,
-      isCommon = typeof result == 'undefined';
+      isCommon = result === undefined;
 
   if (isCommon) {
     result = srcValue;
     if (isLength(srcValue.length) && (isArray(srcValue) || isTypedArray(srcValue))) {
       result = isArray(value)
         ? value
-        : ((value && value.length) ? arrayCopy(value) : []);
+        : (getLength(value) ? arrayCopy(value) : []);
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
       result = isArguments(value)
@@ -146,6 +149,42 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
 }
 
 /**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * in Safari on iOS 8.1 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Creates an array of the own symbols of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of symbols.
+ */
+var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
+  return getOwnPropertySymbols(toObject(object));
+};
+
+/**
  * Checks if `value` is a valid array-like length.
  *
  * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
@@ -156,6 +195,17 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
  */
 function isLength(value) {
   return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Converts `value` to an object if it is not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
 }
 
 /**
@@ -199,7 +249,7 @@ function isObject(value) {
  * @category Object
  * @param {Object} object The destination object.
  * @param {...Object} [sources] The source objects.
- * @param {Function} [customizer] The function to customize merging properties.
+ * @param {Function} [customizer] The function to customize assigned values.
  * @param {*} [thisArg] The `this` binding of `customizer`.
  * @returns {Object} Returns `object`.
  * @example
@@ -234,5 +284,27 @@ function isObject(value) {
  * // => { 'fruits': ['apple', 'banana'], 'vegetables': ['beet', 'carrot'] }
  */
 var merge = createAssigner(baseMerge);
+
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var getter = _.constant(object);
+ *
+ * getter() === object;
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
 
 module.exports = merge;

@@ -1,6 +1,6 @@
 {
   "name": "lodash.has",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "The modern build of lodash’s `_.has` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -20,6 +20,7 @@
     "lodash._baseget": "^3.0.0",
     "lodash._baseslice": "^3.0.0",
     "lodash._topath": "^3.0.0",
+    "lodash.isarguments": "^3.0.0",
     "lodash.isarray": "^3.0.0"
   }
 }

@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,15 +8,7 @@
  */
 var baseAssign = require('lodash._baseassign'),
     createAssigner = require('lodash._createassigner'),
-    isNative = require('lodash.isnative'),
     keys = require('lodash.keys');
-
-/** Used for native method references. */
-var arrayProto = Array.prototype;
-
-/** Native method references. */
-var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnPropertySymbols) && getOwnPropertySymbols,
-    push = arrayProto.push;
 
 /**
  * A specialized version of `_.assign` for customizing assigned values without
@@ -30,10 +22,8 @@ var getOwnPropertySymbols = isNative(getOwnPropertySymbols = Object.getOwnProper
  * @returns {Object} Returns `object`.
  */
 function assignWith(object, source, customizer) {
-  var props = keys(source);
-  push.apply(props, getSymbols(source));
-
   var index = -1,
+      props = keys(source),
       length = props.length;
 
   while (++index < length) {
@@ -50,63 +40,14 @@ function assignWith(object, source, customizer) {
 }
 
 /**
- * Creates an array of the own symbols of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of symbols.
- */
-var getSymbols = !getOwnPropertySymbols ? constant([]) : function(object) {
-  return getOwnPropertySymbols(toObject(object));
-};
-
-/**
- * Converts `value` to an object if it is not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Object} Returns the object.
- */
-function toObject(value) {
-  return isObject(value) ? value : Object(value);
-}
-
-/**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(1);
- * // => false
- */
-function isObject(value) {
-  // Avoid a V8 JIT bug in Chrome 19-20.
-  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-  var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
-}
-
-/**
  * Assigns own enumerable properties of source object(s) to the destination
  * object. Subsequent sources overwrite property assignments of previous sources.
- * If `customizer` is provided it is invoked to produce the assigned values.
+ * If `customizer` is provided it's invoked to produce the assigned values.
  * The `customizer` is bound to `thisArg` and invoked with five arguments:
  * (objectValue, sourceValue, key, object, source).
  *
  * **Note:** This method mutates `object` and is based on
- * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+ * [`Object.assign`](http://ecma-international.org/ecma-262/6.0/#sec-object.assign).
  *
  * @static
  * @memberOf _
@@ -135,27 +76,5 @@ var assign = createAssigner(function(object, source, customizer) {
     ? assignWith(object, source, customizer)
     : baseAssign(object, source);
 });
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- *
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
-}
 
 module.exports = assign;

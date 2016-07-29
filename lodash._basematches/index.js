@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.5 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -7,7 +7,7 @@
  * Available under MIT license <https://lodash.com/license>
  */
 var baseIsMatch = require('lodash._baseismatch'),
-    keys = require('lodash.keys');
+    pairs = require('lodash.pairs');
 
 /**
  * The base implementation of `_.matches` which does not clone `source`.
@@ -17,36 +17,38 @@ var baseIsMatch = require('lodash._baseismatch'),
  * @returns {Function} Returns the new function.
  */
 function baseMatches(source) {
-  var props = keys(source),
-      length = props.length;
+  var matchData = getMatchData(source);
+  if (matchData.length == 1 && matchData[0][2]) {
+    var key = matchData[0][0],
+        value = matchData[0][1];
 
-  if (!length) {
-    return constant(true);
-  }
-  if (length == 1) {
-    var key = props[0],
-        value = source[key];
-
-    if (isStrictComparable(value)) {
-      return function(object) {
-        if (object == null) {
-          return false;
-        }
-        return object[key] === value && (value !== undefined || (key in toObject(object)));
-      };
-    }
-  }
-  var values = Array(length),
-      strictCompareFlags = Array(length);
-
-  while (length--) {
-    value = source[props[length]];
-    values[length] = value;
-    strictCompareFlags[length] = isStrictComparable(value);
+    return function(object) {
+      if (object == null) {
+        return false;
+      }
+      return object[key] === value && (value !== undefined || (key in toObject(object)));
+    };
   }
   return function(object) {
-    return object != null && baseIsMatch(toObject(object), props, values, strictCompareFlags);
+    return baseIsMatch(object, matchData);
   };
+}
+
+/**
+ * Gets the propery names, values, and compare flags of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the match data of `object`.
+ */
+function getMatchData(object) {
+  var result = pairs(object),
+      length = result.length;
+
+  while (length--) {
+    result[length][2] = isStrictComparable(result[length][1]);
+  }
+  return result;
 }
 
 /**
@@ -62,7 +64,7 @@ function isStrictComparable(value) {
 }
 
 /**
- * Converts `value` to an object if it is not one.
+ * Converts `value` to an object if it's not one.
  *
  * @private
  * @param {*} value The value to process.
@@ -96,29 +98,7 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
-}
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var object = { 'user': 'fred' };
- * var getter = _.constant(object);
- *
- * getter() === object;
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
+  return !!value && (type == 'object' || type == 'function');
 }
 
 module.exports = baseMatches;

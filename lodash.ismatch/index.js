@@ -1,5 +1,5 @@
 /**
- * lodash 3.1.3 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -8,7 +8,24 @@
  */
 var baseIsMatch = require('lodash._baseismatch'),
     bindCallback = require('lodash._bindcallback'),
-    keys = require('lodash.keys');
+    pairs = require('lodash.pairs');
+
+/**
+ * Gets the propery names, values, and compare flags of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the match data of `object`.
+ */
+function getMatchData(object) {
+  var result = pairs(object),
+      length = result.length;
+
+  while (length--) {
+    result[length][2] = isStrictComparable(result[length][1]);
+  }
+  return result;
+}
 
 /**
  * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -20,17 +37,6 @@ var baseIsMatch = require('lodash._baseismatch'),
  */
 function isStrictComparable(value) {
   return value === value && !isObject(value);
-}
-
-/**
- * Converts `value` to an object if it is not one.
- *
- * @private
- * @param {*} value The value to process.
- * @returns {Object} Returns the object.
- */
-function toObject(value) {
-  return isObject(value) ? value : Object(value);
 }
 
 /**
@@ -57,13 +63,13 @@ function isObject(value) {
   // Avoid a V8 JIT bug in Chrome 19-20.
   // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
   var type = typeof value;
-  return type == 'function' || (!!value && type == 'object');
+  return !!value && (type == 'object' || type == 'function');
 }
 
 /**
  * Performs a deep comparison between `object` and `source` to determine if
  * `object` contains equivalent property values. If `customizer` is provided
- * it is invoked to compare values. If `customizer` returns `undefined`
+ * it's invoked to compare values. If `customizer` returns `undefined`
  * comparisons are handled by the method instead. The `customizer` is bound
  * to `thisArg` and invoked with three arguments: (value, other, index|key).
  *
@@ -100,33 +106,8 @@ function isObject(value) {
  * // => true
  */
 function isMatch(object, source, customizer, thisArg) {
-  var props = keys(source),
-      length = props.length;
-
-  if (!length) {
-    return true;
-  }
-  if (object == null) {
-    return false;
-  }
-  customizer = typeof customizer == 'function' && bindCallback(customizer, thisArg, 3);
-  object = toObject(object);
-  if (!customizer && length == 1) {
-    var key = props[0],
-        value = source[key];
-
-    if (isStrictComparable(value)) {
-      return value === object[key] && (value !== undefined || (key in object));
-    }
-  }
-  var values = Array(length),
-      strictCompareFlags = Array(length);
-
-  while (length--) {
-    value = values[length] = source[props[length]];
-    strictCompareFlags[length] = isStrictComparable(value);
-  }
-  return baseIsMatch(object, props, values, strictCompareFlags, customizer);
+  customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
+  return baseIsMatch(object, getMatchData(source), customizer);
 }
 
 module.exports = isMatch;

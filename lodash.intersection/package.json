@@ -1,6 +1,6 @@
 {
   "name": "lodash.intersection",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "The modern build of lodash’s `_.intersection` as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -19,6 +19,7 @@
   "dependencies": {
     "lodash._baseindexof": "^3.0.0",
     "lodash._cacheindexof": "^3.0.0",
-    "lodash._createcache": "^3.0.0"
+    "lodash._createcache": "^3.0.0",
+    "lodash.restparam": "^3.0.0"
   }
 }

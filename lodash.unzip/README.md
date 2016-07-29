@@ -1,4 +1,4 @@
-# lodash.unzip v3.1.0
+# lodash.unzip v3.2.0
 
 The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.unzip` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
 
@@ -17,4 +17,4 @@ In Node.js/io.js:
 var unzip = require('lodash.unzip');
 ```
 
-See the [documentation](https://lodash.com/docs#unzip) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.unzip) for more details.
+See the [documentation](https://lodash.com/docs#unzip) or [package source](https://github.com/lodash/lodash/blob/3.2.0-npm-packages/lodash.unzip) for more details.

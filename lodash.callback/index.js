@@ -1,26 +1,13 @@
 /**
- * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
 var baseCallback = require('lodash._basecallback'),
-    baseClone = require('lodash._baseclone'),
-    baseMatches = require('lodash._basematches'),
     isIterateeCall = require('lodash._isiterateecall');
-
-/**
- * Checks if `value` is object-like.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- */
-function isObjectLike(value) {
-  return !!value && typeof value == 'object';
-}
 
 /**
  * Creates a function that invokes `func` with the `this` binding of `thisArg`
@@ -64,38 +51,7 @@ function callback(func, thisArg, guard) {
   if (guard && isIterateeCall(func, thisArg, guard)) {
     thisArg = null;
   }
-  return isObjectLike(func)
-    ? matches(func)
-    : baseCallback(func, thisArg);
-}
-
-/**
- * Creates a function which performs a deep comparison between a given object
- * and `source`, returning `true` if the given object has equivalent property
- * values, else `false`.
- *
- * **Note:** This method supports comparing arrays, booleans, `Date` objects,
- * numbers, `Object` objects, regexes, and strings. Objects are compared by
- * their own, not inherited, enumerable properties. For comparing a single
- * own or inherited property value see `_.matchesProperty`.
- *
- * @static
- * @memberOf _
- * @category Utility
- * @param {Object} source The object of property values to match.
- * @returns {Function} Returns the new function.
- * @example
- *
- * var users = [
- *   { 'user': 'barney', 'age': 36, 'active': true },
- *   { 'user': 'fred',   'age': 40, 'active': false }
- * ];
- *
- * _.filter(users, _.matches({ 'age': 40, 'active': false }));
- * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
- */
-function matches(source) {
-  return baseMatches(baseClone(source, true));
+  return baseCallback(func, thisArg);
 }
 
 module.exports = callback;

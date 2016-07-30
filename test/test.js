@@ -10970,7 +10970,7 @@
     QUnit.test('should detect methods masquerading as native', function(assert) {
       assert.expect(2);
 
-      if (_._baseEach) {
+      if (!amd && _._baseEach) {
         var path = require('path'),
             basePath = path.dirname(filePath),
             uid = 'e0gvgyrad1jor',

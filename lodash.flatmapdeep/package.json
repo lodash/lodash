@@ -1,6 +1,6 @@
 {
   "name": "lodash.flatmapdeep",
-  "version": "4.9.1",
+  "version": "4.10.0",
   "description": "The lodash method `_.flatMapDeep` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",

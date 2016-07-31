@@ -11344,8 +11344,9 @@
      * Performs a partial deep comparison between `object` and `source` to
      * determine if `object` contains equivalent property values.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`
-     * and is equivalent to `_.matches` when `source` is partially applied.
+     * **Note:** If source is empty, this method returns true. Otherwise, it supports
+     * comparing the same values as `_.isEqual` and is equivalent to `_.matches`
+     * when `source` is partially applied.
      *
      * @static
      * @memberOf _
@@ -15060,8 +15061,9 @@
      * object and `source`, returning `true` if the given object has equivalent
      * property values, else `false`.
      *
-     * **Note:** The created function supports comparing the same values as
-     * `_.isEqual` is equivalent to `_.isMatch` with `source` partially applied.
+     * **Note:** If source is empty, the created function returns true. Otherwise
+     * it supports comparing the same values as `_.isEqual` and is equivalent to
+     * `_.isMatch` with `source` partially applied.
      *
      * @static
      * @memberOf _
@@ -15088,7 +15090,8 @@
      * value at `path` of a given object to `srcValue`, returning `true` if the
      * object value is equivalent, else `false`.
      *
-     * **Note:** This method supports comparing the same values as `_.isEqual`.
+     * **Note:** If `srcValue` is an empty object, this method returns true. Otherwise,
+     * it supports comparing the same values as `_.isEqual`.
      *
      * @static
      * @memberOf _

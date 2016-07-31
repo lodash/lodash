@@ -11344,9 +11344,12 @@
      * Performs a partial deep comparison between `object` and `source` to
      * determine if `object` contains equivalent property values.
      *
-     * **Note:** If source is empty, this method returns true. Otherwise, it supports
-     * comparing the same values as `_.isEqual` and is equivalent to `_.matches`
-     * when `source` is partially applied.
+     * **Note:** This method is equivalent to `_.matches` when `source` is
+     * partially applied.
+     *
+     * Partial comparisons will match empty array and empty object `source`
+     * values against any array or object value, respectively. See `_.isEqual`
+     * for a list of supported value comparisons.
      *
      * @static
      * @memberOf _
@@ -15061,9 +15064,12 @@
      * object and `source`, returning `true` if the given object has equivalent
      * property values, else `false`.
      *
-     * **Note:** If source is empty, the created function returns true. Otherwise
-     * it supports comparing the same values as `_.isEqual` and is equivalent to
-     * `_.isMatch` with `source` partially applied.
+     * **Note:** The created function is equivalent to `_.isMatch` with `source`
+     * partially applied.
+     *
+     * Partial comparisons will match empty array and empty object `source`
+     * values against any array or object value, respectively. See `_.isEqual`
+     * for a list of supported value comparisons.
      *
      * @static
      * @memberOf _
@@ -15090,8 +15096,9 @@
      * value at `path` of a given object to `srcValue`, returning `true` if the
      * object value is equivalent, else `false`.
      *
-     * **Note:** If `srcValue` is an empty object, this method returns true. Otherwise,
-     * it supports comparing the same values as `_.isEqual`.
+     * **Note:** Partial comparisons will match empty array and empty object
+     * `srcValue` values against any array or object value, respectively. See
+     * `_.isEqual` for a list of supported value comparisons.
      *
      * @static
      * @memberOf _

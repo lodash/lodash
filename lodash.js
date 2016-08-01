@@ -2479,7 +2479,7 @@
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
      * @param {Array} args The arguments to provide to `func`.
-     * @returns {number} Returns the timer id.
+     * @returns {number|Object} Returns the timer id or timeout object.
      */
     function baseDelay(func, wait, args) {
       if (typeof func != 'function') {
@@ -4161,7 +4161,7 @@
      * A simple wrapper around the global [`clearTimeout`](https://mdn.io/clearTimeout).
      *
      * @private
-     * @param {number} id The id of the timer to clear.
+     * @param {number|Object} id The timer id or timeout object of the timer to clear.
      */
     var clearTimeout = ctxClearTimeout || function(id) {
       return root.clearTimeout(id);
@@ -6203,7 +6203,7 @@
      * @private
      * @param {Function} func The function to delay.
      * @param {number} wait The number of milliseconds to delay invocation.
-     * @returns {number} Returns the timer id.
+     * @returns {number|Object} Returns the timer id or timeout object.
      */
     var setTimeout = ctxSetTimeout || function(func, wait) {
       return root.setTimeout(func, wait);

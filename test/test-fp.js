@@ -371,7 +371,7 @@
         'method', 'methodOf', 'rest', 'runInContext'
       ];
 
-      var exceptions = funcMethods.concat('mixin', 'template'),
+      var exceptions = funcMethods.concat('mixin', 'nthArg', 'template'),
           expected = _.map(mapping.aryMethod[1], _.constant(true));
 
       var actual = _.map(mapping.aryMethod[1], function(methodName) {
@@ -1588,6 +1588,22 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('fp.nthArg');
+
+  (function() {
+    QUnit.test('should return a curried function', function(assert) {
+      assert.expect(2);
+
+      var func = fp.nthArg(1);
+      assert.strictEqual(func(1)(2), 2);
+
+      func = fp.nthArg(-1);
+      assert.strictEqual(func(1), 1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('fp.over');
 
   (function() {
@@ -1793,7 +1809,7 @@
       assert.deepEqual(rearged('c', 'a', 'b'), ['a', 'b', 'c']);
     });
 
-    QUnit.test('should curry the rearged function', function(assert) {
+    QUnit.test('should return a curried function', function(assert) {
       assert.expect(1);
 
       var rearged = fp.rearg([1, 2, 0], fn);

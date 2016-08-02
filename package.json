@@ -33,7 +33,7 @@
     "codecov.io": "~0.1.6",
     "coveralls": "^2.11.12",
     "curl-amd": "~0.8.12",
-    "docdown": "~0.6.1",
+    "docdown": "~0.7.0",
     "dojo": "^1.11.2",
     "ecstatic": "^1.4.1",
     "fs-extra": "~0.30.0",

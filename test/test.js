@@ -19865,41 +19865,15 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should follow `path` over non-plain objects', function(assert) {
-      assert.expect(4);
-
-      var object = { 'a': '' },
-          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
-
-      lodashStable.each(paths, function(path) {
-        func(0, path, updater);
-        assert.strictEqual(0..a, value);
-        delete numberProto.a;
-      });
-
-      lodashStable.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
-        func(object, path, updater);
-        assert.strictEqual(stringProto.replace.b, value);
-        delete stringProto.replace.b;
-      });
-    });
-
-    QUnit.test('`_.' + methodName + '` should not error on paths over primitives in strict mode', function(assert) {
-      'use strict';
-
+    QUnit.test('`_.' + methodName + '` should overwrite primitives in the path', function(assert) {
       assert.expect(2);
-
-      lodashStable.each(['a', 'a.a.a'], function(path) {
-        numberProto.a = oldValue;
-        try {
-          func(0, path, updater);
-          assert.strictEqual(0..a, oldValue);
-        } catch (e) {
-          assert.ok(false, e.message);
-        }
-      });
-
-      delete numberProto.a;
+      
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        var object = { 'a': '' };
+        
+        func(object, path, updater);
+        assert.deepEqual(object, { 'a': { 'b': 2 } });
+      });;
     });
 
     QUnit.test('`_.' + methodName + '` should not create an array for missing non-index property names that start with numbers', function(assert) {

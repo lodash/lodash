@@ -332,7 +332,7 @@
   }());
 
   /** Used to detect instrumented istanbul code coverage runs. */
-  var coverage = root.__coverage__ || root[lodashStable.findKey(root, function(value, key) {
+  var coverage = root.__coverage__ || root[lodashStable.find(lodashStable.keys(root), function(key) {
     return /^(?:\$\$cov_\d+\$\$)$/.test(key);
   })];
 

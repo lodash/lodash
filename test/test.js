@@ -5785,26 +5785,6 @@
 
       assert.deepEqual(_.filter(array, isEven), [2]);
     });
-
-    QUnit.test('should iterate over an object with numeric keys (test in Mobile Safari 8)', function(assert) {
-      assert.expect(1);
-
-      // Trigger a mobile Safari 8 JIT bug.
-      // See https://github.com/lodash/lodash/issues/799.
-      var counter = 0,
-          object = { '1': 'foo', '8': 'bar', '50': 'baz' };
-
-      lodashStable.times(1000, function(assert) {
-        _.filter([], stubTrue);
-      });
-
-      _.filter(object, function() {
-        counter++;
-        return true;
-      });
-
-      assert.strictEqual(counter, 3);
-    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -7799,19 +7779,6 @@
         var path = isHas ? symbol : symbol2;
 
         assert.strictEqual(func(new Foo, path), true);
-      }
-      else {
-        skipAssert(assert);
-      }
-    });
-
-    QUnit.test('`_.' + methodName + '` should work for objects with a `[[Prototype]]` of `null`', function(assert) {
-      assert.expect(1);
-
-      if (create)  {
-        var object = create(null);
-        object[1] = 'a';
-        assert.strictEqual(func(object, 1), true);
       }
       else {
         skipAssert(assert);
@@ -11237,22 +11204,6 @@
       else {
         skipAssert(assert, 7);
       }
-    });
-
-    QUnit.test('should avoid V8 bug #2291 (test in Chrome 19-20)', function(assert) {
-      assert.expect(1);
-
-      // Trigger a V8 JIT bug.
-      // See https://code.google.com/p/v8/issues/detail?id=2291.
-      var object = {};
-
-      // First, have a comparison statement.
-      object == object;
-
-      // Then perform the check with `object`.
-      _.isObject(object);
-
-      assert.strictEqual(_.isObject('a'), false);
     });
   }(1, 2, 3));
 

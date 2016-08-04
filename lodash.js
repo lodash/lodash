@@ -11046,12 +11046,14 @@
           return !value.size;
         }
       }
+      var isProto = isPrototype(value);
       for (var key in value) {
-        if (hasOwnProperty.call(value, key)) {
+        if (hasOwnProperty.call(value, key) &&
+            !(isProto && key == 'constructor')) {
           return false;
         }
       }
-      return !(nonEnumShadows && keys(value).length);
+      return !(nonEnumShadows && baseKeys(value).length);
     }
 
     /**

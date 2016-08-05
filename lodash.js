@@ -266,9 +266,9 @@
   var contextProps = [
     'Array', 'Buffer', 'DataView', 'Date', 'Error', 'Float32Array', 'Float64Array',
     'Function', 'Int8Array', 'Int16Array', 'Int32Array', 'Map', 'Math', 'Object',
-    'Promise', 'Reflect', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError',
-    'Uint8Array', 'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap',
-    '_', 'clearTimeout', 'isFinite', 'parseInt', 'setTimeout'
+    'Promise', 'RegExp', 'Set', 'String', 'Symbol', 'TypeError', 'Uint8Array',
+    'Uint8ClampedArray', 'Uint16Array', 'Uint32Array', 'WeakMap', '_', 'clearTimeout',
+    'isFinite', 'parseInt', 'setTimeout'
   ];
 
   /** Used to make template sourceURLs easier to identify. */
@@ -1331,10 +1331,9 @@
 
     /** Built-in value references. */
     var Buffer = moduleExports ? context.Buffer : undefined,
-        Reflect = context.Reflect,
         Symbol = context.Symbol,
         Uint8Array = context.Uint8Array,
-        enumerate = Reflect ? Reflect.enumerate : undefined,
+        getPrototype = overArg(Object.getPrototypeOf, Object),
         iteratorSymbol = Symbol ? Symbol.iterator : undefined,
         objectCreate = context.Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
@@ -1349,12 +1348,11 @@
     /* Built-in method references for those with the same name as other `lodash` methods. */
     var nativeCeil = Math.ceil,
         nativeFloor = Math.floor,
-        nativeGetPrototype = Object.getPrototypeOf,
         nativeGetSymbols = Object.getOwnPropertySymbols,
         nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
         nativeIsFinite = context.isFinite,
         nativeJoin = arrayProto.join,
-        nativeKeys = Object.keys,
+        nativeKeys = overArg(Object.keys, Object),
         nativeMax = Math.max,
         nativeMin = Math.min,
         nativeParseInt = context.parseInt,
@@ -2200,6 +2198,31 @@
     Stack.prototype.set = stackSet;
 
     /*------------------------------------------------------------------------*/
+
+    /**
+     * Creates an array of the enumerable property names of the array-like `value`.
+     *
+     * @private
+     * @param {*} value The value to query.
+     * @param {boolean} inherited Specify returning inherited property names.
+     * @returns {Array} Returns the array of property names.
+     */
+    function arrayLikeKeys(value, inherited) {
+      var result = (isArray(value) || isString(value) || isArguments(value))
+        ? baseTimes(value.length, String)
+        : [];
+
+      var length = result.length,
+          skipIndexes = !!length;
+
+      for (var key in value) {
+        if ((inherited || hasOwnProperty.call(value, key)) &&
+            !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+          result.push(key);
+        }
+      }
+      return result;
+    }
 
     /**
      * Used by `_.defaults` to customize its `_.assignIn` use.
@@ -3198,38 +3221,45 @@
     }
 
     /**
-     * The base implementation of `_.keys` which doesn't skip the constructor
-     * property of prototypes or treat sparse arrays as dense.
+     * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
      *
      * @private
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property names.
      */
-    var baseKeys = overArg(nativeKeys, Object);
+    function baseKeys(object) {
+      if (!isPrototype(object)) {
+        return nativeKeys(object);
+      }
+      var result = [];
+      for (var key in object) {
+        if (hasOwnProperty.call(object, key) && key != 'constructor') {
+          result.push(key);
+        }
+      }
+      return result;
+    }
 
     /**
-     * The base implementation of `_.keysIn` which doesn't skip the constructor
-     * property of prototypes or treat sparse arrays as dense.
+     * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
      *
      * @private
      * @param {Object} object The object to query.
      * @returns {Array} Returns the array of property names.
      */
     function baseKeysIn(object) {
-      object = object == null ? object : Object(object);
-
       var result = [];
+      if (object == null) {
+        return result;
+      }
+      object = Object(object);
+      var isProto = isPrototype(object);
       for (var key in object) {
-        result.push(key);
+        if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+          result.push(key);
+        }
       }
       return result;
-    }
-
-    // Fallback for IE < 9 with es6-shim.
-    if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-      baseKeysIn = function(object) {
-        return iteratorToArray(enumerate(object));
-      };
     }
 
     /**
@@ -5592,15 +5622,6 @@
     }
 
     /**
-     * Gets the `[[Prototype]]` of `value`.
-     *
-     * @private
-     * @param {*} value The value to query.
-     * @returns {null|Object} Returns the `[[Prototype]]`.
-     */
-    var getPrototype = overArg(nativeGetPrototype, Object);
-
-    /**
      * Creates an array of the own enumerable symbol properties of `object`.
      *
      * @private
@@ -5810,23 +5831,6 @@
         case symbolTag:
           return cloneSymbol(object);
       }
-    }
-
-    /**
-     * Creates an array of index keys for `object` values of arrays,
-     * `arguments` objects, and strings, otherwise `null` is returned.
-     *
-     * @private
-     * @param {Object} object The object to query.
-     * @returns {Array|null} Returns index keys, else `null`.
-     */
-    function indexKeys(object) {
-      var length = object ? object.length : undefined;
-      if (isLength(length) &&
-          (isArray(object) || isString(object) || isArguments(object))) {
-        return baseTimes(length, String);
-      }
-      return null;
     }
 
     /**
@@ -9388,7 +9392,7 @@
           return collection.size;
         }
       }
-      return keys(collection).length;
+      return baseKeys(collection).length;
     }
 
     /**
@@ -11035,7 +11039,7 @@
           return false;
         }
       }
-      return !(nonEnumShadows && baseKeys(value).length);
+      return !(nonEnumShadows && nativeKeys(value).length);
     }
 
     /**
@@ -12810,23 +12814,7 @@
      * // => ['0', '1']
      */
     function keys(object) {
-      var isProto = isPrototype(object);
-      if (!(isProto || isArrayLike(object))) {
-        return baseKeys(object);
-      }
-      var indexes = indexKeys(object),
-          skipIndexes = !!indexes,
-          result = indexes || [],
-          length = result.length;
-
-      for (var key in object) {
-        if (hasOwnProperty.call(object, key) &&
-            !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-            !(isProto && key == 'constructor')) {
-          result.push(key);
-        }
-      }
-      return result;
+      return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
     }
 
     /**
@@ -12853,23 +12841,7 @@
      * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
      */
     function keysIn(object) {
-      var index = -1,
-          isProto = isPrototype(object),
-          props = baseKeysIn(object),
-          propsLength = props.length,
-          indexes = indexKeys(object),
-          skipIndexes = !!indexes,
-          result = indexes || [],
-          length = result.length;
-
-      while (++index < propsLength) {
-        var key = props[index];
-        if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-            !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-          result.push(key);
-        }
-      }
-      return result;
+      return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
     }
 
     /**

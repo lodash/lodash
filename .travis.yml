@@ -2,6 +2,9 @@ language: node_js
 sudo: false
 node_js:
   - "6"
+cache:
+   directories:
+     - travis_phantomjs
 env:
   global:
     - BIN="node" ISTANBUL=false OPTION=""
@@ -34,6 +37,12 @@ notifications:
     on_success: change
     on_failure: always
 before_install:
+  - "export PHANTOMJS_VERSION=2.1.1"
+  - "export PATH=$PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin:$PATH"
+  - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi"
+  - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2; fi"
+  - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
+  - "phantomjs --version"
   - "nvm use $TRAVIS_NODE_VERSION"
   - "npm set loglevel error"
   - "npm set progress false"
@@ -64,7 +73,7 @@ script:
   - "[ $ISTANBUL == false ]   || istanbul cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/coverage.json | codecov) || true"
-  
+
 # Test in Node.js and PhantomJS.
   - "[ $ISTANBUL == true ]    || node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
   - "[ $ISTANBUL == true ]    || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js)"

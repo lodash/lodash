@@ -11242,7 +11242,7 @@
     /**
      * Checks if `value` is a valid array-like length.
      *
-     * **Note:** This function is loosely based on
+     * **Note:** This method is loosely based on
      * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
      *
      * @static

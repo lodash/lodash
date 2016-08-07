@@ -12929,16 +12929,6 @@
       delete numberProto.a;
     });
 
-    QUnit.test('`_.' + methodName + '` should not coerce nullish values to objects', function(assert) {
-      assert.expect(2);
-
-      objectProto.a = 1;
-      lodashStable.each([null, undefined], function(value) {
-        assert.deepEqual(func(value), []);
-      });
-      delete objectProto.a;
-    });
-
     QUnit.test('`_.' + methodName + '` skips the `constructor` property on prototype objects', function(assert) {
       assert.expect(3);
 
@@ -12954,6 +12944,20 @@
       var Fake = { 'prototype': {} };
       Fake.prototype.constructor = Fake;
       assert.deepEqual(func(Fake.prototype), ['constructor']);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return an empty array when `object` is nullish', function(assert) {
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, stubArray);
+
+      var actual = lodashStable.map(values, function(value, index) {
+        objectProto.a = 1;
+        var result = index ? func(value) : func();
+        delete objectProto.a;
+        return result;
+      });
+
+      assert.deepEqual(actual, expected);
     });
   });
 
@@ -14032,14 +14036,22 @@
       });
     });
 
-    QUnit.test('should return `false` if parts of `path` are missing', function(assert) {
-      assert.expect(4);
+    QUnit.test('should return `false` when `object` is nullish', function(assert) {
+      assert.expect(2);
 
-      var object = {};
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, stubFalse);
 
-      lodashStable.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+      lodashStable.each(['constructor', ['constructor']], function(path) {
         var matches = _.matchesProperty(path, 1);
-        assert.strictEqual(matches(object), false);
+
+        var actual = lodashStable.map(values, function(value, index) {
+          try {
+            return index ? matches(value) : matches();
+          } catch (e) {}
+        });
+
+        assert.deepEqual(actual, expected);
       });
     });
 
@@ -14059,6 +14071,17 @@
         });
 
         assert.deepEqual(actual, expected);
+      });
+    });
+
+    QUnit.test('should return `false` if parts of `path` are missing', function(assert) {
+      assert.expect(4);
+
+      var object = {};
+
+      lodashStable.each(['a', 'a[1].b.c', ['a'], ['a', '1', 'b', 'c']], function(path) {
+        var matches = _.matchesProperty(path, 1);
+        assert.strictEqual(matches(object), false);
       });
     });
 
@@ -14298,25 +14321,6 @@
       }
       delete numberProto.a;
       delete numberProto.b;
-    });
-
-    QUnit.test('should return `false` when `object` is nullish', function(assert) {
-      assert.expect(2);
-
-      var values = [, null, undefined],
-          expected = lodashStable.map(values, stubFalse);
-
-      lodashStable.each(['constructor', ['constructor']], function(path) {
-        var matches = _.matchesProperty(path, 1);
-
-        var actual = lodashStable.map(values, function(value, index) {
-          try {
-            return index ? matches(value) : matches();
-          } catch (e) {}
-        });
-
-        assert.deepEqual(actual, expected);
-      });
     });
 
     QUnit.test('should return `true` when comparing a `srcValue` of empty arrays and objects', function(assert) {
@@ -16212,11 +16216,12 @@
     QUnit.test('should return an empty object when `object` is nullish', function(assert) {
       assert.expect(2);
 
-      objectProto.a = 1;
       lodashStable.each([null, undefined], function(value) {
-        assert.deepEqual(_.omit(value, 'valueOf'), {});
+        objectProto.a = 1;
+        var actual = _.omit(value, 'valueOf');
+        delete objectProto.a;
+        assert.deepEqual(actual, {});
       });
-      delete objectProto.a;
     });
 
     QUnit.test('should work with `arguments` objects as secondary arguments', function(assert) {
@@ -19818,10 +19823,10 @@
 
     QUnit.test('`_.' + methodName + '` should overwrite primitives in the path', function(assert) {
       assert.expect(2);
-      
+
       lodashStable.each(['a.b', ['a', 'b']], function(path) {
         var object = { 'a': '' };
-        
+
         func(object, path, updater);
         assert.deepEqual(object, { 'a': { 'b': 2 } });
       });;

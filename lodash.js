@@ -3231,7 +3231,7 @@
         return nativeKeys(object);
       }
       var result = [];
-      for (var key in object) {
+      for (var key in Object(object)) {
         if (hasOwnProperty.call(object, key) && key != 'constructor') {
           result.push(key);
         }
@@ -3247,7 +3247,7 @@
      * @returns {Array} Returns the array of property names.
      */
     function baseKeysIn(object) {
-      if (object == null || !('constructor' in Object(object))) {
+      if (!isObject(object)) {
         return nativeKeysIn(object);
       }
       var isProto = isPrototype(object),
@@ -6127,8 +6127,10 @@
      */
     function nativeKeysIn(object) {
       var result = [];
-      for (var key in object) {
-        result.push(key);
+      if (object != null) {
+        for (var key in Object(object)) {
+          result.push(key);
+        }
       }
       return result;
     }

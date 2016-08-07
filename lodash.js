@@ -2468,14 +2468,13 @@
       if (object == null) {
         return !length;
       }
-      var index = length;
-      while (index--) {
-        var key = props[index],
+      object = Object(object);
+      while (length--) {
+        var key = props[length],
             predicate = source[key],
             value = object[key];
 
-        if ((value === undefined &&
-            !(key in Object(object))) || !predicate(value)) {
+        if ((value === undefined && !(key in object)) || !predicate(value)) {
           return false;
         }
       }
@@ -3248,12 +3247,12 @@
      * @returns {Array} Returns the array of property names.
      */
     function baseKeysIn(object) {
-      var result = [];
-      if (object == null) {
-        return result;
+      if (object == null || !('constructor' in Object(object))) {
+        return nativeKeysIn(object);
       }
-      object = Object(object);
-      var isProto = isPrototype(object);
+      var isProto = isPrototype(object),
+          result = [];
+
       for (var key in object) {
         if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
           result.push(key);
@@ -3346,7 +3345,7 @@
         return;
       }
       if (!(isArray(source) || isTypedArray(source))) {
-        var props = keysIn(source);
+        var props = baseKeysIn(source);
       }
       arrayEach(props || source, function(srcValue, key) {
         if (props) {
@@ -6115,6 +6114,23 @@
         stack['delete'](srcValue);
       }
       return objValue;
+    }
+
+    /**
+     * This function is like
+     * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+     * except that it includes inherited enumerable properties.
+     *
+     * @private
+     * @param {Object} object The object to query.
+     * @returns {Array} Returns the array of property names.
+     */
+    function nativeKeysIn(object) {
+      var result = [];
+      for (var key in object) {
+        result.push(key);
+      }
+      return result;
     }
 
     /**
@@ -12174,13 +12190,7 @@
      * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
      */
     var assignIn = createAssigner(function(object, source) {
-      if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
-        copyObject(source, keysIn(source), object);
-        return;
-      }
-      for (var key in source) {
-        assignValue(object, key, source[key]);
-      }
+      copyObject(source, keysIn(source), object);
     });
 
     /**

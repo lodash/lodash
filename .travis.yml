@@ -3,8 +3,9 @@ sudo: false
 node_js:
   - "6"
 cache:
-   directories:
-     - travis_phantomjs
+  directories:
+    - node_modules
+    - travis_phantomjs
 env:
   global:
     - BIN="node" ISTANBUL=false OPTION=""
@@ -64,6 +65,7 @@ before_install:
           node ./test/remove.js "$PTRN" ./lodash.js
         done
       fi
+  - "rm -rf ./node_modules/lodash-cli"
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
   - "mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
   - "cd ../../ && npm i && cd ../../"

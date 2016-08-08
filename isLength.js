@@ -6,16 +6,15 @@ define([], function() {
   /**
    * Checks if `value` is a valid array-like length.
    *
-   * **Note:** This function is loosely based on
-   * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+   * **Note:** This method is loosely based on
+   * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
    *
    * @static
    * @memberOf _
    * @since 4.0.0
    * @category Lang
    * @param {*} value The value to check.
-   * @returns {boolean} Returns `true` if `value` is a valid length,
-   *  else `false`.
+   * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
    * @example
    *
    * _.isLength(3);

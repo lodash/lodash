@@ -17,7 +17,7 @@ define(['./_DataView', './_Map', './_Promise', './_Set', './_WeakMap', './_baseG
 
   /**
    * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
    * of values.
    */
   var objectToString = objectProto.toString;

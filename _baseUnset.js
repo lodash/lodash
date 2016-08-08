@@ -1,4 +1,10 @@
-define(['./_baseHas', './_castPath', './_isKey', './last', './_parent', './_toKey'], function(baseHas, castPath, isKey, last, parent, toKey) {
+define(['./_castPath', './_isKey', './last', './_parent', './_toKey'], function(castPath, isKey, last, parent, toKey) {
+
+  /** Used for built-in method references. */
+  var objectProto = Object.prototype;
+
+  /** Used to check objects for own properties. */
+  var hasOwnProperty = objectProto.hasOwnProperty;
 
   /**
    * The base implementation of `_.unset`.
@@ -13,7 +19,7 @@ define(['./_baseHas', './_castPath', './_isKey', './last', './_parent', './_toKe
     object = parent(object, path);
 
     var key = toKey(last(path));
-    return !(object != null && baseHas(object, key)) || delete object[key];
+    return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
   }
 
   return baseUnset;

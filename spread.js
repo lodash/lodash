@@ -12,7 +12,7 @@ define(['./_apply', './_arrayPush', './_baseRest', './_castSlice', './toInteger'
   /**
    * Creates a function that invokes `func` with the `this` binding of the
    * create function and an array of arguments much like
-   * [`Function#apply`](http://www.ecma-international.org/ecma-262/6.0/#sec-function.prototype.apply).
+   * [`Function#apply`](http://www.ecma-international.org/ecma-262/7.0/#sec-function.prototype.apply).
    *
    * **Note:** This method is based on the
    * [spread operator](https://mdn.io/spread_operator).

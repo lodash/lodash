@@ -2,7 +2,7 @@ define(['./_baseFlatten', './_baseRest', './_baseUniq', './isArrayLikeObject'], 
 
   /**
    * Creates an array of unique values, in order, from all given arrays using
-   * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
    * for equality comparisons.
    *
    * @static

@@ -1,10 +1,16 @@
-define(['./_baseHas', './keys'], function(baseHas, keys) {
+define(['./keys'], function(keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /** Used to compose bitmasks for comparison styles. */
   var PARTIAL_COMPARE_FLAG = 2;
+
+  /** Used for built-in method references. */
+  var objectProto = Object.prototype;
+
+  /** Used to check objects for own properties. */
+  var hasOwnProperty = objectProto.hasOwnProperty;
 
   /**
    * A specialized version of `baseIsEqualDeep` for objects with support for
@@ -33,7 +39,7 @@ define(['./_baseHas', './keys'], function(baseHas, keys) {
     var index = objLength;
     while (index--) {
       var key = objProps[index];
-      if (!(isPartial ? key in other : baseHas(other, key))) {
+      if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
         return false;
       }
     }

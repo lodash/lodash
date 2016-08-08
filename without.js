@@ -2,7 +2,7 @@ define(['./_baseDifference', './_baseRest', './isArrayLikeObject'], function(bas
 
   /**
    * Creates an array excluding all given values using
-   * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
    * for equality comparisons.
    *
    * **Note:** Unlike `_.pull`, this method returns a new array.

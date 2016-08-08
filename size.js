@@ -1,4 +1,4 @@
-define(['./_getTag', './isArrayLike', './isObjectLike', './isString', './keys', './_stringSize'], function(getTag, isArrayLike, isObjectLike, isString, keys, stringSize) {
+define(['./_baseKeys', './_getTag', './isArrayLike', './isObjectLike', './isString', './_stringSize'], function(baseKeys, getTag, isArrayLike, isObjectLike, isString, stringSize) {
 
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
@@ -39,7 +39,7 @@ define(['./_getTag', './isArrayLike', './isObjectLike', './isString', './keys', 
         return collection.size;
       }
     }
-    return keys(collection).length;
+    return baseKeys(collection).length;
   }
 
   return size;

@@ -1,4 +1,4 @@
-define(['./drop'], function(drop) {
+define(['./_baseSlice'], function(baseSlice) {
 
   /**
    * Gets all but the first element of `array`.
@@ -15,7 +15,8 @@ define(['./drop'], function(drop) {
    * // => [2, 3]
    */
   function tail(array) {
-    return drop(array, 1);
+    var length = array ? array.length : 0;
+    return length ? baseSlice(array, 1, length) : [];
   }
 
   return tail;

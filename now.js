@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_root'], function(root) {
 
   /**
    * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -16,9 +16,9 @@ define([], function() {
    * }, _.now());
    * // => Logs the number of milliseconds it took for the deferred invocation.
    */
-  function now() {
-    return Date.now();
-  }
+  var now = function() {
+    return root.Date.now();
+  };
 
   return now;
 });

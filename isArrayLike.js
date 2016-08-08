@@ -1,4 +1,4 @@
-define(['./_getLength', './isFunction', './isLength'], function(getLength, isFunction, isLength) {
+define(['./isFunction', './isLength'], function(isFunction, isLength) {
 
   /**
    * Checks if `value` is array-like. A value is considered array-like if it's
@@ -26,7 +26,7 @@ define(['./_getLength', './isFunction', './isLength'], function(getLength, isFun
    * // => false
    */
   function isArrayLike(value) {
-    return value != null && isLength(getLength(value)) && !isFunction(value);
+    return value != null && isLength(value.length) && !isFunction(value);
   }
 
   return isArrayLike;

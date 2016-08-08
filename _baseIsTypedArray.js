@@ -48,7 +48,7 @@ define(['./isLength', './isObjectLike'], function(isLength, isObjectLike) {
 
   /**
    * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
    * of values.
    */
   var objectToString = objectProto.toString;

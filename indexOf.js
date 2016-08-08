@@ -5,7 +5,7 @@ define(['./_baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
 
   /**
    * Gets the index at which the first occurrence of `value` is found in `array`
-   * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+   * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
    * for equality comparisons. If `fromIndex` is negative, it's used as the
    * offset from the end of `array`.
    *

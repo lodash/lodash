@@ -14,6 +14,9 @@ define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject',
    * @returns {Object} Returns `object`.
    */
   function baseSet(object, path, value, customizer) {
+    if (!isObject(object)) {
+      return object;
+    }
     path = isKey(path, object) ? [path] : castPath(path);
 
     var index = -1,
@@ -22,20 +25,19 @@ define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject',
         nested = object;
 
     while (nested != null && ++index < length) {
-      var key = toKey(path[index]);
-      if (isObject(nested)) {
-        var newValue = value;
-        if (index != lastIndex) {
-          var objValue = nested[key];
-          newValue = customizer ? customizer(objValue, key, nested) : undefined;
-          if (newValue === undefined) {
-            newValue = objValue == null
-              ? (isIndex(path[index + 1]) ? [] : {})
-              : objValue;
-          }
+      var key = toKey(path[index]),
+          newValue = value;
+
+      if (index != lastIndex) {
+        var objValue = nested[key];
+        newValue = customizer ? customizer(objValue, key, nested) : undefined;
+        if (newValue === undefined) {
+          newValue = isObject(objValue)
+            ? objValue
+            : (isIndex(path[index + 1]) ? [] : {});
         }
-        assignValue(nested, key, newValue);
       }
+      assignValue(nested, key, newValue);
       nested = nested[key];
     }
     return object;

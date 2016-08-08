@@ -223,6 +223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'keys': util.keys,
 	    'rearg': util.rearg,
 	    'spread': util.spread,
+	    'toInteger': util.toInteger,
 	    'toPath': util.toPath
 	  };
 
@@ -236,6 +237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      keys = helpers.keys,
 	      rearg = helpers.rearg,
 	      spread = helpers.spread,
+	      toInteger = helpers.toInteger,
 	      toPath = helpers.toPath;
 
 	  var aryMethodKeys = keys(mapping.aryMethod);
@@ -289,10 +291,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return func;
 	      };
 	    },
+	    'nthArg': function(nthArg) {
+	      return function(n) {
+	        var arity = n < 0 ? 1 : (toInteger(n) + 1);
+	        return curry(nthArg(n), arity);
+	      };
+	    },
 	    'rearg': function(rearg) {
 	      return function(func, indexes) {
-	        var n = indexes ? indexes.length : 0;
-	        return curry(rearg(func, indexes), n);
+	        var arity = indexes ? indexes.length : 0;
+	        return curry(rearg(func, indexes), arity);
 	      };
 	    },
 	    'runInContext': function(runInContext) {
@@ -686,10 +694,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  '1': [
 	    'assignAll', 'assignInAll', 'attempt', 'castArray', 'ceil', 'create',
 	    'curry', 'curryRight', 'defaultsAll', 'defaultsDeepAll', 'floor', 'flow',
-	    'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method',
-	    'mergeAll', 'methodOf', 'mixin', 'over', 'overEvery', 'overSome', 'rest',
-	    'reverse', 'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd',
-	    'trimStart', 'uniqueId', 'words', 'zipAll'
+	    'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method', 'mergeAll',
+	    'methodOf', 'mixin', 'nthArg', 'over', 'overEvery', 'overSome','rest', 'reverse',
+	    'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
+	    'uniqueId', 'words', 'zipAll'
 	  ],
 	  '2': [
 	    'add', 'after', 'ary', 'assign', 'assignAllWith', 'assignIn', 'assignInAllWith',

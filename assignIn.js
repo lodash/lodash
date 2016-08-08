@@ -1,18 +1,6 @@
-import assignValue from './_assignValue.js';
 import copyObject from './_copyObject.js';
 import createAssigner from './_createAssigner.js';
-import isArrayLike from './isArrayLike.js';
-import isPrototype from './_isPrototype.js';
 import keysIn from './keysIn.js';
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Built-in value references. */
-var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
 /**
  * This method is like `_.assign` except that it iterates over own and
@@ -46,13 +34,7 @@ var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
  * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
  */
 var assignIn = createAssigner(function(object, source) {
-  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
-    copyObject(source, keysIn(source), object);
-    return;
-  }
-  for (var key in source) {
-    assignValue(object, key, source[key]);
-  }
+  copyObject(source, keysIn(source), object);
 });
 
 export default assignIn;

@@ -1,15 +1,12 @@
-import baseHas from './_baseHas.js';
+import arrayLikeKeys from './_arrayLikeKeys.js';
 import baseKeys from './_baseKeys.js';
-import indexKeys from './_indexKeys.js';
 import isArrayLike from './isArrayLike.js';
-import isIndex from './_isIndex.js';
-import isPrototype from './_isPrototype.js';
 
 /**
  * Creates an array of the own enumerable property names of `object`.
  *
  * **Note:** Non-object values are coerced to objects. See the
- * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
  * for more details.
  *
  * @static
@@ -34,23 +31,7 @@ import isPrototype from './_isPrototype.js';
  * // => ['0', '1']
  */
 function keys(object) {
-  var isProto = isPrototype(object);
-  if (!(isProto || isArrayLike(object))) {
-    return baseKeys(object);
-  }
-  var indexes = indexKeys(object),
-      skipIndexes = !!indexes,
-      result = indexes || [],
-      length = result.length;
-
-  for (var key in object) {
-    if (baseHas(object, key) &&
-        !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
-        !(isProto && key == 'constructor')) {
-      result.push(key);
-    }
-  }
-  return result;
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
 }
 
 export default keys;

@@ -1,4 +1,4 @@
-import dropRight from './dropRight.js';
+import baseSlice from './_baseSlice.js';
 
 /**
  * Gets all but the last element of `array`.
@@ -15,7 +15,8 @@ import dropRight from './dropRight.js';
  * // => [1, 2]
  */
 function initial(array) {
-  return dropRight(array, 1);
+  var length = array ? array.length : 0;
+  return length ? baseSlice(array, 0, -1) : [];
 }
 
 export default initial;

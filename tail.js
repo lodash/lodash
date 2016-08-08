@@ -1,4 +1,4 @@
-import drop from './drop.js';
+import baseSlice from './_baseSlice.js';
 
 /**
  * Gets all but the first element of `array`.
@@ -15,7 +15,8 @@ import drop from './drop.js';
  * // => [2, 3]
  */
 function tail(array) {
-  return drop(array, 1);
+  var length = array ? array.length : 0;
+  return length ? baseSlice(array, 1, length) : [];
 }
 
 export default tail;

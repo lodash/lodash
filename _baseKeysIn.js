@@ -1,36 +1,33 @@
-import Reflect from './_Reflect.js';
-import iteratorToArray from './_iteratorToArray.js';
+import isObject from './isObject.js';
+import isPrototype from './_isPrototype.js';
+import nativeKeysIn from './_nativeKeysIn.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
-/** Built-in value references. */
-var enumerate = Reflect ? Reflect.enumerate : undefined,
-    propertyIsEnumerable = objectProto.propertyIsEnumerable;
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * The base implementation of `_.keysIn` which doesn't skip the constructor
- * property of prototypes or treat sparse arrays as dense.
+ * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
  *
  * @private
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property names.
  */
 function baseKeysIn(object) {
-  object = object == null ? object : Object(object);
+  if (!isObject(object)) {
+    return nativeKeysIn(object);
+  }
+  var isProto = isPrototype(object),
+      result = [];
 
-  var result = [];
   for (var key in object) {
-    result.push(key);
+    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
   }
   return result;
-}
-
-// Fallback for IE < 9 with es6-shim.
-if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
-  baseKeysIn = function(object) {
-    return iteratorToArray(enumerate(object));
-  };
 }
 
 export default baseKeysIn;

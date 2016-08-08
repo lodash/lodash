@@ -1,11 +1,11 @@
 import Stack from './_Stack.js';
 import arrayEach from './_arrayEach.js';
 import assignMergeValue from './_assignMergeValue.js';
+import baseKeysIn from './_baseKeysIn.js';
 import baseMergeDeep from './_baseMergeDeep.js';
 import isArray from './isArray.js';
 import isObject from './isObject.js';
 import isTypedArray from './isTypedArray.js';
-import keysIn from './keysIn.js';
 
 /**
  * The base implementation of `_.merge` without support for multiple sources.
@@ -23,7 +23,7 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
     return;
   }
   if (!(isArray(source) || isTypedArray(source))) {
-    var props = keysIn(source);
+    var props = baseKeysIn(source);
   }
   arrayEach(props || source, function(srcValue, key) {
     if (props) {

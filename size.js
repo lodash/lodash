@@ -1,8 +1,8 @@
+import baseKeys from './_baseKeys.js';
 import getTag from './_getTag.js';
 import isArrayLike from './isArrayLike.js';
 import isObjectLike from './isObjectLike.js';
 import isString from './isString.js';
-import keys from './keys.js';
 import stringSize from './_stringSize.js';
 
 /** `Object#toString` result references. */
@@ -44,7 +44,7 @@ function size(collection) {
       return collection.size;
     }
   }
-  return keys(collection).length;
+  return baseKeys(collection).length;
 }
 
 export default size;

@@ -5,8 +5,9 @@ import isArrayLike from './isArrayLike.js';
 import isBuffer from './isBuffer.js';
 import isFunction from './isFunction.js';
 import isObjectLike from './isObjectLike.js';
+import isPrototype from './_isPrototype.js';
 import isString from './isString.js';
-import keys from './keys.js';
+import nativeKeys from './_nativeKeys.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -69,12 +70,14 @@ function isEmpty(value) {
       return !value.size;
     }
   }
+  var isProto = isPrototype(value);
   for (var key in value) {
-    if (hasOwnProperty.call(value, key)) {
+    if (hasOwnProperty.call(value, key) &&
+        !(isProto && key == 'constructor')) {
       return false;
     }
   }
-  return !(nonEnumShadows && keys(value).length);
+  return !(nonEnumShadows && nativeKeys(value).length);
 }
 
 export default isEmpty;

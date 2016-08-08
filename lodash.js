@@ -2208,7 +2208,7 @@
      * @returns {Array} Returns the array of property names.
      */
     function arrayLikeKeys(value, inherited) {
-      var result = (isArray(value) || isString(value) || isArguments(value))
+      var result = isArray(value)
         ? baseTimes(value.length, String)
         : [];
 
@@ -5748,7 +5748,7 @@
       }
       var length = object ? object.length : 0;
       return !!length && isLength(length) && isIndex(key, length) &&
-        (isArray(object) || isString(object) || isArguments(object));
+        (isArray(object) || isArguments(object));
     }
 
     /**
@@ -9401,8 +9401,7 @@
         return 0;
       }
       if (isArrayLike(collection)) {
-        var result = collection.length;
-        return (result && isString(collection)) ? stringSize(collection) : result;
+        return isString(collection) ? stringSize(collection) : collection.length;
       }
       if (isObjectLike(collection)) {
         var tag = getTag(collection);
@@ -11040,24 +11039,23 @@
      */
     function isEmpty(value) {
       if (isArrayLike(value) &&
-          (isArray(value) || isString(value) || isFunction(value.splice) ||
-            isArguments(value) || isBuffer(value))) {
+          (isArray(value) || typeof value == 'string' ||
+            typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
         return !value.length;
       }
-      if (isObjectLike(value)) {
-        var tag = getTag(value);
-        if (tag == mapTag || tag == setTag) {
-          return !value.size;
-        }
+      var tag = getTag(value);
+      if (tag == mapTag || tag == setTag) {
+        return !value.size;
       }
-      var isProto = isPrototype(value);
+      if (nonEnumShadows || isPrototype(value)) {
+        return !nativeKeys(value).length;
+      }
       for (var key in value) {
-        if (hasOwnProperty.call(value, key) &&
-            !(isProto && key == 'constructor')) {
+        if (hasOwnProperty.call(value, key)) {
           return false;
         }
       }
-      return !(nonEnumShadows && nativeKeys(value).length);
+      return true;
     }
 
     /**

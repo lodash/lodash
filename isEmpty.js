@@ -5,8 +5,9 @@ var getTag = require('./_getTag'),
     isBuffer = require('./isBuffer'),
     isFunction = require('./isFunction'),
     isObjectLike = require('./isObjectLike'),
+    isPrototype = require('./_isPrototype'),
     isString = require('./isString'),
-    keys = require('./keys');
+    nativeKeys = require('./_nativeKeys');
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -69,12 +70,14 @@ function isEmpty(value) {
       return !value.size;
     }
   }
+  var isProto = isPrototype(value);
   for (var key in value) {
-    if (hasOwnProperty.call(value, key)) {
+    if (hasOwnProperty.call(value, key) &&
+        !(isProto && key == 'constructor')) {
       return false;
     }
   }
-  return !(nonEnumShadows && keys(value).length);
+  return !(nonEnumShadows && nativeKeys(value).length);
 }
 
 module.exports = isEmpty;

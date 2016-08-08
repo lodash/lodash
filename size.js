@@ -1,8 +1,8 @@
-var getTag = require('./_getTag'),
+var baseKeys = require('./_baseKeys'),
+    getTag = require('./_getTag'),
     isArrayLike = require('./isArrayLike'),
     isObjectLike = require('./isObjectLike'),
     isString = require('./isString'),
-    keys = require('./keys'),
     stringSize = require('./_stringSize');
 
 /** `Object#toString` result references. */
@@ -44,7 +44,7 @@ function size(collection) {
       return collection.size;
     }
   }
-  return keys(collection).length;
+  return baseKeys(collection).length;
 }
 
 module.exports = size;

@@ -48,6 +48,7 @@ before_install:
   - "npm set loglevel error"
   - "npm set progress false"
   - "npm i -g npm@\"^2.0.0\""
+  - "npm prune && npm update --dev"
   - |
       PATTERN[0]="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"
       PATTERN[1]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
@@ -68,7 +69,7 @@ before_install:
   - "rm -rf ./node_modules/lodash-cli"
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
   - "mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
-  - "cd ../../ && npm i && cd ../../"
+  - "cd ../../ && npm i --production && cd ../../"
 script:
 
 # Detect code coverage.

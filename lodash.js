@@ -2208,7 +2208,7 @@
      * @returns {Array} Returns the array of property names.
      */
     function arrayLikeKeys(value, inherited) {
-      var result = isArray(value)
+      var result = (isArray(value) || isArguments(value))
         ? baseTimes(value.length, String)
         : [];
 

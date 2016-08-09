@@ -38,17 +38,23 @@ notifications:
     on_success: change
     on_failure: always
 before_install:
+  # Upgrade PhantomJS to v2.1.1.
   - "export PHANTOMJS_VERSION=2.1.1"
   - "export PATH=$PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin:$PATH"
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi"
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2; fi"
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
   - "phantomjs --version"
+
+  # Use exact Node version.
   - "nvm use $TRAVIS_NODE_VERSION"
+
+  # Setup npm.
   - "npm set loglevel error"
   - "npm set progress false"
   - "npm i -g npm@\"^2.0.0\""
-  - "npm prune && npm update --dev"
+
+  # Remove code skipped on the coverage run.
   - |
       PATTERN[0]="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"
       PATTERN[1]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
@@ -66,25 +72,34 @@ before_install:
           node ./test/remove.js "$PTRN" ./lodash.js
         done
       fi
-  - "rm -rf ./node_modules/lodash-cli"
-  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
-  - "mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
-  - "cd ../../ && npm i --production && cd ../../"
-script:
 
-# Detect code coverage.
+  # Move lodash-cli node_modules before pruning.
+  - "mkdir -p ./tmp/lodash-cli/node_modules"
+  - "mv ./node_modules/lodash-cli/node_modules ./tmp/lodash-cli/node_modules || true"
+  - "npm prune && npm update --dev"
+
+  # Restore lodash-cli.
+  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
+  - "mv ./tmp/lodash-cli/node_modules ./node_modules/lodash-cli/node_modules || true"
+  - "cd ./node_modules/lodash-cli"
+  - "npm prune && npm update"
+  - "mkdir -p ./node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
+  - "cd ../../ && rm -rf .git && npm i --production && cd ../../"
+
+script:
+  # Detect code coverage.
   - "[ $ISTANBUL == false ]   || istanbul cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
   - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/coverage.json | codecov) || true"
 
-# Test in Node.js and PhantomJS.
+  # Test in Node.js and PhantomJS.
   - "[ $ISTANBUL == true ]    || node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js"
   - "[ $ISTANBUL == true ]    || (node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js)"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || cd ./test"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || $BIN $OPTION ./test.js ../lodash.js"
   - "[ $ISTANBUL == true ]    || [ $SAUCE_LABS == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../dist/lodash.min.js"
 
-# Test in Sauce Labs.
+  # Test in Sauce Labs.
   - "[ $SAUCE_LABS == false ] || node ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js"
   - "[ $SAUCE_LABS == false ] || npm run build"
   - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\"     runner=\"test/index.html?build=../dist/lodash.js&noglobals=true\"     tags=\"development\""

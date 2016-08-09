@@ -14,15 +14,15 @@ In a browser:
 <script>
 // Loading `lodash.fp.js` converts `_` to its fp variant.
 _.defaults({ 'a': 2, 'b': 2 })({ 'a': 1 });
-// ➜ { 'a: 1, 'b': 2 }
+// ➜ { 'a': 1, 'b': 2 }
 
 // Use `noConflict` to restore the pre-fp variant.
 var fp = _.noConflict();
 
 _.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 });
-// ➜ { 'a: 1, 'b': 2 }
+// ➜ { 'a': 1, 'b': 2 }
 fp.defaults({ 'a': 2, 'b': 2 })({ 'a': 1 });
-// ➜ { 'a: 1, 'b': 2 }
+// ➜ { 'a': 1, 'b': 2 }
 </script>
 ```
 

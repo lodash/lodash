@@ -81,8 +81,7 @@ before_install:
   # Restore lodash-cli.
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
   - "mv ./tmp/lodash-cli/node_modules ./node_modules/lodash-cli/node_modules || true"
-  - "cd ./node_modules/lodash-cli"
-  - "npm prune && npm update"
+  - "cd ./node_modules/lodash-cli && npm prune"
   - "mkdir -p ./node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
   - "cd ../../ && rm -rf .git && npm i --production && cd ../../"
 

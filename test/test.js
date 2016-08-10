@@ -4377,18 +4377,18 @@
 
       var debounced = _.debounce(function() {
         ++callCount;
-      }, 64, { 'maxWait': 64 });
+      }, 200, { 'maxWait': 200 });
 
       debounced();
 
-      lodashStable.times(20, function(index) {
-        setTimeout(debounced, 54 + index);
-      });
+      setTimeout(debounced, 190);
+      setTimeout(debounced, 200);
+      setTimeout(debounced, 210);
 
       setTimeout(function() {
         assert.strictEqual(callCount, 2);
         done();
-      }, 160);
+      }, 500);
     });
 
     QUnit.test('should cancel `maxDelayed` when `delayed` is invoked', function(assert) {

@@ -1375,13 +1375,13 @@
         Math = context.Math,
         Object = context.Object,
         RegExp = context.RegExp,
+        String = context.String,
         TypeError = context.TypeError;
 
     /** Used for built-in method references. */
     var arrayProto = Array.prototype,
         funcProto = Function.prototype,
-        objectProto = Object.prototype,
-        stringProto = String.prototype;
+        objectProto = Object.prototype;
 
     /** Used to detect overreaching core-js shims. */
     var coreJsData = context['__core-js_shared__'];

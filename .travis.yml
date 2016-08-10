@@ -4,7 +4,7 @@ node_js:
   - "6"
 cache:
   directories:
-    - node_modules
+    - $HOME/.npm
     - travis_phantomjs
 env:
   global:
@@ -73,17 +73,10 @@ before_install:
         done
       fi
 
-  # Move lodash-cli node_modules before pruning.
-  - "mkdir -p ./tmp/lodash-cli/node_modules"
-  - "mv ./node_modules/lodash-cli/node_modules ./tmp/lodash-cli/node_modules || true"
-  - "npm prune"
-
-  # Restore lodash-cli.
+  # Use lodash-cli from GitHub.
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"
-  - "mv ./tmp/lodash-cli/node_modules ./node_modules/lodash-cli/node_modules || true"
-  - "cd ./node_modules/lodash-cli && npm prune"
-  - "mkdir -p ./node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
-  - "cd ../../ && rm -rf .git && npm i --production && cd ../../"
+  - "mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json"
+  - "cd ../../ && npm i --production && cd ../../"
 
 script:
   # Detect code coverage.

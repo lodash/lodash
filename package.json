@@ -35,7 +35,7 @@
     "curl-amd": "~0.8.12",
     "docdown": "~0.7.1",
     "dojo": "^1.11.2",
-    "ecstatic": "^2.0.0",
+    "ecstatic": "^2.1.0",
     "fs-extra": "~0.30.0",
     "glob": "^7.0.5",
     "istanbul": "0.4.4",

@@ -76,7 +76,7 @@ before_install:
   # Move lodash-cli node_modules before pruning.
   - "mkdir -p ./tmp/lodash-cli/node_modules"
   - "mv ./node_modules/lodash-cli/node_modules ./tmp/lodash-cli/node_modules || true"
-  - "npm prune && npm update --dev"
+  - "npm prune"
 
   # Restore lodash-cli.
   - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli"

@@ -2335,6 +2335,8 @@
      * @returns {Array} Returns the array of property names.
      */
     function arrayLikeKeys(value, inherited) {
+      // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+      // Safari 9 makes `arguments.length` enumerable in strict mode.
       var result = (isArray(value) || isArguments(value))
         ? baseTimes(value.length, String)
         : [];
@@ -5783,7 +5785,7 @@
     var getTag = baseGetTag;
 
     // Fallback for data views, maps, sets, and weak maps in IE 11,
-    // for data views in Edge, and promises in Node.js.
+    // for data views in Edge < 14, and promises in Node.js.
     if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
         (Map && getTag(new Map) != mapTag) ||
         (Promise && getTag(Promise.resolve()) != promiseTag) ||
@@ -10941,7 +10943,7 @@
      * // => false
      */
     function isArguments(value) {
-      // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+      // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
       return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
         (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
     }
@@ -11328,8 +11330,7 @@
      */
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in Safari 8 which returns 'object' for typed array and weak map constructors,
-      // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+      // in Safari 8-9 which returns 'object' for typed array and other constructors.
       var tag = isObject(value) ? objectToString.call(value) : '';
       return tag == funcTag || tag == genTag;
     }

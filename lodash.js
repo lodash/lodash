@@ -150,7 +150,7 @@
       reSplitDetails = /,? & /;
 
   /** Used to match non-compound words composed of alphanumeric characters. */
-  var reAsciiWord = /[a-zA-Z0-9]+/g;
+  var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
 
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;

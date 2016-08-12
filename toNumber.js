@@ -1,4 +1,4 @@
-define(['./isFunction', './isObject', './isSymbol'], function(isFunction, isObject, isSymbol) {
+define(['./isObject', './isSymbol'], function(isObject, isSymbol) {
 
   /** Used as references for various `Number` constants. */
   var NAN = 0 / 0;
@@ -49,7 +49,7 @@ define(['./isFunction', './isObject', './isSymbol'], function(isFunction, isObje
       return NAN;
     }
     if (isObject(value)) {
-      var other = isFunction(value.valueOf) ? value.valueOf() : value;
+      var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
       value = isObject(other) ? (other + '') : other;
     }
     if (typeof value != 'string') {

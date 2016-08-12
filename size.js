@@ -1,4 +1,4 @@
-define(['./_baseKeys', './_getTag', './isArrayLike', './isObjectLike', './isString', './_stringSize'], function(baseKeys, getTag, isArrayLike, isObjectLike, isString, stringSize) {
+define(['./_baseKeys', './_getTag', './isArrayLike', './isString', './_stringSize'], function(baseKeys, getTag, isArrayLike, isString, stringSize) {
 
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
@@ -12,7 +12,7 @@ define(['./_baseKeys', './_getTag', './isArrayLike', './isObjectLike', './isStri
    * @memberOf _
    * @since 0.1.0
    * @category Collection
-   * @param {Array|Object} collection The collection to inspect.
+   * @param {Array|Object|string} collection The collection to inspect.
    * @returns {number} Returns the collection size.
    * @example
    *
@@ -30,14 +30,11 @@ define(['./_baseKeys', './_getTag', './isArrayLike', './isObjectLike', './isStri
       return 0;
     }
     if (isArrayLike(collection)) {
-      var result = collection.length;
-      return (result && isString(collection)) ? stringSize(collection) : result;
+      return isString(collection) ? stringSize(collection) : collection.length;
     }
-    if (isObjectLike(collection)) {
-      var tag = getTag(collection);
-      if (tag == mapTag || tag == setTag) {
-        return collection.size;
-      }
+    var tag = getTag(collection);
+    if (tag == mapTag || tag == setTag) {
+      return collection.size;
     }
     return baseKeys(collection).length;
   }

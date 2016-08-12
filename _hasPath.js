@@ -1,4 +1,4 @@
-define(['./_castPath', './isArguments', './isArray', './_isIndex', './_isKey', './isLength', './isString', './_toKey'], function(castPath, isArguments, isArray, isIndex, isKey, isLength, isString, toKey) {
+define(['./_castPath', './isArguments', './isArray', './_isIndex', './_isKey', './isLength', './_toKey'], function(castPath, isArguments, isArray, isIndex, isKey, isLength, toKey) {
 
   /**
    * Checks if `path` exists on `object`.
@@ -28,7 +28,7 @@ define(['./_castPath', './isArguments', './isArray', './_isIndex', './_isKey', '
     }
     var length = object ? object.length : 0;
     return !!length && isLength(length) && isIndex(key, length) &&
-      (isArray(object) || isString(object) || isArguments(object));
+      (isArray(object) || isArguments(object));
   }
 
   return hasPath;

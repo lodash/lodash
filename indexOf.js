@@ -13,7 +13,7 @@ define(['./_baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
    * @memberOf _
    * @since 0.1.0
    * @category Array
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {*} value The value to search for.
    * @param {number} [fromIndex=0] The index to search from.
    * @returns {number} Returns the index of the matched value, else `-1`.

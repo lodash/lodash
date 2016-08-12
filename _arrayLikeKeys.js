@@ -1,4 +1,4 @@
-define(['./_baseTimes', './isArguments', './isArray', './_isIndex', './isString'], function(baseTimes, isArguments, isArray, isIndex, isString) {
+define(['./_baseTimes', './isArguments', './isArray', './_isIndex'], function(baseTimes, isArguments, isArray, isIndex) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -15,7 +15,9 @@ define(['./_baseTimes', './isArguments', './isArray', './_isIndex', './isString'
    * @returns {Array} Returns the array of property names.
    */
   function arrayLikeKeys(value, inherited) {
-    var result = (isArray(value) || isString(value) || isArguments(value))
+    // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+    // Safari 9 makes `arguments.length` enumerable in strict mode.
+    var result = (isArray(value) || isArguments(value))
       ? baseTimes(value.length, String)
       : [];
 

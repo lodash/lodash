@@ -1,16 +1,10 @@
-define(['./_baseToString', './_castSlice', './_isIterateeCall', './isRegExp', './_reHasComplexSymbol', './_stringToArray', './toString'], function(baseToString, castSlice, isIterateeCall, isRegExp, reHasComplexSymbol, stringToArray, toString) {
+define(['./_baseToString', './_castSlice', './_hasUnicode', './_isIterateeCall', './isRegExp', './_stringToArray', './toString'], function(baseToString, castSlice, hasUnicode, isIterateeCall, isRegExp, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
   /** Used as references for the maximum length and index of an array. */
   var MAX_ARRAY_LENGTH = 4294967295;
-
-  /** Used for built-in method references. */
-  var stringProto = String.prototype;
-
-  /* Built-in method references for those with the same name as other `lodash` methods. */
-  var nativeSplit = stringProto.split;
 
   /**
    * Splits `string` by `separator`.
@@ -45,11 +39,11 @@ define(['./_baseToString', './_castSlice', './_isIterateeCall', './isRegExp', '.
           (separator != null && !isRegExp(separator))
         )) {
       separator = baseToString(separator);
-      if (separator == '' && reHasComplexSymbol.test(string)) {
+      if (!separator && hasUnicode(string)) {
         return castSlice(stringToArray(string), 0, limit);
       }
     }
-    return nativeSplit.call(string, separator, limit);
+    return string.split(separator, limit);
   }
 
   return split;

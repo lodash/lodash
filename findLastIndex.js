@@ -15,7 +15,7 @@ define(['./_baseFindIndex', './_baseIteratee', './toInteger'], function(baseFind
    * @memberOf _
    * @since 2.0.0
    * @category Array
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {Function} [predicate=_.identity]
    *  The function invoked per iteration.
    * @param {number} [fromIndex=array.length-1] The index to search from.

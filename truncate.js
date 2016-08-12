@@ -1,4 +1,4 @@
-define(['./_baseToString', './_castSlice', './isObject', './isRegExp', './_reHasComplexSymbol', './_stringSize', './_stringToArray', './toInteger', './toString'], function(baseToString, castSlice, isObject, isRegExp, reHasComplexSymbol, stringSize, stringToArray, toInteger, toString) {
+define(['./_baseToString', './_castSlice', './_hasUnicode', './isObject', './isRegExp', './_stringSize', './_stringToArray', './toInteger', './toString'], function(baseToString, castSlice, hasUnicode, isObject, isRegExp, stringSize, stringToArray, toInteger, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -59,7 +59,7 @@ define(['./_baseToString', './_castSlice', './isObject', './isRegExp', './_reHas
     string = toString(string);
 
     var strLength = string.length;
-    if (reHasComplexSymbol.test(string)) {
+    if (hasUnicode(string)) {
       var strSymbols = stringToArray(string);
       strLength = strSymbols.length;
     }

@@ -1,4 +1,4 @@
-define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer', './isFunction', './isObjectLike', './_isPrototype', './isString', './_nativeKeys'], function(getTag, isArguments, isArray, isArrayLike, isBuffer, isFunction, isObjectLike, isPrototype, isString, nativeKeys) {
+define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer', './_isPrototype', './_nativeKeys'], function(getTag, isArguments, isArray, isArrayLike, isBuffer, isPrototype, nativeKeys) {
 
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
@@ -51,24 +51,23 @@ define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer'
    */
   function isEmpty(value) {
     if (isArrayLike(value) &&
-        (isArray(value) || isString(value) || isFunction(value.splice) ||
-          isArguments(value) || isBuffer(value))) {
+        (isArray(value) || typeof value == 'string' ||
+          typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
       return !value.length;
     }
-    if (isObjectLike(value)) {
-      var tag = getTag(value);
-      if (tag == mapTag || tag == setTag) {
-        return !value.size;
-      }
+    var tag = getTag(value);
+    if (tag == mapTag || tag == setTag) {
+      return !value.size;
     }
-    var isProto = isPrototype(value);
+    if (nonEnumShadows || isPrototype(value)) {
+      return !nativeKeys(value).length;
+    }
     for (var key in value) {
-      if (hasOwnProperty.call(value, key) &&
-          !(isProto && key == 'constructor')) {
+      if (hasOwnProperty.call(value, key)) {
         return false;
       }
     }
-    return !(nonEnumShadows && nativeKeys(value).length);
+    return true;
   }
 
   return isEmpty;

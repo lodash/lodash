@@ -1,4 +1,4 @@
-define(['./_castSlice', './_reHasComplexSymbol', './_stringToArray', './toString'], function(castSlice, reHasComplexSymbol, stringToArray, toString) {
+define(['./_castSlice', './_hasUnicode', './_stringToArray', './toString'], function(castSlice, hasUnicode, stringToArray, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,7 +14,7 @@ define(['./_castSlice', './_reHasComplexSymbol', './_stringToArray', './toString
     return function(string) {
       string = toString(string);
 
-      var strSymbols = reHasComplexSymbol.test(string)
+      var strSymbols = hasUnicode(string)
         ? stringToArray(string)
         : undefined;
 

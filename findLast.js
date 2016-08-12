@@ -8,7 +8,7 @@ define(['./_createFind', './findLastIndex'], function(createFind, findLastIndex)
    * @memberOf _
    * @since 2.0.0
    * @category Collection
-   * @param {Array|Object} collection The collection to search.
+   * @param {Array|Object} collection The collection to inspect.
    * @param {Function} [predicate=_.identity]
    *  The function invoked per iteration.
    * @param {number} [fromIndex=collection.length-1] The index to search from.

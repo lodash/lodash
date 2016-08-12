@@ -1,7 +1,10 @@
 define([], function() {
 
+  /** Used for built-in method references. */
+  var funcProto = Function.prototype;
+
   /** Used to resolve the decompiled source of functions. */
-  var funcToString = Function.prototype.toString;
+  var funcToString = funcProto.toString;
 
   /**
    * Converts `func` to its source code.

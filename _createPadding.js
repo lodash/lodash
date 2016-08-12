@@ -1,4 +1,4 @@
-define(['./_baseRepeat', './_baseToString', './_castSlice', './_reHasComplexSymbol', './_stringSize', './_stringToArray'], function(baseRepeat, baseToString, castSlice, reHasComplexSymbol, stringSize, stringToArray) {
+define(['./_baseRepeat', './_baseToString', './_castSlice', './_hasUnicode', './_stringSize', './_stringToArray'], function(baseRepeat, baseToString, castSlice, hasUnicode, stringSize, stringToArray) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./_baseRepeat', './_baseToString', './_castSlice', './_reHasComplexSymb
       return charsLength ? baseRepeat(chars, length) : chars;
     }
     var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
-    return reHasComplexSymbol.test(chars)
+    return hasUnicode(chars)
       ? castSlice(stringToArray(result), 0, length).join('')
       : result.slice(0, length);
   }

@@ -7,7 +7,7 @@ define(['./_assignValue', './_castPath', './_isIndex', './_isKey', './isObject',
    * The base implementation of `_.set`.
    *
    * @private
-   * @param {Object} object The object to query.
+   * @param {Object} object The object to modify.
    * @param {Array|string} path The path of the property to set.
    * @param {*} value The value to set.
    * @param {Function} [customizer] The function to customize path creation.

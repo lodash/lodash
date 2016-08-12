@@ -3,10 +3,7 @@ var getTag = require('./_getTag'),
     isArray = require('./isArray'),
     isArrayLike = require('./isArrayLike'),
     isBuffer = require('./isBuffer'),
-    isFunction = require('./isFunction'),
-    isObjectLike = require('./isObjectLike'),
     isPrototype = require('./_isPrototype'),
-    isString = require('./isString'),
     nativeKeys = require('./_nativeKeys');
 
 /** `Object#toString` result references. */
@@ -60,24 +57,23 @@ var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
  */
 function isEmpty(value) {
   if (isArrayLike(value) &&
-      (isArray(value) || isString(value) || isFunction(value.splice) ||
-        isArguments(value) || isBuffer(value))) {
+      (isArray(value) || typeof value == 'string' ||
+        typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
     return !value.length;
   }
-  if (isObjectLike(value)) {
-    var tag = getTag(value);
-    if (tag == mapTag || tag == setTag) {
-      return !value.size;
-    }
+  var tag = getTag(value);
+  if (tag == mapTag || tag == setTag) {
+    return !value.size;
   }
-  var isProto = isPrototype(value);
+  if (nonEnumShadows || isPrototype(value)) {
+    return !nativeKeys(value).length;
+  }
   for (var key in value) {
-    if (hasOwnProperty.call(value, key) &&
-        !(isProto && key == 'constructor')) {
+    if (hasOwnProperty.call(value, key)) {
       return false;
     }
   }
-  return !(nonEnumShadows && nativeKeys(value).length);
+  return true;
 }
 
 module.exports = isEmpty;

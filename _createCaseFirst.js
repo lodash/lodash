@@ -1,5 +1,5 @@
 import castSlice from './_castSlice.js';
-import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import hasUnicode from './_hasUnicode.js';
 import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
 
@@ -14,7 +14,7 @@ function createCaseFirst(methodName) {
   return function(string) {
     string = toString(string);
 
-    var strSymbols = reHasComplexSymbol.test(string)
+    var strSymbols = hasUnicode(string)
       ? stringToArray(string)
       : undefined;
 

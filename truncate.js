@@ -1,8 +1,8 @@
 import baseToString from './_baseToString.js';
 import castSlice from './_castSlice.js';
+import hasUnicode from './_hasUnicode.js';
 import isObject from './isObject.js';
 import isRegExp from './isRegExp.js';
-import reHasComplexSymbol from './_reHasComplexSymbol.js';
 import stringSize from './_stringSize.js';
 import stringToArray from './_stringToArray.js';
 import toInteger from './toInteger.js';
@@ -64,7 +64,7 @@ function truncate(string, options) {
   string = toString(string);
 
   var strLength = string.length;
-  if (reHasComplexSymbol.test(string)) {
+  if (hasUnicode(string)) {
     var strSymbols = stringToArray(string);
     strLength = strSymbols.length;
   }

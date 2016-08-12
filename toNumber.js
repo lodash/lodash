@@ -1,4 +1,3 @@
-import isFunction from './isFunction.js';
 import isObject from './isObject.js';
 import isSymbol from './isSymbol.js';
 
@@ -51,7 +50,7 @@ function toNumber(value) {
     return NAN;
   }
   if (isObject(value)) {
-    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
     value = isObject(other) ? (other + '') : other;
   }
   if (typeof value != 'string') {

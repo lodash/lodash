@@ -10,7 +10,7 @@ import findIndex from './findIndex.js';
  * @memberOf _
  * @since 0.1.0
  * @category Collection
- * @param {Array|Object} collection The collection to search.
+ * @param {Array|Object} collection The collection to inspect.
  * @param {Function} [predicate=_.identity]
  *  The function invoked per iteration.
  * @param {number} [fromIndex=0] The index to search from.

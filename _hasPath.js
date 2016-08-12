@@ -4,7 +4,6 @@ import isArray from './isArray.js';
 import isIndex from './_isIndex.js';
 import isKey from './_isKey.js';
 import isLength from './isLength.js';
-import isString from './isString.js';
 import toKey from './_toKey.js';
 
 /**
@@ -35,7 +34,7 @@ function hasPath(object, path, hasFunc) {
   }
   var length = object ? object.length : 0;
   return !!length && isLength(length) && isIndex(key, length) &&
-    (isArray(object) || isString(object) || isArguments(object));
+    (isArray(object) || isArguments(object));
 }
 
 export default hasPath;

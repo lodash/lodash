@@ -2,7 +2,6 @@ import baseTimes from './_baseTimes.js';
 import isArguments from './isArguments.js';
 import isArray from './isArray.js';
 import isIndex from './_isIndex.js';
-import isString from './isString.js';
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -19,7 +18,9 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {Array} Returns the array of property names.
  */
 function arrayLikeKeys(value, inherited) {
-  var result = (isArray(value) || isString(value) || isArguments(value))
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  // Safari 9 makes `arguments.length` enumerable in strict mode.
+  var result = (isArray(value) || isArguments(value))
     ? baseTimes(value.length, String)
     : [];
 

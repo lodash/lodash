@@ -1,7 +1,7 @@
 import baseRepeat from './_baseRepeat.js';
 import baseToString from './_baseToString.js';
 import castSlice from './_castSlice.js';
-import reHasComplexSymbol from './_reHasComplexSymbol.js';
+import hasUnicode from './_hasUnicode.js';
 import stringSize from './_stringSize.js';
 import stringToArray from './_stringToArray.js';
 
@@ -25,7 +25,7 @@ function createPadding(length, chars) {
     return charsLength ? baseRepeat(chars, length) : chars;
   }
   var result = baseRepeat(chars, nativeCeil(length / stringSize(chars)));
-  return reHasComplexSymbol.test(chars)
+  return hasUnicode(chars)
     ? castSlice(stringToArray(result), 0, length).join('')
     : result.slice(0, length);
 }

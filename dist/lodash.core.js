@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.14.2';
+  var VERSION = '4.15.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -92,7 +92,7 @@
    * support for iteratee shorthands.
    *
    * @private
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {Function} predicate The function invoked per iteration.
    * @param {number} fromIndex The index to search from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
@@ -1430,7 +1430,7 @@
    * @memberOf _
    * @since 1.1.0
    * @category Array
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {Function} [predicate=_.identity]
    *  The function invoked per iteration.
    * @param {number} [fromIndex=0] The index to search from.
@@ -1540,7 +1540,7 @@
    * @memberOf _
    * @since 0.1.0
    * @category Array
-   * @param {Array} array The array to search.
+   * @param {Array} array The array to inspect.
    * @param {*} value The value to search for.
    * @param {number} [fromIndex=0] The index to search from.
    * @returns {number} Returns the index of the matched value, else `-1`.
@@ -1855,7 +1855,7 @@
    * @memberOf _
    * @since 0.1.0
    * @category Collection
-   * @param {Array|Object} collection The collection to search.
+   * @param {Array|Object} collection The collection to inspect.
    * @param {Function} [predicate=_.identity]
    *  The function invoked per iteration.
    * @param {number} [fromIndex=0] The index to search from.
@@ -2014,7 +2014,7 @@
    * @memberOf _
    * @since 0.1.0
    * @category Collection
-   * @param {Array|Object} collection The collection to inspect.
+   * @param {Array|Object|string} collection The collection to inspect.
    * @returns {number} Returns the collection size.
    * @example
    *
@@ -2383,7 +2383,7 @@
    * // => false
    */
   function isArguments(value) {
-    // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+    // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
     return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
       (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
   }
@@ -2635,8 +2635,7 @@
    */
   function isFunction(value) {
     // The use of `Object#toString` avoids issues with the `typeof` operator
-    // in Safari 8 which returns 'object' for typed array and weak map constructors,
-    // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+    // in Safari 8-9 which returns 'object' for typed array and other constructors.
     var tag = isObject(value) ? objectToString.call(value) : '';
     return tag == funcTag || tag == genTag;
   }

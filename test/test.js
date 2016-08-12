@@ -104,12 +104,24 @@
       stubObject = function() { return {}; },
       stubString = function() { return ''; };
 
-  /** List of latin-1 supplementary letters to basic latin letters. */
+
+
+  /** List of Latin Unicode letters. */
   var burredLetters = [
-    '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce',
-    '\xcf', '\xd0', '\xd1', '\xd2', '\xd3', '\xd4', '\xd5', '\xd6', '\xd8', '\xd9', '\xda', '\xdb', '\xdc', '\xdd', '\xde',
-    '\xdf', '\xe0', '\xe1', '\xe2', '\xe3', '\xe4', '\xe5', '\xe6', '\xe7', '\xe8', '\xe9', '\xea', '\xeb', '\xec', '\xed', '\xee',
-    '\xef', '\xf0', '\xf1', '\xf2', '\xf3', '\xf4', '\xf5', '\xf6', '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
+    // Latin-1 Supplement letters.
+    '\xc0', '\xc1', '\xc2', '\xc3', '\xc4', '\xc5', '\xc6', '\xc7', '\xc8', '\xc9', '\xca', '\xcb', '\xcc', '\xcd', '\xce', '\xcf',
+    '\xd0', '\xd1', '\xd2', '\xd3', '\xd4', '\xd5', '\xd6',         '\xd8', '\xd9', '\xda', '\xdb', '\xdc', '\xdd', '\xde', '\xdf',
+    '\xe0', '\xe1', '\xe2', '\xe3', '\xe4', '\xe5', '\xe6', '\xe7', '\xe8', '\xe9', '\xea', '\xeb', '\xec', '\xed', '\xee', '\xef',
+    '\xf0', '\xf1', '\xf2', '\xf3', '\xf4', '\xf5', '\xf6',         '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff',
+    // Latin Extended-A letters.
+    '\u0100', '\u0101', '\u0102', '\u0103', '\u0104', '\u0105', '\u0106', '\u0107', '\u0108', '\u0109', '\u010a', '\u010b', '\u010c', '\u010d', '\u010e', '\u010f',
+    '\u0110', '\u0111', '\u0112', '\u0113', '\u0114', '\u0115', '\u0116', '\u0117', '\u0118', '\u0119', '\u011a', '\u011b', '\u011c', '\u011d', '\u011e', '\u011f',
+    '\u0120', '\u0121', '\u0122', '\u0123', '\u0124', '\u0125', '\u0126', '\u0127', '\u0128', '\u0129', '\u012a', '\u012b', '\u012c', '\u012d', '\u012e', '\u012f',
+    '\u0130', '\u0131', '\u0132', '\u0133', '\u0134', '\u0135', '\u0136', '\u0137', '\u0138', '\u0139', '\u013a', '\u013b', '\u013c', '\u013d', '\u013e', '\u013f',
+    '\u0140', '\u0141', '\u0142', '\u0143', '\u0144', '\u0145', '\u0146', '\u0147', '\u0148', '\u0149', '\u014a', '\u014b', '\u014c', '\u014d', '\u014e', '\u014f',
+    '\u0150', '\u0151', '\u0152', '\u0153', '\u0154', '\u0155', '\u0156', '\u0157', '\u0158', '\u0159', '\u015a', '\u015b', '\u015c', '\u015d', '\u015e', '\u015f',
+    '\u0160', '\u0161', '\u0162', '\u0163', '\u0164', '\u0165', '\u0166', '\u0167', '\u0168', '\u0169', '\u016a', '\u016b', '\u016c', '\u016d', '\u016e', '\u016f',
+    '\u0170', '\u0171', '\u0172', '\u0173', '\u0174', '\u0175', '\u0176', '\u0177', '\u0178', '\u0179', '\u017a', '\u017b', '\u017c', '\u017d', '\u017e', '\u017f'
   ];
 
   /** List of combining diacritical marks. */
@@ -124,12 +136,25 @@
     '\ufe20', '\ufe21', '\ufe22', '\ufe23'
   ];
 
-  /** List of `burredLetters` translated to basic latin letters. */
+  /** List of converted Latin Unicode letters. */
   var deburredLetters = [
+    // Converted Latin-1 Supplement letters.
     'A',  'A', 'A', 'A', 'A', 'A', 'Ae', 'C',  'E', 'E', 'E', 'E', 'I', 'I', 'I',
     'I',  'D', 'N', 'O', 'O', 'O', 'O',  'O',  'O', 'U', 'U', 'U', 'U', 'Y', 'Th',
     'ss', 'a', 'a', 'a', 'a', 'a', 'a',  'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i',  'i',
-    'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y'
+    'i',  'd', 'n', 'o', 'o', 'o', 'o',  'o',  'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y',
+    // Converted Latin Extended-A letters.
+    'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c',
+    'D', 'd', 'D', 'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e',
+    'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g', 'H', 'h', 'H', 'h',
+    'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j',
+    'K', 'k', 'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l',
+    'N', 'n', 'N', 'n', 'N', 'n', "'n", 'N', 'n',
+    'O', 'o', 'O', 'o', 'O', 'o', 'Oe', 'oe',
+    'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S', 's',
+    'T', 't', 'T', 't', 'T', 't',
+    'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u',
+    'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 'ss'
   ];
 
   /** Used to provide falsey values to methods. */
@@ -2234,9 +2259,9 @@
       assert.expect(1);
 
       var actual = lodashStable.map(burredLetters, function(burred, index) {
-        var letter = deburredLetters[index];
+        var letter = deburredLetters[index].replace(/['\u2019]/g, '');
         if (caseName == 'start') {
-          letter = lodashStable.capitalize(letter);
+          letter = letter == 'IJ' ? letter : lodashStable.capitalize(letter);
         } else if (caseName == 'upper') {
           letter = letter.toUpperCase();
         } else {
@@ -2273,7 +2298,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should remove latin-1 mathematical operators', function(assert) {
+    QUnit.test('`_.' + methodName + '` should remove Latin mathematical operators', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(['\xd7', '\xf7'], func);
@@ -4448,14 +4473,14 @@
   QUnit.module('lodash.deburr');
 
   (function() {
-    QUnit.test('should convert latin-1 supplementary letters to basic latin', function(assert) {
+    QUnit.test('should convert Latin-1 Supplement letters to basic Latin', function(assert) {
       assert.expect(1);
 
       var actual = lodashStable.map(burredLetters, _.deburr);
       assert.deepEqual(actual, deburredLetters);
     });
 
-    QUnit.test('should not deburr latin-1 mathematical operators', function(assert) {
+    QUnit.test('should not deburr Latin mathematical operators', function(assert) {
       assert.expect(1);
 
       var operators = ['\xd7', '\xf7'],
@@ -24985,7 +25010,7 @@
   QUnit.module('lodash.words');
 
   (function() {
-    QUnit.test('should treat latin-1 supplementary letters as words', function(assert) {
+    QUnit.test('should match words containing Latin-1 Supplement letters', function(assert) {
       assert.expect(1);
 
       var expected = lodashStable.map(burredLetters, function(letter) {

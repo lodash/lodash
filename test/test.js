@@ -104,8 +104,6 @@
       stubObject = function() { return {}; },
       stubString = function() { return ''; };
 
-
-
   /** List of Latin Unicode letters. */
   var burredLetters = [
     // Latin-1 Supplement letters.

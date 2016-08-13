@@ -1,4 +1,4 @@
-# lodash.tofinite v4.12.0
+# lodash.tofinite v4.12.1
 
 The [lodash](https://lodash.com/) method `_.toFinite` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var toFinite = require('lodash.tofinite');
 ```
 
-See the [documentation](https://lodash.com/docs#toFinite) or [package source](https://github.com/lodash/lodash/blob/4.12.0-npm-packages/lodash.tofinite) for more details.
+See the [documentation](https://lodash.com/docs#toFinite) or [package source](https://github.com/lodash/lodash/blob/4.12.1-npm-packages/lodash.tofinite) for more details.

@@ -1,10 +1,11 @@
 {
-  "name": "lodash._basetostring",
-  "version": "4.12.0",
-  "description": "The internal lodash function `baseToString` exported as a module.",
+  "name": "lodash.stubstring",
+  "version": "4.13.0",
+  "description": "The lodash method `_.stubString` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
+  "keywords": "lodash-modularized, stubstring",
   "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
   "contributors": [
     "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",

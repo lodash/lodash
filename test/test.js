@@ -11135,12 +11135,6 @@
         skipAssert(assert);
       }
     });
-
-    QUnit.test('should avoid `[xpconnect wrapped native prototype]` in Firefox', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.isNumber(+'2'), true);
-    });
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -16986,7 +16980,7 @@
       assert.strictEqual(_.parseInt('08', 10), 8);
     });
 
-    QUnit.test('should parse strings with leading whitespace (test in Chrome and Firefox)', function(assert) {
+    QUnit.test('should parse strings with leading whitespace', function(assert) {
       assert.expect(2);
 
       var expected = [8, 8, 10, 10, 32, 32, 32, 32];
@@ -20633,14 +20627,8 @@
             ? 0
             : Math.min(length, MAX_ARRAY_INDEX);
 
-          // Avoid false fails in older Firefox.
-          if (array.length == length) {
-            assert.ok(steps == 32 || steps == 33);
-            assert.strictEqual(actual, expected);
-          }
-          else {
-            skipAssert(assert, 2);
-          }
+          assert.ok(steps == 32 || steps == 33);
+          assert.strictEqual(actual, expected);
         });
       });
     });

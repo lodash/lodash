@@ -10495,22 +10495,6 @@
       }
     });
 
-    QUnit.test('should work with host objects in IE 8 document mode (test in IE 11)', function(assert) {
-      assert.expect(2);
-
-      // Trigger a Chakra JIT bug.
-      // See https://github.com/jashkenas/underscore/issues/1621.
-      lodashStable.each([body, xml], function(object) {
-        if (object) {
-          lodashStable.times(100, _.isFunction);
-          assert.strictEqual(_.isFunction(object), false);
-        }
-        else {
-          skipAssert(assert);
-        }
-      });
-    });
-
     QUnit.test('should work with a function from another realm', function(assert) {
       assert.expect(1);
 

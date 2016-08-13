@@ -56,15 +56,14 @@ before_install:
 
   # Remove code skipped on the coverage run.
   - |
-      PATTERN[0]="|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)|"
-      PATTERN[1]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
-      PATTERN[2]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
-      PATTERN[3]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
-      PATTERN[4]="|\bcase\s+(?:dataView|promise|set|map|weakMap)CtorString:.+|g"
-      PATTERN[5]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
-      PATTERN[6]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
-      PATTERN[7]="|\s*define\([\s\S]+?\);|"
-      PATTERN[8]="|\s*root\._\s*=\s*_;|"
+      PATTERN[0]="|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}|"
+      PATTERN[1]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
+      PATTERN[2]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
+      PATTERN[3]="|\bcase\s+(?:dataView|promise|set|map|weakMap)CtorString:.+|g"
+      PATTERN[4]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
+      PATTERN[5]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
+      PATTERN[6]="|\s*define\([\s\S]+?\);|"
+      PATTERN[7]="|\s*root\._\s*=\s*_;|"
 
       if [ $ISTANBUL == true ]; then
         set -e

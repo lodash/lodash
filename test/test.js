@@ -5450,8 +5450,8 @@
   QUnit.module('lodash.escape');
 
   (function() {
-    var escaped = '&amp;&lt;&gt;&quot;&#39;&#96;\/',
-        unescaped = '&<>"\'`\/';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;/',
+        unescaped = '&<>"\'/';
 
     escaped += escaped;
     unescaped += unescaped;
@@ -21728,8 +21728,8 @@
       assert.expect(1);
 
       var strings = ['<p><%- value %></p>', '<p><%-value%></p>', '<p><%-\nvalue\n%></p>'],
-          expected = lodashStable.map(strings, lodashStable.constant('<p>&amp;&lt;&gt;&quot;&#39;&#96;\/</p>')),
-          data = { 'value': '&<>"\'`\/' };
+          expected = lodashStable.map(strings, lodashStable.constant('<p>&amp;&lt;&gt;&quot;&#39;/</p>')),
+          data = { 'value': '&<>"\'/' };
 
       var actual = lodashStable.map(strings, function(string) {
         return _.template(string)(data);
@@ -22268,13 +22268,13 @@
 
       var array = ['<%= a %>', '<%- b %>', '<% print(c) %>'],
           compiles = lodashStable.map(array, _.template),
-          data = { 'a': 'one', 'b': '`two`', 'c': 'three' };
+          data = { 'a': 'one', 'b': '"two"', 'c': 'three' };
 
       var actual = lodashStable.map(compiles, function(compiled) {
         return compiled(data);
       });
 
-      assert.deepEqual(actual, ['one', '&#96;two&#96;', 'three']);
+      assert.deepEqual(actual, ['one', '&quot;two&quot;', 'three']);
     });
   }());
 
@@ -24205,8 +24205,8 @@
   QUnit.module('lodash.unescape');
 
   (function() {
-    var escaped = '&amp;&lt;&gt;&quot;&#39;\/',
-        unescaped = '&<>"\'\/';
+    var escaped = '&amp;&lt;&gt;&quot;&#39;/',
+        unescaped = '&<>"\'/';
 
     escaped += escaped;
     unescaped += unescaped;

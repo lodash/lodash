@@ -3781,7 +3781,7 @@
      */
     function baseRest(func, start) {
       start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
-      return function() {
+      return setToString(function() {
         var args = arguments,
             index = -1,
             length = nativeMax(args.length - start, 0),
@@ -3797,7 +3797,7 @@
         }
         otherArgs[start] = array;
         return apply(func, this, otherArgs);
-      };
+      }, func + '');
     }
 
     /**
@@ -6314,6 +6314,22 @@
     };
 
     /**
+     * Sets the `toString` method of `func` to return `string`.
+     *
+     * @private
+     * @param {Function} func The function to modify.
+     * @param {Function} string The `toString` result.
+     * @returns {Function} Returns `func`.
+     */
+    var setToString = !defineProperty ? identity : function(func, string) {
+      return defineProperty(func, 'toString', {
+        'configurable': true,
+        'enumerable': false,
+        'value': constant(string)
+      });
+    };
+
+    /**
      * Sets the `toString` method of `wrapper` to mimic the source of `reference`
      * with wrapper details in a comment at the top of the source body.
      *
@@ -6323,14 +6339,10 @@
      * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
      * @returns {Function} Returns `wrapper`.
      */
-    var setWrapToString = !defineProperty ? identity : function(wrapper, reference, bitmask) {
+    function setWrapToString(wrapper, reference, bitmask) {
       var source = (reference + '');
-      return defineProperty(wrapper, 'toString', {
-        'configurable': true,
-        'enumerable': false,
-        'value': constant(insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)))
-      });
-    };
+      return setToString(wrapper, insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)));
+    }
 
     /**
      * Converts `string` to a property path array.

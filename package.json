@@ -51,7 +51,7 @@
     "request": "^2.74.0",
     "requirejs": "^2.2.0",
     "sauce-tunnel": "^2.5.0",
-    "uglify-js": "2.7.2",
+    "uglify-js": "2.7.3",
     "webpack": "^1.13.1"
   }
 }

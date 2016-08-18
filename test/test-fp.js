@@ -629,7 +629,7 @@
     _.forOwn(mapping.placeholder, function(truthy, methodName) {
       var func = fp[methodName];
 
-      QUnit.test('`_.' + methodName + '` should have a `placeholder` property', function(assert) {
+      QUnit.test('fp.' + methodName + '` should have a `placeholder` property', function(assert) {
         assert.expect(2);
 
         assert.ok(_.isObject(func.placeholder));
@@ -833,7 +833,7 @@
   _.each(['curry', 'curryRight'], function(methodName) {
     var func = fp[methodName];
 
-    QUnit.test('`_.' + methodName + '` should only accept a `func` param', function(assert) {
+    QUnit.test('fp.' + methodName + '` should only accept a `func` param', function(assert) {
       assert.expect(1);
 
       assert.raises(function() { func(1, _.noop); }, TypeError);
@@ -847,7 +847,7 @@
   _.each(['curryN', 'curryRightN'], function(methodName) {
     var func = fp[methodName];
 
-    QUnit.test('`_.' + methodName + '` should accept an `arity` param', function(assert) {
+    QUnit.test('fp.' + methodName + '` should accept an `arity` param', function(assert) {
       assert.expect(1);
 
       var actual = func(1)(function(a, b) { return [a, b]; })('a');
@@ -984,7 +984,7 @@
   _.each(['findFrom', 'findIndexFrom', 'findLastFrom', 'findLastIndexFrom'], function(methodName) {
     var func = fp[methodName];
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `predicate` arguments', function(assert) {
+    QUnit.test('fp.' + methodName + '` should provide the correct `predicate` arguments', function(assert) {
       assert.expect(1);
 
       var args;
@@ -1043,7 +1043,7 @@
     var func = fp[methodName],
         resolve = methodName == 'findIndexFrom' ? fp.eq : _.identity;
 
-    QUnit.test('`_.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
+    QUnit.test('fp.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3, 1, 2, 3];
@@ -1061,7 +1061,7 @@
     var func = fp[methodName],
         resolve = methodName == 'findLastIndexFrom' ? fp.eq : _.identity;
 
-    QUnit.test('`_.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
+    QUnit.test('fp.' + methodName + '` should have an argument order of `value`, `fromIndex`, then `array`', function(assert) {
       assert.expect(2);
 
       var array = [1, 2, 3, 1, 2, 3];
@@ -1646,7 +1646,7 @@
         isPad = methodName == 'padChars',
         isStart = methodName == 'padCharsStart';
 
-    QUnit.test('`_.' + methodName + '` should truncate pad characters to fit the pad length', function(assert) {
+    QUnit.test('fp.' + methodName + '` should truncate pad characters to fit the pad length', function(assert) {
       assert.expect(1);
 
       if (isPad) {
@@ -1665,7 +1665,7 @@
     var func = fp[methodName],
         isPartial = methodName == 'partial';
 
-    QUnit.test('`_.' + methodName + '` should accept an `args` param', function(assert) {
+    QUnit.test('fp.' + methodName + '` should accept an `args` param', function(assert) {
       assert.expect(1);
 
       var expected = isPartial ? [1, 2, 3] : [0, 1, 2];
@@ -1677,7 +1677,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should convert by name', function(assert) {
+    QUnit.test('fp.' + methodName + '` should convert by name', function(assert) {
       assert.expect(2);
 
       var expected = isPartial ? [1, 2, 3] : [0, 1, 2],
@@ -1789,7 +1789,7 @@
     var func = fp[methodName],
         isRange = methodName == 'range';
 
-    QUnit.test('`_.' + methodName + '` should have an argument order of `start` then `end`', function(assert) {
+    QUnit.test('fp.' + methodName + '` should have an argument order of `start` then `end`', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func(1)(4), isRange ? [1, 2, 3] : [3, 2, 1]);
@@ -1804,7 +1804,7 @@
     var func = fp[methodName],
         isRange = methodName == 'rangeStep';
 
-    QUnit.test('`_.' + methodName + '` should have an argument order of `step`, `start`, then `end`', function(assert) {
+    QUnit.test('fp.' + methodName + '` should have an argument order of `step`, `start`, then `end`', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(func(2)(1)(4), isRange ? [1, 3] : [3, 1]);
@@ -1843,7 +1843,7 @@
     var func = fp[methodName],
         isReduce = methodName == 'reduce';
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
+    QUnit.test('`fp.' + methodName + '` should provide the correct `iteratee` arguments when iterating an array', function(assert) {
       assert.expect(1);
 
       var args;
@@ -1855,7 +1855,7 @@
       assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
     });
 
-    QUnit.test('`_.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
+    QUnit.test('`fp.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
       assert.expect(1);
 
       var args,
@@ -2017,7 +2017,7 @@
     }
     parts = parts.join(' and ');
 
-    QUnit.test('`_.' + methodName + '` should remove ' + parts + ' `chars`', function(assert) {
+    QUnit.test('`fp.' + methodName + '` should remove ' + parts + ' `chars`', function(assert) {
       assert.expect(1);
 
       var string = '-_-a-b-c-_-',

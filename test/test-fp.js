@@ -1783,15 +1783,33 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('fp.range');
+  QUnit.module('range methods');
 
-  (function() {
-    QUnit.test('should have an argument order of `start` then `end`', function(assert) {
+  _.each(['range', 'rangeRight'], function(methodName) {
+    var func = fp[methodName],
+        isRange = methodName == 'range';
+
+    QUnit.test('`_.' + methodName + '` should have an argument order of `start` then `end`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(fp.range(1)(4), [1, 2, 3]);
+      assert.deepEqual(func(1)(4), isRange ? [1, 2, 3] : [3, 2, 1]);
     });
-  }());
+  });
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('rangeStep methods');
+
+  _.each(['rangeStep', 'rangeStepRight'], function(methodName) {
+    var func = fp[methodName],
+        isRange = methodName == 'rangeStep';
+
+    QUnit.test('`_.' + methodName + '` should have an argument order of `step`, `start`, then `end`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(func(2)(1)(4), isRange ? [1, 3] : [3, 1]);
+    });
+  });
 
   /*--------------------------------------------------------------------------*/
 

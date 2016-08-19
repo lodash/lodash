@@ -18,11 +18,7 @@ env:
     - SAUCE_LABS=true
 matrix:
   include:
-    - node_js: "0.12"
-      env:
     - node_js: "4"
-      env:
-    - node_js: "5"
       env:
 git:
   depth: 10

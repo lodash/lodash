@@ -7461,7 +7461,7 @@
   QUnit.module('`__proto__` property bugs');
 
   (function() {
-    QUnit.test('internal data objects should work with the `__proto__` key', function(assert) {
+    QUnit.test('should work with the `__proto__` key in internal data objects', function(assert) {
       assert.expect(4);
 
       var stringLiteral = '__proto__',
@@ -7476,6 +7476,13 @@
       assert.deepEqual(_.intersection(largeArray, largeArray), expected);
       assert.deepEqual(_.uniq(largeArray), expected);
       assert.deepEqual(_.without.apply(_, [largeArray].concat(largeArray)), []);
+    });
+
+    QUnit.test('should treat `__proto__` as a regular key in assignments', function(assert) {
+      assert.expect(1);
+
+      var actual = _.groupBy([{ 'a': '__proto__' }], 'a');
+      assert.notOk(actual instanceof Array);
     });
   }());
 

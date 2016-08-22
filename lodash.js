@@ -2407,7 +2407,16 @@
       var objValue = object[key];
       if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
           (value === undefined && !(key in object))) {
-        object[key] = value;
+        if (key == '__proto__' && defineProperty) {
+          defineProperty(object, key, {
+            'configurable': true,
+            'enumerable': true,
+            'value': value,
+            'writable': true
+          });
+        } else {
+          object[key] = value;
+        }
       }
     }
 
@@ -8746,7 +8755,7 @@
      * // => { '3': 2, '5': 1 }
      */
     var countBy = createAggregator(function(result, value, key) {
-      hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
+      hasOwnProperty.call(result, key) ? ++result[key] : assignValue(result, key, 1);
     });
 
     /**
@@ -9069,7 +9078,7 @@
       if (hasOwnProperty.call(result, key)) {
         result[key].push(value);
       } else {
-        result[key] = [value];
+        assignValue(result, key, [value]);
       }
     });
 
@@ -9182,7 +9191,7 @@
      * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
      */
     var keyBy = createAggregator(function(result, value, key) {
-      result[key] = value;
+      assignValue(result, key, value);
     });
 
     /**

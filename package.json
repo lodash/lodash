@@ -38,7 +38,7 @@
     "ecstatic": "^2.1.0",
     "fs-extra": "~0.30.0",
     "glob": "^7.0.5",
-    "istanbul": "0.4.4",
+    "istanbul": "0.4.5",
     "jquery": "^3.1.0",
     "jscs": "^3.0.7",
     "lodash": "4.15.0",
@@ -51,7 +51,7 @@
     "request": "^2.74.0",
     "requirejs": "^2.2.0",
     "sauce-tunnel": "^2.5.0",
-    "uglify-js": "2.7.0",
-    "webpack": "^1.13.1"
+    "uglify-js": "2.7.3",
+    "webpack": "^1.13.2"
   }
 }

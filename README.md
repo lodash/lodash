@@ -12,7 +12,7 @@
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```bash
+```shell
 $ npm run build
 $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js

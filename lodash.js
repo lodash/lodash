@@ -6358,7 +6358,8 @@
       return defineProperty(func, 'toString', {
         'configurable': true,
         'enumerable': false,
-        'value': constant(string)
+        'value': constant(string),
+        'writable': true
       });
     };
 

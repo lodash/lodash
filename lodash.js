@@ -1503,15 +1503,8 @@
         Promise = getNative(context, 'Promise'),
         Set = getNative(context, 'Set'),
         WeakMap = getNative(context, 'WeakMap'),
+        defineProperty = getNative(Object, 'defineProperty'),
         nativeCreate = getNative(Object, 'create');
-
-    /* Used to set `toString` methods. */
-    var defineProperty = (function() {
-      var func = getNative(Object, 'defineProperty'),
-          name = getNative.name;
-
-      return (name && name.length > 2) ? func : undefined;
-    }());
 
     /** Used to store function metadata. */
     var metaMap = WeakMap && new WeakMap;

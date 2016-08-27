@@ -2,8 +2,8 @@
 
 delete global['__core-js_shared__'];
 
-var _ = require('./lodash.js'),
-    globals = require('lodash-doc-globals');
+const _ = require('./lodash.js');
+const globals = require('lodash-doc-globals');
 
 module.exports = {
   'babel': false,

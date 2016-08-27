@@ -21,7 +21,7 @@
     "style:perf": "jscs perf/*.js perf/**/*.js",
     "style:test": "jscs test/*.js test/**/*.js",
     "test": "npm run test:main && npm run test:fp",
-    "test:doc": "markdown-doctest",
+    "test:doc": "markdown-doctest doc/*.md",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test",
     "validate": "npm run style && npm run test"

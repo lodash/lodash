@@ -5606,7 +5606,7 @@
 
   QUnit.module('strict mode checks');
 
-  lodashStable.each(['assign', 'assignIn', 'bindAll', 'defaults'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'bindAll', 'defaults', 'defaultsDeep', 'merge'], function(methodName) {
     var func = _[methodName],
         isBindAll = methodName == 'bindAll';
 
@@ -7203,10 +7203,10 @@
 
   QUnit.module('object assignments');
 
-  lodashStable.each(['assign', 'assignIn', 'defaults', 'merge'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'defaults', 'defaultsDeep', 'merge'], function(methodName) {
     var func = _[methodName],
         isAssign = methodName == 'assign',
-        isDefaults = methodName == 'defaults';
+        isDefaults = methodName == 'defaults' || methodName == 'defaultsDeep';
 
     QUnit.test('`_.' + methodName + '` should coerce primitives to objects', function(assert) {
       assert.expect(1);
@@ -7320,7 +7320,7 @@
     });
   });
 
-  lodashStable.each(['assign', 'assignIn', 'assignInWith', 'assignWith', 'defaults', 'merge', 'mergeWith'], function(methodName) {
+  lodashStable.each(['assign', 'assignIn', 'assignInWith', 'assignWith', 'defaults', 'defaultsDeep', 'merge', 'mergeWith'], function(methodName) {
     var func = _[methodName];
 
     QUnit.test('`_.' + methodName + '` should not assign values that are the same as their destinations', function(assert) {

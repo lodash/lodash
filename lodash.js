@@ -10341,7 +10341,7 @@
           return cache.get(key);
         }
         var result = func.apply(this, args);
-        if (cache.clear && cache.size === MAX_MEMOIZE_SIZE) {
+        if (cache.size === MAX_MEMOIZE_SIZE) {
           cache = cache.clear() || cache;
         }
         memoized.cache = cache.set(key, result);

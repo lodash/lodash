@@ -12,6 +12,9 @@
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
+  /** Used as the maximum memoize cache size. */
+  var MAX_MEMOIZE_SIZE = 500;
+
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991,
       MAX_INTEGER = 1.7976931348623157e+308;
@@ -14661,6 +14664,39 @@
       assert.strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
+    });
+
+    QUnit.test('should enforce a max cache size of `MAX_MEMOIZE_SIZE`', function(assert) {
+      assert.expect(2);
+
+      var memoized = _.memoize(identity),
+          cache = memoized.cache;
+
+      lodashStable.times(MAX_MEMOIZE_SIZE, memoized);
+      assert.strictEqual(cache.size, MAX_MEMOIZE_SIZE);
+
+      memoized(MAX_MEMOIZE_SIZE);
+      assert.strictEqual(cache.size, 1);
+    });
+
+    QUnit.test('should not error when the max cache size is exceeded with a weak map', function(assert) {
+      assert.expect(1);
+
+      if (WeakMap) {
+        var memoized = _.memoize(identity),
+            pass = true;
+
+        try {
+          memoized.cache = new WeakMap;
+          lodashStable.times(MAX_MEMOIZE_SIZE + 1, function() { memoized({}); });
+        } catch (e) {
+          pass = false;
+        }
+        assert.ok(pass);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
   }());
 

@@ -1070,10 +1070,10 @@
 
           assert.deepEqual(cache.get(key), value);
           assert.strictEqual(cache.has(key), true);
-          assert.strictEqual(cache['delete'](key), true);
+          assert.strictEqual(cache.delete(key), true);
           assert.strictEqual(cache.has(key), false);
           assert.strictEqual(cache.get(key), undefined);
-          assert.strictEqual(cache['delete'](key), false);
+          assert.strictEqual(cache.delete(key), false);
           assert.strictEqual(cache.set(key, value), cache);
           assert.strictEqual(cache.has(key), true);
         });
@@ -9944,11 +9944,11 @@
           map2.set('a', 1);
           assert.strictEqual(_.isEqual(map1, map2), true);
 
-          map1['delete']('a');
+          map1.delete('a');
           map1.set('a', 1);
           assert.strictEqual(_.isEqual(map1, map2), true);
 
-          map2['delete']('a');
+          map2.delete('a');
           assert.strictEqual(_.isEqual(map1, map2), false);
 
           map1.clear();
@@ -10023,11 +10023,11 @@
           set2.add(1);
           assert.strictEqual(_.isEqual(set1, set2), true);
 
-          set1['delete'](1);
+          set1.delete(1);
           set1.add(1);
           assert.strictEqual(_.isEqual(set1, set2), true);
 
-          set2['delete'](1);
+          set2.delete(1);
           assert.strictEqual(_.isEqual(set1, set2), false);
 
           set1.clear();
@@ -13789,7 +13789,7 @@
 
         assert.deepEqual(actual, [objects[1]]);
 
-        map['delete']('b');
+        map.delete('b');
         actual = lodashStable.filter(objects, matches({ 'a': map }));
 
         assert.deepEqual(actual, objects);
@@ -13819,7 +13819,7 @@
 
         assert.deepEqual(actual, [objects[1]]);
 
-        set['delete'](2);
+        set.delete(2);
         actual = lodashStable.filter(objects, matches({ 'a': set }));
 
         assert.deepEqual(actual, objects);
@@ -14232,7 +14232,7 @@
 
         assert.deepEqual(actual, [objects[1]]);
 
-        map['delete']('b');
+        map.delete('b');
         actual = lodashStable.filter(objects, _.matchesProperty('a', map));
 
         assert.deepEqual(actual, objects);
@@ -14262,7 +14262,7 @@
 
         assert.deepEqual(actual, [objects[1]]);
 
-        set['delete'](2);
+        set.delete(2);
         actual = lodashStable.filter(objects, _.matchesProperty('a', set));
 
         assert.deepEqual(actual, objects);
@@ -14566,7 +14566,7 @@
         assert.strictEqual(count, 1);
         assert.strictEqual(cache.get(key), array);
         assert.notOk(cache.__data__ instanceof Array);
-        assert.strictEqual(cache['delete'](key), true);
+        assert.strictEqual(cache.delete(key), true);
       });
     });
 

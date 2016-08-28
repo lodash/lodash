@@ -51,7 +51,6 @@
       freeze = Object.freeze,
       getSymbols = Object.getOwnPropertySymbols,
       identity = function(value) { return value; },
-      JSON = root.JSON,
       noop = function() {},
       objToString = objectProto.toString,
       params = argv,
@@ -5614,20 +5613,15 @@
     QUnit.test('`_.' + methodName + '` should ' + (isStrict ? '' : 'not ') + 'throw strict mode errors', function(assert) {
       assert.expect(1);
 
-      if (freeze) {
-        var object = freeze({ 'a': undefined, 'b': function() {} }),
-            pass = !isStrict;
+      var object = freeze({ 'a': undefined, 'b': function() {} }),
+          pass = !isStrict;
 
-        try {
-          func(object, isBindAll ? 'b' : { 'a': 1 });
-        } catch (e) {
-          pass = !pass;
-        }
-        assert.ok(pass);
+      try {
+        func(object, isBindAll ? 'b' : { 'a': 1 });
+      } catch (e) {
+        pass = !pass;
       }
-      else {
-        skipAssert(assert);
-      }
+      assert.ok(pass);
     });
   });
 
@@ -9752,17 +9746,13 @@
       }
       Foo.prototype.constructor = null;
 
-      var object2 = { 'a': 1 };
-      assert.strictEqual(_.isEqual(new Foo, object2), false);
+      var object1 = create(null);
+      object1.a = 1;
 
-      if (create)  {
-        var object1 = create(null);
-        object1.a = 1;
-        assert.strictEqual(_.isEqual(object1, object2), true);
-      }
-      else {
-        skipAssert(assert);
-      }
+      var object2 = { 'a': 1 };
+
+      assert.strictEqual(_.isEqual(object1, object2), true);
+      assert.strictEqual(_.isEqual(new Foo, object2), false);
     });
 
     QUnit.test('should return `false` for objects with custom `toString` methods', function(assert) {
@@ -11290,16 +11280,11 @@
     QUnit.test('should return `true` for objects with a `[[Prototype]]` of `null`', function(assert) {
       assert.expect(2);
 
-      if (create) {
-        var object = create(null);
-        assert.strictEqual(_.isPlainObject(object), true);
+      var object = create(null);
+      assert.strictEqual(_.isPlainObject(object), true);
 
-        object.constructor = objectProto.constructor;
-        assert.strictEqual(_.isPlainObject(object), true);
-      }
-      else {
-        skipAssert(assert, 2);
-      }
+      object.constructor = objectProto.constructor;
+      assert.strictEqual(_.isPlainObject(object), true);
     });
 
     QUnit.test('should return `true` for plain objects with a custom `valueOf` property', function(assert) {
@@ -11322,13 +11307,8 @@
     QUnit.test('should return `false` for objects with a custom `[[Prototype]]`', function(assert) {
       assert.expect(1);
 
-      if (create) {
-        var object = create({ 'a': 1 });
-        assert.strictEqual(_.isPlainObject(object), false);
-      }
-      else {
-        skipAssert(assert);
-      }
+      var object = create({ 'a': 1 });
+      assert.strictEqual(_.isPlainObject(object), false);
     });
 
     QUnit.test('should return `false` for DOM elements', function(assert) {

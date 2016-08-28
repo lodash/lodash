@@ -1062,8 +1062,10 @@
     }
 
     lodashStable.forOwn(createCaches(pairs), function(cache, kind) {
+      var isLarge = /^large/.test(kind);
+
       QUnit.test('should implement a `Map` interface for ' + kind, function(assert) {
-        assert.expect(82);
+        assert.expect(83);
 
         lodashStable.each(keys, function(key, index) {
           var value = pairs[index][1];
@@ -1078,6 +1080,7 @@
           assert.strictEqual(cache.has(key), true);
         });
 
+        assert.strictEqual(cache.size, isLarge ? LARGE_ARRAY_SIZE : keys.length);
         assert.strictEqual(cache.clear(), undefined);
         assert.ok(lodashStable.every(keys, function(key) {
           return !cache.has(key);
@@ -1090,9 +1093,7 @@
         assert.expect(10);
 
         lodashStable.each(keys, function(key) {
-          cache.set(key, 1);
-          cache.set(key, 2);
-
+          cache.set(key, 1).set(key, 2);
           assert.strictEqual(cache.get(key), 2);
         });
       });

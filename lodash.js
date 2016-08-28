@@ -10344,7 +10344,7 @@
         if (cache.size === MAX_MEMOIZE_SIZE) {
           cache = cache.clear() || cache;
         }
-        memoized.cache = cache.set(key, result);
+        memoized.cache = cache.set(key, result) || cache;
         return result;
       };
       memoized.cache = new (memoize.Cache || MapCache);

@@ -7206,7 +7206,7 @@
   lodashStable.each(['assign', 'assignIn', 'defaults', 'defaultsDeep', 'merge'], function(methodName) {
     var func = _[methodName],
         isAssign = methodName == 'assign',
-        isDefaults = methodName == 'defaults' || methodName == 'defaultsDeep';
+        isDefaults = /^defaults/.test(methodName);
 
     QUnit.test('`_.' + methodName + '` should coerce primitives to objects', function(assert) {
       assert.expect(1);
@@ -19706,7 +19706,7 @@
 
   lodashStable.each(['update', 'updateWith', 'set', 'setWith'], function(methodName) {
     var func = _[methodName],
-        isUpdate = methodName == 'update' || methodName == 'updateWith';
+        isUpdate = /^update/.test(methodName);
 
     var oldValue = 1,
         value = 2,

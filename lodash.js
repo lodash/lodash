@@ -23,6 +23,9 @@
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
+  /** Used as the maximum memoize cache size. */
+  var MAX_MEMOIZE_SIZE = 500;
+
   /** Used as the internal argument placeholder. */
   var PLACEHOLDER = '__lodash_placeholder__';
 
@@ -1897,6 +1900,7 @@
      * @memberOf Hash
      */
     function hashClear() {
+      this.size = 0;
       this.__data__ = nativeCreate ? nativeCreate(null) : {};
     }
 
@@ -1911,7 +1915,9 @@
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */
     function hashDelete(key) {
-      return this.has(key) && delete this.__data__[key];
+      var result = this.has(key) && delete this.__data__[key];
+      this.size -= result ? 1 : 0;
+      return result;
     }
 
     /**
@@ -1958,6 +1964,7 @@
      */
     function hashSet(key, value) {
       var data = this.__data__;
+      this.size += this.has(key) ? 0 : 1;
       data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
       return this;
     }
@@ -1997,6 +2004,7 @@
      * @memberOf ListCache
      */
     function listCacheClear() {
+      this.size = 0;
       this.__data__ = [];
     }
 
@@ -2022,6 +2030,7 @@
       } else {
         splice.call(data, index, 1);
       }
+      --this.size;
       return true;
     }
 
@@ -2069,6 +2078,7 @@
           index = assocIndexOf(data, key);
 
       if (index < 0) {
+        ++this.size;
         data.push([key, value]);
       } else {
         data[index][1] = value;
@@ -2111,6 +2121,7 @@
      * @memberOf MapCache
      */
     function mapCacheClear() {
+      this.size = 0;
       this.__data__ = {
         'hash': new Hash,
         'map': new (Map || ListCache),
@@ -2128,7 +2139,9 @@
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
      */
     function mapCacheDelete(key) {
-      return getMapData(this, key)['delete'](key);
+      var result = getMapData(this, key)['delete'](key);
+      this.size -= result ? 1 : 0;
+      return result;
     }
 
     /**
@@ -2168,7 +2181,11 @@
      * @returns {Object} Returns the map cache instance.
      */
     function mapCacheSet(key, value) {
-      getMapData(this, key).set(key, value);
+      var data = getMapData(this, key),
+          size = data.size;
+
+      data.set(key, value);
+      this.size += data.size == size ? 0 : 1;
       return this;
     }
 
@@ -10316,6 +10333,9 @@
           return cache.get(key);
         }
         var result = func.apply(this, args);
+        if (cache.clear && cache.size === MAX_MEMOIZE_SIZE) {
+          cache = cache.clear() || cache;
+        }
         memoized.cache = cache.set(key, result);
         return result;
       };

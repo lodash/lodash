@@ -1309,7 +1309,7 @@
       var args,
           iteration = 0,
           objects = [{ 'a': 1 }, { 'a': 2 }],
-          stack = { '__data__': { '__data__': [objects, objects.slice().reverse()] } },
+          stack = { '__data__': { '__data__': [objects, objects.slice().reverse()], 'size': 0 } },
           expected = [1, 2, 'a', objects[0], objects[1], stack];
 
       fp.isEqualWith(function() {
@@ -1335,7 +1335,7 @@
 
       var args,
           objects = [{ 'a': 1 }, { 'a': 2 }],
-          stack = { '__data__': { '__data__': [] } },
+          stack = { '__data__': { '__data__': [], 'size': 0 } },
           expected = [2, 1, 'a', objects[1], objects[0], stack];
 
       fp.isMatchWith(function() {
@@ -1444,7 +1444,7 @@
       assert.expect(1);
 
       var args,
-          stack = { '__data__': { '__data__': [] } },
+          stack = { '__data__': { '__data__': [], 'size': 0 } },
           expected = [[1, 2], [3], 'a', { 'a': [1, 2] }, { 'a': [3] }, stack];
 
       fp.mergeWith(function() {
@@ -1477,7 +1477,7 @@
       assert.expect(1);
 
       var args,
-          stack = { '__data__': { '__data__': [] } },
+          stack = { '__data__': { '__data__': [], 'size': 0 } },
           expected = [[1, 2], [3], 'a', { 'a': [1, 2] }, { 'a': [3] }, stack];
 
       fp.mergeAllWith(function() {

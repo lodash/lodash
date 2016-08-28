@@ -7473,9 +7473,29 @@
     });
 
     QUnit.test('should treat "__proto__" as a regular key in assignments', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      var actual = _.groupBy([{ 'a': '__proto__' }], 'a');
+      var methods = [
+        'assign',
+        'assignIn',
+        'defaults',
+        'defaultsDeep',
+        'merge'
+      ];
+
+      var source = create(null);
+      source.__proto__ = [];
+
+      var expected = lodashStable.map(methods, stubFalse);
+
+      var actual = lodashStable.map(methods, function(methodName) {
+        var result = _[methodName]({}, source);
+        return result instanceof Array;
+      });
+
+      assert.deepEqual(actual, expected);
+
+      actual = _.groupBy([{ 'a': '__proto__' }], 'a');
       assert.notOk(actual instanceof Array);
     });
   }());

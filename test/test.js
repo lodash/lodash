@@ -14470,6 +14470,44 @@
   QUnit.module('lodash.memoize');
 
   (function() {
+    function CustomCache() {
+      this.clear();
+    }
+
+    CustomCache.prototype = {
+      'clear': function() {
+        this.__data__ = [];
+        return this;
+      },
+      'get': function(key) {
+        var entry = lodashStable.find(this.__data__, ['key', key]);
+        return entry && entry.value;
+      },
+      'has': function(key) {
+        return lodashStable.some(this.__data__, ['key', key]);
+      },
+      'set': function(key, value) {
+        this.__data__.push({ 'key': key, 'value': value });
+        return this;
+      }
+    };
+
+    function ImmutableCache() {
+      this.__data__ = [];
+    }
+
+    ImmutableCache.prototype = lodashStable.create(CustomCache.prototype, {
+      'constructor': ImmutableCache,
+      'clear': function() {
+        return new ImmutableCache;
+      },
+      'set': function(key, value) {
+        var result = new ImmutableCache;
+        result.__data__ = this.__data__.concat({ 'key': key, 'value': value });
+        return result;
+      }
+    });
+
     QUnit.test('should memoize results based on the first argument given', function(assert) {
       assert.expect(2);
 
@@ -14578,43 +14616,20 @@
       assert.expect(4);
 
       var oldCache = _.memoize.Cache;
-
-      function Cache() {
-        this.__data__ = [];
-      }
-
-      Cache.prototype = {
-        'get': function(key) {
-          var entry = _.find(this.__data__, function(entry) {
-            return key === entry.key;
-          });
-          return entry && entry.value;
-        },
-        'has': function(key) {
-          return _.some(this.__data__, function(entry) {
-            return key === entry.key;
-          });
-        },
-        'set': function(key, value) {
-          this.__data__.push({ 'key': key, 'value': value });
-          return this;
-        }
-      };
-
-      _.memoize.Cache = Cache;
+      _.memoize.Cache = CustomCache;
 
       var memoized = _.memoize(function(object) {
-        return 'value:' + object.id;
+        return object.id;
       });
 
       var cache = memoized.cache,
           key1 = { 'id': 'a' },
           key2 = { 'id': 'b' };
 
-      assert.strictEqual(memoized(key1), 'value:a');
+      assert.strictEqual(memoized(key1), 'a');
       assert.strictEqual(cache.has(key1), true);
 
-      assert.strictEqual(memoized(key2), 'value:b');
+      assert.strictEqual(memoized(key2), 'b');
       assert.strictEqual(cache.has(key2), true);
 
       _.memoize.Cache = oldCache;
@@ -14624,30 +14639,7 @@
       assert.expect(2);
 
       var oldCache = _.memoize.Cache;
-
-      function Cache() {
-        this.__data__ = [];
-      }
-
-      Cache.prototype = {
-        'get': function(key) {
-          return _.find(this.__data__, function(entry) {
-            return key === entry.key;
-          }).value;
-        },
-        'has': function(key) {
-          return _.some(this.__data__, function(entry) {
-            return key === entry.key;
-          });
-        },
-        'set': function(key, value) {
-          var result = new Cache;
-          result.__data__ = this.__data__.concat({ 'key': key, 'value': value });
-          return result;
-        }
-      };
-
-      _.memoize.Cache = Cache;
+      _.memoize.Cache = ImmutableCache;
 
       var memoized = _.memoize(function(object) {
         return object.id;
@@ -14697,6 +14689,21 @@
       else {
         skipAssert(assert);
       }
+    });
+
+    QUnit.test('should not error when the max cache size is exceeded with an immutable map', function(assert) {
+      assert.expect(1);
+
+      var memoized = _.memoize(identity),
+          pass = true;
+
+      try {
+        memoized.cache = new ImmutableCache;
+        lodashStable.times(MAX_MEMOIZE_SIZE + 1, memoized);
+      } catch (e) {
+        pass = false;
+      }
+      assert.ok(pass);
     });
   }());
 

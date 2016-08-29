@@ -10962,7 +10962,7 @@
       }
     });
 
-    QUnit.test('should detect methods masquerading as native', function(assert) {
+    QUnit.test('should detect methods masquerading as native (test in Node.js)', function(assert) {
       assert.expect(2);
 
       if (!amd && _._baseEach) {

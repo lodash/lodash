@@ -733,7 +733,8 @@
       lodashStable.each([
         'baseEach',
         'isIndex',
-        'isIterateeCall'
+        'isIterateeCall',
+        'memoizeCapped'
       ], function(funcName) {
         _['_' + funcName] = interopRequire(path.join(basePath, '_' + funcName));
       });
@@ -14657,53 +14658,31 @@
 
       _.memoize.Cache = oldCache;
     });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('memoizeCapped');
+
+  (function() {
+    var func = _._memoizeCapped;
 
     QUnit.test('should enforce a max cache size of `MAX_MEMOIZE_SIZE`', function(assert) {
       assert.expect(2);
 
-      var memoized = _.memoize(identity),
-          cache = memoized.cache;
+      if (func) {
+        var memoized = func(identity),
+            cache = memoized.cache;
 
-      lodashStable.times(MAX_MEMOIZE_SIZE, memoized);
-      assert.strictEqual(cache.size, MAX_MEMOIZE_SIZE);
+        lodashStable.times(MAX_MEMOIZE_SIZE, memoized);
+        assert.strictEqual(cache.size, MAX_MEMOIZE_SIZE);
 
-      memoized(MAX_MEMOIZE_SIZE);
-      assert.strictEqual(cache.size, 1);
-    });
-
-    QUnit.test('should not error when the max cache size is exceeded with a weak map', function(assert) {
-      assert.expect(1);
-
-      if (WeakMap) {
-        var memoized = _.memoize(identity),
-            pass = true;
-
-        try {
-          memoized.cache = new WeakMap;
-          lodashStable.times(MAX_MEMOIZE_SIZE + 1, function() { memoized({}); });
-        } catch (e) {
-          pass = false;
-        }
-        assert.ok(pass);
+        memoized(MAX_MEMOIZE_SIZE);
+        assert.strictEqual(cache.size, 1);
       }
       else {
-        skipAssert(assert);
+        skipAssert(assert, 2);
       }
-    });
-
-    QUnit.test('should not error when the max cache size is exceeded with an immutable map', function(assert) {
-      assert.expect(1);
-
-      var memoized = _.memoize(identity),
-          pass = true;
-
-      try {
-        memoized.cache = new ImmutableCache;
-        lodashStable.times(MAX_MEMOIZE_SIZE + 1, memoized);
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass);
     });
   }());
 

@@ -7731,7 +7731,13 @@
   lodashStable.each(['has', 'hasIn'], function(methodName) {
     var args = (function() { return arguments; }(1, 2, 3)),
         func = _[methodName],
-        isHas = methodName == 'has';
+        isHas = methodName == 'has',
+        sparseArgs = (function() { return arguments; }(1)),
+        sparseArray = Array(1),
+        sparseString = Object('a');
+
+    delete sparseArgs[0];
+    delete sparseString[0];
 
     QUnit.test('`_.' + methodName + '` should check for own properties', function(assert) {
       assert.expect(2);
@@ -7866,14 +7872,10 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return `true` for index values within bounds for arrays, `arguments` objects, and strings', function(assert) {
-      assert.expect(2);
+    QUnit.test('`_.' + methodName + '` should return `true` for indexes of sparse values', function(assert) {
+      assert.expect(1);
 
-      var string = Object('abc');
-      delete args[0];
-      delete string[0];
-
-      var values = [Array(3), args, string],
+      var values = [sparseArgs, sparseArray, sparseString],
           expected = lodashStable.map(values, stubTrue);
 
       var actual = lodashStable.map(values, function(value) {
@@ -7881,17 +7883,21 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
 
-      expected = lodashStable.map(values, lodashStable.constant([true, true]));
+    QUnit.test('`_.' + methodName + '` should return `true` for indexes of sparse values with deep paths', function(assert) {
+      assert.expect(1);
 
-      actual = lodashStable.map(values, function(value) {
+      var values = [sparseArgs, sparseArray, sparseString],
+          expected = lodashStable.map(values, lodashStable.constant([true, true]));
+
+      var actual = lodashStable.map(values, function(value) {
         return lodashStable.map(['a[0]', ['a', '0']], function(path) {
           return func({ 'a': value }, path);
         });
       });
 
       assert.deepEqual(actual, expected);
-      args[0] = 1;
     });
 
     QUnit.test('`_.' + methodName + '` should return `false` when `object` is nullish', function(assert) {
@@ -7938,6 +7944,21 @@
 
         assert.deepEqual(actual, expected);
       });
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `false` over sparse values of deep paths', function(assert) {
+      assert.expect(1);
+
+      var values = [sparseArgs, sparseArray, sparseString],
+          expected = lodashStable.map(values, lodashStable.constant([false, false]));
+
+      var actual = lodashStable.map(values, function(value) {
+        return lodashStable.map(['a[0].b', ['a', '0', 'b']], function(path) {
+          return func({ 'a': value }, path);
+        });
+      });
+
+      assert.deepEqual(actual, expected);
     });
   });
 

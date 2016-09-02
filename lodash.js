@@ -713,6 +713,19 @@
   }
 
   /**
+   * A specialized version of `_.sample` for arrays without support for iteratee
+   * shorthands.
+   *
+   * @private
+   * @param {Array} array The array to sample.
+   * @returns {*} Returns the random element.
+   */
+  function arraySample(array) {
+    var length = array.length;
+    return length ? array[baseRandom(0, length - 1)] : undefined;
+  }
+
+  /**
    * A specialized version of `_.some` for arrays without support for iteratee
    * shorthands.
    *
@@ -9575,10 +9588,7 @@
      * // => 2
      */
     function sample(collection) {
-      var array = isArrayLike(collection) ? collection : values(collection),
-          length = array.length;
-
-      return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+      return arraySample(isArrayLike(collection) ? collection : values(collection));
     }
 
     /**

@@ -38,6 +38,7 @@
     "ecstatic": "^2.1.0",
     "fs-extra": "~0.30.0",
     "glob": "^7.0.6",
+    "html-minifier": "^3.0.2",
     "istanbul": "0.4.5",
     "jquery": "^3.1.0",
     "jscs": "^3.0.7",

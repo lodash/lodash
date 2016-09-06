@@ -50,7 +50,7 @@
     "qunit-extras": "^2.1.0",
     "qunitjs": "^2.0.1",
     "request": "^2.74.0",
-    "requirejs": "^2.2.0",
+    "requirejs": "^2.3.0",
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.3",
     "webpack": "^1.13.2"

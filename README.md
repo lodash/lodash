@@ -46,16 +46,16 @@ In Node.js:
 var _ = require('lodash');
 // Load the core build.
 var _ = require('lodash/core');
-// Load the fp build for immutable auto-curried iteratee-first data-last methods.
+// Load the FP build for immutable auto-curried iteratee-first data-last methods.
 var fp = require('lodash/fp');
 
-// Load a method category.
+// Load method categories.
 var array = require('lodash/array');
 var object = require('lodash/fp/object');
 
-// Load a single method for smaller builds with browserify/rollup/webpack.
+// Cherry-pick methods for smaller browserify/rollup/webpack bundles.
 var chunk = require('lodash/chunk');
-var extend = require('lodash/fp/extend')
+var extend = require('lodash/fp/extend');
 ```
 
 **Note:**<br>

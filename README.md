@@ -59,8 +59,7 @@ var extend = require('lodash/fp/extend');
 ```
 
 **Note:**<br>
-Don’t assign values to the [special variable](http://nodejs.org/api/repl.html#repl_repl_features) `_` in the Node.js < 6 REPL.<br>
-Install [n_](https://www.npmjs.com/package/n_) for a REPL that includes `lodash` by default.
+Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
 
 ## Why Lodash?
 

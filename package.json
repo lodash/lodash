@@ -54,5 +54,10 @@
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.3",
     "webpack": "^1.13.2"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "lodash"
+    ]
   }
 }

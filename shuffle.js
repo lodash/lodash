@@ -1,7 +1,7 @@
-var sampleSize = require('./sampleSize');
-
-/** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = 4294967295;
+var copyArray = require('./_copyArray'),
+    isArrayLike = require('./isArrayLike'),
+    shuffleSelf = require('./_shuffleSelf'),
+    values = require('./values');
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -19,7 +19,10 @@ var MAX_ARRAY_LENGTH = 4294967295;
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  return sampleSize(collection, MAX_ARRAY_LENGTH);
+  return shuffleSelf(isArrayLike(collection)
+    ? copyArray(collection)
+    : values(collection)
+  );
 }
 
 module.exports = shuffle;

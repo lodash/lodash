@@ -60,14 +60,14 @@ function memoize(func, resolver) {
       return cache.get(key);
     }
     var result = func.apply(this, args);
-    memoized.cache = cache.set(key, result);
+    memoized.cache = cache.set(key, result) || cache;
     return result;
   };
   memoized.cache = new (memoize.Cache || MapCache);
   return memoized;
 }
 
-// Assign cache to `_.memoize`.
+// Expose `MapCache`.
 memoize.Cache = MapCache;
 
 module.exports = memoize;

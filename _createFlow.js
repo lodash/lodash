@@ -1,6 +1,5 @@
 var LodashWrapper = require('./_LodashWrapper'),
-    baseFlatten = require('./_baseFlatten'),
-    baseRest = require('./_baseRest'),
+    flatRest = require('./_flatRest'),
     getData = require('./_getData'),
     getFuncName = require('./_getFuncName'),
     isArray = require('./isArray'),
@@ -26,9 +25,7 @@ var CURRY_FLAG = 8,
  * @returns {Function} Returns the new flow function.
  */
 function createFlow(fromRight) {
-  return baseRest(function(funcs) {
-    funcs = baseFlatten(funcs, 1);
-
+  return flatRest(function(funcs) {
     var length = funcs.length,
         index = length,
         prereq = LodashWrapper.prototype.thru;

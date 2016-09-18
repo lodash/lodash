@@ -12,7 +12,6 @@ var Stack = require('./_Stack'),
     initCloneObject = require('./_initCloneObject'),
     isArray = require('./isArray'),
     isBuffer = require('./isBuffer'),
-    isHostObject = require('./_isHostObject'),
     isObject = require('./isObject'),
     keys = require('./keys');
 
@@ -100,9 +99,6 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
       return cloneBuffer(value, isDeep);
     }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-      if (isHostObject(value)) {
-        return object ? value : {};
-      }
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
         return copySymbols(value, baseAssign(result, value));

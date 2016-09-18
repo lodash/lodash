@@ -1,4 +1,4 @@
-var baseRandom = require('./_baseRandom'),
+var arraySample = require('./_arraySample'),
     isArrayLike = require('./isArrayLike'),
     values = require('./values');
 
@@ -17,10 +17,7 @@ var baseRandom = require('./_baseRandom'),
  * // => 2
  */
 function sample(collection) {
-  var array = isArrayLike(collection) ? collection : values(collection),
-      length = array.length;
-
-  return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+  return arraySample(isArrayLike(collection) ? collection : values(collection));
 }
 
 module.exports = sample;

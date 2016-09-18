@@ -20,7 +20,7 @@ define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function
    * @see _.forEachRight
    * @example
    *
-   * _([1, 2]).forEach(function(value) {
+   * _.forEach([1, 2], function(value) {
    *   console.log(value);
    * });
    * // => Logs `1` then `2`.

@@ -6,8 +6,9 @@ define(['./_arrayFilter', './_baseIteratee', './_baseRest', './_baseXor', './isA
   /**
    * This method is like `_.xor` except that it accepts `iteratee` which is
    * invoked for each element of each `arrays` to generate the criterion by
-   * which by which they're compared. The iteratee is invoked with one argument:
-   * (value).
+   * which by which they're compared. The order of result values is determined
+   * by the order they occur in the arrays. The iteratee is invoked with one
+   * argument: (value).
    *
    * @static
    * @memberOf _

@@ -1,9 +1,9 @@
-# lodash-amd v4.15.0
+# lodash-amd v4.16.0
 
 The [Lodash](https://lodash.com/) library exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```bash
+```shell
 $ lodash exports=amd -o ./
 $ lodash exports=amd -d -o ./main.js
 ```
@@ -11,8 +11,8 @@ $ lodash exports=amd -d -o ./main.js
 ## Installation
 
 Using npm:
-```bash
-$ {sudo -H} npm i -g npm
+```shell
+$ npm i -g npm
 $ npm i --save lodash-amd
 ```
 
@@ -27,4 +27,4 @@ require({
 });
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.15.0-amd) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.16.0-amd) for more details.

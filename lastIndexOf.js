@@ -1,4 +1,4 @@
-define(['./_baseFindIndex', './_baseIsNaN', './toInteger'], function(baseFindIndex, baseIsNaN, toInteger) {
+define(['./_baseFindIndex', './_baseIsNaN', './_strictLastIndexOf', './toInteger'], function(baseFindIndex, baseIsNaN, strictLastIndexOf, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -36,21 +36,11 @@ define(['./_baseFindIndex', './_baseIsNaN', './toInteger'], function(baseFindInd
     var index = length;
     if (fromIndex !== undefined) {
       index = toInteger(fromIndex);
-      index = (
-        index < 0
-          ? nativeMax(length + index, 0)
-          : nativeMin(index, length - 1)
-      ) + 1;
+      index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);
     }
-    if (value !== value) {
-      return baseFindIndex(array, baseIsNaN, index - 1, true);
-    }
-    while (index--) {
-      if (array[index] === value) {
-        return index;
-      }
-    }
-    return -1;
+    return value === value
+      ? strictLastIndexOf(array, value, index)
+      : baseFindIndex(array, baseIsNaN, index, true);
   }
 
   return lastIndexOf;

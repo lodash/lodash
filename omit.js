@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseDifference', './_baseFlatten', './_basePick', './_baseRest', './_getAllKeysIn', './_toKey'], function(arrayMap, baseDifference, baseFlatten, basePick, baseRest, getAllKeysIn, toKey) {
+define(['./_arrayMap', './_baseDifference', './_basePick', './_flatRest', './_getAllKeysIn', './_toKey'], function(arrayMap, baseDifference, basePick, flatRest, getAllKeysIn, toKey) {
 
   /**
    * The opposite of `_.pick`; this method creates an object composed of the
@@ -19,11 +19,11 @@ define(['./_arrayMap', './_baseDifference', './_baseFlatten', './_basePick', './
    * _.omit(object, ['a', 'c']);
    * // => { 'b': '2' }
    */
-  var omit = baseRest(function(object, props) {
+  var omit = flatRest(function(object, props) {
     if (object == null) {
       return {};
     }
-    props = arrayMap(baseFlatten(props, 1), toKey);
+    props = arrayMap(props, toKey);
     return basePick(object, baseDifference(getAllKeysIn(object), props));
   });
 

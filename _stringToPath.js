@@ -1,4 +1,4 @@
-define(['./memoize', './toString'], function(memoize, toString) {
+define(['./_memoizeCapped', './toString'], function(memoizeCapped, toString) {
 
   /** Used to match property names within property paths. */
   var reLeadingDot = /^\./,
@@ -14,7 +14,7 @@ define(['./memoize', './toString'], function(memoize, toString) {
    * @param {string} string The string to convert.
    * @returns {Array} Returns the property path array.
    */
-  var stringToPath = memoize(function(string) {
+  var stringToPath = memoizeCapped(function(string) {
     string = toString(string);
 
     var result = [];

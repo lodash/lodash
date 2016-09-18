@@ -1,7 +1,4 @@
-define(['./sampleSize'], function(sampleSize) {
-
-  /** Used as references for the maximum length and index of an array. */
-  var MAX_ARRAY_LENGTH = 4294967295;
+define(['./_copyArray', './isArrayLike', './_shuffleSelf', './values'], function(copyArray, isArrayLike, shuffleSelf, values) {
 
   /**
    * Creates an array of shuffled values, using a version of the
@@ -19,7 +16,10 @@ define(['./sampleSize'], function(sampleSize) {
    * // => [4, 1, 3, 2]
    */
   function shuffle(collection) {
-    return sampleSize(collection, MAX_ARRAY_LENGTH);
+    return shuffleSelf(isArrayLike(collection)
+      ? copyArray(collection)
+      : values(collection)
+    );
   }
 
   return shuffle;

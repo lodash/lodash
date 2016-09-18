@@ -1,4 +1,4 @@
-define(['./_LodashWrapper', './_baseFlatten', './_baseRest', './_getData', './_getFuncName', './isArray', './_isLaziable'], function(LodashWrapper, baseFlatten, baseRest, getData, getFuncName, isArray, isLaziable) {
+define(['./_LodashWrapper', './_flatRest', './_getData', './_getFuncName', './isArray', './_isLaziable'], function(LodashWrapper, flatRest, getData, getFuncName, isArray, isLaziable) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,9 +23,7 @@ define(['./_LodashWrapper', './_baseFlatten', './_baseRest', './_getData', './_g
    * @returns {Function} Returns the new flow function.
    */
   function createFlow(fromRight) {
-    return baseRest(function(funcs) {
-      funcs = baseFlatten(funcs, 1);
-
+    return flatRest(function(funcs) {
       var length = funcs.length,
           index = length,
           prereq = LodashWrapper.prototype.thru;

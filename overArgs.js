@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_baseRest', './_baseUnary', './isArray'], function(apply, arrayMap, baseFlatten, baseIteratee, baseRest, baseUnary, isArray) {
+define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_baseRest', './_baseUnary', './_castRest', './isArray'], function(apply, arrayMap, baseFlatten, baseIteratee, baseRest, baseUnary, castRest, isArray) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeMin = Math.min;
@@ -34,7 +34,7 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_base
    * func(10, 5);
    * // => [100, 10]
    */
-  var overArgs = baseRest(function(func, transforms) {
+  var overArgs = castRest(function(func, transforms) {
     transforms = (transforms.length == 1 && isArray(transforms[0]))
       ? arrayMap(transforms[0], baseUnary(baseIteratee))
       : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));

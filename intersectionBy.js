@@ -6,8 +6,9 @@ define(['./_arrayMap', './_baseIntersection', './_baseIteratee', './_baseRest', 
   /**
    * This method is like `_.intersection` except that it accepts `iteratee`
    * which is invoked for each element of each `arrays` to generate the criterion
-   * by which they're compared. Result values are chosen from the first array.
-   * The iteratee is invoked with one argument: (value).
+   * by which they're compared. The order and references of result values are
+   * determined by the first array. The iteratee is invoked with one argument:
+   * (value).
    *
    * @static
    * @memberOf _

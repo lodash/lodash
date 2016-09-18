@@ -1,4 +1,4 @@
-define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
+define(['./_SetCache', './_arraySome', './_cacheHas'], function(SetCache, arraySome, cacheHas) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -61,9 +61,9 @@ define(['./_SetCache', './_arraySome'], function(SetCache, arraySome) {
       // Recursively compare arrays (susceptible to call stack limits).
       if (seen) {
         if (!arraySome(other, function(othValue, othIndex) {
-              if (!seen.has(othIndex) &&
+              if (!cacheHas(seen, othIndex) &&
                   (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
-                return seen.add(othIndex);
+                return seen.push(othIndex);
               }
             })) {
           result = false;

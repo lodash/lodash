@@ -1,4 +1,4 @@
-define(['./_getPrototype', './_isHostObject', './isObjectLike'], function(getPrototype, isHostObject, isObjectLike) {
+define(['./_getPrototype', './isObjectLike'], function(getPrototype, isObjectLike) {
 
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';
@@ -52,8 +52,7 @@ define(['./_getPrototype', './_isHostObject', './isObjectLike'], function(getPro
    * // => true
    */
   function isPlainObject(value) {
-    if (!isObjectLike(value) ||
-        objectToString.call(value) != objectTag || isHostObject(value)) {
+    if (!isObjectLike(value) || objectToString.call(value) != objectTag) {
       return false;
     }
     var proto = getPrototype(value);

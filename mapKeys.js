@@ -1,4 +1,4 @@
-define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) {
+define(['./_baseAssignValue', './_baseForOwn', './_baseIteratee'], function(baseAssignValue, baseForOwn, baseIteratee) {
 
   /**
    * The opposite of `_.mapValues`; this method creates an object with the
@@ -26,7 +26,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
     iteratee = baseIteratee(iteratee, 3);
 
     baseForOwn(object, function(value, key, object) {
-      result[iteratee(value, key, object)] = value;
+      baseAssignValue(result, iteratee(value, key, object), value);
     });
     return result;
   }

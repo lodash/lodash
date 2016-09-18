@@ -1,4 +1,4 @@
-define(['./eq'], function(eq) {
+define(['./_baseAssignValue', './eq'], function(baseAssignValue, eq) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./eq'], function(eq) {
     var objValue = object[key];
     if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
         (value === undefined && !(key in object))) {
-      object[key] = value;
+      baseAssignValue(object, key, value);
     }
   }
 

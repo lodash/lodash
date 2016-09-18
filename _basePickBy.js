@@ -1,4 +1,4 @@
-define([], function() {
+define(['./_baseAssignValue'], function(baseAssignValue) {
 
   /**
    * The base implementation of  `_.pickBy` without support for iteratee shorthands.
@@ -19,7 +19,7 @@ define([], function() {
           value = object[key];
 
       if (predicate(value, key)) {
-        result[key] = value;
+        baseAssignValue(result, key, value);
       }
     }
     return result;

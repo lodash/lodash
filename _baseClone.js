@@ -1,4 +1,4 @@
-define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_cloneBuffer', './_copyArray', './_copySymbols', './_getAllKeys', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './_isHostObject', './isObject', './keys'], function(Stack, arrayEach, assignValue, baseAssign, cloneBuffer, copyArray, copySymbols, getAllKeys, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isHostObject, isObject, keys) {
+define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_cloneBuffer', './_copyArray', './_copySymbols', './_getAllKeys', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './isObject', './keys'], function(Stack, arrayEach, assignValue, baseAssign, cloneBuffer, copyArray, copySymbols, getAllKeys, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isObject, keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -87,9 +87,6 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_clone
         return cloneBuffer(value, isDeep);
       }
       if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-        if (isHostObject(value)) {
-          return object ? value : {};
-        }
         result = initCloneObject(isFunc ? {} : value);
         if (!isDeep) {
           return copySymbols(value, baseAssign(result, value));

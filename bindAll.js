@@ -1,4 +1,4 @@
-define(['./_arrayEach', './_baseFlatten', './_baseRest', './bind', './_toKey'], function(arrayEach, baseFlatten, baseRest, bind, toKey) {
+define(['./_arrayEach', './_baseAssignValue', './bind', './_flatRest', './_toKey'], function(arrayEach, baseAssignValue, bind, flatRest, toKey) {
 
   /**
    * Binds methods of an object to the object itself, overwriting the existing
@@ -26,10 +26,10 @@ define(['./_arrayEach', './_baseFlatten', './_baseRest', './bind', './_toKey'], 
    * jQuery(element).on('click', view.click);
    * // => Logs 'clicked docs' when clicked.
    */
-  var bindAll = baseRest(function(object, methodNames) {
-    arrayEach(baseFlatten(methodNames, 1), function(key) {
+  var bindAll = flatRest(function(object, methodNames) {
+    arrayEach(methodNames, function(key) {
       key = toKey(key);
-      object[key] = bind(object[key], object);
+      baseAssignValue(object, key, bind(object[key], object));
     });
     return object;
   });

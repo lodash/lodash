@@ -1,4 +1,4 @@
-define(['./_createAggregator'], function(createAggregator) {
+define(['./_baseAssignValue', './_createAggregator'], function(baseAssignValue, createAggregator) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -34,7 +34,7 @@ define(['./_createAggregator'], function(createAggregator) {
     if (hasOwnProperty.call(result, key)) {
       result[key].push(value);
     } else {
-      result[key] = [value];
+      baseAssignValue(result, key, [value]);
     }
   });
 

@@ -1,4 +1,4 @@
-define(['./isFunction', './_isHostObject', './_isMasked', './isObject', './_toSource'], function(isFunction, isHostObject, isMasked, isObject, toSource) {
+define(['./isFunction', './_isMasked', './isObject', './_toSource'], function(isFunction, isMasked, isObject, toSource) {
 
   /**
    * Used to match `RegExp`
@@ -37,7 +37,7 @@ define(['./isFunction', './_isHostObject', './_isMasked', './isObject', './_toSo
     if (!isObject(value) || isMasked(value)) {
       return false;
     }
-    var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+    var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
     return pattern.test(toSource(value));
   }
 

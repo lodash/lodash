@@ -1,4 +1,4 @@
-define(['./eq'], function(eq) {
+define(['./_baseAssignValue', './eq'], function(baseAssignValue, eq) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -15,7 +15,7 @@ define(['./eq'], function(eq) {
   function assignMergeValue(object, key, value) {
     if ((value !== undefined && !eq(object[key], value)) ||
         (typeof key == 'number' && value === undefined && !(key in object))) {
-      object[key] = value;
+      baseAssignValue(object, key, value);
     }
   }
 

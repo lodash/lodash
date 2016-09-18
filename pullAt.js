@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_baseRest', './_compareAscending', './_isIndex'], function(arrayMap, baseAt, baseFlatten, basePullAt, baseRest, compareAscending, isIndex) {
+define(['./_arrayMap', './_baseAt', './_basePullAt', './_compareAscending', './_flatRest', './_isIndex'], function(arrayMap, baseAt, basePullAt, compareAscending, flatRest, isIndex) {
 
   /**
    * Removes elements from `array` corresponding to `indexes` and returns an
@@ -24,9 +24,7 @@ define(['./_arrayMap', './_baseAt', './_baseFlatten', './_basePullAt', './_baseR
    * console.log(pulled);
    * // => ['b', 'd']
    */
-  var pullAt = baseRest(function(array, indexes) {
-    indexes = baseFlatten(indexes, 1);
-
+  var pullAt = flatRest(function(array, indexes) {
     var length = array ? array.length : 0,
         result = baseAt(array, indexes);
 

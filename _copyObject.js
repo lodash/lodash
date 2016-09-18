@@ -1,4 +1,4 @@
-define(['./_assignValue'], function(assignValue) {
+define(['./_assignValue', './_baseAssignValue'], function(assignValue, baseAssignValue) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,6 +14,7 @@ define(['./_assignValue'], function(assignValue) {
    * @returns {Object} Returns `object`.
    */
   function copyObject(source, props, object, customizer) {
+    var isNew = !object;
     object || (object = {});
 
     var index = -1,
@@ -26,7 +27,14 @@ define(['./_assignValue'], function(assignValue) {
         ? customizer(object[key], source[key], key, object, source)
         : undefined;
 
-      assignValue(object, key, newValue === undefined ? source[key] : newValue);
+      if (newValue === undefined) {
+        newValue = source[key];
+      }
+      if (isNew) {
+        baseAssignValue(object, key, newValue);
+      } else {
+        assignValue(object, key, newValue);
+      }
     }
     return object;
   }

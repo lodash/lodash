@@ -6,7 +6,7 @@ define(['./toString', './_unescapeHtmlChar'], function(toString, unescapeHtmlCha
 
   /**
    * The inverse of `_.escape`; this method converts the HTML entities
-   * `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to
+   * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
    * their corresponding characters.
    *
    * **Note:** No other HTML entities are unescaped. To unescape additional

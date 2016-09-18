@@ -6,8 +6,7 @@ define(['./_basePropertyOf'], function(basePropertyOf) {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;',
-    '`': '&#96;'
+    "'": '&#39;'
   };
 
   /**

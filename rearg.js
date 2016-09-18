@@ -1,4 +1,4 @@
-define(['./_baseFlatten', './_baseRest', './_createWrap'], function(baseFlatten, baseRest, createWrap) {
+define(['./_createWrap', './_flatRest'], function(createWrap, flatRest) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -28,8 +28,8 @@ define(['./_baseFlatten', './_baseRest', './_createWrap'], function(baseFlatten,
    * rearged('b', 'c', 'a')
    * // => ['a', 'b', 'c']
    */
-  var rearg = baseRest(function(func, indexes) {
-    return createWrap(func, REARG_FLAG, undefined, undefined, undefined, baseFlatten(indexes, 1));
+  var rearg = flatRest(function(func, indexes) {
+    return createWrap(func, REARG_FLAG, undefined, undefined, undefined, indexes);
   });
 
   return rearg;

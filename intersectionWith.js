@@ -5,9 +5,9 @@ define(['./_arrayMap', './_baseIntersection', './_baseRest', './_castArrayLikeOb
 
   /**
    * This method is like `_.intersection` except that it accepts `comparator`
-   * which is invoked to compare elements of `arrays`. Result values are chosen
-   * from the first array. The comparator is invoked with two arguments:
-   * (arrVal, othVal).
+   * which is invoked to compare elements of `arrays`. The order and references
+   * of result values are determined by the first array. The comparator is
+   * invoked with two arguments: (arrVal, othVal).
    *
    * @static
    * @memberOf _

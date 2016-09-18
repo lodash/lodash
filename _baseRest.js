@@ -1,10 +1,4 @@
-define(['./_apply'], function(apply) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
-
-  /* Built-in method references for those with the same name as other `lodash` methods. */
-  var nativeMax = Math.max;
+define(['./identity', './_overRest', './_setToString'], function(identity, overRest, setToString) {
 
   /**
    * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -15,24 +9,7 @@ define(['./_apply'], function(apply) {
    * @returns {Function} Returns the new function.
    */
   function baseRest(func, start) {
-    start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
-    return function() {
-      var args = arguments,
-          index = -1,
-          length = nativeMax(args.length - start, 0),
-          array = Array(length);
-
-      while (++index < length) {
-        array[index] = args[start + index];
-      }
-      index = -1;
-      var otherArgs = Array(start + 1);
-      while (++index < start) {
-        otherArgs[index] = args[index];
-      }
-      otherArgs[start] = array;
-      return apply(func, this, otherArgs);
-    };
+    return setToString(overRest(func, start, identity), func + '');
   }
 
   return baseRest;

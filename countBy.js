@@ -1,4 +1,4 @@
-define(['./_createAggregator'], function(createAggregator) {
+define(['./_baseAssignValue', './_createAggregator'], function(baseAssignValue, createAggregator) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -30,7 +30,11 @@ define(['./_createAggregator'], function(createAggregator) {
    * // => { '3': 2, '5': 1 }
    */
   var countBy = createAggregator(function(result, value, key) {
-    hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
+    if (hasOwnProperty.call(result, key)) {
+      ++result[key];
+    } else {
+      baseAssignValue(result, key, 1);
+    }
   });
 
   return countBy;

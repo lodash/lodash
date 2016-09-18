@@ -1,4 +1,4 @@
-define(['./_createAggregator'], function(createAggregator) {
+define(['./_baseAssignValue', './_createAggregator'], function(baseAssignValue, createAggregator) {
 
   /**
    * Creates an object composed of keys generated from the results of running
@@ -30,7 +30,7 @@ define(['./_createAggregator'], function(createAggregator) {
    * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
    */
   var keyBy = createAggregator(function(result, value, key) {
-    result[key] = value;
+    baseAssignValue(result, key, value);
   });
 
   return keyBy;

@@ -9,6 +9,7 @@ define(['./_ListCache'], function(ListCache) {
    */
   function stackClear() {
     this.__data__ = new ListCache;
+    this.size = 0;
   }
 
   return stackClear;

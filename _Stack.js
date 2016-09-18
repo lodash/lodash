@@ -8,7 +8,8 @@ define(['./_ListCache', './_stackClear', './_stackDelete', './_stackGet', './_st
    * @param {Array} [entries] The key-value pairs to cache.
    */
   function Stack(entries) {
-    this.__data__ = new ListCache(entries);
+    var data = this.__data__ = new ListCache(entries);
+    this.size = data.size;
   }
 
   // Add methods to `Stack`.

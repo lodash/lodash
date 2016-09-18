@@ -8,6 +8,7 @@ define(['./_Hash', './_ListCache', './_Map'], function(Hash, ListCache, Map) {
    * @memberOf MapCache
    */
   function mapCacheClear() {
+    this.size = 0;
     this.__data__ = {
       'hash': new Hash,
       'map': new (Map || ListCache),

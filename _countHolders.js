@@ -14,7 +14,7 @@ define([], function() {
 
     while (length--) {
       if (array[length] === placeholder) {
-        result++;
+        ++result;
       }
     }
     return result;

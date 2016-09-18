@@ -3,8 +3,8 @@ define(['./_arrayMap', './_baseIntersection', './_baseRest', './_castArrayLikeOb
   /**
    * Creates an array of unique values that are included in all given arrays
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-   * for equality comparisons. The order of result values is determined by the
-   * order they occur in the first array.
+   * for equality comparisons. The order and references of result values are
+   * determined by the first array.
    *
    * @static
    * @memberOf _

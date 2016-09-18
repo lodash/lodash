@@ -1,7 +1,7 @@
 define(['./identity', './_metaMap'], function(identity, metaMap) {
 
   /**
-   * The base implementation of `setData` without support for hot loop detection.
+   * The base implementation of `setData` without support for hot loop shorting.
    *
    * @private
    * @param {Function} func The function to associate metadata with.

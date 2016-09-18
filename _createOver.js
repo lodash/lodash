@@ -1,4 +1,4 @@
-define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_baseRest', './_baseUnary', './isArray'], function(apply, arrayMap, baseFlatten, baseIteratee, baseRest, baseUnary, isArray) {
+define(['./_apply', './_arrayMap', './_baseIteratee', './_baseRest', './_baseUnary', './_flatRest'], function(apply, arrayMap, baseIteratee, baseRest, baseUnary, flatRest) {
 
   /**
    * Creates a function like `_.over`.
@@ -8,11 +8,8 @@ define(['./_apply', './_arrayMap', './_baseFlatten', './_baseIteratee', './_base
    * @returns {Function} Returns the new over function.
    */
   function createOver(arrayFunc) {
-    return baseRest(function(iteratees) {
-      iteratees = (iteratees.length == 1 && isArray(iteratees[0]))
-        ? arrayMap(iteratees[0], baseUnary(baseIteratee))
-        : arrayMap(baseFlatten(iteratees, 1), baseUnary(baseIteratee));
-
+    return flatRest(function(iteratees) {
+      iteratees = arrayMap(iteratees, baseUnary(baseIteratee));
       return baseRest(function(args) {
         var thisArg = this;
         return arrayFunc(iteratees, function(iteratee) {

@@ -9,6 +9,7 @@ define(['./_nativeCreate'], function(nativeCreate) {
    */
   function hashClear() {
     this.__data__ = nativeCreate ? nativeCreate(null) : {};
+    this.size = 0;
   }
 
   return hashClear;

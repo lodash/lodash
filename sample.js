@@ -1,7 +1,4 @@
-define(['./_baseRandom', './isArrayLike', './values'], function(baseRandom, isArrayLike, values) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_arraySample', './isArrayLike', './values'], function(arraySample, isArrayLike, values) {
 
   /**
    * Gets a random element from `collection`.
@@ -18,10 +15,7 @@ define(['./_baseRandom', './isArrayLike', './values'], function(baseRandom, isAr
    * // => 2
    */
   function sample(collection) {
-    var array = isArrayLike(collection) ? collection : values(collection),
-        length = array.length;
-
-    return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+    return arraySample(isArrayLike(collection) ? collection : values(collection));
   }
 
   return sample;

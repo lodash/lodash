@@ -1,4 +1,4 @@
-define(['./_baseFindIndex', './_baseIsNaN'], function(baseFindIndex, baseIsNaN) {
+define(['./_baseFindIndex', './_baseIsNaN', './_strictIndexOf'], function(baseFindIndex, baseIsNaN, strictIndexOf) {
 
   /**
    * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -10,18 +10,9 @@ define(['./_baseFindIndex', './_baseIsNaN'], function(baseFindIndex, baseIsNaN) 
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    if (value !== value) {
-      return baseFindIndex(array, baseIsNaN, fromIndex);
-    }
-    var index = fromIndex - 1,
-        length = array.length;
-
-    while (++index < length) {
-      if (array[index] === value) {
-        return index;
-      }
-    }
-    return -1;
+    return value === value
+      ? strictIndexOf(array, value, fromIndex)
+      : baseFindIndex(array, baseIsNaN, fromIndex);
   }
 
   return baseIndexOf;

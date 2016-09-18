@@ -1,4 +1,4 @@
-define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) {
+define(['./_baseAssignValue', './_baseForOwn', './_baseIteratee'], function(baseAssignValue, baseForOwn, baseIteratee) {
 
   /**
    * Creates an object with the same keys as `object` and values generated
@@ -33,7 +33,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
     iteratee = baseIteratee(iteratee, 3);
 
     baseForOwn(object, function(value, key, object) {
-      result[key] = iteratee(value, key, object);
+      baseAssignValue(result, key, iteratee(value, key, object));
     });
     return result;
   }

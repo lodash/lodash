@@ -23,7 +23,7 @@ import isArray from './isArray.js';
  * @see _.forEachRight
  * @example
  *
- * _([1, 2]).forEach(function(value) {
+ * _.forEach([1, 2], function(value) {
  *   console.log(value);
  * });
  * // => Logs `1` then `2`.

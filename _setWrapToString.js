@@ -1,8 +1,6 @@
-import constant from './constant.js';
-import defineProperty from './_defineProperty.js';
 import getWrapDetails from './_getWrapDetails.js';
-import identity from './identity.js';
 import insertWrapDetails from './_insertWrapDetails.js';
+import setToString from './_setToString.js';
 import updateWrapDetails from './_updateWrapDetails.js';
 
 /**
@@ -15,13 +13,9 @@ import updateWrapDetails from './_updateWrapDetails.js';
  * @param {number} bitmask The bitmask flags. See `createWrap` for more details.
  * @returns {Function} Returns `wrapper`.
  */
-var setWrapToString = !defineProperty ? identity : function(wrapper, reference, bitmask) {
+function setWrapToString(wrapper, reference, bitmask) {
   var source = (reference + '');
-  return defineProperty(wrapper, 'toString', {
-    'configurable': true,
-    'enumerable': false,
-    'value': constant(insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)))
-  });
-};
+  return setToString(wrapper, insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)));
+}
 
 export default setWrapToString;

@@ -1,3 +1,5 @@
+import baseAssignValue from './_baseAssignValue.js';
+
 /**
  * The base implementation of  `_.pickBy` without support for iteratee shorthands.
  *
@@ -17,7 +19,7 @@ function basePickBy(object, props, predicate) {
         value = object[key];
 
     if (predicate(value, key)) {
-      result[key] = value;
+      baseAssignValue(result, key, value);
     }
   }
   return result;

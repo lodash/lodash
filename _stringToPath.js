@@ -1,4 +1,4 @@
-import memoize from './memoize.js';
+import memoizeCapped from './_memoizeCapped.js';
 import toString from './toString.js';
 
 /** Used to match property names within property paths. */
@@ -15,7 +15,7 @@ var reEscapeChar = /\\(\\)?/g;
  * @param {string} string The string to convert.
  * @returns {Array} Returns the property path array.
  */
-var stringToPath = memoize(function(string) {
+var stringToPath = memoizeCapped(function(string) {
   string = toString(string);
 
   var result = [];

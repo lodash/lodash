@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import createAggregator from './_createAggregator.js';
 
 /** Used for built-in method references. */
@@ -34,7 +35,7 @@ var groupBy = createAggregator(function(result, value, key) {
   if (hasOwnProperty.call(result, key)) {
     result[key].push(value);
   } else {
-    result[key] = [value];
+    baseAssignValue(result, key, [value]);
   }
 });
 

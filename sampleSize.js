@@ -1,8 +1,8 @@
-import baseClamp from './_baseClamp.js';
-import baseRandom from './_baseRandom.js';
+import arraySampleSize from './_arraySampleSize.js';
+import isArrayLike from './isArrayLike.js';
 import isIterateeCall from './_isIterateeCall.js';
-import toArray from './toArray.js';
 import toInteger from './toInteger.js';
+import values from './values.js';
 
 /**
  * Gets `n` random elements at unique keys from `collection` up to the
@@ -25,25 +25,12 @@ import toInteger from './toInteger.js';
  * // => [2, 3, 1]
  */
 function sampleSize(collection, n, guard) {
-  var index = -1,
-      result = toArray(collection),
-      length = result.length,
-      lastIndex = length - 1;
-
   if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
     n = 1;
   } else {
-    n = baseClamp(toInteger(n), 0, length);
+    n = toInteger(n);
   }
-  while (++index < n) {
-    var rand = baseRandom(index, lastIndex),
-        value = result[rand];
-
-    result[rand] = result[index];
-    result[index] = value;
-  }
-  result.length = n;
-  return result;
+  return arraySampleSize(isArrayLike(collection) ? collection : values(collection), n);
 }
 
 export default sampleSize;

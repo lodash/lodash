@@ -1,4 +1,4 @@
-import baseRandom from './_baseRandom.js';
+import arraySample from './_arraySample.js';
 import isArrayLike from './isArrayLike.js';
 import values from './values.js';
 
@@ -17,10 +17,7 @@ import values from './values.js';
  * // => 2
  */
 function sample(collection) {
-  var array = isArrayLike(collection) ? collection : values(collection),
-      length = array.length;
-
-  return length > 0 ? array[baseRandom(0, length - 1)] : undefined;
+  return arraySample(isArrayLike(collection) ? collection : values(collection));
 }
 
 export default sample;

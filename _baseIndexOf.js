@@ -1,5 +1,6 @@
 import baseFindIndex from './_baseFindIndex.js';
 import baseIsNaN from './_baseIsNaN.js';
+import strictIndexOf from './_strictIndexOf.js';
 
 /**
  * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
@@ -11,18 +12,9 @@ import baseIsNaN from './_baseIsNaN.js';
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function baseIndexOf(array, value, fromIndex) {
-  if (value !== value) {
-    return baseFindIndex(array, baseIsNaN, fromIndex);
-  }
-  var index = fromIndex - 1,
-      length = array.length;
-
-  while (++index < length) {
-    if (array[index] === value) {
-      return index;
-    }
-  }
-  return -1;
+  return value === value
+    ? strictIndexOf(array, value, fromIndex)
+    : baseFindIndex(array, baseIsNaN, fromIndex);
 }
 
 export default baseIndexOf;

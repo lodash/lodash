@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import baseForOwn from './_baseForOwn.js';
 import baseIteratee from './_baseIteratee.js';
 
@@ -27,7 +28,7 @@ function mapKeys(object, iteratee) {
   iteratee = baseIteratee(iteratee, 3);
 
   baseForOwn(object, function(value, key, object) {
-    result[iteratee(value, key, object)] = value;
+    baseAssignValue(result, iteratee(value, key, object), value);
   });
   return result;
 }

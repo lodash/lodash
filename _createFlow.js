@@ -1,6 +1,5 @@
 import LodashWrapper from './_LodashWrapper.js';
-import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
+import flatRest from './_flatRest.js';
 import getData from './_getData.js';
 import getFuncName from './_getFuncName.js';
 import isArray from './isArray.js';
@@ -26,9 +25,7 @@ var CURRY_FLAG = 8,
  * @returns {Function} Returns the new flow function.
  */
 function createFlow(fromRight) {
-  return baseRest(function(funcs) {
-    funcs = baseFlatten(funcs, 1);
-
+  return flatRest(function(funcs) {
     var length = funcs.length,
         index = length,
         prereq = LodashWrapper.prototype.thru;

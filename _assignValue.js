@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import eq from './eq.js';
 
 /** Used for built-in method references. */
@@ -20,7 +21,7 @@ function assignValue(object, key, value) {
   var objValue = object[key];
   if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
       (value === undefined && !(key in object))) {
-    object[key] = value;
+    baseAssignValue(object, key, value);
   }
 }
 

@@ -1,5 +1,4 @@
 import isFunction from './isFunction.js';
-import isHostObject from './_isHostObject.js';
 import isMasked from './_isMasked.js';
 import isObject from './isObject.js';
 import toSource from './_toSource.js';
@@ -41,7 +40,7 @@ function baseIsNative(value) {
   if (!isObject(value) || isMasked(value)) {
     return false;
   }
-  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
   return pattern.test(toSource(value));
 }
 

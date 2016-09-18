@@ -1,7 +1,7 @@
 import arrayEach from './_arrayEach.js';
-import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
+import baseAssignValue from './_baseAssignValue.js';
 import bind from './bind.js';
+import flatRest from './_flatRest.js';
 import toKey from './_toKey.js';
 
 /**
@@ -30,10 +30,10 @@ import toKey from './_toKey.js';
  * jQuery(element).on('click', view.click);
  * // => Logs 'clicked docs' when clicked.
  */
-var bindAll = baseRest(function(object, methodNames) {
-  arrayEach(baseFlatten(methodNames, 1), function(key) {
+var bindAll = flatRest(function(object, methodNames) {
+  arrayEach(methodNames, function(key) {
     key = toKey(key);
-    object[key] = bind(object[key], object);
+    baseAssignValue(object, key, bind(object[key], object));
   });
   return object;
 });

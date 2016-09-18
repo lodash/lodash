@@ -16,12 +16,6 @@ var objectProto = Object.prototype;
 /** Used to check objects for own properties. */
 var hasOwnProperty = objectProto.hasOwnProperty;
 
-/** Built-in value references. */
-var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-/** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
-
 /**
  * Checks if `value` is an empty object, collection, map, or set.
  *
@@ -65,7 +59,7 @@ function isEmpty(value) {
   if (tag == mapTag || tag == setTag) {
     return !value.size;
   }
-  if (nonEnumShadows || isPrototype(value)) {
+  if (isPrototype(value)) {
     return !nativeKeys(value).length;
   }
   for (var key in value) {

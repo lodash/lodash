@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import createAggregator from './_createAggregator.js';
 
 /**
@@ -30,7 +31,7 @@ import createAggregator from './_createAggregator.js';
  * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
 var keyBy = createAggregator(function(result, value, key) {
-  result[key] = value;
+  baseAssignValue(result, key, value);
 });
 
 export default keyBy;

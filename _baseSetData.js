@@ -2,7 +2,7 @@ import identity from './identity.js';
 import metaMap from './_metaMap.js';
 
 /**
- * The base implementation of `setData` without support for hot loop detection.
+ * The base implementation of `setData` without support for hot loop shorting.
  *
  * @private
  * @param {Function} func The function to associate metadata with.

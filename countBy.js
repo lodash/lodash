@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import createAggregator from './_createAggregator.js';
 
 /** Used for built-in method references. */
@@ -30,7 +31,11 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * // => { '3': 2, '5': 1 }
  */
 var countBy = createAggregator(function(result, value, key) {
-  hasOwnProperty.call(result, key) ? ++result[key] : (result[key] = 1);
+  if (hasOwnProperty.call(result, key)) {
+    ++result[key];
+  } else {
+    baseAssignValue(result, key, 1);
+  }
 });
 
 export default countBy;

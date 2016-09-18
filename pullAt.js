@@ -1,9 +1,8 @@
 import arrayMap from './_arrayMap.js';
 import baseAt from './_baseAt.js';
-import baseFlatten from './_baseFlatten.js';
 import basePullAt from './_basePullAt.js';
-import baseRest from './_baseRest.js';
 import compareAscending from './_compareAscending.js';
+import flatRest from './_flatRest.js';
 import isIndex from './_isIndex.js';
 
 /**
@@ -30,9 +29,7 @@ import isIndex from './_isIndex.js';
  * console.log(pulled);
  * // => ['b', 'd']
  */
-var pullAt = baseRest(function(array, indexes) {
-  indexes = baseFlatten(indexes, 1);
-
+var pullAt = flatRest(function(array, indexes) {
   var length = array ? array.length : 0,
       result = baseAt(array, indexes);
 

@@ -1,8 +1,7 @@
 import LazyWrapper from './_LazyWrapper.js';
 import LodashWrapper from './_LodashWrapper.js';
 import baseAt from './_baseAt.js';
-import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
+import flatRest from './_flatRest.js';
 import isIndex from './_isIndex.js';
 import thru from './thru.js';
 
@@ -22,8 +21,7 @@ import thru from './thru.js';
  * _(object).at(['a[0].b.c', 'a[1]']).value();
  * // => [3, 4]
  */
-var wrapperAt = baseRest(function(paths) {
-  paths = baseFlatten(paths, 1);
+var wrapperAt = flatRest(function(paths) {
   var length = paths.length,
       start = length ? paths[0] : 0,
       value = this.__wrapped__,

@@ -1,5 +1,6 @@
 import baseFindIndex from './_baseFindIndex.js';
 import baseIsNaN from './_baseIsNaN.js';
+import strictLastIndexOf from './_strictLastIndexOf.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -35,21 +36,11 @@ function lastIndexOf(array, value, fromIndex) {
   var index = length;
   if (fromIndex !== undefined) {
     index = toInteger(fromIndex);
-    index = (
-      index < 0
-        ? nativeMax(length + index, 0)
-        : nativeMin(index, length - 1)
-    ) + 1;
+    index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);
   }
-  if (value !== value) {
-    return baseFindIndex(array, baseIsNaN, index - 1, true);
-  }
-  while (index--) {
-    if (array[index] === value) {
-      return index;
-    }
-  }
-  return -1;
+  return value === value
+    ? strictLastIndexOf(array, value, index)
+    : baseFindIndex(array, baseIsNaN, index, true);
 }
 
 export default lastIndexOf;

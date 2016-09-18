@@ -12,7 +12,6 @@ import initCloneByTag from './_initCloneByTag.js';
 import initCloneObject from './_initCloneObject.js';
 import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
-import isHostObject from './_isHostObject.js';
 import isObject from './isObject.js';
 import keys from './keys.js';
 
@@ -100,9 +99,6 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
       return cloneBuffer(value, isDeep);
     }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-      if (isHostObject(value)) {
-        return object ? value : {};
-      }
       result = initCloneObject(isFunc ? {} : value);
       if (!isDeep) {
         return copySymbols(value, baseAssign(result, value));

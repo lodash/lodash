@@ -19,7 +19,7 @@ import isPlainObject from './isPlainObject.js';
  * // => false
  */
 function isElement(value) {
-  return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
+  return value != null && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
 }
 
 export default isElement;

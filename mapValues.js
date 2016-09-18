@@ -1,3 +1,4 @@
+import baseAssignValue from './_baseAssignValue.js';
 import baseForOwn from './_baseForOwn.js';
 import baseIteratee from './_baseIteratee.js';
 
@@ -34,7 +35,7 @@ function mapValues(object, iteratee) {
   iteratee = baseIteratee(iteratee, 3);
 
   baseForOwn(object, function(value, key, object) {
-    result[key] = iteratee(value, key, object);
+    baseAssignValue(result, key, iteratee(value, key, object));
   });
   return result;
 }

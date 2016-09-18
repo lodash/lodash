@@ -1,9 +1,5 @@
 import baseSetData from './_baseSetData.js';
-import now from './now.js';
-
-/** Used to detect hot functions by number of calls within a span of milliseconds. */
-var HOT_COUNT = 150,
-    HOT_SPAN = 16;
+import shortOut from './_shortOut.js';
 
 /**
  * Sets metadata for `func`.
@@ -19,24 +15,6 @@ var HOT_COUNT = 150,
  * @param {*} data The metadata.
  * @returns {Function} Returns `func`.
  */
-var setData = (function() {
-  var count = 0,
-      lastCalled = 0;
-
-  return function(key, value) {
-    var stamp = now(),
-        remaining = HOT_SPAN - (stamp - lastCalled);
-
-    lastCalled = stamp;
-    if (remaining > 0) {
-      if (++count >= HOT_COUNT) {
-        return key;
-      }
-    } else {
-      count = 0;
-    }
-    return baseSetData(key, value);
-  };
-}());
+var setData = shortOut(baseSetData);
 
 export default setData;

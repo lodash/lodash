@@ -9,6 +9,7 @@ import ListCache from './_ListCache.js';
  */
 function stackClear() {
   this.__data__ = new ListCache;
+  this.size = 0;
 }
 
 export default stackClear;

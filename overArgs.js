@@ -4,6 +4,7 @@ import baseFlatten from './_baseFlatten.js';
 import baseIteratee from './_baseIteratee.js';
 import baseRest from './_baseRest.js';
 import baseUnary from './_baseUnary.js';
+import castRest from './_castRest.js';
 import isArray from './isArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -40,7 +41,7 @@ var nativeMin = Math.min;
  * func(10, 5);
  * // => [100, 10]
  */
-var overArgs = baseRest(function(func, transforms) {
+var overArgs = castRest(function(func, transforms) {
   transforms = (transforms.length == 1 && isArray(transforms[0]))
     ? arrayMap(transforms[0], baseUnary(baseIteratee))
     : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));

@@ -1,7 +1,7 @@
-import sampleSize from './sampleSize.js';
-
-/** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = 4294967295;
+import copyArray from './_copyArray.js';
+import isArrayLike from './isArrayLike.js';
+import shuffleSelf from './_shuffleSelf.js';
+import values from './values.js';
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -19,7 +19,10 @@ var MAX_ARRAY_LENGTH = 4294967295;
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  return sampleSize(collection, MAX_ARRAY_LENGTH);
+  return shuffleSelf(isArrayLike(collection)
+    ? copyArray(collection)
+    : values(collection)
+  );
 }
 
 export default shuffle;

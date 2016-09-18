@@ -164,9 +164,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'includesFrom', 'indexOfFrom', 'inRange', 'intersectionBy', 'intersectionWith',
 	    'invokeArgs', 'invokeArgsMap', 'isEqualWith', 'isMatchWith', 'flatMapDepth',
 	    'lastIndexOfFrom', 'mergeWith', 'orderBy', 'padChars', 'padCharsEnd',
-	    'padCharsStart', 'pullAllBy', 'pullAllWith', 'reduce', 'reduceRight', 'replace',
-	    'set', 'slice', 'sortedIndexBy', 'sortedLastIndexBy', 'transform', 'unionBy',
-	    'unionWith', 'update', 'xorBy', 'xorWith', 'zipWith'
+	    'padCharsStart', 'pullAllBy', 'pullAllWith', 'rangeStep', 'rangeStepRight',
+	    'reduce', 'reduceRight', 'replace', 'set', 'slice', 'sortedIndexBy',
+	    'sortedLastIndexBy', 'transform', 'unionBy', 'unionWith', 'update', 'xorBy',
+	    'xorWith', 'zipWith'
 	  ],
 	  '4': [
 	    'fill', 'setWith', 'updateWith'
@@ -245,6 +246,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'padCharsStart': [2, 1, 0],
 	  'pullAllBy': [2, 1, 0],
 	  'pullAllWith': [2, 1, 0],
+	  'rangeStep': [1, 2, 0],
+	  'rangeStepRight': [1, 2, 0],
 	  'setWith': [3, 1, 2, 0],
 	  'sortedIndexBy': [2, 1, 0],
 	  'sortedLastIndexBy': [2, 1, 0],
@@ -366,6 +369,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'padCharsEnd': 'padEnd',
 	  'padCharsStart': 'padStart',
 	  'propertyOf': 'get',
+	  'rangeStep': 'range',
+	  'rangeStepRight': 'rangeRight',
 	  'restFrom': 'rest',
 	  'spreadFrom': 'spread',
 	  'trimChars': 'trim',

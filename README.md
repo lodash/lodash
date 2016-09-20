@@ -1,4 +1,4 @@
-# lodash v4.16.0
+# lodash v4.16.1
 
 The [Lodash](https://lodash.com/) library exported as [Node.js](https://nodejs.org/) modules.
 
@@ -28,7 +28,7 @@ var chunk = require('lodash/chunk');
 var extend = require('lodash/fp/extend');
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.16.0-npm) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.16.1-npm) for more details.
 
 **Note:**<br>
 Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.

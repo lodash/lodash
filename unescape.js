@@ -2,7 +2,7 @@ var toString = require('./toString'),
     unescapeHtmlChar = require('./_unescapeHtmlChar');
 
 /** Used to match HTML entities and HTML characters. */
-var reEscapedHtml = /&(?:amp|lt|gt|quot|#39|#96);/g,
+var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
     reHasEscapedHtml = RegExp(reEscapedHtml.source);
 
 /**

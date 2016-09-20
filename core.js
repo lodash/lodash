@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.16.0';
+  var VERSION = '4.16.1';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -44,7 +44,7 @@
       stringTag = '[object String]';
 
   /** Used to match HTML entities and HTML characters. */
-  var reUnescapedHtml = /[&<>"'`]/g,
+  var reUnescapedHtml = /[&<>"']/g,
       reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
   /** Used to map characters to HTML entities. */

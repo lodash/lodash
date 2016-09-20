@@ -25142,7 +25142,7 @@
     QUnit.test('should create a wrapped function', function(assert) {
       assert.expect(1);
 
-      var p = _.wrap(_.escape, function(func, text) {
+      var p = _.wrap(lodashStable.escape, function(func, text) {
         return '<p>' + func(text) + '</p>';
       });
 
@@ -25179,7 +25179,7 @@
     QUnit.test('should use `this` binding of function', function(assert) {
       assert.expect(1);
 
-      var p = _.wrap(_.escape, function(func) {
+      var p = _.wrap(lodashStable.escape, function(func) {
         return '<p>' + func(this.text) + '</p>';
       });
 

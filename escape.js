@@ -1,7 +1,7 @@
 define(['./_escapeHtmlChar', './toString'], function(escapeHtmlChar, toString) {
 
   /** Used to match HTML entities and HTML characters. */
-  var reUnescapedHtml = /[&<>"'`]/g,
+  var reUnescapedHtml = /[&<>"']/g,
       reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 
   /**

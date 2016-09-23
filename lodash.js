@@ -17,8 +17,11 @@
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
-  /** Used as the `TypeError` message for "Functions" methods. */
-  var FUNC_ERROR_TEXT = 'Expected a function';
+  /** Error message constants. */
+  var TRY_ES_SHIMS = 'Try https://github.com/es-shims.',
+      CORE_ERROR_TEXT = 'Unsupported core-js use. ' + TRY_ES_SHIMS,
+      FUNC_ERROR_TEXT = 'Expected a function',
+      SHIM_ERROR_TEXT = 'Unsupported method. ' + TRY_ES_SHIMS;
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -11145,7 +11148,7 @@
      * // => false
      */
     var isArray = Array.isArray || (Array.isArray = function() {
-      throw new Error('This method is not supported. Try https://github.com/es-shims.');
+      throw new Error(SHIM_ERROR_TEXT);
     });
 
     /**
@@ -11780,7 +11783,7 @@
      */
     function isNative(value) {
       if (isMaskable(value)) {
-        throw new Error('This method is not supported with core-js. Try https://github.com/es-shims.');
+        throw new Error(CORE_ERROR_TEXT);
       }
       return baseIsNative(value);
     }

@@ -11144,7 +11144,9 @@
      * _.isArray(_.noop);
      * // => false
      */
-    var isArray = Array.isArray;
+    var isArray = Array.isArray || (Array.isArray = function() {
+      throw new Error('This method is not supported. Try https://github.com/es-shims.');
+    });
 
     /**
      * Checks if `value` is classified as an `ArrayBuffer` object.

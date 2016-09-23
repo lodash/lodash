@@ -14279,7 +14279,7 @@
       } else if (radix) {
         radix = +radix;
       }
-      return nativeParseInt(toString(string), radix || 0);
+      return nativeParseInt(toString(string).replace(reTrimStart, ''), radix || 0);
     }
 
     /**

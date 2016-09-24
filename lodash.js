@@ -1334,6 +1334,19 @@
   }
 
   /**
+   * Creates a function that throws an error with `message`.
+   *
+   * @private
+   * @param {stirng} message The error message.
+   * @returns {Function} Returns the new thrower function.
+   */
+  function thrower(message) {
+    return function() {
+      throw new Error(message);
+    };
+  }
+
+  /**
    * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
@@ -1488,13 +1501,14 @@
     var nativeCeil = Math.ceil,
         nativeFloor = Math.floor,
         nativeGetSymbols = Object.getOwnPropertySymbols,
+        nativeIsArray = Array.isArray || (Array.isArray = thrower(SHIM_ERROR_TEXT)),
         nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
         nativeIsFinite = context.isFinite,
         nativeJoin = arrayProto.join,
         nativeKeys = overArg(Object.keys, Object),
         nativeMax = Math.max,
         nativeMin = Math.min,
-        nativeNow = Date.now,
+        nativeNow = Date.now || (Date.now = thrower(SHIM_ERROR_TEXT)),
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
         nativeReverse = arrayProto.reverse;
@@ -11162,9 +11176,7 @@
      * _.isArray(_.noop);
      * // => false
      */
-    var isArray = Array.isArray || (Array.isArray = function() {
-      throw new Error(SHIM_ERROR_TEXT);
-    });
+    var isArray = nativeIsArray;
 
     /**
      * Checks if `value` is classified as an `ArrayBuffer` object.

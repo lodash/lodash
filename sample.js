@@ -1,4 +1,4 @@
-define(['./_arraySample', './isArrayLike', './values'], function(arraySample, isArrayLike, values) {
+define(['./_arraySample', './_baseSample', './isArray'], function(arraySample, baseSample, isArray) {
 
   /**
    * Gets a random element from `collection`.
@@ -15,7 +15,8 @@ define(['./_arraySample', './isArrayLike', './values'], function(arraySample, is
    * // => 2
    */
   function sample(collection) {
-    return arraySample(isArrayLike(collection) ? collection : values(collection));
+    var func = isArray(collection) ? arraySample : baseSample;
+    return func(collection);
   }
 
   return sample;

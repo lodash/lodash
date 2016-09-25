@@ -1,24 +1,30 @@
-define(['./_baseRandom'], function(baseRandom) {
+define(['./_baseClamp', './_baseRandom'], function(baseClamp, baseRandom) {
+
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
 
   /**
-   * A specialized version of `arrayShuffle` which mutates `array`.
+   * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
    *
    * @private
    * @param {Array} array The array to shuffle.
+   * @param {number} [size=array.length] The size of `array`.
    * @returns {Array} Returns `array`.
    */
-  function shuffleSelf(array) {
+  function shuffleSelf(array, size) {
     var index = -1,
         length = array.length,
         lastIndex = length - 1;
 
-    while (++index < length) {
+    size = size === undefined ? length : baseClamp(size, 0, length);
+    while (++index < size) {
       var rand = baseRandom(index, lastIndex),
           value = array[rand];
 
       array[rand] = array[index];
       array[index] = value;
     }
+    array.length = size;
     return array;
   }
 

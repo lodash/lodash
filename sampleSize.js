@@ -1,4 +1,4 @@
-define(['./_arraySampleSize', './isArrayLike', './_isIterateeCall', './toInteger', './values'], function(arraySampleSize, isArrayLike, isIterateeCall, toInteger, values) {
+define(['./_arraySampleSize', './_baseSampleSize', './isArray', './_isIterateeCall', './toInteger'], function(arraySampleSize, baseSampleSize, isArray, isIterateeCall, toInteger) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -29,7 +29,8 @@ define(['./_arraySampleSize', './isArrayLike', './_isIterateeCall', './toInteger
     } else {
       n = toInteger(n);
     }
-    return arraySampleSize(isArrayLike(collection) ? collection : values(collection), n);
+    var func = isArray(collection) ? arraySampleSize : baseSampleSize;
+    return func(collection, n);
   }
 
   return sampleSize;

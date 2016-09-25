@@ -1,4 +1,4 @@
-define(['./_copyArray', './isArrayLike', './_shuffleSelf', './values'], function(copyArray, isArrayLike, shuffleSelf, values) {
+define(['./_arrayShuffle', './_baseShuffle', './isArray'], function(arrayShuffle, baseShuffle, isArray) {
 
   /**
    * Creates an array of shuffled values, using a version of the
@@ -16,10 +16,8 @@ define(['./_copyArray', './isArrayLike', './_shuffleSelf', './values'], function
    * // => [4, 1, 3, 2]
    */
   function shuffle(collection) {
-    return shuffleSelf(isArrayLike(collection)
-      ? copyArray(collection)
-      : values(collection)
-    );
+    var func = isArray(collection) ? arrayShuffle : baseShuffle;
+    return func(collection);
   }
 
   return shuffle;

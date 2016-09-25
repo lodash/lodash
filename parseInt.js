@@ -1,5 +1,8 @@
 define(['./_root', './toString'], function(root, toString) {
 
+  /** Used to match leading and trailing whitespace. */
+  var reTrimStart = /^\s+/;
+
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeParseInt = root.parseInt;
 
@@ -33,7 +36,7 @@ define(['./_root', './toString'], function(root, toString) {
     } else if (radix) {
       radix = +radix;
     }
-    return nativeParseInt(toString(string), radix || 0);
+    return nativeParseInt(toString(string).replace(reTrimStart, ''), radix || 0);
   }
 
   return parseInt;

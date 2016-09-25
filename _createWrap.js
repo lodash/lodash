@@ -3,7 +3,7 @@ define(['./_baseSetData', './_createBind', './_createCurry', './_createHybrid', 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used as the `TypeError` message for "Functions" methods. */
+  /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used to compose bitmasks for function metadata. */

@@ -4,8 +4,7 @@ define(['./_baseRandom'], function(baseRandom) {
   var undefined;
 
   /**
-   * A specialized version of `_.sample` for arrays without support for iteratee
-   * shorthands.
+   * A specialized version of `_.sample` for arrays.
    *
    * @private
    * @param {Array} array The array to sample.

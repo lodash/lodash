@@ -1,6 +1,6 @@
 define(['./_apply', './_arrayMap', './_baseIteratee', './_baseRest'], function(apply, arrayMap, baseIteratee, baseRest) {
 
-  /** Used as the `TypeError` message for "Functions" methods. */
+  /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /**

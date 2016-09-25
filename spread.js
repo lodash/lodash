@@ -3,7 +3,7 @@ define(['./_apply', './_arrayPush', './_baseRest', './_castSlice', './toInteger'
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used as the `TypeError` message for "Functions" methods. */
+  /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
   /* Built-in method references for those with the same name as other `lodash` methods. */

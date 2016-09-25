@@ -2430,7 +2430,7 @@
      * @returns {Array} Returns the new shuffled array.
      */
     function arrayShuffle(array) {
-      return shuffleSelf(copyArray(array), MAX_ARRAY_LENGTH);
+      return shuffleSelf(copyArray(array));
     }
 
     /**
@@ -4001,7 +4001,7 @@
      * @returns {Array} Returns the new shuffled array.
      */
     function baseShuffle(collection) {
-      return shuffleSelf(values(collection), MAX_ARRAY_LENGTH);
+      return shuffleSelf(values(collection));
     }
 
     /**

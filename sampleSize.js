@@ -1,8 +1,8 @@
 var arraySampleSize = require('./_arraySampleSize'),
-    isArrayLike = require('./isArrayLike'),
+    baseSampleSize = require('./_baseSampleSize'),
+    isArray = require('./isArray'),
     isIterateeCall = require('./_isIterateeCall'),
-    toInteger = require('./toInteger'),
-    values = require('./values');
+    toInteger = require('./toInteger');
 
 /**
  * Gets `n` random elements at unique keys from `collection` up to the
@@ -30,7 +30,8 @@ function sampleSize(collection, n, guard) {
   } else {
     n = toInteger(n);
   }
-  return arraySampleSize(isArrayLike(collection) ? collection : values(collection), n);
+  var func = isArray(collection) ? arraySampleSize : baseSampleSize;
+  return func(collection, n);
 }
 
 module.exports = sampleSize;

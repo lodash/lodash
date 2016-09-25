@@ -1,6 +1,6 @@
 var arraySample = require('./_arraySample'),
-    isArrayLike = require('./isArrayLike'),
-    values = require('./values');
+    baseSample = require('./_baseSample'),
+    isArray = require('./isArray');
 
 /**
  * Gets a random element from `collection`.
@@ -17,7 +17,8 @@ var arraySample = require('./_arraySample'),
  * // => 2
  */
 function sample(collection) {
-  return arraySample(isArrayLike(collection) ? collection : values(collection));
+  var func = isArray(collection) ? arraySample : baseSample;
+  return func(collection);
 }
 
 module.exports = sample;

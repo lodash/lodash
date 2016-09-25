@@ -1,7 +1,6 @@
-var copyArray = require('./_copyArray'),
-    isArrayLike = require('./isArrayLike'),
-    shuffleSelf = require('./_shuffleSelf'),
-    values = require('./values');
+var arrayShuffle = require('./_arrayShuffle'),
+    baseShuffle = require('./_baseShuffle'),
+    isArray = require('./isArray');
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -19,10 +18,8 @@ var copyArray = require('./_copyArray'),
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  return shuffleSelf(isArrayLike(collection)
-    ? copyArray(collection)
-    : values(collection)
-  );
+  var func = isArray(collection) ? arrayShuffle : baseShuffle;
+  return func(collection);
 }
 
 module.exports = shuffle;

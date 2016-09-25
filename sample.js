@@ -1,6 +1,6 @@
 import arraySample from './_arraySample.js';
-import isArrayLike from './isArrayLike.js';
-import values from './values.js';
+import baseSample from './_baseSample.js';
+import isArray from './isArray.js';
 
 /**
  * Gets a random element from `collection`.
@@ -17,7 +17,8 @@ import values from './values.js';
  * // => 2
  */
 function sample(collection) {
-  return arraySample(isArrayLike(collection) ? collection : values(collection));
+  var func = isArray(collection) ? arraySample : baseSample;
+  return func(collection);
 }
 
 export default sample;

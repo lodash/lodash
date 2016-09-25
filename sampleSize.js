@@ -1,8 +1,8 @@
 import arraySampleSize from './_arraySampleSize.js';
-import isArrayLike from './isArrayLike.js';
+import baseSampleSize from './_baseSampleSize.js';
+import isArray from './isArray.js';
 import isIterateeCall from './_isIterateeCall.js';
 import toInteger from './toInteger.js';
-import values from './values.js';
 
 /**
  * Gets `n` random elements at unique keys from `collection` up to the
@@ -30,7 +30,8 @@ function sampleSize(collection, n, guard) {
   } else {
     n = toInteger(n);
   }
-  return arraySampleSize(isArrayLike(collection) ? collection : values(collection), n);
+  var func = isArray(collection) ? arraySampleSize : baseSampleSize;
+  return func(collection, n);
 }
 
 export default sampleSize;

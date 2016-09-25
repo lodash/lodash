@@ -9,7 +9,7 @@ import setData from './_setData.js';
 import setWrapToString from './_setWrapToString.js';
 import toInteger from './toInteger.js';
 
-/** Used as the `TypeError` message for "Functions" methods. */
+/** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /** Used to compose bitmasks for function metadata. */

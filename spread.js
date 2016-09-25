@@ -4,7 +4,7 @@ import baseRest from './_baseRest.js';
 import castSlice from './_castSlice.js';
 import toInteger from './toInteger.js';
 
-/** Used as the `TypeError` message for "Functions" methods. */
+/** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

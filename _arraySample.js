@@ -1,8 +1,7 @@
 import baseRandom from './_baseRandom.js';
 
 /**
- * A specialized version of `_.sample` for arrays without support for iteratee
- * shorthands.
+ * A specialized version of `_.sample` for arrays.
  *
  * @private
  * @param {Array} array The array to sample.

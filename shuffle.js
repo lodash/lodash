@@ -1,7 +1,6 @@
-import copyArray from './_copyArray.js';
-import isArrayLike from './isArrayLike.js';
-import shuffleSelf from './_shuffleSelf.js';
-import values from './values.js';
+import arrayShuffle from './_arrayShuffle.js';
+import baseShuffle from './_baseShuffle.js';
+import isArray from './isArray.js';
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -19,10 +18,8 @@ import values from './values.js';
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  return shuffleSelf(isArrayLike(collection)
-    ? copyArray(collection)
-    : values(collection)
-  );
+  var func = isArray(collection) ? arrayShuffle : baseShuffle;
+  return func(collection);
 }
 
 export default shuffle;

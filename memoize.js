@@ -1,6 +1,6 @@
 import MapCache from './_MapCache.js';
 
-/** Used as the `TypeError` message for "Functions" methods. */
+/** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
 /**

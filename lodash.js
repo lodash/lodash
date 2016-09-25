@@ -18,10 +18,8 @@
   var LARGE_ARRAY_SIZE = 200;
 
   /** Error message constants. */
-  var TRY_ES_SHIMS = 'Try https://github.com/es-shims.',
-      CORE_ERROR_TEXT = 'Unsupported core-js use. ' + TRY_ES_SHIMS,
-      FUNC_ERROR_TEXT = 'Expected a function',
-      SHIM_ERROR_TEXT = 'Unsupported method. ' + TRY_ES_SHIMS;
+  var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://github.com/es-shims.',
+      FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -1334,19 +1332,6 @@
   }
 
   /**
-   * Creates a function that throws an error with `message`.
-   *
-   * @private
-   * @param {stirng} message The error message.
-   * @returns {Function} Returns the new thrower function.
-   */
-  function thrower(message) {
-    return function() {
-      throw new Error(message);
-    };
-  }
-
-  /**
    * Used by `_.unescape` to convert HTML entities to characters.
    *
    * @private
@@ -1501,14 +1486,13 @@
     var nativeCeil = Math.ceil,
         nativeFloor = Math.floor,
         nativeGetSymbols = Object.getOwnPropertySymbols,
-        nativeIsArray = Array.isArray || (Array.isArray = thrower(SHIM_ERROR_TEXT)),
         nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
         nativeIsFinite = context.isFinite,
         nativeJoin = arrayProto.join,
         nativeKeys = overArg(Object.keys, Object),
         nativeMax = Math.max,
         nativeMin = Math.min,
-        nativeNow = Date.now || (Date.now = thrower(SHIM_ERROR_TEXT)),
+        nativeNow = Date.now,
         nativeParseInt = context.parseInt,
         nativeRandom = Math.random,
         nativeReverse = arrayProto.reverse;
@@ -11176,7 +11160,7 @@
      * _.isArray(_.noop);
      * // => false
      */
-    var isArray = nativeIsArray;
+    var isArray = Array.isArray;
 
     /**
      * Checks if `value` is classified as an `ArrayBuffer` object.

@@ -2420,9 +2420,7 @@
      * @returns {Array} Returns the random elements.
      */
     function arraySampleSize(array, n) {
-      var result = arrayShuffle(array);
-      result.length = baseClamp(n, 0, result.length);
-      return result;
+      return shuffleSelf(copyArray(array), n);
     }
 
     /**
@@ -2433,7 +2431,7 @@
      * @returns {Array} Returns the new shuffled array.
      */
     function arrayShuffle(array) {
-      return shuffleSelf(copyArray(array));
+      return shuffleSelf(copyArray(array), MAX_ARRAY_LENGTH);
     }
 
     /**
@@ -3904,6 +3902,29 @@
     }
 
     /**
+     * The base implementation of `_.sample`.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to sample.
+     * @returns {*} Returns the random element.
+     */
+    function baseSample(collection) {
+      return arraySample(values(collection));
+    }
+
+    /**
+     * The base implementation of `_.sampleSize` without param guards.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to sample.
+     * @param {number} n The number of elements to sample.
+     * @returns {Array} Returns the random elements.
+     */
+    function baseSampleSize(collection, n) {
+      return shuffleSelf(values(collection), n);
+    }
+
+    /**
      * The base implementation of `_.set`.
      *
      * @private
@@ -3972,6 +3993,17 @@
         'writable': true
       });
     };
+
+    /**
+     * The base implementation of `_.shuffle`.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to shuffle.
+     * @returns {Array} Returns the new shuffled array.
+     */
+    function baseShuffle(collection) {
+      return shuffleSelf(values(collection), MAX_ARRAY_LENGTH);
+    }
 
     /**
      * The base implementation of `_.slice` without an iteratee call guard.
@@ -6549,24 +6581,27 @@
     }
 
     /**
-     * A specialized version of `arrayShuffle` which mutates `array`.
+     * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
      *
      * @private
      * @param {Array} array The array to shuffle.
+     * @param {number} [n=array.length] The size of `array`.
      * @returns {Array} Returns `array`.
      */
-    function shuffleSelf(array) {
+    function shuffleSelf(array, n) {
       var index = -1,
           length = array.length,
           lastIndex = length - 1;
 
-      while (++index < length) {
+      n = n === undefined ? length : baseClamp(n, 0, length);
+      while (++index < n) {
         var rand = baseRandom(index, lastIndex),
             value = array[rand];
 
         array[rand] = array[index];
         array[index] = value;
       }
+      array.length = n;
       return array;
     }
 
@@ -9644,7 +9679,8 @@
      * // => 2
      */
     function sample(collection) {
-      return arraySample(isArrayLike(collection) ? collection : values(collection));
+      var func = isArray(collection) ? arraySample : baseSample;
+      return func(collection);
     }
 
     /**
@@ -9673,7 +9709,8 @@
       } else {
         n = toInteger(n);
       }
-      return arraySampleSize(isArrayLike(collection) ? collection : values(collection), n);
+      var func = isArray(collection) ? arraySampleSize : baseSampleSize;
+      return func(collection, n);
     }
 
     /**
@@ -9692,10 +9729,8 @@
      * // => [4, 1, 3, 2]
      */
     function shuffle(collection) {
-      return shuffleSelf(isArrayLike(collection)
-        ? copyArray(collection)
-        : values(collection)
-      );
+      var func = isArray(collection) ? arrayShuffle : baseShuffle;
+      return func(collection);
     }
 
     /**

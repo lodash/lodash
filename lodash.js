@@ -6584,23 +6584,23 @@
      *
      * @private
      * @param {Array} array The array to shuffle.
-     * @param {number} [n=array.length] The size of `array`.
+     * @param {number} [size=array.length] The size of `array`.
      * @returns {Array} Returns `array`.
      */
-    function shuffleSelf(array, n) {
+    function shuffleSelf(array, size) {
       var index = -1,
           length = array.length,
           lastIndex = length - 1;
 
-      n = n === undefined ? length : baseClamp(n, 0, length);
-      while (++index < n) {
+      size = size === undefined ? length : baseClamp(size, 0, length);
+      while (++index < size) {
         var rand = baseRandom(index, lastIndex),
             value = array[rand];
 
         array[rand] = array[index];
         array[index] = value;
       }
-      array.length = n;
+      array.length = size;
       return array;
     }
 

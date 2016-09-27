@@ -2462,7 +2462,7 @@
      */
     function assignMergeValue(object, key, value) {
       if ((value !== undefined && !eq(object[key], value)) ||
-          (typeof key == 'number' && value === undefined && !(key in object))) {
+          (value === undefined && !(key in object))) {
         baseAssignValue(object, key, value);
       }
     }
@@ -3616,29 +3616,32 @@
       var isCommon = newValue === undefined;
 
       if (isCommon) {
+        var isArr = isArray(srcValue),
+            isTyped = !isArr && isTypedArray(srcValue);
+
         newValue = srcValue;
-        if (isArray(srcValue) || isTypedArray(srcValue)) {
+        if (isArr || isTyped) {
           if (isArray(objValue)) {
             newValue = objValue;
           }
           else if (isArrayLikeObject(objValue)) {
             newValue = copyArray(objValue);
           }
-          else {
+          else if (isTyped) {
             isCommon = false;
-            newValue = baseClone(srcValue, true);
+            newValue = cloneTypedArray(srcValue, true);
+          }
+          else {
+            newValue = [];
           }
         }
         else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+          newValue = objValue;
           if (isArguments(objValue)) {
             newValue = toPlainObject(objValue);
           }
           else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
-            isCommon = false;
-            newValue = baseClone(srcValue, true);
-          }
-          else {
-            newValue = objValue;
+            newValue = initCloneObject(srcValue);
           }
         }
         else {

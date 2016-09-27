@@ -4512,15 +4512,20 @@
     QUnit.test('should assign source properties if missing on `object`', function(assert) {
       assert.expect(1);
 
-      assert.deepEqual(_.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 }), { 'a': 1, 'b': 2 });
+      var actual = _.defaults({ 'a': 1 }, { 'a': 2, 'b': 2 });
+      assert.deepEqual(actual, { 'a': 1, 'b': 2 });
     });
 
     QUnit.test('should accept multiple sources', function(assert) {
       assert.expect(2);
 
-      var expected = { 'a': 1, 'b': 2, 'c': 3 };
-      assert.deepEqual(_.defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 }), expected);
-      assert.deepEqual(_.defaults({ 'a': 1, 'b': 2 }, { 'b': 3, 'c': 3 }, { 'c': 2 }), expected);
+      var expected = { 'a': 1, 'b': 2, 'c': 3 },
+          actual = _.defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 });
+
+      assert.deepEqual(actual, expected);
+
+      actual = _.defaults({ 'a': 1, 'b': 2 }, { 'b': 3, 'c': 3 }, { 'c': 2 });
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should not overwrite `null` values', function(assert) {
@@ -4535,6 +4540,15 @@
 
       var actual = _.defaults({ 'a': undefined }, { 'a': 1 });
       assert.strictEqual(actual.a, 1);
+    });
+
+    QUnit.test('should assign `undefined` values', function(assert) {
+      assert.expect(1);
+
+      var source = { 'a': undefined, 'b': 1 },
+          actual = _.defaults({}, source);
+
+      assert.deepEqual(actual, { 'a': undefined, 'b': 1 });
     });
 
     QUnit.test('should assign properties that shadow those on `Object.prototype`', function(assert) {
@@ -4560,8 +4574,11 @@
         'valueOf': 7
       };
 
-      assert.deepEqual(_.defaults({}, source), source);
-      assert.deepEqual(_.defaults({}, object, source), object);
+      var expected = lodashStable.clone(source);
+      assert.deepEqual(_.defaults({}, source), expected);
+
+      expected = lodashStable.clone(object);
+      assert.deepEqual(_.defaults({}, object, source), expected);
     });
   }());
 
@@ -4633,6 +4650,16 @@
       assert.strictEqual(actual.a.b, 2);
     });
 
+    QUnit.test('should assign `undefined` values', function(assert) {
+      assert.expect(1);
+
+      var source = { 'a': undefined, 'b': { 'c': undefined, 'd': 1 } },
+          expected = lodashStable.cloneDeep(source),
+          actual = _.defaultsDeep({}, source);
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('should merge sources containing circular references', function(assert) {
       assert.expect(2);
 
@@ -4672,7 +4699,7 @@
       assert.expect(1);
 
       var actual = _.defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
-      assert.deepEqual(actual, { 'a': ['abc'] });
+      assert.deepEqual(actual.a, ['abc']);
     });
   }());
 
@@ -14993,14 +15020,14 @@
       assert.deepEqual(actual, [new Foo(object)]);
     });
 
-    QUnit.test('should not assign `undefined` values', function(assert) {
+    QUnit.test('should not overwrite existing values with `undefined` values of object sources', function(assert) {
       assert.expect(1);
 
       var actual = _.merge({ 'a': 1 }, { 'a': undefined, 'b': undefined });
-      assert.deepEqual(actual, { 'a': 1 });
+      assert.deepEqual(actual, { 'a': 1, 'b': undefined });
     });
 
-    QUnit.test('should skip `undefined` values in array sources if a destination value exists', function(assert) {
+    QUnit.test('should not overwrite existing values with `undefined` values of array sources', function(assert) {
       assert.expect(2);
 
       var array = [1];

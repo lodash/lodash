@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "4.16.2",
+  "version": "4.16.3-pre",
   "license": "MIT",
   "private": true,
   "main": "lodash.js",
@@ -42,7 +42,7 @@
     "istanbul": "0.4.5",
     "jquery": "^3.1.1",
     "jscs": "^3.0.7",
-    "lodash": "4.16.1",
+    "lodash": "4.16.2",
     "lodash-doc-globals": "^0.1.1",
     "markdown-doctest": "^0.8.1",
     "optional-dev-dependency": "^1.3.0",

@@ -66,9 +66,9 @@ Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
 numbers, objects, strings, etc. Lodash’s modular methods are great for:
 
-* Iterating arrays, objects, & strings
-* Manipulating & testing values
-* Creating composite functions
+ * Iterating arrays, objects, & strings
+ * Manipulating & testing values
+ * Creating composite functions
 
 ## Module Formats
 

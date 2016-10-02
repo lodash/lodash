@@ -63,8 +63,9 @@
 
   var ArrayBuffer = root.ArrayBuffer,
       Buffer = root.Buffer,
-      Promise = root.Promise,
       Map = root.Map,
+      Promise = root.Promise,
+      Proxy = root.Proxy,
       Set = root.Set,
       Symbol = root.Symbol,
       Uint8Array = root.Uint8Array,
@@ -10520,6 +10521,17 @@
       assert.expect(1);
 
       assert.strictEqual(_.isFunction(generator), typeof generator == 'function');
+    });
+
+    QUnit.test('should return `true` for the `Proxy` constructor', function(assert) {
+      assert.expect(1);
+
+      if (Proxy) {
+        assert.strictEqual(_.isFunction(Proxy), true);
+      }
+      else {
+        skipAssert(assert);
+      }
     });
 
     QUnit.test('should return `true` for array view constructors', function(assert) {

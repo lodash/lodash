@@ -3283,6 +3283,7 @@
           return false;
         }
         objIsArr = true;
+        objIsObj = false;
       }
       if (isSameTag && !objIsObj) {
         stack || (stack = new Stack);

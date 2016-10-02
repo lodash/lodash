@@ -9934,6 +9934,21 @@
       });
     });
 
+    QUnit.test('should compare buffers', function(assert) {
+      assert.expect(3);
+
+      if (Buffer) {
+        var buffer = new Buffer([1]);
+
+        assert.strictEqual(_.isEqual(buffer, new Buffer([2])), false);
+        assert.strictEqual(_.isEqual(buffer, new Uint8Array([1])), false);
+        assert.strictEqual(_.isEqual(buffer, new Buffer([1])), true);
+      }
+      else {
+        skipAssert(assert, 3);
+      }
+    });
+
     QUnit.test('should compare date objects', function(assert) {
       assert.expect(4);
 

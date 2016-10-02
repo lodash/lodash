@@ -10572,7 +10572,8 @@
 
       if (document) {
         assert.strictEqual(_.isFunction(document.getElementsByTagName('body')), false);
-      } else {
+      }
+      else {
         skipAssert(assert);
       }
     });

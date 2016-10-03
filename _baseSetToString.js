@@ -1,6 +1,6 @@
 var constant = require('./constant'),
-    identity = require('./identity'),
-    nativeDefineProperty = require('./_nativeDefineProperty');
+    defineProperty = require('./_defineProperty'),
+    identity = require('./identity');
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
@@ -10,8 +10,8 @@ var constant = require('./constant'),
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-var baseSetToString = !nativeDefineProperty ? identity : function(func, string) {
-  return nativeDefineProperty(func, 'toString', {
+var baseSetToString = !defineProperty ? identity : function(func, string) {
+  return defineProperty(func, 'toString', {
     'configurable': true,
     'enumerable': false,
     'value': constant(string),

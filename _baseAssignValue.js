@@ -1,5 +1,4 @@
-/** Built-in value references. */
-var defineProperty = Object.defineProperty;
+var defineProperty = require('./_defineProperty');
 
 /**
  * The base implementation of `assignValue` and `assignMergeValue` without

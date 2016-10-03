@@ -20,7 +20,7 @@ var baseCreate = (function() {
     if (objectCreate) {
       return objectCreate(proto);
     }
-    object.prototype = prototype;
+    object.prototype = proto;
     var result = new object;
     object.prototype = undefined;
     return result;

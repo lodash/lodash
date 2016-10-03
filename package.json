@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "4.16.3",
+  "version": "4.16.4-pre",
   "license": "MIT",
   "private": true,
   "main": "lodash.js",

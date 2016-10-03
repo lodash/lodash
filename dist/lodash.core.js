@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.16.2';
+  var VERSION = '4.16.3';
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -40,6 +40,7 @@
       genTag = '[object GeneratorFunction]',
       numberTag = '[object Number]',
       objectTag = '[object Object]',
+      proxyTag = '[object Proxy]',
       regexpTag = '[object RegExp]',
       stringTag = '[object String]';
 
@@ -369,7 +370,7 @@
       if (objectCreate) {
         return objectCreate(proto);
       }
-      object.prototype = prototype;
+      object.prototype = proto;
       var result = new object;
       object.prototype = undefined;
       return result;
@@ -2688,7 +2689,7 @@
     // The use of `Object#toString` avoids issues with the `typeof` operator
     // in Safari 8-9 which returns 'object' for typed array and other constructors.
     var tag = isObject(value) ? objectToString.call(value) : '';
-    return tag == funcTag || tag == genTag;
+    return tag == funcTag || tag == genTag || tag == proxyTag;
   }
 
   /**

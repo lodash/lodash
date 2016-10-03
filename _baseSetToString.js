@@ -1,4 +1,4 @@
-define(['./constant', './identity', './_nativeDefineProperty'], function(constant, identity, nativeDefineProperty) {
+define(['./constant', './_defineProperty', './identity'], function(constant, defineProperty, identity) {
 
   /**
    * The base implementation of `setToString` without support for hot loop shorting.
@@ -8,8 +8,8 @@ define(['./constant', './identity', './_nativeDefineProperty'], function(constan
    * @param {Function} string The `toString` result.
    * @returns {Function} Returns `func`.
    */
-  var baseSetToString = !nativeDefineProperty ? identity : function(func, string) {
-    return nativeDefineProperty(func, 'toString', {
+  var baseSetToString = !defineProperty ? identity : function(func, string) {
+    return defineProperty(func, 'toString', {
       'configurable': true,
       'enumerable': false,
       'value': constant(string),

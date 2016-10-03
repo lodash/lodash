@@ -1,4 +1,4 @@
-define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_getTag', './isArray', './isTypedArray'], function(Stack, equalArrays, equalByTag, equalObjects, getTag, isArray, isTypedArray) {
+define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_getTag', './isArray', './isBuffer', './isTypedArray'], function(Stack, equalArrays, equalByTag, equalObjects, getTag, isArray, isBuffer, isTypedArray) {
 
   /** Used to compose bitmasks for comparison styles. */
   var PARTIAL_COMPARE_FLAG = 2;
@@ -47,6 +47,13 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
         othIsObj = othTag == objectTag,
         isSameTag = objTag == othTag;
 
+    if (isSameTag && isBuffer(object)) {
+      if (!isBuffer(other)) {
+        return false;
+      }
+      objIsArr = true;
+      objIsObj = false;
+    }
     if (isSameTag && !objIsObj) {
       stack || (stack = new Stack);
       return (objIsArr || isTypedArray(object))

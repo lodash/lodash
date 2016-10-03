@@ -1,7 +1,4 @@
-define([], function() {
-
-  /** Built-in value references. */
-  var defineProperty = Object.defineProperty;
+define(['./_defineProperty'], function(defineProperty) {
 
   /**
    * The base implementation of `assignValue` and `assignMergeValue` without

@@ -1,4 +1,4 @@
-define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', './isArray', './isArrayLikeObject', './isFunction', './isObject', './isPlainObject', './isTypedArray', './toPlainObject'], function(assignMergeValue, baseClone, copyArray, isArguments, isArray, isArrayLikeObject, isFunction, isObject, isPlainObject, isTypedArray, toPlainObject) {
+define(['./_assignMergeValue', './_cloneTypedArray', './_copyArray', './_initCloneObject', './isArguments', './isArray', './isArrayLikeObject', './isFunction', './isObject', './isPlainObject', './isTypedArray', './toPlainObject'], function(assignMergeValue, cloneTypedArray, copyArray, initCloneObject, isArguments, isArray, isArrayLikeObject, isFunction, isObject, isPlainObject, isTypedArray, toPlainObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -34,29 +34,32 @@ define(['./_assignMergeValue', './_baseClone', './_copyArray', './isArguments', 
     var isCommon = newValue === undefined;
 
     if (isCommon) {
+      var isArr = isArray(srcValue),
+          isTyped = !isArr && isTypedArray(srcValue);
+
       newValue = srcValue;
-      if (isArray(srcValue) || isTypedArray(srcValue)) {
+      if (isArr || isTyped) {
         if (isArray(objValue)) {
           newValue = objValue;
         }
         else if (isArrayLikeObject(objValue)) {
           newValue = copyArray(objValue);
         }
-        else {
+        else if (isTyped) {
           isCommon = false;
-          newValue = baseClone(srcValue, true);
+          newValue = cloneTypedArray(srcValue, true);
+        }
+        else {
+          newValue = [];
         }
       }
       else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+        newValue = objValue;
         if (isArguments(objValue)) {
           newValue = toPlainObject(objValue);
         }
         else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
-          isCommon = false;
-          newValue = baseClone(srcValue, true);
-        }
-        else {
-          newValue = objValue;
+          newValue = initCloneObject(srcValue);
         }
       }
       else {

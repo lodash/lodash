@@ -1,5 +1,4 @@
-/** Built-in value references. */
-var defineProperty = Object.defineProperty;
+import defineProperty from './_defineProperty.js';
 
 /**
  * The base implementation of `assignValue` and `assignMergeValue` without

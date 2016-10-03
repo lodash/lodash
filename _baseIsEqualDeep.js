@@ -4,6 +4,7 @@ import equalByTag from './_equalByTag.js';
 import equalObjects from './_equalObjects.js';
 import getTag from './_getTag.js';
 import isArray from './isArray.js';
+import isBuffer from './isBuffer.js';
 import isTypedArray from './isTypedArray.js';
 
 /** Used to compose bitmasks for comparison styles. */
@@ -53,6 +54,13 @@ function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
       othIsObj = othTag == objectTag,
       isSameTag = objTag == othTag;
 
+  if (isSameTag && isBuffer(object)) {
+    if (!isBuffer(other)) {
+      return false;
+    }
+    objIsArr = true;
+    objIsObj = false;
+  }
   if (isSameTag && !objIsObj) {
     stack || (stack = new Stack);
     return (objIsArr || isTypedArray(object))

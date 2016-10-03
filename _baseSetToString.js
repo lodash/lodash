@@ -1,6 +1,6 @@
 import constant from './constant.js';
+import defineProperty from './_defineProperty.js';
 import identity from './identity.js';
-import nativeDefineProperty from './_nativeDefineProperty.js';
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
@@ -10,8 +10,8 @@ import nativeDefineProperty from './_nativeDefineProperty.js';
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-var baseSetToString = !nativeDefineProperty ? identity : function(func, string) {
-  return nativeDefineProperty(func, 'toString', {
+var baseSetToString = !defineProperty ? identity : function(func, string) {
+  return defineProperty(func, 'toString', {
     'configurable': true,
     'enumerable': false,
     'value': constant(string),

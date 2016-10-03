@@ -1,6 +1,7 @@
 import assignMergeValue from './_assignMergeValue.js';
-import baseClone from './_baseClone.js';
+import cloneTypedArray from './_cloneTypedArray.js';
 import copyArray from './_copyArray.js';
+import initCloneObject from './_initCloneObject.js';
 import isArguments from './isArguments.js';
 import isArray from './isArray.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
@@ -41,29 +42,32 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
   var isCommon = newValue === undefined;
 
   if (isCommon) {
+    var isArr = isArray(srcValue),
+        isTyped = !isArr && isTypedArray(srcValue);
+
     newValue = srcValue;
-    if (isArray(srcValue) || isTypedArray(srcValue)) {
+    if (isArr || isTyped) {
       if (isArray(objValue)) {
         newValue = objValue;
       }
       else if (isArrayLikeObject(objValue)) {
         newValue = copyArray(objValue);
       }
-      else {
+      else if (isTyped) {
         isCommon = false;
-        newValue = baseClone(srcValue, true);
+        newValue = cloneTypedArray(srcValue, true);
+      }
+      else {
+        newValue = [];
       }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+      newValue = objValue;
       if (isArguments(objValue)) {
         newValue = toPlainObject(objValue);
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
-        isCommon = false;
-        newValue = baseClone(srcValue, true);
-      }
-      else {
-        newValue = objValue;
+        newValue = initCloneObject(srcValue);
       }
     }
     else {

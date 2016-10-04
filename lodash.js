@@ -2387,7 +2387,6 @@
      * @returns {Array} Returns the array of property names.
      */
     function arrayLikeKeys(value, inherited) {
-      // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
       // Safari 9 makes `arguments.length` enumerable in strict mode.
       var result = (isArray(value) || isArguments(value))
         ? baseTimes(value.length, String)
@@ -11575,7 +11574,7 @@
      */
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in Safari 8-9 which returns 'object' for typed array and other constructors.
+      // in Safari 9 which returns 'object' for typed array and other constructors.
       var tag = isObject(value) ? objectToString.call(value) : '';
       return tag == funcTag || tag == genTag || tag == proxyTag;
     }

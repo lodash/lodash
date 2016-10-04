@@ -3643,7 +3643,9 @@
           }
           else if (isTyped) {
             isCommon = false;
-            newValue = cloneTypedArray(srcValue, true);
+            newValue = isBuffer(srcValue)
+              ? cloneBuffer(srcValue, true)
+              : cloneTypedArray(srcValue, true);
           }
           else {
             newValue = [];

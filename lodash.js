@@ -11182,7 +11182,7 @@
      * // => false
      */
     function isArguments(value) {
-      return isArrayLikeObject(value) && objectToString.call(value) == argsTag;
+      return isObjectLike(value) && objectToString.call(value) == argsTag;
     }
 
     /**

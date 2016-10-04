@@ -3631,21 +3631,24 @@
 
       if (isCommon) {
         var isArr = isArray(srcValue),
-            isTyped = !isArr && isTypedArray(srcValue);
+            isBuff = !isArr && isBuffer(srcValue),
+            isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 
         newValue = srcValue;
-        if (isArr || isTyped) {
+        if (isArr || isBuff || isTyped) {
           if (isArray(objValue)) {
             newValue = objValue;
           }
           else if (isArrayLikeObject(objValue)) {
             newValue = copyArray(objValue);
           }
+          else if (isBuff) {
+            isCommon = false;
+            newValue = cloneBuffer(srcValue, true);
+          }
           else if (isTyped) {
             isCommon = false;
-            newValue = isBuffer(srcValue)
-              ? cloneBuffer(srcValue, true)
-              : cloneTypedArray(srcValue, true);
+            newValue = cloneTypedArray(srcValue, true);
           }
           else {
             newValue = [];

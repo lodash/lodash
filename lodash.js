@@ -2661,9 +2661,7 @@
       }
       stack.set(value, result);
 
-      if (!isArr) {
-        var props = isFull ? getAllKeys(value) : keys(value);
-      }
+      var props = isArr ? undefined : (isFull ? getAllKeys : keys)(value);
       arrayEach(props || value, function(subValue, key) {
         if (props) {
           key = subValue;
@@ -3573,9 +3571,7 @@
       if (object === source) {
         return;
       }
-      if (!(isArray(source) || isBuffer(source) || isTypedArray(source))) {
-        var props = baseKeysIn(source);
-      }
+      var props = isArray(source) ? undefined : baseKeysIn(source);
       arrayEach(props || source, function(srcValue, key) {
         if (props) {
           key = srcValue;

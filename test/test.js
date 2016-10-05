@@ -9366,6 +9366,18 @@
       assert.strictEqual(_.isEmpty(args), false);
     });
 
+    QUnit.test('should work with prototytpe objects', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype = { 'constructor': Foo };
+
+      assert.strictEqual(_.isEmpty(Foo.prototype), true);
+
+      Foo.prototype.a = 1;
+      assert.strictEqual(_.isEmpty(Foo.prototype), false);
+    });
+
     QUnit.test('should work with jQuery/MooTools DOM query collections', function(assert) {
       assert.expect(1);
 

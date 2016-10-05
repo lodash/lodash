@@ -11434,7 +11434,7 @@
         return !value.size;
       }
       if (isPrototype(value)) {
-        return !nativeKeys(value).length;
+        return !baseKeys(value).length;
       }
       for (var key in value) {
         if (hasOwnProperty.call(value, key)) {

@@ -14973,7 +14973,7 @@
       assert.strictEqual(actual.a, null);
     });
 
-    QUnit.test('should assign non array/typed-array/plain-object sources directly', function(assert) {
+    QUnit.test('should assign non array/buffer/typed-array/plain-object source values directly', function(assert) {
       assert.expect(1);
 
       function Foo() {}
@@ -14989,25 +14989,43 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should deep clone array/typed-array/plain-object sources', function(assert) {
+    QUnit.test('should clone buffer source values', function(assert) {
+      assert.expect(3);
+
+      if (Buffer) {
+        var buffer = new Buffer([1]),
+            actual = _.merge({}, { 'value': buffer }).value;
+
+        assert.ok(lodashStable.isBuffer(actual));
+        assert.strictEqual(actual[0], buffer[0]);
+        assert.notStrictEqual(actual, buffer);
+      }
+      else {
+        skipAssert(assert, 3);
+      }
+    });
+
+    QUnit.test('should deep clone array/typed-array/plain-object source values', function(assert) {
       assert.expect(1);
 
       var typedArray = Uint8Array
-        ? new Uint8Array(new ArrayBuffer(2))
-        : { 'buffer': [0, 0] };
+        ? new Uint8Array([1])
+        : { 'buffer': [1] };
 
-      var props = ['0', 'a', 'buffer'],
-          values = [[{ 'a': 1 }], { 'a': [1] }, typedArray],
+      var props = ['0', 'buffer', 'a'],
+          values = [[{ 'a': 1 }], typedArray, { 'a': [1] }],
           expected = lodashStable.map(values, stubTrue);
 
       var actual = lodashStable.map(values, function(value, index) {
         var key = props[index],
             object = _.merge({}, { 'value': value }),
-            newValue = object.value;
+            subValue = value[key],
+            newValue = object.value,
+            newSubValue = newValue[key];
 
         return (
           newValue !== value &&
-          newValue[key] !== value[key] &&
+          newSubValue !== subValue &&
           lodashStable.isEqual(newValue, value)
         );
       });

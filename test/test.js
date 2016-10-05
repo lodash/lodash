@@ -891,12 +891,8 @@
 
         try {
           var symObject = Object(symbol);
-
-          // Avoid symbol detection in Babel's `typeof` helper.
-          symObject.constructor = Object;
-
           actual = [
-            Symbol ? lodashBizarro.clone(symObject) : { 'constructor': Object },
+            Symbol ? lodashBizarro.clone(symObject) : {},
             Symbol ? lodashBizarro.isEqual(symObject, Object(symbol)) : false,
             Symbol ? lodashBizarro.toString(symObject) : ''
           ];
@@ -904,7 +900,7 @@
           actual = null;
         }
         label = message('_.clone`, `_.isEqual`, and `_.toString', 'Symbol');
-        assert.deepEqual(actual, [{ 'constructor': Object }, false, ''], label);
+        assert.deepEqual(actual, [{}, false, ''], label);
 
         try {
           var map = new lodashBizarro.memoize.Cache;

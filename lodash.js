@@ -1473,6 +1473,7 @@
         getPrototype = overArg(Object.getPrototypeOf, Object),
         iteratorSymbol = Symbol ? Symbol.iterator : undefined,
         objectCreate = Object.create,
+        propertyIsEnumerable = objectProto.propertyIsEnumerable,
         splice = arrayProto.splice,
         spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
 
@@ -3201,6 +3202,17 @@
       }
       var func = object == null ? object : object[toKey(path)];
       return func == null ? undefined : apply(func, object, args);
+    }
+
+    /**
+     * The base implementation of `_.isArguments`.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+     */
+    function baseIsArguments(value) {
+      return isObjectLike(value) && objectToString.call(value) == argsTag;
     }
 
     /**
@@ -11186,9 +11198,10 @@
      * _.isArguments([1, 2, 3]);
      * // => false
      */
-    function isArguments(value) {
-      return isObjectLike(value) && objectToString.call(value) == argsTag;
-    }
+    var isArguments = baseIsArguments(arguments) ? baseIsArguments : function(value) {
+      return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
+        !propertyIsEnumerable.call(value, 'callee');
+    };
 
     /**
      * Checks if `value` is classified as an `Array` object.

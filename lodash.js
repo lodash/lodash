@@ -2433,7 +2433,7 @@
      * @returns {Array} Returns the random elements.
      */
     function arraySampleSize(array, n) {
-      return shuffleSelf(copyArray(array), n);
+      return shuffleSelf(copyArray(array), baseClamp(n, 0, array.length));
     }
 
     /**
@@ -3940,7 +3940,8 @@
      * @returns {Array} Returns the random elements.
      */
     function baseSampleSize(collection, n) {
-      return shuffleSelf(values(collection), n);
+      var array = values(collection);
+      return shuffleSelf(array, baseClamp(n, 0, array.length));
     }
 
     /**
@@ -6612,7 +6613,7 @@
           length = array.length,
           lastIndex = length - 1;
 
-      size = size === undefined ? length : baseClamp(size, 0, length);
+      size = size === undefined ? length : size;
       while (++index < size) {
         var rand = baseRandom(index, lastIndex),
             value = array[rand];

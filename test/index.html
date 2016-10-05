@@ -85,9 +85,9 @@
         setProperty(Object, '_create', Object.create);
         setProperty(Object, 'create', (function() {
           function object() {}
-          return function(prototype) {
-            if (prototype === Object(prototype)) {
-              object.prototype = prototype;
+          return function(proto) {
+            if (proto === Object(proto)) {
+              object.prototype = proto;
               var result = new object;
               object.prototype = undefined;
             }

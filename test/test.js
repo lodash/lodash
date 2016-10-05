@@ -520,9 +520,9 @@
     // Set bad shims.
     setProperty(Object, 'create', (function() {
       function object() {}
-      return function(prototype) {
-        if (lodashStable.isObject(prototype)) {
-          object.prototype = prototype;
+      return function(proto) {
+        if (lodashStable.isObject(proto)) {
+          object.prototype = proto;
           var result = new object;
           object.prototype = undefined;
         }
@@ -823,7 +823,7 @@
     });
 
     QUnit.test('should avoid non-native built-ins', function(assert) {
-      assert.expect(7);
+      assert.expect(8);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -854,6 +854,14 @@
         }
         var label = message('_.isEmpty', 'Object#propertyIsEnumerable');
         assert.strictEqual(actual, true, label);
+
+        try {
+          actual = lodashBizarro.create(Foo.prototype);
+        } catch (e) {
+          actual = null;
+        }
+        label = message('_.create', 'Object.create');
+        assert.ok(actual instanceof Foo, label);
 
         try {
           actual = [
@@ -920,7 +928,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipAssert(assert, 7);
+        skipAssert(assert, 8);
       }
     });
   }());

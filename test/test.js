@@ -16071,7 +16071,7 @@
       assert.expect(1);
 
       var argCount,
-          count = 4,
+          count = 5,
           negate = _.negate(function() { argCount = arguments.length; }),
           expected = lodashStable.times(count, stubTrue);
 

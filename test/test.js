@@ -823,7 +823,7 @@
     });
 
     QUnit.test('should avoid non-native built-ins', function(assert) {
-      assert.expect(8);
+      assert.expect(6);
 
       function message(lodashMethod, nativeMethod) {
         return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
@@ -840,27 +840,11 @@
 
       if (lodashBizarro) {
         try {
-          var actual = lodashBizarro.keysIn(new Foo).sort();
+          var actual = lodashBizarro.create(Foo.prototype);
         } catch (e) {
           actual = null;
         }
-        var label = message('_.keysIn', 'Object#propertyIsEnumerable');
-        assert.deepEqual(actual, ['a', 'b'], label);
-
-        try {
-          var actual = lodashBizarro.isEmpty({});
-        } catch (e) {
-          actual = null;
-        }
-        var label = message('_.isEmpty', 'Object#propertyIsEnumerable');
-        assert.strictEqual(actual, true, label);
-
-        try {
-          actual = lodashBizarro.create(Foo.prototype);
-        } catch (e) {
-          actual = null;
-        }
-        label = message('_.create', 'Object.create');
+        var label = message('_.create', 'Object.create');
         assert.ok(actual instanceof Foo, label);
 
         try {
@@ -872,7 +856,7 @@
         } catch (e) {
           actual = null;
         }
-        label = message('_.difference`, `_.intersection`, and `_.uniq', 'Object.create` and `Map');
+        label = message('_.difference`, `_.intersection`, and `_.uniq', 'Map');
         assert.deepEqual(actual, [[otherObject], [object], [object]], label);
 
         try {
@@ -925,7 +909,7 @@
         assert.deepEqual(actual, [], label);
       }
       else {
-        skipAssert(assert, 8);
+        skipAssert(assert, 6);
       }
     });
   }());

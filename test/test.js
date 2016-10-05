@@ -23714,12 +23714,34 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should preserve the sign of `0` in an array', function(assert) {
+      assert.expect(1);
+
+      var values = [-0, Object(-0), 0, Object(0)];
+      assert.deepEqual(_.toString(values), '-0,-0,0,0');
+    });
+
     QUnit.test('should not error on symbols', function(assert) {
       assert.expect(1);
 
       if (Symbol) {
         try {
           assert.strictEqual(_.toString(symbol), 'Symbol(a)');
+        } catch (e) {
+          assert.ok(false, e.message);
+        }
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should not error on an array of symbols', function(assert) {
+      assert.expect(1);
+
+      if (Symbol) {
+        try {
+          assert.strictEqual(_.toString([symbol]), 'Symbol(a)');
         } catch (e) {
           assert.ok(false, e.message);
         }

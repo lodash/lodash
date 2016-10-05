@@ -11202,7 +11202,7 @@
      * _.isArguments([1, 2, 3]);
      * // => false
      */
-    var isArguments = baseIsArguments(arguments) ? baseIsArguments : function(value) {
+    var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
       return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
         !propertyIsEnumerable.call(value, 'callee');
     };

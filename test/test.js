@@ -518,18 +518,7 @@
     funcProto._method = noop;
 
     // Set bad shims.
-    setProperty(Object, 'create', (function() {
-      function object() {}
-      return function(proto) {
-        if (lodashStable.isObject(proto)) {
-          object.prototype = proto;
-          var result = new object;
-          object.prototype = undefined;
-        }
-        return result || {};
-      };
-    }()));
-
+    setProperty(Object, 'create', undefined);
     setProperty(Object, 'getOwnPropertySymbols', undefined);
 
     var _propertyIsEnumerable = objectProto.propertyIsEnumerable;

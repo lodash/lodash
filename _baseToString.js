@@ -1,4 +1,4 @@
-define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
+define(['./_Symbol', './_arrayMap', './isArray', './isSymbol'], function(Symbol, arrayMap, isArray, isSymbol) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -22,6 +22,10 @@ define(['./_Symbol', './isSymbol'], function(Symbol, isSymbol) {
     // Exit early for strings to avoid a performance hit in some environments.
     if (typeof value == 'string') {
       return value;
+    }
+    if (isArray(value)) {
+      // Recursively convert values (susceptible to call stack limits).
+      return arrayMap(value, baseToString) + '';
     }
     if (isSymbol(value)) {
       return symbolToString ? symbolToString.call(value) : '';

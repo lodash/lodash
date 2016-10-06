@@ -34,7 +34,7 @@ define(['./isObject'], function(isObject) {
    */
   function isFunction(value) {
     // The use of `Object#toString` avoids issues with the `typeof` operator
-    // in Safari 8-9 which returns 'object' for typed array and other constructors.
+    // in Safari 9 which returns 'object' for typed array and other constructors.
     var tag = isObject(value) ? objectToString.call(value) : '';
     return tag == funcTag || tag == genTag || tag == proxyTag;
   }

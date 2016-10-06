@@ -1,4 +1,4 @@
-define(['./_assignMergeValue', './_cloneTypedArray', './_copyArray', './_initCloneObject', './isArguments', './isArray', './isArrayLikeObject', './isFunction', './isObject', './isPlainObject', './isTypedArray', './toPlainObject'], function(assignMergeValue, cloneTypedArray, copyArray, initCloneObject, isArguments, isArray, isArrayLikeObject, isFunction, isObject, isPlainObject, isTypedArray, toPlainObject) {
+define(['./_assignMergeValue', './_cloneBuffer', './_cloneTypedArray', './_copyArray', './_initCloneObject', './isArguments', './isArray', './isArrayLikeObject', './isBuffer', './isFunction', './isObject', './isPlainObject', './isTypedArray', './toPlainObject'], function(assignMergeValue, cloneBuffer, cloneTypedArray, copyArray, initCloneObject, isArguments, isArray, isArrayLikeObject, isBuffer, isFunction, isObject, isPlainObject, isTypedArray, toPlainObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -35,15 +35,20 @@ define(['./_assignMergeValue', './_cloneTypedArray', './_copyArray', './_initClo
 
     if (isCommon) {
       var isArr = isArray(srcValue),
-          isTyped = !isArr && isTypedArray(srcValue);
+          isBuff = !isArr && isBuffer(srcValue),
+          isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 
       newValue = srcValue;
-      if (isArr || isTyped) {
+      if (isArr || isBuff || isTyped) {
         if (isArray(objValue)) {
           newValue = objValue;
         }
         else if (isArrayLikeObject(objValue)) {
           newValue = copyArray(objValue);
+        }
+        else if (isBuff) {
+          isCommon = false;
+          newValue = cloneBuffer(srcValue, true);
         }
         else if (isTyped) {
           isCommon = false;

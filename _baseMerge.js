@@ -1,4 +1,4 @@
-define(['./_Stack', './_arrayEach', './_assignMergeValue', './_baseKeysIn', './_baseMergeDeep', './isArray', './isObject', './isTypedArray'], function(Stack, arrayEach, assignMergeValue, baseKeysIn, baseMergeDeep, isArray, isObject, isTypedArray) {
+define(['./_Stack', './_assignMergeValue', './_baseFor', './_baseMergeDeep', './isObject', './keysIn'], function(Stack, assignMergeValue, baseFor, baseMergeDeep, isObject, keysIn) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -18,14 +18,7 @@ define(['./_Stack', './_arrayEach', './_assignMergeValue', './_baseKeysIn', './_
     if (object === source) {
       return;
     }
-    if (!(isArray(source) || isTypedArray(source))) {
-      var props = baseKeysIn(source);
-    }
-    arrayEach(props || source, function(srcValue, key) {
-      if (props) {
-        key = srcValue;
-        srcValue = source[key];
-      }
+    baseFor(source, function(srcValue, key) {
       if (isObject(srcValue)) {
         stack || (stack = new Stack);
         baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
@@ -40,7 +33,7 @@ define(['./_Stack', './_arrayEach', './_assignMergeValue', './_baseKeysIn', './_
         }
         assignMergeValue(object, key, newValue);
       }
-    });
+    }, keysIn);
   }
 
   return baseMerge;

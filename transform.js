@@ -1,4 +1,4 @@
-define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './_getPrototype', './isArray', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, getPrototype, isArray, isFunction, isObject, isTypedArray) {
+define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './_getPrototype', './isArray', './isBuffer', './isFunction', './isObject', './isTypedArray'], function(arrayEach, baseCreate, baseForOwn, baseIteratee, getPrototype, isArray, isBuffer, isFunction, isObject, isTypedArray) {
 
   /**
    * An alternative to `_.reduce`; this method transforms `object` to a new
@@ -31,22 +31,23 @@ define(['./_arrayEach', './_baseCreate', './_baseForOwn', './_baseIteratee', './
    * // => { '1': ['a', 'c'], '2': ['b'] }
    */
   function transform(object, iteratee, accumulator) {
-    var isArr = isArray(object) || isTypedArray(object);
-    iteratee = baseIteratee(iteratee, 4);
+    var isArr = isArray(object),
+        isArrLike = isArr || isBuffer(object) || isTypedArray(object);
 
+    iteratee = baseIteratee(iteratee, 4);
     if (accumulator == null) {
-      if (isArr || isObject(object)) {
-        var Ctor = object.constructor;
-        if (isArr) {
-          accumulator = isArray(object) ? new Ctor : [];
-        } else {
-          accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
-        }
-      } else {
+      var Ctor = object && object.constructor;
+      if (isArrLike) {
+        accumulator = isArr ? new Ctor : [];
+      }
+      else if (isObject(object)) {
+        accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
+      }
+      else {
         accumulator = {};
       }
     }
-    (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
+    (isArrLike ? arrayEach : baseForOwn)(object, function(value, index, object) {
       return iteratee(accumulator, value, index, object);
     });
     return accumulator;

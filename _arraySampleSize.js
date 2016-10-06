@@ -1,4 +1,4 @@
-define(['./_copyArray', './_shuffleSelf'], function(copyArray, shuffleSelf) {
+define(['./_baseClamp', './_copyArray', './_shuffleSelf'], function(baseClamp, copyArray, shuffleSelf) {
 
   /**
    * A specialized version of `_.sampleSize` for arrays.
@@ -9,7 +9,7 @@ define(['./_copyArray', './_shuffleSelf'], function(copyArray, shuffleSelf) {
    * @returns {Array} Returns the random elements.
    */
   function arraySampleSize(array, n) {
-    return shuffleSelf(copyArray(array), n);
+    return shuffleSelf(copyArray(array), baseClamp(n, 0, array.length));
   }
 
   return arraySampleSize;

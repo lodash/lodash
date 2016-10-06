@@ -1,4 +1,4 @@
-define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer', './_isPrototype', './_nativeKeys'], function(getTag, isArguments, isArray, isArrayLike, isBuffer, isPrototype, nativeKeys) {
+define(['./_baseKeys', './_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer', './_isPrototype', './isTypedArray'], function(baseKeys, getTag, isArguments, isArray, isArrayLike, isBuffer, isPrototype, isTypedArray) {
 
   /** `Object#toString` result references. */
   var mapTag = '[object Map]',
@@ -45,8 +45,8 @@ define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer'
    */
   function isEmpty(value) {
     if (isArrayLike(value) &&
-        (isArray(value) || typeof value == 'string' ||
-          typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
+        (isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
+          isBuffer(value) || isTypedArray(value) || isArguments(value))) {
       return !value.length;
     }
     var tag = getTag(value);
@@ -54,7 +54,7 @@ define(['./_getTag', './isArguments', './isArray', './isArrayLike', './isBuffer'
       return !value.size;
     }
     if (isPrototype(value)) {
-      return !nativeKeys(value).length;
+      return !baseKeys(value).length;
     }
     for (var key in value) {
       if (hasOwnProperty.call(value, key)) {

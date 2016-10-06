@@ -1,4 +1,4 @@
-define(['./_baseClamp', './_baseRandom'], function(baseClamp, baseRandom) {
+define(['./_baseRandom'], function(baseRandom) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -16,7 +16,7 @@ define(['./_baseClamp', './_baseRandom'], function(baseClamp, baseRandom) {
         length = array.length,
         lastIndex = length - 1;
 
-    size = size === undefined ? length : baseClamp(size, 0, length);
+    size = size === undefined ? length : size;
     while (++index < size) {
       var rand = baseRandom(index, lastIndex),
           value = array[rand];

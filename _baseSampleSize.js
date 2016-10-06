@@ -1,4 +1,4 @@
-define(['./_shuffleSelf', './values'], function(shuffleSelf, values) {
+define(['./_baseClamp', './_shuffleSelf', './values'], function(baseClamp, shuffleSelf, values) {
 
   /**
    * The base implementation of `_.sampleSize` without param guards.
@@ -9,7 +9,8 @@ define(['./_shuffleSelf', './values'], function(shuffleSelf, values) {
    * @returns {Array} Returns the random elements.
    */
   function baseSampleSize(collection, n) {
-    return shuffleSelf(values(collection), n);
+    var array = values(collection);
+    return shuffleSelf(array, baseClamp(n, 0, array.length));
   }
 
   return baseSampleSize;

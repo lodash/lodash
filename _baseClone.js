@@ -106,9 +106,7 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_clone
     }
     stack.set(value, result);
 
-    if (!isArr) {
-      var props = isFull ? getAllKeys(value) : keys(value);
-    }
+    var props = isArr ? undefined : (isFull ? getAllKeys : keys)(value);
     arrayEach(props || value, function(subValue, key) {
       if (props) {
         key = subValue;

@@ -14919,10 +14919,6 @@
       var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
           buffer = ArrayBuffer && new ArrayBuffer(8);
 
-      // Juggle for `Float64Array` shim.
-      if (root.Float64Array && (new Float64Array(buffer)).length == 8) {
-        arrays[1] = array4;
-      }
       var expected = lodashStable.map(typedArrays, function(type, index) {
         var array = arrays[index].slice();
         array[0] = 1;

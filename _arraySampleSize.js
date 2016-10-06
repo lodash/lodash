@@ -1,4 +1,5 @@
-var copyArray = require('./_copyArray'),
+var baseClamp = require('./_baseClamp'),
+    copyArray = require('./_copyArray'),
     shuffleSelf = require('./_shuffleSelf');
 
 /**
@@ -10,7 +11,7 @@ var copyArray = require('./_copyArray'),
  * @returns {Array} Returns the random elements.
  */
 function arraySampleSize(array, n) {
-  return shuffleSelf(copyArray(array), n);
+  return shuffleSelf(copyArray(array), baseClamp(n, 0, array.length));
 }
 
 module.exports = arraySampleSize;

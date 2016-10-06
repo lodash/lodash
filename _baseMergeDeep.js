@@ -1,10 +1,12 @@
 var assignMergeValue = require('./_assignMergeValue'),
+    cloneBuffer = require('./_cloneBuffer'),
     cloneTypedArray = require('./_cloneTypedArray'),
     copyArray = require('./_copyArray'),
     initCloneObject = require('./_initCloneObject'),
     isArguments = require('./isArguments'),
     isArray = require('./isArray'),
     isArrayLikeObject = require('./isArrayLikeObject'),
+    isBuffer = require('./isBuffer'),
     isFunction = require('./isFunction'),
     isObject = require('./isObject'),
     isPlainObject = require('./isPlainObject'),
@@ -43,15 +45,20 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
 
   if (isCommon) {
     var isArr = isArray(srcValue),
-        isTyped = !isArr && isTypedArray(srcValue);
+        isBuff = !isArr && isBuffer(srcValue),
+        isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 
     newValue = srcValue;
-    if (isArr || isTyped) {
+    if (isArr || isBuff || isTyped) {
       if (isArray(objValue)) {
         newValue = objValue;
       }
       else if (isArrayLikeObject(objValue)) {
         newValue = copyArray(objValue);
+      }
+      else if (isBuff) {
+        isCommon = false;
+        newValue = cloneBuffer(srcValue, true);
       }
       else if (isTyped) {
         isCommon = false;

@@ -1,4 +1,5 @@
-var shuffleSelf = require('./_shuffleSelf'),
+var baseClamp = require('./_baseClamp'),
+    shuffleSelf = require('./_shuffleSelf'),
     values = require('./values');
 
 /**
@@ -10,7 +11,8 @@ var shuffleSelf = require('./_shuffleSelf'),
  * @returns {Array} Returns the random elements.
  */
 function baseSampleSize(collection, n) {
-  return shuffleSelf(values(collection), n);
+  var array = values(collection);
+  return shuffleSelf(array, baseClamp(n, 0, array.length));
 }
 
 module.exports = baseSampleSize;

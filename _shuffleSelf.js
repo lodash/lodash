@@ -1,5 +1,4 @@
-var baseClamp = require('./_baseClamp'),
-    baseRandom = require('./_baseRandom');
+var baseRandom = require('./_baseRandom');
 
 /**
  * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
@@ -14,7 +13,7 @@ function shuffleSelf(array, size) {
       length = array.length,
       lastIndex = length - 1;
 
-  size = size === undefined ? length : baseClamp(size, 0, length);
+  size = size === undefined ? length : size;
   while (++index < size) {
     var rand = baseRandom(index, lastIndex),
         value = array[rand];

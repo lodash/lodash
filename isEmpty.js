@@ -1,10 +1,11 @@
+import baseKeys from './_baseKeys.js';
 import getTag from './_getTag.js';
 import isArguments from './isArguments.js';
 import isArray from './isArray.js';
 import isArrayLike from './isArrayLike.js';
 import isBuffer from './isBuffer.js';
 import isPrototype from './_isPrototype.js';
-import nativeKeys from './_nativeKeys.js';
+import isTypedArray from './isTypedArray.js';
 
 /** `Object#toString` result references. */
 var mapTag = '[object Map]',
@@ -51,8 +52,8 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  */
 function isEmpty(value) {
   if (isArrayLike(value) &&
-      (isArray(value) || typeof value == 'string' ||
-        typeof value.splice == 'function' || isBuffer(value) || isArguments(value))) {
+      (isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
+        isBuffer(value) || isTypedArray(value) || isArguments(value))) {
     return !value.length;
   }
   var tag = getTag(value);
@@ -60,7 +61,7 @@ function isEmpty(value) {
     return !value.size;
   }
   if (isPrototype(value)) {
-    return !nativeKeys(value).length;
+    return !baseKeys(value).length;
   }
   for (var key in value) {
     if (hasOwnProperty.call(value, key)) {

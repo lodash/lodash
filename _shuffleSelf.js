@@ -1,4 +1,3 @@
-import baseClamp from './_baseClamp.js';
 import baseRandom from './_baseRandom.js';
 
 /**
@@ -14,7 +13,7 @@ function shuffleSelf(array, size) {
       length = array.length,
       lastIndex = length - 1;
 
-  size = size === undefined ? length : baseClamp(size, 0, length);
+  size = size === undefined ? length : size;
   while (++index < size) {
     var rand = baseRandom(index, lastIndex),
         value = array[rand];

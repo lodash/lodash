@@ -1,3 +1,4 @@
+import baseClamp from './_baseClamp.js';
 import shuffleSelf from './_shuffleSelf.js';
 import values from './values.js';
 
@@ -10,7 +11,8 @@ import values from './values.js';
  * @returns {Array} Returns the random elements.
  */
 function baseSampleSize(collection, n) {
-  return shuffleSelf(values(collection), n);
+  var array = values(collection);
+  return shuffleSelf(array, baseClamp(n, 0, array.length));
 }
 
 export default baseSampleSize;

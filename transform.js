@@ -4,6 +4,7 @@ import baseForOwn from './_baseForOwn.js';
 import baseIteratee from './_baseIteratee.js';
 import getPrototype from './_getPrototype.js';
 import isArray from './isArray.js';
+import isBuffer from './isBuffer.js';
 import isFunction from './isFunction.js';
 import isObject from './isObject.js';
 import isTypedArray from './isTypedArray.js';
@@ -39,22 +40,23 @@ import isTypedArray from './isTypedArray.js';
  * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function transform(object, iteratee, accumulator) {
-  var isArr = isArray(object) || isTypedArray(object);
-  iteratee = baseIteratee(iteratee, 4);
+  var isArr = isArray(object),
+      isArrLike = isArr || isBuffer(object) || isTypedArray(object);
 
+  iteratee = baseIteratee(iteratee, 4);
   if (accumulator == null) {
-    if (isArr || isObject(object)) {
-      var Ctor = object.constructor;
-      if (isArr) {
-        accumulator = isArray(object) ? new Ctor : [];
-      } else {
-        accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
-      }
-    } else {
+    var Ctor = object && object.constructor;
+    if (isArrLike) {
+      accumulator = isArr ? new Ctor : [];
+    }
+    else if (isObject(object)) {
+      accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
+    }
+    else {
       accumulator = {};
     }
   }
-  (isArr ? arrayEach : baseForOwn)(object, function(value, index, object) {
+  (isArrLike ? arrayEach : baseForOwn)(object, function(value, index, object) {
     return iteratee(accumulator, value, index, object);
   });
   return accumulator;

@@ -83,17 +83,7 @@
 
         // Set bad shims.
         setProperty(Object, '_create', Object.create);
-        setProperty(Object, 'create', (function() {
-          function object() {}
-          return function(proto) {
-            if (proto === Object(proto)) {
-              object.prototype = proto;
-              var result = new object;
-              object.prototype = undefined;
-            }
-            return result || {};
-          };
-        }()));
+        setProperty(Object, 'create', undefined);
 
         setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
         setProperty(Object, 'getOwnPropertySymbols', undefined);

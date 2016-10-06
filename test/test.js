@@ -14971,8 +14971,8 @@
           expected = lodashStable.map(values, stubTrue);
 
       var actual = lodashStable.map(values, function(value) {
-        var object = _.merge({}, { 'value': value });
-        return object.value === value;
+        var object = _.merge({}, { 'a': value, 'b': { 'c': value } });
+        return object.a === value && object.b.c === value;
       });
 
       assert.deepEqual(actual, expected);

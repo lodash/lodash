@@ -5,10 +5,7 @@
   "private": true,
   "main": "lodash.js",
   "engines": { "node": ">=4.0.0" },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/lodash/lodash.git"
-  },
+  "repository": "lodash/lodash",
   "scripts": {
     "build": "npm run build:main && npm run build:fp",
     "build:fp": "node lib/fp/build-dist.js",

@@ -14,4 +14,4 @@ addEventListener('message', function(e) {
     }
     postMessage(_.VERSION);
   }
-}, false);
+});

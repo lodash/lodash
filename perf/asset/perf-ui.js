@@ -39,7 +39,7 @@
     span1.innerHTML =
       '<label for="perf-build">Build: </label>' +
       '<select id="perf-build">' +
-      '<option value="lodash">lodash</option>' +
+      '<option value="lodash">lodash (production)</option>' +
       '</select>';
 
     var span2 = document.createElement('span');

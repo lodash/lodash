@@ -93,6 +93,7 @@
       genTag = '[object GeneratorFunction]',
       mapTag = '[object Map]',
       numberTag = '[object Number]',
+      nullTag = '[object Null]',
       objectTag = '[object Object]',
       promiseTag = '[object Promise]',
       proxyTag = '[object Proxy]',
@@ -100,6 +101,7 @@
       setTag = '[object Set]',
       stringTag = '[object String]',
       symbolTag = '[object Symbol]',
+      undefinedTag = '[object Undefined]',
       weakMapTag = '[object WeakMap]',
       weakSetTag = '[object WeakSet]';
 
@@ -1471,11 +1473,12 @@
         Uint8Array = context.Uint8Array,
         allocUnsafe = Buffer ? Buffer.allocUnsafe : undefined,
         getPrototype = overArg(Object.getPrototypeOf, Object),
-        iteratorSymbol = Symbol ? Symbol.iterator : undefined,
         objectCreate = Object.create,
         propertyIsEnumerable = objectProto.propertyIsEnumerable,
         splice = arrayProto.splice,
-        spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
+        spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined,
+        symIterator = Symbol ? Symbol.iterator : undefined,
+        symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 
     var defineProperty = (function() {
       try {
@@ -3050,7 +3053,19 @@
      * @returns {string} Returns the `toStringTag`.
      */
     function baseGetTag(value) {
-      return objectToString.call(value);
+      if (value == null) {
+        return value === undefined ? undefinedTag : nullTag;
+      }
+      value = Object(value);
+      if (symToStringTag && symToStringTag in value) {
+        var symbol = value[symToStringTag];
+        value[symToStringTag] = undefined;
+      }
+      var result = objectToString.call(value);
+      if (symbol) {
+        value[symToStringTag] = symbol;
+      }
+      return result;
     }
 
     /**
@@ -3212,7 +3227,7 @@
      * @returns {boolean} Returns `true` if `value` is an `arguments` object,
      */
     function baseIsArguments(value) {
-      return isObjectLike(value) && objectToString.call(value) == argsTag;
+      return isObjectLike(value) && baseGetTag(value) == argsTag;
     }
 
     /**
@@ -3223,7 +3238,7 @@
      * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
      */
     function baseIsArrayBuffer(value) {
-      return isObjectLike(value) && objectToString.call(value) == arrayBufferTag;
+      return isObjectLike(value) && baseGetTag(value) == arrayBufferTag;
     }
 
     /**
@@ -3234,7 +3249,7 @@
      * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
      */
     function baseIsDate(value) {
-      return isObjectLike(value) && objectToString.call(value) == dateTag;
+      return isObjectLike(value) && baseGetTag(value) == dateTag;
     }
 
     /**
@@ -3416,7 +3431,7 @@
      * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
      */
     function baseIsRegExp(value) {
-      return isObject(value) && objectToString.call(value) == regexpTag;
+      return isObject(value) && baseGetTag(value) == regexpTag;
     }
 
     /**
@@ -3439,7 +3454,7 @@
      */
     function baseIsTypedArray(value) {
       return isObjectLike(value) &&
-        isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
+        isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
     }
 
     /**
@@ -5976,7 +5991,7 @@
         (Set && getTag(new Set) != setTag) ||
         (WeakMap && getTag(new WeakMap) != weakMapTag)) {
       getTag = function(value) {
-        var result = objectToString.call(value),
+        var result = baseGetTag(value),
             Ctor = result == objectTag ? value.constructor : undefined,
             ctorString = Ctor ? toSource(Ctor) : undefined;
 
@@ -11328,7 +11343,7 @@
      */
     function isBoolean(value) {
       return value === true || value === false ||
-        (isObjectLike(value) && objectToString.call(value) == boolTag);
+        (isObjectLike(value) && baseGetTag(value) == boolTag);
     }
 
     /**
@@ -11539,7 +11554,7 @@
       if (!isObjectLike(value)) {
         return false;
       }
-      return (objectToString.call(value) == errorTag) ||
+      return (baseGetTag(value) == errorTag) ||
         (typeof value.message == 'string' && typeof value.name == 'string');
     }
 
@@ -11593,7 +11608,7 @@
     function isFunction(value) {
       // The use of `Object#toString` avoids issues with the `typeof` operator
       // in Safari 9 which returns 'object' for typed array and other constructors.
-      var tag = isObject(value) ? objectToString.call(value) : '';
+      var tag = isObject(value) ? baseGetTag(value) : '';
       return tag == funcTag || tag == genTag || tag == proxyTag;
     }
 
@@ -11945,7 +11960,7 @@
      */
     function isNumber(value) {
       return typeof value == 'number' ||
-        (isObjectLike(value) && objectToString.call(value) == numberTag);
+        (isObjectLike(value) && baseGetTag(value) == numberTag);
     }
 
     /**
@@ -11977,7 +11992,7 @@
      * // => true
      */
     function isPlainObject(value) {
-      if (!isObjectLike(value) || objectToString.call(value) != objectTag) {
+      if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
         return false;
       }
       var proto = getPrototype(value);
@@ -12077,7 +12092,7 @@
      */
     function isString(value) {
       return typeof value == 'string' ||
-        (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
+        (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
     }
 
     /**
@@ -12099,7 +12114,7 @@
      */
     function isSymbol(value) {
       return typeof value == 'symbol' ||
-        (isObjectLike(value) && objectToString.call(value) == symbolTag);
+        (isObjectLike(value) && baseGetTag(value) == symbolTag);
     }
 
     /**
@@ -12181,7 +12196,7 @@
      * // => false
      */
     function isWeakSet(value) {
-      return isObjectLike(value) && objectToString.call(value) == weakSetTag;
+      return isObjectLike(value) && baseGetTag(value) == weakSetTag;
     }
 
     /**
@@ -12266,8 +12281,8 @@
       if (isArrayLike(value)) {
         return isString(value) ? stringToArray(value) : copyArray(value);
       }
-      if (iteratorSymbol && value[iteratorSymbol]) {
-        return iteratorToArray(value[iteratorSymbol]());
+      if (symIterator && value[symIterator]) {
+        return iteratorToArray(value[symIterator]());
       }
       var tag = getTag(value),
           func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
@@ -16946,8 +16961,8 @@
     // Add lazy aliases.
     lodash.prototype.first = lodash.prototype.head;
 
-    if (iteratorSymbol) {
-      lodash.prototype[iteratorSymbol] = wrapperToIterator;
+    if (symIterator) {
+      lodash.prototype[symIterator] = wrapperToIterator;
     }
     return lodash;
   });

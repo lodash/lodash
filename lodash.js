@@ -3046,7 +3046,7 @@
     }
 
     /**
-     * The base implementation of `getTag`.
+     * The base implementation of `getTag` without fallbacks for buggy environments.
      *
      * @private
      * @param {*} value The value to query.
@@ -3057,15 +3057,9 @@
         return value === undefined ? undefinedTag : nullTag;
       }
       value = Object(value);
-      if (symToStringTag && symToStringTag in value) {
-        var symbol = value[symToStringTag];
-        value[symToStringTag] = undefined;
-      }
-      var result = objectToString.call(value);
-      if (symbol) {
-        value[symToStringTag] = symbol;
-      }
-      return result;
+      return (symToStringTag && symToStringTag in value)
+        ? getRawTag(value)
+        : objectToString(value);
     }
 
     /**
@@ -5947,6 +5941,27 @@
     function getNative(object, key) {
       var value = getValue(object, key);
       return baseIsNative(value) ? value : undefined;
+    }
+
+    /**
+     * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+     *
+     * @private
+     * @param {*} value The value to query.
+     * @returns {string} Returns the raw `toStringTag`.
+     */
+    function getRawTag(value) {
+      try {
+        var symbol = value[symToStringTag];
+        value[symToStringTag] = undefined;
+      } catch (e) {
+        symbol = undefined;
+      }
+      var result = nativeObjectToString.call(value);
+      if (symbol) {
+        value[symToStringTag] = symbol;
+      }
+      return result;
     }
 
     /**

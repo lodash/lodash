@@ -11956,14 +11956,8 @@
 
       lodashStable.each(funcs, function(methodName) {
         if (xml) {
-          var pass = true;
-
-          try {
-            _[methodName](xml);
-          } catch (e) {
-            pass = false;
-          }
-          assert.ok(pass, '`_.' + methodName + '` should not error');
+          _[methodName](xml);
+          assert.ok(true, '`_.' + methodName + '` should not error');
         }
         else {
           skipAssert(assert);
@@ -16526,20 +16520,14 @@
     QUnit.test('should not throw more than once', function(assert) {
       assert.expect(2);
 
-      var pass = true;
-
       var once = _.once(function() {
         throw new Error;
       });
 
       assert.raises(once);
 
-      try {
-        once();
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass);
+      once();
+      assert.ok(true);
     });
   }());
 
@@ -22246,23 +22234,11 @@
     QUnit.test('should not error for non-object `data` and `options` values', function(assert) {
       assert.expect(2);
 
-      var pass = true;
+      _.template('')(1);
+      assert.ok(true, '`data` value');
 
-      try {
-        _.template('')(1);
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass, '`data` value');
-
-      pass = true;
-
-      try {
-        _.template('', 1)(1);
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass, '`options` value');
+      _.template('', 1)(1);
+      assert.ok(true, '`options` value');
     });
 
     QUnit.test('should expose the source on compiled templates', function(assert) {
@@ -22694,14 +22670,8 @@
     QUnit.test('`_.' + methodName + '` should not error for non-object `options` values', function(assert) {
       assert.expect(1);
 
-      var pass = true;
-
-      try {
-        func(noop, 32, 1);
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass);
+      func(noop, 32, 1);
+      assert.ok(true);
     });
 
     QUnit.test('`_.' + methodName + '` should use a default `wait` of `0`', function(assert) {
@@ -26521,15 +26491,10 @@
 
       lodashStable.each(acceptFalsey, function(methodName) {
         var expected = arrays,
-            func = _[methodName],
-            pass = true;
+            func = _[methodName];
 
         var actual = lodashStable.map(falsey, function(value, index) {
-          try {
-            return index ? func(value) : func();
-          } catch (e) {
-            pass = false;
-          }
+          return index ? func(value) : func();
         });
 
         if (methodName == 'noConflict') {
@@ -26541,7 +26506,7 @@
         if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
           assert.deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
-        assert.ok(pass, '`_.' + methodName + '` accepts falsey arguments');
+        assert.ok(true, '`_.' + methodName + '` accepts falsey arguments');
       });
 
       // Skip tests for missing methods of modularized builds.

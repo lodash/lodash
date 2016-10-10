@@ -14994,7 +14994,7 @@
       assert.deepEqual(actual.a, [[3, 4, 3]]);
     });
 
-    QUnit.test('should merge plain-objects onto non-plain objects', function(assert) {
+    QUnit.test('should merge plain objects onto non-plain objects', function(assert) {
       assert.expect(4);
 
       function Foo(object) {

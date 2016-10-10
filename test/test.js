@@ -22137,21 +22137,6 @@
       assert.strictEqual(compiled({ 'value': 3 }), '<p>6</p>');
     });
 
-    QUnit.test('should not error with IE conditional comments enabled (test with development build)', function(assert) {
-      assert.expect(1);
-
-      var compiled = _.template(''),
-          pass = true;
-
-      /*@cc_on @*/
-      try {
-        compiled();
-      } catch (e) {
-        pass = false;
-      }
-      assert.ok(pass);
-    });
-
     QUnit.test('should tokenize delimiters', function(assert) {
       assert.expect(1);
 

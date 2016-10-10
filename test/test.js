@@ -11360,7 +11360,21 @@
       assert.strictEqual(_.isPlainObject(object), true);
     });
 
-    QUnit.test('should return `true` for plain objects with a custom `valueOf` property', function(assert) {
+    QUnit.test('should return `true` for objects with a `Symbol.toStringTag` property', function(assert) {
+      assert.expect(1);
+
+      if (Symbol && Symbol.toStringTag) {
+        var object = {};
+        object[Symbol.toStringTag] = 'X';
+
+        assert.deepEqual(_.isPlainObject(object), true);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should return `true` for objects with a `valueOf` property', function(assert) {
       assert.expect(2);
 
       assert.strictEqual(_.isPlainObject({ 'valueOf': 0 }), true);

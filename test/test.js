@@ -10425,6 +10425,12 @@
       assert.strictEqual(_.isError(symbol), false);
     });
 
+    QUnit.test('should return `false` for plain objects', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isError({ 'name': 'Error', 'message': '' }), false);
+    });
+
     QUnit.test('should work with an error object from another realm', function(assert) {
       assert.expect(1);
 

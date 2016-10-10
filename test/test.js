@@ -9237,22 +9237,25 @@
   (function() {
     var args = arguments;
 
-    function Element() {
-      this.nodeType = 1;
-    }
+    QUnit.test('should return `true` for elements', function(assert) {
+      assert.expect(1);
 
-    QUnit.test('should return `false` for plain objects', function(assert) {
-      assert.expect(7);
+      if (document) {
+        assert.strictEqual(_.isElement(body), true);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
 
-      var element = body || new Element;
+    QUnit.test('should return `true` for non-plain objects', function(assert) {
+      assert.expect(1);
 
-      assert.strictEqual(_.isElement(element), true);
-      assert.strictEqual(_.isElement({ 'nodeType': 1 }), false);
-      assert.strictEqual(_.isElement({ 'nodeType': Object(1) }), false);
-      assert.strictEqual(_.isElement({ 'nodeType': true }), false);
-      assert.strictEqual(_.isElement({ 'nodeType': [1] }), false);
-      assert.strictEqual(_.isElement({ 'nodeType': '1' }), false);
-      assert.strictEqual(_.isElement({ 'nodeType': '001' }), false);
+      function Foo() {
+        this.nodeType = 1;
+      }
+
+      assert.strictEqual(_.isElement(new Foo), true);
     });
 
     QUnit.test('should return `false` for non DOM elements', function(assert) {
@@ -9278,6 +9281,17 @@
       assert.strictEqual(_.isElement(/x/), false);
       assert.strictEqual(_.isElement('a'), false);
       assert.strictEqual(_.isElement(symbol), false);
+    });
+
+    QUnit.test('should return `false` for plain objects', function(assert) {
+      assert.expect(6);
+
+      assert.strictEqual(_.isElement({ 'nodeType': 1 }), false);
+      assert.strictEqual(_.isElement({ 'nodeType': Object(1) }), false);
+      assert.strictEqual(_.isElement({ 'nodeType': true }), false);
+      assert.strictEqual(_.isElement({ 'nodeType': [1] }), false);
+      assert.strictEqual(_.isElement({ 'nodeType': '1' }), false);
+      assert.strictEqual(_.isElement({ 'nodeType': '001' }), false);
     });
 
     QUnit.test('should work with a DOM element from another realm', function(assert) {
@@ -15033,7 +15047,7 @@
       assert.deepEqual(actual.a, [[3, 4, 3]]);
     });
 
-    QUnit.test('should merge plain-objects onto non plain-objects', function(assert) {
+    QUnit.test('should merge plain-objects onto non-plain objects', function(assert) {
       assert.expect(4);
 
       function Foo(object) {

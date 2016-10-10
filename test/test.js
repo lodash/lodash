@@ -11387,6 +11387,25 @@
       assert.strictEqual(_.isPlainObject(object), false);
     });
 
+    QUnit.test('should return `false` for objects with a read-only `Symbol.toStringTag` property', function(assert) {
+      assert.expect(1);
+
+      if (Symbol && Symbol.toStringTag) {
+        var object = {};
+        defineProperty(object, Symbol.toStringTag, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': false,
+          'value': 'X'
+        });
+
+        assert.deepEqual(_.isPlainObject(object), false);
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
     QUnit.test('should return `false` for DOM elements', function(assert) {
       assert.expect(1);
 
@@ -11397,7 +11416,7 @@
       }
     });
 
-    QUnit.test('should return `false` for Object objects without a `toStringTag` of "Object"', function(assert) {
+    QUnit.test('should return `false` for non-Object objects', function(assert) {
       assert.expect(3);
 
       assert.strictEqual(_.isPlainObject(arguments), false);

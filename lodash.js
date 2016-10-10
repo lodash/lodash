@@ -3430,7 +3430,7 @@
      * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
      */
     function baseIsRegExp(value) {
-      return isObject(value) && baseGetTag(value) == regexpTag;
+      return isObjectLike(value) && baseGetTag(value) == regexpTag;
     }
 
     /**

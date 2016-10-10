@@ -659,7 +659,7 @@
       '  });',
       '',
       '  return object;',
-      '}())'
+      '}());'
     ].join('\n')));
   });
 
@@ -673,11 +673,12 @@
 
     var idoc = (idoc = iframe.contentDocument || iframe.contentWindow).document || idoc;
     idoc.write([
+      '<html>',
+      '<body>',
       '<script>',
-      'var _ = parent._;',
-      '',
-      '  var noop = function() {},',
-      '      root = this;',
+      'var _ = parent._,',
+      '    noop = function() {},',
+      '    root = this;',
       '',
       'var object = {',
       "  'ArrayBuffer': root.ArrayBuffer,",
@@ -686,6 +687,7 @@
       "  'arrayBuffer': root.ArrayBuffer ? new root.ArrayBuffer : undefined,",
       "  'boolean': Object(false),",
       "  'date': new Date,",
+      "  'element': document.body,",
       "  'errors': [new Error, new EvalError, new RangeError, new ReferenceError, new SyntaxError, new TypeError, new URIError],",
       "  'function': noop,",
       "  'map': root.Map ? new root.Map : undefined,",
@@ -710,7 +712,9 @@
       '});',
       '',
       '_.assign(_._realm, object);',
-      '<\/script>'
+      '</script>',
+      '</body>',
+      '</html>'
     ].join('\n'));
 
     idoc.close();

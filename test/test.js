@@ -11375,20 +11375,9 @@
     });
 
     QUnit.test('should return `true` for objects with a `valueOf` property', function(assert) {
-      assert.expect(2);
+      assert.expect(1);
 
       assert.strictEqual(_.isPlainObject({ 'valueOf': 0 }), true);
-
-      if (element) {
-        var valueOf = element.valueOf;
-        element.valueOf = 0;
-
-        assert.strictEqual(_.isPlainObject(element), false);
-        element.valueOf = valueOf;
-      }
-      else {
-        skipAssert(assert);
-      }
     });
 
     QUnit.test('should return `false` for objects with a custom `[[Prototype]]`', function(assert) {

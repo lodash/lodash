@@ -273,6 +273,25 @@
       assert.strictEqual(fp.isArray(array), true);
       assert.strictEqual(isArray()(array), true);
     });
+
+    QUnit.test('should convert method aliases', function(assert) {
+      assert.expect(1);
+
+      var all = fp.all.convert({ 'rearg': false }),
+          actual = all([0])(_.identity);
+
+      assert.strictEqual(actual, false);
+    });
+
+    QUnit.test('should convert remapped methods', function(assert) {
+      assert.expect(1);
+
+      var extendAll = fp.extendAll.convert({ 'immutable': false }),
+          object = {};
+
+      extendAll([object, { 'a': 1 }, { 'b': 2 }]);
+      assert.deepEqual(object, { 'a': 1, 'b': 2 });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

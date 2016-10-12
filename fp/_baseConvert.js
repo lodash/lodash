@@ -1,5 +1,7 @@
 var mapping = require('./_mapping'),
+    aliasToReal = mapping.aliasToReal,
     mutateMap = mapping.mutate,
+    remap = mapping.remap,
     fallbackHolder = require('./placeholder');
 
 /**
@@ -351,13 +353,16 @@ function baseConvert(util, name, func, options) {
    * @returns {Function} Returns the new converter function.
    */
   function createConverter(name, func) {
-    var oldOptions = options;
+    var realName = aliasToReal[name] || name,
+        methodName = remap[realName] || realName,
+        oldOptions = options;
+
     return function(options) {
       var newUtil = isLib ? pristine : helpers,
-          newFunc = isLib ? pristine[name] : func,
+          newFunc = isLib ? pristine[methodName] : func,
           newOptions = assign(assign({}, oldOptions), options);
 
-      return baseConvert(newUtil, name, newFunc, newOptions);
+      return baseConvert(newUtil, realName, newFunc, newOptions);
     };
   }
 
@@ -428,7 +433,7 @@ function baseConvert(util, name, func, options) {
    * @returns {Function} Returns the converted function.
    */
   function wrap(name, func) {
-    name = mapping.aliasToReal[name] || name;
+    name = aliasToReal[name] || name;
 
     var result,
         wrapped = func,
@@ -491,7 +496,7 @@ function baseConvert(util, name, func, options) {
   var pairs = [];
   each(aryMethodKeys, function(aryKey) {
     each(mapping.aryMethod[aryKey], function(key) {
-      var func = _[mapping.remap[key] || key];
+      var func = _[remap[key] || key];
       if (func) {
         pairs.push([key, wrap(key, func)]);
       }

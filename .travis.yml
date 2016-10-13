@@ -52,7 +52,9 @@ before_install:
   # Use exact Node version.
   - nvm use $TRAVIS_NODE_VERSION
 
-  # Install yarn.
+  # Setup package managers.
+  - npm set loglevel error
+  - npm set progress false
   - npm i -g yarn
   - yarn -V
 

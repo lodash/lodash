@@ -1,7 +1,7 @@
 language: node_js
 sudo: false
 node_js:
-  - "6"
+  - 6
 
 cache:
   directories:
@@ -10,19 +10,19 @@ cache:
 
 env:
   global:
-    - BIN="node" ISTANBUL=false OPTION=""
-    - SAUCE_LABS=false SAUCE_USERNAME="lodash"
-    - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
+    - BIN=node ISTANBUL=false OPTION=""
+    - SAUCE_LABS=false SAUCE_USERNAME=lodash
+    - secure: tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU=
 
   matrix:
     -
-    - BIN="phantomjs"
+    - BIN=phantomjs
     - ISTANBUL=true
     - SAUCE_LABS=true
 
 matrix:
   include:
-    - node_js: "4"
+    - node_js: 4
       env:
 
 git:
@@ -67,10 +67,10 @@ before_install:
       PATTERN[6]="|\s*define\([\s\S]+?\);|"
       PATTERN[7]="|\s*root\._\s*=\s*_;|"
 
-      if [ $ISTANBUL == true ]; then
+      if [ $ISTANBUL = true ]; then
         set -e
         for PTRN in ${PATTERN[@]}; do
-          node ./test/remove.js "$PTRN" ./lodash.js
+          node ./test/remove.js $PTRN ./lodash.js
         done
       fi
 
@@ -82,9 +82,9 @@ before_install:
 script:
   # Detect code coverage.
   - |
-      if [ $ISTANBUL == true ]; then
+      if [ $ISTANBUL = true ]; then
         istanbul cover -x "**/vendor/**" --report lcovonly ./test/test.js -- ./lodash.js
-        if [ $TRAVIS_SECURE_ENV_VARS == true ]; then
+        if [ $TRAVIS_SECURE_ENV_VARS = true ]; then
           cat ./coverage/lcov.info | coveralls
           cat ./coverage/coverage.json | codecov
         fi
@@ -92,13 +92,13 @@ script:
 
   # Test in Node.js and PhantomJS.
   - |
-      if [ $ISTANBUL == false ]; then
+      if [ $ISTANBUL = false ]; then
         node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js
         node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js
-        if [ $SAUCE_LABS == false ]; then
+        if [ $SAUCE_LABS = false ]; then
           cd ./test
           $BIN $OPTION ./test.js ../lodash.js
-          if [  $TRAVIS_SECURE_ENV_VARS == true ]; then
+          if [ $TRAVIS_SECURE_ENV_VARS = true ]; then
             $BIN $OPTION ./test.js ../dist/lodash.min.js
           fi
         fi
@@ -106,7 +106,7 @@ script:
 
   # Test in Sauce Labs.
   - |
-      if [ $SAUCE_LABS == true ]; then
+      if [ $SAUCE_LABS = true ]; then
         node ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js
         npm run build
         $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.js&noglobals=true"     tags="development"

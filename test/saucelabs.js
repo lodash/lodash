@@ -108,7 +108,7 @@ var platforms = [
   ['Windows 10', 'chrome', '52'],
   ['Windows 10', 'firefox', '49'],
   ['Windows 10', 'firefox', '48'],
-  ['Windows 10', 'microsoftedge', '13'],
+  ['Windows 10', 'microsoftedge', '14'],
   ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],

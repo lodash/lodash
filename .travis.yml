@@ -6,6 +6,7 @@ node_js:
 cache:
   directories:
     - $HOME/.npm
+    - $HOME/.yarn-cache
     - travis_phantomjs
 
 env:
@@ -46,15 +47,14 @@ before_install:
   - if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then rm -rf $PWD/travis_phantomjs; mkdir -p $PWD/travis_phantomjs; fi
   - if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -O $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2; fi
   - if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi
-  - phantomjs --version
+  - phantomjs -v
 
   # Use exact Node version.
   - nvm use $TRAVIS_NODE_VERSION
 
-  # Setup npm.
-  - npm set loglevel error
-  - npm set progress false
-  - npm i -g npm@"^2.0.0"
+  # Install yarn.
+  - npm i -g yarn
+  - yarn -V
 
   # Remove code skipped on the coverage run.
   - |
@@ -73,6 +73,10 @@ before_install:
           node ./test/remove.js $PTRN ./lodash.js
         done
       fi
+
+install:
+  # Install packages.
+  - yarn
 
   # Use lodash-cli from GitHub.
   - git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli

@@ -80,8 +80,8 @@ install:
 
   # Use lodash-cli from GitHub.
   - git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli
-  - mkdir -p ./node_modules/lodash-cli/node_modules/lodash && cd $_ && cp ../../../../lodash.js ./lodash.js && cp ../../../../package.json ./package.json
-  - cd ../../ && npm i --production && cd ../../
+  - mkdir -p ./node_modules/lodash-cli/node_modules/lodash; cd $_; cp ../../../../lodash.js ./lodash.js; cp ../../../../package.json ./package.json
+  - cd ../../; npm i --production; cd ../../
 
 script:
   # Detect code coverage.
@@ -98,7 +98,8 @@ script:
   - |
       if [ $ISTANBUL = false ]; then
         node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js
-        node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./ && node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js
+        node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./
+        node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js
         if [ $SAUCE_LABS = false ]; then
           cd ./test
           $BIN $OPTION ./test.js ../lodash.js

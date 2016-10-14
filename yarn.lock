@@ -112,7 +112,7 @@ async@^1.3.0, async@^1.4.0, async@1.x:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.0-rc.6, async@^2.0.1:
+async@^2.0.0-rc.6, async@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/async/-/async-2.1.1.tgz#e11b6d10043f2254efb61a21163d840ccddb8d28"
   dependencies:

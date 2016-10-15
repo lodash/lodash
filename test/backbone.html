@@ -40,36 +40,38 @@
         var lodash = _.noConflict();
 
         return function(_) {
-          lodash.defaultsDeep(_, { 'templateSettings': lodash.templateSettings });
-          lodash.mixin(_, lodash.pick(lodash, lodash.difference([
-            'countBy',
-            'debounce',
-            'difference',
-            'find',
-            'findIndex',
-            'findLastIndex',
-            'groupBy',
-            'includes',
-            'invert',
-            'invokeMap',
-            'keyBy',
-            'omit',
-            'partition',
-            'reduceRight',
-            'reject',
-            'sample',
-            'without'
-          ], lodash.functions(_))));
+          lodash(_)
+            .defaultsDeep({ 'templateSettings': lodash.templateSettings })
+            .mixin(lodash.pick(lodash, lodash.difference([
+              'countBy',
+              'debounce',
+              'difference',
+              'find',
+              'findIndex',
+              'findLastIndex',
+              'groupBy',
+              'includes',
+              'invert',
+              'invokeMap',
+              'keyBy',
+              'omit',
+              'partition',
+              'reduceRight',
+              'reject',
+              'sample',
+              'without'
+            ], lodash.functions(_))))
+            .value();
 
           lodash.forOwn(keyMap, function(realName, otherName) {
             _[otherName] = lodash[realName];
             _.prototype[otherName] = lodash.prototype[realName];
           });
-
           lodash.forOwn(aliasToReal, function(realName, alias) {
             _[alias] = _[realName];
             _.prototype[alias] = _.prototype[realName];
           });
+          return _;
         };
       }());
 
@@ -147,7 +149,7 @@
         QUnit.config.autostart = false;
 
         require(getConfig(), ['underscore'], function(lodash) {
-          mixinPrereqs(lodash);
+          _ = mixinPrereqs(lodash);
           require(getConfig(), ['backbone'], function() {
             require(getConfig(), [
               'test/setup/dom-setup',
@@ -159,9 +161,7 @@
               'test/router',
               'test/view',
               'test/sync'
-            ], function() {
-              QUnit.start();
-            });
+            ], QUnit.start);
           });
         });
       }());

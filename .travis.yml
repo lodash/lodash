@@ -116,13 +116,13 @@ script:
       if [ $SAUCE_LABS = true ]; then
         node ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js
         npm run build
-        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.js&noglobals=true"     tags="development"
-        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.min.js&noglobals=true" tags="production"
-        $BIN ./test/saucelabs.js name="lodash-fp tests"  runner="test/fp.html?noglobals=true"                                tags="development"
-        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.js"               tags="development,underscore"
-        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.min.js"           tags="production,underscore"
-        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.js"                 tags="development,backbone"
-        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.min.js"             tags="production,backbone"
-        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.js"            tags="development,backbone"
-        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.min.js"        tags="production,backbone"
+        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.js&noglobals=true"     tags=development
+        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.min.js&noglobals=true" tags=production
+        $BIN ./test/saucelabs.js name="lodash-fp tests"  runner="test/fp.html?noglobals=true"                                tags=development
+        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.js"               tags=development,underscore
+        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.min.js"           tags=production,underscore
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.js"                 tags=development,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.min.js"             tags=production,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.js"            tags=development,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.min.js"        tags=production,backbone
       fi

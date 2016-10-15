@@ -15,27 +15,8 @@
 
   /*--------------------------------------------------------------------------*/
 
-  /**
-   * Registers an event listener on an element.
-   *
-   * @private
-   * @param {Element} element The element.
-   * @param {string} eventName The name of the event.
-   * @param {Function} handler The event handler.
-   * @returns {Element} The element.
-   */
-  function addListener(element, eventName, handler) {
-    if (typeof element.addEventListener != 'undefined') {
-      element.addEventListener(eventName, handler, false);
-    } else if (typeof element.attachEvent != 'undefined') {
-      element.attachEvent('on' + eventName, handler);
-    }
-  }
-
-  /*--------------------------------------------------------------------------*/
-
   // Initialize controls.
-  addListener(window, 'load', function() {
+  addEventListener('load', function() {
     function eventHandler(event) {
       var buildIndex = buildList.selectedIndex,
           loaderIndex = loaderList.selectedIndex,
@@ -59,16 +40,14 @@
         setTimeout(init, 15);
         return;
       }
-      toolbar.appendChild(span1);
-      toolbar.appendChild(span2);
+      toolbar.insertBefore(span2, toolbar.lastChild);
+      toolbar.insertBefore(span1, span2);
 
       buildList.selectedIndex = (function() {
         switch (build) {
           case 'lodash':            return 1;
           case 'lodash-core-dev':   return 2;
           case 'lodash-core':       return 3;
-          case 'lodash-custom-dev': return 4;
-          case 'lodash-custom':     return 5;
           case 'lodash-dev':
           case null:                return 0;
         }
@@ -86,12 +65,11 @@
         return -1;
       }());
 
-      addListener(buildList, 'change', eventHandler);
-      addListener(loaderList, 'change', eventHandler);
+      buildList.addEventListener('change', eventHandler);
+      loaderList.addEventListener('change', eventHandler);
     }
 
     var span1 = document.createElement('span');
-    span1.style.cssText = 'float:right';
     span1.innerHTML =
       '<label for="qunit-build">Build: </label>' +
       '<select id="qunit-build">' +
@@ -99,12 +77,9 @@
       '<option value="lodash">lodash (production)</option>' +
       '<option value="lodash-core-dev">lodash-core (development)</option>' +
       '<option value="lodash-core">lodash-core (production)</option>' +
-      '<option value="lodash-custom-dev">lodash (custom development)</option>' +
-      '<option value="lodash-custom">lodash (custom production)</option>' +
       '</select>';
 
     var span2 = document.createElement('span');
-    span2.style.cssText = 'float:right';
     span2.innerHTML =
       '<label for="qunit-loader">Loader: </label>' +
       '<select id="qunit-loader">' +
@@ -113,6 +88,12 @@
       '<option value="dojo">Dojo</option>' +
       '<option value="requirejs">RequireJS</option>' +
       '</select>';
+
+    span1.style.cssText =
+    span2.style.cssText = 'display:inline-block;float:right;line-height:2.1em;margin-left:1em;margin-top:0;';
+
+    span1.firstChild.style.cssText =
+    span2.firstChild.style.cssText = 'display:inline-block;margin-right:.5em;';
 
     var buildList = span1.lastChild,
         loaderList = span2.lastChild;
@@ -128,11 +109,9 @@
   ui.buildPath = (function() {
     var result;
     switch (build) {
-      case 'lodash':            result = 'lodash.min.js'; break;
-      case 'lodash-core-dev':   result = 'lodash.core.js'; break;
-      case 'lodash-core':       result = 'lodash.core.min.js'; break;
-      case 'lodash-custom-dev': result = 'lodash.custom.js'; break;
-      case 'lodash-custom':     result = 'lodash.custom.min.js'; break;
+      case 'lodash':            result = 'dist/lodash.min.js'; break;
+      case 'lodash-core-dev':   result = 'dist/lodash.core.js'; break;
+      case 'lodash-core':       result = 'dist/lodash.core.min.js'; break;
       case null:                build  = 'lodash-dev';
       case 'lodash-dev':        result = 'lodash.js'; break;
       default:                  return build;
@@ -160,13 +139,13 @@
   ui.isForeign = RegExp('^(\\w+:)?//').test(build);
 
   // Used to indicate testing a modularized build.
-  ui.isModularize = /\b(?:amd|commonjs|es6?|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
+  ui.isModularize = /\b(?:amd|commonjs|es|node|npm|(index|main)\.js)\b/.test([location.pathname, location.search]);
 
   // Used to indicate testing in Sauce Labs' automated test cloud.
   ui.isSauceLabs = location.port == '9001';
 
   // Used to indicate that lodash is in strict mode.
-  ui.isStrict = /\bes6?\b/.test([location.pathname, location.search]);
+  ui.isStrict = /\bes\b/.test([location.pathname, location.search]);
 
   ui.urlParams = { 'build': build, 'loader': loader };
   ui.timing = { 'loadEventEnd': 0 };

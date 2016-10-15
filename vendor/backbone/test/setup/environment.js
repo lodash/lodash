@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var sync = Backbone.sync;
   var ajax = Backbone.ajax;
@@ -8,11 +8,13 @@
   var pushState = history.pushState;
   var replaceState = history.replaceState;
 
+  QUnit.config.noglobals = true;
+
   QUnit.testStart(function() {
     var env = QUnit.config.current.testEnvironment;
 
     // We never want to actually call these during tests.
-    history.pushState = history.replaceState = function(){};
+    history.pushState = history.replaceState = function() {};
 
     // Capture ajax settings for comparison.
     Backbone.ajax = function(settings) {
@@ -40,4 +42,4 @@
     history.replaceState = replaceState;
   });
 
-})();
+})(QUnit);

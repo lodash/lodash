@@ -1,29 +1,80 @@
-# lodash v4.0.0-pre
+# lodash v4.16.4
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash](https://lodash.com/) with packages for [Bower](http://bower.io/), [Component](http://component.github.io/), & [Volo](http://volojs.org/).
+[Site](https://lodash.com/) |
+[Docs](https://lodash.com/docs) |
+[FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
+[Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
+[Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
+[Code of Conduct](https://jquery.org/conduct/) |
+[Twitter](https://twitter.com/bestiejs) |
+[Chat](https://gitter.im/lodash/lodash)
+
+The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```bash
-$ lodash modern -o ./lodash.js
+```shell
+$ npm run build
+$ lodash -o ./dist/lodash.js
+$ lodash core -o ./dist/lodash.core.js
 ```
 
-## Community
+## Download
 
-[![Join the chat at https://gitter.im/lodash/lodash](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lodash/lodash)
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.16.4/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.16.4/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.16.4/dist/lodash.js) ([~23 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.16.4/dist/lodash.min.js))
+ * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
-## Module formats
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.16.4/LICENSE) & supports [modern environments](#support).<br>
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
-lodash is also available in a variety of other builds & module formats.
+## Installation
 
- * npm packages for [modern](https://www.npmjs.com/package/lodash), [compatibility](https://www.npmjs.com/package/lodash-compat), & [per method](https://www.npmjs.com/browse/keyword/lodash-modularized) builds
- * AMD modules for [modern](https://github.com/lodash/lodash/tree/3.10.1-amd) & [compatibility](https://github.com/lodash/lodash-compat/tree/3.10.1-amd) builds
- * ES modules for the [modern](https://github.com/lodash/lodash/tree/3.10.1-es) build
+In a browser:
+```html
+<script src="lodash.js"></script>
+```
 
-## Further Reading
+Using npm:
+```shell
+$ npm i -g npm
+$ npm i --save lodash
+```
 
-  * [API Documentation](https://lodash.com/docs)
-  * [Build Differences](https://github.com/lodash/lodash/wiki/Build-Differences)
-  * [Changelog](https://github.com/lodash/lodash/wiki/Changelog)
-  * [Release Notes](https://github.com/lodash/lodash/releases)
-  * [Roadmap](https://github.com/lodash/lodash/wiki/Roadmap)
-  * [More Resources](https://github.com/lodash/lodash/wiki/Resources)
+In Node.js:
+```js
+// Load the full build.
+var _ = require('lodash');
+// Load the core build.
+var _ = require('lodash/core');
+// Load the FP build for immutable auto-curried iteratee-first data-last methods.
+var fp = require('lodash/fp');
+
+// Load method categories.
+var array = require('lodash/array');
+var object = require('lodash/fp/object');
+
+// Cherry-pick methods for smaller browserify/rollup/webpack bundles.
+var at = require('lodash/at');
+var curryN = require('lodash/fp/curryN');
+```
+
+**Note:**<br>
+Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
+
+## Why Lodash?
+
+Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
+numbers, objects, strings, etc. Lodash’s modular methods are great for:
+
+ * Iterating arrays, objects, & strings
+ * Manipulating & testing values
+ * Creating composite functions
+
+## Module Formats
+
+Lodash is available in a [variety of builds](https://lodash.com/custom-builds) & module formats.
+
+ * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
+ * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
+ * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
+ * [lodash-amd](https://www.npmjs.com/package/lodash-amd)

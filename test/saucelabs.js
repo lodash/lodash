@@ -97,23 +97,22 @@ var browserNameMap = {
   'googlechrome': 'Chrome',
   'iehta': 'Internet Explorer',
   'ipad': 'iPad',
-  'iphone': 'iPhone'
+  'iphone': 'iPhone',
+  'microsoftedge': 'Edge'
 };
 
 /** List of platforms to load the runner on. */
 var platforms = [
   ['Linux', 'android', '5.1'],
-  ['Windows 10', 'chrome', '44'],
-  ['Windows 10', 'chrome', '43'],
-  ['Windows 10', 'firefox', '39'],
-  ['Windows 10', 'firefox', '38'],
-  ['Windows 10', 'microsoftedge', '20.10240'],
+  ['Windows 10', 'chrome', '53'],
+  ['Windows 10', 'chrome', '52'],
+  ['Windows 10', 'firefox', '49'],
+  ['Windows 10', 'firefox', '48'],
+  ['Windows 10', 'microsoftedge', '14'],
   ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],
-  //['Windows 7', 'internet explorer', '8'],
-  ['OS X 10.10', 'ipad', '8.4'],
-  ['OS X 10.11', 'safari', '8.1'],
+  ['OS X 10.11', 'safari', '9'],
   ['OS X 10.10', 'safari', '8']
 ];
 
@@ -214,18 +213,7 @@ if (tunneled) {
  * @returns {string} Returns the formal browser name.
  */
 function browserName(identifier) {
-  return browserNameMap[identifier] || capitalizeWords(identifier);
-}
-
-/**
- * Capitalizes the first character of each word in `string`.
- *
- * @private
- * @param {string} string The string to augment.
- * @returns {string} Returns the augmented string.
- */
-function capitalizeWords(string) {
-  return _.map(string.split(' '), _.capitalize).join(' ');
+  return browserNameMap[identifier] || _.startCase(identifier);
 }
 
 /**
@@ -269,7 +257,7 @@ function isJobId(value) {
  */
 function logInline(text) {
   var blankLine = _.repeat(' ', _.size(prevLine));
-  prevLine = text = _.trunc(text, { 'length': 40 });
+  prevLine = text = _.truncate(text, { 'length': 40 });
   process.stdout.write(text + blankLine.slice(text.length) + '\r');
 }
 
@@ -291,7 +279,7 @@ function logThrobber() {
  * @returns {Array} Returns the new converted array.
  */
 function optionToArray(name, string) {
-  return _.compact(_.invoke((optionToValue(name, string) || '').split(/, */), 'trim'));
+  return _.compact(_.invokeMap((optionToValue(name, string) || '').split(/, */), 'trim'));
 }
 
 /**
@@ -305,7 +293,7 @@ function optionToArray(name, string) {
 function optionToValue(name, string) {
   var result = string.match(RegExp('^' + name + '(?:=([\\s\\S]+))?$'));
   if (result) {
-    result = _.result(result, 1);
+    result = _.get(result, 1);
     result = result ? _.trim(result) : true;
   }
   if (result === 'false') {
@@ -377,8 +365,8 @@ function onJobStart(error, res, body) {
   if (this.stopping) {
     return;
   }
-  var statusCode = _.result(res, 'statusCode'),
-      taskId = _.first(_.result(body, 'js tests'));
+  var statusCode = _.get(res, 'statusCode'),
+      taskId = _.first(_.get(body, 'js tests'));
 
   if (error || !taskId || statusCode != 200) {
     if (this.attempts < this.retries) {
@@ -419,19 +407,19 @@ function onJobStatus(error, res, body) {
   if (!this.running || this.stopping) {
     return;
   }
-  var completed = _.result(body, 'completed', false),
-      data = _.first(_.result(body, 'js tests')),
+  var completed = _.get(body, 'completed', false),
+      data = _.first(_.get(body, 'js tests')),
       elapsed = (_.now() - this.timestamp) / 1000,
-      jobId = _.result(data, 'job_id', null),
-      jobResult = _.result(data, 'result', null),
-      jobStatus = _.result(data, 'status', ''),
-      jobUrl = _.result(data, 'url', null),
+      jobId = _.get(data, 'job_id', null),
+      jobResult = _.get(data, 'result', null),
+      jobStatus = _.get(data, 'status', ''),
+      jobUrl = _.get(data, 'url', null),
       expired = (elapsed >= queueTimeout && !_.includes(jobStatus, 'in progress')),
       options = this.options,
       platform = options.platforms[0];
 
   if (_.isObject(jobResult)) {
-    var message = _.result(jobResult, 'message');
+    var message = _.get(jobResult, 'message');
   } else {
     if (typeof jobResult == 'string') {
       message = jobResult;
@@ -451,9 +439,9 @@ function onJobStatus(error, res, body) {
     this._pollerId = _.delay(_.bind(this.status, this), this.statusInterval * 1000);
     return;
   }
-  var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+  var description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + _.startCase(platform[0]),
       errored = !jobResult || !jobResult.passed || reError.test(message) || reError.test(jobStatus),
-      failures = _.result(jobResult, 'failed'),
+      failures = _.get(jobResult, 'failed'),
       label = options.name + ':',
       tunnel = this.tunnel;
 
@@ -474,7 +462,7 @@ function onJobStatus(error, res, body) {
       return;
     }
     else {
-      if (typeof message == 'undefined') {
+      if (message === undefined) {
         message = 'Results are unavailable. ' + details;
       }
       console.error(label, description, chalk.red('failed') + ';', message);
@@ -602,7 +590,7 @@ Job.prototype.restart = function(callback) {
 
   var options = this.options,
       platform = options.platforms[0],
-      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + capitalizeWords(platform[0]),
+      description = browserName(platform[1]) + ' ' + platform[2] + ' on ' + _.startCase(platform[0]),
       label = options.name + ':';
 
   logInline();
@@ -715,7 +703,7 @@ function Tunnel(properties) {
       total = all.length,
       tunnel = this;
 
-  _.invoke(all, 'on', 'complete', function() {
+  _.invokeMap(all, 'on', 'complete', function() {
     _.pull(active, this);
     if (success) {
       success = !this.failed;
@@ -727,7 +715,7 @@ function Tunnel(properties) {
     tunnel.dequeue();
   });
 
-  _.invoke(all, 'on', 'restart', function() {
+  _.invokeMap(all, 'on', 'restart', function() {
     if (!_.includes(restarted, this)) {
       restarted.push(this);
     }
@@ -775,7 +763,7 @@ Tunnel.prototype.restart = function(callback) {
       all = jobs.all;
 
   var reset = _.after(all.length, _.bind(this.stop, this, onGenericRestart)),
-      stop = _.after(active.length, _.partial(_.invoke, all, 'reset', reset));
+      stop = _.after(active.length, _.partial(_.invokeMap, all, 'reset', reset));
 
   if (_.isEmpty(active)) {
     _.defer(stop);
@@ -783,7 +771,7 @@ Tunnel.prototype.restart = function(callback) {
   if (_.isEmpty(all)) {
     _.defer(reset);
   }
-  _.invoke(active, 'stop', function() {
+  _.invokeMap(active, 'stop', function() {
     _.pull(active, this);
     stop();
   });
@@ -827,13 +815,16 @@ Tunnel.prototype.start = function(callback) {
  * @param {Object} Returns the tunnel instance.
  */
 Tunnel.prototype.dequeue = function() {
-  var jobs = this.jobs,
+  var count = 0,
+      jobs = this.jobs,
       active = jobs.active,
       queue = jobs.queue,
       throttled = this.throttled;
 
   while (queue.length && (active.length < throttled)) {
-    active.push(queue.shift().start());
+    var job = queue.shift();
+    active.push(job);
+    _.delay(_.bind(job.start, job), ++count * 1000);
   }
   return this;
 };
@@ -871,7 +862,7 @@ Tunnel.prototype.stop = function(callback) {
   if (_.isEmpty(active)) {
     _.defer(stop);
   }
-  _.invoke(active, 'stop', function() {
+  _.invokeMap(active, 'stop', function() {
     _.pull(active, this);
     stop();
   });

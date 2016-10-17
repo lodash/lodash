@@ -23,6 +23,7 @@ $ lodash core -o ./dist/lodash.core.js
  * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.16.5/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.16.5/dist/lodash.core.min.js))
  * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.16.5/dist/lodash.js) ([~23 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.16.5/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
+ * [![CDNJS](https://img.shields.io/cdnjs/v/lodash.js.svg?style=plastic)](https://cdnjs.com/libraries/lodash.js)
 
 Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.16.5/LICENSE) & supports [modern environments](#support).<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.

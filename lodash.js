@@ -13840,6 +13840,7 @@
      * @memberOf _
      * @category Object
      * @param {Object} object The object to query.
+     * @param {Array<string>|string} props List or array of property keys (order is guanteed)
      * @returns {Array} Returns the array of property values.
      * @example
      *
@@ -13855,9 +13856,25 @@
      *
      * _.values('hi');
      * // => ['h', 'i']
+     *
+     * @example
+     *
+     * o = {"3a": 1, "3b": 2, "4": 3, "4a": 4, "5": 5}
+     * _.values(o)
+     * // [3, 5, 1, 2, 4]
+     *
+     * _.values(o, ['3a', '3b', '4', '4a', '5'])
+     * // [1, 2, 3, 4, 5]
+     *
+     * _.values(o, '3a', '3b', '4', '4a', '5')
+     * // [1, 2, 3, 4, 5]
      */
     function values(object) {
-      return object ? baseValues(object, keys(object)) : [];
+      return object
+        ? (arguments.length > 1)
+          ? baseValues(object, flatten(arguments).slice(1))
+          : baseValues(object, keys(object))
+        : [];
     }
 
     /**

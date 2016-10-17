@@ -24958,6 +24958,32 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.values with ordered keys');
+
+  lodashStable.each(['values'], function(methodName) {
+    var func = _[methodName];
+
+    QUnit.test('`_.' + methodName + '` should get values of `object` in specified (array) key order', function(assert) {
+      assert.expect(1);
+
+      var object = {"3a": 1, "3b": 2, "4": 3, "4a": 4, "5": 5},
+          actual = func(object, [5, "4a", 4, "3b", "3a"]);
+
+      assert.deepEqual(actual, [5, 4, 3, 2, 1]);
+    });
+
+    QUnit.test('`_.' + methodName + '` should get values of `object` in specified (arguments) key order', function(assert) {
+      assert.expect(1);
+
+      var object = {"3a": 1, "3b": 2, "4": 3, "4a": 4, "5": 5},
+          actual = func(object, 5, "4a", 4, "3b", "3a");
+
+      assert.deepEqual(actual, [5, 4, 3, 2, 1]);
+    });
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('values methods');
 
   lodashStable.each(['values', 'valuesIn'], function(methodName) {

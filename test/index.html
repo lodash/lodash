@@ -22,7 +22,7 @@
         };
       }
     </script>
-    <script src="../node_modules/lodash/index.js"></script>
+    <script src="../node_modules/lodash/lodash.js"></script>
     <script>var lodashStable = _.noConflict();</script>
     <script src="../node_modules/qunitjs/qunit/qunit.js"></script>
     <script src="../node_modules/qunit-extras/qunit-extras.js"></script>
@@ -32,22 +32,19 @@
     <div id="exports"></div>
     <div id="module"></div>
     <script>
-      var setProperty = (function() {
-        var _defineProperty = Object.defineProperty;
-        return function(object, key, value) {
-          try {
-            _defineProperty(object, key, {
-              'configurable': true,
-              'enumerable': false,
-              'writable': true,
-              'value': value
-            });
-          } catch(e) {
-            object[key] = value;
-          }
-          return object;
-        };
-      }());
+      function setProperty(object, key, value) {
+        try {
+          Object.defineProperty(object, key, {
+            'configurable': true,
+            'enumerable': false,
+            'writable': true,
+            'value': value
+          });
+        } catch (e) {
+          object[key] = value;
+        }
+        return object;
+      }
 
       function addBizarroMethods() {
         var funcProto = Function.prototype,
@@ -85,6 +82,12 @@
         funcProto._method = noop;
 
         // Set bad shims.
+        setProperty(Object, '_create', Object.create);
+        setProperty(Object, 'create', undefined);
+
+        setProperty(Object, '_getOwnPropertySymbols', Object.getOwnPropertySymbols);
+        setProperty(Object, 'getOwnPropertySymbols', undefined);
+
         setProperty(objectProto, '_propertyIsEnumerable', propertyIsEnumerable);
         setProperty(objectProto, 'propertyIsEnumerable', function(key) {
           return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
@@ -106,11 +109,14 @@
 
           setProperty(Map, 'toString', createToString('Map'));
         }
-        setProperty(Object, '_create', window.create);
-        setProperty(Object, 'create', noop);
+        setProperty(window, '_Promise', window.Promise);
+        setProperty(window, 'Promise', noop);
 
         setProperty(window, '_Set', window.Set);
         setProperty(window, 'Set', noop);
+
+        setProperty(window, '_Symbol', window.Symbol);
+        setProperty(window, 'Symbol', undefined);
 
         setProperty(window, '_WeakMap', window.WeakMap);
         setProperty(window, 'WeakMap', noop);
@@ -128,30 +134,45 @@
         var funcProto = Function.prototype,
             objectProto = Object.prototype;
 
+        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
+
         if (Object._create) {
           Object.create = Object._create;
         } else {
           delete Object.create;
+        }
+        if (Object._getOwnPropertySymbols) {
+          Object.getOwnPropertySymbols = Object._getOwnPropertySymbols;
+        } else {
+          delete Object.getOwnPropertySymbols;
         }
         if (_Map) {
           Map = _Map;
         } else {
           setProperty(window, 'Map', undefined);
         }
+        if (_Promise) {
+          Promise = _Promise;
+        } else {
+          setProperty(window, 'Promise', undefined);
+        }
         if (_Set) {
           Set = _Set;
         } else {
           setProperty(window, 'Set', undefined);
+        }
+        if (_Symbol) {
+          Symbol = _Symbol;
         }
         if (_WeakMap) {
           WeakMap = _WeakMap;
         } else {
           setProperty(window, 'WeakMap', undefined);
         }
-        setProperty(objectProto, 'propertyIsEnumerable', objectProto._propertyIsEnumerable);
-
         setProperty(window, '_Map', undefined);
+        setProperty(window, '_Promise', undefined);
         setProperty(window, '_Set', undefined);
+        setProperty(window, '_Symbol', undefined);
         setProperty(window, '_WeakMap', undefined);
 
         setProperty(window, 'WinRTError', undefined);
@@ -161,8 +182,9 @@
         setProperty(window, 'module', document.getElementById('module'));
 
         delete funcProto._method;
-        delete objectProto._propertyIsEnumerable;
         delete Object._create;
+        delete Object._getOwnPropertySymbols;
+        delete objectProto._propertyIsEnumerable;
       }
 
       // Load lodash to expose it to the bad extensions/shims.
@@ -269,20 +291,17 @@
               underscoreModule = underscore.result(underscore, 'noConflict') || underscore;
               underscoreModule.moduleName = 'underscore';
             }
-            if (ui.isModularize) {
-              window._ = lodash;
-            }
+            window._ = lodash;
+
             if (ui.isModularize) {
               require(getConfig(), [
-                'lodash/internal/baseEach',
-                'lodash/internal/isIndex',
-                'lodash/internal/isIterateeCall',
-                'lodash/internal/isLength'
-              ], function(baseEach, isIndex, isIterateeCall, isLength) {
+                'lodash/_baseEach',
+                'lodash/_isIndex',
+                'lodash/_isIterateeCall'
+              ], function(baseEach, isIndex, isIterateeCall) {
                 lodash._baseEach = baseEach;
                 lodash._isIndex = isIndex;
                 lodash._isIterateeCall = isIterateeCall;
-                lodash._isLength = isLength;
                 loadTests();
               });
             } else {

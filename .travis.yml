@@ -1,58 +1,132 @@
 language: node_js
 sudo: false
 node_js:
-  - "4"
+  - 6
+
+cache:
+  directories:
+    - $HOME/.npm
+    - $HOME/.yarn-cache
+    - travis_phantomjs
+
 env:
   global:
-    - BIN="node" ISTANBUL=false OPTION=""
-    - NPM_VERSION="^2.0.0" SAUCE_LABS=false SAUCE_USERNAME="lodash"
-    - PATTERN1="s|\s*if\s*\(isHostObject\b[\s\S]+?\}(?=\n)||"
-    - PATTERN2="s|\s*if\s*\(enumerate\b[\s\S]+?\};\s*\}||"
-    - PATTERN3="s|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}||"
-    - secure: "tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU="
+    - BIN=node ISTANBUL=false OPTION=""
+    - SAUCE_LABS=false SAUCE_USERNAME=lodash
+    - secure: tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU=
+
   matrix:
     -
+    - BIN=phantomjs
     - ISTANBUL=true
-    - BIN="phantomjs"
+    - SAUCE_LABS=true
+
 matrix:
   include:
-    - node_js: "0.8"
-      env: NPM_VERSION="~1.4.0"
-    - node_js: "0.10"
+    - node_js: 4
       env:
-    - node_js: "0.12"
-      env:
-    - node_js: "4"
-      env: SAUCE_LABS=true
+
 git:
   depth: 10
+
 branches:
   only:
     - master
+
 notifications:
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/4aab6358b0e9aed0b628
     on_success: change
     on_failure: always
+
 before_install:
-  - "nvm use $TRAVIS_NODE_VERSION"
-  - "npm config set loglevel error"
-  - "npm i -g npm@\"$NPM_VERSION\""
-  - "git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli && mkdir $_/node_modules && cd $_ && ln -s ../../../ ./lodash && cd ../ && npm i && cd ../../"
-  - "node ./node_modules/lodash-cli/bin/lodash -o ./lodash.js"
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN1\" ./lodash.js"
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN2\" ./lodash.js"
-  - "[ $ISTANBUL == false ]   || perl -0pi -e \"$PATTERN3\" ./lodash.js"
+  # Upgrade PhantomJS.
+  - |
+      export PHANTOMJS_VERSION=2.1.1
+      export PATH=$PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin:$PATH
+      if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then
+        rm -rf $PWD/travis_phantomjs
+        mkdir -p $PWD/travis_phantomjs
+        wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2
+        tar -xvf phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs
+      fi
+      phantomjs -v
+
+  # Use exact Node version.
+  - nvm use $TRAVIS_NODE_VERSION
+
+  # Setup package managers.
+  - npm set loglevel error
+  - npm set progress false
+  - npm i -g yarn
+  - yarn -V
+
+  # Remove code skipped on the coverage run.
+  - |
+      PATTERN[0]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
+      PATTERN[1]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
+      PATTERN[2]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
+      PATTERN[3]="|\bcase\s+(?:dataView|promise|set|map|weakMap)CtorString:.+|g"
+      PATTERN[4]="|\s*if\s*\(cache\.size\b[\s\S]+?\}|"
+      PATTERN[5]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
+      PATTERN[6]="|\s*define\([\s\S]+?\);|"
+      PATTERN[7]="|\s*root\._\s*=\s*_;|"
+
+      if [ $ISTANBUL = true ]; then
+        set -e
+        for PTRN in ${PATTERN[@]}; do
+          node ./test/remove.js $PTRN ./lodash.js
+        done
+      fi
+
+install:
+  # Install packages.
+  - yarn
+
+  # Use lodash-cli from GitHub.
+  - git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli
+  - mkdir -p ./node_modules/lodash-cli/node_modules/lodash; cd $_; cp ../../../../lodash.js ./lodash.js; cp ../../../../package.json ./package.json
+  - cd ../../; npm i --production; cd ../../
+
 script:
-  - "[ $ISTANBUL == false ]   || node ./node_modules/istanbul/lib/cli.js cover -x \"**/vendor/**\" --report lcovonly ./test/test.js -- ./lodash.js"
-  - "[ $ISTANBUL == false ]   || [ $TRAVIS_SECURE_ENV_VARS == false ] || (cat ./coverage/lcov.info | coveralls) || true"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || cd ./test"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || $BIN $OPTION ./test.js ../lodash.js"
-  - "[ $SAUCE_LABS == true ]  || [ $ISTANBUL == true ] || [ $TRAVIS_SECURE_ENV_VARS == false ] || $BIN $OPTION ./test.js ../lodash.min.js"
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.js&noglobals=true\" tags=\"development\""
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"lodash tests\" runner=\"test/index.html?build=../lodash.min.js&noglobals=true\" tags=\"production\""
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../lodash.js\" tags=\"development,backbone\""
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"backbone tests\"   runner=\"test/backbone.html?build=../lodash.min.js\" tags=\"production,backbone\""
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../lodash.js\" tags=\"development,underscore\""
-  - "[ $SAUCE_LABS == false ] || $BIN ./test/saucelabs.js name=\"underscore tests\" runner=\"test/underscore.html?build=../lodash.min.js\" tags=\"production,underscore\""
+  # Detect code coverage.
+  - |
+      if [ $ISTANBUL = true ]; then
+        istanbul cover -x "**/vendor/**" --report lcovonly ./test/test.js -- ./lodash.js
+        if [ $TRAVIS_SECURE_ENV_VARS = true ]; then
+          cat ./coverage/lcov.info | coveralls
+          cat ./coverage/coverage.json | codecov
+        fi
+      fi
+
+  # Test in Node.js and PhantomJS.
+  - |
+      if [ $ISTANBUL = false ]; then
+        node ./node_modules/lodash-cli/bin/lodash -o ./dist/lodash.js
+        node ./node_modules/lodash-cli/bin/lodash modularize exports=node -o ./
+        node ./node_modules/lodash-cli/bin/lodash -d -o ./lodash.js
+        if [ $SAUCE_LABS = false ]; then
+          cd ./test
+          $BIN $OPTION ./test.js ../lodash.js
+          if [ $TRAVIS_SECURE_ENV_VARS = true ]; then
+            $BIN $OPTION ./test.js ../dist/lodash.min.js
+          fi
+        fi
+      fi
+
+  # Test in Sauce Labs.
+  - |
+      if [ $SAUCE_LABS = true ]; then
+        node ./node_modules/lodash-cli/bin/lodash core -o ./dist/lodash.core.js
+        npm run build
+        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.js&noglobals=true"     tags=development
+        $BIN ./test/saucelabs.js name="lodash tests"     runner="test/index.html?build=../dist/lodash.min.js&noglobals=true" tags=production
+        $BIN ./test/saucelabs.js name="lodash-fp tests"  runner="test/fp.html?noglobals=true"                                tags=development
+        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.js"               tags=development,underscore
+        $BIN ./test/saucelabs.js name="underscore tests" runner="test/underscore.html?build=../dist/lodash.min.js"           tags=production,underscore
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.js"                 tags=development,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.min.js"             tags=production,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.js"            tags=development,backbone
+        $BIN ./test/saucelabs.js name="backbone tests"   runner="test/backbone.html?build=../dist/lodash.core.min.js"        tags=production,backbone
+      fi

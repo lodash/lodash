@@ -51,7 +51,7 @@
       DEFAULT_TRUNC_OMISSION = '...';
 
   /** Used to detect hot functions by number of calls within a span of milliseconds. */
-  var HOT_COUNT = 500,
+  var HOT_COUNT = 800,
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees. */

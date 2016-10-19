@@ -16946,9 +16946,9 @@
     });
 
     // Add `Array` methods to `lodash.prototype`.
-    arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+    arrayEach(['pop', 'push', 'shift', 'splice', 'unshift'], function(methodName) {
       var func = arrayProto[methodName],
-          chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
+          chainName = /^(?:push|unshift)$/.test(methodName) ? 'tap' : 'thru',
           retUnwrapped = /^(?:pop|shift)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
@@ -16962,6 +16962,39 @@
         });
       };
     });
+
+    // Ensure that Array.sort is stable
+    lodash.prototype.sort = function(compareFn) {
+      if (!isFunction(compareFn)) {
+        compareFn = compareAscending;
+      }
+      return this.tap(function(array) {
+        if (!isArray(array)) { return; }
+        var length = array.length;
+        // Map to object containing original index and value
+        while (length--) {
+          array[length] = {
+            index: length,
+            value: array[length]
+          };
+        }
+
+        arrayProto.sort.call(array, function(a, b) {
+          var comp = compareFn(a.value, b.value);
+          if (comp === 0) {
+            // Compare the indexes when the comparison is otherwise equal
+            return compareAscending(a.index, b.index);
+          }
+          return comp;
+        });
+
+        length = array.length;
+        while (length--) {
+          array[length] = array[length].value;
+        }
+        return array;
+      });
+    };
 
     // Map minified method names to their real names.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {

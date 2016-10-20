@@ -25581,12 +25581,12 @@
 
   QUnit.module('lodash(...).next');
 
-  lodashStable.each([false, true], function(implict) {
+  lodashStable.each([false, true], function(implicit) {
     function chain(value) {
-      return implict ? _(value) : _.chain(value);
+      return implicit ? _(value) : _.chain(value);
     }
 
-    var chainType = 'in an ' + (implict ? 'implict' : 'explict') + ' chain';
+    var chainType = 'in an ' + (implicit ? 'implicit' : 'explict') + ' chain';
 
     QUnit.test('should follow the iterator protocol ' + chainType, function(assert) {
       assert.expect(3);

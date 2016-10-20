@@ -13949,7 +13949,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` hould return `true` when comparing an empty `source`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `true` when comparing an empty `source`', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1 },
@@ -22875,7 +22875,7 @@
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      var actual = _.times(2.6, _.indentify);
+      var actual = _.times(2.6, _.identity);
       assert.deepEqual(actual, [0, 1]);
     });
 
@@ -25581,12 +25581,12 @@
 
   QUnit.module('lodash(...).next');
 
-  lodashStable.each([false, true], function(implict) {
+  lodashStable.each([false, true], function(implicit) {
     function chain(value) {
-      return implict ? _(value) : _.chain(value);
+      return implicit ? _(value) : _.chain(value);
     }
 
-    var chainType = 'in an ' + (implict ? 'implict' : 'explict') + ' chain';
+    var chainType = 'in an ' + (implicit ? 'implicit' : 'explict') + ' chain';
 
     QUnit.test('should follow the iterator protocol ' + chainType, function(assert) {
       assert.expect(3);

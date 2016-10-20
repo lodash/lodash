@@ -22875,7 +22875,7 @@
     QUnit.test('should coerce `n` to an integer', function(assert) {
       assert.expect(1);
 
-      var actual = _.times(2.6, _.indentify);
+      var actual = _.times(2.6, _.identity);
       assert.deepEqual(actual, [0, 1]);
     });
 

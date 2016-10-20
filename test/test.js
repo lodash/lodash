@@ -13949,7 +13949,7 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` hould return `true` when comparing an empty `source`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return `true` when comparing an empty `source`', function(assert) {
       assert.expect(1);
 
       var object = { 'a': 1 },

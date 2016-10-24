@@ -3,6 +3,10 @@ sudo: false
 node_js:
   - 6
 
+addons:
+  jwt:
+    secure: OYhRpW+8A0Iik+9GmHwa45ZwXeBXw/6zh6I+1w2H9g/LqPRp+Nhq3f4FSpvrrfno8lO8W4h+7s6+JOzF8C8NxNda5UUygKjF9pUphgiQdqls3YZMJlC9zXVl7gQXAHi3nG1s8vWSpwpzYD9fqczE1FX9n0+R63qX3eB6C/LbPeI=
+
 cache:
   directories:
     - $HOME/.npm
@@ -13,7 +17,6 @@ env:
   global:
     - BIN=node ISTANBUL=false OPTION=""
     - SAUCE_LABS=false SAUCE_USERNAME=lodash
-    - secure: tg1JFsIFnxzLaTboFPOnm+aJCuMm5+JdhLlESlqg9x3fwro++7KCnwHKLNovhchaPe4otC43ZMB/nfWhDnDm11dKbm/V6HlTkED+dadTsaLxVDg6J+7yK41QhokBPJOxLV78iDaNaAQVYEirAgZ0yn8kFubxmNKV+bpCGQNc9yU=
 
   matrix:
     -

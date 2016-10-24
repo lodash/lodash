@@ -4,11 +4,6 @@
 /** Environment shortcut. */
 var env = process.env;
 
-if (env.TRAVIS_SECURE_ENV_VARS == 'false') {
-  console.log('Skipping Sauce Labs jobs; secure environment variables are unavailable');
-  process.exit(0);
-}
-
 /** Load Node.js modules. */
 var EventEmitter = require('events').EventEmitter,
     http = require('http'),

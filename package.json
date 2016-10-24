@@ -52,7 +52,7 @@
     "request": "^2.75.0",
     "requirejs": "^2.3.2",
     "sauce-tunnel": "^2.5.0",
-    "uglify-js": "2.7.3",
+    "uglify-js": "2.7.4",
     "webpack": "^1.13.2"
   },
   "greenkeeper": {

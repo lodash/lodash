@@ -11360,6 +11360,12 @@
       assert.strictEqual(_.isPlainObject(object), true);
     });
 
+    QUnit.test('should return `true` for objects with a `valueOf` property', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isPlainObject({ 'valueOf': 0 }), true);
+    });
+
     QUnit.test('should return `true` for objects with a `Symbol.toStringTag` property', function(assert) {
       assert.expect(1);
 
@@ -11372,19 +11378,6 @@
       else {
         skipAssert(assert);
       }
-    });
-
-    QUnit.test('should return `true` for objects with a `valueOf` property', function(assert) {
-      assert.expect(1);
-
-      assert.strictEqual(_.isPlainObject({ 'valueOf': 0 }), true);
-    });
-
-    QUnit.test('should return `false` for objects with a custom `[[Prototype]]`', function(assert) {
-      assert.expect(1);
-
-      var object = create({ 'a': 1 });
-      assert.strictEqual(_.isPlainObject(object), false);
     });
 
     QUnit.test('should return `false` for objects with a read-only `Symbol.toStringTag` property', function(assert) {
@@ -11404,6 +11397,13 @@
       else {
         skipAssert(assert);
       }
+    });
+
+    QUnit.test('should return `false` for objects with a custom `[[Prototype]]`', function(assert) {
+      assert.expect(1);
+
+      var object = create({ 'a': 1 });
+      assert.strictEqual(_.isPlainObject(object), false);
     });
 
     QUnit.test('should return `false` for DOM elements', function(assert) {

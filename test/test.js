@@ -54,6 +54,7 @@
       fnToString = funcProto.toString,
       freeze = Object.freeze,
       getSymbols = Object.getOwnPropertySymbols,
+      hasOwnProperty = objectProto.hasOwnProperty,
       identity = function(value) { return value; },
       noop = function() {},
       objToString = objectProto.toString,
@@ -11366,7 +11367,7 @@
       assert.strictEqual(_.isPlainObject({ 'valueOf': 0 }), true);
     });
 
-    QUnit.test('should return `true` for objects with a `Symbol.toStringTag` property', function(assert) {
+    QUnit.test('should return `true` for objects with a writable `Symbol.toStringTag` property', function(assert) {
       assert.expect(1);
 
       if (Symbol && Symbol.toStringTag) {
@@ -11396,6 +11397,22 @@
       }
       else {
         skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should not mutate its input', function(assert) {
+      assert.expect(2);
+
+      if (Symbol && Symbol.toStringTag) {
+        var proto = {};
+        proto[Symbol.toStringTag] = undefined;
+        var object = create(proto);
+
+        assert.deepEqual(_.isPlainObject(object), false);
+        assert.deepEqual(hasOwnProperty.call(object, Symbol.toStringTag), false);
+      }
+      else {
+        skipAssert(assert, 2);
       }
     });
 

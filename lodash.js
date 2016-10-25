@@ -5957,14 +5957,17 @@
      */
     function getRawTag(value) {
       try {
-        var symbol = value[symToStringTag];
+        var tag = value[symToStringTag];
+        var own = hasOwnProperty.call(value, symToStringTag);
         value[symToStringTag] = undefined;
       } catch (e) {
-        symbol = undefined;
+        own = undefined;
       }
       var result = nativeObjectToString.call(value);
-      if (symbol) {
-        value[symToStringTag] = symbol;
+      if (own === true) {
+        value[symToStringTag] = tag;
+      } else if (own === false) {
+        delete value[symToStringTag];
       }
       return result;
     }

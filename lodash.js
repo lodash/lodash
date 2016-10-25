@@ -5956,15 +5956,21 @@
      * @returns {string} Returns the raw `toStringTag`.
      */
     function getRawTag(value) {
+      var isOwn = hasOwnProperty.call(value, symToStringTag),
+          tag = value[symToStringTag];
+
       try {
-        var symbol = value[symToStringTag];
         value[symToStringTag] = undefined;
-      } catch (e) {
-        symbol = undefined;
-      }
+        var isSet = true;
+      } catch (e) {}
+
       var result = nativeObjectToString.call(value);
-      if (symbol) {
-        value[symToStringTag] = symbol;
+      if (isSet) {
+        if (isOwn) {
+          value[symToStringTag] = tag;
+        } else {
+          delete value[symToStringTag];
+        }
       }
       return result;
     }

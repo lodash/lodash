@@ -25264,7 +25264,7 @@
       assert.expect(2);
 
       var actual = func([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
-      assert.deepEqual(actual, [1, 4, 5]);
+      assert.deepEqual(actual, [1, 4]);
 
       actual = func([1, 1]);
       assert.deepEqual(actual, [1]);

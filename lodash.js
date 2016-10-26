@@ -4401,17 +4401,21 @@
      */
     function baseXor(arrays, iteratee, comparator) {
       var index = -1,
-          length = arrays.length;
+          length = arrays.length,
+          result = Array(length);
 
       while (++index < length) {
-        var result = result
-          ? arrayPush(
-              baseDifference(result, arrays[index], iteratee, comparator),
-              baseDifference(arrays[index], result, iteratee, comparator)
-            )
-          : arrays[index];
+        var array = arrays[index],
+            othIndex = -1;
+
+        while (++othIndex < length) {
+          var othArray = arrays[othIndex];
+          if (othArray !== array) {
+            result[index] = baseDifference(result[index] || array, othArray, iteratee, comparator);
+          }
+        }
       }
-      return (result && result.length) ? baseUniq(result, iteratee, comparator) : [];
+      return baseUniq(baseFlatten(result, 1), iteratee, comparator);
     }
 
     /**

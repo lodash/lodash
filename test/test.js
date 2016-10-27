@@ -14612,12 +14612,13 @@
       assert.raises(function() { _.memoize(noop, true); }, TypeError);
     });
 
-    QUnit.test('should not error if `resolver` is falsey', function(assert) {
+    QUnit.test('should not error if `resolver` is nullish', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(falsey, stubTrue);
+      var values = [, null, undefined],
+          expected = lodashStable.map(values, stubTrue);
 
-      var actual = lodashStable.map(falsey, function(resolver, index) {
+      var actual = lodashStable.map(values, function(resolver, index) {
         try {
           return _.isFunction(index ? _.memoize(noop, resolver) : _.memoize(noop));
         } catch (e) {}
@@ -14656,7 +14657,7 @@
 
       lodashStable.times(2, function(index) {
         var count = 0,
-            resolver = index && identity;
+            resolver = index ? identity : undefined;
 
         var memoized = _.memoize(function() {
           count++;
@@ -20615,12 +20616,13 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('`_.' + methodName + '` should accept a falsey `array` argument and a `value`', function(assert) {
+    QUnit.test('`_.' + methodName + '` should accept a nullish `array` and a `value`', function(assert) {
       assert.expect(1);
 
-      var expected = lodashStable.map(falsey, lodashStable.constant([0, 0, 0]));
+      var values = [null, undefined],
+          expected = lodashStable.map(values, lodashStable.constant([0, 0, 0]));
 
-      var actual = lodashStable.map(falsey, function(array) {
+      var actual = lodashStable.map(values, function(array) {
         return [func(array, 1), func(array, undefined), func(array, NaN)];
       });
 

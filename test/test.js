@@ -25270,10 +25270,13 @@
     });
 
     QUnit.test('`_.' + methodName + '` should return the symmetric difference of multiple arrays', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var actual = func([2, 1], [2, 3], [3, 4]);
       assert.deepEqual(actual, [1, 4]);
+
+      actual = func([1, 2], [2, 1], [1, 2]);
+      assert.deepEqual(actual, []);
     });
 
     QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {

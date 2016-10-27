@@ -364,8 +364,13 @@
     return /^(?:\$\$cov_\d+\$\$)$/.test(key);
   })];
 
+  /** Used to test async functions. */
+  var asyncFunc = lodashStable.attempt(function() {
+    return Function('return async () => {}');
+  });
+
   /** Used to test generator functions. */
-  var generator = lodashStable.attempt(function() {
+  var genFunc = lodashStable.attempt(function() {
     return Function('return function*(){}');
   });
 
@@ -2717,7 +2722,8 @@
     var uncloneable = {
       'DOM elements': body,
       'functions': Foo,
-      'generators': generator
+      'async functions': asyncFunc,
+      'generator functions': genFunc
     };
 
     lodashStable.each(errors, function(error) {
@@ -9033,7 +9039,7 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(11);
+      assert.expect(12);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === '';
@@ -9049,7 +9055,8 @@
       assert.strictEqual(_.isArrayLike(new Date), false);
       assert.strictEqual(_.isArrayLike(new Error), false);
       assert.strictEqual(_.isArrayLike(_), false);
-      assert.strictEqual(_.isArrayLike(generator), false);
+      assert.strictEqual(_.isArrayLike(asyncFunc), false);
+      assert.strictEqual(_.isArrayLike(genFunc), false);
       assert.strictEqual(_.isArrayLike(slice), false);
       assert.strictEqual(_.isArrayLike({ 'a': 1 }), false);
       assert.strictEqual(_.isArrayLike(1), false);
@@ -10519,10 +10526,16 @@
       assert.strictEqual(_.isFunction(slice), true);
     });
 
+    QUnit.test('should return `true` for async functions', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isFunction(asyncFunc), typeof asyncFunc == 'function');
+    });
+
     QUnit.test('should return `true` for generator functions', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.isFunction(generator), typeof generator == 'function');
+      assert.strictEqual(_.isFunction(genFunc), typeof genFunc == 'function');
     });
 
     QUnit.test('should return `true` for the `Proxy` constructor', function(assert) {

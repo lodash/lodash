@@ -2723,7 +2723,8 @@
       'DOM elements': body,
       'functions': Foo,
       'async functions': asyncFunc,
-      'generator functions': genFunc
+      'generator functions': genFunc,
+      'the `Proxy` constructor': Proxy
     };
 
     lodashStable.each(errors, function(error) {

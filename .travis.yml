@@ -28,8 +28,6 @@ matrix:
   include:
     - node_js: 6
       env:
-    - node_js: 4
-      env:
 
 git:
   depth: 10

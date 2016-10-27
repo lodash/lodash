@@ -59,7 +59,7 @@ var curryN = require('lodash/fp/curryN');
 ```
 
 **Note:**<br>
-Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
+Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js REPL.
 
 ## Why Lodash?
 

@@ -9,8 +9,8 @@ addons:
 
 cache:
   directories:
-    - $HOME/.npm
-    - $HOME/.yarn-cache
+    - ~/.npm
+    - ~/.yarn-cache
     - travis_phantomjs
 
 env:

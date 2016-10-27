@@ -1612,7 +1612,7 @@
      * `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`, `findLast`,
      * `findLastIndex`, `findLastKey`, `first`, `floor`, `forEach`, `forEachRight`,
      * `forIn`, `forInRight`, `forOwn`, `forOwnRight`, `get`, `gt`, `gte`, `has`,
-     * `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`, `invoke`,
+     * `hasIn`, `head`, `identity`, `includes`, `indexOf`, `inRange`, `invoke`, `invokeSafe`,
      * `isArguments`, `isArray`, `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`,
      * `isBoolean`, `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`,
      * `isEqualWith`, `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`,
@@ -13214,6 +13214,41 @@
     var invoke = baseRest(baseInvoke);
 
     /**
+     * Invokes the method at `path` of `object`. Doesn't throw
+     * Doesn't throw an error if the method is not a function eventually
+     *
+     * @static
+     * @memberOf _
+     * @since 4.0.0
+     * @category Object
+     * @param {Object} object The object to query.
+     * @param {Array|string} path The path of the method to invoke.
+     * @param {...*} [args] The arguments to invoke the method with.
+     * @returns {*} Returns the result of the invoked method.
+     * @example
+     *
+     * var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
+     *
+     * _.invokeSafe(object, 'a[0].b.c.slice', 1, 3);
+     * // => [2, 3]
+     *
+     *
+     * var object = { 'a': [{ 'b': { 'c': null } }] };
+     *
+     * _.invokeSafe(object, 'a[0].b.c');
+     * // => undefined (nothing was called)
+     */
+     var invokeSafe = baseRest(function(object, path, args) {
+       if (!isKey(path, object)) {
+        path = castPath(path);
+        object = parent(object, path);
+        path = last(path);
+      }
+      var func = object == null ? object : object[toKey(path)];
+      return !isFunction(func) ? undefined : apply(func, object, args);
+    })
+
+    /**
      * Creates an array of the own enumerable property names of `object`.
      *
      * **Note:** Non-object values are coerced to objects. See the
@@ -16633,6 +16668,7 @@
     lodash.indexOf = indexOf;
     lodash.inRange = inRange;
     lodash.invoke = invoke;
+    lodash.invokeSafe = invokeSafe;
     lodash.isArguments = isArguments;
     lodash.isArray = isArray;
     lodash.isArrayBuffer = isArrayBuffer;

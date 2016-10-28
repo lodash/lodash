@@ -5969,11 +5969,11 @@
 
       try {
         value[symToStringTag] = undefined;
-        var isSet = true;
+        var unmasked = true;
       } catch (e) {}
 
       var result = nativeObjectToString.call(value);
-      if (isSet) {
+      if (unmasked) {
         if (isOwn) {
           value[symToStringTag] = tag;
         } else {

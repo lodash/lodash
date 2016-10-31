@@ -1,5 +1,5 @@
 import baseForOwn from './_baseForOwn.js';
-import baseIteratee from './_baseIteratee.js';
+import castFunction from './_castFunction.js';
 
 /**
  * Iterates over own enumerable string keyed properties of an object and
@@ -30,7 +30,7 @@ import baseIteratee from './_baseIteratee.js';
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, baseIteratee(iteratee, 3));
+  return object && baseForOwn(object, castFunction(iteratee));
 }
 
 export default forOwn;

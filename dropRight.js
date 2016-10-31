@@ -27,7 +27,7 @@ import toInteger from './toInteger.js';
  * // => [1, 2, 3]
  */
 function dropRight(array, n, guard) {
-  var length = array ? array.length : 0;
+  var length = array == null ? 0 : array.length;
   if (!length) {
     return [];
   }

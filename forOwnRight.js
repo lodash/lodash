@@ -1,5 +1,5 @@
 import baseForOwnRight from './_baseForOwnRight.js';
-import baseIteratee from './_baseIteratee.js';
+import castFunction from './_castFunction.js';
 
 /**
  * This method is like `_.forOwn` except that it iterates over properties of
@@ -28,7 +28,7 @@ import baseIteratee from './_baseIteratee.js';
  * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, baseIteratee(iteratee, 3));
+  return object && baseForOwnRight(object, castFunction(iteratee));
 }
 
 export default forOwnRight;

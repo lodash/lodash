@@ -22,7 +22,7 @@ import toInteger from './toInteger.js';
  * // => [1, 2, 3, [4], 5]
  */
 function flattenDepth(array, depth) {
-  var length = array ? array.length : 0;
+  var length = array == null ? 0 : array.length;
   if (!length) {
     return [];
   }

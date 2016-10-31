@@ -1,4 +1,4 @@
-import identity from './identity.js';
+import castFunction from './_castFunction.js';
 import partial from './partial.js';
 
 /**
@@ -24,8 +24,7 @@ import partial from './partial.js';
  * // => '<p>fred, barney, &amp; pebbles</p>'
  */
 function wrap(value, wrapper) {
-  wrapper = wrapper == null ? identity : wrapper;
-  return partial(wrapper, value);
+  return partial(castFunction(wrapper), value);
 }
 
 export default wrap;

@@ -29,6 +29,7 @@ import baseClone from './_baseClone.js';
  * // => 20
  */
 function cloneDeepWith(value, customizer) {
+  customizer = typeof customizer == 'function' ? customizer : undefined;
   return baseClone(value, true, true, customizer);
 }
 

@@ -27,9 +27,7 @@ import last from './last.js';
  */
 var xorWith = baseRest(function(arrays) {
   var comparator = last(arrays);
-  if (isArrayLikeObject(comparator)) {
-    comparator = undefined;
-  }
+  comparator = typeof comparator == 'function' ? comparator : undefined;
   return baseXor(arrayFilter(arrays, isArrayLikeObject), undefined, comparator);
 });
 

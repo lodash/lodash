@@ -1,5 +1,5 @@
 import baseFor from './_baseFor.js';
-import baseIteratee from './_baseIteratee.js';
+import castFunction from './_castFunction.js';
 import keysIn from './keysIn.js';
 
 /**
@@ -33,7 +33,7 @@ import keysIn from './keysIn.js';
 function forIn(object, iteratee) {
   return object == null
     ? object
-    : baseFor(object, baseIteratee(iteratee, 3), keysIn);
+    : baseFor(object, castFunction(iteratee), keysIn);
 }
 
 export default forIn;

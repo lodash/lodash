@@ -1,6 +1,6 @@
 import arrayEachRight from './_arrayEachRight.js';
 import baseEachRight from './_baseEachRight.js';
-import baseIteratee from './_baseIteratee.js';
+import castFunction from './_castFunction.js';
 import isArray from './isArray.js';
 
 /**
@@ -25,7 +25,7 @@ import isArray from './isArray.js';
  */
 function forEachRight(collection, iteratee) {
   var func = isArray(collection) ? arrayEachRight : baseEachRight;
-  return func(collection, baseIteratee(iteratee, 3));
+  return func(collection, castFunction(iteratee));
 }
 
 export default forEachRight;

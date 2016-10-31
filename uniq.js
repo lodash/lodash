@@ -19,9 +19,7 @@ import baseUniq from './_baseUniq.js';
  * // => [2, 1]
  */
 function uniq(array) {
-  return (array && array.length)
-    ? baseUniq(array)
-    : [];
+  return (array && array.length) ? baseUniq(array) : [];
 }
 
 export default uniq;

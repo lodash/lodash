@@ -32,6 +32,7 @@ var baseClone = require('./_baseClone');
  * // => 0
  */
 function cloneWith(value, customizer) {
+  customizer = typeof customizer == 'function' ? customizer : undefined;
   return baseClone(value, false, true, customizer);
 }
 

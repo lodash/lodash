@@ -10,12 +10,12 @@ var get = require('./get');
  */
 function baseAt(object, paths) {
   var index = -1,
-      isNil = object == null,
       length = paths.length,
-      result = Array(length);
+      result = Array(length),
+      skip = object == null;
 
   while (++index < length) {
-    result[index] = isNil ? undefined : get(object, paths[index]);
+    result[index] = skip ? undefined : get(object, paths[index]);
   }
   return result;
 }

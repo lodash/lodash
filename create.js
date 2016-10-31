@@ -36,7 +36,7 @@ define(['./_baseAssign', './_baseCreate'], function(baseAssign, baseCreate) {
    */
   function create(prototype, properties) {
     var result = baseCreate(prototype);
-    return properties ? baseAssign(result, properties) : result;
+    return properties == null ? result : baseAssign(result, properties);
   }
 
   return create;

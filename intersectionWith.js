@@ -28,9 +28,8 @@ define(['./_arrayMap', './_baseIntersection', './_baseRest', './_castArrayLikeOb
     var comparator = last(arrays),
         mapped = arrayMap(arrays, castArrayLikeObject);
 
-    if (comparator === last(mapped)) {
-      comparator = undefined;
-    } else {
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    if (comparator) {
       mapped.pop();
     }
     return (mapped.length && mapped[0] === arrays[0])

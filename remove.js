@@ -13,8 +13,7 @@ define(['./_baseIteratee', './_basePullAt'], function(baseIteratee, basePullAt) 
    * @since 2.0.0
    * @category Array
    * @param {Array} array The array to modify.
-   * @param {Function} [predicate=_.identity]
-   *  The function invoked per iteration.
+   * @param {Function} [predicate=_.identity] The function invoked per iteration.
    * @returns {Array} Returns the new array of removed elements.
    * @example
    *

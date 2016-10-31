@@ -1,4 +1,4 @@
-define(['./isLength', './isObjectLike'], function(isLength, isObjectLike) {
+define(['./_baseGetTag', './isLength', './isObjectLike'], function(baseGetTag, isLength, isObjectLike) {
 
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]',
@@ -43,16 +43,6 @@ define(['./isLength', './isObjectLike'], function(isLength, isObjectLike) {
   typedArrayTags[setTag] = typedArrayTags[stringTag] =
   typedArrayTags[weakMapTag] = false;
 
-  /** Used for built-in method references. */
-  var objectProto = Object.prototype;
-
-  /**
-   * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-   * of values.
-   */
-  var objectToString = objectProto.toString;
-
   /**
    * The base implementation of `_.isTypedArray` without Node.js optimizations.
    *
@@ -62,7 +52,7 @@ define(['./isLength', './isObjectLike'], function(isLength, isObjectLike) {
    */
   function baseIsTypedArray(value) {
     return isObjectLike(value) &&
-      isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
+      isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
   }
 
   return baseIsTypedArray;

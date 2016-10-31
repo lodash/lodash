@@ -24,9 +24,8 @@ define(['./_baseUniq'], function(baseUniq) {
    * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
    */
   function uniqWith(array, comparator) {
-    return (array && array.length)
-      ? baseUniq(array, undefined, comparator)
-      : [];
+    comparator = typeof comparator == 'function' ? comparator : undefined;
+    return (array && array.length) ? baseUniq(array, undefined, comparator) : [];
   }
 
   return uniqWith;

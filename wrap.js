@@ -1,4 +1,4 @@
-define(['./identity', './partial'], function(identity, partial) {
+define(['./_castFunction', './partial'], function(castFunction, partial) {
 
   /**
    * Creates a function that provides `value` to `wrapper` as its first
@@ -23,8 +23,7 @@ define(['./identity', './partial'], function(identity, partial) {
    * // => '<p>fred, barney, &amp; pebbles</p>'
    */
   function wrap(value, wrapper) {
-    wrapper = wrapper == null ? identity : wrapper;
-    return partial(wrapper, value);
+    return partial(castFunction(wrapper), value);
   }
 
   return wrap;

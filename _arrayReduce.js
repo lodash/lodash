@@ -14,7 +14,7 @@ define([], function() {
    */
   function arrayReduce(array, iteratee, accumulator, initAccum) {
     var index = -1,
-        length = array ? array.length : 0;
+        length = array == null ? 0 : array.length;
 
     if (initAccum && length) {
       accumulator = array[++index];

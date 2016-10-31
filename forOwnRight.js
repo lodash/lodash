@@ -1,4 +1,4 @@
-define(['./_baseForOwnRight', './_baseIteratee'], function(baseForOwnRight, baseIteratee) {
+define(['./_baseForOwnRight', './_castFunction'], function(baseForOwnRight, castFunction) {
 
   /**
    * This method is like `_.forOwn` except that it iterates over properties of
@@ -27,7 +27,7 @@ define(['./_baseForOwnRight', './_baseIteratee'], function(baseForOwnRight, base
    * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
    */
   function forOwnRight(object, iteratee) {
-    return object && baseForOwnRight(object, baseIteratee(iteratee, 3));
+    return object && baseForOwnRight(object, castFunction(iteratee));
   }
 
   return forOwnRight;

@@ -1,6 +1,6 @@
 {
   "name": "lodash-amd",
-  "version": "4.16.4",
+  "version": "4.16.5",
   "description": "Lodash exported as AMD modules.",
   "keywords": "amd, modules, stdlib, util",
   "homepage": "https://lodash.com/custom-builds",

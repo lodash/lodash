@@ -1,4 +1,4 @@
-define(['./_getPrototype', './isObjectLike'], function(getPrototype, isObjectLike) {
+define(['./_baseGetTag', './_getPrototype', './isObjectLike'], function(baseGetTag, getPrototype, isObjectLike) {
 
   /** `Object#toString` result references. */
   var objectTag = '[object Object]';
@@ -15,13 +15,6 @@ define(['./_getPrototype', './isObjectLike'], function(getPrototype, isObjectLik
 
   /** Used to infer the `Object` constructor. */
   var objectCtorString = funcToString.call(Object);
-
-  /**
-   * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-   * of values.
-   */
-  var objectToString = objectProto.toString;
 
   /**
    * Checks if `value` is a plain object, that is, an object created by the
@@ -52,7 +45,7 @@ define(['./_getPrototype', './isObjectLike'], function(getPrototype, isObjectLik
    * // => true
    */
   function isPlainObject(value) {
-    if (!isObjectLike(value) || objectToString.call(value) != objectTag) {
+    if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
       return false;
     }
     var proto = getPrototype(value);
@@ -60,8 +53,8 @@ define(['./_getPrototype', './isObjectLike'], function(getPrototype, isObjectLik
       return true;
     }
     var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-    return (typeof Ctor == 'function' &&
-      Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+    return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+      funcToString.call(Ctor) == objectCtorString;
   }
 
   return isPlainObject;

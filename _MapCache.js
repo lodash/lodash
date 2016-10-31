@@ -9,7 +9,7 @@ define(['./_mapCacheClear', './_mapCacheDelete', './_mapCacheGet', './_mapCacheH
    */
   function MapCache(entries) {
     var index = -1,
-        length = entries ? entries.length : 0;
+        length = entries == null ? 0 : entries.length;
 
     this.clear();
     while (++index < length) {

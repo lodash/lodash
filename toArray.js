@@ -8,7 +8,7 @@ define(['./_Symbol', './_copyArray', './_getTag', './isArrayLike', './isString',
       setTag = '[object Set]';
 
   /** Built-in value references. */
-  var iteratorSymbol = Symbol ? Symbol.iterator : undefined;
+  var symIterator = Symbol ? Symbol.iterator : undefined;
 
   /**
    * Converts `value` to an array.
@@ -40,8 +40,8 @@ define(['./_Symbol', './_copyArray', './_getTag', './isArrayLike', './isString',
     if (isArrayLike(value)) {
       return isString(value) ? stringToArray(value) : copyArray(value);
     }
-    if (iteratorSymbol && value[iteratorSymbol]) {
-      return iteratorToArray(value[iteratorSymbol]());
+    if (symIterator && value[symIterator]) {
+      return iteratorToArray(value[symIterator]());
     }
     var tag = getTag(value),
         func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);

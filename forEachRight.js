@@ -1,4 +1,4 @@
-define(['./_arrayEachRight', './_baseEachRight', './_baseIteratee', './isArray'], function(arrayEachRight, baseEachRight, baseIteratee, isArray) {
+define(['./_arrayEachRight', './_baseEachRight', './_castFunction', './isArray'], function(arrayEachRight, baseEachRight, castFunction, isArray) {
 
   /**
    * This method is like `_.forEach` except that it iterates over elements of
@@ -22,7 +22,7 @@ define(['./_arrayEachRight', './_baseEachRight', './_baseIteratee', './isArray']
    */
   function forEachRight(collection, iteratee) {
     var func = isArray(collection) ? arrayEachRight : baseEachRight;
-    return func(collection, baseIteratee(iteratee, 3));
+    return func(collection, castFunction(iteratee));
   }
 
   return forEachRight;

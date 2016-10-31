@@ -1,24 +1,30 @@
-define([], function() {
+define(['./_Symbol', './_getRawTag', './_objectToString'], function(Symbol, getRawTag, objectToString) {
 
-  /** Used for built-in method references. */
-  var objectProto = Object.prototype;
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
+  /** `Object#toString` result references. */
+  var nullTag = '[object Null]',
+      undefinedTag = '[object Undefined]';
+
+  /** Built-in value references. */
+  var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 
   /**
-   * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-   * of values.
-   */
-  var objectToString = objectProto.toString;
-
-  /**
-   * The base implementation of `getTag`.
+   * The base implementation of `getTag` without fallbacks for buggy environments.
    *
    * @private
    * @param {*} value The value to query.
    * @returns {string} Returns the `toStringTag`.
    */
   function baseGetTag(value) {
-    return objectToString.call(value);
+    if (value == null) {
+      return value === undefined ? undefinedTag : nullTag;
+    }
+    value = Object(value);
+    return (symToStringTag && symToStringTag in value)
+      ? getRawTag(value)
+      : objectToString(value);
   }
 
   return baseGetTag;

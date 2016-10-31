@@ -19,9 +19,7 @@ define(['./_baseUniq'], function(baseUniq) {
    * // => [2, 1]
    */
   function uniq(array) {
-    return (array && array.length)
-      ? baseUniq(array)
-      : [];
+    return (array && array.length) ? baseUniq(array) : [];
   }
 
   return uniq;

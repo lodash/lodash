@@ -16,8 +16,7 @@ define(['./_baseFindIndex', './_baseIteratee', './toInteger'], function(baseFind
    * @since 2.0.0
    * @category Array
    * @param {Array} array The array to inspect.
-   * @param {Function} [predicate=_.identity]
-   *  The function invoked per iteration.
+   * @param {Function} [predicate=_.identity] The function invoked per iteration.
    * @param {number} [fromIndex=array.length-1] The index to search from.
    * @returns {number} Returns the index of the found element, else `-1`.
    * @example
@@ -44,7 +43,7 @@ define(['./_baseFindIndex', './_baseIteratee', './toInteger'], function(baseFind
    * // => 0
    */
   function findLastIndex(array, predicate, fromIndex) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (!length) {
       return -1;
     }

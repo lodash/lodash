@@ -1,4 +1,4 @@
-define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) {
+define(['./_baseForOwn', './_castFunction'], function(baseForOwn, castFunction) {
 
   /**
    * Iterates over own enumerable string keyed properties of an object and
@@ -29,7 +29,7 @@ define(['./_baseForOwn', './_baseIteratee'], function(baseForOwn, baseIteratee) 
    * // => Logs 'a' then 'b' (iteration order is not guaranteed).
    */
   function forOwn(object, iteratee) {
-    return object && baseForOwn(object, baseIteratee(iteratee, 3));
+    return object && baseForOwn(object, castFunction(iteratee));
   }
 
   return forOwn;

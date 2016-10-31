@@ -1,4 +1,4 @@
-define(['./_baseForRight', './_baseIteratee', './keysIn'], function(baseForRight, baseIteratee, keysIn) {
+define(['./_baseForRight', './_castFunction', './keysIn'], function(baseForRight, castFunction, keysIn) {
 
   /**
    * This method is like `_.forIn` except that it iterates over properties of
@@ -29,7 +29,7 @@ define(['./_baseForRight', './_baseIteratee', './keysIn'], function(baseForRight
   function forInRight(object, iteratee) {
     return object == null
       ? object
-      : baseForRight(object, baseIteratee(iteratee, 3), keysIn);
+      : baseForRight(object, castFunction(iteratee), keysIn);
   }
 
   return forInRight;

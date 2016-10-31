@@ -1,4 +1,4 @@
-define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function(arrayEach, baseEach, baseIteratee, isArray) {
+define(['./_arrayEach', './_baseEach', './_castFunction', './isArray'], function(arrayEach, baseEach, castFunction, isArray) {
 
   /**
    * Iterates over elements of `collection` and invokes `iteratee` for each element.
@@ -32,7 +32,7 @@ define(['./_arrayEach', './_baseEach', './_baseIteratee', './isArray'], function
    */
   function forEach(collection, iteratee) {
     var func = isArray(collection) ? arrayEach : baseEach;
-    return func(collection, baseIteratee(iteratee, 3));
+    return func(collection, castFunction(iteratee));
   }
 
   return forEach;

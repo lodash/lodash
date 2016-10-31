@@ -17,7 +17,7 @@ define(['./_baseSortedIndex', './eq'], function(baseSortedIndex, eq) {
    * // => 1
    */
   function sortedIndexOf(array, value) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (length) {
       var index = baseSortedIndex(array, value);
       if (index < length && eq(array[index], value)) {

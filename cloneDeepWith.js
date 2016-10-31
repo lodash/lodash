@@ -1,5 +1,8 @@
 define(['./_baseClone'], function(baseClone) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * This method is like `_.cloneWith` except that it recursively clones `value`.
    *
@@ -29,6 +32,7 @@ define(['./_baseClone'], function(baseClone) {
    * // => 20
    */
   function cloneDeepWith(value, customizer) {
+    customizer = typeof customizer == 'function' ? customizer : undefined;
     return baseClone(value, true, true, customizer);
   }
 

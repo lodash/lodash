@@ -17,7 +17,7 @@ define([], function() {
    */
   function compact(array) {
     var index = -1,
-        length = array ? array.length : 0,
+        length = array == null ? 0 : array.length,
         resIndex = 0,
         result = [];
 

@@ -20,7 +20,7 @@ define(['./_baseSlice', './_isIterateeCall', './toInteger'], function(baseSlice,
    * @returns {Array} Returns the slice of `array`.
    */
   function slice(array, start, end) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (!length) {
       return [];
     }

@@ -33,7 +33,7 @@ define(['./_apply', './_arrayMap', './_baseIteratee', './_baseRest'], function(a
    * // => 'no match'
    */
   function cond(pairs) {
-    var length = pairs ? pairs.length : 0,
+    var length = pairs == null ? 0 : pairs.length,
         toIteratee = baseIteratee;
 
     pairs = !length ? [] : arrayMap(pairs, function(pair) {

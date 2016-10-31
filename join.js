@@ -22,7 +22,7 @@ define([], function() {
    * // => 'a~b~c'
    */
   function join(array, separator) {
-    return array ? nativeJoin.call(array, separator) : '';
+    return array == null ? '' : nativeJoin.call(array, separator);
   }
 
   return join;

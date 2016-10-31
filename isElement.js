@@ -18,7 +18,7 @@ define(['./isObjectLike', './isPlainObject'], function(isObjectLike, isPlainObje
    * // => false
    */
   function isElement(value) {
-    return value != null && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
+    return isObjectLike(value) && value.nodeType === 1 && !isPlainObject(value);
   }
 
   return isElement;

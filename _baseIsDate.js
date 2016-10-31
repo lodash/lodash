@@ -1,17 +1,7 @@
-define(['./isObjectLike'], function(isObjectLike) {
+define(['./_baseGetTag', './isObjectLike'], function(baseGetTag, isObjectLike) {
 
   /** `Object#toString` result references. */
   var dateTag = '[object Date]';
-
-  /** Used for built-in method references. */
-  var objectProto = Object.prototype;
-
-  /**
-   * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-   * of values.
-   */
-  var objectToString = objectProto.toString;
 
   /**
    * The base implementation of `_.isDate` without Node.js optimizations.
@@ -21,7 +11,7 @@ define(['./isObjectLike'], function(isObjectLike) {
    * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
    */
   function baseIsDate(value) {
-    return isObjectLike(value) && objectToString.call(value) == dateTag;
+    return isObjectLike(value) && baseGetTag(value) == dateTag;
   }
 
   return baseIsDate;

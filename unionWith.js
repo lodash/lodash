@@ -26,9 +26,7 @@ define(['./_baseFlatten', './_baseRest', './_baseUniq', './isArrayLikeObject', '
    */
   var unionWith = baseRest(function(arrays) {
     var comparator = last(arrays);
-    if (isArrayLikeObject(comparator)) {
-      comparator = undefined;
-    }
+    comparator = typeof comparator == 'function' ? comparator : undefined;
     return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);
   });
 

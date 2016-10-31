@@ -12,8 +12,7 @@ define(['./_baseIteratee', './_baseUniq'], function(baseIteratee, baseUniq) {
    * @since 4.0.0
    * @category Array
    * @param {Array} array The array to inspect.
-   * @param {Function} [iteratee=_.identity]
-   *  The iteratee invoked per element.
+   * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
    * @returns {Array} Returns the new duplicate free array.
    * @example
    *
@@ -25,9 +24,7 @@ define(['./_baseIteratee', './_baseUniq'], function(baseIteratee, baseUniq) {
    * // => [{ 'x': 1 }, { 'x': 2 }]
    */
   function uniqBy(array, iteratee) {
-    return (array && array.length)
-      ? baseUniq(array, baseIteratee(iteratee, 2))
-      : [];
+    return (array && array.length) ? baseUniq(array, baseIteratee(iteratee, 2)) : [];
   }
 
   return uniqBy;

@@ -18,7 +18,7 @@ define(['./_baseSortedIndexBy', './identity', './isSymbol'], function(baseSorted
    */
   function baseSortedIndex(array, value, retHighest) {
     var low = 0,
-        high = array ? array.length : low;
+        high = array == null ? low : array.length;
 
     if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
       while (low < high) {

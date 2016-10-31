@@ -1,19 +1,10 @@
-define(['./isObject'], function(isObject) {
+define(['./_baseGetTag', './isObject'], function(baseGetTag, isObject) {
 
   /** `Object#toString` result references. */
-  var funcTag = '[object Function]',
+  var asyncTag = '[object AsyncFunction]',
+      funcTag = '[object Function]',
       genTag = '[object GeneratorFunction]',
       proxyTag = '[object Proxy]';
-
-  /** Used for built-in method references. */
-  var objectProto = Object.prototype;
-
-  /**
-   * Used to resolve the
-   * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-   * of values.
-   */
-  var objectToString = objectProto.toString;
 
   /**
    * Checks if `value` is classified as a `Function` object.
@@ -33,10 +24,13 @@ define(['./isObject'], function(isObject) {
    * // => false
    */
   function isFunction(value) {
+    if (!isObject(value)) {
+      return false;
+    }
     // The use of `Object#toString` avoids issues with the `typeof` operator
-    // in Safari 9 which returns 'object' for typed array and other constructors.
-    var tag = isObject(value) ? objectToString.call(value) : '';
-    return tag == funcTag || tag == genTag || tag == proxyTag;
+    // in Safari 9 which returns 'object' for typed arrays and other constructors.
+    var tag = baseGetTag(value);
+    return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
   }
 
   return isFunction;

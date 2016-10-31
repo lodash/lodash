@@ -10,7 +10,7 @@ define([], function() {
    * Converts `func` to its source code.
    *
    * @private
-   * @param {Function} func The function to process.
+   * @param {Function} func The function to convert.
    * @returns {string} Returns the source code.
    */
   function toSource(func) {

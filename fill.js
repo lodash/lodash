@@ -30,7 +30,7 @@ define(['./_baseFill', './_isIterateeCall'], function(baseFill, isIterateeCall) 
    * // => [4, '*', '*', 10]
    */
   function fill(array, value, start, end) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (!length) {
       return [];
     }

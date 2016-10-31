@@ -29,7 +29,7 @@ define(['./_baseFindIndex', './_baseIsNaN', './_strictLastIndexOf', './toInteger
    * // => 1
    */
   function lastIndexOf(array, value, fromIndex) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (!length) {
       return -1;
     }

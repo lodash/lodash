@@ -28,7 +28,7 @@ define(['./isSymbol'], function(isSymbol) {
     value = iteratee(value);
 
     var low = 0,
-        high = array ? array.length : 0,
+        high = array == null ? 0 : array.length,
         valIsNaN = value !== value,
         valIsNull = value === null,
         valIsSymbol = isSymbol(value),

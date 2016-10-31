@@ -27,7 +27,7 @@ define(['./_baseIndexOf', './toInteger'], function(baseIndexOf, toInteger) {
    * // => 3
    */
   function indexOf(array, value, fromIndex) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     if (!length) {
       return -1;
     }

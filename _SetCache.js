@@ -10,7 +10,7 @@ define(['./_MapCache', './_setCacheAdd', './_setCacheHas'], function(MapCache, s
    */
   function SetCache(values) {
     var index = -1,
-        length = values ? values.length : 0;
+        length = values == null ? 0 : values.length;
 
     this.__data__ = new MapCache;
     while (++index < length) {

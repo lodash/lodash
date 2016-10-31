@@ -1,5 +1,8 @@
 define(['./_baseClone'], function(baseClone) {
 
+  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  var undefined;
+
   /**
    * This method is like `_.clone` except that it accepts `customizer` which
    * is invoked to produce the cloned value. If `customizer` returns `undefined`,
@@ -32,6 +35,7 @@ define(['./_baseClone'], function(baseClone) {
    * // => 0
    */
   function cloneWith(value, customizer) {
+    customizer = typeof customizer == 'function' ? customizer : undefined;
     return baseClone(value, false, true, customizer);
   }
 

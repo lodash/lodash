@@ -25,7 +25,7 @@ define(['./_arrayMap', './_baseAt', './_basePullAt', './_compareAscending', './_
    * // => ['b', 'd']
    */
   var pullAt = flatRest(function(array, indexes) {
-    var length = array ? array.length : 0,
+    var length = array == null ? 0 : array.length,
         result = baseAt(array, indexes);
 
     basePullAt(array, arrayMap(indexes, function(index) {

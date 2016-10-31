@@ -10,8 +10,7 @@ define(['./_baseIteratee', './_baseWhile'], function(baseIteratee, baseWhile) {
    * @since 3.0.0
    * @category Array
    * @param {Array} array The array to query.
-   * @param {Function} [predicate=_.identity]
-   *  The function invoked per iteration.
+   * @param {Function} [predicate=_.identity] The function invoked per iteration.
    * @returns {Array} Returns the slice of `array`.
    * @example
    *

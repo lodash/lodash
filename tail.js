@@ -15,7 +15,7 @@ define(['./_baseSlice'], function(baseSlice) {
    * // => [2, 3]
    */
   function tail(array) {
-    var length = array ? array.length : 0;
+    var length = array == null ? 0 : array.length;
     return length ? baseSlice(array, 1, length) : [];
   }
 

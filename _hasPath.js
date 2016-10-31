@@ -26,7 +26,7 @@ define(['./_castPath', './isArguments', './isArray', './_isIndex', './_isKey', '
     if (result || ++index != length) {
       return result;
     }
-    length = object ? object.length : 0;
+    length = object == null ? 0 : object.length;
     return !!length && isLength(length) && isIndex(key, length) &&
       (isArray(object) || isArguments(object));
   }

@@ -1,4 +1,4 @@
-define(['./_baseFor', './_baseIteratee', './keysIn'], function(baseFor, baseIteratee, keysIn) {
+define(['./_baseFor', './_castFunction', './keysIn'], function(baseFor, castFunction, keysIn) {
 
   /**
    * Iterates over own and inherited enumerable string keyed properties of an
@@ -31,7 +31,7 @@ define(['./_baseFor', './_baseIteratee', './keysIn'], function(baseFor, baseIter
   function forIn(object, iteratee) {
     return object == null
       ? object
-      : baseFor(object, baseIteratee(iteratee, 3), keysIn);
+      : baseFor(object, castFunction(iteratee), keysIn);
   }
 
   return forIn;

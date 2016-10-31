@@ -4414,7 +4414,7 @@
 
         while (++othIndex < length) {
           var othArray = arrays[othIndex];
-          if (othArray !== array) {
+          if (othIndex != index) {
             result[index] = baseDifference(result[index] || array, othArray, iteratee, comparator);
           }
         }

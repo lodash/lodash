@@ -25279,6 +25279,15 @@
       assert.deepEqual(actual, []);
     });
 
+    QUnit.test('`_.' + methodName + '` should return an empty array when comparing the same array', function(assert) {
+      assert.expect(1);
+
+      var array = [1],
+          actual = func(array, array, array);
+
+      assert.deepEqual(actual, []);
+    });
+
     QUnit.test('`_.' + methodName + '` should return an array of unique values', function(assert) {
       assert.expect(2);
 

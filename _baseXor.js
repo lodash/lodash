@@ -23,9 +23,8 @@ define(['./_baseDifference', './_baseFlatten', './_baseUniq'], function(baseDiff
           othIndex = -1;
 
       while (++othIndex < length) {
-        var othArray = arrays[othIndex];
-        if (othArray !== array) {
-          result[index] = baseDifference(result[index] || array, othArray, iteratee, comparator);
+        if (othIndex != index) {
+          result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator);
         }
       }
     }

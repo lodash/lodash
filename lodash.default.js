@@ -45,7 +45,7 @@ import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.16.5';
+var VERSION = '4.16.6';
 
 /** Used to compose bitmasks for function metadata. */
 var BIND_KEY_FLAG = 2;

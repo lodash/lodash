@@ -10822,6 +10822,7 @@
         if (array) {
           arrayPush(otherArgs, array);
         }
+        arrayPush(otherArgs, castSlice(args, start + 1));
         return apply(func, this, otherArgs);
       });
     }

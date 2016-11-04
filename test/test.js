@@ -20866,8 +20866,8 @@
         args = slice.call(arguments);
       });
 
-      spread([4, 2], 'ignored');
-      assert.deepEqual(args, [4, 2]);
+      spread([1, 2], 3);
+      assert.deepEqual(args, [1, 2, 3]);
     });
 
     QUnit.test('should work with `start`', function(assert) {

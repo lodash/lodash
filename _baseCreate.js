@@ -22,7 +22,6 @@ var baseCreate = (function() {
     }
     object.prototype = proto;
     var result = new object;
-    object.prototype = undefined;
     return result;
   };
 }());

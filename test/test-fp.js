@@ -801,6 +801,17 @@
       assert.deepEqual(objects[0], { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
     });
+
+    QUnit.test('`fp.' + methodName + '` should work with more than two sources', function(assert) {
+      assert.expect(2);
+
+      var pass = false,
+          objects = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
+          actual = func(function() { pass = true; })(objects);
+
+      assert.ok(pass);
+      assert.deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -1517,6 +1528,17 @@
 
       assert.deepEqual(objects[0], { 'a': [1, 2] });
       assert.deepEqual(actual, { 'a': [3, 2] });
+    });
+
+    QUnit.test('should work with more than two sources', function(assert) {
+      assert.expect(2);
+
+      var pass = false,
+          objects = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
+          actual = fp.mergeAllWith(function() { pass = true; }, objects);
+
+      assert.ok(pass);
+      assert.deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   }());
 

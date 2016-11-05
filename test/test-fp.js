@@ -717,7 +717,7 @@
 
   /*--------------------------------------------------------------------------*/
 
-  QUnit.module('assign methods');
+  QUnit.module('object assignments');
 
   _.each(['assign', 'assignIn', 'defaults', 'defaultsDeep', 'merge'], function(methodName) {
     var func = fp[methodName];
@@ -747,10 +747,6 @@
     });
   });
 
-  /*--------------------------------------------------------------------------*/
-
-  QUnit.module('assignWith methods');
-
   _.each(['assignWith', 'assignInWith', 'extendWith'], function(methodName) {
     var func = fp[methodName];
 
@@ -765,38 +761,16 @@
 
       assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }]);
     });
-
-    QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
-      assert.expect(2);
-
-      var objects = [{ 'a': 1 }, { 'b': 2 }],
-          actual = func(_.nthArg(1))(objects[0])(objects[1]);
-
-      assert.deepEqual(objects[0], { 'a': 1 });
-      assert.deepEqual(actual, { 'a': 1, 'b': 2 });
-    });
   });
 
-  _.each(['assignAllWith', 'assignInAllWith', 'extendAllWith'], function(methodName) {
+  _.each(['assignAllWith', 'assignInAllWith', 'extendAllWith', 'mergeAllWith'], function(methodName) {
     var func = fp[methodName];
-
-    QUnit.test('`fp.' + methodName + '` should provide the correct `customizer` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      func(function() {
-        args || (args = _.map(arguments, _.cloneDeep));
-      })([{ 'a': 1 }, { 'b': 2 }]);
-
-      assert.deepEqual(args, [undefined, 2, 'b', { 'a': 1 }, { 'b': 2 }]);
-    });
 
     QUnit.test('`fp.' + methodName + '` should not mutate values', function(assert) {
       assert.expect(2);
 
       var objects = [{ 'a': 1 }, { 'b': 2 }],
-          actual = func(_.nthArg(1))(objects);
+          actual = func(_.noop)(objects);
 
       assert.deepEqual(objects[0], { 'a': 1 });
       assert.deepEqual(actual, { 'a': 1, 'b': 2 });
@@ -1507,38 +1481,18 @@
       assert.expect(1);
 
       var args,
+          objects = [{ 'a': [1, 2] }, { 'a': [3] }],
           stack = { '__data__': { '__data__': [], 'size': 0 }, 'size': 0 },
           expected = [[1, 2], [3], 'a', { 'a': [1, 2] }, { 'a': [3] }, stack];
 
       fp.mergeAllWith(function() {
         args || (args = _.map(arguments, _.cloneDeep));
-      })([{ 'a': [1, 2] }, { 'a': [3] }]);
+      })(objects);
 
       args[5] = _.omitBy(args[5], _.isFunction);
       args[5].__data__ = _.omitBy(args[5].__data__, _.isFunction);
 
       assert.deepEqual(args, expected);
-    });
-
-    QUnit.test('should not mutate values', function(assert) {
-      assert.expect(2);
-
-      var objects = [{ 'a': [1, 2] }, { 'a': [3] }],
-          actual = fp.mergeAllWith(_.noop, objects);
-
-      assert.deepEqual(objects[0], { 'a': [1, 2] });
-      assert.deepEqual(actual, { 'a': [3, 2] });
-    });
-
-    QUnit.test('should work with more than two sources', function(assert) {
-      assert.expect(2);
-
-      var pass = false,
-          objects = [{ 'a': 1 }, { 'b': 2 }, { 'c': 3 }],
-          actual = fp.mergeAllWith(function() { pass = true; }, objects);
-
-      assert.ok(pass);
-      assert.deepEqual(actual, { 'a': 1, 'b': 2, 'c': 3 });
     });
   }());
 

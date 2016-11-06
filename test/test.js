@@ -20836,10 +20836,12 @@
     }
 
     QUnit.test('should spread arguments to `func`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var spread = _.spread(fn);
-      assert.deepEqual(spread([4, 2]), [4, 2]);
+
+      assert.deepEqual(spread([1, 2]), [1, 2]);
+      assert.deepEqual(spread([1, 2], 3), [1, 2, 3]);
     });
 
     QUnit.test('should accept a falsey `array`', function(assert) {
@@ -20857,45 +20859,36 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should provide correct `func` arguments', function(assert) {
-      assert.expect(1);
-
-      var args;
-
-      var spread = _.spread(function() {
-        args = slice.call(arguments);
-      });
-
-      spread([1, 2], 3);
-      assert.deepEqual(args, [1, 2, 3]);
-    });
-
     QUnit.test('should work with `start`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var spread = _.spread(fn, 1);
-      assert.deepEqual(spread(1, [2, 3, 4]), [1, 2, 3, 4]);
+
+      assert.deepEqual(spread(1, [2, 3]), [1, 2, 3]);
+      assert.deepEqual(spread(1, [2, 3], 4), [1, 2, 3, 4]);
     });
 
     QUnit.test('should treat `start` as `0` for negative or `NaN` values', function(assert) {
       assert.expect(1);
 
       var values = [-1, NaN, 'a'],
-          expected = lodashStable.map(values, lodashStable.constant([1, 2, 3, 4]));
+          expected = lodashStable.map(values, lodashStable.constant([1, 2]));
 
       var actual = lodashStable.map(values, function(value) {
         var spread = _.spread(fn, value);
-        return spread([1, 2, 3, 4]);
+        return spread([1, 2]);
       });
 
       assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should coerce `start` to an integer', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var spread = _.spread(fn, 1.6);
+
       assert.deepEqual(spread(1, [2, 3]), [1, 2, 3]);
+      assert.deepEqual(spread(1, [2, 3], 4), [1, 2, 3, 4]);
     });
   }());
 

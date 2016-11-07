@@ -3090,7 +3090,7 @@
           if (value) {
             var object = { 'a': value, 'b': { 'c': value } },
                 actual = func(object),
-                expected = (typeof value == 'function' && !!value.c) ? { 'c': Foo.c } : {};
+                expected = value === Foo ? { 'c': Foo.c } : {};
 
             assert.deepEqual(actual, object);
             assert.notStrictEqual(actual, object);

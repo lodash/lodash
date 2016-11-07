@@ -3777,10 +3777,10 @@
 
       while (++index < length) {
         var key = props[index],
-            value = get(object, key);
+            value = baseGet(object, key);
 
         if (predicate(value, key)) {
-          set(result, key, value);
+          baseSet(result, key, value);
         }
       }
       return result;

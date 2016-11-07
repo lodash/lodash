@@ -16386,6 +16386,12 @@
 
       assert.deepEqual(_.omit({ '0': 'a' }, 0), {});
     });
+
+    QUnit.test('should work with deep properties', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.omit({ 'a': 1, 'b': { 'c': 2 } }, 'b.c'), { 'a': 1, 'b': {} });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -17607,6 +17613,12 @@
       assert.expect(1);
 
       assert.deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
+    });
+
+    QUnit.test('should work with deep properties', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.pick({ 'a': 1, 'b': { 'c': 2 } }, 'b.c'), { 'b': { 'c': 2 } });
     });
   }());
 

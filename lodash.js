@@ -3757,7 +3757,7 @@
     function basePick(object, props) {
       object = Object(object);
       return basePickBy(object, props, function(value, key) {
-        return key in object;
+        return hasIn(object, key);
       });
     }
 
@@ -3777,10 +3777,10 @@
 
       while (++index < length) {
         var key = props[index],
-            value = object[key];
+            value = get(object, key);
 
         if (predicate(value, key)) {
-          baseAssignValue(result, key, value);
+          set(result, key, value);
         }
       }
       return result;

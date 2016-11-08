@@ -13473,12 +13473,14 @@
      * // => { 'b': '2' }
      */
     var omit = flatRest(function(object, paths) {
+      var result = {};
       if (object == null) {
-        return {};
+        return result;
       }
-      var length = paths.length,
-          result = baseClone(copyObject(object, getAllKeysIn(object), {}), CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+      copyObject(object, getAllKeysIn(object), result);
+      result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
 
+      var length = paths.length;
       while (length--) {
         baseUnset(result, paths[length]);
       }

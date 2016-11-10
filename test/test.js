@@ -4703,6 +4703,13 @@
       var actual = _.defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
       assert.deepEqual(actual.a, ['abc']);
     });
+
+    QUnit.test('should not attempt a merge of array values', function(assert) {
+      assert.expect(1);
+
+      var actual = _.defaultsDeep({ 'a': ['abc'] }, { 'a': ['cba'] });
+      assert.deepEqual(actual.a, ['abc']);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

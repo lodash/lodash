@@ -45,7 +45,7 @@
     "lodash": "4.16.6",
     "lodash-doc-globals": "^0.1.1",
     "markdown-doctest": "^0.9.0",
-    "optional-dev-dependency": "^1.4.0",
+    "optional-dev-dependency": "^2.0.0",
     "platform": "^1.3.2",
     "qunit-extras": "^3.0.0",
     "qunitjs": "^2.0.1",

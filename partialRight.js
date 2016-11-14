@@ -4,7 +4,7 @@ define(['./_baseRest', './_createWrap', './_getHolder', './_replaceHolders'], fu
   var undefined;
 
   /** Used to compose bitmasks for function metadata. */
-  var PARTIAL_RIGHT_FLAG = 64;
+  var WRAP_PARTIAL_RIGHT_FLAG = 64;
 
   /**
    * This method is like `_.partial` except that partially applied arguments
@@ -40,7 +40,7 @@ define(['./_baseRest', './_createWrap', './_getHolder', './_replaceHolders'], fu
    */
   var partialRight = baseRest(function(func, partials) {
     var holders = replaceHolders(partials, getHolder(partialRight));
-    return createWrap(func, PARTIAL_RIGHT_FLAG, undefined, partials, holders);
+    return createWrap(func, WRAP_PARTIAL_RIGHT_FLAG, undefined, partials, holders);
   });
 
   // Assign default placeholders.

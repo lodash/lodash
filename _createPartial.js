@@ -1,7 +1,7 @@
 define(['./_apply', './_createCtor', './_root'], function(apply, createCtor, root) {
 
   /** Used to compose bitmasks for function metadata. */
-  var BIND_FLAG = 1;
+  var WRAP_BIND_FLAG = 1;
 
   /**
    * Creates a function that wraps `func` to invoke it with the `this` binding
@@ -16,7 +16,7 @@ define(['./_apply', './_createCtor', './_root'], function(apply, createCtor, roo
    * @returns {Function} Returns the new wrapped function.
    */
   function createPartial(func, bitmask, thisArg, partials) {
-    var isBind = bitmask & BIND_FLAG,
+    var isBind = bitmask & WRAP_BIND_FLAG,
         Ctor = createCtor(func);
 
     function wrapper() {

@@ -1,7 +1,7 @@
 define(['./_createWrap'], function(createWrap) {
 
   /** Used to compose bitmasks for function metadata. */
-  var FLIP_FLAG = 512;
+  var WRAP_FLIP_FLAG = 512;
 
   /**
    * Creates a function that invokes `func` with arguments reversed.
@@ -22,7 +22,7 @@ define(['./_createWrap'], function(createWrap) {
    * // => ['d', 'c', 'b', 'a']
    */
   function flip(func) {
-    return createWrap(func, FLIP_FLAG);
+    return createWrap(func, WRAP_FLIP_FLAG);
   }
 
   return flip;

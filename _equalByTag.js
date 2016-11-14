@@ -3,9 +3,9 @@ define(['./_Symbol', './_Uint8Array', './eq', './_equalArrays', './_mapToArray',
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to compose bitmasks for comparison styles. */
-  var UNORDERED_COMPARE_FLAG = 1,
-      PARTIAL_COMPARE_FLAG = 2;
+  /** Used to compose bitmasks for value comparisons. */
+  var COMPARE_PARTIAL_FLAG = 1,
+      COMPARE_UNORDERED_FLAG = 2;
 
   /** `Object#toString` result references. */
   var boolTag = '[object Boolean]',
@@ -36,14 +36,13 @@ define(['./_Symbol', './_Uint8Array', './eq', './_equalArrays', './_mapToArray',
    * @param {Object} object The object to compare.
    * @param {Object} other The other object to compare.
    * @param {string} tag The `toStringTag` of the objects to compare.
-   * @param {Function} equalFunc The function to determine equivalents of values.
+   * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
    * @param {Function} customizer The function to customize comparisons.
-   * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-   *  for more details.
+   * @param {Function} equalFunc The function to determine equivalents of values.
    * @param {Object} stack Tracks traversed `object` and `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
-  function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
+  function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
     switch (tag) {
       case dataViewTag:
         if ((object.byteLength != other.byteLength) ||
@@ -81,7 +80,7 @@ define(['./_Symbol', './_Uint8Array', './eq', './_equalArrays', './_mapToArray',
         var convert = mapToArray;
 
       case setTag:
-        var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
+        var isPartial = bitmask & COMPARE_PARTIAL_FLAG;
         convert || (convert = setToArray);
 
         if (object.size != other.size && !isPartial) {
@@ -92,11 +91,11 @@ define(['./_Symbol', './_Uint8Array', './eq', './_equalArrays', './_mapToArray',
         if (stacked) {
           return stacked == other;
         }
-        bitmask |= UNORDERED_COMPARE_FLAG;
+        bitmask |= COMPARE_UNORDERED_FLAG;
 
         // Recursively compare objects (susceptible to call stack limits).
         stack.set(object, other);
-        var result = equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
+        var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
         stack['delete'](object);
         return result;
 

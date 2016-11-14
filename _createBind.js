@@ -1,7 +1,7 @@
 define(['./_createCtor', './_root'], function(createCtor, root) {
 
   /** Used to compose bitmasks for function metadata. */
-  var BIND_FLAG = 1;
+  var WRAP_BIND_FLAG = 1;
 
   /**
    * Creates a function that wraps `func` to invoke it with the optional `this`
@@ -14,7 +14,7 @@ define(['./_createCtor', './_root'], function(createCtor, root) {
    * @returns {Function} Returns the new wrapped function.
    */
   function createBind(func, bitmask, thisArg) {
-    var isBind = bitmask & BIND_FLAG,
+    var isBind = bitmask & WRAP_BIND_FLAG,
         Ctor = createCtor(func);
 
     function wrapper() {

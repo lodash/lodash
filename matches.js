@@ -1,5 +1,8 @@
 define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
 
+  /** Used to compose bitmasks for cloning. */
+  var CLONE_DEEP_FLAG = 1;
+
   /**
    * Creates a function that performs a partial deep comparison between a given
    * object and `source`, returning `true` if the given object has equivalent
@@ -29,7 +32,7 @@ define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
    * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
    */
   function matches(source) {
-    return baseMatches(baseClone(source, true));
+    return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
   }
 
   return matches;

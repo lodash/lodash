@@ -1,5 +1,8 @@
 define(['./_addMapEntry', './_arrayReduce', './_mapToArray'], function(addMapEntry, arrayReduce, mapToArray) {
 
+  /** Used to compose bitmasks for cloning. */
+  var CLONE_DEEP_FLAG = 1;
+
   /**
    * Creates a clone of `map`.
    *
@@ -10,7 +13,7 @@ define(['./_addMapEntry', './_arrayReduce', './_mapToArray'], function(addMapEnt
    * @returns {Object} Returns the cloned map.
    */
   function cloneMap(map, isDeep, cloneFunc) {
-    var array = isDeep ? cloneFunc(mapToArray(map), true) : mapToArray(map);
+    var array = isDeep ? cloneFunc(mapToArray(map), CLONE_DEEP_FLAG) : mapToArray(map);
     return arrayReduce(array, addMapEntry, new map.constructor);
   }
 

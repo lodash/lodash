@@ -4,7 +4,7 @@ define(['./_createWrap'], function(createWrap) {
   var undefined;
 
   /** Used to compose bitmasks for function metadata. */
-  var CURRY_RIGHT_FLAG = 16;
+  var WRAP_CURRY_RIGHT_FLAG = 16;
 
   /**
    * This method is like `_.curry` except that arguments are applied to `func`
@@ -46,7 +46,7 @@ define(['./_createWrap'], function(createWrap) {
    */
   function curryRight(func, arity, guard) {
     arity = guard ? undefined : arity;
-    var result = createWrap(func, CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+    var result = createWrap(func, WRAP_CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
     result.placeholder = curryRight.placeholder;
     return result;
   }

@@ -3,6 +3,9 @@ define(['./_baseClone'], function(baseClone) {
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
+  /** Used to compose bitmasks for cloning. */
+  var CLONE_SYMBOLS_FLAG = 4;
+
   /**
    * This method is like `_.clone` except that it accepts `customizer` which
    * is invoked to produce the cloned value. If `customizer` returns `undefined`,
@@ -36,7 +39,7 @@ define(['./_baseClone'], function(baseClone) {
    */
   function cloneWith(value, customizer) {
     customizer = typeof customizer == 'function' ? customizer : undefined;
-    return baseClone(value, false, true, customizer);
+    return baseClone(value, CLONE_SYMBOLS_FLAG, customizer);
   }
 
   return cloneWith;

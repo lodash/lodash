@@ -3,6 +3,10 @@ define(['./_baseClone'], function(baseClone) {
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
+  /** Used to compose bitmasks for cloning. */
+  var CLONE_DEEP_FLAG = 1,
+      CLONE_SYMBOLS_FLAG = 4;
+
   /**
    * This method is like `_.cloneWith` except that it recursively clones `value`.
    *
@@ -33,7 +37,7 @@ define(['./_baseClone'], function(baseClone) {
    */
   function cloneDeepWith(value, customizer) {
     customizer = typeof customizer == 'function' ? customizer : undefined;
-    return baseClone(value, true, true, customizer);
+    return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG, customizer);
   }
 
   return cloneDeepWith;

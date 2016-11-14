@@ -4,7 +4,7 @@ define(['./_createWrap'], function(createWrap) {
   var undefined;
 
   /** Used to compose bitmasks for function metadata. */
-  var ARY_FLAG = 128;
+  var WRAP_ARY_FLAG = 128;
 
   /**
    * Creates a function that invokes `func`, with up to `n` arguments,
@@ -26,7 +26,7 @@ define(['./_createWrap'], function(createWrap) {
   function ary(func, n, guard) {
     n = guard ? undefined : n;
     n = (func && n == null) ? func.length : n;
-    return createWrap(func, ARY_FLAG, undefined, undefined, undefined, undefined, n);
+    return createWrap(func, WRAP_ARY_FLAG, undefined, undefined, undefined, undefined, n);
   }
 
   return ary;

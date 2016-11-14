@@ -1,7 +1,7 @@
 define(['./_copyObject', './_getSymbols'], function(copyObject, getSymbols) {
 
   /**
-   * Copies own symbol properties of `source` to `object`.
+   * Copies own symbols of `source` to `object`.
    *
    * @private
    * @param {Object} source The object to copy symbols from.

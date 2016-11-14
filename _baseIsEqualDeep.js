@@ -1,7 +1,7 @@
 define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_getTag', './isArray', './isBuffer', './isTypedArray'], function(Stack, equalArrays, equalByTag, equalObjects, getTag, isArray, isBuffer, isTypedArray) {
 
-  /** Used to compose bitmasks for comparison styles. */
-  var PARTIAL_COMPARE_FLAG = 2;
+  /** Used to compose bitmasks for value comparisons. */
+  var COMPARE_PARTIAL_FLAG = 1;
 
   /** `Object#toString` result references. */
   var argsTag = '[object Arguments]',
@@ -22,14 +22,13 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
    * @private
    * @param {Object} object The object to compare.
    * @param {Object} other The other object to compare.
+   * @param {number} bitmask The bitmask flags. See `baseIsEqual` for more details.
+   * @param {Function} customizer The function to customize comparisons.
    * @param {Function} equalFunc The function to determine equivalents of values.
-   * @param {Function} [customizer] The function to customize comparisons.
-   * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
-   *  for more details.
    * @param {Object} [stack] Tracks traversed `object` and `other` objects.
    * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
    */
-  function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
+  function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
     var objIsArr = isArray(object),
         othIsArr = isArray(other),
         objTag = arrayTag,
@@ -57,10 +56,10 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
     if (isSameTag && !objIsObj) {
       stack || (stack = new Stack);
       return (objIsArr || isTypedArray(object))
-        ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
-        : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
+        ? equalArrays(object, other, bitmask, customizer, equalFunc, stack)
+        : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
     }
-    if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
+    if (!(bitmask & COMPARE_PARTIAL_FLAG)) {
       var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
           othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
 
@@ -69,14 +68,14 @@ define(['./_Stack', './_equalArrays', './_equalByTag', './_equalObjects', './_ge
             othUnwrapped = othIsWrapped ? other.value() : other;
 
         stack || (stack = new Stack);
-        return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
+        return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
       }
     }
     if (!isSameTag) {
       return false;
     }
     stack || (stack = new Stack);
-    return equalObjects(object, other, equalFunc, customizer, bitmask, stack);
+    return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
   }
 
   return baseIsEqualDeep;

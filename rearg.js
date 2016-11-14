@@ -4,7 +4,7 @@ define(['./_createWrap', './_flatRest'], function(createWrap, flatRest) {
   var undefined;
 
   /** Used to compose bitmasks for function metadata. */
-  var REARG_FLAG = 256;
+  var WRAP_REARG_FLAG = 256;
 
   /**
    * Creates a function that invokes `func` with arguments arranged according
@@ -29,7 +29,7 @@ define(['./_createWrap', './_flatRest'], function(createWrap, flatRest) {
    * // => ['a', 'b', 'c']
    */
   var rearg = flatRest(function(func, indexes) {
-    return createWrap(func, REARG_FLAG, undefined, undefined, undefined, indexes);
+    return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes);
   });
 
   return rearg;

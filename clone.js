@@ -1,5 +1,8 @@
 define(['./_baseClone'], function(baseClone) {
 
+  /** Used to compose bitmasks for cloning. */
+  var CLONE_SYMBOLS_FLAG = 4;
+
   /**
    * Creates a shallow clone of `value`.
    *
@@ -27,7 +30,7 @@ define(['./_baseClone'], function(baseClone) {
    * // => true
    */
   function clone(value) {
-    return baseClone(value, false, true);
+    return baseClone(value, CLONE_SYMBOLS_FLAG);
   }
 
   return clone;

@@ -4,7 +4,7 @@ define(['./_createWrap'], function(createWrap) {
   var undefined;
 
   /** Used to compose bitmasks for function metadata. */
-  var CURRY_FLAG = 8;
+  var WRAP_CURRY_FLAG = 8;
 
   /**
    * Creates a function that accepts arguments of `func` and either invokes
@@ -49,7 +49,7 @@ define(['./_createWrap'], function(createWrap) {
    */
   function curry(func, arity, guard) {
     arity = guard ? undefined : arity;
-    var result = createWrap(func, CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+    var result = createWrap(func, WRAP_CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
     result.placeholder = curry.placeholder;
     return result;
   }

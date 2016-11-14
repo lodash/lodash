@@ -13529,7 +13529,7 @@
      * // => { 'a': 1, 'c': 3 }
      */
     var pick = flatRest(function(object, paths) {
-      return object == null ? {} : basePick(object, arrayMap(paths, toKey));
+      return object == null ? {} : basePick(object, paths);
     });
 
     /**

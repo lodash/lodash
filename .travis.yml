@@ -62,7 +62,7 @@ before_install:
   # Setup package managers.
   - npm set loglevel error
   - npm set progress false
-  - npm i -g yarn
+  - npm i -g yarn@0.16.1
   - yarn -V
 
   # Remove code skipped on the coverage run.

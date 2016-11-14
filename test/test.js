@@ -17640,6 +17640,15 @@
 
       assert.deepEqual(actual, { 'a': 1, 'c': 3 });
     });
+
+    QUnit.test('should not treat keys with dots as deep paths', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a.b.c': 1 },
+          actual = _.pickBy(object, stubTrue);
+
+      assert.deepEqual(actual, { 'a.b.c': 1 });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

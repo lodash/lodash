@@ -13475,17 +13475,14 @@
       if (object == null) {
         return result;
       }
-      var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG,
-          isDeep = false;
-
+      var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG;
       paths = arrayMap(paths, function(path) {
         path = toPath(path);
-        isDeep = isDeep || path.length > 1;
+        bitmask |= (path.length > 1 ? CLONE_DEEP_FLAG : 0);
         return path;
       });
 
       copyObject(object, getAllKeysIn(object), result);
-      bitmask |= isDeep ? CLONE_DEEP_FLAG : 0;
       result = baseClone(result, bitmask);
 
       var length = paths.length;

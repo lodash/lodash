@@ -4503,7 +4503,7 @@
      * @returns {Array} Returns the cast property path array.
      */
     function castPath(value) {
-      return isArray(value) ? value : stringToPath(value);
+      return isArray(value) ? value : stringToPath(toString(value));
     }
 
     /**
@@ -6745,8 +6745,6 @@
      * @returns {Array} Returns the property path array.
      */
     var stringToPath = memoizeCapped(function(string) {
-      string = toString(string);
-
       var result = [];
       if (reLeadingDot.test(string)) {
         result.push('');
@@ -13477,8 +13475,18 @@
       if (object == null) {
         return result;
       }
+      var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG,
+          isDeep = false;
+
+      paths = arrayMap(paths, function(path) {
+        path = toPath(path);
+        isDeep = isDeep || path.length > 1;
+        return path;
+      });
+
       copyObject(object, getAllKeysIn(object), result);
-      result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+      bitmask |= isDeep ? CLONE_DEEP_FLAG : 0;
+      result = baseClone(result, bitmask);
 
       var length = paths.length;
       while (length--) {
@@ -16111,7 +16119,7 @@
       if (isArray(value)) {
         return arrayMap(value, toKey);
       }
-      return isSymbol(value) ? [value] : copyArray(stringToPath(value));
+      return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)));
     }
 
     /**

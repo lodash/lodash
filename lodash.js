@@ -3056,7 +3056,7 @@
      * @returns {*} Returns the resolved value.
      */
     function baseGet(object, path) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = 0,
           length = path.length;
@@ -3242,12 +3242,9 @@
      * @returns {*} Returns the result of the invoked method.
      */
     function baseInvoke(object, path, args) {
-      if (!isKey(path, object)) {
-        path = castPath(path);
-        object = parent(object, path);
-        path = last(path);
-      }
-      var func = object == null ? object : object[toKey(path)];
+      path = castPath(path, object);
+      object = parent(object, path);
+      var func = object == null ? object : object[toKey(last(path))];
       return func == null ? undefined : apply(func, object, args);
     }
 
@@ -3885,16 +3882,13 @@
           if (isIndex(index)) {
             splice.call(array, index, 1);
           }
-          else if (!isKey(index, array)) {
-            var path = castPath(index),
+          else {
+            var path = castPath(index, array),
                 object = parent(array, path);
 
             if (object != null) {
               delete object[toKey(last(path))];
             }
-          }
-          else {
-            delete array[toKey(index)];
           }
         }
       }
@@ -4015,7 +4009,7 @@
       if (!isObject(object)) {
         return object;
       }
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length,
@@ -4356,9 +4350,8 @@
      * @returns {boolean} Returns `true` if the property is deleted, else `false`.
      */
     function baseUnset(object, path) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
       object = parent(object, path);
-
       var key = toKey(last(path));
       return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
     }
@@ -4500,10 +4493,14 @@
      *
      * @private
      * @param {*} value The value to inspect.
+     * @param {Object} [object] The object to query keys on.
      * @returns {Array} Returns the cast property path array.
      */
-    function castPath(value) {
-      return isArray(value) ? value : stringToPath(toString(value));
+    function castPath(value, object) {
+      if (isArray(value)) {
+        return value;
+      }
+      return isKey(value, object) ? [value] : stringToPath(toString(value));
     }
 
     /**
@@ -6128,7 +6125,7 @@
      * @returns {boolean} Returns `true` if `path` exists, else `false`.
      */
     function hasPath(object, path, hasFunc) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length,
@@ -6605,7 +6602,7 @@
      * @returns {*} Returns the parent value.
      */
     function parent(object, path) {
-      return path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      return path.length < 2 ? object : baseGet(object, baseSlice(path, 0, -1));
     }
 
     /**
@@ -13477,7 +13474,7 @@
       }
       var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG;
       paths = arrayMap(paths, function(path) {
-        path = toPath(path);
+        path = castPath(path, object);
         bitmask |= (path.length > 1 ? CLONE_DEEP_FLAG : 0);
         return path;
       });
@@ -13598,7 +13595,7 @@
      * // => 'default'
      */
     function result(object, path, defaultValue) {
-      path = isKey(path, object) ? [path] : castPath(path);
+      path = castPath(path, object);
 
       var index = -1,
           length = path.length;

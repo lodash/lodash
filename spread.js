@@ -51,10 +51,14 @@ function spread(func, start) {
   start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
   return baseRest(function(args) {
     var array = args[start],
+        lastIndex = args.length - 1,
         otherArgs = castSlice(args, 0, start);
 
     if (array) {
       arrayPush(otherArgs, array);
+    }
+    if (start != lastIndex) {
+      arrayPush(otherArgs, castSlice(args, start + 1));
     }
     return apply(func, this, otherArgs);
   });

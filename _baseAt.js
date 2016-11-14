@@ -5,7 +5,7 @@ var get = require('./get');
  *
  * @private
  * @param {Object} object The object to iterate over.
- * @param {string[]} paths The property paths of elements to pick.
+ * @param {string[]} paths The property paths to pick.
  * @returns {Array} Returns the picked elements.
  */
 function baseAt(object, paths) {

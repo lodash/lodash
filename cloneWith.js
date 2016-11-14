@@ -1,5 +1,8 @@
 var baseClone = require('./_baseClone');
 
+/** Used to compose bitmasks for cloning. */
+var CLONE_SYMBOLS_FLAG = 4;
+
 /**
  * This method is like `_.clone` except that it accepts `customizer` which
  * is invoked to produce the cloned value. If `customizer` returns `undefined`,
@@ -33,7 +36,7 @@ var baseClone = require('./_baseClone');
  */
 function cloneWith(value, customizer) {
   customizer = typeof customizer == 'function' ? customizer : undefined;
-  return baseClone(value, false, true, customizer);
+  return baseClone(value, CLONE_SYMBOLS_FLAG, customizer);
 }
 
 module.exports = cloneWith;

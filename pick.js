@@ -11,7 +11,7 @@ import toKey from './_toKey.js';
  * @memberOf _
  * @category Object
  * @param {Object} object The source object.
- * @param {...(string|string[])} [props] The property identifiers to pick.
+ * @param {...(string|string[])} [paths] The property paths to pick.
  * @returns {Object} Returns the new object.
  * @example
  *
@@ -20,8 +20,8 @@ import toKey from './_toKey.js';
  * _.pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }
  */
-var pick = flatRest(function(object, props) {
-  return object == null ? {} : basePick(object, arrayMap(props, toKey));
+var pick = flatRest(function(object, paths) {
+  return object == null ? {} : basePick(object, arrayMap(paths, toKey));
 });
 
 export default pick;

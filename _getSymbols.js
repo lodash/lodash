@@ -5,7 +5,7 @@ import stubArray from './stubArray.js';
 var nativeGetSymbols = Object.getOwnPropertySymbols;
 
 /**
- * Creates an array of the own enumerable symbol properties of `object`.
+ * Creates an array of the own enumerable symbols of `object`.
  *
  * @private
  * @param {Object} object The object to query.

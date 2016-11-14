@@ -1,6 +1,6 @@
 /**
  * @license
- * lodash (Custom Build) <https://lodash.com/>
+ * Lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
  * Copyright JS Foundation and other contributors <https://js.foundation/>
  * Released under MIT license <https://lodash.com/license>
@@ -45,10 +45,10 @@ import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.16.6';
+var VERSION = '4.17.0';
 
 /** Used to compose bitmasks for function metadata. */
-var BIND_KEY_FLAG = 2;
+var WRAP_BIND_KEY_FLAG = 2;
 
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 1,
@@ -614,7 +614,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   }
 });
 
-realNames[createHybrid(undefined, BIND_KEY_FLAG).name] = [{
+realNames[createHybrid(undefined, WRAP_BIND_KEY_FLAG).name] = [{
   'name': 'wrapper',
   'func': undefined
 }];

@@ -2,10 +2,13 @@ import Stack from './_Stack.js';
 import arrayEach from './_arrayEach.js';
 import assignValue from './_assignValue.js';
 import baseAssign from './_baseAssign.js';
+import baseAssignIn from './_baseAssignIn.js';
 import cloneBuffer from './_cloneBuffer.js';
 import copyArray from './_copyArray.js';
 import copySymbols from './_copySymbols.js';
+import copySymbolsIn from './_copySymbolsIn.js';
 import getAllKeys from './_getAllKeys.js';
+import getAllKeysIn from './_getAllKeysIn.js';
 import getTag from './_getTag.js';
 import initCloneArray from './_initCloneArray.js';
 import initCloneByTag from './_initCloneByTag.js';
@@ -14,6 +17,11 @@ import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
 import isObject from './isObject.js';
 import keys from './keys.js';
+
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1,
+    CLONE_FLAT_FLAG = 2,
+    CLONE_SYMBOLS_FLAG = 4;
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -66,16 +74,22 @@ cloneableTags[weakMapTag] = false;
  *
  * @private
  * @param {*} value The value to clone.
- * @param {boolean} [isDeep] Specify a deep clone.
- * @param {boolean} [isFull] Specify a clone including symbols.
+ * @param {boolean} bitmask The bitmask flags.
+ *  1 - Deep clone
+ *  2 - Flatten inherited properties
+ *  4 - Clone symbols
  * @param {Function} [customizer] The function to customize cloning.
  * @param {string} [key] The key of `value`.
  * @param {Object} [object] The parent object of `value`.
  * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
  * @returns {*} Returns the cloned value.
  */
-function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
-  var result;
+function baseClone(value, bitmask, customizer, key, object, stack) {
+  var result,
+      isDeep = bitmask & CLONE_DEEP_FLAG,
+      isFlat = bitmask & CLONE_FLAT_FLAG,
+      isFull = bitmask & CLONE_SYMBOLS_FLAG;
+
   if (customizer) {
     result = object ? customizer(value, key, object, stack) : customizer(value);
   }
@@ -99,9 +113,11 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
       return cloneBuffer(value, isDeep);
     }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-      result = initCloneObject(isFunc ? {} : value);
+      result = (isFlat || isFunc) ? {} : initCloneObject(value);
       if (!isDeep) {
-        return copySymbols(value, baseAssign(result, value));
+        return isFlat
+          ? copySymbolsIn(value, baseAssignIn(result, value))
+          : copySymbols(value, baseAssign(result, value));
       }
     } else {
       if (!cloneableTags[tag]) {
@@ -118,14 +134,18 @@ function baseClone(value, isDeep, isFull, customizer, key, object, stack) {
   }
   stack.set(value, result);
 
-  var props = isArr ? undefined : (isFull ? getAllKeys : keys)(value);
+  var keysFunc = isFull
+    ? (isFlat ? getAllKeysIn : getAllKeys)
+    : (isFlat ? keysIn : keys);
+
+  var props = isArr ? undefined : keysFunc(value);
   arrayEach(props || value, function(subValue, key) {
     if (props) {
       key = subValue;
       subValue = value[key];
     }
     // Recursively populate clone (susceptible to call stack limits).
-    assignValue(result, key, baseClone(subValue, isDeep, isFull, customizer, key, value, stack));
+    assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack));
   });
   return result;
 }

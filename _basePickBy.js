@@ -1,25 +1,26 @@
-import baseAssignValue from './_baseAssignValue.js';
+import baseGet from './_baseGet.js';
+import baseSet from './_baseSet.js';
 
 /**
  * The base implementation of  `_.pickBy` without support for iteratee shorthands.
  *
  * @private
  * @param {Object} object The source object.
- * @param {string[]} props The property identifiers to pick from.
+ * @param {string[]} paths The property paths to pick.
  * @param {Function} predicate The function invoked per property.
  * @returns {Object} Returns the new object.
  */
-function basePickBy(object, props, predicate) {
+function basePickBy(object, paths, predicate) {
   var index = -1,
-      length = props.length,
+      length = paths.length,
       result = {};
 
   while (++index < length) {
-    var key = props[index],
-        value = object[key];
+    var path = paths[index],
+        value = baseGet(object, path);
 
-    if (predicate(value, key)) {
-      baseAssignValue(result, key, value);
+    if (predicate(value, path)) {
+      baseSet(result, path, value);
     }
   }
   return result;

@@ -2,6 +2,9 @@ import addSetEntry from './_addSetEntry.js';
 import arrayReduce from './_arrayReduce.js';
 import setToArray from './_setToArray.js';
 
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1;
+
 /**
  * Creates a clone of `set`.
  *
@@ -12,7 +15,7 @@ import setToArray from './_setToArray.js';
  * @returns {Object} Returns the cloned set.
  */
 function cloneSet(set, isDeep, cloneFunc) {
-  var array = isDeep ? cloneFunc(setToArray(set), true) : setToArray(set);
+  var array = isDeep ? cloneFunc(setToArray(set), CLONE_DEEP_FLAG) : setToArray(set);
   return arrayReduce(array, addSetEntry, new set.constructor);
 }
 

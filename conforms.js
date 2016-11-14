@@ -1,6 +1,9 @@
 import baseClone from './_baseClone.js';
 import baseConforms from './_baseConforms.js';
 
+/** Used to compose bitmasks for cloning. */
+var CLONE_DEEP_FLAG = 1;
+
 /**
  * Creates a function that invokes the predicate properties of `source` with
  * the corresponding property values of a given object, returning `true` if
@@ -26,7 +29,7 @@ import baseConforms from './_baseConforms.js';
  * // => [{ 'a': 1, 'b': 2 }]
  */
 function conforms(source) {
-  return baseConforms(baseClone(source, true));
+  return baseConforms(baseClone(source, CLONE_DEEP_FLAG));
 }
 
 export default conforms;

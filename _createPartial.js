@@ -3,7 +3,7 @@ import createCtor from './_createCtor.js';
 import root from './_root.js';
 
 /** Used to compose bitmasks for function metadata. */
-var BIND_FLAG = 1;
+var WRAP_BIND_FLAG = 1;
 
 /**
  * Creates a function that wraps `func` to invoke it with the `this` binding
@@ -18,7 +18,7 @@ var BIND_FLAG = 1;
  * @returns {Function} Returns the new wrapped function.
  */
 function createPartial(func, bitmask, thisArg, partials) {
-  var isBind = bitmask & BIND_FLAG,
+  var isBind = bitmask & WRAP_BIND_FLAG,
       Ctor = createCtor(func);
 
   function wrapper() {

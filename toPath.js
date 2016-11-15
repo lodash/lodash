@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_copyArray', './isArray', './isSymbol', './_stringToPath', './_toKey'], function(arrayMap, copyArray, isArray, isSymbol, stringToPath, toKey) {
+define(['./_arrayMap', './_copyArray', './isArray', './isSymbol', './_stringToPath', './_toKey', './toString'], function(arrayMap, copyArray, isArray, isSymbol, stringToPath, toKey, toString) {
 
   /**
    * Converts `value` to a property path array.
@@ -21,7 +21,7 @@ define(['./_arrayMap', './_copyArray', './isArray', './isSymbol', './_stringToPa
     if (isArray(value)) {
       return arrayMap(value, toKey);
     }
-    return isSymbol(value) ? [value] : copyArray(stringToPath(value));
+    return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)));
   }
 
   return toPath;

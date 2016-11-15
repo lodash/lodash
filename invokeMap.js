@@ -1,7 +1,4 @@
-define(['./_apply', './_baseEach', './_baseInvoke', './_baseRest', './isArrayLike', './_isKey'], function(apply, baseEach, baseInvoke, baseRest, isArrayLike, isKey) {
-
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
+define(['./_apply', './_baseEach', './_baseInvoke', './_baseRest', './isArrayLike'], function(apply, baseEach, baseInvoke, baseRest, isArrayLike) {
 
   /**
    * Invokes the method at `path` of each element in `collection`, returning
@@ -29,12 +26,10 @@ define(['./_apply', './_baseEach', './_baseInvoke', './_baseRest', './isArrayLik
   var invokeMap = baseRest(function(collection, path, args) {
     var index = -1,
         isFunc = typeof path == 'function',
-        isProp = isKey(path),
         result = isArrayLike(collection) ? Array(collection.length) : [];
 
     baseEach(collection, function(value) {
-      var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-      result[++index] = func ? apply(func, value, args) : baseInvoke(value, path, args);
+      result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
     });
     return result;
   });

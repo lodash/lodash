@@ -1,4 +1,4 @@
-define(['./_baseIteratee', './_basePickBy', './_getAllKeysIn'], function(baseIteratee, basePickBy, getAllKeysIn) {
+define(['./_arrayMap', './_baseIteratee', './_basePickBy', './_getAllKeysIn'], function(arrayMap, baseIteratee, basePickBy, getAllKeysIn) {
 
   /**
    * Creates an object composed of the `object` properties `predicate` returns
@@ -19,7 +19,16 @@ define(['./_baseIteratee', './_basePickBy', './_getAllKeysIn'], function(baseIte
    * // => { 'a': 1, 'c': 3 }
    */
   function pickBy(object, predicate) {
-    return object == null ? {} : basePickBy(object, getAllKeysIn(object), baseIteratee(predicate));
+    if (object == null) {
+      return {};
+    }
+    var props = arrayMap(getAllKeysIn(object), function(prop) {
+      return [prop];
+    });
+    predicate = baseIteratee(predicate);
+    return basePickBy(object, props, function(value, path) {
+      return predicate(value, path[0]);
+    });
   }
 
   return pickBy;

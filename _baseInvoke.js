@@ -1,4 +1,4 @@
-define(['./_apply', './_castPath', './_isKey', './last', './_parent', './_toKey'], function(apply, castPath, isKey, last, parent, toKey) {
+define(['./_apply', './_castPath', './last', './_parent', './_toKey'], function(apply, castPath, last, parent, toKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -14,12 +14,9 @@ define(['./_apply', './_castPath', './_isKey', './last', './_parent', './_toKey'
    * @returns {*} Returns the result of the invoked method.
    */
   function baseInvoke(object, path, args) {
-    if (!isKey(path, object)) {
-      path = castPath(path);
-      object = parent(object, path);
-      path = last(path);
-    }
-    var func = object == null ? object : object[toKey(path)];
+    path = castPath(path, object);
+    object = parent(object, path);
+    var func = object == null ? object : object[toKey(last(path))];
     return func == null ? undefined : apply(func, object, args);
   }
 

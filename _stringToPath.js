@@ -1,4 +1,4 @@
-define(['./_memoizeCapped', './toString'], function(memoizeCapped, toString) {
+define(['./_memoizeCapped'], function(memoizeCapped) {
 
   /** Used to match property names within property paths. */
   var reLeadingDot = /^\./,
@@ -15,8 +15,6 @@ define(['./_memoizeCapped', './toString'], function(memoizeCapped, toString) {
    * @returns {Array} Returns the property path array.
    */
   var stringToPath = memoizeCapped(function(string) {
-    string = toString(string);
-
     var result = [];
     if (reLeadingDot.test(string)) {
       result.push('');

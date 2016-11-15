@@ -1,4 +1,4 @@
-define(['./_castPath', './_isKey', './_toKey'], function(castPath, isKey, toKey) {
+define(['./_castPath', './_toKey'], function(castPath, toKey) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -12,7 +12,7 @@ define(['./_castPath', './_isKey', './_toKey'], function(castPath, isKey, toKey)
    * @returns {*} Returns the resolved value.
    */
   function baseGet(object, path) {
-    path = isKey(path, object) ? [path] : castPath(path);
+    path = castPath(path, object);
 
     var index = 0,
         length = path.length;

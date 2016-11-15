@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_basePick', './_flatRest', './_toKey'], function(arrayMap, basePick, flatRest, toKey) {
+define(['./_basePick', './_flatRest'], function(basePick, flatRest) {
 
   /**
    * Creates an object composed of the picked `object` properties.
@@ -18,7 +18,7 @@ define(['./_arrayMap', './_basePick', './_flatRest', './_toKey'], function(array
    * // => { 'a': 1, 'c': 3 }
    */
   var pick = flatRest(function(object, paths) {
-    return object == null ? {} : basePick(object, arrayMap(paths, toKey));
+    return object == null ? {} : basePick(object, paths);
   });
 
   return pick;

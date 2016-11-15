@@ -1,4 +1,4 @@
-define(['./_castPath', './_isKey', './last', './_parent', './_toKey'], function(castPath, isKey, last, parent, toKey) {
+define(['./_castPath', './last', './_parent', './_toKey'], function(castPath, last, parent, toKey) {
 
   /** Used for built-in method references. */
   var objectProto = Object.prototype;
@@ -15,9 +15,8 @@ define(['./_castPath', './_isKey', './last', './_parent', './_toKey'], function(
    * @returns {boolean} Returns `true` if the property is deleted, else `false`.
    */
   function baseUnset(object, path) {
-    path = isKey(path, object) ? [path] : castPath(path);
+    path = castPath(path, object);
     object = parent(object, path);
-
     var key = toKey(last(path));
     return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
   }

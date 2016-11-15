@@ -1,4 +1,4 @@
-define(['./_castPath', './_isIndex', './_isKey', './last', './_parent', './_toKey'], function(castPath, isIndex, isKey, last, parent, toKey) {
+define(['./_castPath', './_isIndex', './last', './_parent', './_toKey'], function(castPath, isIndex, last, parent, toKey) {
 
   /** Used for built-in method references. */
   var arrayProto = Array.prototype;
@@ -26,16 +26,13 @@ define(['./_castPath', './_isIndex', './_isKey', './last', './_parent', './_toKe
         if (isIndex(index)) {
           splice.call(array, index, 1);
         }
-        else if (!isKey(index, array)) {
-          var path = castPath(index),
+        else {
+          var path = castPath(index, array),
               object = parent(array, path);
 
           if (object != null) {
             delete object[toKey(last(path))];
           }
-        }
-        else {
-          delete array[toKey(index)];
         }
       }
     }

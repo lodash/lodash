@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.0';
+  var VERSION = '4.17.1';
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -1438,15 +1438,6 @@
    * @returns {Function} Returns `func`.
    */
   var setToString = identity;
-
-  /**
-   * Converts `value` to a string key if it's not a string or symbol.
-   *
-   * @private
-   * @param {*} value The value to inspect.
-   * @returns {string|symbol} Returns the key.
-   */
-  var toKey = String;
 
   /*------------------------------------------------------------------------*/
 
@@ -3312,7 +3303,7 @@
    * // => { 'a': 1, 'c': 3 }
    */
   var pick = flatRest(function(object, paths) {
-    return object == null ? {} : basePick(object, baseMap(paths, toKey));
+    return object == null ? {} : basePick(object, paths);
   });
 
   /**

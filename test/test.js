@@ -20870,10 +20870,11 @@
     QUnit.test('should spread arguments to `func`', function(assert) {
       assert.expect(2);
 
-      var spread = _.spread(fn);
+      var spread = _.spread(fn),
+          expected = [1, 2];
 
-      assert.deepEqual(spread([1, 2]), [1, 2]);
-      assert.deepEqual(spread([1, 2], 3), [1, 2, 3]);
+      assert.deepEqual(spread([1, 2]), expected);
+      assert.deepEqual(spread([1, 2], 3), expected);
     });
 
     QUnit.test('should accept a falsey `array`', function(assert) {
@@ -20894,10 +20895,11 @@
     QUnit.test('should work with `start`', function(assert) {
       assert.expect(2);
 
-      var spread = _.spread(fn, 1);
+      var spread = _.spread(fn, 1),
+          expected = [1, 2, 3];
 
-      assert.deepEqual(spread(1, [2, 3]), [1, 2, 3]);
-      assert.deepEqual(spread(1, [2, 3], 4), [1, 2, 3, 4]);
+      assert.deepEqual(spread(1, [2, 3]), expected);
+      assert.deepEqual(spread(1, [2, 3], 4), expected);
     });
 
     QUnit.test('should treat `start` as `0` for negative or `NaN` values', function(assert) {
@@ -20917,10 +20919,11 @@
     QUnit.test('should coerce `start` to an integer', function(assert) {
       assert.expect(2);
 
-      var spread = _.spread(fn, 1.6);
+      var spread = _.spread(fn, 1.6),
+          expected = [1, 2, 3];
 
-      assert.deepEqual(spread(1, [2, 3]), [1, 2, 3]);
-      assert.deepEqual(spread(1, [2, 3], 4), [1, 2, 3, 4]);
+      assert.deepEqual(spread(1, [2, 3]), expected);
+      assert.deepEqual(spread(1, [2, 3], 4), expected);
     });
   }());
 

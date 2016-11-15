@@ -10853,9 +10853,6 @@
         if (array) {
           arrayPush(otherArgs, array);
         }
-        if (start != lastIndex) {
-          arrayPush(otherArgs, castSlice(args, start + 1));
-        }
         return apply(func, this, otherArgs);
       });
     }

@@ -1,7 +1,5 @@
-var arrayMap = require('./_arrayMap'),
-    basePick = require('./_basePick'),
-    flatRest = require('./_flatRest'),
-    toKey = require('./_toKey');
+var basePick = require('./_basePick'),
+    flatRest = require('./_flatRest');
 
 /**
  * Creates an object composed of the picked `object` properties.
@@ -21,7 +19,7 @@ var arrayMap = require('./_arrayMap'),
  * // => { 'a': 1, 'c': 3 }
  */
 var pick = flatRest(function(object, paths) {
-  return object == null ? {} : basePick(object, arrayMap(paths, toKey));
+  return object == null ? {} : basePick(object, paths);
 });
 
 module.exports = pick;

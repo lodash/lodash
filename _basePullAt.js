@@ -1,6 +1,5 @@
 var castPath = require('./_castPath'),
     isIndex = require('./_isIndex'),
-    isKey = require('./_isKey'),
     last = require('./last'),
     parent = require('./_parent'),
     toKey = require('./_toKey');
@@ -31,16 +30,13 @@ function basePullAt(array, indexes) {
       if (isIndex(index)) {
         splice.call(array, index, 1);
       }
-      else if (!isKey(index, array)) {
-        var path = castPath(index),
+      else {
+        var path = castPath(index, array),
             object = parent(array, path);
 
         if (object != null) {
           delete object[toKey(last(path))];
         }
-      }
-      else {
-        delete array[toKey(index)];
       }
     }
   }

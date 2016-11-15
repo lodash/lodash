@@ -1,5 +1,7 @@
-var baseClone = require('./_baseClone'),
+var arrayMap = require('./_arrayMap'),
+    baseClone = require('./_baseClone'),
     baseUnset = require('./_baseUnset'),
+    castPath = require('./_castPath'),
     copyObject = require('./_copyObject'),
     flatRest = require('./_flatRest'),
     getAllKeysIn = require('./_getAllKeysIn');
@@ -34,8 +36,15 @@ var omit = flatRest(function(object, paths) {
   if (object == null) {
     return result;
   }
+  var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG;
+  paths = arrayMap(paths, function(path) {
+    path = castPath(path, object);
+    bitmask |= (path.length > 1 ? CLONE_DEEP_FLAG : 0);
+    return path;
+  });
+
   copyObject(object, getAllKeysIn(object), result);
-  result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+  result = baseClone(result, bitmask);
 
   var length = paths.length;
   while (length--) {

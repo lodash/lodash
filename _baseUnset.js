@@ -1,5 +1,4 @@
 var castPath = require('./_castPath'),
-    isKey = require('./_isKey'),
     last = require('./last'),
     parent = require('./_parent'),
     toKey = require('./_toKey');
@@ -19,9 +18,8 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {boolean} Returns `true` if the property is deleted, else `false`.
  */
 function baseUnset(object, path) {
-  path = isKey(path, object) ? [path] : castPath(path);
+  path = castPath(path, object);
   object = parent(object, path);
-
   var key = toKey(last(path));
   return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
 }

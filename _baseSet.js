@@ -1,7 +1,6 @@
 import assignValue from './_assignValue.js';
 import castPath from './_castPath.js';
 import isIndex from './_isIndex.js';
-import isKey from './_isKey.js';
 import isObject from './isObject.js';
 import toKey from './_toKey.js';
 
@@ -19,7 +18,7 @@ function baseSet(object, path, value, customizer) {
   if (!isObject(object)) {
     return object;
   }
-  path = isKey(path, object) ? [path] : castPath(path);
+  path = castPath(path, object);
 
   var index = -1,
       length = path.length,

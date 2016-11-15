@@ -1,7 +1,5 @@
-import arrayMap from './_arrayMap.js';
 import basePick from './_basePick.js';
 import flatRest from './_flatRest.js';
-import toKey from './_toKey.js';
 
 /**
  * Creates an object composed of the picked `object` properties.
@@ -21,7 +19,7 @@ import toKey from './_toKey.js';
  * // => { 'a': 1, 'c': 3 }
  */
 var pick = flatRest(function(object, paths) {
-  return object == null ? {} : basePick(object, arrayMap(paths, toKey));
+  return object == null ? {} : basePick(object, paths);
 });
 
 export default pick;

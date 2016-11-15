@@ -1,3 +1,4 @@
+import arrayMap from './_arrayMap.js';
 import baseIteratee from './_baseIteratee.js';
 import basePickBy from './_basePickBy.js';
 import getAllKeysIn from './_getAllKeysIn.js';
@@ -21,7 +22,16 @@ import getAllKeysIn from './_getAllKeysIn.js';
  * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
-  return object == null ? {} : basePickBy(object, getAllKeysIn(object), baseIteratee(predicate));
+  if (object == null) {
+    return {};
+  }
+  var props = arrayMap(getAllKeysIn(object), function(prop) {
+    return [prop];
+  });
+  predicate = baseIteratee(predicate);
+  return basePickBy(object, props, function(value, path) {
+    return predicate(value, path[0]);
+  });
 }
 
 export default pickBy;

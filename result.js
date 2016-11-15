@@ -1,6 +1,5 @@
 import castPath from './_castPath.js';
 import isFunction from './isFunction.js';
-import isKey from './_isKey.js';
 import toKey from './_toKey.js';
 
 /**
@@ -33,7 +32,7 @@ import toKey from './_toKey.js';
  * // => 'default'
  */
 function result(object, path, defaultValue) {
-  path = isKey(path, object) ? [path] : castPath(path);
+  path = castPath(path, object);
 
   var index = -1,
       length = path.length;

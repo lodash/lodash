@@ -1,5 +1,4 @@
 import memoizeCapped from './_memoizeCapped.js';
-import toString from './toString.js';
 
 /** Used to match property names within property paths. */
 var reLeadingDot = /^\./,
@@ -16,8 +15,6 @@ var reEscapeChar = /\\(\\)?/g;
  * @returns {Array} Returns the property path array.
  */
 var stringToPath = memoizeCapped(function(string) {
-  string = toString(string);
-
   var result = [];
   if (reLeadingDot.test(string)) {
     result.push('');

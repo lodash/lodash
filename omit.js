@@ -1,5 +1,7 @@
+import arrayMap from './_arrayMap.js';
 import baseClone from './_baseClone.js';
 import baseUnset from './_baseUnset.js';
+import castPath from './_castPath.js';
 import copyObject from './_copyObject.js';
 import flatRest from './_flatRest.js';
 import getAllKeysIn from './_getAllKeysIn.js';
@@ -34,8 +36,15 @@ var omit = flatRest(function(object, paths) {
   if (object == null) {
     return result;
   }
+  var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG;
+  paths = arrayMap(paths, function(path) {
+    path = castPath(path, object);
+    bitmask |= (path.length > 1 ? CLONE_DEEP_FLAG : 0);
+    return path;
+  });
+
   copyObject(object, getAllKeysIn(object), result);
-  result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+  result = baseClone(result, bitmask);
 
   var length = paths.length;
   while (length--) {

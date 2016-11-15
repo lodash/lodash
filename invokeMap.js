@@ -3,7 +3,6 @@ import baseEach from './_baseEach.js';
 import baseInvoke from './_baseInvoke.js';
 import baseRest from './_baseRest.js';
 import isArrayLike from './isArrayLike.js';
-import isKey from './_isKey.js';
 
 /**
  * Invokes the method at `path` of each element in `collection`, returning
@@ -31,12 +30,10 @@ import isKey from './_isKey.js';
 var invokeMap = baseRest(function(collection, path, args) {
   var index = -1,
       isFunc = typeof path == 'function',
-      isProp = isKey(path),
       result = isArrayLike(collection) ? Array(collection.length) : [];
 
   baseEach(collection, function(value) {
-    var func = isFunc ? path : ((isProp && value != null) ? value[path] : undefined);
-    result[++index] = func ? apply(func, value, args) : baseInvoke(value, path, args);
+    result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
   });
   return result;
 });

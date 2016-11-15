@@ -2,7 +2,6 @@ import castPath from './_castPath.js';
 import isArguments from './isArguments.js';
 import isArray from './isArray.js';
 import isIndex from './_isIndex.js';
-import isKey from './_isKey.js';
 import isLength from './isLength.js';
 import toKey from './_toKey.js';
 
@@ -16,7 +15,7 @@ import toKey from './_toKey.js';
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  */
 function hasPath(object, path, hasFunc) {
-  path = isKey(path, object) ? [path] : castPath(path);
+  path = castPath(path, object);
 
   var index = -1,
       length = path.length,

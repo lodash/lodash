@@ -1154,16 +1154,16 @@ detect-indent@^3.0.1:
     minimist "^1.1.0"
     repeating "^1.1.0"
 
-docdown@~0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/docdown/-/docdown-0.7.1.tgz#7a2893d4c2ff5911fb0f9448462966806124cbf4"
+docdown@~0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/docdown/-/docdown-0.7.2.tgz#f8c68f5836974860e5bb1802bcac52ba8a3ff677"
   dependencies:
-    doctrine "^1.2.2"
-    lodash "^4.14.1"
+    doctrine "^2.0.0"
+    lodash "^4.17.2"
 
-doctrine@^1.2.2:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-1.4.0.tgz#e2db32defa752407b935b381e89f3740e469e599"
+doctrine@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.0.0.tgz#c73d8d2909d22291e1a007a395804da8b665fe63"
   dependencies:
     esutils "^2.0.2"
     isarray "^1.0.0"
@@ -2072,11 +2072,11 @@ lodash@^3.5.0, lodash@^3.7.0, lodash@~3.10.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.14.0, lodash@^4.14.1, lodash@^4.16.0, lodash@^4.16.4, lodash@^4.2.0:
+lodash@^4.14.0, lodash@^4.16.0, lodash@^4.16.4, lodash@^4.2.0:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.16.4.tgz#01ce306b9bad1319f2a5528674f88297aeb70127"
 
-lodash@4.17.2:
+lodash@^4.17.2, lodash@4.17.2:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 

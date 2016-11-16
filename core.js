@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.1';
+  var VERSION = '4.17.2';
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';

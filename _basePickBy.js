@@ -1,4 +1,4 @@
-define(['./_baseGet', './_baseSet'], function(baseGet, baseSet) {
+define(['./_baseGet', './_baseSet', './_castPath'], function(baseGet, baseSet, castPath) {
 
   /**
    * The base implementation of  `_.pickBy` without support for iteratee shorthands.
@@ -19,7 +19,7 @@ define(['./_baseGet', './_baseSet'], function(baseGet, baseSet) {
           value = baseGet(object, path);
 
       if (predicate(value, path)) {
-        baseSet(result, path, value);
+        baseSet(result, castPath(path, object), value);
       }
     }
     return result;

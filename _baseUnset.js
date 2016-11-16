@@ -3,12 +3,6 @@ import last from './last.js';
 import parent from './_parent.js';
 import toKey from './_toKey.js';
 
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
 /**
  * The base implementation of `_.unset`.
  *
@@ -20,8 +14,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 function baseUnset(object, path) {
   path = castPath(path, object);
   object = parent(object, path);
-  var key = toKey(last(path));
-  return !(object != null && hasOwnProperty.call(object, key)) || delete object[key];
+  return object == null || delete object[toKey(last(path))];
 }
 
 export default baseUnset;

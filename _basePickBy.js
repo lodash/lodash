@@ -1,5 +1,6 @@
 import baseGet from './_baseGet.js';
 import baseSet from './_baseSet.js';
+import castPath from './_castPath.js';
 
 /**
  * The base implementation of  `_.pickBy` without support for iteratee shorthands.
@@ -20,7 +21,7 @@ function basePickBy(object, paths, predicate) {
         value = baseGet(object, path);
 
     if (predicate(value, path)) {
-      baseSet(result, path, value);
+      baseSet(result, castPath(path, object), value);
     }
   }
   return result;

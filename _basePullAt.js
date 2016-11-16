@@ -1,8 +1,5 @@
-import castPath from './_castPath.js';
+import baseUnset from './_baseUnset.js';
 import isIndex from './_isIndex.js';
-import last from './last.js';
-import parent from './_parent.js';
-import toKey from './_toKey.js';
 
 /** Used for built-in method references. */
 var arrayProto = Array.prototype;
@@ -29,14 +26,8 @@ function basePullAt(array, indexes) {
       var previous = index;
       if (isIndex(index)) {
         splice.call(array, index, 1);
-      }
-      else {
-        var path = castPath(index, array),
-            object = parent(array, path);
-
-        if (object != null) {
-          delete object[toKey(last(path))];
-        }
+      } else {
+        baseUnset(array, index);
       }
     }
   }

@@ -39,8 +39,8 @@ function result(object, path, defaultValue) {
 
   // Ensure the loop is entered when path is empty.
   if (!length) {
-    object = undefined;
     length = 1;
+    object = undefined;
   }
   while (++index < length) {
     var value = object == null ? undefined : object[toKey(path[index])];

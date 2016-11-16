@@ -36,16 +36,16 @@ var omit = flatRest(function(object, paths) {
   if (object == null) {
     return result;
   }
-  var bitmask = CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG;
+  var isDeep = false;
   paths = arrayMap(paths, function(path) {
     path = castPath(path, object);
-    bitmask |= (path.length > 1 ? CLONE_DEEP_FLAG : 0);
+    isDeep || (isDeep = path.length > 1);
     return path;
   });
-
   copyObject(object, getAllKeysIn(object), result);
-  result = baseClone(result, bitmask);
-
+  if (isDeep) {
+    result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+  }
   var length = paths.length;
   while (length--) {
     baseUnset(result, paths[length]);

@@ -7775,7 +7775,7 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should not use the `hasOwnProperty` method of the object', function(assert) {
+    QUnit.test('`_.' + methodName + '` should not use the `hasOwnProperty` method of `object`', function(assert) {
       assert.expect(1);
 
       var object = { 'hasOwnProperty': null, 'a': 1 };
@@ -7797,24 +7797,22 @@
     });
 
     QUnit.test('`_.' + methodName + '` should coerce `path` to a string', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
-          objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}];
+      var object = { 'null': 1 , 'undefined': 2, 'fn': 3, '[object Object]': 4 },
+          paths = [null, undefined, fn, {}],
+          expected = lodashStable.map(paths, stubTrue);
 
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
-          var prop = _.property(key);
-          result.push(prop(object));
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
+          return func(object, index ? [path] : path);
         });
-      });
 
-      assert.deepEqual(actual, expected);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('`_.' + methodName + '` should work with `arguments` objects', function(assert) {
@@ -7876,28 +7874,6 @@
       });
     });
 
-    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for inherited properties', function(assert) {
-      assert.expect(2);
-
-      function Foo() {}
-      Foo.prototype.a = 1;
-
-      lodashStable.each(['a', ['a']], function(path) {
-        assert.strictEqual(func(new Foo, path), !isHas);
-      });
-    });
-
-    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for nested inherited properties', function(assert) {
-      assert.expect(2);
-
-      function Foo() {}
-      Foo.prototype.a = { 'b': 1 };
-
-      lodashStable.each(['a.b', ['a', 'b']], function(path) {
-        assert.strictEqual(func(new Foo, path), !isHas);
-      });
-    });
-
     QUnit.test('`_.' + methodName + '` should return `true` for indexes of sparse values', function(assert) {
       assert.expect(1);
 
@@ -7924,6 +7900,28 @@
       });
 
       assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for inherited properties', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype.a = 1;
+
+      lodashStable.each(['a', ['a']], function(path) {
+        assert.strictEqual(func(new Foo, path), !isHas);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `' + (isHas ? 'false' : 'true') + '` for nested inherited properties', function(assert) {
+      assert.expect(2);
+
+      function Foo() {}
+      Foo.prototype.a = { 'b': 1 };
+
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        assert.strictEqual(func(new Foo, path), !isHas);
+      });
     });
 
     QUnit.test('`_.' + methodName + '` should return `false` when `object` is nullish', function(assert) {
@@ -14090,28 +14088,24 @@
       assert.deepEqual(actual, expected);
     });
 
-    QUnit.test('should coerce key to a string', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce `path` to a string', function(assert) {
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}];
+      var object = { 'null': 1, 'undefined': 2, 'fn': 3, '[object Object]': 4 },
+          paths = [null, undefined, fn, {}],
+          expected = lodashStable.map(paths, stubTrue);
 
-      var expected = lodashStable.transform(values, function(result) {
-        result.push(true, true);
-      });
-
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
-          var matches = _.matchesProperty(path, object[key]);
-          result.push(matches(object));
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
+          var matches = _.matchesProperty(index ? [path] : path, object[path]);
+          return matches(object);
         });
-      });
 
-      assert.deepEqual(actual, expected);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should match a key over a path', function(assert) {
@@ -15254,25 +15248,24 @@
       });
     });
 
-    QUnit.test('should coerce key to a string', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce `path` to a string', function(assert) {
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
-          objects = [{ 'null': stubOne }, { 'undefined': stubTwo }, { 'fn': stubThree }, { '[object Object]': stubFour }],
-          values = [null, undefined, fn, {}];
+      var expected = [1, 2, 3, 4],
+          object = { 'null': stubOne, 'undefined': stubTwo, 'fn': stubThree, '[object Object]': stubFour },
+          paths = [null, undefined, fn, {}];
 
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
-          var method = _.method(key);
-          result.push(method(object));
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
+          var method = _.method(index ? [path] : path);
+          return method(object);
         });
-      });
 
-      assert.deepEqual(actual, expected);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should work with inherited property values', function(assert) {
@@ -15409,25 +15402,24 @@
       });
     });
 
-    QUnit.test('should coerce key to a string', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce `path` to a string', function(assert) {
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var expected = [1, 1, 2, 2, 3, 3, 4, 4],
-          objects = [{ 'null': stubOne }, { 'undefined': stubTwo }, { 'fn': stubThree }, { '[object Object]': stubFour }],
-          values = [null, undefined, fn, {}];
+      var expected = [1, 2, 3, 4],
+          object = { 'null': stubOne, 'undefined': stubTwo, 'fn': stubThree, '[object Object]': stubFour },
+          paths = [null, undefined, fn, {}];
 
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
           var methodOf = _.methodOf(object);
-          result.push(methodOf(key));
+          return methodOf(index ? [path] : path);
         });
-      });
 
-      assert.deepEqual(actual, expected);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should work with inherited property values', function(assert) {
@@ -17807,24 +17799,24 @@
       assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
     });
 
-    QUnit.test('should coerce key to a string', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce `path` to a string', function(assert) {
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}];
+      var expected = [1, 2, 3, 4],
+          object = { 'null': 1, 'undefined': 2, 'fn': 3, '[object Object]': 4 },
+          paths = [null, undefined, fn, {}];
 
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
-          var prop = _.property(key);
-          result.push(prop(object));
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
+          var prop = _.property(index ? [path] : path);
+          return prop(object);
         });
-      });
 
-      assert.deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4]);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -17952,24 +17944,24 @@
       assert.deepEqual(actual, ['a', 'a', 'b', 'b']);
     });
 
-    QUnit.test('should coerce key to a string', function(assert) {
-      assert.expect(1);
+    QUnit.test('should coerce `path` to a string', function(assert) {
+      assert.expect(2);
 
       function fn() {}
       fn.toString = lodashStable.constant('fn');
 
-      var objects = [{ 'null': 1 }, { 'undefined': 2 }, { 'fn': 3 }, { '[object Object]': 4 }],
-          values = [null, undefined, fn, {}];
+      var expected = [1, 2, 3, 4],
+          object = { 'null': 1, 'undefined': 2, 'fn': 3, '[object Object]': 4 },
+          paths = [null, undefined, fn, {}];
 
-      var actual = lodashStable.transform(objects, function(result, object, index) {
-        var key = values[index];
-        lodashStable.each([key, [key]], function(path) {
+      lodashStable.times(2, function(index) {
+        var actual = lodashStable.map(paths, function(path) {
           var propOf = _.propertyOf(object);
-          result.push(propOf(key));
+          return propOf(index ? [path] : path);
         });
-      });
 
-      assert.deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4]);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('should pluck a key over a path', function(assert) {
@@ -19325,25 +19317,19 @@
     });
 
     QUnit.test('`_.' + methodName + '` should return the default value for `undefined` values', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       var object = { 'a': {} },
-          values = empties.concat(true, new Date, 1, /x/, 'a');
+          values = empties.concat(true, new Date, 1, /x/, 'a'),
+          expected = lodashStable.map(values, function(value) { return [value, value]; });
 
-      var expected = lodashStable.transform(values, function(result, value) {
-        result.push(value, value, value, value);
-      });
-
-      var actual = lodashStable.transform(values, function(result, value) {
-        lodashStable.each(['a.b', ['a', 'b']], function(path) {
-          result.push(
-            func(object, path, value),
-            func(null, path, value)
-          );
+      lodashStable.each(['a.b', ['a', 'b']], function(path) {
+        var actual = lodashStable.map(values, function(value) {
+          return [func(object, path, value), func(null, path, value)];
         });
-      });
 
-      assert.deepEqual(actual, expected);
+        assert.deepEqual(actual, expected);
+      });
     });
 
     QUnit.test('`_.' + methodName + '` should return the default value when `path` is empty', function(assert) {

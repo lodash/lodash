@@ -16351,16 +16351,40 @@
       assert.deepEqual(_.omit(nested, 'b.c'), { 'a': 1, 'b': { 'd': 3} });
     });
 
-    QUnit.test('should coerce property names to strings', function(assert) {
+    QUnit.test('should support path arrays', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a.b': 1, 'a': { 'b': 2 } },
+          actual = _.omit(object, [['a.b']]);
+
+      assert.deepEqual(actual, { 'a': { 'b': 2 } });
+    });
+
+     QUnit.test('should omit a key over a path', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a.b': 1, 'a': { 'b': 2 } };
+
+      lodashStable.each(['a.b', ['a.b']], function(path) {
+        assert.deepEqual(_.omit(object, path), { 'a': { 'b': 2 } });
+      });
+    });
+
+    QUnit.test('should coerce `paths` to strings', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.omit({ '0': 'a' }, 0), {});
     });
 
-    QUnit.test('should work with `arguments` objects as secondary arguments', function(assert) {
-      assert.expect(1);
+    QUnit.test('should return an empty object when `object` is nullish', function(assert) {
+      assert.expect(2);
 
-      assert.deepEqual(_.omit(object, args), { 'b': 2, 'd': 4 });
+      lodashStable.each([null, undefined], function(value) {
+        objectProto.a = 1;
+        var actual = _.omit(value, 'valueOf');
+        delete objectProto.a;
+        assert.deepEqual(actual, {});
+      });
     });
 
     QUnit.test('should work with a primitive `object`', function(assert) {
@@ -16375,15 +16399,10 @@
       delete stringProto.b;
     });
 
-    QUnit.test('should return an empty object when `object` is nullish', function(assert) {
-      assert.expect(2);
+    QUnit.test('should work with `arguments` object `paths`', function(assert) {
+      assert.expect(1);
 
-      lodashStable.each([null, undefined], function(value) {
-        objectProto.a = 1;
-        var actual = _.omit(value, 'valueOf');
-        delete objectProto.a;
-        assert.deepEqual(actual, {});
-      });
+      assert.deepEqual(_.omit(object, args), { 'b': 2, 'd': 4 });
     });
   }());
 
@@ -17592,28 +17611,26 @@
     QUnit.test('should support path arrays', function(assert) {
       assert.expect(1);
 
-      var object = { 'a.b.c': 1 },
-          actual = _.pick(object, [['a.b.c']]);
+      var object = { 'a.b': 1, 'a': { 'b': 2 } },
+          actual = _.pick(object, [['a.b']]);
 
-      assert.deepEqual(actual, { 'a.b.c': 1 });
+      assert.deepEqual(actual, { 'a.b': 1 });
     });
 
-    QUnit.test('should coerce property names to strings', function(assert) {
+    QUnit.test('should pick a key over a path', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a.b': 1, 'a': { 'b': 2 } };
+
+      lodashStable.each(['a.b', ['a.b']], function(path) {
+        assert.deepEqual(_.pick(object, path), { 'a.b': 1 });
+      });
+    });
+
+    QUnit.test('should coerce `paths` to strings', function(assert) {
       assert.expect(1);
 
       assert.deepEqual(_.pick({ '0': 'a', '1': 'b' }, 0), { '0': 'a' });
-    });
-
-    QUnit.test('should work with `arguments` objects as secondary arguments', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.pick(object, args), { 'a': 1, 'c': 3 });
-    });
-
-    QUnit.test('should work with a primitive `object`', function(assert) {
-      assert.expect(1);
-
-      assert.deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
     });
 
     QUnit.test('should return an empty object when `object` is nullish', function(assert) {
@@ -17622,6 +17639,18 @@
       lodashStable.each([null, undefined], function(value) {
         assert.deepEqual(_.pick(value, 'valueOf'), {});
       });
+    });
+
+    QUnit.test('should work with a primitive `object`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.pick('', 'slice'), { 'slice': ''.slice });
+    });
+
+    QUnit.test('should work with `arguments` object `paths`', function(assert) {
+      assert.expect(1);
+
+      assert.deepEqual(_.pick(object, args), { 'a': 1, 'c': 3 });
     });
   }());
 

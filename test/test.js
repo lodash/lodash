@@ -16360,7 +16360,7 @@
       assert.deepEqual(actual, { 'a': { 'b': 2 } });
     });
 
-     QUnit.test('should omit a key over a path', function(assert) {
+    QUnit.test('should omit a key over a path', function(assert) {
       assert.expect(2);
 
       var object = { 'a.b': 1, 'a': { 'b': 2 } };
@@ -18253,7 +18253,7 @@
 
       assert.deepEqual(actual, expected);
 
-      expected = lodashStable.map(values, noop),
+      expected = lodashStable.map(values, noop);
       actual = lodashStable.at(array, values);
 
       assert.deepEqual(actual, expected);

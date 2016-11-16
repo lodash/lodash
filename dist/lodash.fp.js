@@ -81,6 +81,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var mapping = __webpack_require__(2),
 	    fallbackHolder = __webpack_require__(3);
 
+	/** Built-in value reference. */
+	var push = Array.prototype.push;
+
 	/**
 	 * Creates a function, with an arity of `n`, that invokes `func` with the
 	 * arguments it receives.
@@ -138,6 +141,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	function createCloner(func) {
 	  return function(object) {
 	    return func({}, object);
+	  };
+	}
+
+	/**
+	 * This function is like `_.spread` except that it includes arguments after those spread.
+	 *
+	 * @private
+	 * @param {Function} func The function to spread arguments over.
+	 * @param {number} start The start position of the spread.
+	 * @returns {Function} Returns the new function.
+	 */
+	function spread(func, start) {
+	  return function() {
+	    var length = arguments.length,
+	        args = Array(length);
+
+	    while (length--) {
+	      args[length] = arguments[length];
+	    }
+	    var array = args[start],
+	        lastIndex = args.length - 1,
+	        otherArgs = args.slice(0, start);
+
+	    if (array) {
+	      push.apply(otherArgs, array);
+	    }
+	    if (start != lastIndex) {
+	      push.apply(otherArgs, args.slice(start + 1));
+	    }
+	    return func.apply(this, otherArgs);
 	  };
 	}
 
@@ -221,7 +254,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'iteratee': util.iteratee,
 	    'keys': util.keys,
 	    'rearg': util.rearg,
-	    'spread': util.spread,
 	    'toInteger': util.toInteger,
 	    'toPath': util.toPath
 	  };
@@ -235,7 +267,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      isFunction = helpers.isFunction,
 	      keys = helpers.keys,
 	      rearg = helpers.rearg,
-	      spread = helpers.spread,
 	      toInteger = helpers.toInteger,
 	      toPath = helpers.toPath;
 

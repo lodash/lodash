@@ -11673,7 +11673,7 @@
      * Checks if `value` is an integer.
      *
      * **Note:** This method is based on
-     * [`Number.isInteger`](https://mdn.io/Number/isInteger).
+     * [`isInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-isinteger).
      *
      * @static
      * @memberOf _
@@ -11696,7 +11696,8 @@
      * // => false
      */
     function isInteger(value) {
-      return typeof value == 'number' && value == toInteger(value);
+      return typeof value == 'number' && !isNaN(value) &&
+        isFinite(value) && floor(value) === value;
     }
 
     /**

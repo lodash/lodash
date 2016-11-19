@@ -16974,7 +16974,7 @@
           isLazy = useLazy = false;
         }
         var chainAll = this.__chain__,
-            isHybrid = !!this.__actions__.length,
+            isHybrid = this.__actions__.length,
             isUnwrapped = retUnwrapped && !chainAll,
             onlyLazy = isLazy && !isHybrid;
 

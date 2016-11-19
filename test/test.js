@@ -10629,7 +10629,7 @@
     QUnit.test('should return `false` for non-integer number values', function(assert) {
       assert.expect(1);
 
-      var values = [NaN, Infinity, -Infinity, Object(1), 3.14],
+      var values = [NaN, Infinity, -Infinity, Object(1), 3.14, '1'],
           expected = lodashStable.map(values, stubFalse);
 
       var actual = lodashStable.map(values, function(value) {

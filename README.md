@@ -8,3 +8,19 @@ $ lodash modularize exports=es -o ./
 ```
 
 See the [package source](https://github.com/lodash/lodash/tree/4.17.2-es) for more details.
+
+## TypeScript
+
+For typescript users, install the default typings for lodash + this
+
+```shell
+$ npm install @types/lodash --save-dev
+```
+
+### Example
+
+```ts
+import kebabCase from "lodash-es/kebabCase";
+
+const food = kebabCase("chickenWings");
+```

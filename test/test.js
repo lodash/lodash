@@ -2544,6 +2544,13 @@
       assert.deepEqual(actual, [[0, 1, 2], [3, 4, 5]]);
     });
 
+    QUnit.test('should return randomed arrays', function(assert) {
+      assert.expect(1);
+
+      var actual = _.suffle(array);
+      assert.notEqual(actual, [0, 1, 2, 3, 4, 5]);
+    })
+
     QUnit.test('should return the last chunk as remaining elements', function(assert) {
       assert.expect(1);
 

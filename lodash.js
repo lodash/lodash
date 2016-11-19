@@ -19,7 +19,8 @@
 
   /** Error message constants. */
   var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.',
-      FUNC_ERROR_TEXT = 'Expected a function';
+      FUNC_ERROR_TEXT = 'Expected a function',
+      ARR_ERROR_TEXT = 'Expected an Array';
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -6872,6 +6873,32 @@
         result[resIndex++] = baseSlice(array, index, (index += size));
       }
       return result;
+    }
+    
+    /**
+     * Suffle an array base on Math.randon().
+     *
+     * @static
+     * @memberOf _
+     * @since 4.17.3-pre
+     * @category Array
+     * @param {Array} array The array to suffle.
+     * @returns {Array} Returns the new suffled array.
+     * @example
+     *
+     * _.suffle([0, 1, false, 2, '']);
+     * // => [ 1, false, 2, '', 0 ]
+     */
+    function suffle(array) {
+      var length = array == null ? 0 : array.length
+
+      for (var i = length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
     }
 
     /**
@@ -16505,6 +16532,7 @@
     lodash.castArray = castArray;
     lodash.chain = chain;
     lodash.chunk = chunk;
+    lodash.suffle = suffle;
     lodash.compact = compact;
     lodash.concat = concat;
     lodash.cond = cond;

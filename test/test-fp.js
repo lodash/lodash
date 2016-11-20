@@ -1847,7 +1847,7 @@
         args || (args = slice.call(arguments));
       })(0)([1, 2, 3]);
 
-      assert.deepEqual(args, isReduce ? [0, 1] : [0, 3]);
+      assert.deepEqual(args, isReduce ? [0, 1] : [3, 0]);
     });
 
     QUnit.test('`fp.' + methodName + '` should provide the correct `iteratee` arguments when iterating an object', function(assert) {
@@ -1858,8 +1858,8 @@
           isFIFO = _.keys(object)[0] == 'a';
 
       var expected = isFIFO
-        ? (isReduce ? [0, 1] : [0, 2])
-        : (isReduce ? [0, 2] : [0, 1]);
+        ? (isReduce ? [0, 1] : [2, 0])
+        : (isReduce ? [0, 2] : [1, 0]);
 
       func(function() {
         args || (args = slice.call(arguments));

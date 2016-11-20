@@ -9815,7 +9815,7 @@
       assert.strictEqual(_.isEqual(object1, object2), true);
     });
 
-    QUnit.test('should treat objects created by `Object.create(null)` like a plain object', function(assert) {
+    QUnit.test('should treat objects created by `Object.create(null)` like plain objects', function(assert) {
       assert.expect(2);
 
       function Foo() {
@@ -9830,22 +9830,6 @@
 
       assert.strictEqual(_.isEqual(object1, object2), true);
       assert.strictEqual(_.isEqual(new Foo, object2), false);
-    });
-
-    QUnit.test('should return `false` for objects with custom `toString` methods', function(assert) {
-      assert.expect(1);
-
-      var primitive,
-          object = { 'toString': function() { return primitive; } },
-          values = [true, null, 1, 'a', undefined],
-          expected = lodashStable.map(values, stubFalse);
-
-      var actual = lodashStable.map(values, function(value) {
-        primitive = value;
-        return _.isEqual(object, value);
-      });
-
-      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should avoid common type coercions', function(assert) {
@@ -10123,42 +10107,25 @@
       }
     });
 
-    QUnit.test('should work as an iteratee for `_.every`', function(assert) {
-      assert.expect(1);
+    QUnit.test('should compare symbol properties', function(assert) {
+      assert.expect(3);
 
-      var actual = lodashStable.every([1, 1, 1], lodashStable.partial(_.isEqual, 1));
-      assert.ok(actual);
-    });
+      if (Symbol) {
+        var object1 = { 'a': 1 },
+            object2 = { 'a': 1 };
 
-    QUnit.test('should return `true` for like-objects from different documents', function(assert) {
-      assert.expect(4);
+        object1[symbol] = object2[symbol] = 2;
+        assert.strictEqual(_.isEqual(object1, object2), true);
 
-      if (realm.object) {
-        assert.strictEqual(_.isEqual([1], realm.array), true);
-        assert.strictEqual(_.isEqual([2], realm.array), false);
-        assert.strictEqual(_.isEqual({ 'a': 1 }, realm.object), true);
-        assert.strictEqual(_.isEqual({ 'a': 2 }, realm.object), false);
+        object2[symbol] = 3;
+        assert.strictEqual(_.isEqual(object1, object2), false);
+
+        delete object2[symbol];
+        object2[Symbol('a')] = 2;
+        assert.strictEqual(_.isEqual(object1, object2), false);
       }
       else {
-        skipAssert(assert, 4);
-      }
-    });
-
-    QUnit.test('should not error on DOM elements', function(assert) {
-      assert.expect(1);
-
-      if (document) {
-        var element1 = document.createElement('div'),
-            element2 = element1.cloneNode(true);
-
-        try {
-          assert.strictEqual(_.isEqual(element1, element2), false);
-        } catch (e) {
-          assert.ok(false, e.message);
-        }
-      }
-      else {
-        skipAssert(assert);
+        skipAssert(assert, 3);
       }
     });
 
@@ -10219,6 +10186,61 @@
       else {
         skipAssert(assert, 4);
       }
+    });
+
+    QUnit.test('should work as an iteratee for `_.every`', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.every([1, 1, 1], lodashStable.partial(_.isEqual, 1));
+      assert.ok(actual);
+    });
+
+    QUnit.test('should not error on DOM elements', function(assert) {
+      assert.expect(1);
+
+      if (document) {
+        var element1 = document.createElement('div'),
+            element2 = element1.cloneNode(true);
+
+        try {
+          assert.strictEqual(_.isEqual(element1, element2), false);
+        } catch (e) {
+          assert.ok(false, e.message);
+        }
+      }
+      else {
+        skipAssert(assert);
+      }
+    });
+
+    QUnit.test('should return `true` for like-objects from different documents', function(assert) {
+      assert.expect(4);
+
+      if (realm.object) {
+        assert.strictEqual(_.isEqual([1], realm.array), true);
+        assert.strictEqual(_.isEqual([2], realm.array), false);
+        assert.strictEqual(_.isEqual({ 'a': 1 }, realm.object), true);
+        assert.strictEqual(_.isEqual({ 'a': 2 }, realm.object), false);
+      }
+      else {
+        skipAssert(assert, 4);
+      }
+    });
+
+    QUnit.test('should return `false` for objects with custom `toString` methods', function(assert) {
+      assert.expect(1);
+
+      var primitive,
+          object = { 'toString': function() { return primitive; } },
+          values = [true, null, 1, 'a', undefined],
+          expected = lodashStable.map(values, stubFalse);
+
+      var actual = lodashStable.map(values, function(value) {
+        primitive = value;
+        return _.isEqual(object, value);
+      });
+
+      assert.deepEqual(actual, expected);
     });
 
     QUnit.test('should return an unwrapped value when implicitly chaining', function(assert) {

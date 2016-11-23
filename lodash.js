@@ -3307,14 +3307,9 @@
           objTag = objIsArr ? arrayTag : getTag(object),
           othTag = othIsArr ? arrayTag : getTag(other);
 
-      if (objTag == argsTag) {
-        objTag = objectTag;
-        object = copyObject(object, keys(object));
-      }
-      if (othTag == argsTag) {
-        othTag = objectTag;
-        other = copyObject(other, keys(other));
-      }
+      objTag = objTag == argsTag ? objectTag : objTag;
+      othTag = othTag == argsTag ? objectTag : othTag;
+
       var objIsObj = objTag == objectTag,
           othIsObj = othTag == objectTag,
           isSameTag = objTag == othTag;

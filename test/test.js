@@ -10114,14 +10114,15 @@
         var object1 = { 'a': 1 },
             object2 = { 'a': 1 };
 
-        object1[symbol] = object2[symbol] = 2;
+        object1[symbol] = { 'a': { 'b': 2 } };
+        object2[symbol] = { 'a': { 'b': 2 } };
         assert.strictEqual(_.isEqual(object1, object2), true);
 
-        object2[symbol] = 3;
+        object2[symbol] = { 'a': 1 };
         assert.strictEqual(_.isEqual(object1, object2), false);
 
         delete object2[symbol];
-        object2[Symbol('a')] = 2;
+        object2[Symbol('a')] = { 'a': { 'b': 2 } };
         assert.strictEqual(_.isEqual(object1, object2), false);
       }
       else {

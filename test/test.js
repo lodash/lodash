@@ -2925,7 +2925,7 @@
       });
 
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
-        assert.expect(3);
+        assert.expect(7);
 
         function Foo() {
           this[symbol] = { 'c': 1 };
@@ -2935,24 +2935,33 @@
           var symbol2 = Symbol('b');
           Foo.prototype[symbol2] = 2;
 
+          var symbol3 = Symbol('c');
+          defineProperty(Foo.prototype, symbol3, {
+            'configurable': true,
+            'enumerable': false,
+            'writable': true,
+            'value': 3
+          });
+
           var object = { 'a': { 'b': new Foo } };
           object[symbol] = { 'b': 1 };
 
           var actual = func(object);
-
-          assert.deepEqual(getSymbols(actual.a.b), [symbol]);
-
           if (isDeep) {
-            assert.deepEqual(actual[symbol], object[symbol]);
-            assert.deepEqual(actual.a.b[symbol], object.a.b[symbol]);
-          }
-          else {
+            assert.notStrictEqual(actual[symbol], object[symbol]);
+            assert.notStrictEqual(actual.a, object.a);
+          } else {
             assert.strictEqual(actual[symbol], object[symbol]);
             assert.strictEqual(actual.a, object.a);
           }
+          assert.deepEqual(actual[symbol], object[symbol]);
+          assert.deepEqual(getSymbols(actual.a.b), [symbol]);
+          assert.deepEqual(actual.a.b[symbol], object.a.b[symbol]);
+          assert.deepEqual(actual.a.b[symbol2], object.a.b[symbol2]);
+          assert.deepEqual(actual.a.b[symbol3], object.a.b[symbol3])
         }
         else {
-          skipAssert(assert, 3);
+          skipAssert(assert, 7);
         }
       });
 
@@ -7363,8 +7372,8 @@
             pass = true;
 
         defineProperty(object, 'a', {
-          'enumerable': true,
           'configurable': true,
+          'enumerable': true,
           'get': lodashStable.constant(value),
           'set': function() { pass = false; }
         });
@@ -7846,21 +7855,27 @@
     });
 
     QUnit.test('`_.' + methodName + '` should work with a symbol `path`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      function Foo() {
-        this[symbol] = 1;
-      }
+      function Foo() {}
 
       if (Symbol) {
-        var symbol2 = Symbol('b');
-        Foo.prototype[symbol2] = 2;
-        var path = isHas ? symbol : symbol2;
+        Foo.prototype[symbol] = 1;
 
-        assert.strictEqual(func(new Foo, path), true);
+        var symbol2 = Symbol('b');
+        defineProperty(Foo.prototype, symbol2, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': true,
+          'value': 2
+        });
+
+        var object = isHas ? Foo.prototype : new Foo;
+        assert.strictEqual(func(object, symbol), true);
+        assert.strictEqual(func(object, symbol2), true);
       }
       else {
-        skipAssert(assert);
+        skipAssert(assert, 2);
       }
     });
 
@@ -10114,14 +10129,22 @@
         var object1 = { 'a': 1 },
             object2 = { 'a': 1 };
 
-        object1[symbol] = { 'a': { 'b': 2 } };
-        object2[symbol] = { 'a': { 'b': 2 } };
+        object1[symbol1] = { 'a': { 'b': 2 } };
+        object2[symbol1] = { 'a': { 'b': 2 } };
+
+        defineProperty(object2, symbol2, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': true,
+          'value': 2
+        });
+
         assert.strictEqual(_.isEqual(object1, object2), true);
 
-        object2[symbol] = { 'a': 1 };
+        object2[symbol1] = { 'a': 1 };
         assert.strictEqual(_.isEqual(object1, object2), false);
 
-        delete object2[symbol];
+        delete object2[symbol1];
         object2[Symbol('a')] = { 'a': { 'b': 2 } };
         assert.strictEqual(_.isEqual(object1, object2), false);
       }
@@ -15108,8 +15131,8 @@
           pass = true;
 
       defineProperty(object, 'a', {
-        'enumerable': true,
         'configurable': true,
+        'enumerable': true,
         'get': function() { pass = false; },
         'set': function() { pass = false; }
       });
@@ -16499,7 +16522,7 @@
     });
 
     QUnit.test('`_.' + methodName + '` should include symbols', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       function Foo() {
         this.a = 0;
@@ -16509,20 +16532,29 @@
       if (Symbol) {
         var symbol2 = Symbol('b');
         Foo.prototype[symbol2] = 2;
+
+        var symbol3 = Symbol('c');
+        defineProperty(Foo.prototype, symbol3, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': true,
+          'value': 3
+        });
 
         var foo = new Foo,
             actual = func(foo, resolve(foo, 'a'));
 
         assert.strictEqual(actual[symbol], 1);
         assert.strictEqual(actual[symbol2], 2);
+        assert.notOk(symbol3 in actual);
       }
       else {
-        skipAssert(assert, 2);
+        skipAssert(assert, 3);
       }
     });
 
     QUnit.test('`_.' + methodName + '` should create an object with omitted symbols', function(assert) {
-      assert.expect(6);
+      assert.expect(8);
 
       function Foo() {
         this.a = 0;
@@ -16533,21 +16565,31 @@
         var symbol2 = Symbol('b');
         Foo.prototype[symbol2] = 2;
 
+        var symbol3 = Symbol('c');
+        defineProperty(Foo.prototype, symbol3, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': true,
+          'value': 3
+        });
+
         var foo = new Foo,
             actual = func(foo, resolve(foo, symbol));
 
         assert.strictEqual(actual.a, 0);
-        assert.strictEqual(actual[symbol], undefined);
+        assert.notOk(symbol in actual);
         assert.strictEqual(actual[symbol2], 2);
+        assert.notOk(symbol3 in actual);
 
         actual = func(foo, resolve(foo, symbol2));
 
         assert.strictEqual(actual.a, 0);
         assert.strictEqual(actual[symbol], 1);
-        assert.strictEqual(actual[symbol2], undefined);
+        assert.notOk(symbol2 in actual);
+        assert.notOk(symbol3 in actual);
       }
       else {
-        skipAssert(assert, 6);
+        skipAssert(assert, 8);
       }
     });
 
@@ -17711,6 +17753,7 @@
   lodashStable.each(['pick', 'pickBy'], function(methodName) {
     var expected = { 'a': 1, 'c': 3 },
         func = _[methodName],
+        isPick = methodName == 'pick',
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
         resolve = lodashStable.nthArg(1);
 
@@ -17757,7 +17800,7 @@
     });
 
     QUnit.test('`_.' + methodName + '` should pick symbols', function(assert) {
-      assert.expect(2);
+      assert.expect(3);
 
       function Foo() {
         this[symbol] = 1;
@@ -17767,14 +17810,28 @@
         var symbol2 = Symbol('b');
         Foo.prototype[symbol2] = 2;
 
+        var symbol3 = Symbol('c');
+        defineProperty(Foo.prototype, symbol3, {
+          'configurable': true,
+          'enumerable': false,
+          'writable': true,
+          'value': 3
+        });
+
         var foo = new Foo,
-            actual = func(foo, resolve(foo, [symbol, symbol2]));
+            actual = func(foo, resolve(foo, [symbol, symbol2, symbol3]));
 
         assert.strictEqual(actual[symbol], 1);
         assert.strictEqual(actual[symbol2], 2);
+
+        if (isPick) {
+          assert.strictEqual(actual[symbol3], 3);
+        } else {
+          assert.notOk(symbol3 in actual);
+        }
       }
       else {
-        skipAssert(assert, 2);
+        skipAssert(assert, 3);
       }
     });
 
@@ -20065,8 +20122,8 @@
             updater = isUpdate ? lodashStable.constant(value) : value;
 
         defineProperty(object, 'a', {
-          'enumerable': true,
           'configurable': true,
+          'enumerable': true,
           'get': lodashStable.constant(value),
           'set': function() { pass = false; }
         });

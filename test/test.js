@@ -14519,6 +14519,26 @@
       assert.deepEqual(actual, expected);
     });
   }());
+  
+  /*--------------------------------------------------------------------------*/
+  
+  QUnit.module('lodash.mode');
+
+  (function() {
+    QUnit.test('should return the mode of an array of numbers', function(assert) {
+      assert.expect(1);
+
+      var array = [4, 2, 8, 6, 2];
+      assert.strictEqual(_.mode(array), 2);
+    });
+
+    QUnit.test('should return `NaN` when passing string values', function(assert) {
+      assert.expect(1);
+
+      var array = [4, 2, 8, 6, 2, 'abc'];
+      assert.strictEqual(_.mode(array), alwaysNaN);
+    });
+  }());
 
   /*--------------------------------------------------------------------------*/
 

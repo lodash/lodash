@@ -25168,7 +25168,7 @@
     QUnit.test('should work with compound words', function(assert) {
       assert.expect(12);
 
-      assert.deepEqual(_.words('12Feet'), ['12', 'Feet']);
+      assert.deepEqual(_.words('12ft'), ['12', 'ft']);
       assert.deepEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
       assert.deepEqual(_.words('enable 6h format'), ['enable', '6', 'h', 'format']);
       assert.deepEqual(_.words('enable 24H format'), ['enable', '24', 'H', 'format']);

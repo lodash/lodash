@@ -6053,7 +6053,7 @@
      */
     var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
       return arrayFilter(nativeGetSymbols(object), function(symbol) {
-        return propertyIsEnumerable.call(object, symbol);
+        return propertyIsEnumerable.call(Object(object), symbol);
       });
     };
 

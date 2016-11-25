@@ -6853,26 +6853,14 @@
      * _.chunk(['a', 'b', 'c', 'd'], 3);
      * // => [['a', 'b', 'c'], ['d']]
      */
-    function chunk(array, size, guard) {
-      if ((guard ? isIterateeCall(array, size, guard) : size === undefined)) {
-        size = 1;
-      } else {
-        size = nativeMax(toInteger(size), 0);
-      }
-      var length = array == null ? 0 : array.length;
-      if (!length || size < 1) {
-        return [];
-      }
-      var index = 0,
-          resIndex = 0,
-          result = Array(nativeCeil(length / size));
-
-      while (index < length) {
-        result[resIndex++] = baseSlice(array, index, (index += size));
-      }
-      return result;
-    }
-
+     function chunk(array, size) {
+       return array.reduce((accum, next, i) => {
+         const intI = Math.floor(i / size)
+         return Object.assign([], accum, {
+           [intI] : [...accum[intI], next]
+         })
+       }, Array(Math.ceil(array.length / size)).fill([]))
+     }
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are falsey.

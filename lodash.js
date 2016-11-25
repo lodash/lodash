@@ -6050,6 +6050,9 @@
      * @returns {Array} Returns the array of symbols.
      */
     var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+      if (object == null) {
+        return [];
+      }
       object = Object(object);
       return arrayFilter(nativeGetSymbols(object), function(symbol) {
         return propertyIsEnumerable.call(object, symbol);

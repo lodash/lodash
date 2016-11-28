@@ -16298,6 +16298,51 @@
     function mean(array) {
       return baseMean(array, identity);
     }
+    
+    /**
+     * Computes the mode of the values in `array`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @returns {Array} Returns the mode(s).
+     * @example
+     *
+     * _.mode([1,2,3,2,2]);
+     * // =>2
+     */
+    function mode(array) {
+      var resultModesArray = [];
+
+      if(some(array, isString) || indexOfNaN(array,0,false) !== -1) {
+        return 'NaN';
+      }
+
+      var elementsCounts = countBy(array);
+
+      var mappedElements = map(elementsCounts, function(value,key){
+        return {'key':key, 'value':value};
+      });
+
+      var maxOccur = maxBy(mappedElements,function(elem) {
+          return elem.value;
+      });
+
+      var filteredArray = filter(mappedElements, function(item){
+        return item.value === maxOccur.value;
+      });
+
+      if(filteredArray.length === array.length) {
+        return 'No Mode';
+      }
+      else {
+        forEach(filteredArray,function(item){
+          return resultModesArray.push(toNumber(item.key));
+        });
+        return resultModesArray;
+      }
+    }
 
     /**
      * This method is like `_.mean` except that it accepts `iteratee` which is

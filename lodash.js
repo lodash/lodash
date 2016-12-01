@@ -1728,8 +1728,8 @@
 
     /**
      * By default, the template delimiters used by lodash are like those in
-     * embedded Ruby (ERB). Change the following template settings to use
-     * alternative delimiters.
+     * embedded Ruby (ERB), as well as ES6 template strings. Change the 
+     * following template settings to use alternative delimiters.
      *
      * @static
      * @memberOf _

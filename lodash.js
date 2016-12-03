@@ -608,6 +608,34 @@
   }
 
   /**
+   * A specialized version of `_.filterWhile` for arrays without support for
+   * iteratee shorthands.
+   *
+   * @private
+   * @param {Array} [array] The array to iterate over.
+   * @param {Function} predicate The function invoked per iteration.
+   * @param {Function} predicate The function invoked to check if end of iteration.
+   * @returns {Array} Returns the new filtered array.
+   */
+  function arrayFilterWhile(array, filterPredicate, whilePredicate) {
+    var index = -1,
+        length = array == null ? 0 : array.length,
+        resIndex = 0,
+        result = [];
+
+    while (++index < length) {
+      var value = array[index];
+      if(!whilePredicate(value, index, array)) {
+        break;
+      }
+      if (filterPredicate(value, index, array)) {
+        result[resIndex++] = value;
+      }
+    }
+    return result;
+  }
+
+  /**
    * A specialized version of `_.includes` for arrays without support for
    * specifying an index to search from.
    *
@@ -1728,7 +1756,7 @@
 
     /**
      * By default, the template delimiters used by lodash are like those in
-     * embedded Ruby (ERB) as well as ES2015 template strings. Change the
+     * embedded Ruby (ERB), as well as ES6 template strings. Change the 
      * following template settings to use alternative delimiters.
      *
      * @static
@@ -2927,6 +2955,29 @@
         if (predicate(value, index, collection)) {
           result.push(value);
         }
+      });
+      return result;
+    }
+
+    /**
+     * The base implementation of `_.filter` without support for iteratee shorthands.
+     *
+     * @private
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function} predicate The function invoked per iteration.
+     * @param {Function} predicate The function invoked to check if end of iteration.
+     * @returns {Array} Returns the new filtered array.
+     */
+    function baseFilterWhile(collection, filterPredicate, whilePredicate) {
+      var result = [];
+      baseWhile(collection, function(value, index, collection) {
+        if(!whilePredicate(value, index, collection)) {
+          return false;
+        }
+        if (predicate(value, index, collection)) {
+          result.push(value);
+        }
+        return true;
       });
       return result;
     }
@@ -9190,6 +9241,45 @@
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
       return func(collection, getIteratee(predicate, 3));
+    }
+
+    /**
+     * Iterates over elements of `collection` until the `whilePredicate` returns falsey, returning an array of all elements
+     * `filterPredicate` returns truthy for. The filterPredicate is invoked with three
+     * arguments: (value, index|key, collection).
+     *
+     * **Note:** Unlike `_.remove`, this method returns a new array.
+     *
+     * @static
+     * @memberOf _
+     * @since 0.1.0
+     * @category Collection
+     * @param {Array|Object} collection The collection to iterate over.
+     * @param {Function} [filterPredicate=_.identity] The function invoked per iteration.
+     * @param {Function} [whilePredicate=_.identity] The function invoked to check if end of iteration.
+     * @returns {Array} Returns the new filtered array.
+     * @see _.reject
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36, 'active': true },
+     *   { 'user': 'fred', 'age': 36, 'active': false },
+     *   { 'user': 'sheldon', 'age': 37, 'active': false },
+     *   { 'user': 'chandler', 'age': 38, 'active': true }
+     * ];
+     *
+     * _.filterWhile(users, function(o) { return !o.active; }, function(o) { return o.age <= 36 });
+     * // => objects for ['fred']
+     * _.filterWhile(users, { 'age': 36, 'active': true }, {'active': true});
+     * // => objects for ['barney']
+     * _.filterWhile(users, ['active', false], ['age', 36]);
+     * // => objects for ['fred']
+     * _.filterWhile(users, 'active', 'active');
+     * // => objects for ['barney']
+     */
+    function filterWhile(collection, filterPredicate, whilePredicate) {
+      var func = isArray(collection) ? arrayFilterWhile : baseFilterWhile;
+      return func(collection, getIteratee(filterPredicate, 3), getIteratee(whilePredicate, 3));
     }
 
     /**
@@ -16529,6 +16619,7 @@
     lodash.dropWhile = dropWhile;
     lodash.fill = fill;
     lodash.filter = filter;
+    lodash.filterWhile = filterWhile;
     lodash.flatMap = flatMap;
     lodash.flatMapDeep = flatMapDeep;
     lodash.flatMapDepth = flatMapDepth;

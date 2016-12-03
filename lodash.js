@@ -1728,7 +1728,7 @@
 
     /**
      * By default, the template delimiters used by lodash are like those in
-     * embedded Ruby (ERB), as well as ES6 template strings. Change the 
+     * embedded Ruby (ERB) as well as ES2015 template strings. Change the
      * following template settings to use alternative delimiters.
      *
      * @static

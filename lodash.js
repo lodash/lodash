@@ -1567,9 +1567,9 @@
      * Shortcut fusion is an optimization to merge iteratee calls; this avoids
      * the creation of intermediate arrays and can greatly reduce the number of
      * iteratee executions. Sections of a chain sequence qualify for shortcut
-     * fusion if the section is applied to an array of at least `200` elements
-     * and any iteratees accept only one argument. The heuristic for whether a
-     * section qualifies for shortcut fusion is subject to change.
+     * fusion if the section is applied to an array and iteratees accept only
+     * one argument. The heuristic for whether a section qualifies for shortcut
+     * fusion is subject to change.
      *
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
@@ -1876,8 +1876,7 @@
           resIndex = 0,
           takeCount = nativeMin(length, this.__takeCount__);
 
-      if (!isArr || arrLength < LARGE_ARRAY_SIZE ||
-          (arrLength == length && takeCount == length)) {
+      if (!isArr || (arrLength == length && takeCount == length)) {
         return baseWrapperValue(array, this.__actions__);
       }
       var result = [];
@@ -5148,8 +5147,7 @@
           var args = arguments,
               value = args[0];
 
-          if (wrapper && args.length == 1 &&
-              isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+          if (wrapper && args.length == 1 && isArray(value)) {
             return wrapper.plant(value).value();
           }
           var index = 0,

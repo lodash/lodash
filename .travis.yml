@@ -68,13 +68,12 @@ before_install:
   # Remove code skipped on the coverage run.
   - |
       PATTERN[0]="|\s*while\s*\([^)]+\)\s*\{\s*iteratee\(index\);\s*\}|"
-      PATTERN[1]="|\s*else\s*\{\s*assocSet\(data\b[\s\S]+?\}|"
-      PATTERN[2]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
-      PATTERN[3]="|\bcase\s+(?:dataView|promise|set|map|weakMap)CtorString:.+|g"
-      PATTERN[4]="|\s*if\s*\(cache\.size\b[\s\S]+?\}|"
-      PATTERN[5]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
-      PATTERN[6]="|\s*define\([\s\S]+?\);|"
-      PATTERN[7]="|\s*root\._\s*=\s*_;|"
+      PATTERN[1]="|\bindex,\s*iterable\)\s*===\s*false\)[^}]+?(break;)|"
+      PATTERN[2]="|\bcase\s+(?:dataView|promise|set|map|weakMap)CtorString:.+|g"
+      PATTERN[3]="|\s*if\s*\(cache\.size\b[\s\S]+?\}|"
+      PATTERN[4]="|\s*if\s*\(\!lodashFunc\)\s*\{\s*return;\s*\}|"
+      PATTERN[5]="|\s*define\([\s\S]+?\);|"
+      PATTERN[6]="|\s*root\._\s*=\s*_;|"
 
       if [ $ISTANBUL = true ]; then
         set -e

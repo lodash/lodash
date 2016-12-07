@@ -10288,6 +10288,34 @@
         skipAssert(assert);
       }
     });
+
+    QUnit.test('should compare enumerable inherited properties', function(assert) {
+      function aProto() {}
+      Object.defineProperty(aProto, "foo", {
+          enumerable: true,
+          value: "a"
+      });
+
+      var a = Object.create(aProto);
+      var a2 = Object.create(aProto);
+      assert.strictEqual(_.isEqual(a, a2), true);
+
+      function a3Proto() {}
+      Object.defineProperty(a3Proto, "foo", {
+          enumerable: true,
+          value: "a"
+      });
+      var a3 = Object.create(a3Proto);
+      assert.strictEqual(_.isEqual(a, a3), true);
+
+      function bProto() {}
+      Object.defineProperty(bProto, "foo", {
+          enumerable: true,
+          value: "b"
+      });
+      var b = Object.create(bProto);
+      assert.strictEqual(_.isEqual(a, b), false);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

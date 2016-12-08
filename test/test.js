@@ -10315,6 +10315,9 @@
       });
       var b = Object.create(bProto);
       assert.strictEqual(_.isEqual(a, b), false);
+
+      assert.strictEqual(_.isEqual([a], [a2]), true);
+      assert.strictEqual(_.isEqual([a], [b]), false);
     });
   }());
 

@@ -10317,8 +10317,8 @@
       assert.strictEqual(_.isEqual(a, b, true), false);
       assert.strictEqual(_.isEqual(a, b, false), true);
 
-      assert.strictEqual(_.isEqual([a], [a2], true), false);
-      assert.strictEqual(_.isEqual([a], [b], true), true);
+      assert.strictEqual(_.isEqual([a], [a2], true), true);
+      assert.strictEqual(_.isEqual([a], [b], true), false);
       assert.strictEqual(_.isEqual([a], [b], false), true);
     });
   }());

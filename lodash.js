@@ -11532,7 +11532,6 @@
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
@@ -11545,9 +11544,8 @@
      * object === other;
      * // => false
      */
-    function isEqual(value, other, compareInheritedProperties) {
-      var bitmask = compareInheritedProperties ? COMPARE_INHERITED_PROPS_FLAG : undefined;
-      return baseIsEqual(value, other, bitmask);
+    function isEqual(value, other) {
+      return baseIsEqual(value, other);
     }
 
     /**
@@ -11586,6 +11584,30 @@
       customizer = typeof customizer == 'function' ? customizer : undefined;
       var result = customizer ? customizer(value, other) : undefined;
       return result === undefined ? baseIsEqual(value, other, undefined, customizer) : !!result;
+    }
+
+    /**
+     * This method is like `_.isEqual` except that it also checks inherited properties
+     * when comparing objects.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.17.3
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+     * @example
+     *
+     * // property "foo" is declared on the prototype and is inherited by a and b.
+     * var a = Object.create({ foo: "a" });
+     * var b = Object.create({ foo: "b" });
+     *
+     * _.isEqualIn(a, b);
+     * // => false
+     */
+    function isEqualIn(value, other) {
+      return baseIsEqual(value, other, COMPARE_INHERITED_PROPS_FLAG);
     }
 
     /**
@@ -16711,6 +16733,7 @@
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
     lodash.isEqualWith = isEqualWith;
+    lodash.isEqualIn = isEqualIn;
     lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;

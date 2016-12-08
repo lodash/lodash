@@ -37,7 +37,8 @@
 
   /** Used to compose bitmasks for value comparisons. */
   var COMPARE_PARTIAL_FLAG = 1,
-      COMPARE_UNORDERED_FLAG = 2;
+      COMPARE_UNORDERED_FLAG = 2,
+      COMPARE_INHERITED_PROPS_FLAG = 4;
 
   /** Used to compose bitmasks for function metadata. */
   var WRAP_BIND_FLAG = 1,
@@ -3273,17 +3274,16 @@
      *  2 - Partial comparison
      * @param {Function} [customizer] The function to customize comparisons.
      * @param {Object} [stack] Tracks traversed `value` and `other` objects.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      */
-    function baseIsEqual(value, other, bitmask, customizer, stack, compareInheritedProperties) {
+    function baseIsEqual(value, other, bitmask, customizer, stack) {
       if (value === other) {
         return true;
       }
       if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
         return value !== value && other !== other;
       }
-      return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack, compareInheritedProperties);
+      return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
     }
 
     /**
@@ -3298,10 +3298,9 @@
      * @param {Function} customizer The function to customize comparisons.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Object} [stack] Tracks traversed `object` and `other` objects.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack, compareInheritedProperties) {
+    function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
       var objIsArr = isArray(object),
           othIsArr = isArray(other),
           objTag = objIsArr ? arrayTag : getTag(object),
@@ -3343,7 +3342,7 @@
         return false;
       }
       stack || (stack = new Stack);
-      return equalObjects(object, other, bitmask, customizer, equalFunc, stack, compareInheritedProperties);
+      return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
     }
 
     /**
@@ -5649,10 +5648,9 @@
      * @param {Function} customizer The function to customize comparisons.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Object} stack Tracks traversed `array` and `other` objects.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
      */
-    function equalArrays(array, other, bitmask, customizer, equalFunc, stack, compareInheritedProperties) {
+    function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
       var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
           arrLength = array.length,
           othLength = other.length;
@@ -5693,7 +5691,7 @@
         if (seen) {
           if (!arraySome(other, function(othValue, othIndex) {
                 if (!cacheHas(seen, othIndex) &&
-                    (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack, compareInheritedProperties))) {
+                    (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
                   return seen.push(othIndex);
                 }
               })) {
@@ -5728,10 +5726,9 @@
      * @param {Function} customizer The function to customize comparisons.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Object} stack Tracks traversed `object` and `other` objects.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack, compareInheritedProperties) {
+    function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       switch (tag) {
         case dataViewTag:
           if ((object.byteLength != other.byteLength) ||
@@ -5784,7 +5781,7 @@
 
           // Recursively compare objects (susceptible to call stack limits).
           stack.set(object, other);
-          var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack, compareInheritedProperties);
+          var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
           stack['delete'](object);
           return result;
 
@@ -5807,14 +5804,14 @@
      * @param {Function} customizer The function to customize comparisons.
      * @param {Function} equalFunc The function to determine equivalents of values.
      * @param {Object} stack Tracks traversed `object` and `other` objects.
-     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
      */
-    function equalObjects(object, other, bitmask, customizer, equalFunc, stack, compareInheritedProperties) {
+    function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
       var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-          objProps = compareInheritedProperties === true ? getAllKeysIn(object) : getAllKeys(object),
+          compareInheritedProperties = bitmask & COMPARE_INHERITED_PROPS_FLAG,
+          objProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(object),
           objLength = objProps.length,
-          othProps = compareInheritedProperties === true ? getAllKeysIn(object) : getAllKeys(other),
+          othProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(other),
           othLength = othProps.length;
 
       if (objLength != othLength && !isPartial) {
@@ -5823,7 +5820,7 @@
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+        if (!compareInheritedProperties && !(isPartial ? key in other : hasOwnProperty.call(other, key))) {
           return false;
         }
       }
@@ -11549,7 +11546,8 @@
      * // => false
      */
     function isEqual(value, other, compareInheritedProperties) {
-      return baseIsEqual(value, other, undefined, undefined, undefined, compareInheritedProperties);
+      var bitmask = compareInheritedProperties ? COMPARE_INHERITED_PROPS_FLAG : undefined;
+      return baseIsEqual(value, other, bitmask);
     }
 
     /**

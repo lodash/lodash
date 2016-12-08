@@ -10289,7 +10289,7 @@
       }
     });
 
-    QUnit.test('should compare enumerable inherited properties', function(assert) {
+    QUnit.test('should compare enumerable inherited properties if compareInheritedProperties is true', function(assert) {
       function aProto() {}
       Object.defineProperty(aProto, "foo", {
           enumerable: true,
@@ -10298,7 +10298,7 @@
 
       var a = Object.create(aProto);
       var a2 = Object.create(aProto);
-      assert.strictEqual(_.isEqual(a, a2), true);
+      assert.strictEqual(_.isEqual(a, a2, true), true);
 
       function a3Proto() {}
       Object.defineProperty(a3Proto, "foo", {
@@ -10306,7 +10306,7 @@
           value: "a"
       });
       var a3 = Object.create(a3Proto);
-      assert.strictEqual(_.isEqual(a, a3), true);
+      assert.strictEqual(_.isEqual(a, a3, true), true);
 
       function bProto() {}
       Object.defineProperty(bProto, "foo", {
@@ -10314,10 +10314,12 @@
           value: "b"
       });
       var b = Object.create(bProto);
-      assert.strictEqual(_.isEqual(a, b), false);
+      assert.strictEqual(_.isEqual(a, b, true), false);
+      assert.strictEqual(_.isEqual(a, b, false), true);
 
-      assert.strictEqual(_.isEqual([a], [a2]), true);
-      assert.strictEqual(_.isEqual([a], [b]), false);
+      assert.strictEqual(_.isEqual([a], [a2], true), false);
+      assert.strictEqual(_.isEqual([a], [b], true), true);
+      assert.strictEqual(_.isEqual([a], [b], false), true);
     });
   }());
 

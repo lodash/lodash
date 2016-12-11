@@ -145,23 +145,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
-	 * This function is like `_.spread` except that it includes arguments after those spread.
+	 * A specialized version of `_.spread` which flattens the spread array into
+	 * the arguments of the invoked `func`.
 	 *
 	 * @private
 	 * @param {Function} func The function to spread arguments over.
 	 * @param {number} start The start position of the spread.
 	 * @returns {Function} Returns the new function.
 	 */
-	function spread(func, start) {
+	function flatSpread(func, start) {
 	  return function() {
 	    var length = arguments.length,
+	        lastIndex = length - 1,
 	        args = Array(length);
 
 	    while (length--) {
 	      args[length] = arguments[length];
 	    }
 	    var array = args[start],
-	        lastIndex = args.length - 1,
 	        otherArgs = args.slice(0, start);
 
 	    if (array) {
@@ -393,7 +394,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var data = mapping.methodSpread[name],
 	          start = data && data.start;
 
-	      return start  === undefined ? ary(func, n) : spread(func, start);
+	      return start  === undefined ? ary(func, n) : flatSpread(func, start);
 	    }
 	    return func;
 	  }
@@ -563,8 +564,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    each(aryMethodKeys, function(aryKey) {
 	      each(mapping.aryMethod[aryKey], function(otherName) {
 	        if (realName == otherName) {
-	          var spreadData = mapping.methodSpread[realName],
-	              afterRearg = spreadData && spreadData.afterRearg;
+	          var data = mapping.methodSpread[realName],
+	              afterRearg = data && data.afterRearg;
 
 	          result = afterRearg
 	            ? castFixed(realName, castRearg(realName, wrapped, aryKey), aryKey)
@@ -820,7 +821,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/** Used to map method names to iteratee rearg configs. */
 	exports.iterateeRearg = {
-	  'mapKeys': [1]
+	  'mapKeys': [1],
+	  'reduceRight': [1, 0]
 	};
 
 	/** Used to map method names to rearg configs. */

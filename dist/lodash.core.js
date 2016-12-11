@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.2';
+  var VERSION = '4.17.3';
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -249,9 +249,9 @@
    * Shortcut fusion is an optimization to merge iteratee calls; this avoids
    * the creation of intermediate arrays and can greatly reduce the number of
    * iteratee executions. Sections of a chain sequence qualify for shortcut
-   * fusion if the section is applied to an array of at least `200` elements
-   * and any iteratees accept only one argument. The heuristic for whether a
-   * section qualifies for shortcut fusion is subject to change.
+   * fusion if the section is applied to an array and iteratees accept only
+   * one argument. The heuristic for whether a section qualifies for shortcut
+   * fusion is subject to change.
    *
    * Chaining is supported in custom builds as long as the `_#value` method is
    * directly or indirectly included in the build.
@@ -395,24 +395,6 @@
   LodashWrapper.prototype.constructor = LodashWrapper;
 
   /*------------------------------------------------------------------------*/
-
-  /**
-   * Used by `_.defaults` to customize its `_.assignIn` use.
-   *
-   * @private
-   * @param {*} objValue The destination value.
-   * @param {*} srcValue The source value.
-   * @param {string} key The key of the property to assign.
-   * @param {Object} object The parent object of `objValue`.
-   * @returns {*} Returns the value to assign.
-   */
-  function assignInDefaults(objValue, srcValue, key, object) {
-    if (objValue === undefined ||
-        (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-      return srcValue;
-    }
-    return objValue;
-  }
 
   /**
    * Assigns `value` to `key` of `object` if the existing value is not equivalent
@@ -673,7 +655,7 @@
     if (value === other) {
       return true;
     }
-    if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+    if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
       return value !== value && other !== other;
     }
     return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
@@ -696,17 +678,12 @@
   function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
     var objIsArr = isArray(object),
         othIsArr = isArray(other),
-        objTag = arrayTag,
-        othTag = arrayTag;
+        objTag = objIsArr ? arrayTag : baseGetTag(object),
+        othTag = othIsArr ? arrayTag : baseGetTag(other);
 
-    if (!objIsArr) {
-      objTag = baseGetTag(object);
-      objTag = objTag == argsTag ? objectTag : objTag;
-    }
-    if (!othIsArr) {
-      othTag = baseGetTag(other);
-      othTag = othTag == argsTag ? objectTag : othTag;
-    }
+    objTag = objTag == argsTag ? objectTag : objTag;
+    othTag = othTag == argsTag ? objectTag : othTag;
+
     var objIsObj = objTag == objectTag,
         othIsObj = othTag == objectTag,
         isSameTag = objTag == othTag;
@@ -1180,6 +1157,26 @@
       return fn.apply(isBind ? thisArg : this, args);
     }
     return wrapper;
+  }
+
+  /**
+   * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
+   * of source objects to the destination object for all destination properties
+   * that resolve to `undefined`.
+   *
+   * @private
+   * @param {*} objValue The destination value.
+   * @param {*} srcValue The source value.
+   * @param {string} key The key of the property to assign.
+   * @param {Object} object The parent object of `objValue`.
+   * @returns {*} Returns the value to assign.
+   */
+  function customDefaultsAssignIn(objValue, srcValue, key, object) {
+    if (objValue === undefined ||
+        (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+      return srcValue;
+    }
+    return objValue;
   }
 
   /**
@@ -2598,7 +2595,7 @@
    * date objects, error objects, maps, numbers, `Object` objects, regexes,
    * sets, strings, symbols, and typed arrays. `Object` objects are compared
    * by their own, not inherited, enumerable properties. Functions and DOM
-   * nodes are **not** supported.
+   * nodes are compared by strict equality, i.e. `===`.
    *
    * @static
    * @memberOf _
@@ -3195,7 +3192,7 @@
    * // => { 'a': 1, 'b': 2 }
    */
   var defaults = baseRest(function(args) {
-    args.push(undefined, assignInDefaults);
+    args.push(undefined, customDefaultsAssignIn);
     return assignInWith.apply(undefined, args);
   });
 

@@ -6875,11 +6875,12 @@
 
     /**
      * Creates an array of random and non-duplicate elements
-     * Requires an empty array and size of the array
+     * Requires size of the array
      * Returns array of random and non-duplicate element of size provided
      */
 
-    function randomUnique(array, size) {
+    function randomUnique(size) {
+      var array = [];
       while (array.length != size) {
         var a = Math.floor(Math.random() * (size - 1 + 1)) + 1;
         if (lodash.indexOf(array, a) == -1) {

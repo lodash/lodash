@@ -4479,6 +4479,28 @@
         done();
       }, 64);
     });
+
+    QUnit.test('should have a hasDelayedInvocation function', function(assert) {
+      assert.expect(4);
+
+      var done = assert.async();
+
+      var callCount = 0;
+
+      var debounced = _.debounce(function() {
+        ++callCount;
+      }, 32);
+
+      assert.strictEqual(debounced.hasDelayedInvocation(), false);
+      debounced();
+      assert.strictEqual(debounced.hasDelayedInvocation(), true);
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 1);
+        assert.strictEqual(debounced.hasDelayedInvocation(), false);
+        done()
+      }, 128);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

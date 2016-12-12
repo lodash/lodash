@@ -10388,12 +10388,14 @@
         timerId = setTimeout(timerExpired, remainingWait(time));
       }
 
+      function hasDelayedInvocation() {
+        return trailing && !!lastArgs;
+      }
+
       function trailingEdge(time) {
         timerId = undefined;
 
-        // Only invoke if we have `lastArgs` which means `func` has been
-        // debounced at least once.
-        if (trailing && lastArgs) {
+        if (hasDelayedInvocation()) {
           return invokeFunc(time);
         }
         lastArgs = lastThis = undefined;
@@ -10437,6 +10439,7 @@
       }
       debounced.cancel = cancel;
       debounced.flush = flush;
+      debounced.hasDelayedInvocation = hasDelayedInvocation;
       return debounced;
     }
 

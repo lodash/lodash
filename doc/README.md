@@ -4704,7 +4704,7 @@ _.eq(object, object);
 // => true
 
 _.eq(object, other);
-// => false
+// => true
 
 _.eq('a', 'a');
 // => true

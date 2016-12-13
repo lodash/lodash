@@ -16807,6 +16807,9 @@
     lodash.eachRight = forEachRight;
     lodash.first = head;
 
+    // expose createAggregator so people can make their own aggregators
+    lodash.createAggregator = createAggregator;
+
     mixin(lodash, (function() {
       var source = {};
       baseForOwn(lodash, function(func, methodName) {

@@ -2827,7 +2827,7 @@ or `_.forOwn` for object iteration.
 _.forEach([1, 2], function(value) {
   console.log(value);
 });
-// => Logs `1` then `2`.
+// => Logs `1` then `2` (iteration order is guaranteed).
 
 _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
   console.log(key);

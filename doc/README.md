@@ -2551,6 +2551,14 @@ elements of empty collections.
 
 #### Example
 ```js
+// omit predicate to test if all elements are truthy
+_.every([1, 'foo', true]);
+// => true
+
+_.every([true, false, true]);
+// => false
+
+
 _.every([true, 1, null, 'yes'], Boolean);
 // => false
 

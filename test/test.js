@@ -3226,6 +3226,23 @@
 
   /*--------------------------------------------------------------------------*/
 
+    QUnit.module('lodash.categorize');
+
+    (function() {
+      QUnit.test('should categorize elements according to datatype', function(assert) {
+        assert.expect(2);
+
+        var array = [1, "a", null, undefined, true, [1,2,3], { name: "Frank"}],
+            actual = _.categorize(array);
+
+        assert.deepEqual(actual, { number: [ 1 ], string: [ 'a' ], object: [ null, [ 1, 2, 3 ], { name: 'Frank' } ], undefined: [ undefined ], boolean: [ true ] });
+        assert.notStrictEqual(actual, array);
+      });
+
+    }());
+
+    /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.concat');
 
   (function() {

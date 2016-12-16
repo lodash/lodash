@@ -6902,6 +6902,33 @@
       }
       return result;
     }
+    
+    /**
+     * Creates an object with its element categorized according to the datatype.
+     *
+     * @static
+     * @category Array
+     * @param {Array} array The array to categorize.
+     * @returns {Object} Returns an Object with categorized data.
+     * @example
+     *
+     * _.categorize([1, "a", null, undefined, true, [1,2,3], { name: "Frank"}]);
+     * // => { number: [ 1 ], string: [ 'a' ], object: [ null, [ 1, 2, 3 ], { name: 'Frank' } ], undefined: [ undefined ],boolean: [ true ] }
+     */
+    function categorize(array) {
+      var index = -1,
+          length = array ? array.length : 0,
+          result = {};
+
+      while (++index < length) {
+        var value = array[index];
+        if (result[typeof array[index]] === undefined) {
+          result[typeof array[index]] = [];
+        }
+        result[typeof array[index]].push(array[index]);
+      }
+      return result;
+    }
 
     /**
      * Creates a new array concatenating `array` with any additional arrays

@@ -37,7 +37,8 @@
 
   /** Used to compose bitmasks for value comparisons. */
   var COMPARE_PARTIAL_FLAG = 1,
-      COMPARE_UNORDERED_FLAG = 2;
+      COMPARE_UNORDERED_FLAG = 2,
+      COMPARE_INHERITED_PROPS_FLAG = 4;
 
   /** Used to compose bitmasks for function metadata. */
   var WRAP_BIND_FLAG = 1,
@@ -5807,9 +5808,10 @@
      */
     function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
       var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-          objProps = getAllKeys(object),
+          compareInheritedProperties = bitmask & COMPARE_INHERITED_PROPS_FLAG,
+          objProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(object),
           objLength = objProps.length,
-          othProps = getAllKeys(other),
+          othProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(other),
           othLength = othProps.length;
 
       if (objLength != othLength && !isPartial) {
@@ -5818,7 +5820,7 @@
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+        if (!compareInheritedProperties && !(isPartial ? key in other : hasOwnProperty.call(other, key))) {
           return false;
         }
       }
@@ -11530,6 +11532,7 @@
      * @category Lang
      * @param {*} value The value to compare.
      * @param {*} other The other value to compare.
+     * @param {boolean} compareInheritedProperties Whether inherited properties should be compared.
      * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
      * @example
      *
@@ -11542,8 +11545,9 @@
      * object === other;
      * // => false
      */
-    function isEqual(value, other) {
-      return baseIsEqual(value, other);
+    function isEqual(value, other, compareInheritedProperties) {
+      var bitmask = compareInheritedProperties ? COMPARE_INHERITED_PROPS_FLAG : undefined;
+      return baseIsEqual(value, other, bitmask);
     }
 
     /**

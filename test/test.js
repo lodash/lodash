@@ -20576,6 +20576,13 @@
       assert.deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 
+    QUnit.test('should work with "_.property" style `iteratee` and context', function(assert) {
+      assert.expect(1);
+
+      var actual = lodashStable.map(_.sortBy(objects.concat(undefined), 'b', {}), 'b');
+      assert.deepEqual(actual, [1, 2, 3, 4, undefined]);
+    });
+
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 

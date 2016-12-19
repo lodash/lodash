@@ -21,8 +21,7 @@ define(['./_Symbol', './_getRawTag', './_objectToString'], function(Symbol, getR
     if (value == null) {
       return value === undefined ? undefinedTag : nullTag;
     }
-    value = Object(value);
-    return (symToStringTag && symToStringTag in value)
+    return (symToStringTag && symToStringTag in Object(value))
       ? getRawTag(value)
       : objectToString(value);
   }

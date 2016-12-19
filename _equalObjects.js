@@ -1,4 +1,4 @@
-define(['./keys'], function(keys) {
+define(['./_getAllKeys'], function(getAllKeys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -27,9 +27,9 @@ define(['./keys'], function(keys) {
    */
   function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
     var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-        objProps = keys(object),
+        objProps = getAllKeys(object),
         objLength = objProps.length,
-        othProps = keys(other),
+        othProps = getAllKeys(other),
         othLength = othProps.length;
 
     if (objLength != othLength && !isPartial) {

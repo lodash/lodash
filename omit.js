@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseClone', './_baseUnset', './_castPath', './_copyObject', './_flatRest', './_getAllKeysIn'], function(arrayMap, baseClone, baseUnset, castPath, copyObject, flatRest, getAllKeysIn) {
+define(['./_arrayMap', './_baseClone', './_baseUnset', './_castPath', './_copyObject', './_customOmitClone', './_flatRest', './_getAllKeysIn'], function(arrayMap, baseClone, baseUnset, castPath, copyObject, customOmitClone, flatRest, getAllKeysIn) {
 
   /** Used to compose bitmasks for cloning. */
   var CLONE_DEEP_FLAG = 1,
@@ -38,7 +38,7 @@ define(['./_arrayMap', './_baseClone', './_baseUnset', './_castPath', './_copyOb
     });
     copyObject(object, getAllKeysIn(object), result);
     if (isDeep) {
-      result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+      result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
     }
     var length = paths.length;
     while (length--) {

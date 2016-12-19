@@ -1,4 +1,4 @@
-define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', './_escapeStringChar', './isError', './_isIterateeCall', './keys', './_reInterpolate', './templateSettings', './toString'], function(assignInDefaults, assignInWith, attempt, baseValues, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings, toString) {
+define(['./assignInWith', './attempt', './_baseValues', './_customDefaultsAssignIn', './_escapeStringChar', './isError', './_isIterateeCall', './keys', './_reInterpolate', './templateSettings', './toString'], function(assignInWith, attempt, baseValues, customDefaultsAssignIn, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -134,9 +134,9 @@ define(['./_assignInDefaults', './assignInWith', './attempt', './_baseValues', '
       options = undefined;
     }
     string = toString(string);
-    options = assignInWith({}, options, settings, assignInDefaults);
+    options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-    var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+    var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
         importsKeys = keys(imports),
         importsValues = baseValues(imports, importsKeys);
 

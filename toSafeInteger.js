@@ -28,7 +28,9 @@ define(['./_baseClamp', './toInteger'], function(baseClamp, toInteger) {
    * // => 3
    */
   function toSafeInteger(value) {
-    return baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER);
+    return value
+      ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER)
+      : (value === 0 ? value : 0);
   }
 
   return toSafeInteger;

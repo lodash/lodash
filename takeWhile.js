@@ -16,7 +16,7 @@ define(['./_baseIteratee', './_baseWhile'], function(baseIteratee, baseWhile) {
    *
    * var users = [
    *   { 'user': 'barney',  'active': false },
-   *   { 'user': 'fred',    'active': false},
+   *   { 'user': 'fred',    'active': false },
    *   { 'user': 'pebbles', 'active': true }
    * ];
    *

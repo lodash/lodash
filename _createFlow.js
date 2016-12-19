@@ -3,9 +3,6 @@ define(['./_LodashWrapper', './_flatRest', './_getData', './_getFuncName', './is
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used as the size to enable large array optimizations. */
-  var LARGE_ARRAY_SIZE = 200;
-
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -62,8 +59,7 @@ define(['./_LodashWrapper', './_flatRest', './_getData', './_getFuncName', './is
         var args = arguments,
             value = args[0];
 
-        if (wrapper && args.length == 1 &&
-            isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+        if (wrapper && args.length == 1 && isArray(value)) {
           return wrapper.plant(value).value();
         }
         var index = 0,

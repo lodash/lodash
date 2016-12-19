@@ -1,8 +1,5 @@
 define(['./_apply', './_arrayPush', './_baseRest', './_castSlice', './toInteger'], function(apply, arrayPush, baseRest, castSlice, toInteger) {
 
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
-
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -47,7 +44,7 @@ define(['./_apply', './_arrayPush', './_baseRest', './_castSlice', './toInteger'
     if (typeof func != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
-    start = start === undefined ? 0 : nativeMax(toInteger(start), 0);
+    start = start == null ? 0 : nativeMax(toInteger(start), 0);
     return baseRest(function(args) {
       var array = args[start],
           otherArgs = castSlice(args, 0, start);

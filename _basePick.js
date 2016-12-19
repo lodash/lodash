@@ -10,7 +10,6 @@ define(['./_basePickBy', './hasIn'], function(basePickBy, hasIn) {
    * @returns {Object} Returns the new object.
    */
   function basePick(object, paths) {
-    object = Object(object);
     return basePickBy(object, paths, function(value, path) {
       return hasIn(object, path);
     });

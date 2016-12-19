@@ -1,4 +1,4 @@
-define(['./_apply', './_baseRest', './_mergeDefaults', './mergeWith'], function(apply, baseRest, mergeDefaults, mergeWith) {
+define(['./_apply', './_baseRest', './_customDefaultsMerge', './mergeWith'], function(apply, baseRest, customDefaultsMerge, mergeWith) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -23,7 +23,7 @@ define(['./_apply', './_baseRest', './_mergeDefaults', './mergeWith'], function(
    * // => { 'a': { 'b': 2, 'c': 3 } }
    */
   var defaultsDeep = baseRest(function(args) {
-    args.push(undefined, mergeDefaults);
+    args.push(undefined, customDefaultsMerge);
     return apply(mergeWith, undefined, args);
   });
 

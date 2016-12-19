@@ -1,4 +1,4 @@
-define(['./_baseIsEqualDeep', './isObject', './isObjectLike'], function(baseIsEqualDeep, isObject, isObjectLike) {
+define(['./_baseIsEqualDeep', './isObjectLike'], function(baseIsEqualDeep, isObjectLike) {
 
   /**
    * The base implementation of `_.isEqual` which supports partial comparisons
@@ -18,7 +18,7 @@ define(['./_baseIsEqualDeep', './isObject', './isObjectLike'], function(baseIsEq
     if (value === other) {
       return true;
     }
-    if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+    if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
       return value !== value && other !== other;
     }
     return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);

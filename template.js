@@ -1,7 +1,7 @@
-import assignInDefaults from './_assignInDefaults.js';
 import assignInWith from './assignInWith.js';
 import attempt from './attempt.js';
 import baseValues from './_baseValues.js';
+import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
 import escapeStringChar from './_escapeStringChar.js';
 import isError from './isError.js';
 import isIterateeCall from './_isIterateeCall.js';
@@ -141,9 +141,9 @@ function template(string, options, guard) {
     options = undefined;
   }
   string = toString(string);
-  options = assignInWith({}, options, settings, assignInDefaults);
+  options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-  var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+  var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
       importsKeys = keys(imports),
       importsValues = baseValues(imports, importsKeys);
 

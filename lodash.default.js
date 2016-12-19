@@ -45,7 +45,7 @@ import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.17.2';
+var VERSION = '4.17.3';
 
 /** Used to compose bitmasks for function metadata. */
 var WRAP_BIND_KEY_FLAG = 2;
@@ -431,14 +431,13 @@ arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'],
 // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
 arrayEach(['drop', 'take'], function(methodName, index) {
   LazyWrapper.prototype[methodName] = function(n) {
-    var filtered = this.__filtered__;
-    if (filtered && !index) {
-      return new LazyWrapper(this);
-    }
     n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
 
-    var result = this.clone();
-    if (filtered) {
+    var result = (this.__filtered__ && !index)
+      ? new LazyWrapper(this)
+      : this.clone();
+
+    if (result.__filtered__) {
       result.__takeCount__ = nativeMin(n, result.__takeCount__);
     } else {
       result.__views__.push({

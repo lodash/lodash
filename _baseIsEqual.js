@@ -1,5 +1,4 @@
 import baseIsEqualDeep from './_baseIsEqualDeep.js';
-import isObject from './isObject.js';
 import isObjectLike from './isObjectLike.js';
 
 /**
@@ -20,7 +19,7 @@ function baseIsEqual(value, other, bitmask, customizer, stack) {
   if (value === other) {
     return true;
   }
-  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+  if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
     return value !== value && other !== other;
   }
   return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);

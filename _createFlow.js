@@ -5,9 +5,6 @@ import getFuncName from './_getFuncName.js';
 import isArray from './isArray.js';
 import isLaziable from './_isLaziable.js';
 
-/** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
-
 /** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -64,8 +61,7 @@ function createFlow(fromRight) {
       var args = arguments,
           value = args[0];
 
-      if (wrapper && args.length == 1 &&
-          isArray(value) && value.length >= LARGE_ARRAY_SIZE) {
+      if (wrapper && args.length == 1 && isArray(value)) {
         return wrapper.plant(value).value();
       }
       var index = 0,

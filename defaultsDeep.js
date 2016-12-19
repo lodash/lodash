@@ -1,6 +1,6 @@
 import apply from './_apply.js';
 import baseRest from './_baseRest.js';
-import mergeDefaults from './_mergeDefaults.js';
+import customDefaultsMerge from './_customDefaultsMerge.js';
 import mergeWith from './mergeWith.js';
 
 /**
@@ -23,7 +23,7 @@ import mergeWith from './mergeWith.js';
  * // => { 'a': { 'b': 2, 'c': 3 } }
  */
 var defaultsDeep = baseRest(function(args) {
-  args.push(undefined, mergeDefaults);
+  args.push(undefined, customDefaultsMerge);
   return apply(mergeWith, undefined, args);
 });
 

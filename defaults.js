@@ -1,7 +1,7 @@
 import apply from './_apply.js';
-import assignInDefaults from './_assignInDefaults.js';
 import assignInWith from './assignInWith.js';
 import baseRest from './_baseRest.js';
+import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
 
 /**
  * Assigns own and inherited enumerable string keyed properties of source
@@ -25,7 +25,7 @@ import baseRest from './_baseRest.js';
  * // => { 'a': 1, 'b': 2 }
  */
 var defaults = baseRest(function(args) {
-  args.push(undefined, assignInDefaults);
+  args.push(undefined, customDefaultsAssignIn);
   return apply(assignInWith, undefined, args);
 });
 

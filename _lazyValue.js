@@ -2,9 +2,6 @@ import baseWrapperValue from './_baseWrapperValue.js';
 import getView from './_getView.js';
 import isArray from './isArray.js';
 
-/** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
-
 /** Used to indicate the type of lazy iteratees. */
 var LAZY_FILTER_FLAG = 1,
     LAZY_MAP_FLAG = 2;
@@ -36,8 +33,7 @@ function lazyValue() {
       resIndex = 0,
       takeCount = nativeMin(length, this.__takeCount__);
 
-  if (!isArr || arrLength < LARGE_ARRAY_SIZE ||
-      (arrLength == length && takeCount == length)) {
+  if (!isArr || (!isRight && arrLength == length && takeCount == length)) {
     return baseWrapperValue(array, this.__actions__);
   }
   var result = [];

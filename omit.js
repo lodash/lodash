@@ -3,6 +3,7 @@ var arrayMap = require('./_arrayMap'),
     baseUnset = require('./_baseUnset'),
     castPath = require('./_castPath'),
     copyObject = require('./_copyObject'),
+    customOmitClone = require('./_customOmitClone'),
     flatRest = require('./_flatRest'),
     getAllKeysIn = require('./_getAllKeysIn');
 
@@ -44,7 +45,7 @@ var omit = flatRest(function(object, paths) {
   });
   copyObject(object, getAllKeysIn(object), result);
   if (isDeep) {
-    result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG);
+    result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
   }
   var length = paths.length;
   while (length--) {

@@ -7,7 +7,9 @@ var objectProto = Object.prototype;
 var hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * Used by `_.defaults` to customize its `_.assignIn` use.
+ * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
+ * of source objects to the destination object for all destination properties
+ * that resolve to `undefined`.
  *
  * @private
  * @param {*} objValue The destination value.
@@ -16,7 +18,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @param {Object} object The parent object of `objValue`.
  * @returns {*} Returns the value to assign.
  */
-function assignInDefaults(objValue, srcValue, key, object) {
+function customDefaultsAssignIn(objValue, srcValue, key, object) {
   if (objValue === undefined ||
       (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
     return srcValue;
@@ -24,4 +26,4 @@ function assignInDefaults(objValue, srcValue, key, object) {
   return objValue;
 }
 
-module.exports = assignInDefaults;
+module.exports = customDefaultsAssignIn;

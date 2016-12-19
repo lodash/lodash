@@ -10434,6 +10434,53 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.isEqualIn');
+
+  (function() {
+    QUnit.test('should compare enumerable inherited properties', function(assert) {
+      function aProto() {}
+      Object.defineProperty(aProto, "foo", { enumerable: true, value: "a" });
+
+      var a = Object.create(aProto);
+      var a2 = Object.create(aProto);
+      assert.strictEqual(_.isEqualIn(a, a2), true);
+
+      function a3Proto() {}
+      Object.defineProperty(a3Proto, "foo", { enumerable: true, value: "a" });
+      var a3 = Object.create(a3Proto);
+      assert.strictEqual(_.isEqualIn(a, a3), true);
+
+      function bProto() {}
+      Object.defineProperty(bProto, "foo", { enumerable: true, value: "b" });
+      var b = Object.create(bProto);
+      assert.strictEqual(_.isEqualIn(a, b), false);
+
+      assert.strictEqual(_.isEqualIn([a], [a2]), true);
+      assert.strictEqual(_.isEqualIn([a], [b]), false);
+
+      assert.strictEqual(_.isEqualIn(Object.create({ foo: "foo"}), Object.create({ foo: "foo" })), true);
+      assert.strictEqual(_.isEqualIn([Object.create({ foo: "foo"})], [Object.create({ foo: "foo" })]), true);
+      assert.strictEqual(_.isEqualIn(Object.create({ foo: "foo"}), Object.create({ foo: "bar" })), false);
+      assert.strictEqual(_.isEqualIn([Object.create({ foo: "foo"})], [Object.create({ foo: "bar" })]), false);
+    });
+
+    QUnit.test('should ignore non-enumerable inherited properties', function(assert) {
+      function aProto() {}
+      Object.defineProperty(aProto, "foo", { enumerable: true, value: "foo" });
+      Object.defineProperty(aProto, "bar", { enumerable: false, value: "a" });
+      var a = Object.create(aProto);
+
+      function bProto() {}
+      Object.defineProperty(bProto, "foo", { enumerable: true, value: "foo" });
+      Object.defineProperty(bProto, "bar", { enumerable: false, value: "b" });
+      var b = Object.create(bProto);
+
+      assert.strictEqual(_.isEqualIn(a, b), true);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.isError');
 
   (function() {
@@ -26343,6 +26390,8 @@
       'isElement',
       'isEmpty',
       'isEqual',
+      'isEqualWith',
+      'isEqualIn',
       'isError',
       'isFinite',
       'isFunction',
@@ -26652,7 +26701,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

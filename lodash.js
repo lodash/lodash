@@ -37,7 +37,8 @@
 
   /** Used to compose bitmasks for value comparisons. */
   var COMPARE_PARTIAL_FLAG = 1,
-      COMPARE_UNORDERED_FLAG = 2;
+      COMPARE_UNORDERED_FLAG = 2,
+      COMPARE_INHERITED_PROPS_FLAG = 4;
 
   /** Used to compose bitmasks for function metadata. */
   var WRAP_BIND_FLAG = 1,
@@ -5807,9 +5808,10 @@
      */
     function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
       var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-          objProps = getAllKeys(object),
+          compareInheritedProperties = bitmask & COMPARE_INHERITED_PROPS_FLAG,
+          objProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(object),
           objLength = objProps.length,
-          othProps = getAllKeys(other),
+          othProps = compareInheritedProperties ? getAllKeysIn(object) : getAllKeys(other),
           othLength = othProps.length;
 
       if (objLength != othLength && !isPartial) {
@@ -5818,7 +5820,7 @@
       var index = objLength;
       while (index--) {
         var key = objProps[index];
-        if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+        if (!compareInheritedProperties && !(isPartial ? key in other : hasOwnProperty.call(other, key))) {
           return false;
         }
       }
@@ -11585,6 +11587,30 @@
     }
 
     /**
+     * This method is like `_.isEqual` except that it also checks inherited properties
+     * when comparing objects.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.17.3
+     * @category Lang
+     * @param {*} value The value to compare.
+     * @param {*} other The other value to compare.
+     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+     * @example
+     *
+     * // property "foo" is declared on the prototype and is inherited by a and b.
+     * var a = Object.create({ foo: "a" });
+     * var b = Object.create({ foo: "b" });
+     *
+     * _.isEqualIn(a, b);
+     * // => false
+     */
+    function isEqualIn(value, other) {
+      return baseIsEqual(value, other, COMPARE_INHERITED_PROPS_FLAG);
+    }
+
+    /**
      * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
      * `SyntaxError`, `TypeError`, or `URIError` object.
      *
@@ -16707,6 +16733,7 @@
     lodash.isEmpty = isEmpty;
     lodash.isEqual = isEqual;
     lodash.isEqualWith = isEqualWith;
+    lodash.isEqualIn = isEqualIn;
     lodash.isError = isError;
     lodash.isFinite = isFinite;
     lodash.isFunction = isFunction;

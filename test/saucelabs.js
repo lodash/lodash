@@ -107,8 +107,8 @@ var platforms = [
   ['Windows 10', 'internet explorer', '11'],
   ['Windows 8', 'internet explorer', '10'],
   ['Windows 7', 'internet explorer', '9'],
-  ['OS X 10.11', 'safari', '9'],
-  ['OS X 10.10', 'safari', '8']
+  ['macOS 10.12', 'safari', '10'],
+  ['OS X 10.11', 'safari', '9']
 ];
 
 /** Used to tailor the `platforms` array. */

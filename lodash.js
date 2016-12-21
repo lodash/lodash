@@ -14631,7 +14631,10 @@
      */
     function startsWith(string, target, position) {
       string = toString(string);
-      position = baseClamp(toInteger(position), 0, string.length);
+      position = position === undefined
+        ? 0
+        : baseClamp(toInteger(position), 0, string.length);
+
       target = baseToString(target);
       return string.slice(position, position + target.length) == target;
     }

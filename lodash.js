@@ -16676,6 +16676,7 @@
     lodash.escape = escape;
     lodash.escapeRegExp = escapeRegExp;
     lodash.every = every;
+    lodash.all = every;
     lodash.find = find;
     lodash.findIndex = findIndex;
     lodash.findKey = findKey;

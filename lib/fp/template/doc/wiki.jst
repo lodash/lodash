@@ -64,7 +64,7 @@ Methods that cap iteratees to one argument:<br>
 Methods that cap iteratees to two arguments:<br>
 <%= toFuncList(_.keys(_.pickBy(mapping.iterateeAry, _.partial(_.eq, _, 2)))) %>
 
-The iteratee of `mapKeys` is invoked with one argument: (key)
+The iteratee of `mapKeys` is capped to one argument: `(key)`
 
 #### Fixed Arity
 
@@ -134,6 +134,8 @@ Methods with custom argument orders:<br>
   const orders = mapping.methodRearg[methodName];
   return ' * `_.' + methodName + '` has an order of ' + toArgOrder(orders);
 }).join('\n') %>
+
+The iteratee of `reduceRight` has an argument order of: `(b, a)`
 
 #### New Methods
 

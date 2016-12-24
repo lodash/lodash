@@ -756,12 +756,12 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-benchmark@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/benchmark/-/benchmark-2.1.2.tgz#0676d82e560d82d2f317f82cf0858483955a7bfe"
+benchmark@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/benchmark/-/benchmark-2.1.3.tgz#e10e40e4d53d0e1c9d77a834fde593994dca7f0c"
   dependencies:
-    lodash "^4.16.4"
-    platform "^1.3.1"
+    lodash "^4.17.3"
+    platform "^1.3.3"
 
 big.js@^3.1.3:
   version "3.1.3"

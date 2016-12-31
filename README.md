@@ -21,7 +21,7 @@ $ lodash core -o ./dist/lodash.core.js
 ## Download
 
  * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.js) ([~23 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.3/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.3/LICENSE) & supports [modern environments](#support).<br>

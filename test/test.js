@@ -16450,6 +16450,16 @@
 
       assert.deepEqual(_.omit(object, args), { 'b': 2, 'd': 4 });
     });
+
+    QUnit.test('should not mutate `object`', function(assert) {
+      assert.expect(4);
+
+      lodashStable.each(['a', ['a'], 'a.b', ['a.b']], function(path) {
+        var object = { 'a': { 'b': 2 } };
+        _.omit(object, path);
+        assert.deepEqual(object, { 'a': { 'b': 2 } });
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

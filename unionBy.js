@@ -1,6 +1,5 @@
 import baseFlatten from './_baseFlatten.js';
 import baseIteratee from './_baseIteratee.js';
-import baseRest from './_baseRest.js';
 import baseUniq from './_baseUniq.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
@@ -28,12 +27,12 @@ import last from './last.js';
  * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
  * // => [{ 'x': 1 }, { 'x': 2 }]
  */
-var unionBy = baseRest(function(arrays) {
-  var iteratee = last(arrays);
+const unionBy = (...arrays) => {
+  let iteratee = last(arrays);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
   return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), baseIteratee(iteratee, 2));
-});
+};
 
 export default unionBy;

@@ -1,7 +1,7 @@
 import isObject from './isObject.js';
 
 /** Built-in value references. */
-var objectCreate = Object.create;
+const objectCreate = Object.create;
 
 /**
  * The base implementation of `_.create` without support for assigning
@@ -11,9 +11,9 @@ var objectCreate = Object.create;
  * @param {Object} proto The object to inherit from.
  * @returns {Object} Returns the new object.
  */
-var baseCreate = (function() {
+const baseCreate = (() => {
   function object() {}
-  return function(proto) {
+  return proto => {
     if (!isObject(proto)) {
       return {};
     }
@@ -25,6 +25,6 @@ var baseCreate = (function() {
     object.prototype = undefined;
     return result;
   };
-}());
+})();
 
 export default baseCreate;

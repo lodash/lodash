@@ -19,12 +19,12 @@ import isObject from './isObject.js';
 import keys from './keys.js';
 
 /** Used to compose bitmasks for cloning. */
-var CLONE_DEEP_FLAG = 1,
-    CLONE_FLAT_FLAG = 2,
-    CLONE_SYMBOLS_FLAG = 4;
+const CLONE_DEEP_FLAG = 1;
+const CLONE_FLAT_FLAG = 2;
+const CLONE_SYMBOLS_FLAG = 4;
 
 /** `Object#toString` result references. */
-var argsTag = '[object Arguments]',
+const argsTag = '[object Arguments]',
     arrayTag = '[object Array]',
     boolTag = '[object Boolean]',
     dateTag = '[object Date]',

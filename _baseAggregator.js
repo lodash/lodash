@@ -12,7 +12,7 @@ import baseEach from './_baseEach.js';
  * @returns {Function} Returns `accumulator`.
  */
 function baseAggregator(collection, setter, iteratee, accumulator) {
-  baseEach(collection, function(value, key, collection) {
+  baseEach(collection, (value, key, collection) => {
     setter(accumulator, value, iteratee(value), collection);
   });
   return accumulator;

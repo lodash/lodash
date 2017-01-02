@@ -9,8 +9,8 @@ import baseEach from './_baseEach.js';
  * @returns {Array} Returns the new filtered array.
  */
 function baseFilter(collection, predicate) {
-  var result = [];
-  baseEach(collection, function(value, index, collection) {
+  const result = [];
+  baseEach(collection, (value, index, collection) => {
     if (predicate(value, index, collection)) {
       result.push(value);
     }

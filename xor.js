@@ -1,5 +1,4 @@
 import arrayFilter from './_arrayFilter.js';
-import baseRest from './_baseRest.js';
 import baseXor from './_baseXor.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
@@ -21,8 +20,7 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.xor([2, 1], [2, 3]);
  * // => [1, 3]
  */
-var xor = baseRest(function(arrays) {
-  return baseXor(arrayFilter(arrays, isArrayLikeObject));
-});
+const xor = (...arrays) =>
+  baseXor(arrayFilter(arrays, isArrayLikeObject));
 
 export default xor;

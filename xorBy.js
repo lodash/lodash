@@ -1,6 +1,5 @@
 import arrayFilter from './_arrayFilter.js';
 import baseIteratee from './_baseIteratee.js';
-import baseRest from './_baseRest.js';
 import baseXor from './_baseXor.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
@@ -28,12 +27,12 @@ import last from './last.js';
  * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
  * // => [{ 'x': 2 }]
  */
-var xorBy = baseRest(function(arrays) {
-  var iteratee = last(arrays);
+const xorBy = (...arrays) => {
+  let iteratee = last(arrays);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
   return baseXor(arrayFilter(arrays, isArrayLikeObject), baseIteratee(iteratee, 2));
-});
+};
 
 export default xorBy;

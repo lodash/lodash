@@ -10,8 +10,8 @@ import baseEach from './_baseEach.js';
  *  else `false`
  */
 function baseEvery(collection, predicate) {
-  var result = true;
-  baseEach(collection, function(value, index, collection) {
+  let result = true;
+  baseEach(collection, (value, index, collection) => {
     result = !!predicate(value, index, collection);
     return result;
   });

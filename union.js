@@ -1,5 +1,4 @@
 import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
 import baseUniq from './_baseUniq.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
@@ -19,8 +18,7 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.union([2], [1, 2]);
  * // => [2, 1]
  */
-var union = baseRest(function(arrays) {
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
-});
+const union = (...arrays) =>
+  baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
 
 export default union;

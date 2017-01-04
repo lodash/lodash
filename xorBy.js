@@ -27,12 +27,12 @@ import last from './last.js';
  * _.xorBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
  * // => [{ 'x': 2 }]
  */
-const xorBy = (...arrays) => {
+function xorBy(...arrays) {
   let iteratee = last(arrays);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
   return baseXor(arrayFilter(arrays, isArrayLikeObject), baseIteratee(iteratee, 2));
-};
+}
 
 export default xorBy;

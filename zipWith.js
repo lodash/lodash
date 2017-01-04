@@ -1,4 +1,3 @@
-import baseRest from './_baseRest.js';
 import unzipWith from './unzipWith.js';
 
 /**
@@ -21,12 +20,12 @@ import unzipWith from './unzipWith.js';
  * });
  * // => [111, 222]
  */
-var zipWith = baseRest(function(arrays) {
-  var length = arrays.length,
-      iteratee = length > 1 ? arrays[length - 1] : undefined;
+function zipWith(...arrays) {
+  const length = arrays.length;
+  let iteratee = length > 1 ? arrays[length - 1] : undefined;
 
   iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
   return unzipWith(arrays, iteratee);
-});
+}
 
 export default zipWith;

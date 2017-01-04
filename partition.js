@@ -36,8 +36,7 @@ import createAggregator from './_createAggregator.js';
  * _.partition(users, 'active');
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
-var partition = createAggregator(function(result, value, key) {
-  result[key ? 0 : 1].push(value);
-}, function() { return [[], []]; });
+const partition = createAggregator((result, value, key) =>
+  result[key ? 0 : 1].push(value), () => [[], []]);
 
 export default partition;

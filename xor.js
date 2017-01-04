@@ -20,7 +20,8 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.xor([2, 1], [2, 3]);
  * // => [1, 3]
  */
-const xor = (...arrays) =>
-  baseXor(arrayFilter(arrays, isArrayLikeObject));
+function xor(...arrays) {
+  return baseXor(arrayFilter(arrays, isArrayLikeObject));
+}
 
 export default xor;

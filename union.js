@@ -18,7 +18,8 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.union([2], [1, 2]);
  * // => [2, 1]
  */
-const union = (...arrays) =>
-  baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+function union(...arrays) {
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true));
+}
 
 export default union;

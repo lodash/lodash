@@ -157,11 +157,11 @@ function debounce(func, wait, options) {
     return timerId === undefined ? result : trailingEdge(now());
   }
 
-  function debounced() {
+  function debounced(...args) {
     var time = now(),
         isInvoking = shouldInvoke(time);
 
-    lastArgs = arguments;
+    lastArgs = args;
     lastThis = this;
     lastCallTime = time;
 

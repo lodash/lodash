@@ -33,11 +33,11 @@ import isArray from './isArray.js';
  * console.log(_.castArray(array) === array);
  * // => true
  */
-function castArray() {
-  if (!arguments.length) {
+function castArray(...args) {
+  if (!args.length) {
     return [];
   }
-  var value = arguments[0];
+  var value = args[0];
   return isArray(value) ? value : [value];
 }
 

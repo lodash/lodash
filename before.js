@@ -26,9 +26,9 @@ function before(n, func) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   n = toInteger(n);
-  return function() {
+  return function(...args) {
     if (--n > 0) {
-      result = func.apply(this, arguments);
+      result = func.apply(this, args);
     }
     if (n <= 1) {
       func = undefined;

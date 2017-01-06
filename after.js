@@ -32,9 +32,9 @@ function after(n, func) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   n = toInteger(n);
-  return function() {
+  return function(...args) {
     if (--n < 1) {
-      return func.apply(this, arguments);
+      return func.apply(this, args);
     }
   };
 }

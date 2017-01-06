@@ -97,7 +97,7 @@ function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arit
   } else if ((bitmask == WRAP_PARTIAL_FLAG || bitmask == (WRAP_BIND_FLAG | WRAP_PARTIAL_FLAG)) && !holders.length) {
     result = createPartial(func, bitmask, thisArg, partials);
   } else {
-    result = createHybrid.apply(undefined, newData);
+    result = createHybrid(...newData);
   }
   var setter = data ? baseSetData : setData;
   return setWrapToString(setter(result, newData), func, bitmask);

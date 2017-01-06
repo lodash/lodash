@@ -45,7 +45,7 @@ function createRecurry(func, bitmask, wrapFunc, placeholder, thisArg, partials, 
     newHoldersRight, argPos, ary, arity
   ];
 
-  var result = wrapFunc.apply(undefined, newData);
+  var result = wrapFunc(...newData);
   if (isLaziable(func)) {
     setData(result, newData);
   }

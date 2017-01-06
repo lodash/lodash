@@ -15,7 +15,7 @@ function baseDelay(func, wait, args) {
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  return setTimeout(() => func.apply(undefined, args), wait);
+  return setTimeout(() => func(...args), wait);
 }
 
 export default baseDelay;

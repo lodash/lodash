@@ -30,7 +30,7 @@ function shortOut(func) {
     } else {
       count = 0;
     }
-    return func.apply(undefined, arguments);
+    return func(...arguments);
   };
 }
 

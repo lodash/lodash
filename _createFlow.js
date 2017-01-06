@@ -50,7 +50,7 @@ function createFlow(fromRight) {
             data[1] == (WRAP_ARY_FLAG | WRAP_CURRY_FLAG | WRAP_PARTIAL_FLAG | WRAP_REARG_FLAG) &&
             !data[4].length && data[9] == 1
           ) {
-        wrapper = wrapper[getFuncName(data[0])].apply(wrapper, data[3]);
+        wrapper = wrapper[getFuncName(data[0])](...data[3]);
       } else {
         wrapper = (func.length == 1 && isLaziable(func))
           ? wrapper[funcName]()

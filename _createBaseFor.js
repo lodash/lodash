@@ -6,7 +6,7 @@
  * @returns {Function} Returns the new base function.
  */
 function createBaseFor(fromRight) {
-  return function(object, iteratee, keysFunc) {
+  return (object, iteratee, keysFunc) => {
     var index = -1,
         iterable = Object(object),
         props = keysFunc(object),

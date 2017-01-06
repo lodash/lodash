@@ -31,7 +31,7 @@ import last from './last.js';
  * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
  * // => [{ 'x': 2 }]
  */
-var differenceBy = baseRest(function(array, values) {
+var differenceBy = baseRest((array, values) => {
   var iteratee = last(values);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;

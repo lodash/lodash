@@ -33,7 +33,7 @@ import keysIn from './keysIn.js';
  * _.assignIn({ 'a': 0 }, new Foo, new Bar);
  * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
  */
-var assignIn = createAssigner(function(object, source) {
+var assignIn = createAssigner((object, source) => {
   copyObject(source, keysIn(source), object);
 });
 

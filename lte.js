@@ -23,8 +23,6 @@ import createRelationalOperation from './_createRelationalOperation.js';
  * _.lte(3, 1);
  * // => false
  */
-var lte = createRelationalOperation(function(value, other) {
-  return value <= other;
-});
+var lte = createRelationalOperation((value, other) => value <= other);
 
 export default lte;

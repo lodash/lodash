@@ -28,7 +28,7 @@ import last from './last.js';
  * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
  * // => [{ 'x': 1 }]
  */
-var intersectionBy = baseRest(function(arrays) {
+var intersectionBy = baseRest(arrays => {
   var iteratee = last(arrays),
       mapped = arrayMap(arrays, castArrayLikeObject);
 

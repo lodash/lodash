@@ -18,9 +18,7 @@
  * // => true
  */
 function constant(value) {
-  return function() {
-    return value;
-  };
+  return () => value;
 }
 
 export default constant;

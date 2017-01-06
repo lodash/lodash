@@ -12,7 +12,7 @@ import baseForOwn from './_baseForOwn.js';
  * @returns {Function} Returns `accumulator`.
  */
 function baseInverter(object, setter, iteratee, accumulator) {
-  baseForOwn(object, function(value, key, object) {
+  baseForOwn(object, (value, key, object) => {
     setter(accumulator, iteratee(value), key, object);
   });
   return accumulator;

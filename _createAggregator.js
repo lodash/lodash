@@ -12,7 +12,7 @@ import isArray from './isArray.js';
  * @returns {Function} Returns the new aggregator function.
  */
 function createAggregator(setter, initializer) {
-  return function(collection, iteratee) {
+  return (collection, iteratee) => {
     var func = isArray(collection) ? arrayAggregator : baseAggregator,
         accumulator = initializer ? initializer() : {};
 

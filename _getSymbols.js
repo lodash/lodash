@@ -17,14 +17,12 @@ var nativeGetSymbols = Object.getOwnPropertySymbols;
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+var getSymbols = !nativeGetSymbols ? stubArray : object => {
   if (object == null) {
     return [];
   }
   object = Object(object);
-  return arrayFilter(nativeGetSymbols(object), function(symbol) {
-    return propertyIsEnumerable.call(object, symbol);
-  });
+  return arrayFilter(nativeGetSymbols(object), symbol => propertyIsEnumerable.call(object, symbol));
 };
 
 export default getSymbols;

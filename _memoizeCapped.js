@@ -12,7 +12,7 @@ var MAX_MEMOIZE_SIZE = 500;
  * @returns {Function} Returns the new memoized function.
  */
 function memoizeCapped(func) {
-  var result = memoize(func, function(key) {
+  var result = memoize(func, key => {
     if (cache.size === MAX_MEMOIZE_SIZE) {
       cache.clear();
     }

@@ -139,7 +139,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     : (isFlat ? keysIn : keys);
 
   var props = isArr ? undefined : keysFunc(value);
-  arrayEach(props || value, function(subValue, key) {
+  arrayEach(props || value, (subValue, key) => {
     if (props) {
       key = subValue;
       subValue = value[key];

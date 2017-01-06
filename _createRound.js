@@ -14,7 +14,7 @@ var nativeMin = Math.min;
  */
 function createRound(methodName) {
   var func = Math[methodName];
-  return function(number, precision) {
+  return (number, precision) => {
     number = toNumber(number);
     precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
     if (precision) {

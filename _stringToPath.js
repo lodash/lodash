@@ -14,12 +14,12 @@ var reEscapeChar = /\\(\\)?/g;
  * @param {string} string The string to convert.
  * @returns {Array} Returns the property path array.
  */
-var stringToPath = memoizeCapped(function(string) {
+var stringToPath = memoizeCapped(string => {
   var result = [];
   if (reLeadingDot.test(string)) {
     result.push('');
   }
-  string.replace(rePropName, function(match, number, quote, string) {
+  string.replace(rePropName, (match, number, quote, string) => {
     result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
   });
   return result;

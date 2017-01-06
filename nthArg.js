@@ -24,9 +24,7 @@ import toInteger from './toInteger.js';
  */
 function nthArg(n) {
   n = toInteger(n);
-  return baseRest(function(args) {
-    return baseNth(args, n);
-  });
+  return baseRest(args => baseNth(args, n));
 }
 
 export default nthArg;

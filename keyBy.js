@@ -29,7 +29,7 @@ import createAggregator from './_createAggregator.js';
  * _.keyBy(array, 'dir');
  * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
-var keyBy = createAggregator(function(result, value, key) {
+var keyBy = createAggregator((result, value, key) => {
   baseAssignValue(result, key, value);
 });
 

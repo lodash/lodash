@@ -39,7 +39,7 @@ function cond(pairs) {
   var length = pairs == null ? 0 : pairs.length,
       toIteratee = baseIteratee;
 
-  pairs = !length ? [] : arrayMap(pairs, function(pair) {
+  pairs = !length ? [] : arrayMap(pairs, pair => {
     if (typeof pair[1] != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }

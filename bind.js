@@ -42,7 +42,7 @@ var WRAP_BIND_FLAG = 1,
  * bound('hi');
  * // => 'hi fred!'
  */
-var bind = baseRest(function(func, thisArg, partials) {
+var bind = baseRest((func, thisArg, partials) => {
   var bitmask = WRAP_BIND_FLAG;
   if (partials.length) {
     var holders = replaceHolders(partials, getHolder(bind));

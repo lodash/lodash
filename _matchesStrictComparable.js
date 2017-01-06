@@ -8,7 +8,7 @@
  * @returns {Function} Returns the new spec function.
  */
 function matchesStrictComparable(key, srcValue) {
-  return function(object) {
+  return object => {
     if (object == null) {
       return false;
     }

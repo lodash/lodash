@@ -1,10 +1,10 @@
 import coreJsData from './_coreJsData.js';
 
 /** Used to detect methods masquerading as native. */
-var maskSrcKey = (function() {
+var maskSrcKey = ((() => {
   var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
   return uid ? ('Symbol(src)_1.' + uid) : '';
-}());
+})());
 
 /**
  * Checks if `func` has its source masked.

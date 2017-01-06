@@ -29,7 +29,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * _.countBy(['one', 'two', 'three'], 'length');
  * // => { '3': 2, '5': 1 }
  */
-var countBy = createAggregator(function(result, value, key) {
+var countBy = createAggregator((result, value, key) => {
   if (hasOwnProperty.call(result, key)) {
     ++result[key];
   } else {

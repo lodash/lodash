@@ -7,9 +7,7 @@
  * @returns {Function} Returns the new function.
  */
 function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
+  return arg => func(transform(arg));
 }
 
 export default overArg;

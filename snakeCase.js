@@ -21,8 +21,8 @@ import createCompounder from './_createCompounder.js';
  * _.snakeCase('--FOO-BAR--');
  * // => 'foo_bar'
  */
-var snakeCase = createCompounder(function(result, word, index) {
-  return result + (index ? '_' : '') + word.toLowerCase();
-});
+const snakeCase = createCompounder((result, word, index) =>
+  result + (index ? '_' : '') + word.toLowerCase()
+);
 
 export default snakeCase;

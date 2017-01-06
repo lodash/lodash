@@ -24,10 +24,8 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.difference([2, 1], [2, 3]);
  * // => [1]
  */
-var difference = baseRest(function(array, values) {
-  return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
-    : [];
-});
+var difference = baseRest((array, values) => isArrayLikeObject(array)
+  ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
+  : []);
 
 export default difference;

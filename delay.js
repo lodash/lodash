@@ -21,8 +21,6 @@ import toNumber from './toNumber.js';
  * }, 1000, 'later');
  * // => Logs 'later' after one second.
  */
-var delay = baseRest(function(func, wait, args) {
-  return baseDelay(func, toNumber(wait) || 0, args);
-});
+var delay = baseRest((func, wait, args) => baseDelay(func, toNumber(wait) || 0, args));
 
 export default delay;

@@ -9,7 +9,7 @@ import isArrayLike from './isArrayLike.js';
  * @returns {Function} Returns the new base function.
  */
 function createBaseEach(eachFunc, fromRight) {
-  return function(collection, iteratee) {
+  return (collection, iteratee) => {
     if (collection == null) {
       return collection;
     }

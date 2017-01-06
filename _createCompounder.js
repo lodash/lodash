@@ -16,9 +16,7 @@ var reApos = RegExp(rsApos, 'g');
  * @returns {Function} Returns the new compounder function.
  */
 function createCompounder(callback) {
-  return function(string) {
-    return arrayReduce(words(deburr(string).replace(reApos, '')), callback, '');
-  };
+  return string => arrayReduce(words(deburr(string).replace(reApos, '')), callback, '');
 }
 
 export default createCompounder;

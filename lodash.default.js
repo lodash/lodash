@@ -72,22 +72,20 @@ var nativeMax = Math.max,
     nativeMin = Math.min;
 
 // wrap `_.mixin` so it works when provided only one argument
-var mixin = (function(func) {
-  return function(object, source, options) {
-    if (options == null) {
-      var isObj = isObject(source),
-          props = isObj && keys(source),
-          methodNames = props && props.length && baseFunctions(source, props);
+var mixin = ((func => function(object, source, options) {
+  if (options == null) {
+    var isObj = isObject(source),
+        props = isObj && keys(source),
+        methodNames = props && props.length && baseFunctions(source, props);
 
-      if (!(methodNames ? methodNames.length : isObj)) {
-        options = source;
-        source = object;
-        object = this;
-      }
+    if (!(methodNames ? methodNames.length : isObj)) {
+      options = source;
+      source = object;
+      object = this;
     }
-    return func(object, source, options);
-  };
-}(_mixin));
+  }
+  return func(object, source, options);
+})(_mixin));
 
 // Add methods that return wrapped values in chain sequences.
 lodash.after = func.after;
@@ -403,15 +401,15 @@ lodash.each = collection.forEach;
 lodash.eachRight = collection.forEachRight;
 lodash.first = array.head;
 
-mixin(lodash, (function() {
+mixin(lodash, ((() => {
   var source = {};
-  baseForOwn(lodash, function(func, methodName) {
+  baseForOwn(lodash, (func, methodName) => {
     if (!hasOwnProperty.call(lodash.prototype, methodName)) {
       source[methodName] = func;
     }
   });
   return source;
-}()), { 'chain': false });
+})()), { 'chain': false });
 
 /**
  * The semantic version number.
@@ -424,12 +422,12 @@ lodash.VERSION = VERSION;
 (lodash.templateSettings = string.templateSettings).imports._ = lodash;
 
 // Assign default placeholders.
-arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
+arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], methodName => {
   lodash[methodName].placeholder = lodash;
 });
 
 // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
-arrayEach(['drop', 'take'], function(methodName, index) {
+arrayEach(['drop', 'take'], (methodName, index) => {
   LazyWrapper.prototype[methodName] = function(n) {
     n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
 
@@ -454,7 +452,7 @@ arrayEach(['drop', 'take'], function(methodName, index) {
 });
 
 // Add `LazyWrapper` methods that accept an `iteratee` value.
-arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
+arrayEach(['filter', 'map', 'takeWhile'], (methodName, index) => {
   var type = index + 1,
       isFilter = type == LAZY_FILTER_FLAG || type == LAZY_WHILE_FLAG;
 
@@ -470,7 +468,7 @@ arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
 });
 
 // Add `LazyWrapper` methods for `_.head` and `_.last`.
-arrayEach(['head', 'last'], function(methodName, index) {
+arrayEach(['head', 'last'], (methodName, index) => {
   var takeName = 'take' + (index ? 'Right' : '');
 
   LazyWrapper.prototype[methodName] = function() {
@@ -479,7 +477,7 @@ arrayEach(['head', 'last'], function(methodName, index) {
 });
 
 // Add `LazyWrapper` methods for `_.initial` and `_.tail`.
-arrayEach(['initial', 'tail'], function(methodName, index) {
+arrayEach(['initial', 'tail'], (methodName, index) => {
   var dropName = 'drop' + (index ? '' : 'Right');
 
   LazyWrapper.prototype[methodName] = function() {
@@ -503,9 +501,7 @@ LazyWrapper.prototype.invokeMap = baseRest(function(path, args) {
   if (typeof path == 'function') {
     return new LazyWrapper(this);
   }
-  return this.map(function(value) {
-    return baseInvoke(value, path, args);
-  });
+  return this.map(value => baseInvoke(value, path, args));
 });
 
 LazyWrapper.prototype.reject = function(predicate) {
@@ -540,7 +536,7 @@ LazyWrapper.prototype.toArray = function() {
 };
 
 // Add `LazyWrapper` methods to `lodash.prototype`.
-baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+baseForOwn(LazyWrapper.prototype, (func, methodName) => {
   var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
       isTaker = /^(?:head|last)$/.test(methodName),
       lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
@@ -556,7 +552,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
         iteratee = args[0],
         useLazy = isLazy || isArray(value);
 
-    var interceptor = function(value) {
+    var interceptor = value => {
       var result = lodashFunc.apply(lodash, arrayPush([value], args));
       return (isTaker && chainAll) ? result[0] : result;
     };
@@ -585,7 +581,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 });
 
 // Add `Array` methods to `lodash.prototype`.
-arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
+arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], methodName => {
   var func = arrayProto[methodName],
       chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
       retUnwrapped = /^(?:pop|shift)$/.test(methodName);
@@ -596,14 +592,12 @@ arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(method
       var value = this.value();
       return func.apply(isArray(value) ? value : [], args);
     }
-    return this[chainName](function(value) {
-      return func.apply(isArray(value) ? value : [], args);
-    });
+    return this[chainName](value => func.apply(isArray(value) ? value : [], args));
   };
 });
 
 // Map minified method names to their real names.
-baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+baseForOwn(LazyWrapper.prototype, (func, methodName) => {
   var lodashFunc = lodash[methodName];
   if (lodashFunc) {
     var key = (lodashFunc.name + ''),

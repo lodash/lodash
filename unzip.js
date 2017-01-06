@@ -31,15 +31,13 @@ function unzip(array) {
     return [];
   }
   var length = 0;
-  array = arrayFilter(array, function(group) {
+  array = arrayFilter(array, group => {
     if (isArrayLikeObject(group)) {
       length = nativeMax(group.length, length);
       return true;
     }
   });
-  return baseTimes(length, function(index) {
-    return arrayMap(array, baseProperty(index));
-  });
+  return baseTimes(length, index => arrayMap(array, baseProperty(index)));
 }
 
 export default unzip;

@@ -22,9 +22,7 @@ import baseGet from './_baseGet.js';
  * // => [2, 0]
  */
 function propertyOf(object) {
-  return function(path) {
-    return object == null ? undefined : baseGet(object, path);
-  };
+  return path => object == null ? undefined : baseGet(object, path);
 }
 
 export default propertyOf;

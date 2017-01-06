@@ -25,7 +25,7 @@ import last from './last.js';
  * _.unionWith(objects, others, _.isEqual);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
-var unionWith = baseRest(function(arrays) {
+var unionWith = baseRest(arrays => {
   var comparator = last(arrays);
   comparator = typeof comparator == 'function' ? comparator : undefined;
   return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);

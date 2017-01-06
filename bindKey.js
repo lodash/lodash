@@ -53,7 +53,7 @@ var WRAP_BIND_FLAG = 1,
  * bound('hi');
  * // => 'hiya fred!'
  */
-var bindKey = baseRest(function(object, key, partials) {
+var bindKey = baseRest((object, key, partials) => {
   var bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
   if (partials.length) {
     var holders = replaceHolders(partials, getHolder(bindKey));

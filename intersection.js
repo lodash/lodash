@@ -20,7 +20,7 @@ import castArrayLikeObject from './_castArrayLikeObject.js';
  * _.intersection([2, 1], [2, 3]);
  * // => [2]
  */
-var intersection = baseRest(function(arrays) {
+var intersection = baseRest(arrays => {
   var mapped = arrayMap(arrays, castArrayLikeObject);
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped)

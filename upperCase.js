@@ -20,8 +20,8 @@ import createCompounder from './_createCompounder.js';
  * _.upperCase('__foo_bar__');
  * // => 'FOO BAR'
  */
-var upperCase = createCompounder(function(result, word, index) {
-  return result + (index ? ' ' : '') + word.toUpperCase();
-});
+const upperCase = createCompounder((result, word, index) =>
+  result + (index ? ' ' : '') + word.toUpperCase()
+);
 
 export default upperCase;

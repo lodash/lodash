@@ -9,7 +9,7 @@ import metaMap from './_metaMap.js';
  * @param {*} data The metadata.
  * @returns {Function} Returns `func`.
  */
-var baseSetData = !metaMap ? identity : function(func, data) {
+var baseSetData = !metaMap ? identity : (func, data) => {
   metaMap.set(func, data);
   return func;
 };

@@ -10,7 +10,7 @@ import toFinite from './toFinite.js';
  * @returns {Function} Returns the new range function.
  */
 function createRange(fromRight) {
-  return function(start, end, step) {
+  return (start, end, step) => {
     if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
       end = step = undefined;
     }

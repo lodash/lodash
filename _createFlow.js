@@ -22,7 +22,7 @@ var WRAP_CURRY_FLAG = 8,
  * @returns {Function} Returns the new flow function.
  */
 function createFlow(fromRight) {
-  return flatRest(function(funcs) {
+  return flatRest(funcs => {
     var length = funcs.length,
         index = length,
         prereq = LodashWrapper.prototype.thru;

@@ -34,7 +34,7 @@ function mapValues(object, iteratee) {
   var result = {};
   iteratee = baseIteratee(iteratee, 3);
 
-  baseForOwn(object, function(value, key, object) {
+  baseForOwn(object, (value, key, object) => {
     baseAssignValue(result, key, iteratee(value, key, object));
   });
   return result;

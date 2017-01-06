@@ -8,7 +8,7 @@ import toNumber from './toNumber.js';
  * @returns {Function} Returns the new relational operation function.
  */
 function createRelationalOperation(operator) {
-  return function(value, other) {
+  return (value, other) => {
     if (!(typeof value == 'string' && typeof other == 'string')) {
       value = toNumber(value);
       other = toNumber(other);

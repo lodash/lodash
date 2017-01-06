@@ -24,7 +24,7 @@ import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
  * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-var defaults = baseRest(function(args) {
+var defaults = baseRest(args => {
   args.push(undefined, customDefaultsAssignIn);
   return apply(assignInWith, undefined, args);
 });

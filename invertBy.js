@@ -33,7 +33,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * });
  * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
  */
-var invertBy = createInverter(function(result, value, key) {
+var invertBy = createInverter((result, value, key) => {
   if (hasOwnProperty.call(result, value)) {
     result[value].push(key);
   } else {

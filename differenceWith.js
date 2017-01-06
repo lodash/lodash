@@ -27,7 +27,7 @@ import last from './last.js';
  * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
  * // => [{ 'x': 2, 'y': 1 }]
  */
-var differenceWith = baseRest(function(array, values) {
+var differenceWith = baseRest((array, values) => {
   var comparator = last(values);
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;

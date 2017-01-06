@@ -19,8 +19,6 @@ import baseRest from './_baseRest.js';
  * }, 'deferred');
  * // => Logs 'deferred' after one millisecond.
  */
-var defer = baseRest(function(func, args) {
-  return baseDelay(func, 1, args);
-});
+var defer = baseRest((func, args) => baseDelay(func, 1, args));
 
 export default defer;

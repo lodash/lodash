@@ -13,7 +13,7 @@ var nativeGetSymbols = Object.getOwnPropertySymbols;
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
+var getSymbolsIn = !nativeGetSymbols ? stubArray : object => {
   var result = [];
   while (object) {
     arrayPush(result, getSymbols(object));

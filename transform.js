@@ -56,9 +56,7 @@ function transform(object, iteratee, accumulator) {
       accumulator = {};
     }
   }
-  (isArrLike ? arrayEach : baseForOwn)(object, function(value, index, object) {
-    return iteratee(accumulator, value, index, object);
-  });
+  (isArrLike ? arrayEach : baseForOwn)(object, (value, index, object) => iteratee(accumulator, value, index, object));
   return accumulator;
 }
 

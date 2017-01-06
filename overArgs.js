@@ -41,7 +41,7 @@ var nativeMin = Math.min;
  * func(10, 5);
  * // => [100, 10]
  */
-var overArgs = castRest(function(func, transforms) {
+var overArgs = castRest((func, transforms) => {
   transforms = (transforms.length == 1 && isArray(transforms[0]))
     ? arrayMap(transforms[0], baseUnary(baseIteratee))
     : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));

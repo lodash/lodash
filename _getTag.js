@@ -37,7 +37,7 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
     (Promise && getTag(Promise.resolve()) != promiseTag) ||
     (Set && getTag(new Set) != setTag) ||
     (WeakMap && getTag(new WeakMap) != weakMapTag)) {
-  getTag = function(value) {
+  getTag = value => {
     var result = baseGetTag(value),
         Ctor = result == objectTag ? value.constructor : undefined,
         ctorString = Ctor ? toSource(Ctor) : '';

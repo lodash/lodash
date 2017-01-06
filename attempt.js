@@ -24,7 +24,7 @@ import isError from './isError.js';
  *   elements = [];
  * }
  */
-var attempt = baseRest(function(func, args) {
+var attempt = baseRest((func, args) => {
   try {
     return apply(func, undefined, args);
   } catch (e) {

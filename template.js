@@ -164,7 +164,14 @@ function template(string, options, guard) {
   // Use a sourceURL for easier debugging.
   var sourceURL = 'sourceURL' in options ? '//# sourceURL=' + options.sourceURL + '\n' : '';
 
-  string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
+  string.replace(reDelimiters, (
+    match,
+    escapeValue,
+    interpolateValue,
+    esTemplateValue,
+    evaluateValue,
+    offset
+  ) => {
     interpolateValue || (interpolateValue = esTemplateValue);
 
     // Escape characters that can't be included in string literals.
@@ -221,10 +228,8 @@ function template(string, options, guard) {
     source +
     'return __p\n}';
 
-  var result = attempt(function() {
-    return Function(importsKeys, sourceURL + 'return ' + source)
-      .apply(undefined, importsValues);
-  });
+  var result = attempt(() => Function(importsKeys, sourceURL + 'return ' + source)
+    .apply(undefined, importsValues));
 
   // Provide the compiled function's source by its `toString` method or
   // the `source` property as a convenience for inlining compiled templates.

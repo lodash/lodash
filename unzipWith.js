@@ -31,9 +31,7 @@ function unzipWith(array, iteratee) {
   if (iteratee == null) {
     return result;
   }
-  return arrayMap(result, function(group) {
-    return apply(iteratee, undefined, group);
-  });
+  return arrayMap(result, group => apply(iteratee, undefined, group));
 }
 
 export default unzipWith;

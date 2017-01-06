@@ -11,7 +11,7 @@ import toString from './toString.js';
  * @returns {Function} Returns the new case function.
  */
 function createCaseFirst(methodName) {
-  return function(string) {
+  return string => {
     string = toString(string);
 
     var strSymbols = hasUnicode(string)

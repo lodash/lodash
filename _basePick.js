@@ -11,9 +11,7 @@ import hasIn from './hasIn.js';
  * @returns {Object} Returns the new object.
  */
 function basePick(object, paths) {
-  return basePickBy(object, paths, function(value, path) {
-    return hasIn(object, path);
-  });
+  return basePickBy(object, paths, (value, path) => hasIn(object, path));
 }
 
 export default basePick;

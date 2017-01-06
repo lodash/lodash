@@ -9,9 +9,7 @@ import baseInverter from './_baseInverter.js';
  * @returns {Function} Returns the new inverter function.
  */
 function createInverter(setter, toIteratee) {
-  return function(object, iteratee) {
-    return baseInverter(object, setter, toIteratee(iteratee), {});
-  };
+  return (object, iteratee) => baseInverter(object, setter, toIteratee(iteratee), {});
 }
 
 export default createInverter;

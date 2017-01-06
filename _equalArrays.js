@@ -58,7 +58,7 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
     }
     // Recursively compare arrays (susceptible to call stack limits).
     if (seen) {
-      if (!arraySome(other, function(othValue, othIndex) {
+      if (!arraySome(other, (othValue, othIndex) => {
             if (!cacheHas(seen, othIndex) &&
                 (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
               return seen.push(othIndex);

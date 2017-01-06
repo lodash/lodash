@@ -9,7 +9,7 @@ import isIterateeCall from './_isIterateeCall.js';
  * @returns {Function} Returns the new assigner function.
  */
 function createAssigner(assigner) {
-  return baseRest(function(object, sources) {
+  return baseRest((object, sources) => {
     var index = -1,
         length = sources.length,
         customizer = length > 1 ? sources[length - 1] : undefined,

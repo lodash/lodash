@@ -20,8 +20,6 @@ import createCompounder from './_createCompounder.js';
  * _.lowerCase('__FOO_BAR__');
  * // => 'foo bar'
  */
-var lowerCase = createCompounder(function(result, word, index) {
-  return result + (index ? ' ' : '') + word.toLowerCase();
-});
+var lowerCase = createCompounder((result, word, index) => result + (index ? ' ' : '') + word.toLowerCase());
 
 export default lowerCase;

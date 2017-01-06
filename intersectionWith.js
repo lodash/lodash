@@ -25,7 +25,7 @@ import last from './last.js';
  * _.intersectionWith(objects, others, _.isEqual);
  * // => [{ 'x': 1, 'y': 2 }]
  */
-var intersectionWith = baseRest(function(arrays) {
+var intersectionWith = baseRest(arrays => {
   var comparator = last(arrays),
       mapped = arrayMap(arrays, castArrayLikeObject);
 

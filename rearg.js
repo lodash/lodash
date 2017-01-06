@@ -26,8 +26,6 @@ var WRAP_REARG_FLAG = 256;
  * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']
  */
-var rearg = flatRest(function(func, indexes) {
-  return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes);
-});
+var rearg = flatRest((func, indexes) => createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes));
 
 export default rearg;

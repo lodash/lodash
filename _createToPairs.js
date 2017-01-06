@@ -15,7 +15,7 @@ var mapTag = '[object Map]',
  * @returns {Function} Returns the new pairs function.
  */
 function createToPairs(keysFunc) {
-  return function(object) {
+  return object => {
     var tag = getTag(object);
     if (tag == mapTag) {
       return mapToArray(object);

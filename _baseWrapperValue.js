@@ -17,7 +17,7 @@ function baseWrapperValue(value, actions) {
   if (result instanceof LazyWrapper) {
     result = result.value();
   }
-  return arrayReduce(actions, (result, action) => action.func.apply(action.thisArg, arrayPush([result], action.args)), result);
+  return arrayReduce(actions, (result, { func, thisArg, args }) => func.apply(thisArg, arrayPush([result], args)), result);
 }
 
 export default baseWrapperValue;

@@ -14,7 +14,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {string} Returns the function name.
  */
 function getFuncName(func) {
-  var result = (func.name + ''),
+  var result = `${ func.name }`,
       array = realNames[result],
       length = hasOwnProperty.call(realNames, result) ? array.length : 0;
 

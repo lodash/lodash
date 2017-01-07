@@ -27,7 +27,7 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
     }
     else {
       const newValue = customizer
-        ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+        ? customizer(object[key], srcValue, `${ key }`, object, source, stack)
         : undefined;
 
       if (newValue === undefined) {

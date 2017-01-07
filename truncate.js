@@ -91,7 +91,7 @@ function truncate(string, options) {
           substring = result;
 
       if (!separator.global) {
-        separator = RegExp(separator.source, toString(reFlags.exec(separator)) + 'g');
+        separator = RegExp(separator.source, `${ toString(reFlags.exec(separator)) }g`);
       }
       separator.lastIndex = 0;
       while ((match = separator.exec(substring))) {

@@ -162,7 +162,7 @@ function template(string, options, guard) {
   , 'g');
 
   // Use a sourceURL for easier debugging.
-  var sourceURL = 'sourceURL' in options ? '//# sourceURL=' + options.sourceURL + '\n' : '';
+  var sourceURL = 'sourceURL' in options ? `//# sourceURL=${ options.sourceURL }\n` : '';
 
   string.replace(reDelimiters, (
     match,
@@ -180,14 +180,14 @@ function template(string, options, guard) {
     // Replace delimiters with snippets.
     if (escapeValue) {
       isEscaping = true;
-      source += "' +\n__e(" + escapeValue + ") +\n'";
+      source += `' +\n__e(${ escapeValue }) +\n'`;
     }
     if (evaluateValue) {
       isEvaluating = true;
-      source += "';\n" + evaluateValue + ";\n__p += '";
+      source += `';\n${ evaluateValue };\n__p += '`;
     }
     if (interpolateValue) {
-      source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+      source += `' +\n((__t = (${ interpolateValue })) == null ? '' : __t) +\n'`;
     }
     index = offset + match.length;
 
@@ -202,7 +202,7 @@ function template(string, options, guard) {
   // code to add the data object to the top of the scope chain.
   var variable = options.variable;
   if (!variable) {
-    source = 'with (obj) {\n' + source + '\n}\n';
+    source = `with (obj) {\n${ source }\n}\n`;
   }
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
@@ -210,7 +210,7 @@ function template(string, options, guard) {
     .replace(reEmptyStringTrailing, '$1;');
 
   // Frame code as the function body.
-  source = 'function(' + (variable || 'obj') + ') {\n' +
+  source = `function(${ variable || 'obj' }) {\n` +
     (variable
       ? ''
       : 'obj || (obj = {});\n'
@@ -228,8 +228,7 @@ function template(string, options, guard) {
     source +
     'return __p\n}';
 
-  var result = attempt(() => Function(importsKeys, sourceURL + 'return ' + source)
-    .apply(undefined, importsValues));
+  var result = attempt(() => Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues);
 
   // Provide the compiled function's source by its `toString` method or
   // the `source` property as a convenience for inlining compiled templates.

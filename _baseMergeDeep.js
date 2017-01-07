@@ -38,7 +38,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
     return;
   }
   var newValue = customizer
-    ? customizer(objValue, srcValue, (key + ''), object, source, stack)
+    ? customizer(objValue, srcValue, `${ key }`, object, source, stack)
     : undefined;
 
   var isCommon = newValue === undefined;

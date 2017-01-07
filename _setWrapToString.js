@@ -14,7 +14,7 @@ import updateWrapDetails from './_updateWrapDetails.js';
  * @returns {Function} Returns `wrapper`.
  */
 function setWrapToString(wrapper, reference, bitmask) {
-  var source = (reference + '');
+  const source = `${ reference }`;
   return setToString(wrapper, insertWrapDetails(source, updateWrapDetails(getWrapDetails(source), bitmask)));
 }
 

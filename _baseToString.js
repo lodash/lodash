@@ -4,11 +4,11 @@ import isArray from './isArray.js';
 import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
+const INFINITY = 1 / 0;
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = Symbol ? Symbol.prototype : undefined,
-    symbolToString = symbolProto ? symbolProto.toString : undefined;
+const symbolProto = Symbol ? Symbol.prototype : undefined;
+const symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 /**
  * The base implementation of `_.toString` which doesn't convert nullish
@@ -25,12 +25,12 @@ function baseToString(value) {
   }
   if (isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return arrayMap(value, baseToString) + '';
+    return `${ arrayMap(value, baseToString) }`;
   }
   if (isSymbol(value)) {
     return symbolToString ? symbolToString.call(value) : '';
   }
-  var result = (value + '');
+  const result = `${ value }`;
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
 }
 

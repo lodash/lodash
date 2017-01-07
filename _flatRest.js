@@ -10,7 +10,7 @@ import setToString from './_setToString.js';
  * @returns {Function} Returns the new function.
  */
 function flatRest(func) {
-  return setToString(overRest(func, undefined, flatten), func + '');
+  return setToString(overRest(func, undefined, flatten), `${ func }`);
 }
 
 export default flatRest;

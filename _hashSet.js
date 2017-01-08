@@ -1,7 +1,7 @@
 import nativeCreate from './_nativeCreate.js';
 
 /** Used to stand-in for `undefined` hash values. */
-var HASH_UNDEFINED = '__lodash_hash_undefined__';
+const HASH_UNDEFINED = '__lodash_hash_undefined__';
 
 /**
  * Sets the hash `key` to `value`.
@@ -14,7 +14,7 @@ var HASH_UNDEFINED = '__lodash_hash_undefined__';
  * @returns {Object} Returns the hash instance.
  */
 function hashSet(key, value) {
-  var data = this.__data__;
+  const data = this.__data__;
   this.size += this.has(key) ? 0 : 1;
   data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
   return this;

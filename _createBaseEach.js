@@ -16,9 +16,9 @@ function createBaseEach(eachFunc, fromRight) {
     if (!isArrayLike(collection)) {
       return eachFunc(collection, iteratee);
     }
-    var length = collection.length,
-        index = fromRight ? length : -1,
-        iterable = Object(collection);
+    const length = collection.length;
+    const iterable = Object(collection);
+    let index = fromRight ? length : -1;
 
     while ((fromRight ? index-- : ++index < length)) {
       if (iteratee(iterable[index], index, iterable) === false) {

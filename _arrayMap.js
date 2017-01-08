@@ -8,9 +8,9 @@
  * @returns {Array} Returns the new mapped array.
  */
 function arrayMap(array, iteratee) {
-  var index = -1,
-      length = array == null ? 0 : array.length,
-      result = Array(length);
+  let index = -1;
+  const length = array == null ? 0 : array.length;
+  const result = Array(length);
 
   while (++index < length) {
     result[index] = iteratee(array[index], index, array);

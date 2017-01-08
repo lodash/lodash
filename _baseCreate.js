@@ -21,7 +21,7 @@ const baseCreate = (() => {
       return objectCreate(proto);
     }
     object.prototype = proto;
-    var result = new object;
+    const result = new object;
     object.prototype = undefined;
     return result;
   };

@@ -8,7 +8,7 @@ import Uint8Array from './_Uint8Array.js';
  * @returns {ArrayBuffer} Returns the cloned array buffer.
  */
 function cloneArrayBuffer(arrayBuffer) {
-  var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
+  const result = new arrayBuffer.constructor(arrayBuffer.byteLength);
   new Uint8Array(result).set(new Uint8Array(arrayBuffer));
   return result;
 }

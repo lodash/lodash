@@ -9,7 +9,7 @@
  * @returns {Array} Returns `array`.
  */
 function baseSortBy(array, comparer) {
-  var length = array.length;
+  let length = array.length;
 
   array.sort(comparer);
   while (length--) {

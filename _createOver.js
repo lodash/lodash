@@ -16,7 +16,7 @@ function createOver(arrayFunc) {
   return flatRest(iteratees => {
     iteratees = arrayMap(iteratees, baseUnary(baseIteratee));
     return baseRest(function(args) {
-      var thisArg = this;
+      const thisArg = this;
       return arrayFunc(iteratees, iteratee => apply(iteratee, thisArg, args));
     });
   });

@@ -3,10 +3,10 @@ import deburr from './deburr.js';
 import words from './words.js';
 
 /** Used to compose unicode capture groups. */
-var rsApos = "['\u2019]";
+const rsApos = "['\u2019]";
 
 /** Used to match apostrophes. */
-var reApos = RegExp(rsApos, 'g');
+const reApos = RegExp(rsApos, 'g');
 
 /**
  * Creates a function like `_.camelCase`.

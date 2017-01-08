@@ -13,7 +13,7 @@ import arrayReduce from './_arrayReduce.js';
  * @returns {*} Returns the resolved value.
  */
 function baseWrapperValue(value, actions) {
-  var result = value;
+  let result = value;
   if (result instanceof LazyWrapper) {
     result = result.value();
   }

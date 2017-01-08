@@ -11,7 +11,7 @@ import values from './values.js';
  * @returns {Array} Returns the random elements.
  */
 function baseSampleSize(collection, n) {
-  var array = values(collection);
+  const array = values(collection);
   return shuffleSelf(array, baseClamp(n, 0, array.length));
 }
 

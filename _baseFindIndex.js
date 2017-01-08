@@ -10,8 +10,8 @@
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function baseFindIndex(array, predicate, fromIndex, fromRight) {
-  var length = array.length,
-      index = fromIndex + (fromRight ? 1 : -1);
+  const length = array.length;
+  let index = fromIndex + (fromRight ? 1 : -1);
 
   while ((fromRight ? index-- : ++index < length)) {
     if (predicate(array[index], index, array)) {

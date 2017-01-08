@@ -8,6 +8,6 @@ import noop from './noop.js';
  * @param {Function} func The function to query.
  * @returns {*} Returns the metadata for `func`.
  */
-var getData = !metaMap ? noop : func => metaMap.get(func);
+const getData = !metaMap ? noop : func => metaMap.get(func);
 
 export default getData;

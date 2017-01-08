@@ -12,8 +12,8 @@ import toKey from './_toKey.js';
 function baseGet(object, path) {
   path = castPath(path, object);
 
-  var index = 0,
-      length = path.length;
+  let index = 0;
+  const length = path.length;
 
   while (object != null && index < length) {
     object = object[toKey(path[index++])];

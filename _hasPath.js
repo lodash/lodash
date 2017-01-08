@@ -17,7 +17,7 @@ import toKey from './_toKey.js';
 function hasPath(object, path, hasFunc) {
   path = castPath(path, object);
 
-  var index = -1,
+  let index = -1,
       length = path.length,
       result = false;
 

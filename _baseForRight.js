@@ -10,6 +10,6 @@ import createBaseFor from './_createBaseFor.js';
  * @param {Function} keysFunc The function to get the keys of `object`.
  * @returns {Object} Returns `object`.
  */
-var baseForRight = createBaseFor(true);
+const baseForRight = createBaseFor(true);
 
 export default baseForRight;

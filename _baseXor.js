@@ -13,16 +13,16 @@ import baseUniq from './_baseUniq.js';
  * @returns {Array} Returns the new array of values.
  */
 function baseXor(arrays, iteratee, comparator) {
-  var length = arrays.length;
+  const length = arrays.length;
   if (length < 2) {
     return length ? baseUniq(arrays[0]) : [];
   }
-  var index = -1,
-      result = Array(length);
+  let index = -1;
+  const result = Array(length);
 
   while (++index < length) {
-    var array = arrays[index],
-        othIndex = -1;
+    const array = arrays[index];
+    let othIndex = -1;
 
     while (++othIndex < length) {
       if (othIndex != index) {

@@ -1,5 +1,5 @@
 /** Used to escape characters for inclusion in compiled string literals. */
-var stringEscapes = {
+const stringEscapes = {
   '\\': '\\',
   "'": "'",
   '\n': 'n',

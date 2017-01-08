@@ -1,8 +1,8 @@
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * The base implementation of `_.has` without support for deep paths.

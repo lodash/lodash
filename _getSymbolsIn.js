@@ -4,7 +4,7 @@ import getSymbols from './_getSymbols.js';
 import stubArray from './stubArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeGetSymbols = Object.getOwnPropertySymbols;
+const nativeGetSymbols = Object.getOwnPropertySymbols;
 
 /**
  * Creates an array of the own and inherited enumerable symbols of `object`.
@@ -13,8 +13,8 @@ var nativeGetSymbols = Object.getOwnPropertySymbols;
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-var getSymbolsIn = !nativeGetSymbols ? stubArray : object => {
-  var result = [];
+const getSymbolsIn = !nativeGetSymbols ? stubArray : object => {
+  const result = [];
   while (object) {
     arrayPush(result, getSymbols(object));
     object = getPrototype(object);

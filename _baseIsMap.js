@@ -2,7 +2,7 @@ import getTag from './_getTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var mapTag = '[object Map]';
+const mapTag = '[object Map]';
 
 /**
  * The base implementation of `_.isMap` without Node.js optimizations.

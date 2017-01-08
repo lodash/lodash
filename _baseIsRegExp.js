@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var regexpTag = '[object RegExp]';
+const regexpTag = '[object RegExp]';
 
 /**
  * The base implementation of `_.isRegExp` without Node.js optimizations.

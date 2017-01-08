@@ -1,8 +1,8 @@
 /** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = 9007199254740991;
+const MAX_SAFE_INTEGER = 9007199254740991;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeFloor = Math.floor;
+const nativeFloor = Math.floor;
 
 /**
  * The base implementation of `_.repeat` which doesn't coerce arguments.
@@ -13,7 +13,7 @@ var nativeFloor = Math.floor;
  * @returns {string} Returns the repeated string.
  */
 function baseRepeat(string, n) {
-  var result = '';
+  let result = '';
   if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
     return result;
   }

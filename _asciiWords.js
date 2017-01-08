@@ -1,5 +1,5 @@
 /** Used to match words composed of alphanumeric characters. */
-var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+const reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
 
 /**
  * Splits an ASCII `string` into an array of its words.

@@ -9,11 +9,11 @@
  * @returns {Function} Returns `accumulator`.
  */
 function arrayAggregator(array, setter, iteratee, accumulator) {
-  var index = -1,
-      length = array == null ? 0 : array.length;
+  let index = -1;
+  const length = array == null ? 0 : array.length;
 
   while (++index < length) {
-    var value = array[index];
+    const value = array[index];
     setter(accumulator, value, iteratee(value), array);
   }
   return accumulator;

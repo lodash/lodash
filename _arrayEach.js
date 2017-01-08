@@ -8,8 +8,8 @@
  * @returns {Array} Returns `array`.
  */
 function arrayEach(array, iteratee) {
-  var index = -1,
-      length = array == null ? 0 : array.length;
+  let index = -1;
+  const length = array == null ? 0 : array.length;
 
   while (++index < length) {
     if (iteratee(array[index], index, array) === false) {

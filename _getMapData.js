@@ -9,7 +9,7 @@ import isKeyable from './_isKeyable.js';
  * @returns {*} Returns the map data.
  */
 function getMapData({ __data__ }, key) {
-  var data = __data__;
+  const data = __data__;
   return isKeyable(key)
     ? data[typeof key == 'string' ? 'string' : 'hash']
     : data.map;

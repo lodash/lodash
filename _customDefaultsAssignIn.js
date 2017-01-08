@@ -1,10 +1,10 @@
 import eq from './eq.js';
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Used by `_.defaults` to customize its `_.assignIn` use to assign properties

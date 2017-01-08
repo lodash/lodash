@@ -14,15 +14,15 @@ function createCaseFirst(methodName) {
   return string => {
     string = toString(string);
 
-    var strSymbols = hasUnicode(string)
+    const strSymbols = hasUnicode(string)
       ? stringToArray(string)
       : undefined;
 
-    var chr = strSymbols
+    const chr = strSymbols
       ? strSymbols[0]
       : string.charAt(0);
 
-    var trailing = strSymbols
+    const trailing = strSymbols
       ? castSlice(strSymbols, 1).join('')
       : string.slice(1);
 

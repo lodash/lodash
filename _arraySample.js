@@ -8,7 +8,7 @@ import baseRandom from './_baseRandom.js';
  * @returns {*} Returns the random element.
  */
 function arraySample(array) {
-  var length = array.length;
+  const length = array.length;
   return length ? array[baseRandom(0, length - 1)] : undefined;
 }
 

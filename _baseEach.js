@@ -9,6 +9,6 @@ import createBaseEach from './_createBaseEach.js';
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
  */
-var baseEach = createBaseEach(baseForOwn);
+const baseEach = createBaseEach(baseForOwn);
 
 export default baseEach;

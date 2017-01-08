@@ -10,7 +10,7 @@ import baseEach from './_baseEach.js';
  *  else `false`.
  */
 function baseSome(collection, predicate) {
-  var result;
+  let result;
 
   baseEach(collection, (value, index, collection) => {
     result = predicate(value, index, collection);

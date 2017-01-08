@@ -9,6 +9,6 @@ import baseRest from './_baseRest.js';
  * @param {Function} func The function to apply a rest parameter to.
  * @returns {Function} Returns the new function.
  */
-var castRest = baseRest;
+const castRest = baseRest;
 
 export default castRest;

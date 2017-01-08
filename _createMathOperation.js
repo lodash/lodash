@@ -11,7 +11,7 @@ import baseToString from './_baseToString.js';
  */
 function createMathOperation(operator, defaultValue) {
   return (value, other) => {
-    var result;
+    let result;
     if (value === undefined && other === undefined) {
       return defaultValue;
     }

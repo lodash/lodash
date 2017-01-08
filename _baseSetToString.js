@@ -10,7 +10,7 @@ import identity from './identity.js';
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-var baseSetToString = !defineProperty ? identity : (func, string) => defineProperty(func, 'toString', {
+const baseSetToString = !defineProperty ? identity : (func, string) => defineProperty(func, 'toString', {
   'configurable': true,
   'enumerable': false,
   'value': constant(string),

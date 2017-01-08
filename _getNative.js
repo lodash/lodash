@@ -10,7 +10,7 @@ import getValue from './_getValue.js';
  * @returns {*} Returns the function if it's native, else `undefined`.
  */
 function getNative(object, key) {
-  var value = getValue(object, key);
+  const value = getValue(object, key);
   return baseIsNative(value) ? value : undefined;
 }
 

@@ -12,7 +12,7 @@ import toLength from './toLength.js';
  * @returns {Array} Returns `array`.
  */
 function baseFill(array, value, start, end) {
-  var length = array.length;
+  const length = array.length;
 
   start = toInteger(start);
   if (start < 0) {

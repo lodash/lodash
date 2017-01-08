@@ -1,7 +1,7 @@
 import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
-var arrayBufferTag = '[object ArrayBuffer]';
+const arrayBufferTag = '[object ArrayBuffer]';
 
 /**
  * The base implementation of `_.isArrayBuffer` without Node.js optimizations.

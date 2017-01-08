@@ -8,12 +8,12 @@
  * @returns {number} Returns the sum.
  */
 function baseSum(array, iteratee) {
-  var result,
-      index = -1,
-      length = array.length;
+  let result;
+  let index = -1;
+  const length = array.length;
 
   while (++index < length) {
-    var current = iteratee(array[index]);
+    const current = iteratee(array[index]);
     if (current !== undefined) {
       result = result === undefined ? current : (result + current);
     }

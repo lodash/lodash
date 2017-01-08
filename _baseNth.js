@@ -9,7 +9,7 @@ import isIndex from './_isIndex.js';
  * @returns {*} Returns the nth element of `array`.
  */
 function baseNth(array, n) {
-  var length = array.length;
+  const length = array.length;
   if (!length) {
     return;
   }

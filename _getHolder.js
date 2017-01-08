@@ -6,7 +6,7 @@
  * @returns {*} Returns the placeholder value.
  */
 function getHolder(func) {
-  var object = func;
+  const object = func;
   return object.placeholder;
 }
 

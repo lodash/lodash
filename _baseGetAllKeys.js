@@ -13,7 +13,7 @@ import isArray from './isArray.js';
  * @returns {Array} Returns the array of property names and symbols.
  */
 function baseGetAllKeys(object, keysFunc, symbolsFunc) {
-  var result = keysFunc(object);
+  const result = keysFunc(object);
   return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
 }
 

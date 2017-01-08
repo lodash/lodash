@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var dateTag = '[object Date]';
+const dateTag = '[object Date]';
 
 /**
  * The base implementation of `_.isDate` without Node.js optimizations.

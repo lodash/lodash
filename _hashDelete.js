@@ -9,7 +9,7 @@
  * @returns {boolean} Returns `true` if the entry was removed, else `false`.
  */
 function hashDelete(key) {
-  var result = this.has(key) && delete this.__data__[key];
+  const result = this.has(key) && delete this.__data__[key];
   this.size -= result ? 1 : 0;
   return result;
 }

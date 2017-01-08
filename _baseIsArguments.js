@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var argsTag = '[object Arguments]';
+const argsTag = '[object Arguments]';
 
 /**
  * The base implementation of `_.isArguments`.

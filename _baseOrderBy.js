@@ -16,11 +16,11 @@ import identity from './identity.js';
  * @returns {Array} Returns the new sorted array.
  */
 function baseOrderBy(collection, iteratees, orders) {
-  var index = -1;
+  let index = -1;
   iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(baseIteratee));
 
-  var result = baseMap(collection, (value, key, collection) => {
-    var criteria = arrayMap(iteratees, iteratee => iteratee(value));
+  const result = baseMap(collection, (value, key, collection) => {
+    const criteria = arrayMap(iteratees, iteratee => iteratee(value));
     return { 'criteria': criteria, 'index': ++index, 'value': value };
   });
 

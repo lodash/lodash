@@ -15,7 +15,7 @@ import baseSlice from './_baseSlice.js';
  * // => [2, 3]
  */
 function tail(array) {
-  var length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length;
   return length ? baseSlice(array, 1, length) : [];
 }
 

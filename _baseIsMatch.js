@@ -2,8 +2,8 @@ import Stack from './_Stack.js';
 import baseIsEqual from './_baseIsEqual.js';
 
 /** Used to compose bitmasks for value comparisons. */
-var COMPARE_PARTIAL_FLAG = 1,
-    COMPARE_UNORDERED_FLAG = 2;
+const COMPARE_PARTIAL_FLAG = 1;
+const COMPARE_UNORDERED_FLAG = 2;
 
 /**
  * The base implementation of `_.isMatch` without support for iteratee shorthands.
@@ -16,16 +16,18 @@ var COMPARE_PARTIAL_FLAG = 1,
  * @returns {boolean} Returns `true` if `object` is a match, else `false`.
  */
 function baseIsMatch(object, source, matchData, customizer) {
-  var index = matchData.length,
-      length = index,
-      noCustomizer = !customizer;
+  let index = matchData.length;
+  const length = index;
+  const noCustomizer = !customizer;
 
   if (object == null) {
     return !length;
   }
+  let data;
+  let result;
   object = Object(object);
   while (index--) {
-    var data = matchData[index];
+    data = matchData[index];
     if ((noCustomizer && data[2])
           ? data[1] !== object[data[0]]
           : !(data[0] in object)
@@ -35,18 +37,18 @@ function baseIsMatch(object, source, matchData, customizer) {
   }
   while (++index < length) {
     data = matchData[index];
-    var key = data[0],
-        objValue = object[key],
-        srcValue = data[1];
+    const key = data[0];
+    const objValue = object[key];
+    const srcValue = data[1];
 
     if (noCustomizer && data[2]) {
       if (objValue === undefined && !(key in object)) {
         return false;
       }
     } else {
-      var stack = new Stack;
+      const stack = new Stack;
       if (customizer) {
-        var result = customizer(objValue, srcValue, key, object, source, stack);
+        result = customizer(objValue, srcValue, key, object, source, stack);
       }
       if (!(result === undefined
             ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack)

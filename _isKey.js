@@ -2,8 +2,8 @@ import isArray from './isArray.js';
 import isSymbol from './isSymbol.js';
 
 /** Used to match property names within property paths. */
-var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
-    reIsPlainProp = /^\w*$/;
+const reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
+const reIsPlainProp = /^\w*$/;
 
 /**
  * Checks if `value` is a property name and not a property path.
@@ -17,7 +17,7 @@ function isKey(value, object) {
   if (isArray(value)) {
     return false;
   }
-  var type = typeof value;
+  const type = typeof value;
   if (type == 'number' || type == 'symbol' || type == 'boolean' ||
       value == null || isSymbol(value)) {
     return true;

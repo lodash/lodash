@@ -18,7 +18,7 @@ import isArray from './isArray.js';
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  var func = isArray(collection) ? arrayShuffle : baseShuffle;
+  const func = isArray(collection) ? arrayShuffle : baseShuffle;
   return func(collection);
 }
 

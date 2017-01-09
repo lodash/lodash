@@ -25,6 +25,6 @@ import keysIn from './keysIn.js';
  * _.toPairsIn(new Foo);
  * // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
  */
-var toPairsIn = createToPairs(keysIn);
+const toPairsIn = createToPairs(keysIn);
 
 export default toPairsIn;

@@ -9,13 +9,12 @@ import keys from './keys.js';
  * @returns {Array} Returns the match data of `object`.
  */
 function getMatchData(object) {
-  var result = keys(object),
-      length = result.length;
+  const result = keys(object);
+  let length = result.length;
 
   while (length--) {
-    var key = result[length],
-        value = object[key];
-
+    const key = result[length];
+    const value = object[key];
     result[length] = [key, value, isStrictComparable(value)];
   }
   return result;

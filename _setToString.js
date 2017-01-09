@@ -9,6 +9,6 @@ import shortOut from './_shortOut.js';
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-var setToString = shortOut(baseSetToString);
+const setToString = shortOut(baseSetToString);
 
 export default setToString;

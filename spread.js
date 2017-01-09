@@ -5,10 +5,10 @@ import castSlice from './_castSlice.js';
 import toInteger from './toInteger.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+const nativeMax = Math.max;
 
 /**
  * Creates a function that invokes `func` with the `this` binding of the
@@ -50,8 +50,8 @@ function spread(func, start) {
   }
   start = start == null ? 0 : nativeMax(toInteger(start), 0);
   return baseRest(function(args) {
-    var array = args[start],
-        otherArgs = castSlice(args, 0, start);
+    const array = args[start];
+    const otherArgs = castSlice(args, 0, start);
 
     if (array) {
       arrayPush(otherArgs, array);

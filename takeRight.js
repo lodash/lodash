@@ -27,7 +27,7 @@ import toInteger from './toInteger.js';
  * // => []
  */
 function takeRight(array, n, guard) {
-  var length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length;
   if (!length) {
     return [];
   }

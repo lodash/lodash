@@ -6,7 +6,7 @@ import baseUnary from './_baseUnary.js';
 import cacheHas from './_cacheHas.js';
 
 /** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
+const LARGE_ARRAY_SIZE = 200;
 
 /**
  * The base implementation of methods like `_.difference` without support
@@ -20,12 +20,12 @@ var LARGE_ARRAY_SIZE = 200;
  * @returns {Array} Returns the new array of filtered values.
  */
 function baseDifference(array, values, iteratee, comparator) {
-  var index = -1,
-      includes = arrayIncludes,
-      isCommon = true,
-      length = array.length,
-      result = [],
-      valuesLength = values.length;
+  let index = -1;
+  let includes = arrayIncludes;
+  let isCommon = true;
+  const length = array.length;
+  const result = [];
+  const valuesLength = values.length;
 
   if (!length) {
     return result;
@@ -44,12 +44,12 @@ function baseDifference(array, values, iteratee, comparator) {
   }
   outer:
   while (++index < length) {
-    var value = array[index],
-        computed = iteratee == null ? value : iteratee(value);
+    let value = array[index];
+    const computed = iteratee == null ? value : iteratee(value);
 
     value = (comparator || value !== 0) ? value : 0;
     if (isCommon && computed === computed) {
-      var valuesIndex = valuesLength;
+      let valuesIndex = valuesLength;
       while (valuesIndex--) {
         if (values[valuesIndex] === computed) {
           continue outer;

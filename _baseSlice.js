@@ -8,7 +8,7 @@
  * @returns {Array} Returns the slice of `array`.
  */
 function baseSlice(array, start, end) {
-  var index = -1,
+  let index = -1,
       length = array.length;
 
   if (start < 0) {
@@ -21,7 +21,7 @@ function baseSlice(array, start, end) {
   length = start > end ? 0 : ((end - start) >>> 0);
   start >>>= 0;
 
-  var result = Array(length);
+  const result = Array(length);
   while (++index < length) {
     result[index] = array[index + start];
   }

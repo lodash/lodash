@@ -39,7 +39,7 @@ import negate from './negate.js';
  * // => objects for ['barney']
  */
 function reject(collection, predicate) {
-  var func = isArray(collection) ? arrayFilter : baseFilter;
+  const func = isArray(collection) ? arrayFilter : baseFilter;
   return func(collection, negate(baseIteratee(predicate, 3)));
 }
 

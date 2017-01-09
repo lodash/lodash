@@ -29,24 +29,24 @@ import toPlainObject from './toPlainObject.js';
  *  counterparts.
  */
 function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-  var objValue = object[key],
-      srcValue = source[key],
-      stacked = stack.get(srcValue);
+  const objValue = object[key];
+  const srcValue = source[key];
+  const stacked = stack.get(srcValue);
 
   if (stacked) {
     assignMergeValue(object, key, stacked);
     return;
   }
-  var newValue = customizer
+  let newValue = customizer
     ? customizer(objValue, srcValue, `${ key }`, object, source, stack)
     : undefined;
 
-  var isCommon = newValue === undefined;
+  let isCommon = newValue === undefined;
 
   if (isCommon) {
-    var isArr = isArray(srcValue),
-        isBuff = !isArr && isBuffer(srcValue),
-        isTyped = !isArr && !isBuff && isTypedArray(srcValue);
+    const isArr = isArray(srcValue);
+    const isBuff = !isArr && isBuffer(srcValue);
+    const isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 
     newValue = srcValue;
     if (isArr || isBuff || isTyped) {

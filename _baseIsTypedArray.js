@@ -3,34 +3,34 @@ import isLength from './isLength.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var argsTag = '[object Arguments]',
-    arrayTag = '[object Array]',
-    boolTag = '[object Boolean]',
-    dateTag = '[object Date]',
-    errorTag = '[object Error]',
-    funcTag = '[object Function]',
-    mapTag = '[object Map]',
-    numberTag = '[object Number]',
-    objectTag = '[object Object]',
-    regexpTag = '[object RegExp]',
-    setTag = '[object Set]',
-    stringTag = '[object String]',
-    weakMapTag = '[object WeakMap]';
+const argsTag = '[object Arguments]';
+const arrayTag = '[object Array]';
+const boolTag = '[object Boolean]';
+const dateTag = '[object Date]';
+const errorTag = '[object Error]';
+const funcTag = '[object Function]';
+const mapTag = '[object Map]';
+const numberTag = '[object Number]';
+const objectTag = '[object Object]';
+const regexpTag = '[object RegExp]';
+const setTag = '[object Set]';
+const stringTag = '[object String]';
+const weakMapTag = '[object WeakMap]';
 
-var arrayBufferTag = '[object ArrayBuffer]',
-    dataViewTag = '[object DataView]',
-    float32Tag = '[object Float32Array]',
-    float64Tag = '[object Float64Array]',
-    int8Tag = '[object Int8Array]',
-    int16Tag = '[object Int16Array]',
-    int32Tag = '[object Int32Array]',
-    uint8Tag = '[object Uint8Array]',
-    uint8ClampedTag = '[object Uint8ClampedArray]',
-    uint16Tag = '[object Uint16Array]',
-    uint32Tag = '[object Uint32Array]';
+const arrayBufferTag = '[object ArrayBuffer]';
+const dataViewTag = '[object DataView]';
+const float32Tag = '[object Float32Array]';
+const float64Tag = '[object Float64Array]';
+const int8Tag = '[object Int8Array]';
+const int16Tag = '[object Int16Array]';
+const int32Tag = '[object Int32Array]';
+const uint8Tag = '[object Uint8Array]';
+const uint8ClampedTag = '[object Uint8ClampedArray]';
+const uint16Tag = '[object Uint16Array]';
+const uint32Tag = '[object Uint32Array]';
 
 /** Used to identify `toStringTag` values of typed arrays. */
-var typedArrayTags = {};
+const typedArrayTags = {};
 typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
 typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
 typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =

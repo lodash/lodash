@@ -3,8 +3,8 @@ import arraySome from './_arraySome.js';
 import cacheHas from './_cacheHas.js';
 
 /** Used to compose bitmasks for value comparisons. */
-var COMPARE_PARTIAL_FLAG = 1,
-    COMPARE_UNORDERED_FLAG = 2;
+const COMPARE_PARTIAL_FLAG = 1;
+const COMPARE_UNORDERED_FLAG = 2;
 
 /**
  * A specialized version of `baseIsEqualDeep` for arrays with support for
@@ -20,29 +20,28 @@ var COMPARE_PARTIAL_FLAG = 1,
  * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
  */
 function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-      arrLength = array.length,
-      othLength = other.length;
+  const isPartial = bitmask & COMPARE_PARTIAL_FLAG;
+  const arrLength = array.length;
+  const othLength = other.length;
 
   if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
     return false;
   }
   // Assume cyclic values are equal.
-  var stacked = stack.get(array);
+  const stacked = stack.get(array);
   if (stacked && stack.get(other)) {
     return stacked == other;
   }
-  var index = -1,
-      result = true,
-      seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined;
+  let index = -1;
+  let result = true;
+  const seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined;
 
   stack.set(array, other);
   stack.set(other, array);
 
   // Ignore non-index properties.
   while (++index < arrLength) {
-    var arrValue = array[index],
-        othValue = other[index];
+    const arrValue = array[index], othValue = other[index];
 
     if (customizer) {
       var compared = isPartial

@@ -11,8 +11,8 @@ import getMapData from './_getMapData.js';
  * @returns {Object} Returns the map cache instance.
  */
 function mapCacheSet(key, value) {
-  var data = getMapData(this, key),
-      size = data.size;
+  const data = getMapData(this, key);
+  const size = data.size;
 
   data.set(key, value);
   this.size += data.size == size ? 0 : 1;

@@ -10,17 +10,17 @@ import eq from './eq.js';
  * @returns {Array} Returns the new duplicate free array.
  */
 function baseSortedUniq(array, iteratee) {
-  var index = -1,
-      length = array.length,
-      resIndex = 0,
-      result = [];
+  let seen;
+  let index = -1;
+  let resIndex = 0;
+
+  const length = array.length;
+  const result = [];
 
   while (++index < length) {
-    var value = array[index],
-        computed = iteratee ? iteratee(value) : value;
-
+    const value = array[index], computed = iteratee ? iteratee(value) : value;
     if (!index || !eq(computed, seen)) {
-      var seen = computed;
+      seen = computed;
       result[resIndex++] = value === 0 ? 0 : value;
     }
   }

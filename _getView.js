@@ -1,6 +1,6 @@
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max,
-    nativeMin = Math.min;
+const nativeMax = Math.max;
+const nativeMin = Math.min;
 
 /**
  * Gets the view, applying any `transforms` to the `start` and `end` positions.
@@ -13,12 +13,12 @@ var nativeMax = Math.max,
  *  positions of the view.
  */
 function getView(start, end, transforms) {
-  var index = -1,
-      length = transforms.length;
+  let index = -1;
+  const length = transforms.length;
 
   while (++index < length) {
-    var data = transforms[index],
-        size = data.size;
+    const data = transforms[index];
+    const size = data.size;
 
     switch (data.type) {
       case 'drop':      start += size; break;

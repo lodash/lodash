@@ -1,13 +1,13 @@
 import getAllKeys from './_getAllKeys.js';
 
 /** Used to compose bitmasks for value comparisons. */
-var COMPARE_PARTIAL_FLAG = 1;
+const COMPARE_PARTIAL_FLAG = 1;
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * A specialized version of `baseIsEqualDeep` for objects with support for
@@ -23,39 +23,41 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
  */
 function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG,
-      objProps = getAllKeys(object),
-      objLength = objProps.length,
-      othProps = getAllKeys(other),
-      othLength = othProps.length;
+  const isPartial = bitmask & COMPARE_PARTIAL_FLAG;
+  const objProps = getAllKeys(object);
+  const objLength = objProps.length;
+  const othProps = getAllKeys(other);
+  const othLength = othProps.length;
 
   if (objLength != othLength && !isPartial) {
     return false;
   }
-  var index = objLength;
+  let key;
+  let index = objLength;
   while (index--) {
-    var key = objProps[index];
+    key = objProps[index];
     if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
       return false;
     }
   }
   // Assume cyclic values are equal.
-  var stacked = stack.get(object);
+  const stacked = stack.get(object);
   if (stacked && stack.get(other)) {
     return stacked == other;
   }
-  var result = true;
+  let result = true;
   stack.set(object, other);
   stack.set(other, object);
 
-  var skipCtor = isPartial;
+  let compared;
+  let skipCtor = isPartial;
   while (++index < objLength) {
     key = objProps[index];
-    var objValue = object[key],
-        othValue = other[key];
+    const objValue = object[key];
+    const othValue = other[key];
 
     if (customizer) {
-      var compared = isPartial
+      compared = isPartial
         ? customizer(othValue, objValue, key, other, object, stack)
         : customizer(objValue, othValue, key, object, other, stack);
     }
@@ -70,8 +72,8 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
     skipCtor || (skipCtor = key == 'constructor');
   }
   if (result && !skipCtor) {
-    var objCtor = object.constructor,
-        othCtor = other.constructor;
+    const objCtor = object.constructor;
+    const othCtor = other.constructor;
 
     // Non `Object` object instances with different constructors are not equal.
     if (objCtor != othCtor &&

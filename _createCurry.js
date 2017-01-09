@@ -16,18 +16,19 @@ import root from './_root.js';
  * @returns {Function} Returns the new wrapped function.
  */
 function createCurry(func, bitmask, arity) {
-  var Ctor = createCtor(func);
+  const Ctor = createCtor(func);
 
   function wrapper() {
-    var length = arguments.length,
-        args = Array(length),
-        index = length,
-        placeholder = getHolder(wrapper);
+    let length = arguments.length;
+    let index = length;
+
+    const args = Array(length);
+    const placeholder = getHolder(wrapper);
 
     while (index--) {
       args[index] = arguments[index];
     }
-    var holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
+    const holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
       ? []
       : replaceHolders(args, placeholder);
 
@@ -37,7 +38,7 @@ function createCurry(func, bitmask, arity) {
         func, bitmask, createHybrid, wrapper.placeholder, undefined,
         args, holders, undefined, undefined, arity - length);
     }
-    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+    const fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
     return apply(fn, this, args);
   }
   return wrapper;

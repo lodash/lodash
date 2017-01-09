@@ -5,7 +5,7 @@ import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */
-var reTrimEnd = /\s+$/;
+const reTrimEnd = /\s+$/;
 
 /**
  * Removes trailing whitespace or specified characters from `string`.
@@ -34,9 +34,8 @@ function trimEnd(string, chars, guard) {
   if (!string || !(chars = baseToString(chars))) {
     return string;
   }
-  var strSymbols = stringToArray(string),
-      end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
-
+  const strSymbols = stringToArray(string);
+  const end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
   return castSlice(strSymbols, 0, end).join('');
 }
 

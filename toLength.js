@@ -2,7 +2,7 @@ import baseClamp from './_baseClamp.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = 4294967295;
+const MAX_ARRAY_LENGTH = 4294967295;
 
 /**
  * Converts `value` to an integer suitable for use as the length of an

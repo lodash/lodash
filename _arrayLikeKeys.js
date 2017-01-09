@@ -6,10 +6,10 @@ import isIndex from './_isIndex.js';
 import isTypedArray from './isTypedArray.js';
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Creates an array of the enumerable property names of the array-like `value`.
@@ -20,15 +20,15 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {Array} Returns the array of property names.
  */
 function arrayLikeKeys(value, inherited) {
-  var isArr = isArray(value),
-      isArg = !isArr && isArguments(value),
-      isBuff = !isArr && !isArg && isBuffer(value),
-      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
-      skipIndexes = isArr || isArg || isBuff || isType,
-      result = skipIndexes ? baseTimes(value.length, String) : [],
-      length = result.length;
+  const isArr = isArray(value);
+  const isArg = !isArr && isArguments(value);
+  const isBuff = !isArr && !isArg && isBuffer(value);
+  const isType = !isArr && !isArg && !isBuff && isTypedArray(value);
+  const skipIndexes = isArr || isArg || isBuff || isType;
+  const result = skipIndexes ? baseTimes(value.length, String) : [];
+  const length = result.length;
 
-  for (var key in value) {
+  for (const key in value) {
     if ((inherited || hasOwnProperty.call(value, key)) &&
         !(skipIndexes && (
            // Safari 9 has enumerable `arguments.length` in strict mode.

@@ -5,8 +5,8 @@ import isString from './isString.js';
 import stringSize from './_stringSize.js';
 
 /** `Object#toString` result references. */
-var mapTag = '[object Map]',
-    setTag = '[object Set]';
+const mapTag = '[object Map]';
+const setTag = '[object Set]';
 
 /**
  * Gets the size of `collection` by returning its length for array-like
@@ -36,7 +36,7 @@ function size(collection) {
   if (isArrayLike(collection)) {
     return isString(collection) ? stringSize(collection) : collection.length;
   }
-  var tag = getTag(collection);
+  const tag = getTag(collection);
   if (tag == mapTag || tag == setTag) {
     return collection.size;
   }

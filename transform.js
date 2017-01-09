@@ -40,12 +40,12 @@ import isTypedArray from './isTypedArray.js';
  * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function transform(object, iteratee, accumulator) {
-  var isArr = isArray(object),
-      isArrLike = isArr || isBuffer(object) || isTypedArray(object);
+  const isArr = isArray(object);
+  const isArrLike = isArr || isBuffer(object) || isTypedArray(object);
 
   iteratee = baseIteratee(iteratee, 4);
   if (accumulator == null) {
-    var Ctor = object && object.constructor;
+    const Ctor = object && object.constructor;
     if (isArrLike) {
       accumulator = isArr ? new Ctor : [];
     }

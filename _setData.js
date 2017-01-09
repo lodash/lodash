@@ -15,6 +15,6 @@ import shortOut from './_shortOut.js';
  * @param {*} data The metadata.
  * @returns {Function} Returns `func`.
  */
-var setData = shortOut(baseSetData);
+const setData = shortOut(baseSetData);
 
 export default setData;

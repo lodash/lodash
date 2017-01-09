@@ -15,6 +15,6 @@ import createMathOperation from './_createMathOperation.js';
  * _.subtract(6, 4);
  * // => 2
  */
-var subtract = createMathOperation((minuend, subtrahend) => minuend - subtrahend, 0);
+const subtract = createMathOperation((minuend, subtrahend) => minuend - subtrahend, 0);
 
 export default subtract;

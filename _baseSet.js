@@ -20,17 +20,18 @@ function baseSet(object, path, value, customizer) {
   }
   path = castPath(path, object);
 
-  var index = -1,
-      length = path.length,
-      lastIndex = length - 1,
-      nested = object;
+  const length = path.length;
+  const lastIndex = length - 1;
+
+  let index = -1;
+  let nested = object;
 
   while (nested != null && ++index < length) {
-    var key = toKey(path[index]),
-        newValue = value;
+    const key = toKey(path[index]);
+    let newValue = value;
 
     if (index != lastIndex) {
-      var objValue = nested[key];
+      const objValue = nested[key];
       newValue = customizer ? customizer(objValue, key, nested) : undefined;
       if (newValue === undefined) {
         newValue = isObject(objValue)

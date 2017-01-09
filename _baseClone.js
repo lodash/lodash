@@ -24,36 +24,36 @@ const CLONE_FLAT_FLAG = 2;
 const CLONE_SYMBOLS_FLAG = 4;
 
 /** `Object#toString` result references. */
-const argsTag = '[object Arguments]',
-    arrayTag = '[object Array]',
-    boolTag = '[object Boolean]',
-    dateTag = '[object Date]',
-    errorTag = '[object Error]',
-    funcTag = '[object Function]',
-    genTag = '[object GeneratorFunction]',
-    mapTag = '[object Map]',
-    numberTag = '[object Number]',
-    objectTag = '[object Object]',
-    regexpTag = '[object RegExp]',
-    setTag = '[object Set]',
-    stringTag = '[object String]',
-    symbolTag = '[object Symbol]',
-    weakMapTag = '[object WeakMap]';
+const argsTag = '[object Arguments]';
+const arrayTag = '[object Array]';
+const boolTag = '[object Boolean]';
+const dateTag = '[object Date]';
+const errorTag = '[object Error]';
+const funcTag = '[object Function]';
+const genTag = '[object GeneratorFunction]';
+const mapTag = '[object Map]';
+const numberTag = '[object Number]';
+const objectTag = '[object Object]';
+const regexpTag = '[object RegExp]';
+const setTag = '[object Set]';
+const stringTag = '[object String]';
+const symbolTag = '[object Symbol]';
+const weakMapTag = '[object WeakMap]';
 
-var arrayBufferTag = '[object ArrayBuffer]',
-    dataViewTag = '[object DataView]',
-    float32Tag = '[object Float32Array]',
-    float64Tag = '[object Float64Array]',
-    int8Tag = '[object Int8Array]',
-    int16Tag = '[object Int16Array]',
-    int32Tag = '[object Int32Array]',
-    uint8Tag = '[object Uint8Array]',
-    uint8ClampedTag = '[object Uint8ClampedArray]',
-    uint16Tag = '[object Uint16Array]',
-    uint32Tag = '[object Uint32Array]';
+const arrayBufferTag = '[object ArrayBuffer]';
+const dataViewTag = '[object DataView]';
+const float32Tag = '[object Float32Array]';
+const float64Tag = '[object Float64Array]';
+const int8Tag = '[object Int8Array]';
+const int16Tag = '[object Int16Array]';
+const int32Tag = '[object Int32Array]';
+const uint8Tag = '[object Uint8Array]';
+const uint8ClampedTag = '[object Uint8ClampedArray]';
+const uint16Tag = '[object Uint16Array]';
+const uint32Tag = '[object Uint32Array]';
 
 /** Used to identify `toStringTag` values supported by `_.clone`. */
-var cloneableTags = {};
+const cloneableTags = {};
 cloneableTags[argsTag] = cloneableTags[arrayTag] =
 cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
 cloneableTags[boolTag] = cloneableTags[dateTag] =
@@ -85,10 +85,10 @@ cloneableTags[weakMapTag] = false;
  * @returns {*} Returns the cloned value.
  */
 function baseClone(value, bitmask, customizer, key, object, stack) {
-  var result,
-      isDeep = bitmask & CLONE_DEEP_FLAG,
-      isFlat = bitmask & CLONE_FLAT_FLAG,
-      isFull = bitmask & CLONE_SYMBOLS_FLAG;
+  let result;
+  const isDeep = bitmask & CLONE_DEEP_FLAG;
+  const isFlat = bitmask & CLONE_FLAT_FLAG;
+  const isFull = bitmask & CLONE_SYMBOLS_FLAG;
 
   if (customizer) {
     result = object ? customizer(value, key, object, stack) : customizer(value);
@@ -99,15 +99,15 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   if (!isObject(value)) {
     return value;
   }
-  var isArr = isArray(value);
+  const isArr = isArray(value);
   if (isArr) {
     result = initCloneArray(value);
     if (!isDeep) {
       return copyArray(value, result);
     }
   } else {
-    var tag = getTag(value),
-        isFunc = tag == funcTag || tag == genTag;
+    const tag = getTag(value);
+    const isFunc = tag == funcTag || tag == genTag;
 
     if (isBuffer(value)) {
       return cloneBuffer(value, isDeep);
@@ -128,17 +128,17 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
   // Check for circular references and return its corresponding clone.
   stack || (stack = new Stack);
-  var stacked = stack.get(value);
+  const stacked = stack.get(value);
   if (stacked) {
     return stacked;
   }
   stack.set(value, result);
 
-  var keysFunc = isFull
+  const keysFunc = isFull
     ? (isFlat ? getAllKeysIn : getAllKeys)
     : (isFlat ? keysIn : keys);
 
-  var props = isArr ? undefined : keysFunc(value);
+  const props = isArr ? undefined : keysFunc(value);
   arrayEach(props || value, (subValue, key) => {
     if (props) {
       key = subValue;

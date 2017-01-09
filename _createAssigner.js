@@ -10,10 +10,10 @@ import isIterateeCall from './_isIterateeCall.js';
  */
 function createAssigner(assigner) {
   return baseRest((object, sources) => {
-    var index = -1,
-        length = sources.length,
-        customizer = length > 1 ? sources[length - 1] : undefined,
-        guard = length > 2 ? sources[2] : undefined;
+    let index = -1;
+    let length = sources.length;
+    let customizer = length > 1 ? sources[length - 1] : undefined;
+    const guard = length > 2 ? sources[2] : undefined;
 
     customizer = (assigner.length > 3 && typeof customizer == 'function')
       ? (length--, customizer)
@@ -25,7 +25,7 @@ function createAssigner(assigner) {
     }
     object = Object(object);
     while (++index < length) {
-      var source = sources[index];
+      const source = sources[index];
       if (source) {
         assigner(object, source, index, customizer);
       }

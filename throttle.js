@@ -2,7 +2,7 @@ import debounce from './debounce.js';
 import isObject from './isObject.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a throttled function that only invokes `func` at most once per
@@ -49,8 +49,8 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * jQuery(window).on('popstate', throttled.cancel);
  */
 function throttle(func, wait, options) {
-  var leading = true,
-      trailing = true;
+  let leading = true;
+  let trailing = true;
 
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);

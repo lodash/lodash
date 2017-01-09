@@ -10,18 +10,18 @@ import setWrapToString from './_setWrapToString.js';
 import toInteger from './toInteger.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_BIND_FLAG = 1,
-    WRAP_BIND_KEY_FLAG = 2,
-    WRAP_CURRY_FLAG = 8,
-    WRAP_CURRY_RIGHT_FLAG = 16,
-    WRAP_PARTIAL_FLAG = 32,
-    WRAP_PARTIAL_RIGHT_FLAG = 64;
+const WRAP_BIND_FLAG = 1;
+const WRAP_BIND_KEY_FLAG = 2;
+const WRAP_CURRY_FLAG = 8;
+const WRAP_CURRY_RIGHT_FLAG = 16;
+const WRAP_PARTIAL_FLAG = 32;
+const WRAP_PARTIAL_RIGHT_FLAG = 64;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+const nativeMax = Math.max;
 
 /**
  * Creates a function that either curries or invokes `func` with optional
@@ -49,11 +49,11 @@ var nativeMax = Math.max;
  * @returns {Function} Returns the new wrapped function.
  */
 function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
-  var isBindKey = bitmask & WRAP_BIND_KEY_FLAG;
+  const isBindKey = bitmask & WRAP_BIND_KEY_FLAG;
   if (!isBindKey && typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  var length = partials ? partials.length : 0;
+  let length = partials ? partials.length : 0;
   if (!length) {
     bitmask &= ~(WRAP_PARTIAL_FLAG | WRAP_PARTIAL_RIGHT_FLAG);
     partials = holders = undefined;
@@ -68,9 +68,9 @@ function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arit
 
     partials = holders = undefined;
   }
-  var data = isBindKey ? undefined : getData(func);
+  const data = isBindKey ? undefined : getData(func);
 
-  var newData = [
+  const newData = [
     func, bitmask, thisArg, partials, holders, partialsRight, holdersRight,
     argPos, ary, arity
   ];
@@ -99,7 +99,7 @@ function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arit
   } else {
     result = createHybrid(...newData);
   }
-  var setter = data ? baseSetData : setData;
+  const setter = data ? baseSetData : setData;
   return setWrapToString(setter(result, newData), func, bitmask);
 }
 

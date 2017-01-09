@@ -1,5 +1,5 @@
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /**
  * Checks if `value` is likely a prototype object.
@@ -9,8 +9,8 @@ var objectProto = Object.prototype;
  * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
  */
 function isPrototype(value) {
-  var Ctor = value && value.constructor,
-      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+  const Ctor = value && value.constructor;
+  const proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
   return value === proto;
 }

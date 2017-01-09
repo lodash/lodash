@@ -10,15 +10,15 @@ import isSymbol from './isSymbol.js';
  */
 function compareAscending(value, other) {
   if (value !== other) {
-    var valIsDefined = value !== undefined,
-        valIsNull = value === null,
-        valIsReflexive = value === value,
-        valIsSymbol = isSymbol(value);
+    const valIsDefined = value !== undefined;
+    const valIsNull = value === null;
+    const valIsReflexive = value === value;
+    const valIsSymbol = isSymbol(value);
 
-    var othIsDefined = other !== undefined,
-        othIsNull = other === null,
-        othIsReflexive = other === other,
-        othIsSymbol = isSymbol(other);
+    const othIsDefined = other !== undefined;
+    const othIsNull = other === null;
+    const othIsReflexive = other === other;
+    const othIsSymbol = isSymbol(other);
 
     if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
         (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||

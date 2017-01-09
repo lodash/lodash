@@ -2,7 +2,7 @@ import createCtor from './_createCtor.js';
 import root from './_root.js';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_BIND_FLAG = 1;
+const WRAP_BIND_FLAG = 1;
 
 /**
  * Creates a function that wraps `func` to invoke it with the optional `this`
@@ -15,11 +15,11 @@ var WRAP_BIND_FLAG = 1;
  * @returns {Function} Returns the new wrapped function.
  */
 function createBind(func, bitmask, thisArg) {
-  var isBind = bitmask & WRAP_BIND_FLAG,
-      Ctor = createCtor(func);
+  const isBind = bitmask & WRAP_BIND_FLAG;
+  const Ctor = createCtor(func);
 
   function wrapper(...args) {
-    var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+    const fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
     return fn.apply(isBind ? thisArg : this, args);
   }
   return wrapper;

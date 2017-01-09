@@ -30,7 +30,7 @@ function sampleSize(collection, n, guard) {
   } else {
     n = toInteger(n);
   }
-  var func = isArray(collection) ? arraySampleSize : baseSampleSize;
+  const func = isArray(collection) ? arraySampleSize : baseSampleSize;
   return func(collection, n);
 }
 

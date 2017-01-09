@@ -10,7 +10,7 @@ import getMapData from './_getMapData.js';
  * @returns {boolean} Returns `true` if the entry was removed, else `false`.
  */
 function mapCacheDelete(key) {
-  var result = getMapData(this, key)['delete'](key);
+  const result = getMapData(this, key)['delete'](key);
   this.size -= result ? 1 : 0;
   return result;
 }

@@ -4,8 +4,8 @@ import mapToArray from './_mapToArray.js';
 import setToPairs from './_setToPairs.js';
 
 /** `Object#toString` result references. */
-var mapTag = '[object Map]',
-    setTag = '[object Set]';
+const mapTag = '[object Map]';
+const setTag = '[object Set]';
 
 /**
  * Creates a `_.toPairs` or `_.toPairsIn` function.
@@ -16,7 +16,7 @@ var mapTag = '[object Map]',
  */
 function createToPairs(keysFunc) {
   return object => {
-    var tag = getTag(object);
+    const tag = getTag(object);
     if (tag == mapTag) {
       return mapToArray(object);
     }

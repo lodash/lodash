@@ -13,9 +13,8 @@ import isArray from './isArray.js';
  */
 function createAggregator(setter, initializer) {
   return (collection, iteratee) => {
-    var func = isArray(collection) ? arrayAggregator : baseAggregator,
-        accumulator = initializer ? initializer() : {};
-
+    const func = isArray(collection) ? arrayAggregator : baseAggregator;
+    const accumulator = initializer ? initializer() : {};
     return func(collection, setter, baseIteratee(iteratee, 2), accumulator);
   };
 }

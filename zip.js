@@ -17,6 +17,6 @@ import unzip from './unzip.js';
  * _.zip(['a', 'b'], [1, 2], [true, false]);
  * // => [['a', 1, true], ['b', 2, false]]
  */
-var zip = baseRest(unzip);
+const zip = baseRest(unzip);
 
 export default zip;

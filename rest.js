@@ -2,7 +2,7 @@ import baseRest from './_baseRest.js';
 import toInteger from './toInteger.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a function that invokes `func` with the `this` binding of the

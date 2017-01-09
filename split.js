@@ -7,7 +7,7 @@ import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
 
 /** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = 4294967295;
+const MAX_ARRAY_LENGTH = 4294967295;
 
 /**
  * Splits `string` by `separator`.

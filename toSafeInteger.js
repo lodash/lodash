@@ -2,7 +2,7 @@ import baseClamp from './_baseClamp.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = 9007199254740991;
+const MAX_SAFE_INTEGER = 9007199254740991;
 
 /**
  * Converts `value` to a safe integer. A safe integer can be compared and

@@ -1,7 +1,7 @@
 import coreJsData from './_coreJsData.js';
 
 /** Used to detect methods masquerading as native. */
-var maskSrcKey = ((() => {
+const maskSrcKey = ((() => {
   const uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
   return uid ? `Symbol(src)_1.${ uid }` : '';
 })());

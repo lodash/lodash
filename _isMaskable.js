@@ -9,6 +9,6 @@ import stubFalse from './stubFalse.js';
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `func` is maskable, else `false`.
  */
-var isMaskable = coreJsData ? isFunction : stubFalse;
+const isMaskable = coreJsData ? isFunction : stubFalse;
 
 export default isMaskable;

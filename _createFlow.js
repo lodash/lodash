@@ -6,13 +6,13 @@ import isArray from './isArray.js';
 import isLaziable from './_isLaziable.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_CURRY_FLAG = 8,
-    WRAP_PARTIAL_FLAG = 32,
-    WRAP_ARY_FLAG = 128,
-    WRAP_REARG_FLAG = 256;
+const WRAP_CURRY_FLAG = 8;
+const WRAP_PARTIAL_FLAG = 32;
+const WRAP_ARY_FLAG = 128;
+const WRAP_REARG_FLAG = 256;
 
 /**
  * Creates a `_.flow` or `_.flowRight` function.
@@ -23,9 +23,9 @@ var WRAP_CURRY_FLAG = 8,
  */
 function createFlow(fromRight) {
   return flatRest(funcs => {
-    var length = funcs.length,
-        index = length,
-        prereq = LodashWrapper.prototype.thru;
+    const length = funcs.length;
+    const prereq = LodashWrapper.prototype.thru;
+    let index = length;
 
     if (fromRight) {
       funcs.reverse();
@@ -43,12 +43,12 @@ function createFlow(fromRight) {
     while (++index < length) {
       func = funcs[index];
 
-      var funcName = getFuncName(func),
-          data = funcName == 'wrapper' ? getData(func) : undefined;
+      const funcName = getFuncName(func);
+      const data = funcName == 'wrapper' ? getData(func) : undefined;
 
       if (data && isLaziable(data[0]) &&
             data[1] == (WRAP_ARY_FLAG | WRAP_CURRY_FLAG | WRAP_PARTIAL_FLAG | WRAP_REARG_FLAG) &&
-            !data[4].length && data[9] == 1
+               !data[4].length && data[9] == 1
           ) {
         wrapper = wrapper[getFuncName(data[0])](...data[3]);
       } else {
@@ -58,14 +58,13 @@ function createFlow(fromRight) {
       }
     }
     return function() {
-      var args = arguments,
-          value = args[0];
+      const args = arguments;
+      const value = args[0];
 
       if (wrapper && args.length == 1 && isArray(value)) {
         return wrapper.plant(value).value();
       }
-      var index = 0,
-          result = length ? funcs[index].apply(this, args) : value;
+      let index = 0, result = length ? funcs[index].apply(this, args) : value;
 
       while (++index < length) {
         result = funcs[index].call(this, result);

@@ -41,7 +41,7 @@ import isIterateeCall from './_isIterateeCall.js';
  * // => true
  */
 function some(collection, predicate, guard) {
-  var func = isArray(collection) ? arraySome : baseSome;
+  const func = isArray(collection) ? arraySome : baseSome;
   if (guard && isIterateeCall(collection, predicate, guard)) {
     predicate = undefined;
   }

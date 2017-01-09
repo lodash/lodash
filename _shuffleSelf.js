@@ -9,14 +9,14 @@ import baseRandom from './_baseRandom.js';
  * @returns {Array} Returns `array`.
  */
 function shuffleSelf(array, size) {
-  var index = -1,
-      length = array.length,
-      lastIndex = length - 1;
+  let index = -1;
+  const length = array.length;
+  const lastIndex = length - 1;
 
   size = size === undefined ? length : size;
   while (++index < size) {
-    var rand = baseRandom(index, lastIndex),
-        value = array[rand];
+    const rand = baseRandom(index, lastIndex);
+    const value = array[rand];
 
     array[rand] = array[index];
     array[index] = value;

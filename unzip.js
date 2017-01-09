@@ -5,7 +5,7 @@ import baseTimes from './_baseTimes.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+const nativeMax = Math.max;
 
 /**
  * This method is like `_.zip` except that it accepts an array of grouped
@@ -30,7 +30,7 @@ function unzip(array) {
   if (!(array && array.length)) {
     return [];
   }
-  var length = 0;
+  let length = 0;
   array = arrayFilter(array, group => {
     if (isArrayLikeObject(group)) {
       length = nativeMax(group.length, length);

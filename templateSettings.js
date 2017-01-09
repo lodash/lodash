@@ -12,7 +12,7 @@ import reInterpolate from './_reInterpolate.js';
  * @memberOf _
  * @type {Object}
  */
-var templateSettings = {
+const templateSettings = {
 
   /**
    * Used to detect `data` property values to be HTML-escaped.

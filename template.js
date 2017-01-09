@@ -11,21 +11,21 @@ import templateSettings from './templateSettings.js';
 import toString from './toString.js';
 
 /** Used to match empty string literals in compiled template source. */
-var reEmptyStringLeading = /\b__p \+= '';/g,
-    reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
-    reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+const reEmptyStringLeading = /\b__p \+= '';/g;
+const reEmptyStringMiddle = /\b(__p \+=) '' \+/g;
+const reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
 
 /**
  * Used to match
  * [ES template delimiters](http://ecma-international.org/ecma-262/7.0/#sec-template-literal-lexical-components).
  */
-var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+const reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
 
 /** Used to ensure capturing order of template delimiters. */
-var reNoMatch = /($^)/;
+const reNoMatch = /($^)/;
 
 /** Used to match unescaped characters in compiled string literals. */
-var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
+const reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
 /**
  * Creates a compiled template function that can interpolate data properties
@@ -135,7 +135,7 @@ function template(string, options, guard) {
   // Based on John Resig's `tmpl` implementation
   // (http://ejohn.org/blog/javascript-micro-templating/)
   // and Laura Doktorova's doT.js (https://github.com/olado/doT).
-  var settings = templateSettings.imports._.templateSettings || templateSettings;
+  let settings = templateSettings.imports._.templateSettings || templateSettings;
 
   if (guard && isIterateeCall(string, options, guard)) {
     options = undefined;
@@ -143,18 +143,19 @@ function template(string, options, guard) {
   string = toString(string);
   options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-  var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
-      importsKeys = keys(imports),
-      importsValues = baseValues(imports, importsKeys);
+  const imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn);
+  const importsKeys = keys(imports);
+  const importsValues = baseValues(imports, importsKeys);
 
-  var isEscaping,
-      isEvaluating,
-      index = 0,
-      interpolate = options.interpolate || reNoMatch,
-      source = "__p += '";
+  let isEscaping;
+  let isEvaluating;
+  let index = 0;
+
+  const interpolate = options.interpolate || reNoMatch;
+  let source = "__p += '";
 
   // Compile the regexp to match each delimiter.
-  var reDelimiters = RegExp(
+  const reDelimiters = RegExp(
     (options.escape || reNoMatch).source + '|' +
     interpolate.source + '|' +
     (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
@@ -162,7 +163,7 @@ function template(string, options, guard) {
   , 'g');
 
   // Use a sourceURL for easier debugging.
-  var sourceURL = 'sourceURL' in options ? `//# sourceURL=${ options.sourceURL }\n` : '';
+  const sourceURL = 'sourceURL' in options ? `//# sourceURL=${ options.sourceURL }\n` : '';
 
   string.replace(reDelimiters, (
     match,
@@ -200,7 +201,7 @@ function template(string, options, guard) {
 
   // If `variable` is not specified wrap a with-statement around the generated
   // code to add the data object to the top of the scope chain.
-  var variable = options.variable;
+  const variable = options.variable;
   if (!variable) {
     source = `with (obj) {\n${ source }\n}\n`;
   }
@@ -228,7 +229,7 @@ function template(string, options, guard) {
     source +
     'return __p\n}';
 
-  var result = attempt(() => Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues);
+  const result = attempt(() => Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues);
 
   // Provide the compiled function's source by its `toString` method or
   // the `source` property as a convenience for inlining compiled templates.

@@ -3,13 +3,13 @@ import castFunction from './_castFunction.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = 9007199254740991;
+const MAX_SAFE_INTEGER = 9007199254740991;
 
 /** Used as references for the maximum length and index of an array. */
-var MAX_ARRAY_LENGTH = 4294967295;
+const MAX_ARRAY_LENGTH = 4294967295;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min;
+const nativeMin = Math.min;
 
 /**
  * Invokes the iteratee `n` times, returning an array of the results of
@@ -35,13 +35,13 @@ function times(n, iteratee) {
   if (n < 1 || n > MAX_SAFE_INTEGER) {
     return [];
   }
-  var index = MAX_ARRAY_LENGTH,
-      length = nativeMin(n, MAX_ARRAY_LENGTH);
+  let index = MAX_ARRAY_LENGTH;
+  const length = nativeMin(n, MAX_ARRAY_LENGTH);
 
   iteratee = castFunction(iteratee);
   n -= MAX_ARRAY_LENGTH;
 
-  var result = baseTimes(length, iteratee);
+  const result = baseTimes(length, iteratee);
   while (++index < n) {
     iteratee(index);
   }

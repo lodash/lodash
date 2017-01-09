@@ -7,13 +7,14 @@
  */
 function createBaseFor(fromRight) {
   return (object, iteratee, keysFunc) => {
-    var index = -1,
-        iterable = Object(object),
-        props = keysFunc(object),
-        length = props.length;
+    const iterable = Object(object);
+    const props = keysFunc(object);
+
+    let index = -1;
+    let length = props.length;
 
     while (length--) {
-      var key = props[fromRight ? length : ++index];
+      const key = props[fromRight ? length : ++index];
       if (iteratee(iterable[key], key, iterable) === false) {
         break;
       }

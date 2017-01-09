@@ -18,9 +18,9 @@ import eq from './eq.js';
  * // => 1
  */
 function sortedIndexOf(array, value) {
-  var length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length;
   if (length) {
-    var index = baseSortedIndex(array, value);
+    const index = baseSortedIndex(array, value);
     if (index < length && eq(array[index], value)) {
       return index;
     }

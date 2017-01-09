@@ -27,7 +27,7 @@ function unzipWith(array, iteratee) {
   if (!(array && array.length)) {
     return [];
   }
-  var result = unzip(array);
+  const result = unzip(array);
   if (iteratee == null) {
     return result;
   }

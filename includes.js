@@ -5,7 +5,7 @@ import toInteger from './toInteger.js';
 import values from './values.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
+const nativeMax = Math.max;
 
 /**
  * Checks if `value` is in `collection`. If `collection` is a string, it's
@@ -41,7 +41,7 @@ function includes(collection, value, fromIndex, guard) {
   collection = isArrayLike(collection) ? collection : values(collection);
   fromIndex = (fromIndex && !guard) ? toInteger(fromIndex) : 0;
 
-  var length = collection.length;
+  const length = collection.length;
   if (fromIndex < 0) {
     fromIndex = nativeMax(length + fromIndex, 0);
   }

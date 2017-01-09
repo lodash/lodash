@@ -2,7 +2,7 @@ import getTag from './_getTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var weakMapTag = '[object WeakMap]';
+const weakMapTag = '[object WeakMap]';
 
 /**
  * Checks if `value` is classified as a `WeakMap` object.

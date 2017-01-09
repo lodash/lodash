@@ -1,6 +1,5 @@
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
 /**
@@ -24,8 +23,10 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.difference([2, 1], [2, 3]);
  * // => [1]
  */
-var difference = baseRest((array, values) => isArrayLikeObject(array)
-  ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
-  : []);
+function difference(array, ...values) {
+  return isArrayLikeObject(array)
+    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
+    : [];
+}
 
 export default difference;

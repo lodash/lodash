@@ -3,8 +3,8 @@ import isObjectLike from './isObjectLike.js';
 import isPlainObject from './isPlainObject.js';
 
 /** `Object#toString` result references. */
-var domExcTag = '[object DOMException]',
-    errorTag = '[object Error]';
+const domExcTag = '[object DOMException]';
+const errorTag = '[object Error]';
 
 /**
  * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
@@ -28,7 +28,7 @@ function isError(value) {
   if (!isObjectLike(value)) {
     return false;
   }
-  var tag = baseGetTag(value);
+  const tag = baseGetTag(value);
   return tag == errorTag || tag == domExcTag ||
     (typeof value.message == 'string' && typeof value.name == 'string' && !isPlainObject(value));
 }

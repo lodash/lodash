@@ -34,7 +34,7 @@ import isArray from './isArray.js';
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forEach(collection, iteratee) {
-  var func = isArray(collection) ? arrayEach : baseEach;
+  const func = isArray(collection) ? arrayEach : baseEach;
   return func(collection, castFunction(iteratee));
 }
 

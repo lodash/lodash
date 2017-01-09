@@ -1,7 +1,6 @@
 import apply from './_apply.js';
 import baseEach from './_baseEach.js';
 import baseInvoke from './_baseInvoke.js';
-import baseRest from './_baseRest.js';
 import isArrayLike from './isArrayLike.js';
 
 /**
@@ -27,15 +26,15 @@ import isArrayLike from './isArrayLike.js';
  * _.invokeMap([123, 456], String.prototype.split, '');
  * // => [['1', '2', '3'], ['4', '5', '6']]
  */
-var invokeMap = baseRest((collection, path, args) => {
-  var index = -1,
-      isFunc = typeof path == 'function',
-      result = isArrayLike(collection) ? Array(collection.length) : [];
+function invokeMap(collection, path, ...args) {
+  let index = -1;
+  const isFunc = typeof path == 'function';
+  const result = isArrayLike(collection) ? Array(collection.length) : [];
 
   baseEach(collection, value => {
     result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
   });
   return result;
-});
+}
 
 export default invokeMap;

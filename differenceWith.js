@@ -1,6 +1,5 @@
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
-import baseRest from './_baseRest.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 
@@ -27,14 +26,14 @@ import last from './last.js';
  * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
  * // => [{ 'x': 2, 'y': 1 }]
  */
-var differenceWith = baseRest((array, values) => {
-  var comparator = last(values);
+function differenceWith(array, ...values) {
+  let comparator = last(values);
   if (isArrayLikeObject(comparator)) {
     comparator = undefined;
   }
   return isArrayLikeObject(array)
     ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), undefined, comparator)
     : [];
-});
+}
 
 export default differenceWith;

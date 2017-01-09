@@ -3,18 +3,18 @@ import composeArgsRight from './_composeArgsRight.js';
 import replaceHolders from './_replaceHolders.js';
 
 /** Used as the internal argument placeholder. */
-var PLACEHOLDER = '__lodash_placeholder__';
+const PLACEHOLDER = '__lodash_placeholder__';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_BIND_FLAG = 1,
-    WRAP_BIND_KEY_FLAG = 2,
-    WRAP_CURRY_BOUND_FLAG = 4,
-    WRAP_CURRY_FLAG = 8,
-    WRAP_ARY_FLAG = 128,
-    WRAP_REARG_FLAG = 256;
+const WRAP_BIND_FLAG = 1;
+const WRAP_BIND_KEY_FLAG = 2;
+const WRAP_CURRY_BOUND_FLAG = 4;
+const WRAP_CURRY_FLAG = 8;
+const WRAP_ARY_FLAG = 128;
+const WRAP_REARG_FLAG = 256;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min;
+const nativeMin = Math.min;
 
 /**
  * Merges the function metadata of `source` into `data`.
@@ -33,12 +33,13 @@ var nativeMin = Math.min;
  * @returns {Array} Returns `data`.
  */
 function mergeData(data, source) {
-  var bitmask = data[1],
-      srcBitmask = source[1],
-      newBitmask = bitmask | srcBitmask,
-      isCommon = newBitmask < (WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG | WRAP_ARY_FLAG);
+  const bitmask = data[1];
+  const srcBitmask = source[1];
 
-  var isCombo =
+  let newBitmask = bitmask | srcBitmask;
+  const isCommon = newBitmask < (WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG | WRAP_ARY_FLAG);
+
+  const isCombo =
     ((srcBitmask == WRAP_ARY_FLAG) && (bitmask == WRAP_CURRY_FLAG)) ||
     ((srcBitmask == WRAP_ARY_FLAG) && (bitmask == WRAP_REARG_FLAG) && (data[7].length <= source[8])) ||
     ((srcBitmask == (WRAP_ARY_FLAG | WRAP_REARG_FLAG)) && (source[7].length <= source[8]) && (bitmask == WRAP_CURRY_FLAG));
@@ -54,7 +55,7 @@ function mergeData(data, source) {
     newBitmask |= bitmask & WRAP_BIND_FLAG ? 0 : WRAP_CURRY_BOUND_FLAG;
   }
   // Compose partial arguments.
-  var value = source[3];
+  let value = source[3];
   if (value) {
     var partials = data[3];
     data[3] = partials ? composeArgs(partials, value, source[4]) : value;

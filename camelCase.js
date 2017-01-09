@@ -21,7 +21,7 @@ import createCompounder from './_createCompounder.js';
  * _.camelCase('__FOO_BAR__');
  * // => 'fooBar'
  */
-var camelCase = createCompounder((result, word, index) => {
+const camelCase = createCompounder((result, word, index) => {
   word = word.toLowerCase();
   return result + (index ? capitalize(word) : word);
 });

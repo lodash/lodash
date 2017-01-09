@@ -2,7 +2,7 @@ import baseClone from './_baseClone.js';
 import baseConforms from './_baseConforms.js';
 
 /** Used to compose bitmasks for cloning. */
-var CLONE_DEEP_FLAG = 1;
+const CLONE_DEEP_FLAG = 1;
 
 /**
  * Creates a function that invokes the predicate properties of `source` with

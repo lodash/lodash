@@ -1,7 +1,7 @@
 import toInteger from './toInteger.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a function that invokes `func`, with the `this` binding and arguments
@@ -21,7 +21,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => Allows adding up to 4 contacts to the list.
  */
 function before(n, func) {
-  var result;
+  let result;
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
   }

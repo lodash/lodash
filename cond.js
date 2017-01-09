@@ -4,7 +4,7 @@ import baseIteratee from './_baseIteratee.js';
 import baseRest from './_baseRest.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a function that iterates over `pairs` and invokes the corresponding
@@ -36,8 +36,8 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => 'no match'
  */
 function cond(pairs) {
-  var length = pairs == null ? 0 : pairs.length,
-      toIteratee = baseIteratee;
+  const length = pairs == null ? 0 : pairs.length;
+  const toIteratee = baseIteratee;
 
   pairs = !length ? [] : arrayMap(pairs, pair => {
     if (typeof pair[1] != 'function') {
@@ -47,9 +47,9 @@ function cond(pairs) {
   });
 
   return baseRest(function(args) {
-    var index = -1;
+    let index = -1;
     while (++index < length) {
-      var pair = pairs[index];
+      const pair = pairs[index];
       if (apply(pair[0], this, args)) {
         return apply(pair[1], this, args);
       }

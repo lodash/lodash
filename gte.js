@@ -23,6 +23,6 @@ import createRelationalOperation from './_createRelationalOperation.js';
  * _.gte(1, 3);
  * // => false
  */
-var gte = createRelationalOperation((value, other) => value >= other);
+const gte = createRelationalOperation((value, other) => value >= other);
 
 export default gte;

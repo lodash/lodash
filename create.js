@@ -36,7 +36,7 @@ import baseCreate from './_baseCreate.js';
  * // => true
  */
 function create(prototype, properties) {
-  var result = baseCreate(prototype);
+  const result = baseCreate(prototype);
   return properties == null ? result : baseAssign(result, properties);
 }
 

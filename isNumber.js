@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var numberTag = '[object Number]';
+const numberTag = '[object Number]';
 
 /**
  * Checks if `value` is classified as a `Number` primitive or object.

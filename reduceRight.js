@@ -27,8 +27,8 @@ import isArray from './isArray.js';
  * // => [4, 5, 2, 3, 0, 1]
  */
 function reduceRight(collection, iteratee, accumulator) {
-  var func = isArray(collection) ? arrayReduceRight : baseReduce,
-      initAccum = arguments.length < 3;
+  const func = isArray(collection) ? arrayReduceRight : baseReduce;
+  const initAccum = arguments.length < 3;
 
   return func(collection, baseIteratee(iteratee, 4), accumulator, initAccum, baseEachRight);
 }

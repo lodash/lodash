@@ -30,7 +30,7 @@ import toKey from './_toKey.js';
  * jQuery(element).on('click', view.click);
  * // => Logs 'clicked docs' when clicked.
  */
-var bindAll = flatRest((object, methodNames) => {
+const bindAll = flatRest((object, methodNames) => {
   arrayEach(methodNames, key => {
     key = toKey(key);
     baseAssignValue(object, key, bind(object[key], object));

@@ -3,7 +3,7 @@ import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
-var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
+const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
 
 /**
  * Checks if `value` is classified as an `ArrayBuffer` object.
@@ -22,6 +22,6 @@ var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
  * _.isArrayBuffer(new Array(2));
  * // => false
  */
-var isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
+const isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
 
 export default isArrayBuffer;

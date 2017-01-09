@@ -37,6 +37,6 @@ import findIndex from './findIndex.js';
  * _.find(users, 'active');
  * // => object for 'barney'
  */
-var find = createFind(findIndex);
+const find = createFind(findIndex);
 
 export default find;

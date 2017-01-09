@@ -3,20 +3,20 @@ import getPrototype from './_getPrototype.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var objectTag = '[object Object]';
+const objectTag = '[object Object]';
 
 /** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
+const funcProto = Function.prototype;
+const objectProto = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
+const funcToString = funcProto.toString;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /** Used to infer the `Object` constructor. */
-var objectCtorString = funcToString.call(Object);
+const objectCtorString = funcToString.call(Object);
 
 /**
  * Checks if `value` is a plain object, that is, an object created by the
@@ -50,11 +50,11 @@ function isPlainObject(value) {
   if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
     return false;
   }
-  var proto = getPrototype(value);
+  const proto = getPrototype(value);
   if (proto === null) {
     return true;
   }
-  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  const Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
   return typeof Ctor == 'function' && Ctor instanceof Ctor &&
     funcToString.call(Ctor) == objectCtorString;
 }

@@ -1,7 +1,7 @@
 import baseClone from './_baseClone.js';
 
 /** Used to compose bitmasks for cloning. */
-var CLONE_SYMBOLS_FLAG = 4;
+const CLONE_SYMBOLS_FLAG = 4;
 
 /**
  * This method is like `_.clone` except that it accepts `customizer` which

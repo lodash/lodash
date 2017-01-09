@@ -8,9 +8,9 @@
  * @returns {Array} Returns the array of property names.
  */
 function nativeKeysIn(object) {
-  var result = [];
+  const result = [];
   if (object != null) {
-    for (var key in Object(object)) {
+    for (const key in Object(object)) {
       result.push(key);
     }
   }

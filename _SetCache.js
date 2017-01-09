@@ -11,8 +11,8 @@ import setCacheHas from './_setCacheHas.js';
  * @param {Array} [values] The values to cache.
  */
 function SetCache(values) {
-  var index = -1,
-      length = values == null ? 0 : values.length;
+  let index = -1;
+  const length = values == null ? 0 : values.length;
 
   this.__data__ = new MapCache;
   while (++index < length) {

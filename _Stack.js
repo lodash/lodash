@@ -13,7 +13,7 @@ import stackSet from './_stackSet.js';
  * @param {Array} [entries] The key-value pairs to cache.
  */
 function Stack(entries) {
-  var data = this.__data__ = new ListCache(entries);
+  const data = this.__data__ = new ListCache(entries);
   this.size = data.size;
 }
 

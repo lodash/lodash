@@ -1,5 +1,4 @@
 import baseDelay from './_baseDelay.js';
-import baseRest from './_baseRest.js';
 
 /**
  * Defers invoking the `func` until the current call stack has cleared. Any
@@ -19,6 +18,8 @@ import baseRest from './_baseRest.js';
  * }, 'deferred');
  * // => Logs 'deferred' after one millisecond.
  */
-var defer = baseRest((func, args) => baseDelay(func, 1, args));
+function defer(func, ...args) {
+  return baseDelay(func, 1, args);
+}
 
 export default defer;

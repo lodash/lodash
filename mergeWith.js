@@ -32,7 +32,7 @@ import createAssigner from './_createAssigner.js';
  * _.mergeWith(object, other, customizer);
  * // => { 'a': [1, 3], 'b': [2, 4] }
  */
-var mergeWith = createAssigner((object, source, srcIndex, customizer) => {
+const mergeWith = createAssigner((object, source, srcIndex, customizer) => {
   baseMerge(object, source, srcIndex, customizer);
 });
 

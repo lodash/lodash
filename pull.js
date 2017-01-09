@@ -24,6 +24,6 @@ import pullAll from './pullAll.js';
  * console.log(array);
  * // => ['b', 'b']
  */
-var pull = baseRest(pullAll);
+const pull = baseRest(pullAll);
 
 export default pull;

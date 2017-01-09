@@ -2,10 +2,10 @@ import baseIteratee from './_baseIteratee.js';
 import createInverter from './_createInverter.js';
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * This method is like `_.invert` except that the inverted object is generated
@@ -33,7 +33,7 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * });
  * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
  */
-var invertBy = createInverter((result, value, key) => {
+const invertBy = createInverter((result, value, key) => {
   if (hasOwnProperty.call(result, value)) {
     result[value].push(key);
   } else {

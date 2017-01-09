@@ -31,7 +31,7 @@ import baseIteratee from './_baseIteratee.js';
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValues(object, iteratee) {
-  var result = {};
+  const result = {};
   iteratee = baseIteratee(iteratee, 3);
 
   baseForOwn(object, (value, key, object) => {

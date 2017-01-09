@@ -24,6 +24,6 @@ import createRelationalOperation from './_createRelationalOperation.js';
  * _.lt(3, 1);
  * // => false
  */
-var lt = createRelationalOperation(baseLt);
+const lt = createRelationalOperation(baseLt);
 
 export default lt;

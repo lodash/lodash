@@ -1,5 +1,5 @@
 /** Used to match wrap detail comments. */
-var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/;
+const reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/;
 
 /**
  * Inserts wrapper `details` in a comment at the top of the `source` body.

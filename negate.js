@@ -1,5 +1,5 @@
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * Creates a function that negates the result of the predicate `func`. The
@@ -26,7 +26,7 @@ function negate(predicate) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   return function() {
-    var args = arguments;
+    const args = arguments;
     switch (args.length) {
       case 0: return !predicate.call(this);
       case 1: return !predicate.call(this, args[0]);

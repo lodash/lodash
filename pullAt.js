@@ -29,9 +29,8 @@ import isIndex from './_isIndex.js';
  * console.log(pulled);
  * // => ['b', 'd']
  */
-var pullAt = flatRest((array, indexes) => {
-  var length = array == null ? 0 : array.length,
-      result = baseAt(array, indexes);
+const pullAt = flatRest((array, indexes) => {
+  const length = array == null ? 0 : array.length, result = baseAt(array, indexes);
 
   basePullAt(array, arrayMap(indexes, index => isIndex(index, length) ? +index : index).sort(compareAscending));
 

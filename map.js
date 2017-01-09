@@ -46,7 +46,7 @@ import isArray from './isArray.js';
  * // => ['barney', 'fred']
  */
 function map(collection, iteratee) {
-  var func = isArray(collection) ? arrayMap : baseMap;
+  const func = isArray(collection) ? arrayMap : baseMap;
   return func(collection, baseIteratee(iteratee, 3));
 }
 

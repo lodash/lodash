@@ -37,7 +37,7 @@ function castArray(...args) {
   if (!args.length) {
     return [];
   }
-  var value = args[0];
+  const value = args[0];
   return isArray(value) ? value : [value];
 }
 

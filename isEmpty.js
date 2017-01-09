@@ -8,14 +8,14 @@ import isPrototype from './_isPrototype.js';
 import isTypedArray from './isTypedArray.js';
 
 /** `Object#toString` result references. */
-var mapTag = '[object Map]',
-    setTag = '[object Set]';
+const mapTag = '[object Map]';
+const setTag = '[object Set]';
 
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
  * Checks if `value` is an empty object, collection, map, or set.
@@ -59,14 +59,14 @@ function isEmpty(value) {
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {
     return !value.length;
   }
-  var tag = getTag(value);
+  const tag = getTag(value);
   if (tag == mapTag || tag == setTag) {
     return !value.size;
   }
   if (isPrototype(value)) {
     return !baseKeys(value).length;
   }
-  for (var key in value) {
+  for (const key in value) {
     if (hasOwnProperty.call(value, key)) {
       return false;
     }

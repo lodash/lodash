@@ -36,6 +36,6 @@ import createRange from './_createRange.js';
  * _.rangeRight(0);
  * // => []
  */
-var rangeRight = createRange(true);
+const rangeRight = createRange(true);
 
 export default rangeRight;

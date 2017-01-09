@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var weakSetTag = '[object WeakSet]';
+const weakSetTag = '[object WeakSet]';
 
 /**
  * Checks if `value` is classified as a `WeakSet` object.

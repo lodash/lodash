@@ -1,7 +1,7 @@
 import toInteger from './toInteger.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
  * The opposite of `_.before`; this method creates a function that invokes

@@ -15,6 +15,6 @@ import createMathOperation from './_createMathOperation.js';
  * _.divide(6, 4);
  * // => 1.5
  */
-var divide = createMathOperation((dividend, divisor) => dividend / divisor, 1);
+const divide = createMathOperation((dividend, divisor) => dividend / divisor, 1);
 
 export default divide;

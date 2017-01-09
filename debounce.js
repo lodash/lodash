@@ -3,11 +3,11 @@ import now from './now.js';
 import toNumber from './toNumber.js';
 
 /** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
+const FUNC_ERROR_TEXT = 'Expected a function';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max,
-    nativeMin = Math.min;
+const nativeMax = Math.max;
+const nativeMin = Math.min;
 
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
@@ -64,16 +64,17 @@ var nativeMax = Math.max,
  * jQuery(window).on('popstate', debounced.cancel);
  */
 function debounce(func, wait, options) {
-  var lastArgs,
+  let lastArgs,
       lastThis,
       maxWait,
       result,
       timerId,
-      lastCallTime,
-      lastInvokeTime = 0,
-      leading = false,
-      maxing = false,
-      trailing = true;
+      lastCallTime;
+
+  let lastInvokeTime = 0;
+  let leading = false;
+  let maxing = false;
+  let trailing = true;
 
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
@@ -87,8 +88,8 @@ function debounce(func, wait, options) {
   }
 
   function invokeFunc(time) {
-    var args = lastArgs,
-        thisArg = lastThis;
+    const args = lastArgs;
+    const thisArg = lastThis;
 
     lastArgs = lastThis = undefined;
     lastInvokeTime = time;
@@ -106,16 +107,16 @@ function debounce(func, wait, options) {
   }
 
   function remainingWait(time) {
-    var timeSinceLastCall = time - lastCallTime,
-        timeSinceLastInvoke = time - lastInvokeTime,
-        result = wait - timeSinceLastCall;
+    const timeSinceLastCall = time - lastCallTime;
+    const timeSinceLastInvoke = time - lastInvokeTime;
+    const result = wait - timeSinceLastCall;
 
     return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
   }
 
   function shouldInvoke(time) {
-    var timeSinceLastCall = time - lastCallTime,
-        timeSinceLastInvoke = time - lastInvokeTime;
+    const timeSinceLastCall = time - lastCallTime;
+    const timeSinceLastInvoke = time - lastInvokeTime;
 
     // Either this is the first call, activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
@@ -125,7 +126,7 @@ function debounce(func, wait, options) {
   }
 
   function timerExpired() {
-    var time = now();
+    const time = now();
     if (shouldInvoke(time)) {
       return trailingEdge(time);
     }
@@ -158,8 +159,8 @@ function debounce(func, wait, options) {
   }
 
   function debounced(...args) {
-    var time = now(),
-        isInvoking = shouldInvoke(time);
+    const time = now();
+    const isInvoking = shouldInvoke(time);
 
     lastArgs = args;
     lastThis = this;

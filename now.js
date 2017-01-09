@@ -16,6 +16,6 @@ import root from './_root.js';
  * }, _.now());
  * // => Logs the number of milliseconds it took for the deferred invocation.
  */
-var now = () => root.Date.now();
+const now = () => root.Date.now();
 
 export default now;

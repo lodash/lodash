@@ -3,7 +3,7 @@ import isArray from './isArray.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var stringTag = '[object String]';
+const stringTag = '[object String]';
 
 /**
  * Checks if `value` is classified as a `String` primitive or object.

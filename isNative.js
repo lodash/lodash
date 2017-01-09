@@ -2,7 +2,7 @@ import baseIsNative from './_baseIsNative.js';
 import isMaskable from './_isMaskable.js';
 
 /** Error message constants. */
-var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.';
+const CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.';
 
 /**
  * Checks if `value` is a pristine native function.

@@ -3,11 +3,11 @@ import isIterateeCall from './_isIterateeCall.js';
 import toFinite from './toFinite.js';
 
 /** Built-in method references without a dependency on `root`. */
-var freeParseFloat = parseFloat;
+const freeParseFloat = parseFloat;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min,
-    nativeRandom = Math.random;
+const nativeMin = Math.min;
+const nativeRandom = Math.random;
 
 /**
  * Produces a random number between the inclusive `lower` and `upper` bounds.
@@ -68,12 +68,12 @@ function random(lower, upper, floating) {
     }
   }
   if (lower > upper) {
-    var temp = lower;
+    const temp = lower;
     lower = upper;
     upper = temp;
   }
   if (floating || lower % 1 || upper % 1) {
-    var rand = nativeRandom();
+    const rand = nativeRandom();
     return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper);
   }
   return baseRandom(lower, upper);

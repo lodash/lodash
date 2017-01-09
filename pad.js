@@ -4,8 +4,8 @@ import toInteger from './toInteger.js';
 import toString from './toString.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeCeil = Math.ceil,
-    nativeFloor = Math.floor;
+const nativeCeil = Math.ceil;
+const nativeFloor = Math.floor;
 
 /**
  * Pads `string` on the left and right sides if it's shorter than `length`.
@@ -34,11 +34,11 @@ function pad(string, length, chars) {
   string = toString(string);
   length = toInteger(length);
 
-  var strLength = length ? stringSize(string) : 0;
+  const strLength = length ? stringSize(string) : 0;
   if (!length || strLength >= length) {
     return string;
   }
-  var mid = (length - strLength) / 2;
+  const mid = (length - strLength) / 2;
   return (
     createPadding(nativeFloor(mid), chars) +
     string +

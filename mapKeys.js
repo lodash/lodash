@@ -24,7 +24,7 @@ import baseIteratee from './_baseIteratee.js';
  * // => { 'a1': 1, 'b2': 2 }
  */
 function mapKeys(object, iteratee) {
-  var result = {};
+  const result = {};
   iteratee = baseIteratee(iteratee, 3);
 
   baseForOwn(object, (value, key, object) => {

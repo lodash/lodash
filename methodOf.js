@@ -24,6 +24,6 @@ import baseRest from './_baseRest.js';
  * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
  * // => [2, 0]
  */
-var methodOf = baseRest((object, args) => path => baseInvoke(object, path, args));
+const methodOf = baseRest((object, args) => path => baseInvoke(object, path, args));
 
 export default methodOf;

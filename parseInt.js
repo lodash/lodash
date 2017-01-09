@@ -2,10 +2,10 @@ import root from './_root.js';
 import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */
-var reTrimStart = /^\s+/;
+const reTrimStart = /^\s+/;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeParseInt = root.parseInt;
+const nativeParseInt = root.parseInt;
 
 /**
  * Converts `string` to an integer of the specified radix. If `radix` is

@@ -1,12 +1,12 @@
 /** Used for built-in method references. */
-var objectProto = Object.prototype;
+const objectProto = Object.prototype;
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-var nativeObjectToString = objectProto.toString;
+const nativeObjectToString = objectProto.toString;
 
 /**
  * Converts `value` to a string using `Object.prototype.toString`.

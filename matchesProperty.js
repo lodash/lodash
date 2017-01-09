@@ -2,7 +2,7 @@ import baseClone from './_baseClone.js';
 import baseMatchesProperty from './_baseMatchesProperty.js';
 
 /** Used to compose bitmasks for cloning. */
-var CLONE_DEEP_FLAG = 1;
+const CLONE_DEEP_FLAG = 1;
 
 /**
  * Creates a function that performs a partial deep comparison between the

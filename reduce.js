@@ -42,8 +42,8 @@ import isArray from './isArray.js';
  * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
  */
 function reduce(collection, iteratee, accumulator) {
-  var func = isArray(collection) ? arrayReduce : baseReduce,
-      initAccum = arguments.length < 3;
+  const func = isArray(collection) ? arrayReduce : baseReduce;
+  const initAccum = arguments.length < 3;
 
   return func(collection, baseIteratee(iteratee, 4), accumulator, initAccum, baseEach);
 }

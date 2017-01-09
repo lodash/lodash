@@ -1,7 +1,7 @@
 import basePropertyOf from './_basePropertyOf.js';
 
 /** Used to map HTML entities to characters. */
-var htmlUnescapes = {
+const htmlUnescapes = {
   '&amp;': '&',
   '&lt;': '<',
   '&gt;': '>',
@@ -16,6 +16,6 @@ var htmlUnescapes = {
  * @param {string} chr The matched character to unescape.
  * @returns {string} Returns the unescaped character.
  */
-var unescapeHtmlChar = basePropertyOf(htmlUnescapes);
+const unescapeHtmlChar = basePropertyOf(htmlUnescapes);
 
 export default unescapeHtmlChar;

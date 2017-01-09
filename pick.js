@@ -18,6 +18,6 @@ import flatRest from './_flatRest.js';
  * _.pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }
  */
-var pick = flatRest((object, paths) => object == null ? {} : basePick(object, paths));
+const pick = flatRest((object, paths) => object == null ? {} : basePick(object, paths));
 
 export default pick;

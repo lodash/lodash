@@ -1,8 +1,8 @@
 import baseClone from './_baseClone.js';
 
 /** Used to compose bitmasks for cloning. */
-var CLONE_DEEP_FLAG = 1,
-    CLONE_SYMBOLS_FLAG = 4;
+const CLONE_DEEP_FLAG = 1;
+const CLONE_SYMBOLS_FLAG = 4;
 
 /**
  * This method is like `_.cloneWith` except that it recursively clones `value`.

@@ -2,7 +2,7 @@ import baseFlatten from './_baseFlatten.js';
 import map from './map.js';
 
 /** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
+const INFINITY = 1 / 0;
 
 /**
  * This method is like `_.flatMap` except that it recursively flattens the

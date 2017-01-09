@@ -1,6 +1,5 @@
 import arrayMap from './_arrayMap.js';
 import baseIntersection from './_baseIntersection.js';
-import baseRest from './_baseRest.js';
 import castArrayLikeObject from './_castArrayLikeObject.js';
 
 /**
@@ -20,11 +19,11 @@ import castArrayLikeObject from './_castArrayLikeObject.js';
  * _.intersection([2, 1], [2, 3]);
  * // => [2]
  */
-var intersection = baseRest(arrays => {
-  var mapped = arrayMap(arrays, castArrayLikeObject);
+function intersection(...arrays) {
+  const mapped = arrayMap(arrays, castArrayLikeObject);
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped)
     : [];
-});
+}
 
 export default intersection;

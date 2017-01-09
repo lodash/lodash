@@ -4,8 +4,8 @@ import toString from './toString.js';
  * Used to match `RegExp`
  * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
-var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
-    reHasRegExpChar = RegExp(reRegExpChar.source);
+const reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+const reHasRegExpChar = RegExp(reRegExpChar.source);
 
 /**
  * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",

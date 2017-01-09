@@ -31,7 +31,7 @@ import keysIn from './keysIn.js';
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-var assignInWith = createAssigner((object, source, srcIndex, customizer) => {
+const assignInWith = createAssigner((object, source, srcIndex, customizer) => {
   copyObject(source, keysIn(source), object, customizer);
 });
 

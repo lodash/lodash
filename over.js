@@ -19,6 +19,6 @@ import createOver from './_createOver.js';
  * func(1, 2, 3, 4);
  * // => [4, 1]
  */
-var over = createOver(arrayMap);
+const over = createOver(arrayMap);
 
 export default over;

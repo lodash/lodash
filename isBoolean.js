@@ -2,7 +2,7 @@ import baseGetTag from './_baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
-var boolTag = '[object Boolean]';
+const boolTag = '[object Boolean]';
 
 /**
  * Checks if `value` is classified as a boolean primitive or object.

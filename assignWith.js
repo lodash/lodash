@@ -30,7 +30,7 @@ import keys from './keys.js';
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-var assignWith = createAssigner((object, source, srcIndex, customizer) => {
+const assignWith = createAssigner((object, source, srcIndex, customizer) => {
   copyObject(source, keys(source), object, customizer);
 });
 

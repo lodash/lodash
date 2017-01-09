@@ -3,7 +3,7 @@ import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
-var nodeIsDate = nodeUtil && nodeUtil.isDate;
+const nodeIsDate = nodeUtil && nodeUtil.isDate;
 
 /**
  * Checks if `value` is classified as a `Date` object.
@@ -22,6 +22,6 @@ var nodeIsDate = nodeUtil && nodeUtil.isDate;
  * _.isDate('Mon April 23 2012');
  * // => false
  */
-var isDate = nodeIsDate ? baseUnary(nodeIsDate) : baseIsDate;
+const isDate = nodeIsDate ? baseUnary(nodeIsDate) : baseIsDate;
 
 export default isDate;

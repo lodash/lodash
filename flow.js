@@ -22,6 +22,6 @@ import createFlow from './_createFlow.js';
  * addSquare(1, 2);
  * // => 9
  */
-var flow = createFlow();
+const flow = createFlow();
 
 export default flow;

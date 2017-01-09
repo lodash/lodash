@@ -26,13 +26,13 @@ import isArray from './isArray.js';
  * // => [1]
  */
 function concat() {
-  var length = arguments.length;
+  const length = arguments.length;
   if (!length) {
     return [];
   }
-  var args = Array(length - 1),
-      array = arguments[0],
-      index = length;
+  const args = Array(length - 1);
+  const array = arguments[0];
+  let index = length;
 
   while (index--) {
     args[index - 1] = arguments[index];

@@ -41,7 +41,7 @@ import isArray from './isArray.js';
  * // => objects for ['barney']
  */
 function filter(collection, predicate) {
-  var func = isArray(collection) ? arrayFilter : baseFilter;
+  const func = isArray(collection) ? arrayFilter : baseFilter;
   return func(collection, baseIteratee(predicate, 3));
 }
 

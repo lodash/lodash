@@ -1,7 +1,7 @@
 import createWrap from './_createWrap.js';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_CURRY_RIGHT_FLAG = 16;
+const WRAP_CURRY_RIGHT_FLAG = 16;
 
 /**
  * This method is like `_.curry` except that arguments are applied to `func`
@@ -43,7 +43,7 @@ var WRAP_CURRY_RIGHT_FLAG = 16;
  */
 function curryRight(func, arity, guard) {
   arity = guard ? undefined : arity;
-  var result = createWrap(func, WRAP_CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+  const result = createWrap(func, WRAP_CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
   result.placeholder = curryRight.placeholder;
   return result;
 }

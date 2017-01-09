@@ -3,7 +3,7 @@ import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+const nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
 
 /**
  * Checks if `value` is classified as a typed array.
@@ -22,6 +22,6 @@ var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
  * _.isTypedArray([]);
  * // => false
  */
-var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+const isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
 
 export default isTypedArray;

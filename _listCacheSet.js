@@ -11,8 +11,8 @@ import assocIndexOf from './_assocIndexOf.js';
  * @returns {Object} Returns the list cache instance.
  */
 function listCacheSet(key, value) {
-  var data = this.__data__,
-      index = assocIndexOf(data, key);
+  const data = this.__data__;
+  const index = assocIndexOf(data, key);
 
   if (index < 0) {
     ++this.size;

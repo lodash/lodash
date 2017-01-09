@@ -20,7 +20,7 @@ import identity from './identity.js';
  * _.invert(object);
  * // => { '1': 'c', '2': 'b' }
  */
-var invert = createInverter((result, value, key) => {
+const invert = createInverter((result, value, key) => {
   result[value] = key;
 }, constant(identity));
 

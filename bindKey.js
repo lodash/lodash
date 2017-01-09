@@ -4,9 +4,9 @@ import getHolder from './_getHolder.js';
 import replaceHolders from './_replaceHolders.js';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_BIND_FLAG = 1,
-    WRAP_BIND_KEY_FLAG = 2,
-    WRAP_PARTIAL_FLAG = 32;
+const WRAP_BIND_FLAG = 1;
+const WRAP_BIND_KEY_FLAG = 2;
+const WRAP_PARTIAL_FLAG = 32;
 
 /**
  * Creates a function that invokes the method at `object[key]` with `partials`
@@ -53,10 +53,11 @@ var WRAP_BIND_FLAG = 1,
  * bound('hi');
  * // => 'hiya fred!'
  */
-var bindKey = baseRest((object, key, partials) => {
-  var bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
+const bindKey = baseRest((object, key, partials) => {
+  let holders;
+  let bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
   if (partials.length) {
-    var holders = replaceHolders(partials, getHolder(bindKey));
+    holders = replaceHolders(partials, getHolder(bindKey));
     bitmask |= WRAP_PARTIAL_FLAG;
   }
   return createWrap(key, bitmask, object, partials, holders);

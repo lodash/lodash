@@ -3,7 +3,7 @@ import Map from './_Map.js';
 import MapCache from './_MapCache.js';
 
 /** Used as the size to enable large array optimizations. */
-var LARGE_ARRAY_SIZE = 200;
+const LARGE_ARRAY_SIZE = 200;
 
 /**
  * Sets the stack `key` to `value`.
@@ -16,9 +16,9 @@ var LARGE_ARRAY_SIZE = 200;
  * @returns {Object} Returns the stack cache instance.
  */
 function stackSet(key, value) {
-  var data = this.__data__;
+  let data = this.__data__;
   if (data instanceof ListCache) {
-    var pairs = data.__data__;
+    const pairs = data.__data__;
     if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
       pairs.push([key, value]);
       this.size = ++data.size;

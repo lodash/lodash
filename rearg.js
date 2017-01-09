@@ -2,7 +2,7 @@ import createWrap from './_createWrap.js';
 import flatRest from './_flatRest.js';
 
 /** Used to compose bitmasks for function metadata. */
-var WRAP_REARG_FLAG = 256;
+const WRAP_REARG_FLAG = 256;
 
 /**
  * Creates a function that invokes `func` with arguments arranged according
@@ -26,6 +26,6 @@ var WRAP_REARG_FLAG = 256;
  * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']
  */
-var rearg = flatRest((func, indexes) => createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes));
+const rearg = flatRest((func, indexes) => createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes));
 
 export default rearg;

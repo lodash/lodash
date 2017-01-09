@@ -30,17 +30,17 @@ import basePullAt from './_basePullAt.js';
  * // => [2, 4]
  */
 function remove(array, predicate) {
-  var result = [];
+  const result = [];
   if (!(array && array.length)) {
     return result;
   }
-  var index = -1,
-      indexes = [],
-      length = array.length;
+  let index = -1;
+  const indexes = [];
+  const length = array.length;
 
   predicate = baseIteratee(predicate, 3);
   while (++index < length) {
-    var value = array[index];
+    const value = array[index];
     if (predicate(value, index, array)) {
       result.push(value);
       indexes.push(index);

@@ -14,13 +14,13 @@
  * // => [1, 2, 3]
  */
 function compact(array) {
-  var index = -1,
-      length = array == null ? 0 : array.length,
-      resIndex = 0,
-      result = [];
+  let index = -1;
+  const length = array == null ? 0 : array.length;
+  let resIndex = 0;
+  const result = [];
 
   while (++index < length) {
-    var value = array[index];
+    const value = array[index];
     if (value) {
       result[resIndex++] = value;
     }

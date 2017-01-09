@@ -1,7 +1,7 @@
 import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
-var INFINITY = 1 / 0;
+const INFINITY = 1 / 0;
 
 /**
  * Converts `value` to a string key if it's not a string or symbol.

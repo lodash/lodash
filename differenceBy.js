@@ -1,7 +1,6 @@
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
 import baseIteratee from './_baseIteratee.js';
-import baseRest from './_baseRest.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 
@@ -31,14 +30,14 @@ import last from './last.js';
  * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
  * // => [{ 'x': 2 }]
  */
-var differenceBy = baseRest((array, values) => {
-  var iteratee = last(values);
+function differenceBy(array, ...values) {
+  let iteratee = last(values);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
   return isArrayLikeObject(array)
     ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), baseIteratee(iteratee, 2))
     : [];
-});
+}
 
 export default differenceBy;

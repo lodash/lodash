@@ -17,6 +17,6 @@ import createCaseFirst from './_createCaseFirst.js';
  * _.lowerFirst('FRED');
  * // => 'fRED'
  */
-var lowerFirst = createCaseFirst('toLowerCase');
+const lowerFirst = createCaseFirst('toLowerCase');
 
 export default lowerFirst;

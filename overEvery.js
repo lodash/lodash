@@ -25,6 +25,6 @@ import createOver from './_createOver.js';
  * func(NaN);
  * // => false
  */
-var overEvery = createOver(arrayEvery);
+const overEvery = createOver(arrayEvery);
 
 export default overEvery;

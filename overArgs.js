@@ -2,13 +2,11 @@ import apply from './_apply.js';
 import arrayMap from './_arrayMap.js';
 import baseFlatten from './_baseFlatten.js';
 import baseIteratee from './_baseIteratee.js';
-import baseRest from './_baseRest.js';
 import baseUnary from './_baseUnary.js';
-import castRest from './_castRest.js';
 import isArray from './isArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMin = Math.min;
+const nativeMin = Math.min;
 
 /**
  * Creates a function that invokes `func` with its arguments transformed.
@@ -41,21 +39,21 @@ var nativeMin = Math.min;
  * func(10, 5);
  * // => [100, 10]
  */
-var overArgs = castRest((func, transforms) => {
+function overArgs(func, ...transforms) {
   transforms = (transforms.length == 1 && isArray(transforms[0]))
     ? arrayMap(transforms[0], baseUnary(baseIteratee))
     : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));
 
-  var funcsLength = transforms.length;
-  return baseRest(function(args) {
-    var index = -1,
-        length = nativeMin(args.length, funcsLength);
+  const funcsLength = transforms.length;
+  return function(...args) {
+    let index = -1;
+    const length = nativeMin(args.length, funcsLength);
 
     while (++index < length) {
       args[index] = transforms[index].call(this, args[index]);
     }
     return apply(func, this, args);
-  });
-});
+  };
+}
 
 export default overArgs;

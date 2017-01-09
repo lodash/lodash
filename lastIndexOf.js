@@ -4,8 +4,8 @@ import strictLastIndexOf from './_strictLastIndexOf.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max,
-    nativeMin = Math.min;
+const nativeMax = Math.max;
+const nativeMin = Math.min;
 
 /**
  * This method is like `_.indexOf` except that it iterates over elements of
@@ -29,11 +29,11 @@ var nativeMax = Math.max,
  * // => 1
  */
 function lastIndexOf(array, value, fromIndex) {
-  var length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length;
   if (!length) {
     return -1;
   }
-  var index = length;
+  let index = length;
   if (fromIndex !== undefined) {
     index = toInteger(fromIndex);
     index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);

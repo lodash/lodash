@@ -15,6 +15,6 @@ import createMathOperation from './_createMathOperation.js';
  * _.multiply(6, 4);
  * // => 24
  */
-var multiply = createMathOperation((multiplier, multiplicand) => multiplier * multiplicand, 1);
+const multiply = createMathOperation((multiplier, multiplicand) => multiplier * multiplicand, 1);
 
 export default multiply;

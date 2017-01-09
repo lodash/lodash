@@ -1,8 +1,8 @@
 /** Used for built-in method references. */
-var funcProto = Function.prototype;
+const funcProto = Function.prototype;
 
 /** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
+const funcToString = funcProto.toString;
 
 /**
  * Converts `func` to its source code.

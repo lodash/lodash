@@ -1,5 +1,4 @@
 import baseDelay from './_baseDelay.js';
-import baseRest from './_baseRest.js';
 import toNumber from './toNumber.js';
 
 /**
@@ -21,6 +20,8 @@ import toNumber from './toNumber.js';
  * }, 1000, 'later');
  * // => Logs 'later' after one second.
  */
-var delay = baseRest((func, wait, args) => baseDelay(func, toNumber(wait) || 0, args));
+function delay(func, wait, ...args) {
+  return baseDelay(func, toNumber(wait) || 0, args);
+}
 
 export default delay;

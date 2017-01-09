@@ -14,12 +14,12 @@
  * // => { 'a': 1, 'b': 2 }
  */
 function fromPairs(pairs) {
-  var index = -1,
-      length = pairs == null ? 0 : pairs.length,
-      result = {};
+  let index = -1;
+  const length = pairs == null ? 0 : pairs.length;
+  const result = {};
 
   while (++index < length) {
-    var pair = pairs[index];
+    const pair = pairs[index];
     result[pair[0]] = pair[1];
   }
   return result;

@@ -3,7 +3,7 @@ import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
-var nodeIsMap = nodeUtil && nodeUtil.isMap;
+const nodeIsMap = nodeUtil && nodeUtil.isMap;
 
 /**
  * Checks if `value` is classified as a `Map` object.
@@ -22,6 +22,6 @@ var nodeIsMap = nodeUtil && nodeUtil.isMap;
  * _.isMap(new WeakMap);
  * // => false
  */
-var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
+const isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
 
 export default isMap;

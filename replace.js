@@ -20,8 +20,8 @@ import toString from './toString.js';
  * // => 'Hi Barney'
  */
 function replace() {
-  var args = arguments,
-      string = toString(args[0]);
+  const args = arguments;
+  const string = toString(args[0]);
 
   return args.length < 3 ? string : string.replace(args[1], args[2]);
 }

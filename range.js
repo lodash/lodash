@@ -41,6 +41,6 @@ import createRange from './_createRange.js';
  * _.range(0);
  * // => []
  */
-var range = createRange();
+const range = createRange();
 
 export default range;

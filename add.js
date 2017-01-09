@@ -15,6 +15,6 @@ import createMathOperation from './_createMathOperation.js';
  * _.add(6, 4);
  * // => 10
  */
-var add = createMathOperation((augend, addend) => augend + addend, 0);
+const add = createMathOperation((augend, addend) => augend + addend, 0);
 
 export default add;

@@ -20,6 +20,6 @@ import findLastIndex from './findLastIndex.js';
  * });
  * // => 3
  */
-var findLast = createFind(findLastIndex);
+const findLast = createFind(findLastIndex);
 
 export default findLast;

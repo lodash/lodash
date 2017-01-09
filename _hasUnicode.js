@@ -10,7 +10,7 @@ var rsAstralRange = '\\ud800-\\udfff',
 var rsZWJ = '\\u200d';
 
 /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-var reHasUnicode = RegExp(`[${ rsZWJ + rsAstralRange + rsComboRange + rsVarRange }]`;
+var reHasUnicode = RegExp(`[${ rsZWJ + rsAstralRange + rsComboRange + rsVarRange }]`);
 
 /**
  * Checks if `string` contains Unicode symbols.

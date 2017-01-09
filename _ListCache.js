@@ -11,14 +11,16 @@ import listCacheSet from './_listCacheSet.js';
  * @constructor
  * @param {Array} [entries] The key-value pairs to cache.
  */
-function ListCache(entries) {
-  let index = -1;
-  const length = entries == null ? 0 : entries.length;
+class ListCache {
+  constructor(entries) {
+    let index = -1;
+    const length = entries == null ? 0 : entries.length;
 
-  this.clear();
-  while (++index < length) {
-    const entry = entries[index];
-    this.set(entry[0], entry[1]);
+    this.clear();
+    while (++index < length) {
+      const entry = entries[index];
+      this.set(entry[0], entry[1]);
+    }
   }
 }
 

@@ -12,9 +12,11 @@ import stackSet from './_stackSet.js';
  * @constructor
  * @param {Array} [entries] The key-value pairs to cache.
  */
-function Stack(entries) {
-  const data = this.__data__ = new ListCache(entries);
-  this.size = data.size;
+class Stack {
+  constructor(entries) {
+    const data = this.__data__ = new ListCache(entries);
+    this.size = data.size;
+  }
 }
 
 // Add methods to `Stack`.

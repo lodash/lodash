@@ -10,13 +10,15 @@ import setCacheHas from './_setCacheHas.js';
  * @constructor
  * @param {Array} [values] The values to cache.
  */
-function SetCache(values) {
-  let index = -1;
-  const length = values == null ? 0 : values.length;
+class SetCache {
+  constructor(values) {
+    let index = -1;
+    const length = values == null ? 0 : values.length;
 
-  this.__data__ = new MapCache;
-  while (++index < length) {
-    this.add(values[index]);
+    this.__data__ = new MapCache;
+    while (++index < length) {
+      this.add(values[index]);
+    }
   }
 }
 

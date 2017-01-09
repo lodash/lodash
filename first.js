@@ -1,1 +1,1 @@
-export { default } from './head.js'
+export { default } from './head.js';

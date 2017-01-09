@@ -1,1 +1,1 @@
-export { default } from './assignIn.js'
+export { default } from './assignIn.js';

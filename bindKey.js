@@ -1,4 +1,3 @@
-import baseRest from './_baseRest.js';
 import createWrap from './_createWrap.js';
 import getHolder from './_getHolder.js';
 import replaceHolders from './_replaceHolders.js';
@@ -53,7 +52,7 @@ const WRAP_PARTIAL_FLAG = 32;
  * bound('hi');
  * // => 'hiya fred!'
  */
-const bindKey = baseRest((object, key, partials) => {
+function bindKey(object, key, ...partials) {
   let holders;
   let bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
   if (partials.length) {
@@ -61,7 +60,7 @@ const bindKey = baseRest((object, key, partials) => {
     bitmask |= WRAP_PARTIAL_FLAG;
   }
   return createWrap(key, bitmask, object, partials, holders);
-});
+}
 
 // Assign default placeholders.
 bindKey.placeholder = {};

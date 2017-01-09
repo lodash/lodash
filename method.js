@@ -1,5 +1,4 @@
 import baseInvoke from './_baseInvoke.js';
-import baseRest from './_baseRest.js';
 
 /**
  * Creates a function that invokes the method at `path` of a given object.
@@ -25,6 +24,8 @@ import baseRest from './_baseRest.js';
  * _.map(objects, _.method(['a', 'b']));
  * // => [2, 1]
  */
-const method = baseRest((path, args) => object => baseInvoke(object, path, args));
+function method(path, ...args) {
+  return object => baseInvoke(object, path, args);
+}
 
 export default method;

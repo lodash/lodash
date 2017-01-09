@@ -2,7 +2,6 @@ import arrayMap from './_arrayMap.js';
 import baseAt from './_baseAt.js';
 import basePullAt from './_basePullAt.js';
 import compareAscending from './_compareAscending.js';
-import flatRest from './_flatRest.js';
 import isIndex from './_isIndex.js';
 
 /**
@@ -29,12 +28,12 @@ import isIndex from './_isIndex.js';
  * console.log(pulled);
  * // => ['b', 'd']
  */
-const pullAt = flatRest((array, indexes) => {
-  const length = array == null ? 0 : array.length, result = baseAt(array, indexes);
+function pullAt(array, ...indexes) {
+  const length = array == null ? 0 : array.length;
+  const result = baseAt(array, indexes);
 
   basePullAt(array, arrayMap(indexes, index => isIndex(index, length) ? +index : index).sort(compareAscending));
-
   return result;
-});
+}
 
 export default pullAt;

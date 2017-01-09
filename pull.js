@@ -1,4 +1,3 @@
-import baseRest from './_baseRest.js';
 import pullAll from './pullAll.js';
 
 /**
@@ -24,6 +23,8 @@ import pullAll from './pullAll.js';
  * console.log(array);
  * // => ['b', 'b']
  */
-const pull = baseRest(pullAll);
+function pull(array, ...values) {
+  return pullAll(array, values);
+}
 
 export default pull;

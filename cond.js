@@ -1,7 +1,6 @@
 import apply from './_apply.js';
 import arrayMap from './_arrayMap.js';
 import baseIteratee from './_baseIteratee.js';
-import baseRest from './_baseRest.js';
 
 /** Error message constants. */
 const FUNC_ERROR_TEXT = 'Expected a function';
@@ -46,7 +45,7 @@ function cond(pairs) {
     return [toIteratee(pair[0]), pair[1]];
   });
 
-  return baseRest(function(args) {
+  return (...args) => {
     let index = -1;
     while (++index < length) {
       const pair = pairs[index];
@@ -54,7 +53,7 @@ function cond(pairs) {
         return apply(pair[1], this, args);
       }
     }
-  });
+  };
 }
 
 export default cond;

@@ -1,5 +1,4 @@
 import createWrap from './_createWrap.js';
-import flatRest from './_flatRest.js';
 
 /** Used to compose bitmasks for function metadata. */
 const WRAP_REARG_FLAG = 256;
@@ -26,6 +25,8 @@ const WRAP_REARG_FLAG = 256;
  * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']
  */
-const rearg = flatRest((func, indexes) => createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes));
+function rearg(func, ...indexes) {
+  return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes);
+}
 
 export default rearg;

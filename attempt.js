@@ -1,5 +1,4 @@
 import apply from './_apply.js';
-import baseRest from './_baseRest.js';
 import isError from './isError.js';
 
 /**
@@ -24,12 +23,12 @@ import isError from './isError.js';
  *   elements = [];
  * }
  */
-const attempt = baseRest((func, args) => {
+function attempt(func, ...args) {
   try {
     return apply(func, undefined, args);
   } catch (e) {
     return isError(e) ? e : new Error(e);
   }
-});
+}
 
 export default attempt;

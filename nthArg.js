@@ -1,5 +1,4 @@
 import baseNth from './_baseNth.js';
-import baseRest from './_baseRest.js';
 import toInteger from './toInteger.js';
 
 /**
@@ -24,7 +23,7 @@ import toInteger from './toInteger.js';
  */
 function nthArg(n) {
   n = toInteger(n);
-  return baseRest(args => baseNth(args, n));
+  return (...args) => baseNth(args, n);
 }
 
 export default nthArg;

@@ -1,5 +1,4 @@
 import basePick from './_basePick.js';
-import flatRest from './_flatRest.js';
 
 /**
  * Creates an object composed of the picked `object` properties.
@@ -18,6 +17,8 @@ import flatRest from './_flatRest.js';
  * _.pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }
  */
-const pick = flatRest((object, paths) => object == null ? {} : basePick(object, paths));
+function pick(object, ...paths) {
+  return object == null ? {} : basePick(object, paths);
+}
 
 export default pick;

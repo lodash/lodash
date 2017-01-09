@@ -1,6 +1,5 @@
 import apply from './_apply.js';
 import assignInWith from './assignInWith.js';
-import baseRest from './_baseRest.js';
 import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
 
 /**
@@ -24,9 +23,9 @@ import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
  * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-const defaults = baseRest(args => {
+function defaults(...args) {
   args.push(undefined, customDefaultsAssignIn);
   return apply(assignInWith, undefined, args);
-});
+}
 
 export default defaults;

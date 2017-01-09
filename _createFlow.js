@@ -1,5 +1,4 @@
 import LodashWrapper from './_LodashWrapper.js';
-import flatRest from './_flatRest.js';
 import getData from './_getData.js';
 import getFuncName from './_getFuncName.js';
 import isArray from './isArray.js';
@@ -22,7 +21,7 @@ const WRAP_REARG_FLAG = 256;
  * @returns {Function} Returns the new flow function.
  */
 function createFlow(fromRight) {
-  return flatRest(funcs => {
+  return (...funcs) => {
     const length = funcs.length;
     const prereq = LodashWrapper.prototype.thru;
 
@@ -74,7 +73,7 @@ function createFlow(fromRight) {
       }
       return result;
     };
-  });
+  };
 }
 
 export default createFlow;

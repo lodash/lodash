@@ -1,5 +1,4 @@
 import baseAt from './_baseAt.js';
-import flatRest from './_flatRest.js';
 
 /**
  * Creates an array of values corresponding to `paths` of `object`.
@@ -18,6 +17,8 @@ import flatRest from './_flatRest.js';
  * _.at(object, ['a[0].b.c', 'a[1]']);
  * // => [3, 4]
  */
-const at = flatRest(baseAt);
+function at(...paths) {
+  return baseAt(paths);
+}
 
 export default at;

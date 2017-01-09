@@ -1,5 +1,4 @@
 import apply from './_apply.js';
-import baseRest from './_baseRest.js';
 import customDefaultsMerge from './_customDefaultsMerge.js';
 import mergeWith from './mergeWith.js';
 
@@ -22,9 +21,9 @@ import mergeWith from './mergeWith.js';
  * _.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } });
  * // => { 'a': { 'b': 2, 'c': 3 } }
  */
-const defaultsDeep = baseRest(args => {
+function defaultsDeep(...args) {
   args.push(undefined, customDefaultsMerge);
   return apply(mergeWith, undefined, args);
-});
+}
 
 export default defaultsDeep;

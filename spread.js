@@ -1,6 +1,5 @@
 import apply from './_apply.js';
 import arrayPush from './_arrayPush.js';
-import baseRest from './_baseRest.js';
 import castSlice from './_castSlice.js';
 import toInteger from './toInteger.js';
 
@@ -49,7 +48,7 @@ function spread(func, start) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   start = start == null ? 0 : nativeMax(toInteger(start), 0);
-  return baseRest(function(args) {
+  return (...args) => {
     const array = args[start];
     const otherArgs = castSlice(args, 0, start);
 
@@ -57,7 +56,7 @@ function spread(func, start) {
       arrayPush(otherArgs, array);
     }
     return apply(func, this, otherArgs);
-  });
+  };
 }
 
 export default spread;

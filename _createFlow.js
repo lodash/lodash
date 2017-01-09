@@ -25,18 +25,21 @@ function createFlow(fromRight) {
   return flatRest(funcs => {
     const length = funcs.length;
     const prereq = LodashWrapper.prototype.thru;
+
+    let func;
+    let wrapper;
     let index = length;
 
     if (fromRight) {
       funcs.reverse();
     }
     while (index--) {
-      var func = funcs[index];
+      func = funcs[index];
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (prereq && !wrapper && getFuncName(func) == 'wrapper') {
-        var wrapper = new LodashWrapper([], true);
+        wrapper = new LodashWrapper([], true);
       }
     }
     index = wrapper ? index : length;

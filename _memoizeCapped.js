@@ -19,7 +19,7 @@ function memoizeCapped(func) {
     return key;
   });
 
-  var cache = result.cache;
+  const cache = result.cache;
   return result;
 }
 

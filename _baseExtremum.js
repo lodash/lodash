@@ -11,10 +11,12 @@ import isSymbol from './isSymbol.js';
  * @returns {*} Returns the extremum value.
  */
 function baseExtremum(array, iteratee, comparator) {
+  let result;
   let index = -1;
   const length = array.length;
 
   while (++index < length) {
+    let computed;
     const value = array[index];
     const current = iteratee(value);
 
@@ -22,8 +24,8 @@ function baseExtremum(array, iteratee, comparator) {
           ? (current === current && !isSymbol(current))
           : comparator(current, computed)
         )) {
-      var computed = current,
-          result = value;
+      computed = current;
+      result = value;
     }
   }
   return result;

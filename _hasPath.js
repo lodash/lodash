@@ -17,12 +17,13 @@ import toKey from './_toKey.js';
 function hasPath(object, path, hasFunc) {
   path = castPath(path, object);
 
-  let index = -1,
-      length = path.length,
-      result = false;
+  let key;
+  let index = -1;
+  let length = path.length;
+  let result = false;
 
   while (++index < length) {
-    var key = toKey(path[index]);
+    key = toKey(path[index]);
     if (!(result = object != null && hasFunc(object, key))) {
       break;
     }

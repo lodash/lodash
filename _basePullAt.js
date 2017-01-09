@@ -21,9 +21,10 @@ function basePullAt(array, indexes) {
   const lastIndex = length - 1;
 
   while (length--) {
+    let previous;
     const index = indexes[length];
     if (length == lastIndex || index !== previous) {
-      var previous = index;
+      previous = index;
       if (isIndex(index)) {
         splice.call(array, index, 1);
       } else {

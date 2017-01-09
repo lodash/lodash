@@ -41,10 +41,12 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
 
   // Ignore non-index properties.
   while (++index < arrLength) {
-    const arrValue = array[index], othValue = other[index];
+    let compared;
+    const arrValue = array[index];
+    const othValue = other[index];
 
     if (customizer) {
-      var compared = isPartial
+      compared = isPartial
         ? customizer(othValue, arrValue, index, other, array, stack)
         : customizer(arrValue, othValue, index, array, other, stack);
     }

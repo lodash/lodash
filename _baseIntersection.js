@@ -25,11 +25,12 @@ function baseIntersection(arrays, iteratee, comparator) {
   const caches = Array(othLength);
   const result = [];
 
+  let array;
   let maxLength = Infinity;
   let othIndex = othLength;
 
   while (othIndex--) {
-    var array = arrays[othIndex];
+    array = arrays[othIndex];
     if (othIndex && iteratee) {
       array = arrayMap(array, baseUnary(iteratee));
     }

@@ -26,10 +26,11 @@ const symToStringTag = Symbol ? Symbol.toStringTag : undefined;
 function getRawTag(value) {
   const isOwn = hasOwnProperty.call(value, symToStringTag);
   const tag = value[symToStringTag];
+  let unmasked = false;
 
   try {
     value[symToStringTag] = undefined;
-    var unmasked = true;
+    unmasked = true;
   } catch (e) {}
 
   const result = nativeObjectToString.call(value);

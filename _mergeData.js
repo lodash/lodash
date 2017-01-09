@@ -55,9 +55,10 @@ function mergeData(data, source) {
     newBitmask |= bitmask & WRAP_BIND_FLAG ? 0 : WRAP_CURRY_BOUND_FLAG;
   }
   // Compose partial arguments.
+  let partials;
   let value = source[3];
   if (value) {
-    var partials = data[3];
+    partials = data[3];
     data[3] = partials ? composeArgs(partials, value, source[4]) : value;
     data[4] = partials ? replaceHolders(data[3], PLACEHOLDER) : source[4];
   }

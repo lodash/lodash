@@ -31,6 +31,7 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
   const valIsUndefined = value === undefined;
 
   while (low < high) {
+    let setLow;
     const mid = nativeFloor((low + high) / 2);
     const computed = iteratee(array[mid]);
     const othIsDefined = computed !== undefined;
@@ -39,7 +40,7 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
     const othIsSymbol = isSymbol(computed);
 
     if (valIsNaN) {
-      var setLow = retHighest || othIsReflexive;
+      setLow = retHighest || othIsReflexive;
     } else if (valIsUndefined) {
       setLow = othIsReflexive && (retHighest || othIsDefined);
     } else if (valIsNull) {

@@ -1,9 +1,6 @@
 import isObject from './isObject.js';
 import toNumber from './toNumber.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMax = Math.max;
 const nativeMin = Math.min;
@@ -75,7 +72,7 @@ function debounce(func, wait, options) {
   let trailing = true;
 
   if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   wait = toNumber(wait) || 0;
   if (isObject(options)) {

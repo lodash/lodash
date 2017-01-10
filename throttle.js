@@ -1,9 +1,6 @@
 import debounce from './debounce.js';
 import isObject from './isObject.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * Creates a throttled function that only invokes `func` at most once per
  * every `wait` milliseconds. The throttled function comes with a `cancel`
@@ -52,7 +49,7 @@ function throttle(func, wait, options) {
   let trailing = true;
 
   if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   if (isObject(options)) {
     leading = 'leading' in options ? !!options.leading : leading;

@@ -1,8 +1,5 @@
 import MapCache from './_MapCache.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * Creates a function that memoizes the result of `func`. If `resolver` is
  * provided, it determines the cache key for storing the result based on the
@@ -48,7 +45,7 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  */
 function memoize(func, resolver) {
   if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0];

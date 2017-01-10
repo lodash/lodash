@@ -1,6 +1,3 @@
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * The base implementation of `delay` and `defer` which accepts `args`
  * to provide to `func`.
@@ -13,7 +10,7 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  */
 function baseDelay(func, wait, args) {
   if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   return setTimeout(() => func(...args), wait);
 }

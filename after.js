@@ -1,8 +1,5 @@
 import toInteger from './toInteger.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * The opposite of `before`; this method creates a function that invokes
  * `func` once it's called `n` or more times.
@@ -28,7 +25,7 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  */
 function after(n, func) {
   if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   n = toInteger(n);
   return function(...args) {

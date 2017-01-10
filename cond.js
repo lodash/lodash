@@ -1,9 +1,6 @@
 import apply from './_apply.js';
 import arrayMap from './_arrayMap.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * Creates a function that iterates over `pairs` and invokes the corresponding
  * function of the first predicate to return truthy. The predicate-function
@@ -37,7 +34,7 @@ function cond(pairs) {
 
   pairs = !length ? [] : arrayMap(pairs, pair => {
     if (typeof pair[1] != 'function') {
-      throw new TypeError(FUNC_ERROR_TEXT);
+      throw new TypeError('Expected a function');
     }
     return [pair[0], pair[1]];
   });

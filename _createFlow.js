@@ -1,6 +1,3 @@
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * Creates a `flow` or `flowRight` function.
  *
@@ -22,7 +19,7 @@ function createFlow(fromRight) {
     while (index--) {
       func = funcs[index];
       if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
+        throw new TypeError('Expected a function');
       }
     }
     return function(...args) {

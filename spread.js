@@ -3,9 +3,6 @@ import arrayPush from './_arrayPush.js';
 import castSlice from './_castSlice.js';
 import toInteger from './toInteger.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMax = Math.max;
 
@@ -44,7 +41,7 @@ const nativeMax = Math.max;
  */
 function spread(func, start) {
   if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   start = start == null ? 0 : nativeMax(toInteger(start), 0);
   return (...args) => {

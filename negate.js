@@ -1,6 +1,3 @@
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /**
  * Creates a function that negates the result of the predicate `func`. The
  * `func` predicate is invoked with the `this` binding and arguments of the
@@ -22,7 +19,7 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  */
 function negate(predicate) {
   if (typeof predicate != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   return function(...args) {
     return !predicate.apply(this, args);

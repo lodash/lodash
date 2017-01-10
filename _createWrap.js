@@ -9,9 +9,6 @@ import setData from './_setData.js';
 import setWrapToString from './_setWrapToString.js';
 import toInteger from './toInteger.js';
 
-/** Error message constants. */
-const FUNC_ERROR_TEXT = 'Expected a function';
-
 /** Used to compose bitmasks for function metadata. */
 const WRAP_BIND_FLAG = 1;
 const WRAP_BIND_KEY_FLAG = 2;
@@ -51,7 +48,7 @@ const nativeMax = Math.max;
 function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
   const isBindKey = bitmask & WRAP_BIND_KEY_FLAG;
   if (!isBindKey && typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
+    throw new TypeError('Expected a function');
   }
   let length = partials ? partials.length : 0;
   if (!length) {

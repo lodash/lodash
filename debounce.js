@@ -1,5 +1,4 @@
 import isObject from './isObject.js';
-import now from './now.js';
 import toNumber from './toNumber.js';
 
 /** Error message constants. */
@@ -125,7 +124,7 @@ function debounce(func, wait, options) {
   }
 
   function timerExpired() {
-    const time = now();
+    const time = Date.now();
     if (shouldInvoke(time)) {
       return trailingEdge(time);
     }
@@ -154,11 +153,11 @@ function debounce(func, wait, options) {
   }
 
   function flush() {
-    return timerId === undefined ? result : trailingEdge(now());
+    return timerId === undefined ? result : trailingEdge(Date.now());
   }
 
   function debounced(...args) {
-    const time = now();
+    const time = Date.now();
     const isInvoking = shouldInvoke(time);
 
     lastArgs = args;

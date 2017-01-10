@@ -30,7 +30,7 @@ function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
   // in Safari 9 which returns 'object' for typed arrays and other constructors.
   const tag = baseGetTag(value);
-  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+  return tag == funcTag || tag == asyncTag || tag == genTag || tag == proxyTag;
 }
 
 export default isFunction;

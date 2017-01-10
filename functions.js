@@ -1,4 +1,4 @@
-import baseFunctions from './_baseFunctions.js';
+import baseFunctions from './.internal/baseFunctions.js';
 import keys from './keys.js';
 
 /**

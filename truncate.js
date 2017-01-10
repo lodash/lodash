@@ -1,10 +1,10 @@
-import baseToString from './_baseToString.js';
-import castSlice from './_castSlice.js';
-import hasUnicode from './_hasUnicode.js';
+import baseToString from './.internal/baseToString.js';
+import castSlice from './.internal/castSlice.js';
+import hasUnicode from './.internal/hasUnicode.js';
 import isObject from './isObject.js';
 import isRegExp from './isRegExp.js';
-import stringSize from './_stringSize.js';
-import stringToArray from './_stringToArray.js';
+import stringSize from './.internal/stringSize.js';
+import stringToArray from './.internal/stringToArray.js';
 import toInteger from './toInteger.js';
 import toString from './toString.js';
 

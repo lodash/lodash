@@ -1,4 +1,4 @@
-import baseSet from './_baseSet.js';
+import baseSet from './.internal/baseSet.js';
 
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,

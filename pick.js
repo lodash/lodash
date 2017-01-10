@@ -1,4 +1,4 @@
-import basePick from './_basePick.js';
+import basePick from './.internal/basePick.js';
 
 /**
  * Creates an object composed of the picked `object` properties.

@@ -1,5 +1,5 @@
-import baseFindKey from './_baseFindKey.js';
-import baseForOwn from './_baseForOwn.js';
+import baseFindKey from './.internal/baseFindKey.js';
+import baseForOwn from './.internal/baseForOwn.js';
 
 /**
  * This method is like `find` except that it returns the key of the first

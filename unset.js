@@ -1,4 +1,4 @@
-import baseUnset from './_baseUnset.js';
+import baseUnset from './.internal/baseUnset.js';
 
 /**
  * Removes the property at `path` of `object`.

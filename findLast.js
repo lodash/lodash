@@ -1,4 +1,4 @@
-import createFind from './_createFind.js';
+import createFind from './.internal/createFind.js';
 import findLastIndex from './findLastIndex.js';
 
 /**

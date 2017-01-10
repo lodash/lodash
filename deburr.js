@@ -1,4 +1,4 @@
-import deburrLetter from './_deburrLetter.js';
+import deburrLetter from './.internal/deburrLetter.js';
 import toString from './toString.js';
 
 /** Used to match Latin Unicode letters (excluding mathematical operators). */

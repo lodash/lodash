@@ -1,4 +1,4 @@
-import baseDelay from './_baseDelay.js';
+import baseDelay from './.internal/baseDelay.js';
 import toNumber from './toNumber.js';
 
 /**

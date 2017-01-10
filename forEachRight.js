@@ -1,5 +1,5 @@
-import arrayEachRight from './_arrayEachRight.js';
-import baseEachRight from './_baseEachRight.js';
+import arrayEachRight from './.internal/arrayEachRight.js';
+import baseEachRight from './.internal/baseEachRight.js';
 
 /**
  * This method is like `forEach` except that it iterates over elements of

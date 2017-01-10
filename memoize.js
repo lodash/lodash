@@ -1,4 +1,4 @@
-import MapCache from './_MapCache.js';
+import MapCache from './.internal/MapCache.js';
 
 /**
  * Creates a function that memoizes the result of `func`. If `resolver` is

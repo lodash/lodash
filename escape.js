@@ -1,4 +1,4 @@
-import escapeHtmlChar from './_escapeHtmlChar.js';
+import escapeHtmlChar from './.internal/escapeHtmlChar.js';
 import toString from './toString.js';
 
 /** Used to match HTML entities and HTML characters. */

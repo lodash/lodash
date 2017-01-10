@@ -1,4 +1,4 @@
-import baseDifference from './_baseDifference.js';
+import baseDifference from './.internal/baseDifference.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
 /**

@@ -1,4 +1,4 @@
-import createWrap from './_createWrap.js';
+import createWrap from './.internal/createWrap.js';
 
 /** Used to compose bitmasks for function metadata. */
 const WRAP_ARY_FLAG = 128;

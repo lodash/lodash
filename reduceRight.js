@@ -1,6 +1,6 @@
-import arrayReduceRight from './_arrayReduceRight.js';
-import baseEachRight from './_baseEachRight.js';
-import baseReduce from './_baseReduce.js';
+import arrayReduceRight from './.internal/arrayReduceRight.js';
+import baseEachRight from './.internal/baseEachRight.js';
+import baseReduce from './.internal/baseReduce.js';
 
 /**
  * This method is like `reduce` except that it iterates over elements of

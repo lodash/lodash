@@ -1,4 +1,4 @@
-import baseTimes from './_baseTimes.js';
+import baseTimes from './.internal/baseTimes.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for various `Number` constants. */

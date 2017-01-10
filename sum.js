@@ -1,4 +1,4 @@
-import baseSum from './_baseSum.js';
+import baseSum from './.internal/baseSum.js';
 import identity from './identity.js';
 
 /**

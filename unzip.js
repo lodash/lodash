@@ -1,7 +1,7 @@
-import arrayFilter from './_arrayFilter.js';
-import arrayMap from './_arrayMap.js';
-import baseProperty from './_baseProperty.js';
-import baseTimes from './_baseTimes.js';
+import arrayFilter from './.internal/arrayFilter.js';
+import arrayMap from './.internal/arrayMap.js';
+import baseProperty from './.internal/baseProperty.js';
+import baseTimes from './.internal/baseTimes.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

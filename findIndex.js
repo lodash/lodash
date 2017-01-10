@@ -1,4 +1,4 @@
-import baseFindIndex from './_baseFindIndex.js';
+import baseFindIndex from './.internal/baseFindIndex.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

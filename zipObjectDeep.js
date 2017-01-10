@@ -1,5 +1,5 @@
-import baseSet from './_baseSet.js';
-import baseZipObject from './_baseZipObject.js';
+import baseSet from './.internal/baseSet.js';
+import baseZipObject from './.internal/baseZipObject.js';
 
 /**
  * This method is like `zipObject` except that it supports property paths.

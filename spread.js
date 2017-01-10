@@ -1,6 +1,6 @@
-import apply from './_apply.js';
-import arrayPush from './_arrayPush.js';
-import castSlice from './_castSlice.js';
+import apply from './.internal/apply.js';
+import arrayPush from './.internal/arrayPush.js';
+import castSlice from './.internal/castSlice.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

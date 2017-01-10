@@ -1,5 +1,5 @@
-import baseDifference from './_baseDifference.js';
-import baseFlatten from './_baseFlatten.js';
+import baseDifference from './.internal/baseDifference.js';
+import baseFlatten from './.internal/baseFlatten.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 

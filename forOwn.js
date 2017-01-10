@@ -1,4 +1,4 @@
-import baseForOwn from './_baseForOwn.js';
+import baseForOwn from './.internal/baseForOwn.js';
 
 /**
  * Iterates over own enumerable string keyed properties of an object and

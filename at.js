@@ -1,4 +1,4 @@
-import baseAt from './_baseAt.js';
+import baseAt from './.internal/baseAt.js';
 
 /**
  * Creates an array of values corresponding to `paths` of `object`.

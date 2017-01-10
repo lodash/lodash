@@ -1,5 +1,5 @@
-import baseIsArrayBuffer from './_baseIsArrayBuffer.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsArrayBuffer from './.internal/baseIsArrayBuffer.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;

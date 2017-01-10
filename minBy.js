@@ -1,5 +1,5 @@
-import baseExtremum from './_baseExtremum.js';
-import baseLt from './_baseLt.js';
+import baseExtremum from './.internal/baseExtremum.js';
+import baseLt from './.internal/baseLt.js';
 
 /**
  * This method is like `min` except that it accepts `iteratee` which is

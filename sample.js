@@ -1,5 +1,5 @@
-import arraySample from './_arraySample.js';
-import baseSample from './_baseSample.js';
+import arraySample from './.internal/arraySample.js';
+import baseSample from './.internal/baseSample.js';
 
 /**
  * Gets a random element from `collection`.

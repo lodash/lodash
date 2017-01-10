@@ -1,5 +1,5 @@
-import baseFindKey from './_baseFindKey.js';
-import baseForOwnRight from './_baseForOwnRight.js';
+import baseFindKey from './.internal/baseFindKey.js';
+import baseForOwnRight from './.internal/baseForOwnRight.js';
 
 /**
  * This method is like `findKey` except that it iterates over elements of

@@ -1,5 +1,5 @@
-import createPadding from './_createPadding.js';
-import stringSize from './_stringSize.js';
+import createPadding from './.internal/createPadding.js';
+import stringSize from './.internal/stringSize.js';
 import toInteger from './toInteger.js';
 import toString from './toString.js';
 

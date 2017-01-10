@@ -1,6 +1,6 @@
-import apply from './_apply.js';
+import apply from './.internal/apply.js';
 import assignInWith from './assignInWith.js';
-import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
+import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
 
 /**
  * Assigns own and inherited enumerable string keyed properties of source

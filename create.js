@@ -1,5 +1,5 @@
-import baseAssign from './_baseAssign.js';
-import baseCreate from './_baseCreate.js';
+import baseAssign from './.internal/baseAssign.js';
+import baseCreate from './.internal/baseCreate.js';
 
 /**
  * Creates an object that inherits from the `prototype` object. If a

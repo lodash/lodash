@@ -1,4 +1,4 @@
-import baseIsEqual from './_baseIsEqual.js';
+import baseIsEqual from './.internal/baseIsEqual.js';
 
 /**
  * This method is like `isEqual` except that it accepts `customizer` which

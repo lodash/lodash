@@ -1,4 +1,4 @@
-import apply from './_apply.js';
+import apply from './.internal/apply.js';
 import isError from './isError.js';
 
 /**

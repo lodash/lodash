@@ -1,5 +1,5 @@
-import copyObject from './_copyObject.js';
-import createAssigner from './_createAssigner.js';
+import copyObject from './.internal/copyObject.js';
+import createAssigner from './.internal/createAssigner.js';
 import keysIn from './keysIn.js';
 
 /**

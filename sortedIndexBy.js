@@ -1,4 +1,4 @@
-import baseSortedIndexBy from './_baseSortedIndexBy.js';
+import baseSortedIndexBy from './.internal/baseSortedIndexBy.js';
 
 /**
  * This method is like `sortedIndex` except that it accepts `iteratee`

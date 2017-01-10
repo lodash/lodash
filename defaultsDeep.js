@@ -1,5 +1,5 @@
-import apply from './_apply.js';
-import customDefaultsMerge from './_customDefaultsMerge.js';
+import apply from './.internal/apply.js';
+import customDefaultsMerge from './.internal/customDefaultsMerge.js';
 import mergeWith from './mergeWith.js';
 
 /**

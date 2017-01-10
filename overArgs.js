@@ -1,5 +1,5 @@
-import apply from './_apply.js';
-import baseFlatten from './_baseFlatten.js';
+import apply from './.internal/apply.js';
+import baseFlatten from './.internal/baseFlatten.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMin = Math.min;

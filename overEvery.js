@@ -1,5 +1,5 @@
-import arrayEvery from './_arrayEvery.js';
-import createOver from './_createOver.js';
+import arrayEvery from './.internal/arrayEvery.js';
+import createOver from './.internal/createOver.js';
 
 /**
  * Creates a function that checks if **all** of the `predicates` return

@@ -1,4 +1,4 @@
-import baseClamp from './_baseClamp.js';
+import baseClamp from './.internal/baseClamp.js';
 import toNumber from './toNumber.js';
 
 /**

@@ -1,4 +1,4 @@
-import createRelationalOperation from './_createRelationalOperation.js';
+import createRelationalOperation from './.internal/createRelationalOperation.js';
 
 /**
  * Checks if `value` is less than or equal to `other`.

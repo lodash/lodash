@@ -1,5 +1,5 @@
-import baseExtremum from './_baseExtremum.js';
-import baseGt from './_baseGt.js';
+import baseExtremum from './.internal/baseExtremum.js';
+import baseGt from './.internal/baseGt.js';
 import identity from './identity.js';
 
 /**

@@ -1,5 +1,5 @@
-import baseIsRegExp from './_baseIsRegExp.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsRegExp from './.internal/baseIsRegExp.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsRegExp = nodeUtil && nodeUtil.isRegExp;

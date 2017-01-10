@@ -1,6 +1,6 @@
-import arrayEvery from './_arrayEvery.js';
-import baseEvery from './_baseEvery.js';
-import isIterateeCall from './_isIterateeCall.js';
+import arrayEvery from './.internal/arrayEvery.js';
+import baseEvery from './.internal/baseEvery.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 
 /**
  * Checks if `predicate` returns truthy for **all** elements of `collection`.

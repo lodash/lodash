@@ -1,5 +1,5 @@
-import baseAssignValue from './_baseAssignValue.js';
-import baseForOwn from './_baseForOwn.js';
+import baseAssignValue from './.internal/baseAssignValue.js';
+import baseForOwn from './.internal/baseForOwn.js';
 
 /**
  * The opposite of `mapValues`; this method creates an object with the

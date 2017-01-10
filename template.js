@@ -1,12 +1,12 @@
 import assignInWith from './assignInWith.js';
 import attempt from './attempt.js';
-import baseValues from './_baseValues.js';
-import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
-import escapeStringChar from './_escapeStringChar.js';
+import baseValues from './.internal/baseValues.js';
+import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
+import escapeStringChar from './.internal/escapeStringChar.js';
 import isError from './isError.js';
-import isIterateeCall from './_isIterateeCall.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 import keys from './keys.js';
-import reInterpolate from './_reInterpolate.js';
+import reInterpolate from './.internal/reInterpolate.js';
 import templateSettings from './templateSettings.js';
 import toString from './toString.js';
 

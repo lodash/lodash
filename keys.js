@@ -1,5 +1,5 @@
-import arrayLikeKeys from './_arrayLikeKeys.js';
-import baseKeys from './_baseKeys.js';
+import arrayLikeKeys from './.internal/arrayLikeKeys.js';
+import baseKeys from './.internal/baseKeys.js';
 import isArrayLike from './isArrayLike.js';
 
 /**

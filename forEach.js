@@ -1,5 +1,5 @@
-import arrayEach from './_arrayEach.js';
-import baseEach from './_baseEach.js';;
+import arrayEach from './.internal/arrayEach.js';
+import baseEach from './.internal/baseEach.js';;
 
 /**
  * Iterates over elements of `collection` and invokes `iteratee` for each element.

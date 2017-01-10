@@ -1,4 +1,4 @@
-import createToPairs from './_createToPairs.js';
+import createToPairs from './.internal/createToPairs.js';
 import keysIn from './keysIn.js';
 
 /**

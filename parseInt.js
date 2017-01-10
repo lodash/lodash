@@ -1,4 +1,4 @@
-import root from './_root.js';
+import root from './.internal/root.js';
 import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */

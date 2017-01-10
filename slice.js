@@ -1,5 +1,5 @@
-import baseSlice from './_baseSlice.js';
-import isIterateeCall from './_isIterateeCall.js';
+import baseSlice from './.internal/baseSlice.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 import toInteger from './toInteger.js';
 
 /**

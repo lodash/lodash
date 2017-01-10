@@ -1,8 +1,8 @@
-import arrayMap from './_arrayMap.js';
-import copyArray from './_copyArray.js';
+import arrayMap from './.internal/arrayMap.js';
+import copyArray from './.internal/copyArray.js';
 import isSymbol from './isSymbol.js';
-import stringToPath from './_stringToPath.js';
-import toKey from './_toKey.js';
+import stringToPath from './.internal/stringToPath.js';
+import toKey from './.internal/toKey.js';
 import toString from './toString.js';
 
 /**

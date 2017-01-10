@@ -1,5 +1,5 @@
-import baseIsMatch from './_baseIsMatch.js';
-import getMatchData from './_getMatchData.js';
+import baseIsMatch from './.internal/baseIsMatch.js';
+import getMatchData from './.internal/getMatchData.js';
 
 /**
  * This method is like `isMatch` except that it accepts `customizer` which

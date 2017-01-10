@@ -1,5 +1,5 @@
-import assignValue from './_assignValue.js';
-import baseZipObject from './_baseZipObject.js';
+import assignValue from './.internal/assignValue.js';
+import baseZipObject from './.internal/baseZipObject.js';
 
 /**
  * This method is like `fromPairs` except that it accepts two arrays,

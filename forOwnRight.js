@@ -1,4 +1,4 @@
-import baseForOwnRight from './_baseForOwnRight.js';
+import baseForOwnRight from './.internal/baseForOwnRight.js';
 
 /**
  * This method is like `forOwn` except that it iterates over properties of

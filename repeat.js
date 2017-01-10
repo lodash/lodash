@@ -1,5 +1,5 @@
-import baseRepeat from './_baseRepeat.js';
-import isIterateeCall from './_isIterateeCall.js';
+import baseRepeat from './.internal/baseRepeat.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 import toInteger from './toInteger.js';
 import toString from './toString.js';
 

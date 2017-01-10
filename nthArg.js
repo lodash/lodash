@@ -1,4 +1,4 @@
-import baseNth from './_baseNth.js';
+import baseNth from './.internal/baseNth.js';
 import toInteger from './toInteger.js';
 
 /**

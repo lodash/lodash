@@ -1,4 +1,4 @@
-import createInverter from './_createInverter.js';
+import createInverter from './.internal/createInverter.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

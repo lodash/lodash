@@ -1,7 +1,7 @@
-import asciiWords from './_asciiWords.js';
-import hasUnicodeWord from './_hasUnicodeWord.js';
+import asciiWords from './.internal/asciiWords.js';
+import hasUnicodeWord from './.internal/hasUnicodeWord.js';
 import toString from './toString.js';
-import unicodeWords from './_unicodeWords.js';
+import unicodeWords from './.internal/unicodeWords.js';
 
 /**
  * Splits `string` into an array of its words.

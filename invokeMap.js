@@ -1,6 +1,6 @@
-import apply from './_apply.js';
-import baseEach from './_baseEach.js';
-import baseInvoke from './_baseInvoke.js';
+import apply from './.internal/apply.js';
+import baseEach from './.internal/baseEach.js';
+import baseInvoke from './.internal/baseInvoke.js';
 import isArrayLike from './isArrayLike.js';
 
 /**

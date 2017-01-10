@@ -1,4 +1,4 @@
-import baseValues from './_baseValues.js';
+import baseValues from './.internal/baseValues.js';
 import keysIn from './keysIn.js';
 
 /**

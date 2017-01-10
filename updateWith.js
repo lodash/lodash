@@ -1,4 +1,4 @@
-import baseUpdate from './_baseUpdate.js';
+import baseUpdate from './.internal/baseUpdate.js';
 
 /**
  * This method is like `update` except that it accepts `customizer` which is

@@ -1,4 +1,4 @@
-import baseFlatten from './_baseFlatten.js';
+import baseFlatten from './.internal/baseFlatten.js';
 import map from './map.js';
 import toInteger from './toInteger.js';
 

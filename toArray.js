@@ -1,11 +1,11 @@
-import copyArray from './_copyArray.js';
-import getTag from './_getTag.js';
+import copyArray from './.internal/copyArray.js';
+import getTag from './.internal/getTag.js';
 import isArrayLike from './isArrayLike.js';
 import isString from './isString.js';
-import iteratorToArray from './_iteratorToArray.js';
-import mapToArray from './_mapToArray.js';
-import setToArray from './_setToArray.js';
-import stringToArray from './_stringToArray.js';
+import iteratorToArray from './.internal/iteratorToArray.js';
+import mapToArray from './.internal/mapToArray.js';
+import setToArray from './.internal/setToArray.js';
+import stringToArray from './.internal/stringToArray.js';
 import values from './values.js';
 
 /** `Object#toString` result references. */

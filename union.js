@@ -1,5 +1,5 @@
-import baseFlatten from './_baseFlatten.js';
-import baseUniq from './_baseUniq.js';
+import baseFlatten from './.internal/baseFlatten.js';
+import baseUniq from './.internal/baseUniq.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 
 /**

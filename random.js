@@ -1,5 +1,5 @@
-import baseRandom from './_baseRandom.js';
-import isIterateeCall from './_isIterateeCall.js';
+import baseRandom from './.internal/baseRandom.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 import toFinite from './toFinite.js';
 
 /** Built-in method references without a dependency on `root`. */

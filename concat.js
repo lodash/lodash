@@ -1,6 +1,6 @@
-import arrayPush from './_arrayPush.js';
-import baseFlatten from './_baseFlatten.js';
-import copyArray from './_copyArray.js';
+import arrayPush from './.internal/arrayPush.js';
+import baseFlatten from './.internal/baseFlatten.js';
+import copyArray from './.internal/copyArray.js';
 
 /**
  * Creates a new array concatenating `array` with any additional arrays

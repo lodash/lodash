@@ -1,4 +1,4 @@
-import baseUpdate from './_baseUpdate.js';
+import baseUpdate from './.internal/baseUpdate.js';
 
 /**
  * This method is like `set` except that accepts `updater` to produce the

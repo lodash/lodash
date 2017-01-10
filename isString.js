@@ -1,4 +1,4 @@
-import baseGetTag from './_baseGetTag.js';
+import baseGetTag from './.internal/baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */

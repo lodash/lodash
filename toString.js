@@ -1,4 +1,4 @@
-import baseToString from './_baseToString.js';
+import baseToString from './.internal/baseToString.js';
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`

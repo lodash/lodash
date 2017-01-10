@@ -1,5 +1,5 @@
-import baseAssignValue from './_baseAssignValue.js';
-import createAggregator from './_createAggregator.js';
+import baseAssignValue from './.internal/baseAssignValue.js';
+import createAggregator from './.internal/createAggregator.js';
 
 /**
  * Creates an object composed of keys generated from the results of running

@@ -1,4 +1,4 @@
-import createCompounder from './_createCompounder.js';
+import createCompounder from './.internal/createCompounder.js';
 import upperFirst from './upperFirst.js';
 
 /**

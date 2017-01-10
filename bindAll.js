@@ -1,7 +1,7 @@
-import arrayEach from './_arrayEach.js';
-import baseAssignValue from './_baseAssignValue.js';
+import arrayEach from './.internal/arrayEach.js';
+import baseAssignValue from './.internal/baseAssignValue.js';
 import bind from './bind.js';
-import toKey from './_toKey.js';
+import toKey from './.internal/toKey.js';
 
 /**
  * Binds methods of an object to the object itself, overwriting the existing

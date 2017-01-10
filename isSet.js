@@ -1,5 +1,5 @@
-import baseIsSet from './_baseIsSet.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsSet from './.internal/baseIsSet.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsSet = nodeUtil && nodeUtil.isSet;

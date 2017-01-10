@@ -1,5 +1,5 @@
-import arraySome from './_arraySome.js';
-import createOver from './_createOver.js';
+import arraySome from './.internal/arraySome.js';
+import createOver from './.internal/createOver.js';
 
 /**
  * Creates a function that checks if **any** of the `predicates` return

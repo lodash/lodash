@@ -1,4 +1,4 @@
-import baseUniq from './_baseUniq.js';
+import baseUniq from './.internal/baseUniq.js';
 
 /**
  * This method is like `uniq` except that it accepts `iteratee` which is

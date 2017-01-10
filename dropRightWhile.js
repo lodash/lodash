@@ -1,4 +1,4 @@
-import baseWhile from './_baseWhile.js';
+import baseWhile from './.internal/baseWhile.js';
 
 /**
  * Creates a slice of `array` excluding elements dropped from the end.

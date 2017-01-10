@@ -1,4 +1,4 @@
-import baseSortedUniq from './_baseSortedUniq.js';
+import baseSortedUniq from './.internal/baseSortedUniq.js';
 
 /**
  * This method is like `uniqBy` except that it's designed and optimized

@@ -1,4 +1,4 @@
-import basePullAt from './_basePullAt.js';
+import basePullAt from './.internal/basePullAt.js';
 
 /**
  * Removes all elements from `array` that `predicate` returns truthy for

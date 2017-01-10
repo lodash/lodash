@@ -1,5 +1,5 @@
-import baseAssignValue from './_baseAssignValue.js';
-import createAggregator from './_createAggregator.js';
+import baseAssignValue from './.internal/baseAssignValue.js';
+import createAggregator from './.internal/createAggregator.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

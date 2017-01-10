@@ -1,4 +1,4 @@
-import baseFor from './_baseFor.js';
+import baseFor from './.internal/baseFor.js';
 import keysIn from './keysIn.js';
 
 /**

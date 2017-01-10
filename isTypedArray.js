@@ -1,5 +1,5 @@
-import baseIsTypedArray from './_baseIsTypedArray.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsTypedArray from './.internal/baseIsTypedArray.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;

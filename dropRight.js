@@ -1,4 +1,4 @@
-import baseSlice from './_baseSlice.js';
+import baseSlice from './.internal/baseSlice.js';
 import toInteger from './toInteger.js';
 
 /**

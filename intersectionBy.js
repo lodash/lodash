@@ -1,6 +1,6 @@
-import arrayMap from './_arrayMap.js';
-import baseIntersection from './_baseIntersection.js';
-import castArrayLikeObject from './_castArrayLikeObject.js';
+import arrayMap from './.internal/arrayMap.js';
+import baseIntersection from './.internal/baseIntersection.js';
+import castArrayLikeObject from './.internal/castArrayLikeObject.js';
 import last from './last.js';
 
 /**

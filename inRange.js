@@ -1,4 +1,4 @@
-import baseInRange from './_baseInRange.js';
+import baseInRange from './.internal/baseInRange.js';
 import toFinite from './toFinite.js';
 import toNumber from './toNumber.js';
 

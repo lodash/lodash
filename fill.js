@@ -1,5 +1,5 @@
-import baseFill from './_baseFill.js';
-import isIterateeCall from './_isIterateeCall.js';
+import baseFill from './.internal/baseFill.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 
 /**
  * Fills elements of `array` with `value` from `start` up to, but not

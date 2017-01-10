@@ -1,7 +1,7 @@
-import baseProperty from './_baseProperty.js';
-import basePropertyDeep from './_basePropertyDeep.js';
-import isKey from './_isKey.js';
-import toKey from './_toKey.js';
+import baseProperty from './.internal/baseProperty.js';
+import basePropertyDeep from './.internal/basePropertyDeep.js';
+import isKey from './.internal/isKey.js';
+import toKey from './.internal/toKey.js';
 
 /**
  * Creates a function that returns the value at `path` of a given object.

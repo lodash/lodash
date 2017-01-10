@@ -1,4 +1,4 @@
-import baseIndexOf from './_baseIndexOf.js';
+import baseIndexOf from './.internal/baseIndexOf.js';
 import isArrayLike from './isArrayLike.js';
 import isString from './isString.js';
 import toInteger from './toInteger.js';

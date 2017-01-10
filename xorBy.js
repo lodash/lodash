@@ -1,5 +1,5 @@
-import arrayFilter from './_arrayFilter.js';
-import baseXor from './_baseXor.js';
+import arrayFilter from './.internal/arrayFilter.js';
+import baseXor from './.internal/baseXor.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 

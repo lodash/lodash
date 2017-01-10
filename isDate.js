@@ -1,5 +1,5 @@
-import baseIsDate from './_baseIsDate.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsDate from './.internal/baseIsDate.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsDate = nodeUtil && nodeUtil.isDate;

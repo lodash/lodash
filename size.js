@@ -1,8 +1,8 @@
-import baseKeys from './_baseKeys.js';
-import getTag from './_getTag.js';
+import baseKeys from './.internal/baseKeys.js';
+import getTag from './.internal/getTag.js';
 import isArrayLike from './isArrayLike.js';
 import isString from './isString.js';
-import stringSize from './_stringSize.js';
+import stringSize from './.internal/stringSize.js';
 
 /** `Object#toString` result references. */
 const mapTag = '[object Map]';

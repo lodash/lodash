@@ -1,6 +1,6 @@
-import arraySampleSize from './_arraySampleSize.js';
-import baseSampleSize from './_baseSampleSize.js';
-import isIterateeCall from './_isIterateeCall.js';
+import arraySampleSize from './.internal/arraySampleSize.js';
+import baseSampleSize from './.internal/baseSampleSize.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 import toInteger from './toInteger.js';
 
 /**

@@ -1,4 +1,4 @@
-import basePullAll from './_basePullAll.js';
+import basePullAll from './.internal/basePullAll.js';
 
 /**
  * This method is like `pullAll` except that it accepts `iteratee` which is

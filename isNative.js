@@ -1,6 +1,6 @@
 import isFunction from './isFunction.js';
 import isObject from './isObject.js';
-import toSource from './_toSource.js';
+import toSource from './.internal/toSource.js';
 
 /**
  * Used to match `RegExp`

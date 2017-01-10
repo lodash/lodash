@@ -1,5 +1,5 @@
-import arrayMap from './_arrayMap.js';
-import createOver from './_createOver.js';
+import arrayMap from './.internal/arrayMap.js';
+import createOver from './.internal/createOver.js';
 
 /**
  * Creates a function that invokes `iteratees` with the arguments it receives

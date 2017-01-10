@@ -1,5 +1,5 @@
-import baseIsMap from './_baseIsMap.js';
-import nodeUtil from './_nodeUtil.js';
+import baseIsMap from './.internal/baseIsMap.js';
+import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
 const nodeIsMap = nodeUtil && nodeUtil.isMap;

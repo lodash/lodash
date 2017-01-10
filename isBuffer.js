@@ -1,4 +1,4 @@
-import root from './_root.js';
+import root from './.internal/root.js';
 import stubFalse from './stubFalse.js';
 
 /** Detect free variable `exports`. */

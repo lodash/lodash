@@ -1,4 +1,4 @@
-import baseInvoke from './_baseInvoke.js';
+import baseInvoke from './.internal/baseInvoke.js';
 
 /**
  * Invokes the method at `path` of `object`.

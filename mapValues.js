@@ -1,5 +1,5 @@
-import baseAssignValue from './_baseAssignValue.js';
-import baseForOwn from './_baseForOwn.js';
+import baseAssignValue from './.internal/baseAssignValue.js';
+import baseForOwn from './.internal/baseForOwn.js';
 
 /**
  * Creates an object with the same keys as `object` and values generated

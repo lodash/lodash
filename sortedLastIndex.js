@@ -1,4 +1,4 @@
-import baseSortedIndex from './_baseSortedIndex.js';
+import baseSortedIndex from './.internal/baseSortedIndex.js';
 
 /**
  * This method is like `sortedIndex` except that it returns the highest

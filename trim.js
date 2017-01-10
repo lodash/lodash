@@ -1,8 +1,8 @@
-import baseToString from './_baseToString.js';
-import castSlice from './_castSlice.js';
-import charsEndIndex from './_charsEndIndex.js';
-import charsStartIndex from './_charsStartIndex.js';
-import stringToArray from './_stringToArray.js';
+import baseToString from './.internal/baseToString.js';
+import castSlice from './.internal/castSlice.js';
+import charsEndIndex from './.internal/charsEndIndex.js';
+import charsStartIndex from './.internal/charsStartIndex.js';
+import stringToArray from './.internal/stringToArray.js';
 import toString from './toString.js';
 
 /** Used to match leading and trailing whitespace. */

@@ -1,9 +1,9 @@
-import baseKeys from './_baseKeys.js';
-import getTag from './_getTag.js';
+import baseKeys from './.internal/baseKeys.js';
+import getTag from './.internal/getTag.js';
 import isArguments from './isArguments.js';
 import isArrayLike from './isArrayLike.js';
 import isBuffer from './isBuffer.js';
-import isPrototype from './_isPrototype.js';
+import isPrototype from './.internal/isPrototype.js';
 import isTypedArray from './isTypedArray.js';
 
 /** `Object#toString` result references. */

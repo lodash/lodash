@@ -1,4 +1,4 @@
-import baseSortedIndex from './_baseSortedIndex.js';
+import baseSortedIndex from './.internal/baseSortedIndex.js';
 
 /**
  * Uses a binary search to determine the lowest index at which `value`

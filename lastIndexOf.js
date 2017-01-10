@@ -1,6 +1,6 @@
-import baseFindIndex from './_baseFindIndex.js';
-import baseIsNaN from './_baseIsNaN.js';
-import strictLastIndexOf from './_strictLastIndexOf.js';
+import baseFindIndex from './.internal/baseFindIndex.js';
+import baseIsNaN from './.internal/baseIsNaN.js';
+import strictLastIndexOf from './.internal/strictLastIndexOf.js';
 import toInteger from './toInteger.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */

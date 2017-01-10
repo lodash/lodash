@@ -1,4 +1,4 @@
-import baseOrderBy from './_baseOrderBy.js';
+import baseOrderBy from './.internal/baseOrderBy.js';
 
 /**
  * This method is like `sortBy` except that it allows specifying the sort

@@ -1,5 +1,5 @@
-import apply from './_apply.js';
-import arrayMap from './_arrayMap.js';
+import apply from './.internal/apply.js';
+import arrayMap from './.internal/arrayMap.js';
 
 /**
  * Creates a function that iterates over `pairs` and invokes the corresponding

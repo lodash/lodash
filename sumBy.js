@@ -1,4 +1,4 @@
-import baseSum from './_baseSum.js';
+import baseSum from './.internal/baseSum.js';
 
 /**
  * This method is like `sum` except that it accepts `iteratee` which is

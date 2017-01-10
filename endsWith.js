@@ -1,5 +1,5 @@
-import baseClamp from './_baseClamp.js';
-import baseToString from './_baseToString.js';
+import baseClamp from './.internal/baseClamp.js';
+import baseToString from './.internal/baseToString.js';
 import toInteger from './toInteger.js';
 import toString from './toString.js';
 

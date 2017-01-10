@@ -1,4 +1,4 @@
-import baseConformsTo from './_baseConformsTo.js';
+import baseConformsTo from './.internal/baseConformsTo.js';
 import keys from './keys.js';
 
 /**

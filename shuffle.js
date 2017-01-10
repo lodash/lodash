@@ -1,5 +1,5 @@
-import arrayShuffle from './_arrayShuffle.js';
-import baseShuffle from './_baseShuffle.js';
+import arrayShuffle from './.internal/arrayShuffle.js';
+import baseShuffle from './.internal/baseShuffle.js';
 
 /**
  * Creates an array of shuffled values, using a version of the

@@ -1,4 +1,4 @@
-import createMathOperation from './_createMathOperation.js';
+import createMathOperation from './.internal/createMathOperation.js';
 
 /**
  * Adds two numbers.

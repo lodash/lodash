@@ -1,5 +1,5 @@
-import arrayMap from './_arrayMap.js';
-import baseMap from './_baseMap.js';
+import arrayMap from './.internal/arrayMap.js';
+import baseMap from './.internal/baseMap.js';
 
 /**
  * Creates an array of values by running each element in `collection` thru

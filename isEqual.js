@@ -1,4 +1,4 @@
-import baseIsEqual from './_baseIsEqual.js';
+import baseIsEqual from './.internal/baseIsEqual.js';
 
 /**
  * Performs a deep comparison between two values to determine if they are

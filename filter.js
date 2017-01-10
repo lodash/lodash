@@ -1,5 +1,5 @@
-import arrayFilter from './_arrayFilter.js';
-import baseFilter from './_baseFilter.js';
+import arrayFilter from './.internal/arrayFilter.js';
+import baseFilter from './.internal/baseFilter.js';
 
 /**
  * Iterates over elements of `collection`, returning an array of all elements

@@ -1,6 +1,6 @@
-import arraySome from './_arraySome.js';
-import baseSome from './_baseSome.js';
-import isIterateeCall from './_isIterateeCall.js';
+import arraySome from './.internal/arraySome.js';
+import baseSome from './.internal/baseSome.js';
+import isIterateeCall from './.internal/isIterateeCall.js';
 
 /**
  * Checks if `predicate` returns truthy for **any** element of `collection`.

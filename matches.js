@@ -1,5 +1,5 @@
-import baseClone from './_baseClone.js';
-import baseMatches from './_baseMatches.js';
+import baseClone from './.internal/baseClone.js';
+import baseMatches from './.internal/baseMatches.js';
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1;

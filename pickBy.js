@@ -1,6 +1,6 @@
-import arrayMap from './_arrayMap.js';
-import basePickBy from './_basePickBy.js';
-import getAllKeysIn from './_getAllKeysIn.js';
+import arrayMap from './.internal/arrayMap.js';
+import basePickBy from './.internal/basePickBy.js';
+import getAllKeysIn from './.internal/getAllKeysIn.js';
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns

@@ -1,5 +1,5 @@
-import baseLt from './_baseLt.js';
-import createRelationalOperation from './_createRelationalOperation.js';
+import baseLt from './.internal/baseLt.js';
+import createRelationalOperation from './.internal/createRelationalOperation.js';
 
 /**
  * Checks if `value` is less than `other`.

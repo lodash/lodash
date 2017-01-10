@@ -1,6 +1,6 @@
-import createWrap from './_createWrap.js';
-import getHolder from './_getHolder.js';
-import replaceHolders from './_replaceHolders.js';
+import createWrap from './.internal/createWrap.js';
+import getHolder from './.internal/getHolder.js';
+import replaceHolders from './.internal/replaceHolders.js';
 
 /** Used to compose bitmasks for function metadata. */
 const WRAP_BIND_FLAG = 1;

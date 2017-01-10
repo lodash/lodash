@@ -1,5 +1,5 @@
-import baseExtremum from './_baseExtremum.js';
-import baseGt from './_baseGt.js';
+import baseExtremum from './.internal/baseExtremum.js';
+import baseGt from './.internal/baseGt.js';
 
 /**
  * This method is like `max` except that it accepts `iteratee` which is

@@ -1,5 +1,5 @@
-import baseGetTag from './_baseGetTag.js';
-import getPrototype from './_getPrototype.js';
+import baseGetTag from './.internal/baseGetTag.js';
+import getPrototype from './.internal/getPrototype.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */

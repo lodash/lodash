@@ -1,5 +1,5 @@
 import toString from './toString.js';
-import unescapeHtmlChar from './_unescapeHtmlChar.js';
+import unescapeHtmlChar from './.internal/unescapeHtmlChar.js';
 
 /** Used to match HTML entities and HTML characters. */
 const reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;

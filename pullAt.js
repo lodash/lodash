@@ -1,8 +1,8 @@
-import arrayMap from './_arrayMap.js';
-import baseAt from './_baseAt.js';
-import basePullAt from './_basePullAt.js';
-import compareAscending from './_compareAscending.js';
-import isIndex from './_isIndex.js';
+import arrayMap from './.internal/arrayMap.js';
+import baseAt from './.internal/baseAt.js';
+import basePullAt from './.internal/basePullAt.js';
+import compareAscending from './.internal/compareAscending.js';
+import isIndex from './.internal/isIndex.js';
 
 /**
  * Removes elements from `array` corresponding to `indexes` and returns an

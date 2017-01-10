@@ -1,4 +1,4 @@
-import baseClamp from './_baseClamp.js';
+import baseClamp from './.internal/baseClamp.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for the maximum length and index of an array. */

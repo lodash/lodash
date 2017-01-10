@@ -1,4 +1,4 @@
-import createFlow from './_createFlow.js';
+import createFlow from './.internal/createFlow.js';
 
 /**
  * This method is like `flow` except that it creates a function that

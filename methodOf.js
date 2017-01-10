@@ -1,4 +1,4 @@
-import baseInvoke from './_baseInvoke.js';
+import baseInvoke from './.internal/baseInvoke.js';
 
 /**
  * The opposite of `method`; this method creates a function that invokes

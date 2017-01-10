@@ -1,4 +1,4 @@
-import copyObject from './_copyObject.js';
+import copyObject from './.internal/copyObject.js';
 import keysIn from './keysIn.js';
 
 /**

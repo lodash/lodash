@@ -1,4 +1,4 @@
-import baseSortedIndex from './_baseSortedIndex.js';
+import baseSortedIndex from './.internal/baseSortedIndex.js';
 import eq from './eq.js';
 
 /**

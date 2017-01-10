@@ -1,9 +1,6 @@
 import baseGetTag from './.internal/baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
-/** `Object#toString` result references. */
-const argsTag = '[object Arguments]';
-
 /**
  * Checks if `value` is likely an `arguments` object.
  *
@@ -21,7 +18,7 @@ const argsTag = '[object Arguments]';
  * // => false
  */
 function isArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == argsTag;
+  return isObjectLike(value) && baseGetTag(value) == '[object Arguments]';
 }
 
 export default isArguments;

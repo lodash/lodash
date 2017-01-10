@@ -1,4 +1,5 @@
-import baseIsRegExp from './.internal/baseIsRegExp.js';
+import baseGetTag from './.internal/baseGetTag.js';
+import isObjectLike from './isObjectLike.js';
 import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
@@ -21,6 +22,6 @@ const nodeIsRegExp = nodeUtil && nodeUtil.isRegExp;
  */
 const isRegExp = nodeIsRegExp
   ? value => nodeIsRegExp(value)
-  : baseIsRegExp;
+  : value => isObjectLike(value) && baseGetTag(value) == '[object RegExp]';
 
 export default isRegExp;

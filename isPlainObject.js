@@ -2,9 +2,6 @@ import baseGetTag from './.internal/baseGetTag.js';
 import getPrototype from './.internal/getPrototype.js';
 import isObjectLike from './isObjectLike.js';
 
-/** `Object#toString` result references. */
-const objectTag = '[object Object]';
-
 /** Used to resolve the decompiled source of functions. */
 const funcToString = Function.prototype.toString;
 
@@ -41,7 +38,7 @@ const objectCtorString = funcToString.call(Object);
  * // => true
  */
 function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+  if (!isObjectLike(value) || baseGetTag(value) != '[object Object]') {
     return false;
   }
   const proto = getPrototype(value);

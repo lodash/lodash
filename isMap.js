@@ -1,4 +1,5 @@
-import baseIsMap from './.internal/baseIsMap.js';
+import getTag from './.internal/getTag.js';
+import isObjectLike from './isObjectLike.js';
 import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
@@ -21,6 +22,6 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap;
  */
 const isMap = nodeIsMap
   ? value => nodeIsMap(value)
-  : baseIsMap;
+  : value => isObjectLike(value) && getTag(value) == '[object Map]';
 
 export default isMap;

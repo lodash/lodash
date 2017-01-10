@@ -6,10 +6,6 @@ import isBuffer from './isBuffer.js';
 import isPrototype from './.internal/isPrototype.js';
 import isTypedArray from './isTypedArray.js';
 
-/** `Object#toString` result references. */
-const mapTag = '[object Map]';
-const setTag = '[object Set]';
-
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -54,7 +50,7 @@ function isEmpty(value) {
     return !value.length;
   }
   const tag = getTag(value);
-  if (tag == mapTag || tag == setTag) {
+  if (tag == '[object Map]' || tag == '[object Set]') {
     return !value.size;
   }
   if (isPrototype(value)) {

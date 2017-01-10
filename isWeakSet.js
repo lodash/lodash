@@ -1,9 +1,6 @@
 import baseGetTag from './.internal/baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
-/** `Object#toString` result references. */
-const weakSetTag = '[object WeakSet]';
-
 /**
  * Checks if `value` is classified as a `WeakSet` object.
  *
@@ -20,7 +17,7 @@ const weakSetTag = '[object WeakSet]';
  * // => false
  */
 function isWeakSet(value) {
-  return isObjectLike(value) && baseGetTag(value) == weakSetTag;
+  return isObjectLike(value) && baseGetTag(value) == '[object WeakSet]';
 }
 
 export default isWeakSet;

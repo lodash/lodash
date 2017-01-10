@@ -1,12 +1,6 @@
 import baseGetTag from './.internal/baseGetTag.js';
 import isObject from './isObject.js';
 
-/** `Object#toString` result references. */
-const asyncTag = '[object AsyncFunction]';
-const funcTag = '[object Function]';
-const genTag = '[object GeneratorFunction]';
-const proxyTag = '[object Proxy]';
-
 /**
  * Checks if `value` is classified as a `Function` object.
  *
@@ -29,7 +23,8 @@ function isFunction(value) {
   // The use of `Object#toString` avoids issues with the `typeof` operator
   // in Safari 9 which returns 'object' for typed arrays and other constructors.
   const tag = baseGetTag(value);
-  return tag == funcTag || tag == asyncTag || tag == genTag || tag == proxyTag;
+  return tag == '[object Function]' || tag == '[object AsyncFunction]' ||
+    tag == '[object GeneratorFunction]' || tag == '[object Proxy]';
 }
 
 export default isFunction;

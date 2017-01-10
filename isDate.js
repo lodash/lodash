@@ -1,4 +1,5 @@
-import baseIsDate from './.internal/baseIsDate.js';
+import baseGetTag from './.internal/baseGetTag.js';
+import isObjectLike from './isObjectLike.js';
 import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
@@ -21,6 +22,6 @@ const nodeIsDate = nodeUtil && nodeUtil.isDate;
  */
 const isDate = nodeIsDate
   ? value => nodeIsDate(value)
-  : baseIsDate;
+  : value => isObjectLike(value) && baseGetTag(value) == '[object Date]';
 
 export default isDate;

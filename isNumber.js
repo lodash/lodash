@@ -1,9 +1,6 @@
 import baseGetTag from './.internal/baseGetTag.js';
 import isObjectLike from './isObjectLike.js';
 
-/** `Object#toString` result references. */
-const numberTag = '[object Number]';
-
 /**
  * Checks if `value` is classified as a `Number` primitive or object.
  *
@@ -30,7 +27,7 @@ const numberTag = '[object Number]';
  */
 function isNumber(value) {
   return typeof value == 'number' ||
-    (isObjectLike(value) && baseGetTag(value) == numberTag);
+    (isObjectLike(value) && baseGetTag(value) == '[object Number]');
 }
 
 export default isNumber;

@@ -1,4 +1,5 @@
-import baseIsArrayBuffer from './.internal/baseIsArrayBuffer.js';
+import baseGetTag from './.internal/baseGetTag.js';
+import isObjectLike from './isObjectLike.js';
 import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
@@ -21,6 +22,6 @@ const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
  */
 const isArrayBuffer = nodeIsArrayBuffer
   ? value => nodeIsArrayBuffer(value)
-  : baseIsArrayBuffer;
+  : value => isObjectLike(value) && baseGetTag(value) == '[object ArrayBuffer]';
 
 export default isArrayBuffer;

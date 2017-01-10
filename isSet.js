@@ -1,4 +1,5 @@
-import baseIsSet from './.internal/baseIsSet.js';
+import getTag from './.internal/getTag.js';
+import isObjectLike from './isObjectLike.js';
 import nodeUtil from './.internal/nodeUtil.js';
 
 /* Node.js helper references. */
@@ -21,6 +22,6 @@ const nodeIsSet = nodeUtil && nodeUtil.isSet;
  */
 const isSet = nodeIsSet
   ? value => nodeIsSet(value)
-  : baseIsSet;
+  : value => isObjectLike(value) && getTag(value) == '[object Set]';
 
 export default isSet;

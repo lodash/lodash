@@ -18,16 +18,9 @@ import root from './_root.js';
 function createCurry(func, bitmask, arity) {
   const Ctor = createCtor(func);
 
-  function wrapper() {
-    let length = arguments.length;
-    let index = length;
-
-    const args = Array(length);
+  function wrapper(...args) {
+    let length = args.length;
     const placeholder = getHolder(wrapper);
-
-    while (index--) {
-      args[index] = arguments[index];
-    }
     const holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
       ? []
       : replaceHolders(args, placeholder);

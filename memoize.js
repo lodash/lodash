@@ -50,8 +50,8 @@ function memoize(func, resolver) {
   if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
-  const memoized = function() {
-    const args = arguments, key = resolver ? resolver.apply(this, args) : args[0];
+  const memoized = function(...args) {
+    const key = resolver ? resolver.apply(this, args) : args[0];
     const cache = memoized.cache;
 
     if (cache.has(key)) {

@@ -24,18 +24,7 @@ import isArray from './isArray.js';
  * console.log(array);
  * // => [1]
  */
-function concat() {
-  const length = arguments.length;
-  if (!length) {
-    return [];
-  }
-  const args = Array(length - 1);
-  const array = arguments[0];
-  let index = length;
-
-  while (index--) {
-    args[index - 1] = arguments[index];
-  }
+function concat(array, ...values) {
   return arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1));
 }
 

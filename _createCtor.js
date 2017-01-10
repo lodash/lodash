@@ -10,11 +10,10 @@ import isObject from './isObject.js';
  * @returns {Function} Returns the new wrapped function.
  */
 function createCtor(Ctor) {
-  return function() {
+  return function(...args) {
     // Use a `switch` statement to work with class constructors. See
     // http://ecma-international.org/ecma-262/7.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
     // for more details.
-    const args = arguments;
     switch (args.length) {
       case 0: return new Ctor;
       case 1: return new Ctor(args[0]);

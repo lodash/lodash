@@ -1,7 +1,6 @@
 import arrayReduceRight from './_arrayReduceRight.js';
 import baseEachRight from './_baseEachRight.js';
 import baseReduce from './_baseReduce.js';
-import isArray from './isArray.js';
 
 /**
  * This method is like `reduce` except that it iterates over elements of
@@ -25,7 +24,7 @@ import isArray from './isArray.js';
  * // => [4, 5, 2, 3, 0, 1]
  */
 function reduceRight(collection, iteratee, accumulator) {
-  const func = isArray(collection) ? arrayReduceRight : baseReduce;
+  const func = Array.isArray(collection) ? arrayReduceRight : baseReduce;
   const initAccum = arguments.length < 3;
   return func(collection, iteratee, accumulator, initAccum, baseEachRight);
 }

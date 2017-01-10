@@ -1,6 +1,5 @@
 import arrayMap from './_arrayMap.js';
 import baseMap from './_baseMap.js';
-import isArray from './isArray.js';
 
 /**
  * Creates an array of values by running each element in `collection` thru
@@ -35,7 +34,7 @@ import isArray from './isArray.js';
  * // => [16, 64] (iteration order is not guaranteed)
  */
 function map(collection, iteratee) {
-  const func = isArray(collection) ? arrayMap : baseMap;
+  const func = Array.isArray(collection) ? arrayMap : baseMap;
   return func(collection, iteratee);
 }
 

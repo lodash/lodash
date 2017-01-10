@@ -1,6 +1,5 @@
 import arrayAggregator from './_arrayAggregator.js';
 import baseAggregator from './_baseAggregator.js';
-import isArray from './isArray.js';
 
 /**
  * Creates a function like `groupBy`.
@@ -12,7 +11,7 @@ import isArray from './isArray.js';
  */
 function createAggregator(setter, initializer) {
   return (collection, iteratee) => {
-    const func = isArray(collection) ? arrayAggregator : baseAggregator;
+    const func = Array.isArray(collection) ? arrayAggregator : baseAggregator;
     const accumulator = initializer ? initializer() : {};
     return func(collection, setter, iteratee, accumulator);
   };

@@ -1,6 +1,5 @@
 import arrayFilter from './_arrayFilter.js';
 import baseFilter from './_baseFilter.js';
-import isArray from './isArray.js';
 import negate from './negate.js';
 
 /**
@@ -25,7 +24,7 @@ import negate from './negate.js';
  * // => objects for ['fred']
  */
 function reject(collection, predicate) {
-  const func = isArray(collection) ? arrayFilter : baseFilter;
+  const func = Array.isArray(collection) ? arrayFilter : baseFilter;
   return func(collection, negate(predicate));
 }
 

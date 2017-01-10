@@ -1,5 +1,4 @@
 import baseGetTag from './_baseGetTag.js';
-import isArray from './isArray.js';
 import isObjectLike from './isObjectLike.js';
 
 /** `Object#toString` result references. */
@@ -23,7 +22,7 @@ const stringTag = '[object String]';
  */
 function isString(value) {
   return typeof value == 'string' ||
-    (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
+    (!Array.isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
 }
 
 export default isString;

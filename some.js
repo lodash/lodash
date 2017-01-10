@@ -1,6 +1,5 @@
 import arraySome from './_arraySome.js';
 import baseSome from './_baseSome.js';
-import isArray from './isArray.js';
 import isIterateeCall from './_isIterateeCall.js';
 
 /**
@@ -22,7 +21,7 @@ import isIterateeCall from './_isIterateeCall.js';
  * // => true
  */
 function some(collection, predicate, guard) {
-  const func = isArray(collection) ? arraySome : baseSome;
+  const func = Array.isArray(collection) ? arraySome : baseSome;
   if (guard && isIterateeCall(collection, predicate, guard)) {
     predicate = undefined;
   }

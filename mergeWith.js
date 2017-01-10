@@ -20,7 +20,7 @@ import createAssigner from './_createAssigner.js';
  * @example
  *
  * function customizer(objValue, srcValue) {
- *   if (isArray(objValue)) {
+ *   if (Array.isArray(objValue)) {
  *     return objValue.concat(srcValue);
  *   }
  * }

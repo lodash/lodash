@@ -1,6 +1,5 @@
 import arrayFilter from './_arrayFilter.js';
 import baseFilter from './_baseFilter.js';
-import isArray from './isArray.js';
 
 /**
  * Iterates over elements of `collection`, returning an array of all elements
@@ -27,7 +26,7 @@ import isArray from './isArray.js';
  * // => objects for ['fred']
  */
 function filter(collection, predicate) {
-  const func = isArray(collection) ? arrayFilter : baseFilter;
+  const func = Array.isArray(collection) ? arrayFilter : baseFilter;
   return func(collection, predicate);
 }
 

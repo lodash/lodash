@@ -4,7 +4,6 @@ import cloneTypedArray from './_cloneTypedArray.js';
 import copyArray from './_copyArray.js';
 import initCloneObject from './_initCloneObject.js';
 import isArguments from './isArguments.js';
-import isArray from './isArray.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import isBuffer from './isBuffer.js';
 import isFunction from './isFunction.js';
@@ -44,13 +43,13 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
   let isCommon = newValue === undefined;
 
   if (isCommon) {
-    const isArr = isArray(srcValue);
+    const isArr = Array.isArray(srcValue);
     const isBuff = !isArr && isBuffer(srcValue);
     const isTyped = !isArr && !isBuff && isTypedArray(srcValue);
 
     newValue = srcValue;
     if (isArr || isBuff || isTyped) {
-      if (isArray(objValue)) {
+      if (Array.isArray(objValue)) {
         newValue = objValue;
       }
       else if (isArrayLikeObject(objValue)) {

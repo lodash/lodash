@@ -1,5 +1,4 @@
 import arrayPush from './_arrayPush.js';
-import isArray from './isArray.js';
 
 /**
  * The base implementation of `getAllKeys` and `getAllKeysIn` which uses
@@ -14,7 +13,7 @@ import isArray from './isArray.js';
  */
 function baseGetAllKeys(object, keysFunc, symbolsFunc) {
   const result = keysFunc(object);
-  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+  return Array.isArray(object) ? result : arrayPush(result, symbolsFunc(object));
 }
 
 export default baseGetAllKeys;

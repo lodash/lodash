@@ -1,6 +1,5 @@
 import Symbol from './_Symbol.js';
 import arrayMap from './_arrayMap.js';
-import isArray from './isArray.js';
 import isSymbol from './isSymbol.js';
 
 /** Used as references for various `Number` constants. */
@@ -23,7 +22,7 @@ function baseToString(value) {
   if (typeof value == 'string') {
     return value;
   }
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
     return `${ arrayMap(value, baseToString) }`;
   }

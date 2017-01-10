@@ -1,5 +1,4 @@
 import baseOrderBy from './_baseOrderBy.js';
-import isArray from './isArray.js';
 
 /**
  * This method is like `sortBy` except that it allows specifying the sort
@@ -33,11 +32,11 @@ function orderBy(collection, iteratees, orders, guard) {
   if (collection == null) {
     return [];
   }
-  if (!isArray(iteratees)) {
+  if (!Array.isArray(iteratees)) {
     iteratees = iteratees == null ? [] : [iteratees];
   }
   orders = guard ? undefined : orders;
-  if (!isArray(orders)) {
+  if (!Array.isArray(orders)) {
     orders = orders == null ? [] : [orders];
   }
   return baseOrderBy(collection, iteratees, orders);

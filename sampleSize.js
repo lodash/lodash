@@ -1,6 +1,5 @@
 import arraySampleSize from './_arraySampleSize.js';
 import baseSampleSize from './_baseSampleSize.js';
-import isArray from './isArray.js';
 import isIterateeCall from './_isIterateeCall.js';
 import toInteger from './toInteger.js';
 
@@ -29,7 +28,7 @@ function sampleSize(collection, n, guard) {
   } else {
     n = toInteger(n);
   }
-  const func = isArray(collection) ? arraySampleSize : baseSampleSize;
+  const func = Array.isArray(collection) ? arraySampleSize : baseSampleSize;
   return func(collection, n);
 }
 

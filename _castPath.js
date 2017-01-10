@@ -1,4 +1,3 @@
-import isArray from './isArray.js';
 import isKey from './_isKey.js';
 import stringToPath from './_stringToPath.js';
 import toString from './toString.js';
@@ -12,7 +11,7 @@ import toString from './toString.js';
  * @returns {Array} Returns the cast property path array.
  */
 function castPath(value, object) {
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     return value;
   }
   return isKey(value, object) ? [value] : stringToPath(toString(value));

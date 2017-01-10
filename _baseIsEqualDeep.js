@@ -3,7 +3,6 @@ import equalArrays from './_equalArrays.js';
 import equalByTag from './_equalByTag.js';
 import equalObjects from './_equalObjects.js';
 import getTag from './_getTag.js';
-import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
 import isTypedArray from './isTypedArray.js';
 
@@ -33,8 +32,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
  */
 function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
-  let objIsArr = isArray(object);
-  const othIsArr = isArray(other);
+  let objIsArr = Array.isArray(object);
+  const othIsArr = Array.isArray(other);
   let objTag = objIsArr ? arrayTag : getTag(object);
   let othTag = othIsArr ? arrayTag : getTag(other);
 

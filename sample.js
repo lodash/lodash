@@ -1,6 +1,5 @@
 import arraySample from './_arraySample.js';
 import baseSample from './_baseSample.js';
-import isArray from './isArray.js';
 
 /**
  * Gets a random element from `collection`.
@@ -16,7 +15,7 @@ import isArray from './isArray.js';
  * // => 2
  */
 function sample(collection) {
-  const func = isArray(collection) ? arraySample : baseSample;
+  const func = Array.isArray(collection) ? arraySample : baseSample;
   return func(collection);
 }
 

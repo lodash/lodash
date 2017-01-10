@@ -1,6 +1,5 @@
 import baseTimes from './_baseTimes.js';
 import isArguments from './isArguments.js';
-import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
 import isIndex from './_isIndex.js';
 import isTypedArray from './isTypedArray.js';
@@ -17,7 +16,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {Array} Returns the array of property names.
  */
 function arrayLikeKeys(value, inherited) {
-  const isArr = isArray(value);
+  const isArr = Array.isArray(value);
   const isArg = !isArr && isArguments(value);
   const isBuff = !isArr && !isArg && isBuffer(value);
   const isType = !isArr && !isArg && !isBuff && isTypedArray(value);

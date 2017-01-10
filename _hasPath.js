@@ -1,6 +1,5 @@
 import castPath from './_castPath.js';
 import isArguments from './isArguments.js';
-import isArray from './isArray.js';
 import isIndex from './_isIndex.js';
 import isLength from './isLength.js';
 import toKey from './_toKey.js';
@@ -34,7 +33,7 @@ function hasPath(object, path, hasFunc) {
   }
   length = object == null ? 0 : object.length;
   return !!length && isLength(length) && isIndex(key, length) &&
-    (isArray(object) || isArguments(object));
+    (Array.isArray(object) || isArguments(object));
 }
 
 export default hasPath;

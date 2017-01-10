@@ -1,7 +1,6 @@
 import baseKeys from './_baseKeys.js';
 import getTag from './_getTag.js';
 import isArguments from './isArguments.js';
-import isArray from './isArray.js';
 import isArrayLike from './isArrayLike.js';
 import isBuffer from './isBuffer.js';
 import isPrototype from './_isPrototype.js';
@@ -51,7 +50,7 @@ function isEmpty(value) {
     return true;
   }
   if (isArrayLike(value) &&
-      (isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
+      (Array.isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {
     return !value.length;
   }

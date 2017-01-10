@@ -1,6 +1,5 @@
 import arrayShuffle from './_arrayShuffle.js';
 import baseShuffle from './_baseShuffle.js';
-import isArray from './isArray.js';
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -17,7 +16,7 @@ import isArray from './isArray.js';
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  const func = isArray(collection) ? arrayShuffle : baseShuffle;
+  const func = Array.isArray(collection) ? arrayShuffle : baseShuffle;
   return func(collection);
 }
 

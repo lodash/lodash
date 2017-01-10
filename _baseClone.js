@@ -13,7 +13,6 @@ import getTag from './_getTag.js';
 import initCloneArray from './_initCloneArray.js';
 import initCloneByTag from './_initCloneByTag.js';
 import initCloneObject from './_initCloneObject.js';
-import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
 import isObject from './isObject.js';
 import keys from './keys.js';
@@ -99,7 +98,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   if (!isObject(value)) {
     return value;
   }
-  const isArr = isArray(value);
+  const isArr = Array.isArray(value);
   if (isArr) {
     result = initCloneArray(value);
     if (!isDeep) {

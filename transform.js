@@ -2,7 +2,6 @@ import arrayEach from './_arrayEach.js';
 import baseCreate from './_baseCreate.js';
 import baseForOwn from './_baseForOwn.js';
 import getPrototype from './_getPrototype.js';
-import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
 import isFunction from './isFunction.js';
 import isObject from './isObject.js';
@@ -38,7 +37,7 @@ import isTypedArray from './isTypedArray.js';
  * // => { '1': ['a', 'c'], '2': ['b'] }
  */
 function transform(object, iteratee, accumulator) {
-  const isArr = isArray(object);
+  const isArr = Array.isArray(object);
   const isArrLike = isArr || isBuffer(object) || isTypedArray(object);
 
   if (accumulator == null) {

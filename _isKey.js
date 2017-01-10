@@ -1,4 +1,3 @@
-import isArray from './isArray.js';
 import isSymbol from './isSymbol.js';
 
 /** Used to match property names within property paths. */
@@ -14,7 +13,7 @@ const reIsPlainProp = /^\w*$/;
  * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
  */
 function isKey(value, object) {
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     return false;
   }
   const type = typeof value;

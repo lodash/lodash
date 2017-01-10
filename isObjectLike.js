@@ -15,7 +15,7 @@
  * isObjectLike([1, 2, 3]);
  * // => true
  *
- * isObjectLike(noop);
+ * isObjectLike(Function);
  * // => false
  *
  * isObjectLike(null);

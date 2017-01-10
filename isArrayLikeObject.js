@@ -22,7 +22,7 @@ import isObjectLike from './isObjectLike.js';
  * isArrayLikeObject('abc');
  * // => false
  *
- * isArrayLikeObject(noop);
+ * isArrayLikeObject(Function);
  * // => false
  */
 function isArrayLikeObject(value) {

@@ -16,7 +16,7 @@
  * isObject([1, 2, 3]);
  * // => true
  *
- * isObject(noop);
+ * isObject(Function);
  * // => true
  *
  * isObject(null);

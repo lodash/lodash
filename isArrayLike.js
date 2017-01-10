@@ -22,7 +22,7 @@ import isLength from './isLength.js';
  * isArrayLike('abc');
  * // => true
  *
- * isArrayLike(noop);
+ * isArrayLike(Function);
  * // => false
  */
 function isArrayLike(value) {

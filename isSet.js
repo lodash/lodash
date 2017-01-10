@@ -1,5 +1,4 @@
 import baseIsSet from './_baseIsSet.js';
-import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
@@ -22,6 +21,8 @@ const nodeIsSet = nodeUtil && nodeUtil.isSet;
  * _.isSet(new WeakSet);
  * // => false
  */
-const isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
+const isSet = nodeIsSet
+  ? value => nodeIsSet(value)
+  : baseIsSet;
 
 export default isSet;

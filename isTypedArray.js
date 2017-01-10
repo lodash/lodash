@@ -1,5 +1,4 @@
 import baseIsTypedArray from './_baseIsTypedArray.js';
-import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
@@ -22,6 +21,8 @@ const nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
  * _.isTypedArray([]);
  * // => false
  */
-const isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+const isTypedArray = nodeIsTypedArray
+  ? value => nodeIsTypedArray(value)
+  : baseIsTypedArray;
 
 export default isTypedArray;

@@ -1,5 +1,4 @@
 import baseIsMap from './_baseIsMap.js';
-import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
@@ -22,6 +21,8 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap;
  * _.isMap(new WeakMap);
  * // => false
  */
-const isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
+const isMap = nodeIsMap
+  ? value => nodeIsMap(value)
+  : baseIsMap;
 
 export default isMap;

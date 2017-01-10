@@ -1,5 +1,4 @@
 import baseIsRegExp from './_baseIsRegExp.js';
-import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
@@ -22,6 +21,8 @@ const nodeIsRegExp = nodeUtil && nodeUtil.isRegExp;
  * _.isRegExp('/abc/');
  * // => false
  */
-const isRegExp = nodeIsRegExp ? baseUnary(nodeIsRegExp) : baseIsRegExp;
+const isRegExp = nodeIsRegExp
+  ? value => nodeIsRegExp(value)
+  : baseIsRegExp;
 
 export default isRegExp;

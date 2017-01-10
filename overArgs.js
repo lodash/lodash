@@ -2,8 +2,6 @@ import apply from './_apply.js';
 import arrayMap from './_arrayMap.js';
 import baseFlatten from './_baseFlatten.js';
 import baseIteratee from './_baseIteratee.js';
-import baseUnary from './_baseUnary.js';
-import isArray from './isArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMin = Math.min;
@@ -40,10 +38,7 @@ const nativeMin = Math.min;
  * // => [100, 10]
  */
 function overArgs(func, ...transforms) {
-  transforms = (transforms.length == 1 && isArray(transforms[0]))
-    ? arrayMap(transforms[0], baseUnary(baseIteratee))
-    : arrayMap(baseFlatten(transforms, 1), baseUnary(baseIteratee));
-
+  transforms = arrayMap(transforms, transform => baseIteratee(transform));
   const funcsLength = transforms.length;
   return function(...args) {
     let index = -1;

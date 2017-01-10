@@ -1,5 +1,4 @@
 import baseIsArrayBuffer from './_baseIsArrayBuffer.js';
-import baseUnary from './_baseUnary.js';
 import nodeUtil from './_nodeUtil.js';
 
 /* Node.js helper references. */
@@ -22,6 +21,8 @@ const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
  * _.isArrayBuffer(new Array(2));
  * // => false
  */
-const isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
+const isArrayBuffer = nodeIsArrayBuffer
+  ? value => nodeIsArrayBuffer(value)
+  : baseIsArrayBuffer;
 
 export default isArrayBuffer;

@@ -2,7 +2,6 @@ import SetCache from './_SetCache.js';
 import arrayIncludes from './_arrayIncludes.js';
 import arrayIncludesWith from './_arrayIncludesWith.js';
 import arrayMap from './_arrayMap.js';
-import baseUnary from './_baseUnary.js';
 import cacheHas from './_cacheHas.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -32,7 +31,7 @@ function baseIntersection(arrays, iteratee, comparator) {
   while (othIndex--) {
     array = arrays[othIndex];
     if (othIndex && iteratee) {
-      array = arrayMap(array, baseUnary(iteratee));
+      array = arrayMap(array, valye => iteratee(value));
     }
     maxLength = nativeMin(array.length, maxLength);
     caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))

@@ -1,7 +1,6 @@
 import arrayMap from './_arrayMap.js';
 import baseIndexOf from './_baseIndexOf.js';
 import baseIndexOfWith from './_baseIndexOfWith.js';
-import baseUnary from './_baseUnary.js';
 import copyArray from './_copyArray.js';
 
 /** Used for built-in method references. */
@@ -32,7 +31,7 @@ function basePullAll(array, values, iteratee, comparator) {
     values = copyArray(values);
   }
   if (iteratee) {
-    seen = arrayMap(array, baseUnary(iteratee));
+    seen = arrayMap(array, value => iteratee(value));
   }
   while (++index < length) {
     let fromIndex = 0;

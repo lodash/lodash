@@ -21,7 +21,8 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * _.without([2, 1, 2, 3], 1, 2);
  * // => [3]
  */
-const without = (array, ...values) =>
-  isArrayLikeObject(array) ? baseDifference(array, values) : [];
+function without(array, ...values) {
+  return isArrayLikeObject(array) ? baseDifference(array, values) : [];
+}
 
 export default without;

@@ -62,7 +62,6 @@ function memoize(func, resolver) {
   return memoized;
 }
 
-// Expose `MapCache`.
 memoize.Cache = MapCache;
 
 export default memoize;

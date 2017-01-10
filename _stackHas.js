@@ -8,7 +8,7 @@
  * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
  */
 function stackHas(key) {
-  return this.__data_has(key);
+  return this.__data__.has(key);
 }
 
 export default stackHas;

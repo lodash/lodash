@@ -12,7 +12,7 @@ const HASH_UNDEFINED = '__lodash_hash_undefined__';
  * @returns {Object} Returns the cache instance.
  */
 function setCacheAdd(value) {
-  this.__data_set(value, HASH_UNDEFINED);
+  this.__data__.set(value, HASH_UNDEFINED);
   return this;
 }
 

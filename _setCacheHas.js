@@ -8,7 +8,7 @@
  * @returns {number} Returns `true` if `value` is found, else `false`.
  */
 function setCacheHas(value) {
-  return this.__data_has(value);
+  return this.__data__.has(value);
 }
 
 export default setCacheHas;

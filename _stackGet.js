@@ -8,7 +8,7 @@
  * @returns {*} Returns the entry value.
  */
 function stackGet(key) {
-  return this.__data_get(key);
+  return this.__data__.get(key);
 }
 
 export default stackGet;

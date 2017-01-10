@@ -6,7 +6,6 @@ import baseCreate from './.internal/baseCreate.js';
  * `properties` object is given, its own enumerable string keyed properties
  * are assigned to the created object.
  *
- * @static
  * @since 2.3.0
  * @category Object
  * @param {Object} prototype The object to inherit from.

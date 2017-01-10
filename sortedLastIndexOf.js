@@ -5,7 +5,6 @@ import eq from './eq.js';
  * This method is like `lastIndexOf` except that it performs a binary
  * search on a sorted `array`.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.

@@ -8,7 +8,6 @@ import baseSet from './.internal/baseSet.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 3.7.0
  * @category Object
  * @param {Object} object The object to modify.

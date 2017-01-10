@@ -7,7 +7,6 @@ const symbolTag = '[object Symbol]';
 /**
  * Checks if `value` is classified as a `Symbol` primitive or object.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.

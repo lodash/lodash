@@ -5,7 +5,6 @@ import toInteger from './toInteger.js';
  * of the created function, while it's called less than `n` times. Subsequent
  * calls to the created function return the result of the last `func` invocation.
  *
- * @static
  * @since 3.0.0
  * @category Function
  * @param {number} n The number of calls at which `func` is no longer invoked.

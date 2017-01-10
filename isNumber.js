@@ -10,7 +10,6 @@ const numberTag = '[object Number]';
  * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are
  * classified as numbers, use the `isFinite` method.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.

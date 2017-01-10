@@ -13,7 +13,6 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source);
  * **Note:** No other HTML entities are unescaped. To unescape additional
  * HTML entities use a third-party library like [_he_](https://mths.be/he).
  *
- * @static
  * @since 0.6.0
  * @category String
  * @param {string} [string=''] The string to unescape.

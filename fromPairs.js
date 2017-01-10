@@ -2,7 +2,6 @@
  * The inverse of `toPairs`; this method returns an object composed
  * from key-value `pairs`.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} pairs The key-value pairs.

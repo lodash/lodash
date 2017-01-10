@@ -3,7 +3,6 @@
  * its place. The `defaultValue` is returned if `value` is `NaN`, `null`,
  * or `undefined`.
  *
- * @static
  * @since 4.14.0
  * @category Util
  * @param {*} value The value to check.

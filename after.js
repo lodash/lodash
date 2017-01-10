@@ -4,7 +4,6 @@ import toInteger from './toInteger.js';
  * The opposite of `before`; this method creates a function that invokes
  * `func` once it's called `n` or more times.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {number} n The number of calls before `func` is invoked.

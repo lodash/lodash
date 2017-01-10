@@ -5,7 +5,6 @@ import toNumber from './toNumber.js';
  * Invokes `func` after `wait` milliseconds. Any additional arguments are
  * provided to `func` when it's invoked.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to delay.

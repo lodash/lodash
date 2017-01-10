@@ -3,7 +3,6 @@ import createMathOperation from './.internal/createMathOperation.js';
 /**
  * Multiply two numbers.
  *
- * @static
  * @since 4.7.0
  * @category Math
  * @param {number} multiplier The first number in a multiplication.

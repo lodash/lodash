@@ -9,7 +9,6 @@ import isArrayLike from './isArrayLike.js';
  * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
  * for more details.
  *
- * @static
  * @since 0.1.0
  * @category Object
  * @param {Object} object The object to query.

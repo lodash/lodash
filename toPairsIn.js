@@ -6,7 +6,6 @@ import keysIn from './keysIn.js';
  * for `object` which can be consumed by `fromPairs`. If `object` is a map
  * or set, its entries are returned.
  *
- * @static
  * @since 4.0.0
  * @alias entriesIn
  * @category Object

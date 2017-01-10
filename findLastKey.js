@@ -5,7 +5,6 @@ import baseForOwnRight from './.internal/baseForOwnRight.js';
  * This method is like `findKey` except that it iterates over elements of
  * a collection in the opposite order.
  *
- * @static
  * @since 2.0.0
  * @category Object
  * @param {Object} object The object to inspect.

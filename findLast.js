@@ -5,7 +5,6 @@ import findLastIndex from './findLastIndex.js';
  * This method is like `find` except that it iterates over elements of
  * `collection` from right to left.
  *
- * @static
  * @since 2.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to inspect.

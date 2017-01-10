@@ -6,7 +6,6 @@ import toString from './toString.js';
 /**
  * Checks if `string` starts with the given target string.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to inspect.

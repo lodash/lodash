@@ -6,7 +6,6 @@ import findIndex from './findIndex.js';
  * `predicate` returns truthy for. The predicate is invoked with three
  * arguments: (value, index|key, collection).
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to inspect.

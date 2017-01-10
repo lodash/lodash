@@ -5,7 +5,6 @@ import createOver from './.internal/createOver.js';
  * Creates a function that invokes `iteratees` with the arguments it receives
  * and returns their results.
  *
- * @static
  * @since 4.0.0
  * @category Util
  * @param {...(Function|Function[])} [iteratees=[identity]]

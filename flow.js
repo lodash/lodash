@@ -5,7 +5,6 @@ import createFlow from './.internal/createFlow.js';
  * with the `this` binding of the created function, where each successive
  * invocation is supplied the return value of the previous.
  *
- * @static
  * @since 3.0.0
  * @category Util
  * @param {...(Function|Function[])} [funcs] The functions to invoke.

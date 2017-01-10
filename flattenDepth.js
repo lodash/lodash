@@ -4,7 +4,6 @@ import toInteger from './toInteger.js';
 /**
  * Recursively flatten `array` up to `depth` times.
  *
- * @static
  * @since 4.4.0
  * @category Array
  * @param {Array} array The array to flatten.

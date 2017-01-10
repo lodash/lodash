@@ -5,7 +5,6 @@ import baseInvoke from './.internal/baseInvoke.js';
  * the method at a given path of `object`. Any additional arguments are
  * provided to the invoked method.
  *
- * @static
  * @since 3.7.0
  * @category Util
  * @param {Object} object The object to query.

@@ -3,7 +3,6 @@ import baseInvoke from './.internal/baseInvoke.js';
 /**
  * Invokes the method at `path` of `object`.
  *
- * @static
  * @since 4.0.0
  * @category Object
  * @param {Object} object The object to query.

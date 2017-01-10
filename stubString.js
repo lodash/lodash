@@ -1,7 +1,6 @@
 /**
  * This method returns an empty string.
  *
- * @static
  * @since 4.13.0
  * @category Util
  * @returns {string} Returns the empty string.

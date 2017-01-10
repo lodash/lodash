@@ -5,7 +5,6 @@ import baseWhile from './.internal/baseWhile.js';
  * taken until `predicate` returns falsey. The predicate is invoked with
  * three arguments: (value, index, array).
  *
- * @static
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to query.

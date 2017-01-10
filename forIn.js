@@ -7,7 +7,6 @@ import keysIn from './keysIn.js';
  * with three arguments: (value, key, object). Iteratee functions may exit
  * iteration early by explicitly returning `false`.
  *
- * @static
  * @since 0.3.0
  * @category Object
  * @param {Object} object The object to iterate over.

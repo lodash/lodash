@@ -10,7 +10,6 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * **Note:** This method is based on
  * [`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.

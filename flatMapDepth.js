@@ -6,7 +6,6 @@ import toInteger from './toInteger.js';
  * This method is like `flatMap` except that it recursively flattens the
  * mapped results up to `depth` times.
  *
- * @static
  * @since 4.7.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

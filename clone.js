@@ -14,7 +14,6 @@ const CLONE_SYMBOLS_FLAG = 4;
  * as plain objects. An empty object is returned for uncloneable values such
  * as error objects, functions, DOM nodes, and WeakMaps.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to clone.

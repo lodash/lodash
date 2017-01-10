@@ -6,7 +6,6 @@ import baseUniq from './.internal/baseUniq.js';
  * determined by the order they occur in the array.The comparator is invoked
  * with two arguments: (arrVal, othVal).
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.

@@ -7,7 +7,6 @@ import baseUpdate from './.internal/baseUpdate.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 4.6.0
  * @category Object
  * @param {Object} object The object to modify.

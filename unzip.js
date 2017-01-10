@@ -12,7 +12,6 @@ const nativeMax = Math.max;
  * elements and creates an array regrouping the elements to their pre-zip
  * configuration.
  *
- * @static
  * @since 1.2.0
  * @category Array
  * @param {Array} array The array of grouped elements to process.

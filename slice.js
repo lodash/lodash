@@ -9,7 +9,6 @@ import toInteger from './toInteger.js';
  * [`Array#slice`](https://mdn.io/Array/slice) to ensure dense arrays are
  * returned.
  *
- * @static
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to slice.

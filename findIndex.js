@@ -8,7 +8,6 @@ const nativeMax = Math.max;
  * This method is like `find` except that it returns the index of the first
  * element `predicate` returns truthy for instead of the element itself.
  *
- * @static
  * @since 1.1.0
  * @category Array
  * @param {Array} array The array to inspect.

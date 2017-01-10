@@ -8,7 +8,6 @@ import mergeWith from './mergeWith.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 3.10.0
  * @category Object
  * @param {Object} object The destination object.

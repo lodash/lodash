@@ -18,7 +18,6 @@ const nativeRandom = Math.random;
  * **Note:** JavaScript follows the IEEE-754 standard for resolving
  * floating-point values which can produce unexpected results.
  *
- * @static
  * @since 0.7.0
  * @category Number
  * @param {number} [lower=0] The lower bound.

@@ -5,7 +5,6 @@ import keys from './keys.js';
  * Creates an array of function property names from own enumerable properties
  * of `object`.
  *
- * @static
  * @since 0.1.0
  * @category Object
  * @param {Object} object The object to inspect.

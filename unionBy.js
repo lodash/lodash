@@ -10,7 +10,6 @@ import last from './last.js';
  * array in which the value occurs. The iteratee is invoked with one argument:
  * (value).
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.

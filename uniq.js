@@ -7,7 +7,6 @@ import baseUniq from './.internal/baseUniq.js';
  * is kept. The order of result values is determined by the order they occur
  * in the array.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.

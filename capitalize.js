@@ -5,7 +5,6 @@ import upperFirst from './upperFirst.js';
  * Converts the first character of `string` to upper case and the remaining
  * to lower case.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to capitalize.

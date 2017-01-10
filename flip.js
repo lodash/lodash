@@ -6,7 +6,6 @@ const WRAP_FLIP_FLAG = 512;
 /**
  * Creates a function that invokes `func` with arguments reversed.
  *
- * @static
  * @since 4.0.0
  * @category Function
  * @param {Function} func The function to flip arguments for.

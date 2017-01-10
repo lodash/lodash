@@ -19,7 +19,6 @@ const WRAP_PARTIAL_FLAG = 32;
  * The `bindKey.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
  *
- * @static
  * @since 0.10.0
  * @category Function
  * @param {Object} object The object to invoke the method on.

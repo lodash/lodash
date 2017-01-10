@@ -7,7 +7,6 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * for equality comparisons.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.

@@ -6,7 +6,6 @@ import keys from './keys.js';
  * which can be consumed by `fromPairs`. If `object` is a map or set, its
  * entries are returned.
  *
- * @static
  * @since 4.0.0
  * @alias entries
  * @category Object

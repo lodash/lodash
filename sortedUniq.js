@@ -4,7 +4,6 @@ import baseSortedUniq from './.internal/baseSortedUniq.js';
  * This method is like `uniq` except that it's designed and optimized
  * for sorted arrays.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.

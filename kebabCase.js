@@ -4,7 +4,6 @@ import createCompounder from './.internal/createCompounder.js';
  * Converts `string` to
  * [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.

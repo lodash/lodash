@@ -10,7 +10,6 @@ const reTrimEnd = /\s+$/;
 /**
  * Removes trailing whitespace or specified characters from `string`.
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to trim.

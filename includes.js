@@ -14,7 +14,6 @@ const nativeMax = Math.max;
  * is used for equality comparisons. If `fromIndex` is negative, it's used as
  * the offset from the end of `collection`.
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object|string} collection The collection to inspect.

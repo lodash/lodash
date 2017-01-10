@@ -3,7 +3,6 @@
  * `func` predicate is invoked with the `this` binding and arguments of the
  * created function.
  *
- * @static
  * @since 3.0.0
  * @category Function
  * @param {Function} predicate The predicate to negate.

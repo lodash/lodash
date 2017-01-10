@@ -10,7 +10,6 @@ import isIndex from './.internal/isIndex.js';
  *
  * **Note:** Unlike `at`, this method mutates `array`.
  *
- * @static
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to modify.

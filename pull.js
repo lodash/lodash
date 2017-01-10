@@ -8,7 +8,6 @@ import pullAll from './pullAll.js';
  * **Note:** Unlike `without`, this method mutates `array`. Use `remove`
  * to remove elements from an array by predicate.
  *
- * @static
  * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.

@@ -7,7 +7,6 @@ import toInteger from './toInteger.js';
  * Gets `n` random elements at unique keys from `collection` up to the
  * size of `collection`.
  *
- * @static
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to sample.

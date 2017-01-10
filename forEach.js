@@ -10,7 +10,6 @@ import baseEach from './.internal/baseEach.js';;
  * property are iterated like arrays. To avoid this behavior use `forIn`
  * or `forOwn` for object iteration.
  *
- * @static
  * @since 0.1.0
  * @alias each
  * @category Collection

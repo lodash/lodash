@@ -16,7 +16,6 @@ import isTypedArray from './isTypedArray.js';
  * iteratee is invoked with four arguments: (accumulator, value, key, object).
  * Iteratee functions may exit iteration early by explicitly returning `false`.
  *
- * @static
  * @since 1.3.0
  * @category Object
  * @param {Object} object The object to iterate over.

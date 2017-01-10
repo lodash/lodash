@@ -7,7 +7,6 @@ const nativeMin = Math.min;
 /**
  * Creates a function that invokes `func` with its arguments transformed.
  *
- * @static
  * @since 4.0.0
  * @category Function
  * @param {Function} func The function to wrap.

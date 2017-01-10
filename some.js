@@ -7,7 +7,6 @@ import isIterateeCall from './.internal/isIterateeCall.js';
  * Iteration is stopped once `predicate` returns truthy. The predicate is
  * invoked with three arguments: (value, index|key, collection).
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

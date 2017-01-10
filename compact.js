@@ -2,7 +2,6 @@
  * Creates an array with all falsey values removed. The values `false`, `null`,
  * `0`, `""`, `undefined`, and `NaN` are falsey.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to compact.

@@ -5,7 +5,6 @@ import keysIn from './keysIn.js';
  * Creates an array of function property names from own and inherited
  * enumerable properties of `object`.
  *
- * @static
  * @since 4.0.0
  * @category Object
  * @param {Object} object The object to inspect.

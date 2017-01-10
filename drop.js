@@ -4,7 +4,6 @@ import toInteger from './toInteger.js';
 /**
  * Creates a slice of `array` with `n` elements dropped from the beginning.
  *
- * @static
  * @since 0.5.0
  * @category Array
  * @param {Array} array The array to query.

@@ -13,7 +13,6 @@ import MapCache from './.internal/MapCache.js';
  * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
  * method interface of `clear`, `delete`, `get`, `has`, and `set`.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to have its output memoized.

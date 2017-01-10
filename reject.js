@@ -6,7 +6,6 @@ import negate from './negate.js';
  * The opposite of `filter`; this method returns the elements of `collection`
  * that `predicate` does **not** return truthy for.
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

@@ -6,7 +6,6 @@ import copyArray from './.internal/copyArray.js';
  * Creates a new array concatenating `array` with any additional arrays
  * and/or values.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to concatenate.

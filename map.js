@@ -15,7 +15,6 @@ import baseMap from './.internal/baseMap.js';
  * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
  * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

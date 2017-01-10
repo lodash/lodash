@@ -5,7 +5,6 @@ import toInteger from './toInteger.js';
  * Gets the element at index `n` of `array`. If `n` is negative, the nth
  * element from the end is returned.
  *
- * @static
  * @since 4.11.0
  * @category Array
  * @param {Array} array The array to query.

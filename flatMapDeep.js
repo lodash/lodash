@@ -8,7 +8,6 @@ const INFINITY = 1 / 0;
  * This method is like `flatMap` except that it recursively flattens the
  * mapped results.
  *
- * @static
  * @since 4.7.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

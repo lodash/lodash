@@ -8,7 +8,6 @@ import reInterpolate from './.internal/reInterpolate.js';
  * embedded Ruby (ERB) as well as ES2015 template strings. Change the
  * following template settings to use alternative delimiters.
  *
- * @static
  * @type {Object}
  */
 const templateSettings = {

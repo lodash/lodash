@@ -11,7 +11,6 @@ const MAX_ARRAY_LENGTH = 4294967295;
  * **Note:** This method is based on
  * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to convert.

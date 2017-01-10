@@ -5,7 +5,6 @@ import baseForOwn from './.internal/baseForOwn.js';
  * This method is like `find` except that it returns the key of the first
  * element `predicate` returns truthy for instead of the element itself.
  *
- * @static
  * @since 1.1.0
  * @category Object
  * @param {Object} object The object to inspect.

@@ -3,7 +3,6 @@ import createMathOperation from './.internal/createMathOperation.js';
 /**
  * Divide two numbers.
  *
- * @static
  * @since 4.7.0
  * @category Math
  * @param {number} dividend The first number in a division.

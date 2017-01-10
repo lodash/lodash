@@ -2,7 +2,6 @@
 /**
  * Casts `value` as an array if it's not one.
  *
- * @static
  * @since 4.4.0
  * @category Lang
  * @param {*} value The value to inspect.

@@ -10,7 +10,6 @@ import createAssigner from './.internal/createAssigner.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 4.0.0
  * @category Object
  * @param {Object} object The destination object.

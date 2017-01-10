@@ -7,7 +7,6 @@ import identity from './identity.js';
  * If `object` contains duplicate values, subsequent values overwrite
  * property assignments of previous values.
  *
- * @static
  * @since 0.7.0
  * @category Object
  * @param {Object} object The object to invert.

@@ -8,7 +8,6 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * Converts `value` to a safe integer. A safe integer can be compared and
  * represented correctly.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to convert.

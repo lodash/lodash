@@ -10,7 +10,6 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * responsible for generating the inverted value. The iteratee is invoked
  * with one argument: (value).
  *
- * @static
  * @since 4.1.0
  * @category Object
  * @param {Object} object The object to invert.

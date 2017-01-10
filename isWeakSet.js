@@ -7,7 +7,6 @@ const weakSetTag = '[object WeakSet]';
 /**
  * Checks if `value` is classified as a `WeakSet` object.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

@@ -7,7 +7,6 @@ const nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
 /**
  * Checks if `value` is classified as a typed array.
  *
- * @static
  * @since 3.0.0
  * @category Lang
  * @param {*} value The value to check.

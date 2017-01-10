@@ -3,7 +3,6 @@ import createCompounder from './.internal/createCompounder.js';
 /**
  * Converts `string`, as space separated words, to upper case.
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.

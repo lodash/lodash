@@ -3,7 +3,6 @@ import createMathOperation from './.internal/createMathOperation.js';
 /**
  * Adds two numbers.
  *
- * @static
  * @since 3.4.0
  * @category Math
  * @param {number} augend The first number in an addition.

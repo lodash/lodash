@@ -7,7 +7,6 @@ const WRAP_ARY_FLAG = 128;
  * Creates a function that invokes `func`, with up to `n` arguments,
  * ignoring any additional arguments.
  *
- * @static
  * @since 3.0.0
  * @category Function
  * @param {Function} func The function to cap arguments for.

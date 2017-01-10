@@ -6,7 +6,6 @@ import unicodeWords from './.internal/unicodeWords.js';
 /**
  * Splits `string` into an array of its words.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to inspect.

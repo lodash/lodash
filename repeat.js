@@ -6,7 +6,6 @@ import toString from './toString.js';
 /**
  * Repeats the given string `n` times.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to repeat.

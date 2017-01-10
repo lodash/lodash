@@ -16,7 +16,6 @@ const WRAP_PARTIAL_FLAG = 32;
  * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
  * property of bound functions.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to bind.

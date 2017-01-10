@@ -8,7 +8,6 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  *
  * **Note:** Unlike `pull`, this method returns a new array.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.

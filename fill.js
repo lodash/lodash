@@ -7,7 +7,6 @@ import isIterateeCall from './.internal/isIterateeCall.js';
  *
  * **Note:** This method mutates `array`.
  *
- * @static
  * @since 3.2.0
  * @category Array
  * @param {Array} array The array to fill.

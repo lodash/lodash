@@ -11,7 +11,6 @@ const nativeMin = Math.min;
  * This method is like `indexOf` except that it iterates over elements of
  * `array` from right to left.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.

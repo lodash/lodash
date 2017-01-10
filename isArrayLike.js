@@ -6,7 +6,6 @@ import isLength from './isLength.js';
  * not a function and has a `value.length` that's an integer greater than or
  * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.

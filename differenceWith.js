@@ -11,7 +11,6 @@ import last from './last.js';
  *
  * **Note:** Unlike `pullAllWith`, this method returns a new array.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.

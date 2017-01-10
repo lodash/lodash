@@ -8,7 +8,6 @@ const NAN = 0 / 0;
  * invoked for each element in `array` to generate the value to be averaged.
  * The iteratee is invoked with one argument: (value).
  *
- * @static
  * @since 4.7.0
  * @category Math
  * @param {Array} array The array to iterate over.

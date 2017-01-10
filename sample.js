@@ -4,7 +4,6 @@ import baseSample from './.internal/baseSample.js';
 /**
  * Gets a random element from `collection`.
  *
- * @static
  * @since 2.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to sample.

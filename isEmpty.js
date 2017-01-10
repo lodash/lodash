@@ -23,7 +23,6 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * jQuery-like collections are considered empty if they have a `length` of `0`.
  * Similarly, maps and sets are considered empty if they have a `size` of `0`.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.

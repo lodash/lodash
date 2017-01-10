@@ -9,7 +9,6 @@ const WRAP_REARG_FLAG = 256;
  * provided as the first argument, the argument value at the second index is
  * provided as the second argument, and so on.
  *
- * @static
  * @since 3.0.0
  * @category Function
  * @param {Function} func The function to rearrange arguments for.

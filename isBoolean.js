@@ -7,7 +7,6 @@ const boolTag = '[object Boolean]';
 /**
  * Checks if `value` is classified as a boolean primitive or object.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.

@@ -6,7 +6,6 @@ import baseOrderBy from './.internal/baseOrderBy.js';
  * are sorted in ascending order. Otherwise, specify an order of "desc" for
  * descending or "asc" for ascending sort order of corresponding values.
  *
- * @static
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

@@ -8,7 +8,6 @@ import toNumber from './toNumber.js';
  * If `start` is greater than `end` the params are swapped to support
  * negative ranges.
  *
- * @static
  * @since 3.3.0
  * @category Number
  * @param {number} number The number to check.

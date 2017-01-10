@@ -7,7 +7,6 @@ import arrayMap from './.internal/arrayMap.js';
  * pairs are invoked with the `this` binding and arguments of the created
  * function.
  *
- * @static
  * @since 4.0.0
  * @category Util
  * @param {Array} pairs The predicate-function pairs.

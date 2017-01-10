@@ -19,7 +19,6 @@ const nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
 /**
  * Checks if `value` is a buffer.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

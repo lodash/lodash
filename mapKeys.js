@@ -7,7 +7,6 @@ import baseForOwn from './.internal/baseForOwn.js';
  * string keyed property of `object` thru `iteratee`. The iteratee is invoked
  * with three arguments: (value, key, object).
  *
- * @static
  * @since 3.8.0
  * @category Object
  * @param {Object} object The object to iterate over.

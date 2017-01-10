@@ -3,7 +3,6 @@
  * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * comparison between two values to determine if they are equivalent.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to compare.

@@ -7,7 +7,6 @@ const argsTag = '[object Arguments]';
 /**
  * Checks if `value` is likely an `arguments` object.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.

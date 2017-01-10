@@ -22,7 +22,6 @@ const freeParseInt = parseInt;
 /**
  * Converts `value` to a number.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to process.

@@ -8,7 +8,6 @@ import keys from './keys.js';
  * **Note:** This method is equivalent to `conforms` when `source` is
  * partially applied.
  *
- * @static
  * @since 4.14.0
  * @category Lang
  * @param {Object} object The object to inspect.

@@ -27,7 +27,6 @@ const reIsNative = RegExp(`^${
 /**
  * Checks if `value` is a pristine native function.
  *
- * @static
  * @since 3.0.0
  * @category Lang
  * @param {*} value The value to check.

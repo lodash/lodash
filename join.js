@@ -4,7 +4,6 @@ const nativeJoin = Array.prototype.join;
 /**
  * Converts all elements in `array` into a string separated by `separator`.
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to convert.

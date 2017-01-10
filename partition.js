@@ -6,7 +6,6 @@ import createAggregator from './.internal/createAggregator.js';
  * contains elements `predicate` returns falsey for. The predicate is
  * invoked with one argument: (value).
  *
- * @static
  * @since 3.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

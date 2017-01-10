@@ -10,7 +10,6 @@ import baseIsEqual from './.internal/baseIsEqual.js';
  * by their own, not inherited, enumerable properties. Functions and DOM
  * nodes are compared by strict equality, i.e. `===`.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to compare.

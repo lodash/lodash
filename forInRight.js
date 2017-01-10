@@ -5,7 +5,6 @@ import keysIn from './keysIn.js';
  * This method is like `forIn` except that it iterates over properties of
  * `object` in the opposite order.
  *
- * @static
  * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.

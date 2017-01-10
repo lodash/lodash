@@ -4,7 +4,6 @@ import toString from './toString.js';
  * Converts `string`, as a whole, to upper case just like
  * [String#toUpperCase](https://mdn.io/toUpperCase).
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.

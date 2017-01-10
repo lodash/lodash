@@ -9,7 +9,6 @@ import createRange from './.internal/createRange.js';
  * **Note:** JavaScript follows the IEEE-754 standard for resolving
  * floating-point values which can produce unexpected results.
  *
- * @static
  * @since 0.1.0
  * @category Util
  * @param {number} [start=0] The start of the range.

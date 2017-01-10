@@ -17,7 +17,6 @@ import baseReduce from './.internal/baseReduce.js';
  * `assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `orderBy`,
  * and `sortBy`
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

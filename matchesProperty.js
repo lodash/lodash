@@ -13,7 +13,6 @@ const CLONE_DEEP_FLAG = 1;
  * `srcValue` values against any array or object value, respectively. See
  * `isEqual` for a list of supported value comparisons.
  *
- * @static
  * @since 3.2.0
  * @category Util
  * @param {Array|string} path The path of the property to get.

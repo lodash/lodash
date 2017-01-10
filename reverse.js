@@ -8,7 +8,6 @@ const nativeReverse = Array.prototype.reverse;
  * **Note:** This method mutates `array` and is based on
  * [`Array#reverse`](https://mdn.io/Array/reverse).
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to modify.

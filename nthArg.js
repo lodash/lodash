@@ -5,7 +5,6 @@ import toInteger from './toInteger.js';
  * Creates a function that gets the argument at index `n`. If `n` is negative,
  * the nth argument from the end is returned.
  *
- * @static
  * @since 4.0.0
  * @category Util
  * @param {number} [n=0] The index of the argument to return.

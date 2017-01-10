@@ -11,7 +11,6 @@ const nativeFloor = Math.floor;
  * Pads `string` on the left and right sides if it's shorter than `length`.
  * Padding characters are truncated if they can't be evenly divided by `length`.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to pad.

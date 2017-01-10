@@ -3,7 +3,6 @@ import createCaseFirst from './.internal/createCaseFirst.js';
 /**
  * Converts the first character of `string` to upper case.
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.

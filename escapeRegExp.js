@@ -11,7 +11,6 @@ const reHasRegExpChar = RegExp(reRegExpChar.source);
  * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
  * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to escape.

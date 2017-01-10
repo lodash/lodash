@@ -26,7 +26,6 @@ const nativeMin = Math.min;
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `debounce` and `throttle`.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to debounce.

@@ -4,7 +4,6 @@ import identity from './identity.js';
 /**
  * Computes the sum of the values in `array`.
  *
- * @static
  * @since 3.4.0
  * @category Math
  * @param {Array} array The array to iterate over.

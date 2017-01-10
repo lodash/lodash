@@ -11,7 +11,6 @@ const reTrim = /^\s+|\s+$/g;
 /**
  * Removes leading and trailing whitespace or specified characters from `string`.
  *
- * @static
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to trim.

@@ -9,7 +9,6 @@ import toKey from './.internal/toKey.js';
  *
  * **Note:** This method doesn't set the "length" property of bound functions.
  *
- * @static
  * @since 0.1.0
  * @category Util
  * @param {Object} object The object to bind and assign the bound methods to.

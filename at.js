@@ -3,7 +3,6 @@ import baseAt from './.internal/baseAt.js';
 /**
  * Creates an array of values corresponding to `paths` of `object`.
  *
- * @static
  * @since 1.0.0
  * @category Object
  * @param {Object} object The object to iterate over.

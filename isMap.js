@@ -7,7 +7,6 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap;
 /**
  * Checks if `value` is classified as a `Map` object.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

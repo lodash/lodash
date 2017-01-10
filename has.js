@@ -4,7 +4,6 @@ import hasPath from './.internal/hasPath.js';
 /**
  * Checks if `path` is a direct property of `object`.
  *
- * @static
  * @since 0.1.0
  * @category Object
  * @param {Object} object The object to query.

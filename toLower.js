@@ -4,7 +4,6 @@ import toString from './toString.js';
  * Converts `string`, as a whole, to lower case just like
  * [String#toLowerCase](https://mdn.io/toLowerCase).
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.

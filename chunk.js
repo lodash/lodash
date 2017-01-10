@@ -11,7 +11,6 @@ const nativeMax = Math.max;
  * If `array` can't be split evenly, the final chunk will be the remaining
  * elements.
  *
- * @static
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to process.

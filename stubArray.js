@@ -1,7 +1,6 @@
 /**
  * This method returns a new empty array.
  *
- * @static
  * @since 4.13.0
  * @category Util
  * @returns {Array} Returns the new empty array.

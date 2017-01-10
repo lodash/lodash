@@ -8,7 +8,6 @@ import castArrayLikeObject from './.internal/castArrayLikeObject.js';
  * for equality comparisons. The order and references of result values are
  * determined by the first array.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.

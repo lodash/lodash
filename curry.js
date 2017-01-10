@@ -15,7 +15,6 @@ const WRAP_CURRY_FLAG = 8;
  *
  * **Note:** This method doesn't set the "length" property of curried functions.
  *
- * @static
  * @since 2.0.0
  * @category Function
  * @param {Function} func The function to curry.

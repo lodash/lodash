@@ -7,7 +7,6 @@ import toString from './toString.js';
  * Pads `string` on the left side if it's shorter than `length`. Padding
  * characters are truncated if they exceed `length`.
  *
- * @static
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to pad.

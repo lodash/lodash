@@ -12,7 +12,6 @@ import isIterateeCall from './.internal/isIterateeCall.js';
  * [everything is true](https://en.wikipedia.org/wiki/Vacuous_truth) of
  * elements of empty collections.
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

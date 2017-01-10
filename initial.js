@@ -3,7 +3,6 @@ import baseSlice from './.internal/baseSlice.js';
 /**
  * Gets all but the last element of `array`.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to query.

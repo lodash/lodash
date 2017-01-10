@@ -4,7 +4,6 @@ import baseInvoke from './.internal/baseInvoke.js';
  * Creates a function that invokes the method at `path` of a given object.
  * Any additional arguments are provided to the invoked method.
  *
- * @static
  * @since 3.7.0
  * @category Util
  * @param {Array|string} path The path of the method to invoke.

@@ -6,7 +6,6 @@ import identity from './identity.js';
  * Computes the minimum value of `array`. If `array` is empty or falsey,
  * `undefined` is returned.
  *
- * @static
  * @since 0.1.0
  * @category Math
  * @param {Array} array The array to iterate over.

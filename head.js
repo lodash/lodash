@@ -1,7 +1,6 @@
 /**
  * Gets the first element of `array`.
  *
- * @static
  * @since 0.1.0
  * @alias first
  * @category Array

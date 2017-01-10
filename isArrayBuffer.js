@@ -7,7 +7,6 @@ const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer;
 /**
  * Checks if `value` is classified as an `ArrayBuffer` object.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

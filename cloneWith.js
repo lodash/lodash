@@ -9,7 +9,6 @@ const CLONE_SYMBOLS_FLAG = 4;
  * cloning is handled by the method instead. The `customizer` is invoked with
  * up to four arguments; (value [, index|key, object, stack]).
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to clone.

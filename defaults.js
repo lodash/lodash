@@ -10,7 +10,6 @@ import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 0.1.0
  * @category Object
  * @param {Object} object The destination object.

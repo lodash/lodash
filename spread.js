@@ -14,7 +14,6 @@ const nativeMax = Math.max;
  * **Note:** This method is based on the
  * [spread operator](https://mdn.io/spread_operator).
  *
- * @static
  * @since 3.2.0
  * @category Function
  * @param {Function} func The function to spread arguments over.

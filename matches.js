@@ -16,7 +16,6 @@ const CLONE_DEEP_FLAG = 1;
  * values against any array or object value, respectively. See `isEqual`
  * for a list of supported value comparisons.
  *
- * @static
  * @since 3.0.0
  * @category Util
  * @param {Object} source The object of property values to match.

@@ -1,7 +1,6 @@
 /**
  * This method returns a new empty object.
  *
- * @static
  * @since 4.13.0
  * @category Util
  * @returns {Object} Returns the new empty object.

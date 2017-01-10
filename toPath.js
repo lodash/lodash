@@ -8,7 +8,6 @@ import toString from './toString.js';
 /**
  * Converts `value` to a property path array.
  *
- * @static
  * @since 4.0.0
  * @category Util
  * @param {*} value The value to convert.

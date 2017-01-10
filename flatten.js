@@ -3,7 +3,6 @@ import baseFlatten from './.internal/baseFlatten.js';
 /**
  * Flattens `array` a single level deep.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to flatten.

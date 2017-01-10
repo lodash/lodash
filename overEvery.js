@@ -5,7 +5,6 @@ import createOver from './.internal/createOver.js';
  * Creates a function that checks if **all** of the `predicates` return
  * truthy when invoked with the arguments it receives.
  *
- * @static
  * @since 4.0.0
  * @category Util
  * @param {...(Function|Function[])} [predicates=[identity]]

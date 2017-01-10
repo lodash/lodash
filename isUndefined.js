@@ -1,7 +1,6 @@
 /**
  * Checks if `value` is `undefined`.
  *
- * @static
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.

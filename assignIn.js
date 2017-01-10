@@ -8,7 +8,6 @@ import keysIn from './keysIn.js';
  *
  * **Note:** This method mutates `object`.
  *
- * @static
  * @since 4.0.0
  * @alias extend
  * @category Object

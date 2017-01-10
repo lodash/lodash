@@ -7,7 +7,6 @@ const CLONE_SYMBOLS_FLAG = 4;
 /**
  * This method is like `cloneWith` except that it recursively clones `value`.
  *
- * @static
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.

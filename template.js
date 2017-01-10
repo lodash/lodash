@@ -44,7 +44,6 @@ const reUnescapedString = /['\n\r\u2028\u2029\\]/g;
  * For more information on Chrome extension sandboxes see
  * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
  *
- * @static
  * @since 0.1.0
  * @category String
  * @param {string} [string=''] The template string.

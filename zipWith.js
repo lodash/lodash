@@ -5,7 +5,6 @@ import unzipWith from './unzipWith.js';
  * how grouped values should be combined. The iteratee is invoked with the
  * elements of each group: (...group).
  *
- * @static
  * @since 3.8.0
  * @category Array
  * @param {...Array} [arrays] The arrays to process.

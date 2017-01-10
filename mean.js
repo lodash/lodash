@@ -4,7 +4,6 @@ import identity from './identity.js';
 /**
  * Computes the mean of the values in `array`.
  *
- * @static
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.

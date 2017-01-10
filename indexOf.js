@@ -10,7 +10,6 @@ const nativeMax = Math.max;
  * for equality comparisons. If `fromIndex` is negative, it's used as the
  * offset from the end of `array`.
  *
- * @static
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.

@@ -5,7 +5,6 @@ import baseSum from './.internal/baseSum.js';
  * invoked for each element in `array` to generate the value to be summed.
  * The iteratee is invoked with one argument: (value).
  *
- * @static
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.

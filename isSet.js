@@ -7,7 +7,6 @@ const nodeIsSet = nodeUtil && nodeUtil.isSet;
 /**
  * Checks if `value` is classified as a `Set` object.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

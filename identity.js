@@ -1,7 +1,6 @@
 /**
  * This method returns the first argument it receives.
  *
- * @static
  * @since 0.1.0
  * @category Util
  * @param {*} value Any value.

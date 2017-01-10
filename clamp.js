@@ -4,7 +4,6 @@ import toNumber from './toNumber.js';
 /**
  * Clamps `number` within the inclusive `lower` and `upper` bounds.
  *
- * @static
  * @since 4.0.0
  * @category Number
  * @param {number} number The number to clamp.

@@ -5,7 +5,6 @@ import before from './before.js';
  * to the function return the value of the first invocation. The `func` is
  * invoked with the `this` binding and arguments of the created function.
  *
- * @static
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to restrict.

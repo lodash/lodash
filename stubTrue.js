@@ -1,7 +1,6 @@
 /**
  * This method returns `true`.
  *
- * @static
  * @since 4.13.0
  * @category Util
  * @returns {boolean} Returns `true`.

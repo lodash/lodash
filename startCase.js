@@ -5,7 +5,6 @@ import upperFirst from './upperFirst.js';
  * Converts `string` to
  * [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
  *
- * @static
  * @since 3.1.0
  * @category String
  * @param {string} [string=''] The string to convert.

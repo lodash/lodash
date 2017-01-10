@@ -10,7 +10,6 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * each key is the number of times the key was returned by `iteratee`. The
  * iteratee is invoked with one argument: (value).
  *
- * @static
  * @since 0.5.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

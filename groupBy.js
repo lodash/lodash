@@ -11,7 +11,6 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * value of each key is an array of elements responsible for generating the
  * key. The iteratee is invoked with one argument: (value).
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

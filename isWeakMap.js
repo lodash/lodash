@@ -7,7 +7,6 @@ const weakMapTag = '[object WeakMap]';
 /**
  * Checks if `value` is classified as a `WeakMap` object.
  *
- * @static
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.

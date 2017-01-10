@@ -8,7 +8,6 @@ import baseFilter from './.internal/baseFilter.js';
  *
  * **Note:** Unlike `remove`, this method returns a new array.
  *
- * @static
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.

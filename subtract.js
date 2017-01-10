@@ -3,7 +3,6 @@ import createMathOperation from './.internal/createMathOperation.js';
 /**
  * Subtract two numbers.
  *
- * @static
  * @since 4.0.0
  * @category Math
  * @param {number} minuend The first number in a subtraction.

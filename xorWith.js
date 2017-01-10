@@ -9,7 +9,6 @@ import last from './last.js';
  * determined by the order they occur in the arrays. The comparator is invoked
  * with two arguments: (arrVal, othVal).
  *
- * @static
  * @since 4.0.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.

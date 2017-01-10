@@ -30,16 +30,16 @@ const nativeMax = Math.max;
  * @private
  * @param {Function|string} func The function or method name to wrap.
  * @param {number} bitmask The bitmask flags.
- *    1 - `_.bind`
- *    2 - `_.bindKey`
- *    4 - `_.curry` or `_.curryRight` of a bound function
- *    8 - `_.curry`
- *   16 - `_.curryRight`
- *   32 - `_.partial`
- *   64 - `_.partialRight`
- *  128 - `_.rearg`
- *  256 - `_.ary`
- *  512 - `_.flip`
+ *    1 - `bind`
+ *    2 - `bindKey`
+ *    4 - `curry` or `curryRight` of a bound function
+ *    8 - `curry`
+ *   16 - `curryRight`
+ *   32 - `partial`
+ *   64 - `partialRight`
+ *  128 - `rearg`
+ *  256 - `ary`
+ *  512 - `flip`
  * @param {*} [thisArg] The `this` binding of `func`.
  * @param {Array} [partials] The arguments to be partially applied.
  * @param {Array} [holders] The `partials` placeholder indexes.

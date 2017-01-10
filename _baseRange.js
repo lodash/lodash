@@ -3,7 +3,7 @@ const nativeCeil = Math.ceil;
 const nativeMax = Math.max;
 
 /**
- * The base implementation of `_.range` and `_.rangeRight` which doesn't
+ * The base implementation of `range` and `rangeRight` which doesn't
  * coerce arguments.
  *
  * @private

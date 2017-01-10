@@ -11,19 +11,18 @@ const reTrimStart = /^\s+/;
  * Removes leading whitespace or specified characters from `string`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to trim.
  * @param {string} [chars=whitespace] The characters to trim.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {string} Returns the trimmed string.
  * @example
  *
- * _.trimStart('  abc  ');
+ * trimStart('  abc  ');
  * // => 'abc  '
  *
- * _.trimStart('-_-abc-_-', '_-');
+ * trimStart('-_-abc-_-', '_-');
  * // => 'abc-_-'
  */
 function trimStart(string, chars, guard) {

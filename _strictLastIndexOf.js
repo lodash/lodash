@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.lastIndexOf` which performs strict equality
+ * A specialized version of `lastIndexOf` which performs strict equality
  * comparisons of values, i.e. `===`.
  *
  * @private

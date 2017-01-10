@@ -9,10 +9,9 @@ const nativeMin = Math.min;
  *
  * @static
  * @since 4.0.0
- * @memberOf _
  * @category Function
  * @param {Function} func The function to wrap.
- * @param {...(Function|Function[])} [transforms=[_.identity]]
+ * @param {...(Function|Function[])} [transforms=[identity]]
  *  The argument transforms.
  * @returns {Function} Returns the new function.
  * @example
@@ -25,7 +24,7 @@ const nativeMin = Math.min;
  *   return n * n;
  * }
  *
- * var func = _.overArgs(function(x, y) {
+ * var func = overArgs(function(x, y) {
  *   return [x, y];
  * }, [square, doubled]);
  *

@@ -2,7 +2,7 @@ import arraySample from './_arraySample.js';
 import values from './values.js';
 
 /**
- * The base implementation of `_.sample`.
+ * The base implementation of `sample`.
  *
  * @private
  * @param {Array|Object} collection The collection to sample.

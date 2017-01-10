@@ -1,7 +1,7 @@
 import baseForOwn from './_baseForOwn.js';
 
 /**
- * The base implementation of `_.invert` and `_.invertBy` which inverts
+ * The base implementation of `invert` and `invertBy` which inverts
  * `object` with values transformed by `iteratee` and set by `setter`.
  *
  * @private

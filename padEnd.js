@@ -8,7 +8,6 @@ import toString from './toString.js';
  * characters are truncated if they exceed `length`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to pad.
@@ -17,13 +16,13 @@ import toString from './toString.js';
  * @returns {string} Returns the padded string.
  * @example
  *
- * _.padEnd('abc', 6);
+ * padEnd('abc', 6);
  * // => 'abc   '
  *
- * _.padEnd('abc', 6, '_-');
+ * padEnd('abc', 6, '_-');
  * // => 'abc_-_'
  *
- * _.padEnd('abc', 3);
+ * padEnd('abc', 3);
  * // => 'abc'
  */
 function padEnd(string, length, chars) {

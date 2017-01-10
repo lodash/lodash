@@ -8,14 +8,13 @@ import baseUniq from './_baseUniq.js';
  * in the array.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
- * _.uniq([2, 1, 2]);
+ * uniq([2, 1, 2]);
  * // => [2, 1]
  */
 function uniq(array) {

@@ -4,15 +4,14 @@ import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 
 /**
- * This method is like `_.difference` except that it accepts `comparator`
+ * This method is like `difference` except that it accepts `comparator`
  * which is invoked to compare elements of `array` to `values`. The order and
  * references of result values are determined by the first array. The comparator
  * is invoked with two arguments: (arrVal, othVal).
  *
- * **Note:** Unlike `_.pullAllWith`, this method returns a new array.
+ * **Note:** Unlike `pullAllWith`, this method returns a new array.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.
@@ -23,7 +22,7 @@ import last from './last.js';
  *
  * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
  *
- * _.differenceWith(objects, [{ 'x': 1, 'y': 2 }], _.isEqual);
+ * differenceWith(objects, [{ 'x': 1, 'y': 2 }], isEqual);
  * // => [{ 'x': 2, 'y': 1 }]
  */
 function differenceWith(array, ...values) {

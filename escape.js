@@ -24,13 +24,12 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category String
  * @param {string} [string=''] The string to escape.
  * @returns {string} Returns the escaped string.
  * @example
  *
- * _.escape('fred, barney, & pebbles');
+ * escape('fred, barney, & pebbles');
  * // => 'fred, barney, &amp; pebbles'
  */
 function escape(string) {

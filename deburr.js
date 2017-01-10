@@ -27,14 +27,13 @@ const reComboMark = RegExp(rsCombo, 'g');
  * [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to deburr.
  * @returns {string} Returns the deburred string.
  * @example
  *
- * _.deburr('déjà vu');
+ * deburr('déjà vu');
  * // => 'deja vu'
  */
 function deburr(string) {

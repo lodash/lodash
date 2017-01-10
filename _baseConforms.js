@@ -2,7 +2,7 @@ import baseConformsTo from './_baseConformsTo.js';
 import keys from './keys.js';
 
 /**
- * The base implementation of `_.conforms` which doesn't clone `source`.
+ * The base implementation of `conforms` which doesn't clone `source`.
  *
  * @private
  * @param {Object} source The object of property predicates to conform to.

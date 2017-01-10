@@ -2,7 +2,7 @@ import baseForOwn from './_baseForOwn.js';
 import createBaseEach from './_createBaseEach.js';
 
 /**
- * The base implementation of `_.forEach`.
+ * The base implementation of `forEach`.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

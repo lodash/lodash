@@ -2,7 +2,7 @@ import baseIsEqualDeep from './_baseIsEqualDeep.js';
 import isObjectLike from './isObjectLike.js';
 
 /**
- * The base implementation of `_.isEqual` which supports partial comparisons
+ * The base implementation of `isEqual` which supports partial comparisons
  * and tracks traversed objects.
  *
  * @private

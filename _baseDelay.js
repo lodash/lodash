@@ -2,7 +2,7 @@
 const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
- * The base implementation of `_.delay` and `_.defer` which accepts `args`
+ * The base implementation of `delay` and `defer` which accepts `args`
  * to provide to `func`.
  *
  * @private

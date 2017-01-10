@@ -8,17 +8,16 @@ const nodeIsDate = nodeUtil && nodeUtil.isDate;
  * Checks if `value` is classified as a `Date` object.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
  * @example
  *
- * _.isDate(new Date);
+ * isDate(new Date);
  * // => true
  *
- * _.isDate('Mon April 23 2012');
+ * isDate('Mon April 23 2012');
  * // => false
  */
 const isDate = nodeIsDate

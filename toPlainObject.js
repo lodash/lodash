@@ -6,7 +6,6 @@ import keysIn from './keysIn.js';
  * keyed properties of `value` to own properties of the plain object.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Lang
  * @param {*} value The value to convert.
@@ -19,10 +18,10 @@ import keysIn from './keysIn.js';
  *
  * Foo.prototype.c = 3;
  *
- * _.assign({ 'a': 1 }, new Foo);
+ * assign({ 'a': 1 }, new Foo);
  * // => { 'a': 1, 'b': 2 }
  *
- * _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
+ * assign({ 'a': 1 }, toPlainObject(new Foo));
  * // => { 'a': 1, 'b': 2, 'c': 3 }
  */
 function toPlainObject(value) {

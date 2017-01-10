@@ -4,7 +4,7 @@ import isObject from './isObject.js';
 const objectCreate = Object.create;
 
 /**
- * The base implementation of `_.create` without support for assigning
+ * The base implementation of `create` without support for assigning
  * properties to the created object.
  *
  * @private

@@ -6,7 +6,7 @@ import toString from './toString.js';
 const nativeMin = Math.min;
 
 /**
- * Creates a function like `_.round`.
+ * Creates a function like `round`.
  *
  * @private
  * @param {string} methodName The name of the `Math` method to use when rounding.

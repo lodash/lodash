@@ -52,7 +52,7 @@ const uint8ClampedTag = '[object Uint8ClampedArray]';
 const uint16Tag = '[object Uint16Array]';
 const uint32Tag = '[object Uint32Array]';
 
-/** Used to identify `toStringTag` values supported by `_.clone`. */
+/** Used to identify `toStringTag` values supported by `clone`. */
 const cloneableTags = {};
 cloneableTags[argsTag] = cloneableTags[arrayTag] =
 cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
@@ -69,7 +69,7 @@ cloneableTags[errorTag] = cloneableTags[funcTag] =
 cloneableTags[weakMapTag] = false;
 
 /**
- * The base implementation of `_.clone` and `_.cloneDeep` which tracks
+ * The base implementation of `clone` and `cloneDeep` which tracks
  * traversed objects.
  *
  * @private

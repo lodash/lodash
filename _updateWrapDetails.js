@@ -35,7 +35,7 @@ const wrapFlags = [
  */
 function updateWrapDetails(details, bitmask) {
   arrayEach(wrapFlags, pair => {
-    const value = `_.${ pair[0] }`;
+    const value = `${ pair[0] }`;
     if ((bitmask & pair[1]) && !arrayIncludes(details, value)) {
       details.push(value);
     }

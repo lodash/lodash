@@ -1,5 +1,5 @@
 /**
- * This base implementation of `_.zipObject` which assigns values using `assignFunc`.
+ * This base implementation of `zipObject` which assigns values using `assignFunc`.
  *
  * @private
  * @param {Array} props The property identifiers.

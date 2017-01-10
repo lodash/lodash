@@ -7,16 +7,15 @@ import isArray from './isArray.js';
  * `predicate` returns truthy for. The predicate is invoked with three
  * arguments: (value, index|key, collection).
  *
- * **Note:** Unlike `_.remove`, this method returns a new array.
+ * **Note:** Unlike `remove`, this method returns a new array.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
- * @see _.reject
+ * @see reject
  * @example
  *
  * var users = [
@@ -24,7 +23,7 @@ import isArray from './isArray.js';
  *   { 'user': 'fred',   'age': 40, 'active': false }
  * ];
  *
- * _.filter(users, function(o) { return !o.active; });
+ * filter(users, function(o) { return !o.active; });
  * // => objects for ['fred']
  */
 function filter(collection, predicate) {

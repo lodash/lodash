@@ -2,7 +2,7 @@ import shuffleSelf from './_shuffleSelf.js';
 import values from './values.js';
 
 /**
- * The base implementation of `_.shuffle`.
+ * The base implementation of `shuffle`.
  *
  * @private
  * @param {Array|Object} collection The collection to shuffle.

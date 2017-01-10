@@ -2,7 +2,7 @@ import copyObject from './_copyObject.js';
 import keys from './keys.js';
 
 /**
- * The base implementation of `_.assign` without support for multiple sources
+ * The base implementation of `assign` without support for multiple sources
  * or `customizer` functions.
  *
  * @private

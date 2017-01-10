@@ -15,17 +15,16 @@ const CLONE_SYMBOLS_FLAG = 4;
  * as error objects, functions, DOM nodes, and WeakMaps.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to clone.
  * @returns {*} Returns the cloned value.
- * @see _.cloneDeep
+ * @see cloneDeep
  * @example
  *
  * var objects = [{ 'a': 1 }, { 'b': 2 }];
  *
- * var shallow = _.clone(objects);
+ * var shallow = clone(objects);
  * console.log(shallow[0] === objects[0]);
  * // => true
  */

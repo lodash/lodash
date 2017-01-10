@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
 const mapTag = '[object Map]';
 
 /**
- * The base implementation of `_.isMap` without Node.js optimizations.
+ * The base implementation of `isMap` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

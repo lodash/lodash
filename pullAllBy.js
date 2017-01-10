@@ -1,14 +1,13 @@
 import basePullAll from './_basePullAll.js';
 
 /**
- * This method is like `_.pullAll` except that it accepts `iteratee` which is
+ * This method is like `pullAll` except that it accepts `iteratee` which is
  * invoked for each element of `array` and `values` to generate the criterion
  * by which they're compared. The iteratee is invoked with one argument: (value).
  *
- * **Note:** Unlike `_.differenceBy`, this method mutates `array`.
+ * **Note:** Unlike `differenceBy`, this method mutates `array`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to modify.
@@ -19,7 +18,7 @@ import basePullAll from './_basePullAll.js';
  *
  * var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
  *
- * _.pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
+ * pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
  * console.log(array);
  * // => [{ 'x': 2 }]
  */

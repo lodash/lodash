@@ -9,7 +9,7 @@ const objectProto = Object.prototype;
 const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
+ * The base implementation of `keysIn` which doesn't treat sparse arrays as dense.
  *
  * @private
  * @param {Object} object The object to query.

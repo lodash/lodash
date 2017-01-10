@@ -10,7 +10,6 @@ const WRAP_REARG_FLAG = 256;
  * provided as the second argument, and so on.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Function
  * @param {Function} func The function to rearrange arguments for.
@@ -18,7 +17,7 @@ const WRAP_REARG_FLAG = 256;
  * @returns {Function} Returns the new function.
  * @example
  *
- * var rearged = _.rearg(function(a, b, c) {
+ * var rearged = rearg(function(a, b, c) {
  *   return [a, b, c];
  * }, [2, 0, 1]);
  *

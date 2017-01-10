@@ -8,7 +8,7 @@ import isArray from './isArray.js';
  * (value, index|key, collection).
  *
  * Many lodash methods are guarded to work as iteratees for methods like
- * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
+ * `every`, `filter`, `map`, `mapValues`, `reject`, and `some`.
  *
  * The guarded methods are:
  * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
@@ -17,7 +17,6 @@ import isArray from './isArray.js';
  * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -29,10 +28,10 @@ import isArray from './isArray.js';
  *   return n * n;
  * }
  *
- * _.map([4, 8], square);
+ * map([4, 8], square);
  * // => [16, 64]
  *
- * _.map({ 'a': 4, 'b': 8 }, square);
+ * map({ 'a': 4, 'b': 8 }, square);
  * // => [16, 64] (iteration order is not guaranteed)
  */
 function map(collection, iteratee) {

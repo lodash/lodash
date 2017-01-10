@@ -14,7 +14,7 @@ const WRAP_ARY_FLAG = 128;
 const WRAP_REARG_FLAG = 256;
 
 /**
- * Creates a `_.flow` or `_.flowRight` function.
+ * Creates a `flow` or `flowRight` function.
  *
  * @private
  * @param {boolean} [fromRight] Specify iterating from right to left.

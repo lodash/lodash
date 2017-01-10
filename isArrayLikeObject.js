@@ -2,11 +2,10 @@ import isArrayLike from './isArrayLike.js';
 import isObjectLike from './isObjectLike.js';
 
 /**
- * This method is like `_.isArrayLike` except that it also checks if `value`
+ * This method is like `isArrayLike` except that it also checks if `value`
  * is an object.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
@@ -14,16 +13,16 @@ import isObjectLike from './isObjectLike.js';
  *  else `false`.
  * @example
  *
- * _.isArrayLikeObject([1, 2, 3]);
+ * isArrayLikeObject([1, 2, 3]);
  * // => true
  *
- * _.isArrayLikeObject(document.body.children);
+ * isArrayLikeObject(document.body.children);
  * // => true
  *
- * _.isArrayLikeObject('abc');
+ * isArrayLikeObject('abc');
  * // => false
  *
- * _.isArrayLikeObject(_.noop);
+ * isArrayLikeObject(noop);
  * // => false
  */
 function isArrayLikeObject(value) {

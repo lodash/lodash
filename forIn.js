@@ -8,13 +8,12 @@ import keysIn from './keysIn.js';
  * iteration early by explicitly returning `false`.
  *
  * @static
- * @memberOf _
  * @since 0.3.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns `object`.
- * @see _.forInRight
+ * @see forInRight
  * @example
  *
  * function Foo() {
@@ -24,7 +23,7 @@ import keysIn from './keysIn.js';
  *
  * Foo.prototype.c = 3;
  *
- * _.forIn(new Foo, function(value, key) {
+ * forIn(new Foo, function(value, key) {
  *   console.log(key);
  * });
  * // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).

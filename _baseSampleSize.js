@@ -3,7 +3,7 @@ import shuffleSelf from './_shuffleSelf.js';
 import values from './values.js';
 
 /**
- * The base implementation of `_.sampleSize` without param guards.
+ * The base implementation of `sampleSize` without param guards.
  *
  * @private
  * @param {Array|Object} collection The collection to sample.

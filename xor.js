@@ -9,15 +9,14 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * they occur in the arrays.
  *
  * @static
- * @memberOf _
  * @since 2.4.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of filtered values.
- * @see _.difference, _.without
+ * @see difference, without
  * @example
  *
- * _.xor([2, 1], [2, 3]);
+ * xor([2, 1], [2, 3]);
  * // => [1, 3]
  */
 function xor(...arrays) {

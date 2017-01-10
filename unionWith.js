@@ -4,13 +4,12 @@ import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 
 /**
- * This method is like `_.union` except that it accepts `comparator` which
+ * This method is like `union` except that it accepts `comparator` which
  * is invoked to compare elements of `arrays`. Result values are chosen from
  * the first array in which the value occurs. The comparator is invoked
  * with two arguments: (arrVal, othVal).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
@@ -21,7 +20,7 @@ import last from './last.js';
  * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
  * var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
  *
- * _.unionWith(objects, others, _.isEqual);
+ * unionWith(objects, others, isEqual);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
 function unionWith(...arrays) {

@@ -5,7 +5,7 @@ const MAX_SAFE_INTEGER = 9007199254740991;
 const nativeFloor = Math.floor;
 
 /**
- * The base implementation of `_.repeat` which doesn't coerce arguments.
+ * The base implementation of `repeat` which doesn't coerce arguments.
  *
  * @private
  * @param {string} string The string to repeat.

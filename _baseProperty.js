@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.property` without support for deep paths.
+ * The base implementation of `property` without support for deep paths.
  *
  * @private
  * @param {string} key The key of the property to get.

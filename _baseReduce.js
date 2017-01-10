@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.reduce` and `_.reduceRight` which iterates
+ * The base implementation of `reduce` and `reduceRight` which iterates
  * over `collection` using `eachFunc`.
  *
  * @private

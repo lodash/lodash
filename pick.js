@@ -5,7 +5,6 @@ import basePick from './_basePick.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Object
  * @param {Object} object The source object.
  * @param {...(string|string[])} [paths] The property paths to pick.
@@ -14,7 +13,7 @@ import basePick from './_basePick.js';
  *
  * var object = { 'a': 1, 'b': '2', 'c': 3 };
  *
- * _.pick(object, ['a', 'c']);
+ * pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }
  */
 function pick(object, ...paths) {

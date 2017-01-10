@@ -1,12 +1,11 @@
 import basePullAll from './_basePullAll.js';
 
 /**
- * This method is like `_.pull` except that it accepts an array of values to remove.
+ * This method is like `pull` except that it accepts an array of values to remove.
  *
- * **Note:** Unlike `_.difference`, this method mutates `array`.
+ * **Note:** Unlike `difference`, this method mutates `array`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to modify.
@@ -16,7 +15,7 @@ import basePullAll from './_basePullAll.js';
  *
  * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
  *
- * _.pullAll(array, ['a', 'c']);
+ * pullAll(array, ['a', 'c']);
  * console.log(array);
  * // => ['b', 'b']
  */

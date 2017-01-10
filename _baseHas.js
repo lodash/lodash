@@ -5,7 +5,7 @@ const objectProto = Object.prototype;
 const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * The base implementation of `_.has` without support for deep paths.
+ * The base implementation of `has` without support for deep paths.
  *
  * @private
  * @param {Object} [object] The object to query.

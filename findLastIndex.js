@@ -6,11 +6,10 @@ const nativeMax = Math.max;
 const nativeMin = Math.min;
 
 /**
- * This method is like `_.findIndex` except that it iterates over elements
+ * This method is like `findIndex` except that it iterates over elements
  * of `collection` from right to left.
  *
  * @static
- * @memberOf _
  * @since 2.0.0
  * @category Array
  * @param {Array} array The array to inspect.
@@ -25,7 +24,7 @@ const nativeMin = Math.min;
  *   { 'user': 'pebbles', 'active': false }
  * ];
  *
- * _.findLastIndex(users, function(o) { return o.user == 'pebbles'; });
+ * findLastIndex(users, function(o) { return o.user == 'pebbles'; });
  * // => 2
  */
 function findLastIndex(array, predicate, fromIndex) {

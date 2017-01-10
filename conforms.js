@@ -9,11 +9,10 @@ const CLONE_DEEP_FLAG = 1;
  * the corresponding property values of a given object, returning `true` if
  * all predicates return truthy, else `false`.
  *
- * **Note:** The created function is equivalent to `_.conformsTo` with
+ * **Note:** The created function is equivalent to `conformsTo` with
  * `source` partially applied.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Util
  * @param {Object} source The object of property predicates to conform to.
@@ -25,7 +24,7 @@ const CLONE_DEEP_FLAG = 1;
  *   { 'a': 1, 'b': 2 }
  * ];
  *
- * _.filter(objects, _.conforms({ 'b': function(n) { return n > 1; } }));
+ * filter(objects, conforms({ 'b': function(n) { return n > 1; } }));
  * // => [{ 'a': 1, 'b': 2 }]
  */
 function conforms(source) {

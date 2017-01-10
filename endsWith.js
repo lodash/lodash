@@ -7,7 +7,6 @@ import toString from './toString.js';
  * Checks if `string` ends with the given target string.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to inspect.
@@ -17,13 +16,13 @@ import toString from './toString.js';
  *  else `false`.
  * @example
  *
- * _.endsWith('abc', 'c');
+ * endsWith('abc', 'c');
  * // => true
  *
- * _.endsWith('abc', 'b');
+ * endsWith('abc', 'b');
  * // => false
  *
- * _.endsWith('abc', 'b', 2);
+ * endsWith('abc', 'b', 2);
  * // => true
  */
 function endsWith(string, target, position) {

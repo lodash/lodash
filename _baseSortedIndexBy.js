@@ -8,7 +8,7 @@ const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1;
 const nativeFloor = Math.floor, nativeMin = Math.min;
 
 /**
- * The base implementation of `_.sortedIndexBy` and `_.sortedLastIndexBy`
+ * The base implementation of `sortedIndexBy` and `sortedLastIndexBy`
  * which invokes `iteratee` for `value` and each element of `array` to compute
  * their sort ranking. The iteratee is invoked with one argument; (value).
  *

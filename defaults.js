@@ -12,15 +12,14 @@ import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Object
  * @param {Object} object The destination object.
  * @param {...Object} [sources] The source objects.
  * @returns {Object} Returns `object`.
- * @see _.defaultsDeep
+ * @see defaultsDeep
  * @example
  *
- * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+ * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
 function defaults(...args) {

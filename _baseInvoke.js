@@ -5,7 +5,7 @@ import parent from './_parent.js';
 import toKey from './_toKey.js';
 
 /**
- * The base implementation of `_.invoke` without support for individual
+ * The base implementation of `invoke` without support for individual
  * method arguments.
  *
  * @private

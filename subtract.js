@@ -4,7 +4,6 @@ import createMathOperation from './_createMathOperation.js';
  * Subtract two numbers.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Math
  * @param {number} minuend The first number in a subtraction.
@@ -12,7 +11,7 @@ import createMathOperation from './_createMathOperation.js';
  * @returns {number} Returns the difference.
  * @example
  *
- * _.subtract(6, 4);
+ * subtract(6, 4);
  * // => 2
  */
 const subtract = createMathOperation((minuend, subtrahend) => minuend - subtrahend, 0);

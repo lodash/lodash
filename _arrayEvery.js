@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.every` for arrays.
+ * A specialized version of `every` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

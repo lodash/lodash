@@ -9,7 +9,7 @@ const rsApos = "['\u2019]";
 const reApos = RegExp(rsApos, 'g');
 
 /**
- * Creates a function like `_.camelCase`.
+ * Creates a function like `camelCase`.
  *
  * @private
  * @param {Function} callback The function to combine each word.

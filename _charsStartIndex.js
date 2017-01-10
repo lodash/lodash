@@ -1,7 +1,7 @@
 import baseIndexOf from './_baseIndexOf.js';
 
 /**
- * Used by `_.trim` and `_.trimStart` to get the index of the first string symbol
+ * Used by `trim` and `trimStart` to get the index of the first string symbol
  * that is not found in the character symbols.
  *
  * @private

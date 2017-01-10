@@ -6,22 +6,21 @@ import keysIn from './keysIn.js';
  * enumerable properties of `object`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Object
  * @param {Object} object The object to inspect.
  * @returns {Array} Returns the function names.
- * @see _.functions
+ * @see functions
  * @example
  *
  * function Foo() {
- *   this.a = _.constant('a');
- *   this.b = _.constant('b');
+ *   this.a = constant('a');
+ *   this.b = constant('b');
  * }
  *
- * Foo.prototype.c = _.constant('c');
+ * Foo.prototype.c = constant('c');
  *
- * _.functionsIn(new Foo);
+ * functionsIn(new Foo);
  * // => ['a', 'b', 'c']
  */
 function functionsIn(object) {

@@ -3,7 +3,7 @@ import copyArray from './_copyArray.js';
 import shuffleSelf from './_shuffleSelf.js';
 
 /**
- * A specialized version of `_.sampleSize` for arrays.
+ * A specialized version of `sampleSize` for arrays.
  *
  * @private
  * @param {Array} array The array to sample.

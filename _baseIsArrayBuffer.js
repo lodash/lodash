@@ -4,7 +4,7 @@ import isObjectLike from './isObjectLike.js';
 const arrayBufferTag = '[object ArrayBuffer]';
 
 /**
- * The base implementation of `_.isArrayBuffer` without Node.js optimizations.
+ * The base implementation of `isArrayBuffer` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

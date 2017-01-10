@@ -2,7 +2,7 @@ import baseGet from './_baseGet.js';
 import baseSet from './_baseSet.js';
 
 /**
- * The base implementation of `_.update`.
+ * The base implementation of `update`.
  *
  * @private
  * @param {Object} object The object to modify.

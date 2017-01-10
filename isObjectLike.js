@@ -3,23 +3,22 @@
  * and has a `typeof` result of "object".
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
  *
- * _.isObjectLike({});
+ * isObjectLike({});
  * // => true
  *
- * _.isObjectLike([1, 2, 3]);
+ * isObjectLike([1, 2, 3]);
  * // => true
  *
- * _.isObjectLike(_.noop);
+ * isObjectLike(noop);
  * // => false
  *
- * _.isObjectLike(null);
+ * isObjectLike(null);
  * // => false
  */
 function isObjectLike(value) {

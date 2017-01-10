@@ -7,7 +7,6 @@ import baseCreate from './_baseCreate.js';
  * are assigned to the created object.
  *
  * @static
- * @memberOf _
  * @since 2.3.0
  * @category Object
  * @param {Object} prototype The object to inherit from.
@@ -24,7 +23,7 @@ import baseCreate from './_baseCreate.js';
  *   Shape.call(this);
  * }
  *
- * Circle.prototype = _.create(Shape.prototype, {
+ * Circle.prototype = create(Shape.prototype, {
  *   'constructor': Circle
  * });
  *

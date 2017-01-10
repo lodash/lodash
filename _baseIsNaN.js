@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.isNaN` without support for number objects.
+ * The base implementation of `isNaN` without support for number objects.
  *
  * @private
  * @param {*} value The value to check.

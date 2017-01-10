@@ -2,7 +2,7 @@ import baseForRight from './_baseForRight.js';
 import keys from './keys.js';
 
 /**
- * The base implementation of `_.forOwnRight`.
+ * The base implementation of `forOwnRight`.
  *
  * @private
  * @param {Object} object The object to iterate over.

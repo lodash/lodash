@@ -6,7 +6,7 @@ const COMPARE_PARTIAL_FLAG = 1;
 const COMPARE_UNORDERED_FLAG = 2;
 
 /**
- * The base implementation of `_.isMatch`.
+ * The base implementation of `isMatch`.
  *
  * @private
  * @param {Object} object The object to inspect.

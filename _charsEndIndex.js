@@ -1,7 +1,7 @@
 import baseIndexOf from './_baseIndexOf.js';
 
 /**
- * Used by `_.trim` and `_.trimEnd` to get the index of the last string symbol
+ * Used by `trim` and `trimEnd` to get the index of the last string symbol
  * that is not found in the character symbols.
  *
  * @private

@@ -14,17 +14,16 @@ import isIterateeCall from './_isIterateeCall.js';
  * elements of empty collections.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {boolean} Returns `true` if all elements pass the predicate check,
  *  else `false`.
  * @example
  *
- * _.every([true, 1, null, 'yes'], Boolean);
+ * every([true, 1, null, 'yes'], Boolean);
  * // => false
  */
 function every(collection, predicate, guard) {

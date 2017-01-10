@@ -11,7 +11,6 @@ import toKey from './_toKey.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Util
  * @param {Object} object The object to bind and assign the bound methods to.
  * @param {...(string|string[])} methodNames The object method names to bind.
@@ -25,7 +24,7 @@ import toKey from './_toKey.js';
  *   }
  * };
  *
- * _.bindAll(view, ['click']);
+ * bindAll(view, ['click']);
  * jQuery(element).on('click', view.click);
  * // => Logs 'clicked docs' when clicked.
  */

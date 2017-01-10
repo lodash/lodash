@@ -1,5 +1,5 @@
 /**
- * Creates a base function for methods like `_.forIn` and `_.forOwn`.
+ * Creates a base function for methods like `forIn` and `forOwn`.
  *
  * @private
  * @param {boolean} [fromRight] Specify iterating from right to left.

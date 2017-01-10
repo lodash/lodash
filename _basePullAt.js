@@ -8,7 +8,7 @@ const arrayProto = Array.prototype;
 const splice = arrayProto.splice;
 
 /**
- * The base implementation of `_.pullAt` without support for individual
+ * The base implementation of `pullAt` without support for individual
  * indexes or capturing the removed elements.
  *
  * @private

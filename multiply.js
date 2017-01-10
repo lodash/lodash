@@ -4,7 +4,6 @@ import createMathOperation from './_createMathOperation.js';
  * Multiply two numbers.
  *
  * @static
- * @memberOf _
  * @since 4.7.0
  * @category Math
  * @param {number} multiplier The first number in a multiplication.
@@ -12,7 +11,7 @@ import createMathOperation from './_createMathOperation.js';
  * @returns {number} Returns the product.
  * @example
  *
- * _.multiply(6, 4);
+ * multiply(6, 4);
  * // => 24
  */
 const multiply = createMathOperation((multiplier, multiplicand) => multiplier * multiplicand, 1);

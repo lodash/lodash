@@ -11,23 +11,22 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * [`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a safe integer, else `false`.
  * @example
  *
- * _.isSafeInteger(3);
+ * isSafeInteger(3);
  * // => true
  *
- * _.isSafeInteger(Number.MIN_VALUE);
+ * isSafeInteger(Number.MIN_VALUE);
  * // => false
  *
- * _.isSafeInteger(Infinity);
+ * isSafeInteger(Infinity);
  * // => false
  *
- * _.isSafeInteger('3');
+ * isSafeInteger('3');
  * // => false
  */
 function isSafeInteger(value) {

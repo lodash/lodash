@@ -5,11 +5,10 @@ import pullAll from './pullAll.js';
  * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
  * for equality comparisons.
  *
- * **Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`
+ * **Note:** Unlike `without`, this method mutates `array`. Use `remove`
  * to remove elements from an array by predicate.
  *
  * @static
- * @memberOf _
  * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
@@ -19,7 +18,7 @@ import pullAll from './pullAll.js';
  *
  * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
  *
- * _.pull(array, 'a', 'c');
+ * pull(array, 'a', 'c');
  * console.log(array);
  * // => ['b', 'b']
  */

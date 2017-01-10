@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.lt` which doesn't coerce arguments.
+ * The base implementation of `lt` which doesn't coerce arguments.
  *
  * @private
  * @param {*} value The value to compare.

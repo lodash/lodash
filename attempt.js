@@ -6,7 +6,6 @@ import isError from './isError.js';
  * object. Any additional arguments are provided to `func` when it's invoked.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Util
  * @param {Function} func The function to attempt.
@@ -15,11 +14,11 @@ import isError from './isError.js';
  * @example
  *
  * // Avoid throwing errors for invalid selectors.
- * var elements = _.attempt(function(selector) {
+ * var elements = attempt(function(selector) {
  *   return document.querySelectorAll(selector);
  * }, '>_>');
  *
- * if (_.isError(elements)) {
+ * if (isError(elements)) {
  *   elements = [];
  * }
  */

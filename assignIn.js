@@ -3,20 +3,19 @@ import createAssigner from './_createAssigner.js';
 import keysIn from './keysIn.js';
 
 /**
- * This method is like `_.assign` except that it iterates over own and
+ * This method is like `assign` except that it iterates over own and
  * inherited source properties.
  *
  * **Note:** This method mutates `object`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @alias extend
  * @category Object
  * @param {Object} object The destination object.
  * @param {...Object} [sources] The source objects.
  * @returns {Object} Returns `object`.
- * @see _.assign
+ * @see assign
  * @example
  *
  * function Foo() {
@@ -30,7 +29,7 @@ import keysIn from './keysIn.js';
  * Foo.prototype.b = 2;
  * Bar.prototype.d = 4;
  *
- * _.assignIn({ 'a': 0 }, new Foo, new Bar);
+ * assignIn({ 'a': 0 }, new Foo, new Bar);
  * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
  */
 const assignIn = createAssigner((object, source) => {

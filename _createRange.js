@@ -3,7 +3,7 @@ import isIterateeCall from './_isIterateeCall.js';
 import toFinite from './toFinite.js';
 
 /**
- * Creates a `_.range` or `_.rangeRight` function.
+ * Creates a `range` or `rangeRight` function.
  *
  * @private
  * @param {boolean} [fromRight] Specify iterating from right to left.

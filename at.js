@@ -4,7 +4,6 @@ import baseAt from './_baseAt.js';
  * Creates an array of values corresponding to `paths` of `object`.
  *
  * @static
- * @memberOf _
  * @since 1.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
@@ -14,7 +13,7 @@ import baseAt from './_baseAt.js';
  *
  * var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
  *
- * _.at(object, ['a[0].b.c', 'a[1]']);
+ * at(object, ['a[0].b.c', 'a[1]']);
  * // => [3, 4]
  */
 function at(...paths) {

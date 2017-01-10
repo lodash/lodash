@@ -3,7 +3,7 @@ import getMatchData from './_getMatchData.js';
 import matchesStrictComparable from './_matchesStrictComparable.js';
 
 /**
- * The base implementation of `_.matches` which doesn't clone `source`.
+ * The base implementation of `matches` which doesn't clone `source`.
  *
  * @private
  * @param {Object} source The object of property values to match.

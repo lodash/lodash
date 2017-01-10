@@ -4,17 +4,16 @@ import isArray from './isArray.js';
 import negate from './negate.js';
 
 /**
- * The opposite of `_.filter`; this method returns the elements of `collection`
+ * The opposite of `filter`; this method returns the elements of `collection`
  * that `predicate` does **not** return truthy for.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
- * @see _.filter
+ * @see filter
  * @example
  *
  * var users = [
@@ -22,7 +21,7 @@ import negate from './negate.js';
  *   { 'user': 'fred',   'age': 40, 'active': true }
  * ];
  *
- * _.reject(users, function(o) { return !o.active; });
+ * reject(users, function(o) { return !o.active; });
  * // => objects for ['fred']
  */
 function reject(collection, predicate) {

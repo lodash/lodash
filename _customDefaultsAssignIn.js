@@ -7,7 +7,7 @@ const objectProto = Object.prototype;
 const hasOwnProperty = objectProto.hasOwnProperty;
 
 /**
- * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
+ * Used by `defaults` to customize its `assignIn` use to assign properties
  * of source objects to the destination object for all destination properties
  * that resolve to `undefined`.
  *

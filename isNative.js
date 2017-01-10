@@ -16,7 +16,6 @@ const CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=p
  * which rely on core-js.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Lang
  * @param {*} value The value to check.
@@ -24,10 +23,10 @@ const CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=p
  *  else `false`.
  * @example
  *
- * _.isNative(Array.prototype.push);
+ * isNative(Array.prototype.push);
  * // => true
  *
- * _.isNative(_);
+ * isNative(_);
  * // => false
  */
 function isNative(value) {

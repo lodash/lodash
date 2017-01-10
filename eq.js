@@ -4,7 +4,6 @@
  * comparison between two values to determine if they are equivalent.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to compare.
@@ -15,19 +14,19 @@
  * var object = { 'a': 1 };
  * var other = { 'a': 1 };
  *
- * _.eq(object, object);
+ * eq(object, object);
  * // => true
  *
- * _.eq(object, other);
+ * eq(object, other);
  * // => false
  *
- * _.eq('a', 'a');
+ * eq('a', 'a');
  * // => true
  *
- * _.eq('a', Object('a'));
+ * eq('a', Object('a'));
  * // => false
  *
- * _.eq(NaN, NaN);
+ * eq(NaN, NaN);
  * // => true
  */
 function eq(value, other) {

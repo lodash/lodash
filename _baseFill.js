@@ -2,7 +2,7 @@ import toInteger from './toInteger.js';
 import toLength from './toLength.js';
 
 /**
- * The base implementation of `_.fill` without an iteratee call guard.
+ * The base implementation of `fill` without an iteratee call guard.
  *
  * @private
  * @param {Array} array The array to fill.

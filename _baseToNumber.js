@@ -4,7 +4,7 @@ import isSymbol from './isSymbol.js';
 const NAN = 0 / 0;
 
 /**
- * The base implementation of `_.toNumber` which doesn't ensure correct
+ * The base implementation of `toNumber` which doesn't ensure correct
  * conversions of binary, hexadecimal, or octal string values.
  *
  * @private

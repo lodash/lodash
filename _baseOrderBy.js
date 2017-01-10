@@ -5,7 +5,7 @@ import compareMultiple from './_compareMultiple.js';
 import identity from './identity.js';
 
 /**
- * The base implementation of `_.orderBy` without param guards.
+ * The base implementation of `orderBy` without param guards.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

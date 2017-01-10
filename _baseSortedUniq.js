@@ -1,7 +1,7 @@
 import eq from './eq.js';
 
 /**
- * The base implementation of `_.sortedUniq` and `_.sortedUniqBy`.
+ * The base implementation of `sortedUniq` and `sortedUniqBy`.
  *
  * @private
  * @param {Array} array The array to inspect.

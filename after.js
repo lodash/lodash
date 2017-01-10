@@ -4,11 +4,10 @@ import toInteger from './toInteger.js';
 const FUNC_ERROR_TEXT = 'Expected a function';
 
 /**
- * The opposite of `_.before`; this method creates a function that invokes
+ * The opposite of `before`; this method creates a function that invokes
  * `func` once it's called `n` or more times.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {number} n The number of calls before `func` is invoked.
@@ -18,11 +17,11 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  *
  * var saves = ['profile', 'settings'];
  *
- * var done = _.after(saves.length, function() {
+ * var done = after(saves.length, function() {
  *   console.log('done saving!');
  * });
  *
- * _.forEach(saves, function(type) {
+ * forEach(saves, function(type) {
  *   asyncSave({ 'type': type, 'complete': done });
  * });
  * // => Logs 'done saving!' after the two async saves have completed.

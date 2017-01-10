@@ -6,7 +6,6 @@ import baseWhile from './_baseWhile.js';
  * invoked with three arguments: (value, index, array).
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to query.
@@ -20,7 +19,7 @@ import baseWhile from './_baseWhile.js';
  *   { 'user': 'pebbles', 'active': false }
  * ];
  *
- * _.dropRightWhile(users, function(o) { return !o.active; });
+ * dropRightWhile(users, function(o) { return !o.active; });
  * // => objects for ['barney']
  */
 function dropRightWhile(array, predicate) {

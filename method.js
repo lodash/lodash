@@ -5,7 +5,6 @@ import baseInvoke from './_baseInvoke.js';
  * Any additional arguments are provided to the invoked method.
  *
  * @static
- * @memberOf _
  * @since 3.7.0
  * @category Util
  * @param {Array|string} path The path of the method to invoke.
@@ -14,14 +13,14 @@ import baseInvoke from './_baseInvoke.js';
  * @example
  *
  * var objects = [
- *   { 'a': { 'b': _.constant(2) } },
- *   { 'a': { 'b': _.constant(1) } }
+ *   { 'a': { 'b': constant(2) } },
+ *   { 'a': { 'b': constant(1) } }
  * ];
  *
- * _.map(objects, _.method('a.b'));
+ * map(objects, method('a.b'));
  * // => [2, 1]
  *
- * _.map(objects, _.method(['a', 'b']));
+ * map(objects, method(['a', 'b']));
  * // => [2, 1]
  */
 function method(path, ...args) {

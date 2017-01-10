@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
 const argsTag = '[object Arguments]';
 
 /**
- * The base implementation of `_.isArguments`.
+ * The base implementation of `isArguments`.
  *
  * @private
  * @param {*} value The value to check.

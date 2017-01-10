@@ -9,7 +9,7 @@ import isObject from './isObject.js';
 import isTypedArray from './isTypedArray.js';
 
 /**
- * An alternative to `_.reduce`; this method transforms `object` to a new
+ * An alternative to `reduce`; this method transforms `object` to a new
  * `accumulator` object which is the result of running each of its own
  * enumerable string keyed properties thru `iteratee`, with each invocation
  * potentially mutating the `accumulator` object. If `accumulator` is not
@@ -18,7 +18,6 @@ import isTypedArray from './isTypedArray.js';
  * Iteratee functions may exit iteration early by explicitly returning `false`.
  *
  * @static
- * @memberOf _
  * @since 1.3.0
  * @category Object
  * @param {Object} object The object to iterate over.
@@ -27,13 +26,13 @@ import isTypedArray from './isTypedArray.js';
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * _.transform([2, 3, 4], function(result, n) {
+ * transform([2, 3, 4], function(result, n) {
  *   result.push(n *= n);
  *   return n % 2 == 0;
  * }, []);
  * // => [4, 9]
  *
- * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+ * transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
  *   (result[value] || (result[value] = [])).push(key);
  * }, {});
  * // => { '1': ['a', 'c'], '2': ['b'] }

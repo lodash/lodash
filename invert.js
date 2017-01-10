@@ -8,7 +8,6 @@ import identity from './identity.js';
  * property assignments of previous values.
  *
  * @static
- * @memberOf _
  * @since 0.7.0
  * @category Object
  * @param {Object} object The object to invert.
@@ -17,7 +16,7 @@ import identity from './identity.js';
  *
  * var object = { 'a': 1, 'b': 2, 'c': 1 };
  *
- * _.invert(object);
+ * invert(object);
  * // => { '1': 'c', '2': 'b' }
  */
 const invert = createInverter((result, value, key) => {

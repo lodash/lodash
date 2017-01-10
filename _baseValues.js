@@ -1,7 +1,7 @@
 import arrayMap from './_arrayMap.js';
 
 /**
- * The base implementation of `_.values` and `_.valuesIn` which creates an
+ * The base implementation of `values` and `valuesIn` which creates an
  * array of `object` property values corresponding to the property names
  * of `props`.
  *

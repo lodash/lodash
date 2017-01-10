@@ -11,10 +11,9 @@ const CLONE_DEEP_FLAG = 1;
  *
  * **Note:** Partial comparisons will match empty array and empty object
  * `srcValue` values against any array or object value, respectively. See
- * `_.isEqual` for a list of supported value comparisons.
+ * `isEqual` for a list of supported value comparisons.
  *
  * @static
- * @memberOf _
  * @since 3.2.0
  * @category Util
  * @param {Array|string} path The path of the property to get.
@@ -27,7 +26,7 @@ const CLONE_DEEP_FLAG = 1;
  *   { 'a': 4, 'b': 5, 'c': 6 }
  * ];
  *
- * _.find(objects, _.matchesProperty('a', 4));
+ * find(objects, matchesProperty('a', 4));
  * // => { 'a': 4, 'b': 5, 'c': 6 }
  */
 function matchesProperty(path, srcValue) {

@@ -7,21 +7,20 @@ import keys from './keys.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Object
  * @param {Object} object The object to inspect.
  * @returns {Array} Returns the function names.
- * @see _.functionsIn
+ * @see functionsIn
  * @example
  *
  * function Foo() {
- *   this.a = _.constant('a');
- *   this.b = _.constant('b');
+ *   this.a = constant('a');
+ *   this.b = constant('b');
  * }
  *
- * Foo.prototype.c = _.constant('c');
+ * Foo.prototype.c = constant('c');
  *
- * _.functions(new Foo);
+ * functions(new Foo);
  * // => ['a', 'b']
  */
 function functions(object) {

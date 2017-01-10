@@ -8,7 +8,7 @@ import stringToArray from './_stringToArray.js';
 import toInteger from './toInteger.js';
 import toString from './toString.js';
 
-/** Used as default options for `_.truncate`. */
+/** Used as default options for `truncate`. */
 const DEFAULT_TRUNC_LENGTH = 30;
 const DEFAULT_TRUNC_OMISSION = '...';
 
@@ -21,7 +21,6 @@ const reFlags = /\w*$/;
  * string which defaults to "...".
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to truncate.
@@ -32,22 +31,22 @@ const reFlags = /\w*$/;
  * @returns {string} Returns the truncated string.
  * @example
  *
- * _.truncate('hi-diddly-ho there, neighborino');
+ * truncate('hi-diddly-ho there, neighborino');
  * // => 'hi-diddly-ho there, neighbo...'
  *
- * _.truncate('hi-diddly-ho there, neighborino', {
+ * truncate('hi-diddly-ho there, neighborino', {
  *   'length': 24,
  *   'separator': ' '
  * });
  * // => 'hi-diddly-ho there,...'
  *
- * _.truncate('hi-diddly-ho there, neighborino', {
+ * truncate('hi-diddly-ho there, neighborino', {
  *   'length': 24,
  *   'separator': /,? +/
  * });
  * // => 'hi-diddly-ho there...'
  *
- * _.truncate('hi-diddly-ho there, neighborino', {
+ * truncate('hi-diddly-ho there, neighborino', {
  *   'omission': ' [...]'
  * });
  * // => 'hi-diddly-ho there, neig [...]'

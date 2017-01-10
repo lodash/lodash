@@ -7,7 +7,6 @@ import toString from './toString.js';
  * [`String#replace`](https://mdn.io/String/replace).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to modify.
@@ -16,7 +15,7 @@ import toString from './toString.js';
  * @returns {string} Returns the modified string.
  * @example
  *
- * _.replace('Hi Fred', 'Fred', 'Barney');
+ * replace('Hi Fred', 'Fred', 'Barney');
  * // => 'Hi Barney'
  */
 function replace() {

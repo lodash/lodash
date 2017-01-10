@@ -5,20 +5,19 @@ const CLONE_DEEP_FLAG = 1;
 const CLONE_SYMBOLS_FLAG = 4;
 
 /**
- * This method is like `_.clone` except that it recursively clones `value`.
+ * This method is like `clone` except that it recursively clones `value`.
  *
  * @static
- * @memberOf _
  * @since 1.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @returns {*} Returns the deep cloned value.
- * @see _.clone
+ * @see clone
  * @example
  *
  * var objects = [{ 'a': 1 }, { 'b': 2 }];
  *
- * var deep = _.cloneDeep(objects);
+ * var deep = cloneDeep(objects);
  * console.log(deep[0] === objects[0]);
  * // => false
  */

@@ -21,22 +21,21 @@ const symIterator = Symbol ? Symbol.iterator : undefined;
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Lang
  * @param {*} value The value to convert.
  * @returns {Array} Returns the converted array.
  * @example
  *
- * _.toArray({ 'a': 1, 'b': 2 });
+ * toArray({ 'a': 1, 'b': 2 });
  * // => [1, 2]
  *
- * _.toArray('abc');
+ * toArray('abc');
  * // => ['a', 'b', 'c']
  *
- * _.toArray(1);
+ * toArray(1);
  * // => []
  *
- * _.toArray(null);
+ * toArray(null);
  * // => []
  */
 function toArray(value) {

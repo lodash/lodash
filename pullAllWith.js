@@ -1,14 +1,13 @@
 import basePullAll from './_basePullAll.js';
 
 /**
- * This method is like `_.pullAll` except that it accepts `comparator` which
+ * This method is like `pullAll` except that it accepts `comparator` which
  * is invoked to compare elements of `array` to `values`. The comparator is
  * invoked with two arguments: (arrVal, othVal).
  *
- * **Note:** Unlike `_.differenceWith`, this method mutates `array`.
+ * **Note:** Unlike `differenceWith`, this method mutates `array`.
  *
  * @static
- * @memberOf _
  * @since 4.6.0
  * @category Array
  * @param {Array} array The array to modify.
@@ -19,7 +18,7 @@ import basePullAll from './_basePullAll.js';
  *
  * var array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
  *
- * _.pullAllWith(array, [{ 'x': 3, 'y': 4 }], _.isEqual);
+ * pullAllWith(array, [{ 'x': 3, 'y': 4 }], isEqual);
  * console.log(array);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 5, 'y': 6 }]
  */

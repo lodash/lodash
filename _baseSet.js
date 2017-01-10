@@ -5,7 +5,7 @@ import isObject from './isObject.js';
 import toKey from './_toKey.js';
 
 /**
- * The base implementation of `_.set`.
+ * The base implementation of `set`.
  *
  * @private
  * @param {Object} object The object to modify.

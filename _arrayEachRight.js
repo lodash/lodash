@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.forEachRight` for arrays.
+ * A specialized version of `forEachRight` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

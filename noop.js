@@ -2,12 +2,11 @@
  * This method returns `undefined`.
  *
  * @static
- * @memberOf _
  * @since 2.3.0
  * @category Util
  * @example
  *
- * _.times(2, _.noop);
+ * times(2, noop);
  * // => [undefined, undefined]
  */
 function noop() {

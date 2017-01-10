@@ -8,17 +8,16 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap;
  * Checks if `value` is classified as a `Map` object.
  *
  * @static
- * @memberOf _
  * @since 4.3.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a map, else `false`.
  * @example
  *
- * _.isMap(new Map);
+ * isMap(new Map);
  * // => true
  *
- * _.isMap(new WeakMap);
+ * isMap(new WeakMap);
  * // => false
  */
 const isMap = nodeIsMap

@@ -1,7 +1,7 @@
 import isSymbol from './isSymbol.js';
 
 /**
- * The base implementation of methods like `_.max` and `_.min` which accepts a
+ * The base implementation of methods like `max` and `min` which accepts a
  * `comparator` to determine the extremum value.
  *
  * @private

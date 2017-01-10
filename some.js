@@ -9,17 +9,16 @@ import isIterateeCall from './_isIterateeCall.js';
  * invoked with three arguments: (value, index|key, collection).
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {boolean} Returns `true` if any element passes the predicate check,
  *  else `false`.
  * @example
  *
- * _.some([null, 0, 'yes', false], Boolean);
+ * some([null, 0, 'yes', false], Boolean);
  * // => true
  */
 function some(collection, predicate, guard) {

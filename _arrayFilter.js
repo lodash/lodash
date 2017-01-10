@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.filter` for arrays.
+ * A specialized version of `filter` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

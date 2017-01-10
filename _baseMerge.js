@@ -6,7 +6,7 @@ import isObject from './isObject.js';
 import keysIn from './keysIn.js';
 
 /**
- * The base implementation of `_.merge` without support for multiple sources.
+ * The base implementation of `merge` without support for multiple sources.
  *
  * @private
  * @param {Object} object The destination object.

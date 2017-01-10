@@ -2,7 +2,7 @@ import isArrayLike from './isArrayLike.js';
 import keys from './keys.js';
 
 /**
- * Creates a `_.find` or `_.findLast` function.
+ * Creates a `find` or `findLast` function.
  *
  * @private
  * @param {Function} findIndexFunc The function to find the collection index.

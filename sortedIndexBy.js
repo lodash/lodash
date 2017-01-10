@@ -1,12 +1,11 @@
 import baseSortedIndexBy from './_baseSortedIndexBy.js';
 
 /**
- * This method is like `_.sortedIndex` except that it accepts `iteratee`
+ * This method is like `sortedIndex` except that it accepts `iteratee`
  * which is invoked for `value` and each element of `array` to compute their
  * sort ranking. The iteratee is invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {Array} array The sorted array to inspect.
@@ -18,7 +17,7 @@ import baseSortedIndexBy from './_baseSortedIndexBy.js';
  *
  * var objects = [{ 'x': 4 }, { 'x': 5 }];
  *
- * _.sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+ * sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
  * // => 0
  */
 function sortedIndexBy(array, value, iteratee) {

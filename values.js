@@ -8,7 +8,6 @@ import keys from './keys.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Object
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property values.
@@ -21,10 +20,10 @@ import keys from './keys.js';
  *
  * Foo.prototype.c = 3;
  *
- * _.values(new Foo);
+ * values(new Foo);
  * // => [1, 2] (iteration order is not guaranteed)
  *
- * _.values('hi');
+ * values('hi');
  * // => ['h', 'i']
  */
 function values(object) {

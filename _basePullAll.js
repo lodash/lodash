@@ -10,7 +10,7 @@ const arrayProto = Array.prototype;
 const splice = arrayProto.splice;
 
 /**
- * The base implementation of `_.pullAllBy`.
+ * The base implementation of `pullAllBy`.
  *
  * @private
  * @param {Array} array The array to modify.

@@ -4,12 +4,11 @@ import baseSum from './_baseSum.js';
 const NAN = 0 / 0;
 
 /**
- * This method is like `_.mean` except that it accepts `iteratee` which is
+ * This method is like `mean` except that it accepts `iteratee` which is
  * invoked for each element in `array` to generate the value to be averaged.
  * The iteratee is invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 4.7.0
  * @category Math
  * @param {Array} array The array to iterate over.
@@ -19,7 +18,7 @@ const NAN = 0 / 0;
  *
  * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
  *
- * _.meanBy(objects, function(o) { return o.n; });
+ * meanBy(objects, function(o) { return o.n; });
  * // => 5
  */
 function meanBy(array, iteratee) {

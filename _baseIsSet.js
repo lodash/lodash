@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
 const setTag = '[object Set]';
 
 /**
- * The base implementation of `_.isSet` without Node.js optimizations.
+ * The base implementation of `isSet` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

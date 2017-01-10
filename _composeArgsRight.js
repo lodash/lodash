@@ -3,7 +3,7 @@ const nativeMax = Math.max;
 
 /**
  * This function is like `composeArgs` except that the arguments composition
- * is tailored for `_.partialRight`.
+ * is tailored for `partialRight`.
  *
  * @private
  * @param {Array} args The provided arguments.

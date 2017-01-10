@@ -6,7 +6,6 @@ import baseUnset from './_baseUnset.js';
  * **Note:** This method mutates `object`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Object
  * @param {Object} object The object to modify.
@@ -15,13 +14,13 @@ import baseUnset from './_baseUnset.js';
  * @example
  *
  * var object = { 'a': [{ 'b': { 'c': 7 } }] };
- * _.unset(object, 'a[0].b.c');
+ * unset(object, 'a[0].b.c');
  * // => true
  *
  * console.log(object);
  * // => { 'a': [{ 'b': {} }] };
  *
- * _.unset(object, ['a', '0', 'b', 'c']);
+ * unset(object, ['a', '0', 'b', 'c']);
  * // => true
  *
  * console.log(object);

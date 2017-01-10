@@ -4,21 +4,20 @@ import createWrap from './_createWrap.js';
 const WRAP_CURRY_RIGHT_FLAG = 16;
 
 /**
- * This method is like `_.curry` except that arguments are applied to `func`
- * in the manner of `_.partialRight` instead of `_.partial`.
+ * This method is like `curry` except that arguments are applied to `func`
+ * in the manner of `partialRight` instead of `partial`.
  *
- * The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
+ * The `curryRight.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for provided arguments.
  *
  * **Note:** This method doesn't set the "length" property of curried functions.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Function
  * @param {Function} func The function to curry.
  * @param {number} [arity=func.length] The arity of `func`.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Function} Returns the new curried function.
  * @example
  *
@@ -26,7 +25,7 @@ const WRAP_CURRY_RIGHT_FLAG = 16;
  *   return [a, b, c];
  * };
  *
- * var curried = _.curryRight(abc);
+ * var curried = curryRight(abc);
  *
  * curried(3)(2)(1);
  * // => [1, 2, 3]

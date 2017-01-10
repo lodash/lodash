@@ -4,7 +4,7 @@ import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
 
 /**
- * Creates a function like `_.lowerFirst`.
+ * Creates a function like `lowerFirst`.
  *
  * @private
  * @param {string} methodName The name of the `String` case method to use.

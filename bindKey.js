@@ -11,16 +11,15 @@ const WRAP_PARTIAL_FLAG = 32;
  * Creates a function that invokes the method at `object[key]` with `partials`
  * prepended to the arguments it receives.
  *
- * This method differs from `_.bind` by allowing bound functions to reference
+ * This method differs from `bind` by allowing bound functions to reference
  * methods that may be redefined or don't yet exist. See
  * [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
  * for more details.
  *
- * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
+ * The `bindKey.placeholder` value, which defaults to `_` in monolithic
  * builds, may be used as a placeholder for partially applied arguments.
  *
  * @static
- * @memberOf _
  * @since 0.10.0
  * @category Function
  * @param {Object} object The object to invoke the method on.
@@ -36,7 +35,7 @@ const WRAP_PARTIAL_FLAG = 32;
  *   }
  * };
  *
- * var bound = _.bindKey(object, 'greet', 'hi');
+ * var bound = bindKey(object, 'greet', 'hi');
  * bound('!');
  * // => 'hi fred!'
  *
@@ -48,7 +47,7 @@ const WRAP_PARTIAL_FLAG = 32;
  * // => 'hiya fred!'
  *
  * // Bound with placeholders.
- * var bound = _.bindKey(object, 'greet', _, '!');
+ * var bound = bindKey(object, 'greet', _, '!');
  * bound('hi');
  * // => 'hiya fred!'
  */

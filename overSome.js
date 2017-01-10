@@ -6,15 +6,14 @@ import createOver from './_createOver.js';
  * truthy when invoked with the arguments it receives.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Util
- * @param {...(Function|Function[])} [predicates=[_.identity]]
+ * @param {...(Function|Function[])} [predicates=[identity]]
  *  The predicates to check.
  * @returns {Function} Returns the new function.
  * @example
  *
- * var func = _.overSome([Boolean, isFinite]);
+ * var func = overSome([Boolean, isFinite]);
  *
  * func('1');
  * // => true

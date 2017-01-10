@@ -59,7 +59,7 @@ const deburredLetters = {
 };
 
 /**
- * Used by `_.deburr` to convert Latin-1 Supplement and Latin Extended-A
+ * Used by `deburr` to convert Latin-1 Supplement and Latin Extended-A
  * letters to basic Latin letters.
  *
  * @private

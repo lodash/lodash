@@ -5,11 +5,10 @@ import basePullAt from './_basePullAt.js';
  * and returns an array of the removed elements. The predicate is invoked
  * with three arguments: (value, index, array).
  *
- * **Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`
+ * **Note:** Unlike `filter`, this method mutates `array`. Use `pull`
  * to pull elements from an array by value.
  *
  * @static
- * @memberOf _
  * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
@@ -18,7 +17,7 @@ import basePullAt from './_basePullAt.js';
  * @example
  *
  * var array = [1, 2, 3, 4];
- * var evens = _.remove(array, function(n) {
+ * var evens = remove(array, function(n) {
  *   return n % 2 == 0;
  * });
  *

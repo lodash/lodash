@@ -11,7 +11,6 @@ import isArrayLike from './isArrayLike.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Object
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property names.
@@ -24,10 +23,10 @@ import isArrayLike from './isArrayLike.js';
  *
  * Foo.prototype.c = 3;
  *
- * _.keys(new Foo);
+ * keys(new Foo);
  * // => ['a', 'b'] (iteration order is not guaranteed)
  *
- * _.keys('hi');
+ * keys('hi');
  * // => ['0', '1']
  */
 function keys(object) {

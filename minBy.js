@@ -2,12 +2,11 @@ import baseExtremum from './_baseExtremum.js';
 import baseLt from './_baseLt.js';
 
 /**
- * This method is like `_.min` except that it accepts `iteratee` which is
+ * This method is like `min` except that it accepts `iteratee` which is
  * invoked for each element in `array` to generate the criterion by which
  * the value is ranked. The iteratee is invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.
@@ -17,7 +16,7 @@ import baseLt from './_baseLt.js';
  *
  * var objects = [{ 'n': 1 }, { 'n': 2 }];
  *
- * _.minBy(objects, function(o) { return o.n; });
+ * minBy(objects, function(o) { return o.n; });
  * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {

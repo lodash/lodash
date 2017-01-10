@@ -8,7 +8,6 @@ import isArray from './isArray.js';
  * and/or values.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to concatenate.
@@ -17,7 +16,7 @@ import isArray from './isArray.js';
  * @example
  *
  * var array = [1];
- * var other = _.concat(array, 2, [3], [[4]]);
+ * var other = concat(array, 2, [3], [[4]]);
  *
  * console.log(other);
  * // => [1, 2, 3, [4]]

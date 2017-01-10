@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.reduceRight` for arrays.
+ * A specialized version of `reduceRight` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

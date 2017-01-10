@@ -9,7 +9,6 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  * calls to the created function return the result of the last `func` invocation.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Function
  * @param {number} n The number of calls at which `func` is no longer invoked.
@@ -17,7 +16,7 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * jQuery(element).on('click', _.before(5, addContactToList));
+ * jQuery(element).on('click', before(5, addContactToList));
  * // => Allows adding up to 4 contacts to the list.
  */
 function before(n, func) {

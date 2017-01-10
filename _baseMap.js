@@ -2,7 +2,7 @@ import baseEach from './_baseEach.js';
 import isArrayLike from './isArrayLike.js';
 
 /**
- * The base implementation of `_.map`.
+ * The base implementation of `map`.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

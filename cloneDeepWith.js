@@ -5,25 +5,24 @@ const CLONE_DEEP_FLAG = 1;
 const CLONE_SYMBOLS_FLAG = 4;
 
 /**
- * This method is like `_.cloneWith` except that it recursively clones `value`.
+ * This method is like `cloneWith` except that it recursively clones `value`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @param {Function} [customizer] The function to customize cloning.
  * @returns {*} Returns the deep cloned value.
- * @see _.cloneWith
+ * @see cloneWith
  * @example
  *
  * function customizer(value) {
- *   if (_.isElement(value)) {
+ *   if (isElement(value)) {
  *     return value.cloneNode(true);
  *   }
  * }
  *
- * var el = _.cloneDeepWith(document.body, customizer);
+ * var el = cloneDeepWith(document.body, customizer);
  *
  * console.log(el === document.body);
  * // => false

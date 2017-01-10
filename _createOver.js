@@ -1,7 +1,7 @@
 import apply from './_apply.js';
 
 /**
- * Creates a function like `_.over`.
+ * Creates a function like `over`.
  *
  * @private
  * @param {Function} arrayFunc The function to iterate over iteratees.

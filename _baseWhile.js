@@ -1,7 +1,7 @@
 import baseSlice from './_baseSlice.js';
 
 /**
- * The base implementation of methods like `_.dropWhile` and `_.takeWhile`.
+ * The base implementation of methods like `dropWhile` and `takeWhile`.
  *
  * @private
  * @param {Array} array The array to query.

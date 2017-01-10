@@ -3,7 +3,7 @@ const nativeFloor = Math.floor;
 const nativeRandom = Math.random;
 
 /**
- * The base implementation of `_.random` without support for returning
+ * The base implementation of `random` without support for returning
  * floating-point numbers.
  *
  * @private

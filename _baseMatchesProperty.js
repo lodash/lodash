@@ -11,7 +11,7 @@ const COMPARE_PARTIAL_FLAG = 1;
 const COMPARE_UNORDERED_FLAG = 2;
 
 /**
- * The base implementation of `_.matchesProperty` which doesn't clone `srcValue`.
+ * The base implementation of `matchesProperty` which doesn't clone `srcValue`.
  *
  * @private
  * @param {string} path The path of the property to get.

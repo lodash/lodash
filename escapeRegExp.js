@@ -12,14 +12,13 @@ const reHasRegExpChar = RegExp(reRegExpChar.source);
  * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to escape.
  * @returns {string} Returns the escaped string.
  * @example
  *
- * _.escapeRegExp('[lodash](https://lodash.com/)');
+ * escapeRegExp('[lodash](https://lodash.com/)');
  * // => '\[lodash\]\(https://lodash\.com/\)'
  */
 function escapeRegExp(string) {

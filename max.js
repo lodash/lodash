@@ -8,16 +8,15 @@ import identity from './identity.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Math
  * @param {Array} array The array to iterate over.
  * @returns {*} Returns the maximum value.
  * @example
  *
- * _.max([4, 2, 8, 6]);
+ * max([4, 2, 8, 6]);
  * // => 8
  *
- * _.max([]);
+ * max([]);
  * // => undefined
  */
 function max(array) {

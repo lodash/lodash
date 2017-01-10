@@ -5,11 +5,10 @@ import toInteger from './toInteger.js';
 const nativeMax = Math.max;
 
 /**
- * This method is like `_.find` except that it returns the index of the first
+ * This method is like `find` except that it returns the index of the first
  * element `predicate` returns truthy for instead of the element itself.
  *
  * @static
- * @memberOf _
  * @since 1.1.0
  * @category Array
  * @param {Array} array The array to inspect.
@@ -24,7 +23,7 @@ const nativeMax = Math.max;
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * _.findIndex(users, function(o) { return o.user == 'barney'; });
+ * findIndex(users, function(o) { return o.user == 'barney'; });
  * // => 0
  */
 function findIndex(array, predicate, fromIndex) {

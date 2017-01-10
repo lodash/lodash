@@ -5,7 +5,6 @@ import baseDelay from './_baseDelay.js';
  * additional arguments are provided to `func` when it's invoked.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to defer.
@@ -13,7 +12,7 @@ import baseDelay from './_baseDelay.js';
  * @returns {number} Returns the timer id.
  * @example
  *
- * _.defer(function(text) {
+ * defer(function(text) {
  *   console.log(text);
  * }, 'deferred');
  * // => Logs 'deferred' after one millisecond.

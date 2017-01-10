@@ -10,7 +10,7 @@ const htmlEscapes = {
 };
 
 /**
- * Used by `_.escape` to convert characters to HTML entities.
+ * Used by `escape` to convert characters to HTML entities.
  *
  * @private
  * @param {string} chr The matched character to escape.

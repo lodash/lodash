@@ -6,20 +6,19 @@ import upperFirst from './upperFirst.js';
  * [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
  *
  * @static
- * @memberOf _
  * @since 3.1.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the start cased string.
  * @example
  *
- * _.startCase('--foo-bar--');
+ * startCase('--foo-bar--');
  * // => 'Foo Bar'
  *
- * _.startCase('fooBar');
+ * startCase('fooBar');
  * // => 'Foo Bar'
  *
- * _.startCase('__FOO_BAR__');
+ * startCase('__FOO_BAR__');
  * // => 'FOO BAR'
  */
 const startCase = createCompounder((result, word, index) => result + (index ? ' ' : '') + upperFirst(word));

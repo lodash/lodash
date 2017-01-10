@@ -1,7 +1,7 @@
 import baseInverter from './_baseInverter.js';
 
 /**
- * Creates a function like `_.invertBy`.
+ * Creates a function like `invertBy`.
  *
  * @private
  * @param {Function} setter The function to set accumulator values.

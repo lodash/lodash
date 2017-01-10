@@ -3,7 +3,7 @@ import baseIsNaN from './_baseIsNaN.js';
 import strictIndexOf from './_strictIndexOf.js';
 
 /**
- * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
+ * The base implementation of `indexOf` without `fromIndex` bounds checks.
  *
  * @private
  * @param {Array} array The array to inspect.

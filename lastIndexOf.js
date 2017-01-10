@@ -8,11 +8,10 @@ const nativeMax = Math.max;
 const nativeMin = Math.min;
 
 /**
- * This method is like `_.indexOf` except that it iterates over elements of
+ * This method is like `indexOf` except that it iterates over elements of
  * `array` from right to left.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.
@@ -21,11 +20,11 @@ const nativeMin = Math.min;
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * _.lastIndexOf([1, 2, 1, 2], 2);
+ * lastIndexOf([1, 2, 1, 2], 2);
  * // => 3
  *
  * // Search from the `fromIndex`.
- * _.lastIndexOf([1, 2, 1, 2], 2, 2);
+ * lastIndexOf([1, 2, 1, 2], 2, 2);
  * // => 1
  */
 function lastIndexOf(array, value, fromIndex) {

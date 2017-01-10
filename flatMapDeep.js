@@ -5,11 +5,10 @@ import map from './map.js';
 const INFINITY = 1 / 0;
 
 /**
- * This method is like `_.flatMap` except that it recursively flattens the
+ * This method is like `flatMap` except that it recursively flattens the
  * mapped results.
  *
  * @static
- * @memberOf _
  * @since 4.7.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -21,7 +20,7 @@ const INFINITY = 1 / 0;
  *   return [[[n, n]]];
  * }
  *
- * _.flatMapDeep([1, 2], duplicate);
+ * flatMapDeep([1, 2], duplicate);
  * // => [1, 1, 2, 2]
  */
 function flatMapDeep(collection, iteratee) {

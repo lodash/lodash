@@ -9,23 +9,22 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * represented correctly.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to convert.
  * @returns {number} Returns the converted integer.
  * @example
  *
- * _.toSafeInteger(3.2);
+ * toSafeInteger(3.2);
  * // => 3
  *
- * _.toSafeInteger(Number.MIN_VALUE);
+ * toSafeInteger(Number.MIN_VALUE);
  * // => 0
  *
- * _.toSafeInteger(Infinity);
+ * toSafeInteger(Infinity);
  * // => 9007199254740991
  *
- * _.toSafeInteger('3.2');
+ * toSafeInteger('3.2');
  * // => 3
  */
 function toSafeInteger(value) {

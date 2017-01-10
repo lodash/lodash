@@ -2,7 +2,7 @@ import arrayPush from './_arrayPush.js';
 import isFlattenable from './_isFlattenable.js';
 
 /**
- * The base implementation of `_.flatten` with support for restricting flattening.
+ * The base implementation of `flatten` with support for restricting flattening.
  *
  * @private
  * @param {Array} array The array to flatten.

@@ -46,7 +46,7 @@ typedArrayTags[setTag] = typedArrayTags[stringTag] =
 typedArrayTags[weakMapTag] = false;
 
 /**
- * The base implementation of `_.isTypedArray` without Node.js optimizations.
+ * The base implementation of `isTypedArray` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

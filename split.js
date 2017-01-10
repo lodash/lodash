@@ -16,7 +16,6 @@ const MAX_ARRAY_LENGTH = 4294967295;
  * [`String#split`](https://mdn.io/String/split).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to split.
@@ -25,7 +24,7 @@ const MAX_ARRAY_LENGTH = 4294967295;
  * @returns {Array} Returns the string segments.
  * @example
  *
- * _.split('a-b-c', '-', 2);
+ * split('a-b-c', '-', 2);
  * // => ['a', 'b']
  */
 function split(string, separator, limit) {

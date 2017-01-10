@@ -11,7 +11,6 @@ import baseIsEqual from './_baseIsEqual.js';
  * nodes are compared by strict equality, i.e. `===`.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to compare.
@@ -22,7 +21,7 @@ import baseIsEqual from './_baseIsEqual.js';
  * var object = { 'a': 1 };
  * var other = { 'a': 1 };
  *
- * _.isEqual(object, other);
+ * isEqual(object, other);
  * // => true
  *
  * object === other;

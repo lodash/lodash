@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.forEach` for arrays.
+ * A specialized version of `forEach` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

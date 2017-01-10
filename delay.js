@@ -6,7 +6,6 @@ import toNumber from './toNumber.js';
  * provided to `func` when it's invoked.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to delay.
@@ -15,7 +14,7 @@ import toNumber from './toNumber.js';
  * @returns {number} Returns the timer id.
  * @example
  *
- * _.delay(function(text) {
+ * delay(function(text) {
  *   console.log(text);
  * }, 1000, 'later');
  * // => Logs 'later' after one second.

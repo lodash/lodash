@@ -1,7 +1,7 @@
 import baseUpdate from './_baseUpdate.js';
 
 /**
- * This method is like `_.update` except that it accepts `customizer` which is
+ * This method is like `update` except that it accepts `customizer` which is
  * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
  * path creation is handled by the method instead. The `customizer` is invoked
  * with three arguments: (nsValue, key, nsObject).
@@ -9,7 +9,6 @@ import baseUpdate from './_baseUpdate.js';
  * **Note:** This method mutates `object`.
  *
  * @static
- * @memberOf _
  * @since 4.6.0
  * @category Object
  * @param {Object} object The object to modify.
@@ -21,7 +20,7 @@ import baseUpdate from './_baseUpdate.js';
  *
  * var object = {};
  *
- * _.updateWith(object, '[0][1]', _.constant('a'), Object);
+ * updateWith(object, '[0][1]', constant('a'), Object);
  * // => { '0': { '1': 'a' } }
  */
 function updateWith(object, path, updater, customizer) {

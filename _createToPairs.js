@@ -8,7 +8,7 @@ const mapTag = '[object Map]';
 const setTag = '[object Set]';
 
 /**
- * Creates a `_.toPairs` or `_.toPairsIn` function.
+ * Creates a `toPairs` or `toPairsIn` function.
  *
  * @private
  * @param {Function} keysFunc The function to get the keys of a given object.

@@ -23,7 +23,6 @@ const objectCtorString = funcToString.call(Object);
  * `Object` constructor or one with a `[[Prototype]]` of `null`.
  *
  * @static
- * @memberOf _
  * @since 0.8.0
  * @category Lang
  * @param {*} value The value to check.
@@ -34,16 +33,16 @@ const objectCtorString = funcToString.call(Object);
  *   this.a = 1;
  * }
  *
- * _.isPlainObject(new Foo);
+ * isPlainObject(new Foo);
  * // => false
  *
- * _.isPlainObject([1, 2, 3]);
+ * isPlainObject([1, 2, 3]);
  * // => false
  *
- * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * isPlainObject({ 'x': 0, 'y': 0 });
  * // => true
  *
- * _.isPlainObject(Object.create(null));
+ * isPlainObject(Object.create(null));
  * // => true
  */
 function isPlainObject(value) {

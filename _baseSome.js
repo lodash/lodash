@@ -1,7 +1,7 @@
 import baseEach from './_baseEach.js';
 
 /**
- * The base implementation of `_.some`.
+ * The base implementation of `some`.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

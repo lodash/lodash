@@ -7,7 +7,6 @@ import toString from './toString.js';
  * Checks if `string` starts with the given target string.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to inspect.
@@ -17,13 +16,13 @@ import toString from './toString.js';
  *  else `false`.
  * @example
  *
- * _.startsWith('abc', 'a');
+ * startsWith('abc', 'a');
  * // => true
  *
- * _.startsWith('abc', 'b');
+ * startsWith('abc', 'b');
  * // => false
  *
- * _.startsWith('abc', 'b', 1);
+ * startsWith('abc', 'b', 1);
  * // => true
  */
 function startsWith(string, target, position) {

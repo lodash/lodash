@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.conformsTo` which accepts `props` to check.
+ * The base implementation of `conformsTo` which accepts `props` to check.
  *
  * @private
  * @param {Object} object The object to inspect.

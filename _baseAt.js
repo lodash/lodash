@@ -1,7 +1,7 @@
 import get from './get.js';
 
 /**
- * The base implementation of `_.at` without support for individual paths.
+ * The base implementation of `at` without support for individual paths.
  *
  * @private
  * @param {Object} object The object to iterate over.

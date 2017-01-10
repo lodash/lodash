@@ -8,16 +8,15 @@ import identity from './identity.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Math
  * @param {Array} array The array to iterate over.
  * @returns {*} Returns the minimum value.
  * @example
  *
- * _.min([4, 2, 8, 6]);
+ * min([4, 2, 8, 6]);
  * // => 2
  *
- * _.min([]);
+ * min([]);
  * // => undefined
  */
 function min(array) {

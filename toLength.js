@@ -12,23 +12,22 @@ const MAX_ARRAY_LENGTH = 4294967295;
  * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to convert.
  * @returns {number} Returns the converted integer.
  * @example
  *
- * _.toLength(3.2);
+ * toLength(3.2);
  * // => 3
  *
- * _.toLength(Number.MIN_VALUE);
+ * toLength(Number.MIN_VALUE);
  * // => 0
  *
- * _.toLength(Infinity);
+ * toLength(Infinity);
  * // => 4294967295
  *
- * _.toLength('3.2');
+ * toLength('3.2');
  * // => 3
  */
 function toLength(value) {

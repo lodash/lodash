@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.findIndex` and `_.findLastIndex`.
+ * The base implementation of `findIndex` and `findLastIndex`.
  *
  * @private
  * @param {Array} array The array to inspect.

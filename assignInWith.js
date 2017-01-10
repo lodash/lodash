@@ -3,7 +3,7 @@ import createAssigner from './_createAssigner.js';
 import keysIn from './keysIn.js';
 
 /**
- * This method is like `_.assignIn` except that it accepts `customizer`
+ * This method is like `assignIn` except that it accepts `customizer`
  * which is invoked to produce the assigned values. If `customizer` returns
  * `undefined`, assignment is handled by the method instead. The `customizer`
  * is invoked with five arguments: (objValue, srcValue, key, object, source).
@@ -11,7 +11,6 @@ import keysIn from './keysIn.js';
  * **Note:** This method mutates `object`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @alias extendWith
  * @category Object
@@ -19,14 +18,14 @@ import keysIn from './keysIn.js';
  * @param {...Object} sources The source objects.
  * @param {Function} [customizer] The function to customize assigned values.
  * @returns {Object} Returns `object`.
- * @see _.assignWith
+ * @see assignWith
  * @example
  *
  * function customizer(objValue, srcValue) {
- *   return _.isUndefined(objValue) ? srcValue : objValue;
+ *   return isUndefined(objValue) ? srcValue : objValue;
  * }
  *
- * var defaults = _.partialRight(_.assignInWith, customizer);
+ * var defaults = partialRight(assignInWith, customizer);
  *
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }

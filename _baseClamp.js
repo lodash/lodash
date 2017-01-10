@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.clamp` which doesn't coerce arguments.
+ * The base implementation of `clamp` which doesn't coerce arguments.
  *
  * @private
  * @param {number} number The number to clamp.

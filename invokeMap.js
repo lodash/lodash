@@ -10,7 +10,6 @@ import isArrayLike from './isArrayLike.js';
  * for, and `this` bound to, each element in `collection`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -20,10 +19,10 @@ import isArrayLike from './isArrayLike.js';
  * @returns {Array} Returns the array of results.
  * @example
  *
- * _.invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
+ * invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
  * // => [[1, 5, 7], [1, 2, 3]]
  *
- * _.invokeMap([123, 456], String.prototype.split, '');
+ * invokeMap([123, 456], String.prototype.split, '');
  * // => [['1', '2', '3'], ['4', '5', '6']]
  */
 function invokeMap(collection, path, ...args) {

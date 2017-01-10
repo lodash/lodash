@@ -1,7 +1,7 @@
 import isIterateeCall from './_isIterateeCall.js';
 
 /**
- * Creates a function like `_.assign`.
+ * Creates a function like `assign`.
  *
  * @private
  * @param {Function} assigner The function to assign values.

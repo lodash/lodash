@@ -2,7 +2,7 @@ import basePickBy from './_basePickBy.js';
 import hasIn from './hasIn.js';
 
 /**
- * The base implementation of `_.pick` without support for individual
+ * The base implementation of `pick` without support for individual
  * property identifiers.
  *
  * @private

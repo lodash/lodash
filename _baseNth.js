@@ -1,7 +1,7 @@
 import isIndex from './_isIndex.js';
 
 /**
- * The base implementation of `_.nth` which doesn't coerce arguments.
+ * The base implementation of `nth` which doesn't coerce arguments.
  *
  * @private
  * @param {Array} array The array to query.

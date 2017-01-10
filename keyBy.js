@@ -8,7 +8,6 @@ import createAggregator from './_createAggregator.js';
  * iteratee is invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -21,12 +20,12 @@ import createAggregator from './_createAggregator.js';
  *   { 'dir': 'right', 'code': 100 }
  * ];
  *
- * _.keyBy(array, function(o) {
+ * keyBy(array, function(o) {
  *   return String.fromCharCode(o.code);
  * });
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  *
- * _.keyBy(array, 'dir');
+ * keyBy(array, 'dir');
  * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
 const keyBy = createAggregator((result, value, key) => {

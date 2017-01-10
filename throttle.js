@@ -22,10 +22,9 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  * until to the next tick, similar to `setTimeout` with a timeout of `0`.
  *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
- * for details over the differences between `_.throttle` and `_.debounce`.
+ * for details over the differences between `throttle` and `debounce`.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to throttle.
@@ -39,10 +38,10 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  * @example
  *
  * // Avoid excessively updating the position while scrolling.
- * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+ * jQuery(window).on('scroll', throttle(updatePosition, 100));
  *
  * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
- * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+ * var throttled = throttle(renewToken, 300000, { 'trailing': false });
  * jQuery(element).on('click', throttled);
  *
  * // Cancel the trailing throttled invocation.

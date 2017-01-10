@@ -8,19 +8,18 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * for equality comparisons. The order and references of result values are
  * determined by the first array.
  *
- * **Note:** Unlike `_.pullAll`, this method returns a new array.
+ * **Note:** Unlike `pullAll`, this method returns a new array.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to inspect.
  * @param {...Array} [values] The values to exclude.
  * @returns {Array} Returns the new array of filtered values.
- * @see _.without, _.xor
+ * @see without, xor
  * @example
  *
- * _.difference([2, 1], [2, 3]);
+ * difference([2, 1], [2, 3]);
  * // => [1]
  */
 function difference(array, ...values) {

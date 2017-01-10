@@ -1,7 +1,7 @@
 import baseIndexOf from './_baseIndexOf.js';
 
 /**
- * A specialized version of `_.includes` for arrays without support for
+ * A specialized version of `includes` for arrays without support for
  * specifying an index to search from.
  *
  * @private

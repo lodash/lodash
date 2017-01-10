@@ -3,7 +3,7 @@ const nativeMax = Math.max;
 const nativeMin = Math.min;
 
 /**
- * The base implementation of `_.inRange` which doesn't coerce arguments.
+ * The base implementation of `inRange` which doesn't coerce arguments.
  *
  * @private
  * @param {number} number The number to check.

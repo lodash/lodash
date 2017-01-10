@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.hasIn` without support for deep paths.
+ * The base implementation of `hasIn` without support for deep paths.
  *
  * @private
  * @param {Object} [object] The object to query.

@@ -2,7 +2,7 @@ import baseMerge from './_baseMerge.js';
 import isObject from './isObject.js';
 
 /**
- * Used by `_.defaultsDeep` to customize its `_.merge` use to merge source
+ * Used by `defaultsDeep` to customize its `merge` use to merge source
  * objects into destination objects that are passed thru.
  *
  * @private

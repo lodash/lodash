@@ -28,10 +28,9 @@ const nativeMin = Math.min;
  * until to the next tick, similar to `setTimeout` with a timeout of `0`.
  *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
- * for details over the differences between `_.debounce` and `_.throttle`.
+ * for details over the differences between `debounce` and `throttle`.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to debounce.
@@ -47,16 +46,16 @@ const nativeMin = Math.min;
  * @example
  *
  * // Avoid costly calculations while the window size is in flux.
- * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ * jQuery(window).on('resize', debounce(calculateLayout, 150));
  *
  * // Invoke `sendMail` when clicked, debouncing subsequent calls.
- * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ * jQuery(element).on('click', debounce(sendMail, 300, {
  *   'leading': true,
  *   'trailing': false
  * }));
  *
  * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
- * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var debounced = debounce(batchLog, 250, { 'maxWait': 1000 });
  * var source = new EventSource('/stream');
  * jQuery(source).on('message', debounced);
  *

@@ -7,7 +7,6 @@ import findIndex from './findIndex.js';
  * arguments: (value, index|key, collection).
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to inspect.
@@ -22,7 +21,7 @@ import findIndex from './findIndex.js';
  *   { 'user': 'pebbles', 'age': 1,  'active': true }
  * ];
  *
- * _.find(users, function(o) { return o.age < 40; });
+ * find(users, function(o) { return o.age < 40; });
  * // => object for 'barney'
  */
 const find = createFind(findIndex);

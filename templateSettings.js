@@ -9,7 +9,6 @@ import reInterpolate from './_reInterpolate.js';
  * following template settings to use alternative delimiters.
  *
  * @static
- * @memberOf _
  * @type {Object}
  */
 const templateSettings = {
@@ -17,7 +16,7 @@ const templateSettings = {
   /**
    * Used to detect `data` property values to be HTML-escaped.
    *
-   * @memberOf _.templateSettings
+   * @memberOf templateSettings
    * @type {RegExp}
    */
   'escape': reEscape,
@@ -25,7 +24,7 @@ const templateSettings = {
   /**
    * Used to detect code to be evaluated.
    *
-   * @memberOf _.templateSettings
+   * @memberOf templateSettings
    * @type {RegExp}
    */
   'evaluate': reEvaluate,
@@ -33,7 +32,7 @@ const templateSettings = {
   /**
    * Used to detect `data` property values to inject.
    *
-   * @memberOf _.templateSettings
+   * @memberOf templateSettings
    * @type {RegExp}
    */
   'interpolate': reInterpolate,
@@ -41,7 +40,7 @@ const templateSettings = {
   /**
    * Used to reference the data object in the template text.
    *
-   * @memberOf _.templateSettings
+   * @memberOf templateSettings
    * @type {string}
    */
   'variable': '',
@@ -49,7 +48,7 @@ const templateSettings = {
   /**
    * Used to import variables into the compiled template.
    *
-   * @memberOf _.templateSettings
+   * @memberOf templateSettings
    * @type {Object}
    */
   'imports': {
@@ -57,7 +56,7 @@ const templateSettings = {
     /**
      * A reference to the `lodash` function.
      *
-     * @memberOf _.templateSettings.imports
+     * @memberOf templateSettings.imports
      * @type {Function}
      */
     '_': { 'escape': escape }

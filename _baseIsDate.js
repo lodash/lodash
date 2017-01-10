@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
 const dateTag = '[object Date]';
 
 /**
- * The base implementation of `_.isDate` without Node.js optimizations.
+ * The base implementation of `isDate` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

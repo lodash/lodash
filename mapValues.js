@@ -8,13 +8,12 @@ import baseForOwn from './_baseForOwn.js';
  * (value, key, object).
  *
  * @static
- * @memberOf _
  * @since 2.4.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns the new mapped object.
- * @see _.mapKeys
+ * @see mapKeys
  * @example
  *
  * var users = {
@@ -22,7 +21,7 @@ import baseForOwn from './_baseForOwn.js';
  *   'pebbles': { 'user': 'pebbles', 'age': 1 }
  * };
  *
- * _.mapValues(users, function(o) { return o.age; });
+ * mapValues(users, function(o) { return o.age; });
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValues(object, iteratee) {

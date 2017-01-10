@@ -4,7 +4,7 @@ import parent from './_parent.js';
 import toKey from './_toKey.js';
 
 /**
- * The base implementation of `_.unset`.
+ * The base implementation of `unset`.
  *
  * @private
  * @param {Object} object The object to modify.

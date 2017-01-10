@@ -15,7 +15,6 @@ const hasOwnProperty = objectProto.hasOwnProperty;
  * key. The iteratee is invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -23,7 +22,7 @@ const hasOwnProperty = objectProto.hasOwnProperty;
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * _.groupBy([6.1, 4.2, 6.3], Math.floor);
+ * groupBy([6.1, 4.2, 6.3], Math.floor);
  * // => { '4': [4.2], '6': [6.1, 6.3] }
  */
 const groupBy = createAggregator((result, value, key) => {

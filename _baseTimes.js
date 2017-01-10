@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.times` without support for max array length checks.
+ * The base implementation of `times` without support for max array length checks.
  *
  * @private
  * @param {number} n The number of times to invoke `iteratee`.

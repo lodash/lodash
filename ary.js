@@ -8,16 +8,15 @@ const WRAP_ARY_FLAG = 128;
  * ignoring any additional arguments.
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Function
  * @param {Function} func The function to cap arguments for.
  * @param {number} [n=func.length] The arity cap.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Function} Returns the new capped function.
  * @example
  *
- * _.map(['6', '8', '10'], _.ary(parseInt, 1));
+ * map(['6', '8', '10'], ary(parseInt, 1));
  * // => [6, 8, 10]
  */
 function ary(func, n, guard) {

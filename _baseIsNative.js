@@ -30,7 +30,7 @@ const reIsNative = RegExp(`^${
 }$`);
 
 /**
- * The base implementation of `_.isNative` without bad shim checks.
+ * The base implementation of `isNative` without bad shim checks.
  *
  * @private
  * @param {*} value The value to check.

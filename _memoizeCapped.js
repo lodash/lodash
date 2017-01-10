@@ -4,7 +4,7 @@ import memoize from './memoize.js';
 const MAX_MEMOIZE_SIZE = 500;
 
 /**
- * A specialized version of `_.memoize` which clears the memoized function's
+ * A specialized version of `memoize` which clears the memoized function's
  * cache when it exceeds `MAX_MEMOIZE_SIZE`.
  *
  * @private

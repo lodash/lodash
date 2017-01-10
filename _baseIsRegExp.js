@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
 const regexpTag = '[object RegExp]';
 
 /**
- * The base implementation of `_.isRegExp` without Node.js optimizations.
+ * The base implementation of `isRegExp` without Node.js optimizations.
  *
  * @private
  * @param {*} value The value to check.

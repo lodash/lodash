@@ -7,23 +7,22 @@ import isLength from './isLength.js';
  * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
  * @example
  *
- * _.isArrayLike([1, 2, 3]);
+ * isArrayLike([1, 2, 3]);
  * // => true
  *
- * _.isArrayLike(document.body.children);
+ * isArrayLike(document.body.children);
  * // => true
  *
- * _.isArrayLike('abc');
+ * isArrayLike('abc');
  * // => true
  *
- * _.isArrayLike(_.noop);
+ * isArrayLike(noop);
  * // => false
  */
 function isArrayLike(value) {

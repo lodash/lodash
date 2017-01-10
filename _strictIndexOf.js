@@ -1,5 +1,5 @@
 /**
- * A specialized version of `_.indexOf` which performs strict equality
+ * A specialized version of `indexOf` which performs strict equality
  * comparisons of values, i.e. `===`.
  *
  * @private

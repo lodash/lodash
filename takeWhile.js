@@ -6,7 +6,6 @@ import baseWhile from './_baseWhile.js';
  * three arguments: (value, index, array).
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to query.
@@ -20,7 +19,7 @@ import baseWhile from './_baseWhile.js';
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * _.takeWhile(users, function(o) { return !o.active; });
+ * takeWhile(users, function(o) { return !o.active; });
  * // => objects for ['barney', 'fred']
  */
 function takeWhile(array, predicate) {

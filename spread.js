@@ -18,7 +18,6 @@ const nativeMax = Math.max;
  * [spread operator](https://mdn.io/spread_operator).
  *
  * @static
- * @memberOf _
  * @since 3.2.0
  * @category Function
  * @param {Function} func The function to spread arguments over.
@@ -26,7 +25,7 @@ const nativeMax = Math.max;
  * @returns {Function} Returns the new function.
  * @example
  *
- * var say = _.spread(function(who, what) {
+ * var say = spread(function(who, what) {
  *   return who + ' says ' + what;
  * });
  *
@@ -38,7 +37,7 @@ const nativeMax = Math.max;
  *   Promise.resolve(36)
  * ]);
  *
- * numbers.then(_.spread(function(x, y) {
+ * numbers.then(spread(function(x, y) {
  *   return x + y;
  * }));
  * // => a Promise of 76

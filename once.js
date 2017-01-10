@@ -6,14 +6,13 @@ import before from './before.js';
  * invoked with the `this` binding and arguments of the created function.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to restrict.
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * var initialize = _.once(createApplication);
+ * var initialize = once(createApplication);
  * initialize();
  * initialize();
  * // => `createApplication` is invoked once

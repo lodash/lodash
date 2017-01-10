@@ -7,7 +7,6 @@ import createAggregator from './_createAggregator.js';
  * invoked with one argument: (value).
  *
  * @static
- * @memberOf _
  * @since 3.0.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
@@ -21,7 +20,7 @@ import createAggregator from './_createAggregator.js';
  *   { 'user': 'pebbles', 'age': 1,  'active': false }
  * ];
  *
- * _.partition(users, function(o) { return o.active; });
+ * partition(users, function(o) { return o.active; });
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
 const partition = createAggregator((result, value, key) =>

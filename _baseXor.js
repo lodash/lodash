@@ -3,7 +3,7 @@ import baseFlatten from './_baseFlatten.js';
 import baseUniq from './_baseUniq.js';
 
 /**
- * The base implementation of methods like `_.xor` which accepts an array of
+ * The base implementation of methods like `xor` which accepts an array of
  * arrays to inspect.
  *
  * @private

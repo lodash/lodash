@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.sum` and `_.sumBy`.
+ * The base implementation of `sum` and `sumBy`.
  *
  * @private
  * @param {Array} array The array to iterate over.

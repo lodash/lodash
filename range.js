@@ -11,34 +11,33 @@ import createRange from './_createRange.js';
  *
  * @static
  * @since 0.1.0
- * @memberOf _
  * @category Util
  * @param {number} [start=0] The start of the range.
  * @param {number} end The end of the range.
  * @param {number} [step=1] The value to increment or decrement by.
  * @returns {Array} Returns the range of numbers.
- * @see _.inRange, _.rangeRight
+ * @see inRange, rangeRight
  * @example
  *
- * _.range(4);
+ * range(4);
  * // => [0, 1, 2, 3]
  *
- * _.range(-4);
+ * range(-4);
  * // => [0, -1, -2, -3]
  *
- * _.range(1, 5);
+ * range(1, 5);
  * // => [1, 2, 3, 4]
  *
- * _.range(0, 20, 5);
+ * range(0, 20, 5);
  * // => [0, 5, 10, 15]
  *
- * _.range(0, -4, -1);
+ * range(0, -4, -1);
  * // => [0, -1, -2, -3]
  *
- * _.range(1, 4, 0);
+ * range(1, 4, 0);
  * // => [1, 1, 1]
  *
- * _.range(0);
+ * range(0);
  * // => []
  */
 const range = createRange();

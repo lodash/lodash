@@ -7,7 +7,7 @@ const MAX_ARRAY_LENGTH = 4294967295;
 const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
 /**
- * The base implementation of `_.sortedIndex` and `_.sortedLastIndex` which
+ * The base implementation of `sortedIndex` and `sortedLastIndex` which
  * performs a binary search of `array` to determine the index at which `value`
  * should be inserted into `array` in order to maintain its sort order.
  *

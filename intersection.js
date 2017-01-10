@@ -9,14 +9,13 @@ import castArrayLikeObject from './_castArrayLikeObject.js';
  * determined by the first array.
  *
  * @static
- * @memberOf _
  * @since 0.1.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * _.intersection([2, 1], [2, 3]);
+ * intersection([2, 1], [2, 3]);
  * // => [2]
  */
 function intersection(...arrays) {

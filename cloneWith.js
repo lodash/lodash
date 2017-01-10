@@ -4,28 +4,27 @@ import baseClone from './_baseClone.js';
 const CLONE_SYMBOLS_FLAG = 4;
 
 /**
- * This method is like `_.clone` except that it accepts `customizer` which
+ * This method is like `clone` except that it accepts `customizer` which
  * is invoked to produce the cloned value. If `customizer` returns `undefined`,
  * cloning is handled by the method instead. The `customizer` is invoked with
  * up to four arguments; (value [, index|key, object, stack]).
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to clone.
  * @param {Function} [customizer] The function to customize cloning.
  * @returns {*} Returns the cloned value.
- * @see _.cloneDeepWith
+ * @see cloneDeepWith
  * @example
  *
  * function customizer(value) {
- *   if (_.isElement(value)) {
+ *   if (isElement(value)) {
  *     return value.cloneNode(false);
  *   }
  * }
  *
- * var el = _.cloneWith(document.body, customizer);
+ * var el = cloneWith(document.body, customizer);
  *
  * console.log(el === document.body);
  * // => false

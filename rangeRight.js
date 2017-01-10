@@ -1,39 +1,38 @@
 import createRange from './_createRange.js';
 
 /**
- * This method is like `_.range` except that it populates values in
+ * This method is like `range` except that it populates values in
  * descending order.
  *
  * @static
- * @memberOf _
  * @since 4.0.0
  * @category Util
  * @param {number} [start=0] The start of the range.
  * @param {number} end The end of the range.
  * @param {number} [step=1] The value to increment or decrement by.
  * @returns {Array} Returns the range of numbers.
- * @see _.inRange, _.range
+ * @see inRange, range
  * @example
  *
- * _.rangeRight(4);
+ * rangeRight(4);
  * // => [3, 2, 1, 0]
  *
- * _.rangeRight(-4);
+ * rangeRight(-4);
  * // => [-3, -2, -1, 0]
  *
- * _.rangeRight(1, 5);
+ * rangeRight(1, 5);
  * // => [4, 3, 2, 1]
  *
- * _.rangeRight(0, 20, 5);
+ * rangeRight(0, 20, 5);
  * // => [15, 10, 5, 0]
  *
- * _.rangeRight(0, -4, -1);
+ * rangeRight(0, -4, -1);
  * // => [-3, -2, -1, 0]
  *
- * _.rangeRight(1, 4, 0);
+ * rangeRight(1, 4, 0);
  * // => [1, 1, 1]
  *
- * _.rangeRight(0);
+ * rangeRight(0);
  * // => []
  */
 const rangeRight = createRange(true);

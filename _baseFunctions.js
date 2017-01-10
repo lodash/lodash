@@ -2,7 +2,7 @@ import arrayFilter from './_arrayFilter.js';
 import isFunction from './isFunction.js';
 
 /**
- * The base implementation of `_.functions` which creates an array of
+ * The base implementation of `functions` which creates an array of
  * `object` function property names filtered from `props`.
  *
  * @private

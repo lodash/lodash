@@ -3,7 +3,7 @@ import baseAggregator from './_baseAggregator.js';
 import isArray from './isArray.js';
 
 /**
- * Creates a function like `_.groupBy`.
+ * Creates a function like `groupBy`.
  *
  * @private
  * @param {Function} setter The function to set accumulator values.

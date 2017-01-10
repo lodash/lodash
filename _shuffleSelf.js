@@ -1,7 +1,7 @@
 import baseRandom from './_baseRandom.js';
 
 /**
- * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
+ * A specialized version of `shuffle` which mutates and sets the size of `array`.
  *
  * @private
  * @param {Array} array The array to shuffle.

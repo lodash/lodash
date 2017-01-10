@@ -11,7 +11,7 @@ const symbolProto = Symbol ? Symbol.prototype : undefined;
 const symbolToString = symbolProto ? symbolProto.toString : undefined;
 
 /**
- * The base implementation of `_.toString` which doesn't convert nullish
+ * The base implementation of `toString` which doesn't convert nullish
  * values to empty strings.
  *
  * @private

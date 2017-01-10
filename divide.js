@@ -4,7 +4,6 @@ import createMathOperation from './_createMathOperation.js';
  * Divide two numbers.
  *
  * @static
- * @memberOf _
  * @since 4.7.0
  * @category Math
  * @param {number} dividend The first number in a division.
@@ -12,7 +11,7 @@ import createMathOperation from './_createMathOperation.js';
  * @returns {number} Returns the quotient.
  * @example
  *
- * _.divide(6, 4);
+ * divide(6, 4);
  * // => 1.5
  */
 const divide = createMathOperation((dividend, divisor) => dividend / divisor, 1);

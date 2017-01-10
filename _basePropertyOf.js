@@ -1,5 +1,5 @@
 /**
- * The base implementation of `_.propertyOf` without support for deep paths.
+ * The base implementation of `propertyOf` without support for deep paths.
  *
  * @private
  * @param {Object} object The object to query.

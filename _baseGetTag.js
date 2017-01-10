@@ -1,4 +1,3 @@
-import Symbol from './_Symbol.js';
 import getRawTag from './_getRawTag.js';
 import objectToString from './_objectToString.js';
 

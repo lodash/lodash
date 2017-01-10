@@ -1,5 +1,3 @@
-import defineProperty from './_defineProperty.js';
-
 /**
  * The base implementation of `assignValue` and `assignMergeValue` without
  * value checks.
@@ -10,8 +8,8 @@ import defineProperty from './_defineProperty.js';
  * @param {*} value The value to assign.
  */
 function baseAssignValue(object, key, value) {
-  if (key == '__proto__' && defineProperty) {
-    defineProperty(object, key, {
+  if (key == '__proto__') {
+    Object.defineProperty(object, key, {
       'configurable': true,
       'enumerable': true,
       'value': value,

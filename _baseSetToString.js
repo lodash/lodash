@@ -1,5 +1,4 @@
 import constant from './constant.js';
-import defineProperty from './_defineProperty.js';
 import identity from './identity.js';
 
 /**
@@ -10,11 +9,13 @@ import identity from './identity.js';
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-const baseSetToString = !defineProperty ? identity : (func, string) => defineProperty(func, 'toString', {
-  'configurable': true,
-  'enumerable': false,
-  'value': constant(string),
-  'writable': true
-});
+function baseSetToString(func, string){
+  return Object.defineProperty(func, 'toString', {
+    'configurable': true,
+    'enumerable': false,
+    'value': constant(string),
+    'writable': true
+  });
+}
 
 export default baseSetToString;

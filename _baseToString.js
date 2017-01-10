@@ -1,4 +1,3 @@
-import Symbol from './_Symbol.js';
 import arrayMap from './_arrayMap.js';
 import isSymbol from './isSymbol.js';
 

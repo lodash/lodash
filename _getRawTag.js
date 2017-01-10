@@ -1,5 +1,3 @@
-import Symbol from './_Symbol.js';
-
 /** Used for built-in method references. */
 const objectProto = Object.prototype;
 

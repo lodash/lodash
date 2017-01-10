@@ -1,5 +1,4 @@
 import ListCache from './_ListCache.js';
-import Map from './_Map.js';
 import MapCache from './_MapCache.js';
 
 /** Used as the size to enable large array optimizations. */

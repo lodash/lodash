@@ -1,8 +1,5 @@
-import Symbol from './_Symbol.js';
-
 /** Used to convert symbols to primitives and strings. */
-const symbolProto = Symbol ? Symbol.prototype : undefined;
-const symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
+const symbolValueOf = Symbol.prototype.valueOf;
 
 /**
  * Creates a clone of the `symbol` object.

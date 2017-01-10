@@ -1,8 +1,3 @@
-import DataView from './_DataView.js';
-import Map from './_Map.js';
-import Promise from './_Promise.js';
-import Set from './_Set.js';
-import WeakMap from './_WeakMap.js';
 import baseGetTag from './_baseGetTag.js';
 import toSource from './_toSource.js';
 
@@ -32,10 +27,10 @@ let getTag = baseGetTag;
 
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
-    (Map && getTag(new Map) != mapTag) ||
-    (Promise && getTag(Promise.resolve()) != promiseTag) ||
-    (Set && getTag(new Set) != setTag) ||
-    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+    (getTag(new Map) != mapTag) ||
+    (getTag(Promise.resolve()) != promiseTag) ||
+    (getTag(new Set) != setTag) ||
+    (getTag(new WeakMap) != weakMapTag)) {
   getTag = value => {
     const result = baseGetTag(value);
     const Ctor = result == objectTag ? value.constructor : undefined;

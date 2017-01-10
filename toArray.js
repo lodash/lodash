@@ -1,4 +1,3 @@
-import Symbol from './_Symbol.js';
 import copyArray from './_copyArray.js';
 import getTag from './_getTag.js';
 import isArrayLike from './isArrayLike.js';

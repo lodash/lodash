@@ -38,7 +38,7 @@ const reIsNative = RegExp(`^${
  * isNative(Array.prototype.push);
  * // => true
  *
- * isNative(_);
+ * isNative(isDate);
  * // => false
  */
 function isNative(value) {

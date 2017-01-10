@@ -1,4 +1,3 @@
-import Set from './_Set.js';
 import setToArray from './_setToArray.js';
 
 /** Used as references for various `Number` constants. */

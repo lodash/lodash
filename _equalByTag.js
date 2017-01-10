@@ -1,5 +1,3 @@
-import Symbol from './_Symbol.js';
-import Uint8Array from './_Uint8Array.js';
 import eq from './eq.js';
 import equalArrays from './_equalArrays.js';
 import mapToArray from './_mapToArray.js';

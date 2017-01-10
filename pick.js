@@ -10,7 +10,7 @@ import basePick from './.internal/basePick.js';
  * @returns {Object} Returns the new object.
  * @example
  *
- * var object = { 'a': 1, 'b': '2', 'c': 3 };
+ * const object = { 'a': 1, 'b': '2', 'c': 3 };
  *
  * pick(object, ['a', 'c']);
  * // => { 'a': 1, 'c': 3 }

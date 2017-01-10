@@ -13,8 +13,8 @@ import copyArray from './.internal/copyArray.js';
  * @returns {Array} Returns the new concatenated array.
  * @example
  *
- * var array = [1];
- * var other = concat(array, 2, [3], [[4]]);
+ * const array = [1];
+ * const other = concat(array, 2, [3], [[4]]);
  *
  * console.log(other);
  * // => [1, 2, 3, [4]]

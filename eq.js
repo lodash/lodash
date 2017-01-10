@@ -10,8 +10,8 @@
  * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
  * @example
  *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
+ * const object = { 'a': 1 };
+ * const other = { 'a': 1 };
  *
  * eq(object, object);
  * // => true

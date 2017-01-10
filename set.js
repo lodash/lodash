@@ -16,7 +16,7 @@ import baseSet from './.internal/baseSet.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }] };
  *
  * set(object, 'a[0].b.c', 4);
  * console.log(object.a[0].b.c);

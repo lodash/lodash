@@ -21,7 +21,7 @@ const CLONE_SYMBOLS_FLAG = 4;
  *   }
  * }
  *
- * var el = cloneDeepWith(document.body, customizer);
+ * const el = cloneDeepWith(document.body, customizer);
  *
  * console.log(el === document.body);
  * // => false

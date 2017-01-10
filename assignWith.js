@@ -23,7 +23,7 @@ import keys from './keys.js';
  *   return isUndefined(objValue) ? srcValue : objValue;
  * }
  *
- * var defaults = partialRight(assignWith, customizer);
+ * const defaults = partialRight(assignWith, customizer);
  *
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }

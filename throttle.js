@@ -37,7 +37,7 @@ import isObject from './isObject.js';
  * jQuery(window).on('scroll', throttle(updatePosition, 100));
  *
  * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
- * var throttled = throttle(renewToken, 300000, { 'trailing': false });
+ * const throttled = throttle(renewToken, 300000, { 'trailing': false });
  * jQuery(element).on('click', throttled);
  *
  * // Cancel the trailing throttled invocation.

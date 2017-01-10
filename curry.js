@@ -23,11 +23,11 @@ const WRAP_CURRY_FLAG = 8;
  * @returns {Function} Returns the new curried function.
  * @example
  *
- * var abc = function(a, b, c) {
+ * const abc = function(a, b, c) {
  *   return [a, b, c];
  * };
  *
- * var curried = curry(abc);
+ * const curried = curry(abc);
  *
  * curried(1)(2)(3);
  * // => [1, 2, 3]

@@ -19,7 +19,7 @@ import last from './last.js';
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
  *
  * differenceWith(objects, [{ 'x': 1, 'y': 2 }], isEqual);
  * // => [{ 'x': 2, 'y': 1 }]

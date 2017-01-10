@@ -17,8 +17,8 @@ import baseIsEqual from './.internal/baseIsEqual.js';
  * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
  * @example
  *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
+ * const object = { 'a': 1 };
+ * const other = { 'a': 1 };
  *
  * isEqual(object, other);
  * // => true

@@ -6,7 +6,7 @@
  * @returns {Object} Returns the new empty object.
  * @example
  *
- * var objects = times(2, stubObject);
+ * const objects = times(2, stubObject);
  *
  * console.log(objects);
  * // => [{}, {}]

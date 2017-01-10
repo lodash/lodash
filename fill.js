@@ -16,7 +16,7 @@ import isIterateeCall from './.internal/isIterateeCall.js';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = [1, 2, 3];
+ * const array = [1, 2, 3];
  *
  * fill(array, 'a');
  * console.log(array);

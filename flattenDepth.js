@@ -11,7 +11,7 @@ import toInteger from './toInteger.js';
  * @returns {Array} Returns the new flattened array.
  * @example
  *
- * var array = [1, [2, [3, [4]], 5]];
+ * const array = [1, [2, [3, [4]], 5]];
  *
  * flattenDepth(array, 1);
  * // => [1, 2, [3, [4]], 5]

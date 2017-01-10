@@ -11,7 +11,7 @@ import baseInvoke from './.internal/baseInvoke.js';
  * @returns {*} Returns the result of the invoked method.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
+ * const object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
  *
  * invoke(object, 'a[0].b.c.slice', 1, 3);
  * // => [2, 3]

@@ -7,7 +7,7 @@
  * @returns {*} Returns `value`.
  * @example
  *
- * var object = { 'a': 1 };
+ * const object = { 'a': 1 };
  *
  * console.log(identity(object) === object);
  * // => true

@@ -11,15 +11,10 @@ import toInteger from './toInteger.js';
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * var saves = ['profile', 'settings'];
+ * const saves = ['profile', 'settings'];
+ * const done = after(saves.length, () => console.log('done saving!'));
  *
- * var done = after(saves.length, function() {
- *   console.log('done saving!');
- * });
- *
- * forEach(saves, function(type) {
- *   asyncSave({ 'type': type, 'complete': done });
- * });
+ * forEach(saves, type => asyncSave({ 'type': type, 'complete': done }));
  * // => Logs 'done saving!' after the two async saves have completed.
  */
 function after(n, func) {

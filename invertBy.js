@@ -17,11 +17,9 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {Object} Returns the new inverted object.
  * @example
  *
- * var object = { 'a': 1, 'b': 2, 'c': 1 };
+ * const object = { 'a': 1, 'b': 2, 'c': 1 };
  *
- * invertBy(object, function(value) {
- *   return 'group' + value;
- * });
+ * invertBy(object, value => `group${ value }`);
  * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
  */
 const invertBy = createInverter((result, value, key) => {

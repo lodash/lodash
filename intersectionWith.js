@@ -16,8 +16,8 @@ import last from './last.js';
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
- * var others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
+ * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
  *
  * intersectionWith(objects, others, isEqual);
  * // => [{ 'x': 1, 'y': 2 }]

@@ -22,7 +22,7 @@ const CLONE_DEEP_FLAG = 1;
  * @returns {Function} Returns the new spec function.
  * @example
  *
- * var objects = [
+ * const objects = [
  *   { 'a': 1, 'b': 2, 'c': 3 },
  *   { 'a': 4, 'b': 5, 'c': 6 }
  * ];

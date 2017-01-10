@@ -19,11 +19,11 @@ import createAssigner from './.internal/createAssigner.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var object = {
+ * const object = {
  *   'a': [{ 'b': 2 }, { 'd': 4 }]
  * };
  *
- * var other = {
+ * const other = {
  *   'a': [{ 'c': 3 }, { 'e': 5 }]
  * };
  *

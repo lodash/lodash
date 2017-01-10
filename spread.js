@@ -21,21 +21,17 @@ const nativeMax = Math.max;
  * @returns {Function} Returns the new function.
  * @example
  *
- * var say = spread(function(who, what) {
- *   return who + ' says ' + what;
- * });
+ * const say = spread((who, what) => `${ who } says ${ what }`);
  *
  * say(['fred', 'hello']);
  * // => 'fred says hello'
  *
- * var numbers = Promise.all([
+ * const numbers = Promise.all([
  *   Promise.resolve(40),
  *   Promise.resolve(36)
  * ]);
  *
- * numbers.then(spread(function(x, y) {
- *   return x + y;
- * }));
+ * numbers.then(spread((x, y) => x + y));
  * // => a Promise of 76
  */
 function spread(func, start) {

@@ -15,7 +15,7 @@ import basePullAll from './.internal/basePullAll.js';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+ * const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
  *
  * pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
  * console.log(array);

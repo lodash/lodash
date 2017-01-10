@@ -19,7 +19,7 @@ import getMatchData from './.internal/getMatchData.js';
  * @returns {boolean} Returns `true` if `object` is a match, else `false`.
  * @example
  *
- * var object = { 'a': 1, 'b': 2 };
+ * const object = { 'a': 1, 'b': 2 };
  *
  * isMatch(object, { 'b': 2 });
  * // => true

@@ -13,9 +13,9 @@ import baseLt from './.internal/baseLt.js';
  * @returns {*} Returns the minimum value.
  * @example
  *
- * var objects = [{ 'n': 1 }, { 'n': 2 }];
+ * const objects = [{ 'n': 1 }, { 'n': 2 }];
  *
- * minBy(objects, function(o) { return o.n; });
+ * minBy(objects, o => o.n);
  * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {

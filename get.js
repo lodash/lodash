@@ -12,7 +12,7 @@ import baseGet from './.internal/baseGet.js';
  * @returns {*} Returns the resolved value.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }] };
  *
  * get(object, 'a[0].b.c');
  * // => 3

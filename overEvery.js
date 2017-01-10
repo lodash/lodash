@@ -12,7 +12,7 @@ import createOver from './.internal/createOver.js';
  * @returns {Function} Returns the new function.
  * @example
  *
- * var func = overEvery([Boolean, isFinite]);
+ * const func = overEvery([Boolean, isFinite]);
  *
  * func('1');
  * // => true

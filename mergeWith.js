@@ -24,8 +24,8 @@ import createAssigner from './.internal/createAssigner.js';
  *   }
  * }
  *
- * var object = { 'a': [1], 'b': [2] };
- * var other = { 'a': [3], 'b': [4] };
+ * const object = { 'a': [1], 'b': [2] };
+ * const other = { 'a': [3], 'b': [4] };
  *
  * mergeWith(object, other, customizer);
  * // => { 'a': [1, 3], 'b': [2, 4] }

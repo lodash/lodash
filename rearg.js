@@ -16,11 +16,9 @@ const WRAP_REARG_FLAG = 256;
  * @returns {Function} Returns the new function.
  * @example
  *
- * var rearged = rearg(function(a, b, c) {
- *   return [a, b, c];
- * }, [2, 0, 1]);
+ * const rearged = rearg((a, b, c) => [a, b, c], [2, 0, 1]);
  *
- * rearged('b', 'c', 'a')
+ * rearged('b', 'c', 'a');
  * // => ['a', 'b', 'c']
  */
 function rearg(func, ...indexes) {

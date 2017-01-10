@@ -14,9 +14,7 @@ import baseEachRight from './.internal/baseEachRight.js';
  * @see forEach
  * @example
  *
- * forEachRight([1, 2], function(value) {
- *   console.log(value);
- * });
+ * forEachRight([1, 2], value => console.log(value));
  * // => Logs `2` then `1`.
  */
 function forEachRight(collection, iteratee) {

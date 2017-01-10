@@ -12,7 +12,7 @@ import baseUnset from './.internal/baseUnset.js';
  * @returns {boolean} Returns `true` if the property is deleted, else `false`.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': 7 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 7 } }] };
  * unset(object, 'a[0].b.c');
  * // => true
  *

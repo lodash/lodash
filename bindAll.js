@@ -16,11 +16,9 @@ import toKey from './.internal/toKey.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var view = {
+ * const view = {
  *   'label': 'docs',
- *   'click': function() {
- *     console.log('clicked ' + this.label);
- *   }
+ *   'click': () => console.log(`clicked ${ this.label }`)
  * };
  *
  * bindAll(view, ['click']);

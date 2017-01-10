@@ -15,10 +15,8 @@ import basePullAt from './.internal/basePullAt.js';
  * @returns {Array} Returns the new array of removed elements.
  * @example
  *
- * var array = [1, 2, 3, 4];
- * var evens = remove(array, function(n) {
- *   return n % 2 == 0;
- * });
+ * const array = [1, 2, 3, 4];
+ * const evens = remove(array, n => n % 2 == 0);
  *
  * console.log(array);
  * // => [1, 3]

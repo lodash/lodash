@@ -65,66 +65,66 @@ const reUnescapedString = /['\n\r\u2028\u2029\\]/g;
  * @example
  *
  * // Use the "interpolate" delimiter to create a compiled template.
- * var compiled = template('hello <%= user %>!');
+ * let compiled = template('hello <%= user %>!');
  * compiled({ 'user': 'fred' });
  * // => 'hello fred!'
  *
  * // Use the HTML "escape" delimiter to escape data property values.
- * var compiled = template('<b><%- value %></b>');
+ * let compiled = template('<b><%- value %></b>');
  * compiled({ 'value': '<script>' });
  * // => '<b>&lt;script&gt;</b>'
  *
  * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
- * var compiled = template('<% forEach(users, function(user) { %><li><%- user %></li><% }); %>');
+ * let compiled = template('<% forEach(users, function(user) { %><li><%- user %></li><% }); %>');
  * compiled({ 'users': ['fred', 'barney'] });
  * // => '<li>fred</li><li>barney</li>'
  *
  * // Use the internal `print` function in "evaluate" delimiters.
- * var compiled = template('<% print("hello " + user); %>!');
+ * let compiled = template('<% print("hello " + user); %>!');
  * compiled({ 'user': 'barney' });
  * // => 'hello barney!'
  *
  * // Use the ES template literal delimiter as an "interpolate" delimiter.
  * // Disable support by replacing the "interpolate" delimiter.
- * var compiled = template('hello ${ user }!');
+ * let compiled = template('hello ${ user }!');
  * compiled({ 'user': 'pebbles' });
  * // => 'hello pebbles!'
  *
  * // Use backslashes to treat delimiters as plain text.
- * var compiled = template('<%= "\\<%- value %\\>" %>');
+ * let compiled = template('<%= "\\<%- value %\\>" %>');
  * compiled({ 'value': 'ignored' });
  * // => '<%- value %>'
  *
  * // Use the `imports` option to import `jQuery` as `jq`.
- * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
- * var compiled = template(text, { 'imports': { 'jq': jQuery } });
+ * const text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
+ * let compiled = template(text, { 'imports': { 'jq': jQuery } });
  * compiled({ 'users': ['fred', 'barney'] });
  * // => '<li>fred</li><li>barney</li>'
  *
  * // Use the `sourceURL` option to specify a custom sourceURL for the template.
- * var compiled = template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
+ * let compiled = template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
  * compiled(data);
  * // => Find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector.
  *
  * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
- * var compiled = template('hi <%= data.user %>!', { 'variable': 'data' });
+ * let compiled = template('hi <%= data.user %>!', { 'variable': 'data' });
  * compiled.source;
  * // => function(data) {
- * //   var __t, __p = '';
+ * //   const __t, __p = '';
  * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
  * //   return __p;
  * // }
  *
  * // Use custom template delimiters.
  * templateSettings.interpolate = /{{([\s\S]+?)}}/g;
- * var compiled = template('hello {{ user }}!');
+ * let compiled = template('hello {{ user }}!');
  * compiled({ 'user': 'mustache' });
  * // => 'hello mustache!'
  *
  * // Use the `source` property to inline compiled templates for meaningful
  * // line numbers in error messages and stack traces.
  * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
- *   var JST = {\
+ *   const JST = {\
  *     "main": ' + template(mainText).source + '\
  *   };\
  * ');
@@ -214,7 +214,7 @@ function template(string, options, guard) {
       ? ''
       : 'obj || (obj = {});\n'
     ) +
-    "var __t, __p = ''" +
+    "const __t, __p = ''" +
     (isEscaping
        ? ', __e = _.escape'
        : ''

@@ -24,8 +24,8 @@ import baseIsEqual from './.internal/baseIsEqual.js';
  *   }
  * }
  *
- * var array = ['hello', 'goodbye'];
- * var other = ['hi', 'goodbye'];
+ * const array = ['hello', 'goodbye'];
+ * const other = ['hi', 'goodbye'];
  *
  * isEqualWith(array, other, customizer);
  * // => true

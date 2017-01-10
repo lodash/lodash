@@ -50,8 +50,8 @@ const nativeMin = Math.min;
  * }));
  *
  * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
- * var debounced = debounce(batchLog, 250, { 'maxWait': 1000 });
- * var source = new EventSource('/stream');
+ * const debounced = debounce(batchLog, 250, { 'maxWait': 1000 });
+ * const source = new EventSource('/stream');
  * jQuery(source).on('message', debounced);
  *
  * // Cancel the trailing debounced invocation.

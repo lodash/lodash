@@ -15,11 +15,9 @@ import baseReduce from './.internal/baseReduce.js';
  * @see reduce
  * @example
  *
- * var array = [[0, 1], [2, 3], [4, 5]];
+ * const array = [[0, 1], [2, 3], [4, 5]];
  *
- * reduceRight(array, function(flattened, other) {
- *   return flattened.concat(other);
- * }, []);
+ * reduceRight(array, (flattened, other) => flattened.concat(other), []);
  * // => [4, 5, 2, 3, 0, 1]
  */
 function reduceRight(collection, iteratee, accumulator) {

@@ -13,13 +13,13 @@ import createAggregator from './.internal/createAggregator.js';
  * @returns {Array} Returns the array of grouped elements.
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'barney',  'age': 36, 'active': false },
  *   { 'user': 'fred',    'age': 40, 'active': true },
  *   { 'user': 'pebbles', 'age': 1,  'active': false }
  * ];
  *
- * partition(users, function(o) { return o.active; });
+ * partition(users, o => o.active);
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
 const partition = createAggregator((result, value, key) =>

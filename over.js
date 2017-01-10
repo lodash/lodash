@@ -12,7 +12,7 @@ import createOver from './.internal/createOver.js';
  * @returns {Function} Returns the new function.
  * @example
  *
- * var func = over([Math.max, Math.min]);
+ * const func = over([Math.max, Math.min]);
  *
  * func(1, 2, 3, 4);
  * // => [4, 1]

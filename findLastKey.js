@@ -13,13 +13,13 @@ import baseForOwnRight from './.internal/baseForOwnRight.js';
  *  else `undefined`.
  * @example
  *
- * var users = {
+ * const users = {
  *   'barney':  { 'age': 36, 'active': true },
  *   'fred':    { 'age': 40, 'active': false },
  *   'pebbles': { 'age': 1,  'active': true }
  * };
  *
- * findLastKey(users, function(o) { return o.age < 40; });
+ * findLastKey(users, o => o.age < 40);
  * // => returns 'pebbles' assuming `findKey` returns 'barney'
  */
 function findLastKey(object, predicate) {

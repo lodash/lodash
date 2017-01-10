@@ -6,7 +6,7 @@
  * @returns {Array} Returns the new empty array.
  * @example
  *
- * var arrays = times(2, stubArray);
+ * const arrays = times(2, stubArray);
  *
  * console.log(arrays);
  * // => [[], []]

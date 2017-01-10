@@ -14,7 +14,7 @@ const nativeReverse = Array.prototype.reverse;
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = [1, 2, 3];
+ * const array = [1, 2, 3];
  *
  * reverse(array);
  * // => [3, 2, 1]

@@ -16,13 +16,13 @@ const nativeMax = Math.max;
  * @returns {number} Returns the index of the found element, else `-1`.
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'barney',  'active': false },
  *   { 'user': 'fred',    'active': false },
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * findIndex(users, function(o) { return o.user == 'barney'; });
+ * findIndex(users, o => o.user == 'barney');
  * // => 0
  */
 function findIndex(array, predicate, fromIndex) {

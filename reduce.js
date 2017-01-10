@@ -26,12 +26,10 @@ import baseReduce from './.internal/baseReduce.js';
  * @see reduceRight
  * @example
  *
- * reduce([1, 2], function(sum, n) {
- *   return sum + n;
- * }, 0);
+ * reduce([1, 2], (sum, n) => sum + n, 0);
  * // => 3
  *
- * reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+ * reduce({ 'a': 1, 'b': 2, 'c': 1 }, (result, value, key) => {
  *   (result[value] || (result[value] = [])).push(key);
  *   return result;
  * }, {});

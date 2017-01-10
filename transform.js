@@ -24,13 +24,13 @@ import isTypedArray from './isTypedArray.js';
  * @returns {*} Returns the accumulated value.
  * @example
  *
- * transform([2, 3, 4], function(result, n) {
+ * transform([2, 3, 4], (result, n) => {
  *   result.push(n *= n);
  *   return n % 2 == 0;
  * }, []);
  * // => [4, 9]
  *
- * transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
+ * transform({ 'a': 1, 'b': 2, 'c': 1 }, (result, value, key) => {
  *   (result[value] || (result[value] = [])).push(key);
  * }, {});
  * // => { '1': ['a', 'c'], '2': ['b'] }

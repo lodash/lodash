@@ -14,9 +14,9 @@ import baseSortedIndexBy from './.internal/baseSortedIndexBy.js';
  *  into `array`.
  * @example
  *
- * var objects = [{ 'x': 4 }, { 'x': 5 }];
+ * const objects = [{ 'x': 4 }, { 'x': 5 }];
  *
- * sortedIndexBy(objects, { 'x': 4 }, function(o) { return o.x; });
+ * sortedIndexBy(objects, { 'x': 4 }, o => o.x);
  * // => 0
  */
 function sortedIndexBy(array, value, iteratee) {

@@ -11,7 +11,7 @@ import hasPath from './.internal/hasPath.js';
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  * @example
  *
- * var object = create({ 'a': create({ 'b': 2 }) });
+ * const object = create({ 'a': create({ 'b': 2 }) });
  *
  * hasIn(object, 'a');
  * // => true

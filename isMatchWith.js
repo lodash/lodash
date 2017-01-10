@@ -25,8 +25,8 @@ import getMatchData from './.internal/getMatchData.js';
  *   }
  * }
  *
- * var object = { 'greeting': 'hello' };
- * var source = { 'greeting': 'hi' };
+ * const object = { 'greeting': 'hello' };
+ * const source = { 'greeting': 'hi' };
  *
  * isMatchWith(object, source, customizer);
  * // => true

@@ -15,7 +15,7 @@ import basePullAll from './.internal/basePullAll.js';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
+ * const array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];
  *
  * pullAllWith(array, [{ 'x': 3, 'y': 4 }], isEqual);
  * console.log(array);

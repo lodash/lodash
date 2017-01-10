@@ -13,10 +13,10 @@ import arrayMap from './.internal/arrayMap.js';
  * @returns {Function} Returns the new composite function.
  * @example
  *
- * var func = cond([
- *   [matches({ 'a': 1 }),           constant('matches A')],
+ * const func = cond([
+ *   [matches({ 'a': 1 }),         constant('matches A')],
  *   [conforms({ 'b': isNumber }), constant('matches B')],
- *   [stubTrue,                      constant('no match')]
+ *   [stubTrue,                    constant('no match')]
  * ]);
  *
  * func({ 'a': 1, 'b': 2 });

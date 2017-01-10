@@ -15,7 +15,7 @@ import createFlow from './.internal/createFlow.js';
  *   return n * n;
  * }
  *
- * var addSquare = flowRight([square, add]);
+ * const addSquare = flowRight([square, add]);
  * addSquare(1, 2);
  * // => 9
  */

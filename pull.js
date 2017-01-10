@@ -15,7 +15,7 @@ import pullAll from './pullAll.js';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
+ * const array = ['a', 'b', 'c', 'a', 'b', 'c'];
  *
  * pull(array, 'a', 'c');
  * console.log(array);

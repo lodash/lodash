@@ -13,9 +13,7 @@ import toNumber from './toNumber.js';
  * @returns {number} Returns the timer id.
  * @example
  *
- * delay(function(text) {
- *   console.log(text);
- * }, 1000, 'later');
+ * delay(text => console.log(text), 1000, 'later');
  * // => Logs 'later' after one second.
  */
 function delay(func, wait, ...args) {

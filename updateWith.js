@@ -17,7 +17,7 @@ import baseUpdate from './.internal/baseUpdate.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var object = {};
+ * const object = {};
  *
  * updateWith(object, '[0][1]', constant('a'), Object);
  * // => { '0': { '1': 'a' } }

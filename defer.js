@@ -11,9 +11,7 @@ import baseDelay from './.internal/baseDelay.js';
  * @returns {number} Returns the timer id.
  * @example
  *
- * defer(function(text) {
- *   console.log(text);
- * }, 'deferred');
+ * defer(text => console.log(text), 'deferred');
  * // => Logs 'deferred' after one millisecond.
  */
 function defer(func, ...args) {

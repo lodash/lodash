@@ -10,8 +10,8 @@ import baseGet from './.internal/baseGet.js';
  * @returns {Function} Returns the new accessor function.
  * @example
  *
- * var array = [0, 1, 2],
- *     object = { 'a': array, 'b': array, 'c': array };
+ * const array = [0, 1, 2];
+ * const object = { 'a': array, 'b': array, 'c': array };
  *
  * map(['a[2]', 'c[0]'], propertyOf(object));
  * // => [2, 0]

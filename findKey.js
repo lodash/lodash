@@ -13,13 +13,13 @@ import baseForOwn from './.internal/baseForOwn.js';
  *  else `undefined`.
  * @example
  *
- * var users = {
+ * const users = {
  *   'barney':  { 'age': 36, 'active': true },
  *   'fred':    { 'age': 40, 'active': false },
  *   'pebbles': { 'age': 1,  'active': true }
  * };
  *
- * findKey(users, function(o) { return o.age < 40; });
+ * findKey(users, o => o.age < 40);
  * // => 'barney' (iteration order is not guaranteed)
  */
 function findKey(object, predicate) {

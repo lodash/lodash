@@ -11,7 +11,7 @@ import baseInvoke from './.internal/baseInvoke.js';
  * @returns {Function} Returns the new invoker function.
  * @example
  *
- * var objects = [
+ * const objects = [
  *   { 'a': { 'b': constant(2) } },
  *   { 'a': { 'b': constant(1) } }
  * ];

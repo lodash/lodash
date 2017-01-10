@@ -15,12 +15,12 @@ import baseForOwn from './.internal/baseForOwn.js';
  * @see mapKeys
  * @example
  *
- * var users = {
+ * const users = {
  *   'fred':    { 'user': 'fred',    'age': 40 },
  *   'pebbles': { 'user': 'pebbles', 'age': 1 }
  * };
  *
- * mapValues(users, function(o) { return o.age; });
+ * mapValues(users, o => o.age);
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValues(object, iteratee) {

@@ -16,7 +16,7 @@ import baseOrderBy from './.internal/baseOrderBy.js';
  * @returns {Array} Returns the new sorted array.
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'fred',   'age': 48 },
  *   { 'user': 'barney', 'age': 34 },
  *   { 'user': 'fred',   'age': 40 },

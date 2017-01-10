@@ -28,14 +28,14 @@ const WRAP_PARTIAL_FLAG = 32;
  *   return greeting + ' ' + this.user + punctuation;
  * }
  *
- * var object = { 'user': 'fred' };
+ * const object = { 'user': 'fred' };
  *
- * var bound = bind(greet, object, 'hi');
+ * const bound = bind(greet, object, 'hi');
  * bound('!');
  * // => 'hi fred!'
  *
  * // Bound with placeholders.
- * var bound = bind(greet, object, _, '!');
+ * const bound = bind(greet, object, _, '!');
  * bound('hi');
  * // => 'hi fred!'
  */

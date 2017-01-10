@@ -24,7 +24,7 @@ import keysIn from './keysIn.js';
  *   return isUndefined(objValue) ? srcValue : objValue;
  * }
  *
- * var defaults = partialRight(assignInWith, customizer);
+ * const defaults = partialRight(assignInWith, customizer);
  *
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }

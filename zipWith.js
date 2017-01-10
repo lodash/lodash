@@ -13,9 +13,7 @@ import unzipWith from './unzipWith.js';
  * @returns {Array} Returns the new array of grouped elements.
  * @example
  *
- * zipWith([1, 2], [10, 20], [100, 200], function(a, b, c) {
- *   return a + b + c;
- * });
+ * zipWith([1, 2], [10, 20], [100, 200], (a, b, c) => a + b + c);
  * // => [111, 222]
  */
 function zipWith(...arrays) {

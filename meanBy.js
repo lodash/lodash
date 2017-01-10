@@ -15,9 +15,9 @@ const NAN = 0 / 0;
  * @returns {number} Returns the mean.
  * @example
  *
- * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
+ * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
  *
- * meanBy(objects, function(o) { return o.n; });
+ * meanBy(objects, o => o.n);
  * // => 5
  */
 function meanBy(array, iteratee) {

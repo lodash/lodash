@@ -20,10 +20,10 @@ import MapCache from './.internal/MapCache.js';
  * @returns {Function} Returns the new memoized function.
  * @example
  *
- * var object = { 'a': 1, 'b': 2 };
- * var other = { 'c': 3, 'd': 4 };
+ * const object = { 'a': 1, 'b': 2 };
+ * const other = { 'c': 3, 'd': 4 };
  *
- * var values = memoize(values);
+ * const values = memoize(values);
  * values(object);
  * // => [1, 2]
  *

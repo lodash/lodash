@@ -13,7 +13,7 @@ import identity from './identity.js';
  * @returns {Object} Returns the new inverted object.
  * @example
  *
- * var object = { 'a': 1, 'b': 2, 'c': 1 };
+ * const object = { 'a': 1, 'b': 2, 'c': 1 };
  *
  * invert(object);
  * // => { '1': 'c', '2': 'b' }

@@ -18,7 +18,7 @@ const nativeMax = Math.max;
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *
- * var zipped = zip(['a', 'b'], [1, 2], [true, false]);
+ * const zipped = zip(['a', 'b'], [1, 2], [true, false]);
  * // => [['a', 1, true], ['b', 2, false]]
  *
  * unzip(zipped);

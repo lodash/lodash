@@ -12,9 +12,7 @@ const WRAP_FLIP_FLAG = 512;
  * @returns {Function} Returns the new flipped function.
  * @example
  *
- * var flipped = flip(function() {
- *   return toArray(arguments);
- * });
+ * const flipped = flip((...args) => args);
  *
  * flipped('a', 'b', 'c', 'd');
  * // => ['d', 'c', 'b', 'a']

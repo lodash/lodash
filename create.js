@@ -26,7 +26,7 @@ import baseCreate from './.internal/baseCreate.js';
  *   'constructor': Circle
  * });
  *
- * var circle = new Circle;
+ * const circle = new Circle;
  * circle instanceof Circle;
  * // => true
  *

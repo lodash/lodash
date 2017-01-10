@@ -12,7 +12,7 @@ import toKey from './.internal/toKey.js';
  * @returns {Function} Returns the new accessor function.
  * @example
  *
- * var objects = [
+ * const objects = [
  *   { 'a': { 'b': 2 } },
  *   { 'a': { 'b': 1 } }
  * ];

@@ -16,12 +16,12 @@ import baseFilter from './.internal/baseFilter.js';
  * @see reject
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'barney', 'age': 36, 'active': true },
  *   { 'user': 'fred',   'age': 40, 'active': false }
  * ];
  *
- * filter(users, function(o) { return !o.active; });
+ * filter(users, o => !o.active);
  * // => objects for ['fred']
  */
 function filter(collection, predicate) {

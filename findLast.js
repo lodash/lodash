@@ -13,9 +13,7 @@ import findLastIndex from './findLastIndex.js';
  * @returns {*} Returns the matched element, else `undefined`.
  * @example
  *
- * findLast([1, 2, 3, 4], function(n) {
- *   return n % 2 == 1;
- * });
+ * findLast([1, 2, 3, 4], n => n % 2 == 1);
  * // => 3
  */
 const findLast = createFind(findLastIndex);

@@ -12,7 +12,7 @@ import basePullAll from './.internal/basePullAll.js';
  * @returns {Array} Returns `array`.
  * @example
  *
- * var array = ['a', 'b', 'c', 'a', 'b', 'c'];
+ * const array = ['a', 'b', 'c', 'a', 'b', 'c'];
  *
  * pullAll(array, ['a', 'c']);
  * console.log(array);

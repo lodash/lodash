@@ -23,7 +23,7 @@ const CLONE_SYMBOLS_FLAG = 4;
  *   }
  * }
  *
- * var el = cloneWith(document.body, customizer);
+ * const el = cloneWith(document.body, customizer);
  *
  * console.log(el === document.body);
  * // => false

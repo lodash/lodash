@@ -7,7 +7,7 @@
  * @returns {Function} Returns the new constant function.
  * @example
  *
- * var objects = times(2, constant({ 'a': 1 }));
+ * const objects = times(2, constant({ 'a': 1 }));
  *
  * console.log(objects);
  * // => [{ 'a': 1 }, { 'a': 1 }]

@@ -17,13 +17,13 @@ const nativeMin = Math.min;
  * @returns {number} Returns the index of the found element, else `-1`.
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'barney',  'active': true },
  *   { 'user': 'fred',    'active': false },
  *   { 'user': 'pebbles', 'active': false }
  * ];
  *
- * findLastIndex(users, function(o) { return o.user == 'pebbles'; });
+ * findLastIndex(users, o => o.user == 'pebbles');
  * // => 2
  */
 function findLastIndex(array, predicate, fromIndex) {

@@ -12,13 +12,13 @@ import baseWhile from './.internal/baseWhile.js';
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * var users = [
+ * const users = [
  *   { 'user': 'barney',  'active': false },
  *   { 'user': 'fred',    'active': false },
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * takeWhile(users, function(o) { return !o.active; });
+ * takeWhile(users, o => !o.active);
  * // => objects for ['barney', 'fred']
  */
 function takeWhile(array, predicate) {

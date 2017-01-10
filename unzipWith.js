@@ -15,7 +15,7 @@ import unzip from './unzip.js';
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *
- * var zipped = zip([1, 2], [10, 20], [100, 200]);
+ * const zipped = zip([1, 2], [10, 20], [100, 200]);
  * // => [[1, 10, 100], [2, 20, 200]]
  *
  * unzipWith(zipped, add);

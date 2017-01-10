@@ -14,7 +14,7 @@ import createAggregator from './.internal/createAggregator.js';
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * var array = [
+ * const array = [
  *   { 'dir': 'left', 'code': 97 },
  *   { 'dir': 'right', 'code': 100 }
  * ];

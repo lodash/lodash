@@ -13,7 +13,7 @@ import baseUniq from './.internal/baseUniq.js';
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
- * var objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
  *
  * uniqWith(objects, isEqual);
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]

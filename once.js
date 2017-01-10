@@ -11,7 +11,7 @@ import before from './before.js';
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * var initialize = once(createApplication);
+ * const initialize = once(createApplication);
  * initialize();
  * initialize();
  * // => `createApplication` is invoked once

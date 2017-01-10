@@ -17,7 +17,7 @@ import baseSet from './.internal/baseSet.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var object = {};
+ * const object = {};
  *
  * setWith(object, '[0][1]', 'a', Object);
  * // => { '0': { '1': 'a' } }

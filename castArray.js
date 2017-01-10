@@ -26,7 +26,7 @@
  * castArray();
  * // => []
  *
- * var array = [1, 2, 3];
+ * const array = [1, 2, 3];
  * console.log(castArray(array) === array);
  * // => true
  */

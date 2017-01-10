@@ -13,7 +13,7 @@ import getAllKeysIn from './.internal/getAllKeysIn.js';
  * @returns {Object} Returns the new object.
  * @example
  *
- * var object = { 'a': 1, 'b': '2', 'c': 3 };
+ * const object = { 'a': 1, 'b': '2', 'c': 3 };
  *
  * pickBy(object, isNumber);
  * // => { 'a': 1, 'c': 3 }

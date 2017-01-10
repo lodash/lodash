@@ -11,11 +11,11 @@ import toInteger from './toInteger.js';
  * @returns {Function} Returns the new pass-thru function.
  * @example
  *
- * var func = nthArg(1);
+ * const func = nthArg(1);
  * func('a', 'b', 'c', 'd');
  * // => 'b'
  *
- * var func = nthArg(-2);
+ * const func = nthArg(-2);
  * func('a', 'b', 'c', 'd');
  * // => 'c'
  */

@@ -17,8 +17,8 @@ import isIndex from './.internal/isIndex.js';
  * @returns {Array} Returns the new array of removed elements.
  * @example
  *
- * var array = ['a', 'b', 'c', 'd'];
- * var pulled = pullAt(array, [1, 3]);
+ * const array = ['a', 'b', 'c', 'd'];
+ * const pulled = pullAt(array, [1, 3]);
  *
  * console.log(array);
  * // => ['a', 'c']

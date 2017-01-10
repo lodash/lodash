@@ -15,13 +15,13 @@ import baseUpdate from './.internal/baseUpdate.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }] };
  *
- * update(object, 'a[0].b.c', function(n) { return n * n; });
+ * update(object, 'a[0].b.c', n => n * n);
  * console.log(object.a[0].b.c);
  * // => 9
  *
- * update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
+ * update(object, 'x[0].y.z', n => n ? n + 1 : 0);
  * console.log(object.x[0].y.z);
  * // => 0
  */

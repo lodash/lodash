@@ -13,9 +13,9 @@ import baseGt from './.internal/baseGt.js';
  * @returns {*} Returns the maximum value.
  * @example
  *
- * var objects = [{ 'n': 1 }, { 'n': 2 }];
+ * const objects = [{ 'n': 1 }, { 'n': 2 }];
  *
- * maxBy(objects, function(o) { return o.n; });
+ * maxBy(objects, o => o.n);
  * // => { 'n': 2 }
  */
 function maxBy(array, iteratee) {

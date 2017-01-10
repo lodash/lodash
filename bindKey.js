@@ -27,14 +27,14 @@ const WRAP_PARTIAL_FLAG = 32;
  * @returns {Function} Returns the new bound function.
  * @example
  *
- * var object = {
+ * const object = {
  *   'user': 'fred',
  *   'greet': function(greeting, punctuation) {
  *     return greeting + ' ' + this.user + punctuation;
  *   }
  * };
  *
- * var bound = bindKey(object, 'greet', 'hi');
+ * const bound = bindKey(object, 'greet', 'hi');
  * bound('!');
  * // => 'hi fred!'
  *
@@ -46,7 +46,7 @@ const WRAP_PARTIAL_FLAG = 32;
  * // => 'hiya fred!'
  *
  * // Bound with placeholders.
- * var bound = bindKey(object, 'greet', _, '!');
+ * const bound = bindKey(object, 'greet', _, '!');
  * bound('hi');
  * // => 'hiya fred!'
  */

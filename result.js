@@ -15,7 +15,7 @@ import toKey from './.internal/toKey.js';
  * @returns {*} Returns the resolved value.
  * @example
  *
- * var object = { 'a': [{ 'b': { 'c1': 3, 'c2': constant(4) } }] };
+ * const object = { 'a': [{ 'b': { 'c1': 3, 'c2': constant(4) } }] };
  *
  * result(object, 'a[0].b.c1');
  * // => 3

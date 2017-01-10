@@ -15,7 +15,7 @@ import keys from './keys.js';
  * @returns {boolean} Returns `true` if `object` conforms, else `false`.
  * @example
  *
- * var object = { 'a': 1, 'b': 2 };
+ * const object = { 'a': 1, 'b': 2 };
  *
  * conformsTo(object, { 'b': function(n) { return n > 1; } });
  * // => true

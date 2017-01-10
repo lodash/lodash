@@ -13,9 +13,8 @@ import isError from './isError.js';
  * @example
  *
  * // Avoid throwing errors for invalid selectors.
- * var elements = attempt(function(selector) {
- *   return document.querySelectorAll(selector);
- * }, '>_>');
+ * const elements = attempt(selector =>
+ *   document.querySelectorAll(selector), '>_>');
  *
  * if (isError(elements)) {
  *   elements = [];

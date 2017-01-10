@@ -12,7 +12,7 @@ import toInteger from './toInteger.js';
  * @returns {*} Returns the nth element of `array`.
  * @example
  *
- * var array = ['a', 'b', 'c', 'd'];
+ * const array = ['a', 'b', 'c', 'd'];
  *
  * nth(array, 1);
  * // => 'b'

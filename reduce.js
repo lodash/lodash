@@ -1,6 +1,5 @@
 import arrayReduce from './_arrayReduce.js';
 import baseEach from './_baseEach.js';
-import baseIteratee from './_baseIteratee.js';
 import baseReduce from './_baseReduce.js';
 import isArray from './isArray.js';
 
@@ -24,7 +23,7 @@ import isArray from './isArray.js';
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
  * @returns {*} Returns the accumulated value.
  * @see _.reduceRight
@@ -44,8 +43,7 @@ import isArray from './isArray.js';
 function reduce(collection, iteratee, accumulator) {
   const func = isArray(collection) ? arrayReduce : baseReduce;
   const initAccum = arguments.length < 3;
-
-  return func(collection, baseIteratee(iteratee, 4), accumulator, initAccum, baseEach);
+  return func(collection, iteratee, accumulator, initAccum, baseEach);
 }
 
 export default reduce;

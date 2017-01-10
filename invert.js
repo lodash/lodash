@@ -22,6 +22,6 @@ import identity from './identity.js';
  */
 const invert = createInverter((result, value, key) => {
   result[value] = key;
-}, constant(identity));
+});
 
 export default invert;

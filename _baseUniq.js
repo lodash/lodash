@@ -9,7 +9,7 @@ import setToArray from './_setToArray.js';
 const LARGE_ARRAY_SIZE = 200;
 
 /**
- * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+ * The base implementation of `_.uniqBy`.
  *
  * @private
  * @param {Array} array The array to inspect.

@@ -1,6 +1,5 @@
 /**
- * A specialized version of `_.reduceRight` for arrays without support for
- * iteratee shorthands.
+ * A specialized version of `_.reduceRight` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

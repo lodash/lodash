@@ -9,7 +9,7 @@ const LARGE_ARRAY_SIZE = 200;
 
 /**
  * The base implementation of methods like `_.difference` without support
- * for excluding multiple arrays or iteratee shorthands.
+ * for excluding multiple arrays.
  *
  * @private
  * @param {Array} array The array to inspect.

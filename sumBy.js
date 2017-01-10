@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import baseSum from './_baseSum.js';
 
 /**
@@ -11,7 +10,7 @@ import baseSum from './_baseSum.js';
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {number} Returns the sum.
  * @example
  *
@@ -19,14 +18,10 @@ import baseSum from './_baseSum.js';
  *
  * _.sumBy(objects, function(o) { return o.n; });
  * // => 20
- *
- * // The `_.property` iteratee shorthand.
- * _.sumBy(objects, 'n');
- * // => 20
  */
 function sumBy(array, iteratee) {
   return (array && array.length)
-    ? baseSum(array, baseIteratee(iteratee, 2))
+    ? baseSum(array, iteratee)
     : 0;
 }
 

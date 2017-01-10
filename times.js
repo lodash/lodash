@@ -1,5 +1,4 @@
 import baseTimes from './_baseTimes.js';
-import castFunction from './_castFunction.js';
 import toInteger from './toInteger.js';
 
 /** Used as references for various `Number` constants. */
@@ -20,7 +19,7 @@ const nativeMin = Math.min;
  * @memberOf _
  * @category Util
  * @param {number} n The number of times to invoke `iteratee`.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the array of results.
  * @example
  *
@@ -37,11 +36,9 @@ function times(n, iteratee) {
   }
   let index = MAX_ARRAY_LENGTH;
   const length = nativeMin(n, MAX_ARRAY_LENGTH);
-
-  iteratee = castFunction(iteratee);
-  n -= MAX_ARRAY_LENGTH;
-
   const result = baseTimes(length, iteratee);
+
+  n -= MAX_ARRAY_LENGTH;
   while (++index < n) {
     iteratee(index);
   }

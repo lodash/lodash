@@ -1,6 +1,5 @@
 import apply from './_apply.js';
 import arrayMap from './_arrayMap.js';
-import baseIteratee from './_baseIteratee.js';
 
 /** Error message constants. */
 const FUNC_ERROR_TEXT = 'Expected a function';
@@ -36,13 +35,12 @@ const FUNC_ERROR_TEXT = 'Expected a function';
  */
 function cond(pairs) {
   const length = pairs == null ? 0 : pairs.length;
-  const toIteratee = baseIteratee;
 
   pairs = !length ? [] : arrayMap(pairs, pair => {
     if (typeof pair[1] != 'function') {
       throw new TypeError(FUNC_ERROR_TEXT);
     }
-    return [toIteratee(pair[0]), pair[1]];
+    return [pair[0], pair[1]];
   });
 
   return (...args) => {

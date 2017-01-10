@@ -1,6 +1,5 @@
 import arrayMap from './_arrayMap.js';
 import baseIntersection from './_baseIntersection.js';
-import baseIteratee from './_baseIteratee.js';
 import castArrayLikeObject from './_castArrayLikeObject.js';
 import last from './last.js';
 
@@ -16,16 +15,12 @@ import last from './last.js';
  * @since 4.0.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
  * _.intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
  * // => [2.1]
- *
- * // The `_.property` iteratee shorthand.
- * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
- * // => [{ 'x': 1 }]
  */
 function intersectionBy(...arrays) {
   let iteratee = last(arrays);
@@ -37,7 +32,7 @@ function intersectionBy(...arrays) {
     mapped.pop();
   }
   return (mapped.length && mapped[0] === arrays[0])
-    ? baseIntersection(mapped, baseIteratee(iteratee, 2))
+    ? baseIntersection(mapped, iteratee)
     : [];
 }
 

@@ -1,6 +1,5 @@
 import baseAssignValue from './_baseAssignValue.js';
 import baseForOwn from './_baseForOwn.js';
-import baseIteratee from './_baseIteratee.js';
 
 /**
  * The opposite of `_.mapValues`; this method creates an object with the
@@ -13,7 +12,7 @@ import baseIteratee from './_baseIteratee.js';
  * @since 3.8.0
  * @category Object
  * @param {Object} object The object to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns the new mapped object.
  * @see _.mapValues
  * @example
@@ -25,8 +24,6 @@ import baseIteratee from './_baseIteratee.js';
  */
 function mapKeys(object, iteratee) {
   const result = {};
-  iteratee = baseIteratee(iteratee, 3);
-
   baseForOwn(object, (value, key, object) => {
     baseAssignValue(result, iteratee(value, key, object), value);
   });

@@ -1,5 +1,4 @@
 import baseUpdate from './_baseUpdate.js';
-import castFunction from './_castFunction.js';
 
 /**
  * This method is like `_.update` except that it accepts `customizer` which is
@@ -27,7 +26,7 @@ import castFunction from './_castFunction.js';
  */
 function updateWith(object, path, updater, customizer) {
   customizer = typeof customizer == 'function' ? customizer : undefined;
-  return object == null ? object : baseUpdate(object, path, castFunction(updater), customizer);
+  return object == null ? object : baseUpdate(object, path, updater, customizer);
 }
 
 export default updateWith;

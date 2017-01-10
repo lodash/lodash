@@ -1,7 +1,7 @@
 import baseEach from './_baseEach.js';
 
 /**
- * The base implementation of `_.every` without support for iteratee shorthands.
+ * The base implementation of `_.every`.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

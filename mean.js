@@ -1,4 +1,4 @@
-import baseMean from './_baseMean.js';
+import baseMean from './meanBy.js';
 import identity from './identity.js';
 
 /**
@@ -16,7 +16,7 @@ import identity from './identity.js';
  * // => 5
  */
 function mean(array) {
-  return baseMean(array, identity);
+  return mean(array, identity);
 }
 
 export default mean;

@@ -1,6 +1,5 @@
 import arrayEach from './_arrayEach.js';
-import baseEach from './_baseEach.js';
-import castFunction from './_castFunction.js';
+import baseEach from './_baseEach.js';;
 import isArray from './isArray.js';
 
 /**
@@ -18,7 +17,7 @@ import isArray from './isArray.js';
  * @alias each
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
  * @see _.forEachRight
  * @example
@@ -35,7 +34,7 @@ import isArray from './isArray.js';
  */
 function forEach(collection, iteratee) {
   const func = isArray(collection) ? arrayEach : baseEach;
-  return func(collection, castFunction(iteratee));
+  return func(collection, iteratee);
 }
 
 export default forEach;

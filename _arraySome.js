@@ -1,6 +1,5 @@
 /**
- * A specialized version of `_.some` for arrays without support for iteratee
- * shorthands.
+ * A specialized version of `_.some` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

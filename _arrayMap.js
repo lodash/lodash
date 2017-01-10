@@ -1,6 +1,5 @@
 /**
- * A specialized version of `_.map` for arrays without support for iteratee
- * shorthands.
+ * A specialized version of `_.map` for arrays.
  *
  * @private
  * @param {Array} [array] The array to iterate over.

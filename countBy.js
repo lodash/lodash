@@ -18,16 +18,12 @@ const hasOwnProperty = objectProto.hasOwnProperty;
  * @since 0.5.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} [iteratee=_.identity] The iteratee to transform keys.
+ * @param {Function} iteratee The iteratee to transform keys.
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
  * _.countBy([6.1, 4.2, 6.3], Math.floor);
  * // => { '4': 1, '6': 2 }
- *
- * // The `_.property` iteratee shorthand.
- * _.countBy(['one', 'two', 'three'], 'length');
- * // => { '3': 2, '5': 1 }
  */
 const countBy = createAggregator((result, value, key) => {
   if (hasOwnProperty.call(result, key)) {

@@ -1,5 +1,4 @@
 import baseUpdate from './_baseUpdate.js';
-import castFunction from './_castFunction.js';
 
 /**
  * This method is like `_.set` except that accepts `updater` to produce the
@@ -29,7 +28,7 @@ import castFunction from './_castFunction.js';
  * // => 0
  */
 function update(object, path, updater) {
-  return object == null ? object : baseUpdate(object, path, castFunction(updater));
+  return object == null ? object : baseUpdate(object, path, updater);
 }
 
 export default update;

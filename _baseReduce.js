@@ -1,6 +1,6 @@
 /**
- * The base implementation of `_.reduce` and `_.reduceRight`, without support
- * for iteratee shorthands, which iterates over `collection` using `eachFunc`.
+ * The base implementation of `_.reduce` and `_.reduceRight` which iterates
+ * over `collection` using `eachFunc`.
  *
  * @private
  * @param {Array|Object} collection The collection to iterate over.

@@ -1,6 +1,5 @@
 import baseDifference from './_baseDifference.js';
 import baseFlatten from './_baseFlatten.js';
-import baseIteratee from './_baseIteratee.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
 
@@ -19,16 +18,12 @@ import last from './last.js';
  * @category Array
  * @param {Array} array The array to inspect.
  * @param {...Array} [values] The values to exclude.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
  * _.differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor);
  * // => [1.2]
- *
- * // The `_.property` iteratee shorthand.
- * _.differenceBy([{ 'x': 2 }, { 'x': 1 }], [{ 'x': 1 }], 'x');
- * // => [{ 'x': 2 }]
  */
 function differenceBy(array, ...values) {
   let iteratee = last(values);
@@ -36,7 +31,7 @@ function differenceBy(array, ...values) {
     iteratee = undefined;
   }
   return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), baseIteratee(iteratee, 2))
+    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), iteratee)
     : [];
 }
 

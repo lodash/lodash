@@ -1,5 +1,4 @@
 import baseForRight from './_baseForRight.js';
-import castFunction from './_castFunction.js';
 import keysIn from './keysIn.js';
 
 /**
@@ -11,7 +10,7 @@ import keysIn from './keysIn.js';
  * @since 2.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns `object`.
  * @see _.forIn
  * @example
@@ -29,9 +28,7 @@ import keysIn from './keysIn.js';
  * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
  */
 function forInRight(object, iteratee) {
-  return object == null
-    ? object
-    : baseForRight(object, castFunction(iteratee), keysIn);
+  return object == null ? object : baseForRight(object, iteratee, keysIn);
 }
 
 export default forInRight;

@@ -1,6 +1,4 @@
 import apply from './_apply.js';
-import arrayMap from './_arrayMap.js';
-import baseIteratee from './_baseIteratee.js';
 
 /**
  * Creates a function like `_.over`.
@@ -11,8 +9,7 @@ import baseIteratee from './_baseIteratee.js';
  */
 function createOver(arrayFunc) {
   return (...iteratees) => {
-    iteratees = arrayMap(iteratees, iteratee => baseIteratee(iteratee));
-    return (...args) => {
+    return function(...args) {
       const thisArg = this;
       return arrayFunc(iteratees, iteratee => apply(iteratee, thisArg, args));
     };

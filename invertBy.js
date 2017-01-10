@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import createInverter from './_createInverter.js';
 
 /** Used for built-in method references. */
@@ -19,14 +18,11 @@ const hasOwnProperty = objectProto.hasOwnProperty;
  * @since 4.1.0
  * @category Object
  * @param {Object} object The object to invert.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Object} Returns the new inverted object.
  * @example
  *
  * var object = { 'a': 1, 'b': 2, 'c': 1 };
- *
- * _.invertBy(object);
- * // => { '1': ['a', 'c'], '2': ['b'] }
  *
  * _.invertBy(object, function(value) {
  *   return 'group' + value;
@@ -39,6 +35,6 @@ const invertBy = createInverter((result, value, key) => {
   } else {
     result[value] = [key];
   }
-}, baseIteratee);
+});
 
 export default invertBy;

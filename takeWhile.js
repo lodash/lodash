@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import baseWhile from './_baseWhile.js';
 
 /**
@@ -11,7 +10,7 @@ import baseWhile from './_baseWhile.js';
  * @since 3.0.0
  * @category Array
  * @param {Array} array The array to query.
- * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
@@ -23,22 +22,10 @@ import baseWhile from './_baseWhile.js';
  *
  * _.takeWhile(users, function(o) { return !o.active; });
  * // => objects for ['barney', 'fred']
- *
- * // The `_.matches` iteratee shorthand.
- * _.takeWhile(users, { 'user': 'barney', 'active': false });
- * // => objects for ['barney']
- *
- * // The `_.matchesProperty` iteratee shorthand.
- * _.takeWhile(users, ['active', false]);
- * // => objects for ['barney', 'fred']
- *
- * // The `_.property` iteratee shorthand.
- * _.takeWhile(users, 'active');
- * // => []
  */
 function takeWhile(array, predicate) {
   return (array && array.length)
-    ? baseWhile(array, baseIteratee(predicate, 3))
+    ? baseWhile(array, predicate)
     : [];
 }
 

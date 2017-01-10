@@ -12,7 +12,7 @@ import unzip from './unzip.js';
  * @since 3.8.0
  * @category Array
  * @param {Array} array The array of grouped elements to process.
- * @param {Function} [iteratee=_.identity] The function to combine
+ * @param {Function} iteratee The function to combine
  *  regrouped values.
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
@@ -28,9 +28,6 @@ function unzipWith(array, iteratee) {
     return [];
   }
   const result = unzip(array);
-  if (iteratee == null) {
-    return result;
-  }
   return arrayMap(result, group => apply(iteratee, undefined, group));
 }
 

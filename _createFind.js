@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import isArrayLike from './isArrayLike.js';
 import keys from './keys.js';
 
@@ -14,7 +13,6 @@ function createFind(findIndexFunc) {
     let iteratee;
     const iterable = Object(collection);
     if (!isArrayLike(collection)) {
-      iteratee = baseIteratee(predicate, 3);
       collection = keys(collection);
       predicate = key => iteratee(iterable[key], key, iterable);
     }

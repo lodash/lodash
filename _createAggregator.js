@@ -1,6 +1,5 @@
 import arrayAggregator from './_arrayAggregator.js';
 import baseAggregator from './_baseAggregator.js';
-import baseIteratee from './_baseIteratee.js';
 import isArray from './isArray.js';
 
 /**
@@ -15,7 +14,7 @@ function createAggregator(setter, initializer) {
   return (collection, iteratee) => {
     const func = isArray(collection) ? arrayAggregator : baseAggregator;
     const accumulator = initializer ? initializer() : {};
-    return func(collection, setter, baseIteratee(iteratee, 2), accumulator);
+    return func(collection, setter, iteratee, accumulator);
   };
 }
 

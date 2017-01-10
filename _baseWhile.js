@@ -1,8 +1,7 @@
 import baseSlice from './_baseSlice.js';
 
 /**
- * The base implementation of methods like `_.dropWhile` and `_.takeWhile`
- * without support for iteratee shorthands.
+ * The base implementation of methods like `_.dropWhile` and `_.takeWhile`.
  *
  * @private
  * @param {Array} array The array to query.

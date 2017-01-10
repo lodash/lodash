@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import baseUniq from './_baseUniq.js';
 
 /**
@@ -13,19 +12,15 @@ import baseUniq from './_baseUniq.js';
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
  * _.uniqBy([2.1, 1.2, 2.3], Math.floor);
  * // => [2.1, 1.2]
- *
- * // The `_.property` iteratee shorthand.
- * _.uniqBy([{ 'x': 1 }, { 'x': 2 }, { 'x': 1 }], 'x');
- * // => [{ 'x': 1 }, { 'x': 2 }]
  */
 function uniqBy(array, iteratee) {
-  return (array && array.length) ? baseUniq(array, baseIteratee(iteratee, 2)) : [];
+  return (array && array.length) ? baseUniq(array, iteratee) : [];
 }
 
 export default uniqBy;

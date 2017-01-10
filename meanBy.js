@@ -1,5 +1,7 @@
-import baseIteratee from './_baseIteratee.js';
-import baseMean from './_baseMean.js';
+import baseSum from './_baseSum.js';
+
+/** Used as references for various `Number` constants. */
+const NAN = 0 / 0;
 
 /**
  * This method is like `_.mean` except that it accepts `iteratee` which is
@@ -11,7 +13,7 @@ import baseMean from './_baseMean.js';
  * @since 4.7.0
  * @category Math
  * @param {Array} array The array to iterate over.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {number} Returns the mean.
  * @example
  *
@@ -19,13 +21,10 @@ import baseMean from './_baseMean.js';
  *
  * _.meanBy(objects, function(o) { return o.n; });
  * // => 5
- *
- * // The `_.property` iteratee shorthand.
- * _.meanBy(objects, 'n');
- * // => 5
  */
 function meanBy(array, iteratee) {
-  return baseMean(array, baseIteratee(iteratee, 2));
+  const length = array == null ? 0 : array.length;
+  return length ? (baseSum(array, iteratee) / length) : NAN;
 }
 
 export default meanBy;

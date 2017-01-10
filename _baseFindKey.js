@@ -1,7 +1,6 @@
 /**
- * The base implementation of methods like `_.findKey` and `_.findLastKey`,
- * without support for iteratee shorthands, which iterates over `collection`
- * using `eachFunc`.
+ * The base implementation of methods like `_.findKey` and `_.findLastKey`
+ * which iterates over `collection` using `eachFunc`.
  *
  * @private
  * @param {Array|Object} collection The collection to inspect.

@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import baseSortedUniq from './_baseSortedUniq.js';
 
 /**
@@ -10,7 +9,7 @@ import baseSortedUniq from './_baseSortedUniq.js';
  * @since 4.0.0
  * @category Array
  * @param {Array} array The array to inspect.
- * @param {Function} [iteratee] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
@@ -19,7 +18,7 @@ import baseSortedUniq from './_baseSortedUniq.js';
  */
 function sortedUniqBy(array, iteratee) {
   return (array && array.length)
-    ? baseSortedUniq(array, baseIteratee(iteratee, 2))
+    ? baseSortedUniq(array, iteratee)
     : [];
 }
 

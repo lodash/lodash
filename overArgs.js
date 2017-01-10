@@ -1,7 +1,5 @@
 import apply from './_apply.js';
-import arrayMap from './_arrayMap.js';
 import baseFlatten from './_baseFlatten.js';
-import baseIteratee from './_baseIteratee.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMin = Math.min;
@@ -38,7 +36,6 @@ const nativeMin = Math.min;
  * // => [100, 10]
  */
 function overArgs(func, ...transforms) {
-  transforms = arrayMap(transforms, transform => baseIteratee(transform));
   const funcsLength = transforms.length;
   return function(...args) {
     let index = -1;

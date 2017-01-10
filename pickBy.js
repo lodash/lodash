@@ -1,5 +1,4 @@
 import arrayMap from './_arrayMap.js';
-import baseIteratee from './_baseIteratee.js';
 import basePickBy from './_basePickBy.js';
 import getAllKeysIn from './_getAllKeysIn.js';
 
@@ -12,7 +11,7 @@ import getAllKeysIn from './_getAllKeysIn.js';
  * @since 4.0.0
  * @category Object
  * @param {Object} object The source object.
- * @param {Function} [predicate=_.identity] The function invoked per property.
+ * @param {Function} predicate The function invoked per property.
  * @returns {Object} Returns the new object.
  * @example
  *
@@ -26,7 +25,6 @@ function pickBy(object, predicate) {
     return {};
   }
   const props = arrayMap(getAllKeysIn(object), prop => [prop]);
-  predicate = baseIteratee(predicate);
   return basePickBy(object, props, (value, path) => predicate(value, path[0]));
 }
 

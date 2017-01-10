@@ -1,5 +1,4 @@
 import baseExtremum from './_baseExtremum.js';
-import baseIteratee from './_baseIteratee.js';
 import baseLt from './_baseLt.js';
 
 /**
@@ -12,7 +11,7 @@ import baseLt from './_baseLt.js';
  * @since 4.0.0
  * @category Math
  * @param {Array} array The array to iterate over.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {*} Returns the minimum value.
  * @example
  *
@@ -20,14 +19,10 @@ import baseLt from './_baseLt.js';
  *
  * _.minBy(objects, function(o) { return o.n; });
  * // => { 'n': 1 }
- *
- * // The `_.property` iteratee shorthand.
- * _.minBy(objects, 'n');
- * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {
   return (array && array.length)
-    ? baseExtremum(array, baseIteratee(iteratee, 2), baseLt)
+    ? baseExtremum(array, iteratee, baseLt)
     : undefined;
 }
 

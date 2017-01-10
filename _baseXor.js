@@ -3,8 +3,8 @@ import baseFlatten from './_baseFlatten.js';
 import baseUniq from './_baseUniq.js';
 
 /**
- * The base implementation of methods like `_.xor`, without support for
- * iteratee shorthands, that accepts an array of arrays to inspect.
+ * The base implementation of methods like `_.xor` which accepts an array of
+ * arrays to inspect.
  *
  * @private
  * @param {Array} arrays The arrays to inspect.

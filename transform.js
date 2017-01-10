@@ -1,7 +1,6 @@
 import arrayEach from './_arrayEach.js';
 import baseCreate from './_baseCreate.js';
 import baseForOwn from './_baseForOwn.js';
-import baseIteratee from './_baseIteratee.js';
 import getPrototype from './_getPrototype.js';
 import isArray from './isArray.js';
 import isBuffer from './isBuffer.js';
@@ -23,7 +22,7 @@ import isTypedArray from './isTypedArray.js';
  * @since 1.3.0
  * @category Object
  * @param {Object} object The object to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The custom accumulator value.
  * @returns {*} Returns the accumulated value.
  * @example
@@ -43,7 +42,6 @@ function transform(object, iteratee, accumulator) {
   const isArr = isArray(object);
   const isArrLike = isArr || isBuffer(object) || isTypedArray(object);
 
-  iteratee = baseIteratee(iteratee, 4);
   if (accumulator == null) {
     const Ctor = object && object.constructor;
     if (isArrLike) {

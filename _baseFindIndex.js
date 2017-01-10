@@ -1,6 +1,5 @@
 /**
- * The base implementation of `_.findIndex` and `_.findLastIndex` without
- * support for iteratee shorthands.
+ * The base implementation of `_.findIndex` and `_.findLastIndex`.
  *
  * @private
  * @param {Array} array The array to inspect.

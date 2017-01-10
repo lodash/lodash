@@ -1,6 +1,5 @@
 import baseFindKey from './_baseFindKey.js';
 import baseForOwn from './_baseForOwn.js';
-import baseIteratee from './_baseIteratee.js';
 
 /**
  * This method is like `_.find` except that it returns the key of the first
@@ -11,7 +10,7 @@ import baseIteratee from './_baseIteratee.js';
  * @since 1.1.0
  * @category Object
  * @param {Object} object The object to inspect.
- * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {Function} predicate The function invoked per iteration.
  * @returns {string|undefined} Returns the key of the matched element,
  *  else `undefined`.
  * @example
@@ -24,21 +23,9 @@ import baseIteratee from './_baseIteratee.js';
  *
  * _.findKey(users, function(o) { return o.age < 40; });
  * // => 'barney' (iteration order is not guaranteed)
- *
- * // The `_.matches` iteratee shorthand.
- * _.findKey(users, { 'age': 1, 'active': true });
- * // => 'pebbles'
- *
- * // The `_.matchesProperty` iteratee shorthand.
- * _.findKey(users, ['active', false]);
- * // => 'fred'
- *
- * // The `_.property` iteratee shorthand.
- * _.findKey(users, 'active');
- * // => 'barney'
  */
 function findKey(object, predicate) {
-  return baseFindKey(object, baseIteratee(predicate, 3), baseForOwn);
+  return baseFindKey(object, predicate, baseForOwn);
 }
 
 export default findKey;

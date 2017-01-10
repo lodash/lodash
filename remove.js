@@ -1,4 +1,3 @@
-import baseIteratee from './_baseIteratee.js';
 import basePullAt from './_basePullAt.js';
 
 /**
@@ -14,7 +13,7 @@ import basePullAt from './_basePullAt.js';
  * @since 2.0.0
  * @category Array
  * @param {Array} array The array to modify.
- * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new array of removed elements.
  * @example
  *
@@ -38,7 +37,6 @@ function remove(array, predicate) {
   const indexes = [];
   const length = array.length;
 
-  predicate = baseIteratee(predicate, 3);
   while (++index < length) {
     const value = array[index];
     if (predicate(value, index, array)) {

@@ -1,5 +1,4 @@
 import baseFlatten from './_baseFlatten.js';
-import baseIteratee from './_baseIteratee.js';
 import baseUniq from './_baseUniq.js';
 import isArrayLikeObject from './isArrayLikeObject.js';
 import last from './last.js';
@@ -16,23 +15,19 @@ import last from './last.js';
  * @since 4.0.0
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
- * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
+ * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of combined values.
  * @example
  *
  * _.unionBy([2.1], [1.2, 2.3], Math.floor);
  * // => [2.1, 1.2]
- *
- * // The `_.property` iteratee shorthand.
- * _.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
- * // => [{ 'x': 1 }, { 'x': 2 }]
  */
 function unionBy(...arrays) {
   let iteratee = last(arrays);
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined;
   }
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), baseIteratee(iteratee, 2));
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), iteratee);
 }
 
 export default unionBy;

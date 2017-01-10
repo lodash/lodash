@@ -1,5 +1,4 @@
 import arrayMap from './_arrayMap.js';
-import baseIteratee from './_baseIteratee.js';
 import baseMap from './_baseMap.js';
 import isArray from './isArray.js';
 
@@ -22,7 +21,7 @@ import isArray from './isArray.js';
  * @since 0.1.0
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new mapped array.
  * @example
  *
@@ -35,19 +34,10 @@ import isArray from './isArray.js';
  *
  * _.map({ 'a': 4, 'b': 8 }, square);
  * // => [16, 64] (iteration order is not guaranteed)
- *
- * var users = [
- *   { 'user': 'barney' },
- *   { 'user': 'fred' }
- * ];
- *
- * // The `_.property` iteratee shorthand.
- * _.map(users, 'user');
- * // => ['barney', 'fred']
  */
 function map(collection, iteratee) {
   const func = isArray(collection) ? arrayMap : baseMap;
-  return func(collection, baseIteratee(iteratee, 3));
+  return func(collection, iteratee);
 }
 
 export default map;

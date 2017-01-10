@@ -1,8 +1,7 @@
 import eq from './eq.js';
 
 /**
- * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
- * support for iteratee shorthands.
+ * The base implementation of `_.sortedUniq` and `_.sortedUniqBy`.
  *
  * @private
  * @param {Array} array The array to inspect.

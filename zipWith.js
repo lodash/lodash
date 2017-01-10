@@ -10,7 +10,7 @@ import unzipWith from './unzipWith.js';
  * @since 3.8.0
  * @category Array
  * @param {...Array} [arrays] The arrays to process.
- * @param {Function} [iteratee=_.identity] The function to combine
+ * @param {Function} iteratee The function to combine
  *  grouped values.
  * @returns {Array} Returns the new array of grouped elements.
  * @example
@@ -23,7 +23,6 @@ import unzipWith from './unzipWith.js';
 function zipWith(...arrays) {
   const length = arrays.length;
   let iteratee = length > 1 ? arrays[length - 1] : undefined;
-
   iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
   return unzipWith(arrays, iteratee);
 }

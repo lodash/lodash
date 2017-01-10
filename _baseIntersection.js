@@ -8,8 +8,8 @@ import cacheHas from './_cacheHas.js';
 const nativeMin = Math.min;
 
 /**
- * The base implementation of methods like `_.intersection`, without support
- * for iteratee shorthands, that accepts an array of arrays to inspect.
+ * The base implementation of methods like `_.intersection` that accepts an
+ * array of arrays to inspect.
  *
  * @private
  * @param {Array} arrays The arrays to inspect.

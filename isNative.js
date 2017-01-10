@@ -1,19 +1,35 @@
-import baseIsNative from './_baseIsNative.js';
-import isMaskable from './_isMaskable.js';
+import isFunction from './isFunction.js';
+import isObject from './isObject.js';
+import toSource from './_toSource.js';
 
-/** Error message constants. */
-const CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.';
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+const reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+const reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used for built-in method references. */
+const funcProto = Function.prototype;
+const objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+const funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+const hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to detect if a method is native. */
+const reIsNative = RegExp(`^${
+  funcToString.call(hasOwnProperty)
+    .replace(reRegExpChar, '\\$&')
+    .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?')
+}$`);
 
 /**
  * Checks if `value` is a pristine native function.
- *
- * **Note:** This method can't reliably detect native functions in the presence
- * of the core-js package because core-js circumvents this kind of detection.
- * Despite multiple requests, the core-js maintainer has made it clear: any
- * attempt to fix the detection will be obstructed. As a result, we're left
- * with little choice but to throw an error. Unfortunately, this also affects
- * packages, like [babel-polyfill](https://www.npmjs.com/package/babel-polyfill),
- * which rely on core-js.
  *
  * @static
  * @since 3.0.0
@@ -30,10 +46,11 @@ const CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=p
  * // => false
  */
 function isNative(value) {
-  if (isMaskable(value)) {
-    throw new Error(CORE_ERROR_TEXT);
+  if (!isObject(value)) {
+    return false;
   }
-  return baseIsNative(value);
+  const pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
 }
 
 export default isNative;

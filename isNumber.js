@@ -5,7 +5,7 @@ import isObjectLike from './isObjectLike.js';
  * Checks if `value` is classified as a `Number` primitive or object.
  *
  * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are
- * classified as numbers, use the `isFinite` method.
+ * classified as numbers, use the `Number.isFinite` method.
  *
  * @since 0.1.0
  * @category Lang

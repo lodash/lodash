@@ -1,11 +1,8 @@
 import baseUnset from './_baseUnset.js';
 import isIndex from './_isIndex.js';
 
-/** Used for built-in method references. */
-const arrayProto = Array.prototype;
-
 /** Built-in value references. */
-const splice = arrayProto.splice;
+const splice = Array.prototype.splice;
 
 /**
  * The base implementation of `pullAt` without support for individual

@@ -1,10 +1,7 @@
 import assocIndexOf from './_assocIndexOf.js';
 
-/** Used for built-in method references. */
-const arrayProto = Array.prototype;
-
 /** Built-in value references. */
-const splice = arrayProto.splice;
+const splice = Array.prototype.splice;
 
 /**
  * Removes `key` and its value from the list cache.

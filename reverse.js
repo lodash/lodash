@@ -1,8 +1,5 @@
-/** Used for built-in method references. */
-const arrayProto = Array.prototype;
-
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeReverse = arrayProto.reverse;
+const nativeReverse = Array.prototype.reverse;
 
 /**
  * Reverses `array` so that the first element becomes the last, the second

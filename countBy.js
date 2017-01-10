@@ -1,11 +1,8 @@
 import baseAssignValue from './_baseAssignValue.js';
 import createAggregator from './_createAggregator.js';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * Creates an object composed of keys generated from the results of running

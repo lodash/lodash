@@ -3,11 +3,8 @@ import getAllKeys from './_getAllKeys.js';
 /** Used to compose bitmasks for value comparisons. */
 const COMPARE_PARTIAL_FLAG = 1;
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * A specialized version of `baseIsEqualDeep` for objects with support for

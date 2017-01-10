@@ -1,10 +1,7 @@
 import nativeCreate from './_nativeCreate.js';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * Checks if a hash value for `key` exists.

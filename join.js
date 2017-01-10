@@ -1,8 +1,5 @@
-/** Used for built-in method references. */
-const arrayProto = Array.prototype;
-
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeJoin = arrayProto.join;
+const nativeJoin = Array.prototype.join;
 
 /**
  * Converts all elements in `array` into a string separated by `separator`.

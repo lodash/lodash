@@ -11,11 +11,8 @@ import isTypedArray from './isTypedArray.js';
 const mapTag = '[object Map]';
 const setTag = '[object Set]';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * Checks if `value` is an empty object, collection, map, or set.

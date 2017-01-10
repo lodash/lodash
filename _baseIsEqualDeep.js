@@ -15,11 +15,8 @@ const argsTag = '[object Arguments]';
 const arrayTag = '[object Array]';
 const objectTag = '[object Object]';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * A specialized version of `baseIsEqual` for arrays and objects which performs

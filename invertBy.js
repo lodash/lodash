@@ -1,10 +1,7 @@
 import createInverter from './_createInverter.js';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * This method is like `invert` except that the inverted object is generated

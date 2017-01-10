@@ -3,11 +3,8 @@ import nativeCreate from './_nativeCreate.js';
 /** Used to stand-in for `undefined` hash values. */
 const HASH_UNDEFINED = '__lodash_hash_undefined__';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * Gets the hash value for `key`.

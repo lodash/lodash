@@ -2,11 +2,8 @@ import isObject from './isObject.js';
 import isPrototype from './_isPrototype.js';
 import nativeKeysIn from './_nativeKeysIn.js';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * The base implementation of `keysIn` which doesn't treat sparse arrays as dense.

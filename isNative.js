@@ -11,15 +11,11 @@ const reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 /** Used to detect host constructors (Safari). */
 const reIsHostCtor = /^\[object .+?Constructor\]$/;
 
-/** Used for built-in method references. */
-const funcProto = Function.prototype;
-const objectProto = Object.prototype;
-
 /** Used to resolve the decompiled source of functions. */
-const funcToString = funcProto.toString;
+const funcToString = Function.prototype.toString;
 
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /** Used to detect if a method is native. */
 const reIsNative = RegExp(`^${

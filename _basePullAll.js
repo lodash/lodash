@@ -3,11 +3,8 @@ import baseIndexOf from './_baseIndexOf.js';
 import baseIndexOfWith from './_baseIndexOfWith.js';
 import copyArray from './_copyArray.js';
 
-/** Used for built-in method references. */
-const arrayProto = Array.prototype;
-
 /** Built-in value references. */
-const splice = arrayProto.splice;
+const splice = Array.prototype.splice;
 
 /**
  * The base implementation of `pullAllBy`.

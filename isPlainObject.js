@@ -5,15 +5,11 @@ import isObjectLike from './isObjectLike.js';
 /** `Object#toString` result references. */
 const objectTag = '[object Object]';
 
-/** Used for built-in method references. */
-const funcProto = Function.prototype;
-const objectProto = Object.prototype;
-
 /** Used to resolve the decompiled source of functions. */
-const funcToString = funcProto.toString;
+const funcToString = Function.prototype.toString;
 
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /** Used to infer the `Object` constructor. */
 const objectCtorString = funcToString.call(Object);

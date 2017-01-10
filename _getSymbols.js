@@ -1,11 +1,8 @@
 import arrayFilter from './_arrayFilter.js';
 import stubArray from './stubArray.js';
 
-/** Used for built-in method references. */
-const objectProto = Object.prototype;
-
 /** Built-in value references. */
-const propertyIsEnumerable = objectProto.propertyIsEnumerable;
+const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeGetSymbols = Object.getOwnPropertySymbols;

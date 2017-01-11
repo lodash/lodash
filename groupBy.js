@@ -1,5 +1,5 @@
 import baseAssignValue from './.internal/baseAssignValue.js';
-import createAggregator from './.internal/createAggregator.js';
+import reduce from './reduce.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -21,12 +21,15 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * groupBy([6.1, 4.2, 6.3], Math.floor);
  * // => { '4': [4.2], '6': [6.1, 6.3] }
  */
-const groupBy = createAggregator((result, value, key) => {
-  if (hasOwnProperty.call(result, key)) {
-    result[key].push(value);
-  } else {
-    baseAssignValue(result, key, [value]);
-  }
-});
+function groupBy(collection, iteratee) {
+  return reduce(collection, (result, value, key) => {
+    if (hasOwnProperty.call(result, key)) {
+      result[key].push(value);
+    } else {
+      baseAssignValue(result, key, [value]);
+    }
+    return result;
+  }, {});
+}
 
 export default groupBy;

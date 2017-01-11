@@ -1,4 +1,4 @@
-import createAggregator from './.internal/createAggregator.js';
+import reduce from './reduce.js';
 
 /**
  * Creates an array of elements split into two groups, the first of which
@@ -19,10 +19,13 @@ import createAggregator from './.internal/createAggregator.js';
  *   { 'user': 'pebbles', 'age': 1,  'active': false }
  * ];
  *
- * partition(users, o => o.active);
+ * partition(users, ({ active }) => active);
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
-const partition = createAggregator((result, value, key) =>
-  result[key ? 0 : 1].push(value), () => [[], []]);
+function partition(collection, predicate) {
+  return reduce(collection, (result, value, key) => (
+    result[key ? 0 : 1].push(value)
+  ), [[], []]);
+}
 
 export default partition;

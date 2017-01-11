@@ -1,5 +1,5 @@
 import baseAssignValue from './.internal/baseAssignValue.js';
-import createAggregator from './.internal/createAggregator.js';
+import reduce from './reduce.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -20,12 +20,15 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * countBy([6.1, 4.2, 6.3], Math.floor);
  * // => { '4': 1, '6': 2 }
  */
-const countBy = createAggregator((result, value, key) => {
-  if (hasOwnProperty.call(result, key)) {
-    ++result[key];
-  } else {
-    baseAssignValue(result, key, 1);
-  }
-});
+function countBy(collection, iteratee) {
+  return reduce(collection, (result, value, key) => {
+    if (hasOwnProperty.call(result, key)) {
+      ++result[key];
+    } else {
+      baseAssignValue(result, key, 1);
+    }
+    return result;
+  }, {});
+}
 
 export default countBy;

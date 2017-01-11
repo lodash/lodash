@@ -1,5 +1,5 @@
 import baseAssignValue from './.internal/baseAssignValue.js';
-import createAggregator from './.internal/createAggregator.js';
+import reduce from './reduce.js';
 
 /**
  * Creates an object composed of keys generated from the results of running
@@ -19,16 +19,13 @@ import createAggregator from './.internal/createAggregator.js';
  *   { 'dir': 'right', 'code': 100 }
  * ];
  *
- * keyBy(array, function(o) {
- *   return String.fromCharCode(o.code);
- * });
+ * keyBy(array, ({ code }) => String.fromCharCode(code));
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
- *
- * keyBy(array, 'dir');
- * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
  */
-const keyBy = createAggregator((result, value, key) => {
-  baseAssignValue(result, key, value);
-});
+function keyBy(collection, iteratee) {
+  return reduce(collection, (result, value, key) => (
+    baseAssignValue(result, key, value)
+  ), {});
+}
 
 export default keyBy;

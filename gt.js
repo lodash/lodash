@@ -1,5 +1,4 @@
-import baseGt from './.internal/baseGt.js';
-import createRelationalOperation from './.internal/createRelationalOperation.js';
+import toNumber from './toNumber.js';
 
 /**
  * Checks if `value` is greater than `other`.
@@ -22,6 +21,12 @@ import createRelationalOperation from './.internal/createRelationalOperation.js'
  * gt(1, 3);
  * // => false
  */
-const gt = createRelationalOperation(baseGt);
+function gt(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = toNumber(value);
+    other = toNumber(other);
+  }
+  return value > other;
+}
 
 export default gt;

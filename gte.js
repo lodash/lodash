@@ -1,4 +1,4 @@
-import createRelationalOperation from './.internal/createRelationalOperation.js';
+import toNumber from './toNumber.js';
 
 /**
  * Checks if `value` is greater than or equal to `other`.
@@ -21,6 +21,12 @@ import createRelationalOperation from './.internal/createRelationalOperation.js'
  * gte(1, 3);
  * // => false
  */
-const gte = createRelationalOperation((value, other) => value >= other);
+function gte(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = toNumber(value);
+    other = toNumber(other);
+  }
+  return value >= other;
+}
 
 export default gte;

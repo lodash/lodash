@@ -1,5 +1,4 @@
-import baseLt from './.internal/baseLt.js';
-import createRelationalOperation from './.internal/createRelationalOperation.js';
+import toNumber from './toNumber.js';
 
 /**
  * Checks if `value` is less than `other`.
@@ -22,6 +21,12 @@ import createRelationalOperation from './.internal/createRelationalOperation.js'
  * lt(3, 1);
  * // => false
  */
-const lt = createRelationalOperation(baseLt);
+function lt(value, other) {
+  if (!(typeof value == 'string' && typeof other == 'string')) {
+    value = toNumber(value);
+    other = toNumber(other);
+  }
+  return value < other;
+}
 
 export default lt;

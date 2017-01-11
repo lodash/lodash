@@ -1,4 +1,4 @@
-import createInverter from './.internal/createInverter.js';
+import baseForOwn from './baseForOwn.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -22,12 +22,17 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * invertBy(object, value => `group${ value }`);
  * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
  */
-const invertBy = createInverter((result, value, key) => {
-  if (hasOwnProperty.call(result, value)) {
-    result[value].push(key);
-  } else {
-    result[value] = [key];
-  }
-});
+function invertBy(object, iteratee) {
+  const result = {};
+  baseForOwn(object, (value, key) => {
+    value = iteratee(value);
+    if (hasOwnProperty.call(result, value)) {
+      result[value].push(key);
+    } else {
+      result[value] = [key];
+    }
+  });
+  return result;
+}
 
 export default invertBy;

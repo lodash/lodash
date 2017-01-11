@@ -1,6 +1,4 @@
-import constant from './constant.js';
-import createInverter from './.internal/createInverter.js';
-import identity from './identity.js';
+import baseForOwn from './baseForOwn.js';
 
 /**
  * Creates an object composed of the inverted keys and values of `object`.
@@ -18,8 +16,12 @@ import identity from './identity.js';
  * invert(object);
  * // => { '1': 'c', '2': 'b' }
  */
-const invert = createInverter((result, value, key) => {
-  result[value] = key;
-});
+function invert(object) {
+  const result = {};
+  baseForOwn(object, (value, key) => {
+    result[value] = key;
+  });
+  return result;
+}
 
 export default invert;

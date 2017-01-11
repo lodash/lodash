@@ -20,7 +20,7 @@ function createCaseFirst(methodName) {
 
     const chr = strSymbols
       ? strSymbols[0]
-      : string.charAt(0);
+      : string[0];
 
     const trailing = strSymbols
       ? castSlice(strSymbols, 1).join('')

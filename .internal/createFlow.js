@@ -9,19 +9,18 @@ function createFlow(fromRight) {
   return (...funcs) => {
     const length = funcs.length;
 
-    let func;
-    let wrapper;
     let index = length;
 
     if (fromRight) {
       funcs.reverse();
     }
+
     while (index--) {
-      func = funcs[index];
-      if (typeof func != 'function') {
+      if (typeof funcs[index] !== 'function') {
         throw new TypeError('Expected a function');
       }
     }
+
     return function(...args) {
       const value = args[0];
       let index = 0;
@@ -30,6 +29,7 @@ function createFlow(fromRight) {
       while (++index < length) {
         result = funcs[index].call(this, result);
       }
+
       return result;
     };
   };

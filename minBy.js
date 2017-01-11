@@ -1,5 +1,4 @@
-import baseExtremum from './.internal/baseExtremum.js';
-import baseLt from './.internal/baseLt.js';
+import isSymbol from './isSymbol.js';
 
 /**
  * This method is like `min` except that it accepts `iteratee` which is
@@ -19,9 +18,24 @@ import baseLt from './.internal/baseLt.js';
  * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {
-  return (array && array.length)
-    ? baseExtremum(array, iteratee, baseLt)
-    : undefined;
+  let result;
+  let index = -1;
+  const length = array ? array.length : 0;
+
+  while (++index < length) {
+    let computed;
+    const value = array[index];
+    const current = iteratee(value);
+
+    if (current != null && (computed === undefined
+          ? (current === current && !isSymbol(current))
+          : (current < computed)
+        )) {
+      computed = current;
+      result = value;
+    }
+  }
+  return result;
 }
 
 export default minBy;

@@ -1,5 +1,4 @@
-import baseExtremum from './.internal/baseExtremum.js';
-import baseGt from './.internal/baseGt.js';
+import isSymbol from './isSymbol.js';
 
 /**
  * This method is like `max` except that it accepts `iteratee` which is
@@ -19,9 +18,24 @@ import baseGt from './.internal/baseGt.js';
  * // => { 'n': 2 }
  */
 function maxBy(array, iteratee) {
-  return (array && array.length)
-    ? baseExtremum(array, iteratee, baseGt)
-    : undefined;
+  let result;
+  let index = -1;
+  const length = array ? array.length : 0;
+
+  while (++index < length) {
+    let computed;
+    const value = array[index];
+    const current = iteratee(value);
+
+    if (current != null && (computed === undefined
+          ? (current === current && !isSymbol(current))
+          : (current > computed)
+        )) {
+      computed = current;
+      result = value;
+    }
+  }
+  return result;
 }
 
 export default maxBy;

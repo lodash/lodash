@@ -1,6 +1,4 @@
-import baseExtremum from './.internal/baseExtremum.js';
-import baseGt from './.internal/baseGt.js';
-import identity from './identity.js';
+import isSymbol from './isSymbol.js';
 
 /**
  * Computes the maximum value of `array`. If `array` is empty or falsey,
@@ -19,9 +17,23 @@ import identity from './identity.js';
  * // => undefined
  */
 function max(array) {
-  return (array && array.length)
-    ? baseExtremum(array, identity, baseGt)
-    : undefined;
+  let result;
+  let index = -1;
+  const length = array ? array.length : 0;
+
+  while (++index < length) {
+    let computed;
+    const value = array[index];
+
+    if (value != null && (computed === undefined
+          ? (value === value && !isSymbol(value))
+          : (value > computed)
+        )) {
+      computed = value;
+      result = value;
+    }
+  }
+  return result;
 }
 
 export default max;

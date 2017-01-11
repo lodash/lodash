@@ -17,12 +17,12 @@ import baseFilter from './.internal/baseFilter.js';
  * @example
  *
  * const users = [
- *   { 'user': 'barney', 'age': 36, 'active': true },
- *   { 'user': 'fred',   'age': 40, 'active': false }
+ *   { 'user': 'barney', 'active': true },
+ *   { 'user': 'fred',   'active': false }
  * ];
  *
- * filter(users, o => !o.active);
- * // => objects for ['fred']
+ * filter(users, ({ active }) => active);
+ * // => objects for ['barney']
  */
 function filter(collection, predicate) {
   const func = Array.isArray(collection) ? arrayFilter : baseFilter;

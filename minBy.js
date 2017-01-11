@@ -14,7 +14,7 @@ import isSymbol from './isSymbol.js';
  *
  * const objects = [{ 'n': 1 }, { 'n': 2 }];
  *
- * minBy(objects, o => o.n);
+ * minBy(objects, ({ n }) => n);
  * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {

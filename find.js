@@ -20,7 +20,7 @@ import findIndex from './findIndex.js';
  *   { 'user': 'pebbles', 'age': 1,  'active': true }
  * ];
  *
- * find(users, o => o.age < 40);
+ * find(users, ({ age }) => age < 40);
  * // => object for 'barney'
  */
 const find = createFind(findIndex);

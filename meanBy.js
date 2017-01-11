@@ -17,7 +17,7 @@ const NAN = 0 / 0;
  *
  * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
  *
- * meanBy(objects, o => o.n);
+ * meanBy(objects, ({ n }) => n);
  * // => 5
  */
 function meanBy(array, iteratee) {

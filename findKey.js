@@ -19,7 +19,7 @@ import baseForOwn from './.internal/baseForOwn.js';
  *   'pebbles': { 'age': 1,  'active': true }
  * };
  *
- * findKey(users, o => o.age < 40);
+ * findKey(users, ({ age }) => age < 40);
  * // => 'barney' (iteration order is not guaranteed)
  */
 function findKey(object, predicate) {

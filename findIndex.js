@@ -22,7 +22,7 @@ const nativeMax = Math.max;
  *   { 'user': 'pebbles', 'active': true }
  * ];
  *
- * findIndex(users, o => o.user == 'barney');
+ * findIndex(users, ({ user }) => user == 'barney');
  * // => 0
  */
 function findIndex(array, predicate, fromIndex) {

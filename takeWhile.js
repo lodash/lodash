@@ -13,12 +13,12 @@ import baseWhile from './.internal/baseWhile.js';
  * @example
  *
  * const users = [
- *   { 'user': 'barney',  'active': false },
- *   { 'user': 'fred',    'active': false },
- *   { 'user': 'pebbles', 'active': true }
+ *   { 'user': 'barney',  'active': true },
+ *   { 'user': 'fred',    'active': true },
+ *   { 'user': 'pebbles', 'active': false }
  * ];
  *
- * takeWhile(users, o => !o.active);
+ * takeWhile(users, ({ active }) => active);
  * // => objects for ['barney', 'fred']
  */
 function takeWhile(array, predicate) {

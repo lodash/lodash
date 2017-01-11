@@ -15,11 +15,11 @@ import negate from './negate.js';
  * @example
  *
  * const users = [
- *   { 'user': 'barney', 'age': 36, 'active': false },
- *   { 'user': 'fred',   'age': 40, 'active': true }
+ *   { 'user': 'barney', 'active': true },
+ *   { 'user': 'fred',   'active': false }
  * ];
  *
- * reject(users, o => !o.active);
+ * reject(users, ({ active }) => active);
  * // => objects for ['fred']
  */
 function reject(collection, predicate) {

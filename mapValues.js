@@ -20,7 +20,7 @@ import baseForOwn from './.internal/baseForOwn.js';
  *   'pebbles': { 'user': 'pebbles', 'age': 1 }
  * };
  *
- * mapValues(users, o => o.age);
+ * mapValues(users, ({ age }) => age);
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValues(object, iteratee) {

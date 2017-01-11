@@ -13,12 +13,12 @@ import baseWhile from './.internal/baseWhile.js';
  * @example
  *
  * const users = [
- *   { 'user': 'barney',  'active': false },
- *   { 'user': 'fred',    'active': false },
- *   { 'user': 'pebbles', 'active': true }
+ *   { 'user': 'barney',  'active': true },
+ *   { 'user': 'fred',    'active': true },
+ *   { 'user': 'pebbles', 'active': false }
  * ];
  *
- * dropWhile(users, o => !o.active);
+ * dropWhile(users, ({ active }) => active);
  * // => objects for ['pebbles']
  */
 function dropWhile(array, predicate) {

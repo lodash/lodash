@@ -19,7 +19,7 @@ import baseForOwnRight from './.internal/baseForOwnRight.js';
  *   'pebbles': { 'age': 1,  'active': true }
  * };
  *
- * findLastKey(users, o => o.age < 40);
+ * findLastKey(users, ({ age }) => age < 40);
  * // => returns 'pebbles' assuming `findKey` returns 'barney'
  */
 function findLastKey(object, predicate) {

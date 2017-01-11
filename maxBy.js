@@ -14,7 +14,7 @@ import isSymbol from './isSymbol.js';
  *
  * const objects = [{ 'n': 1 }, { 'n': 2 }];
  *
- * maxBy(objects, o => o.n);
+ * maxBy(objects, ({ n }) => n);
  * // => { 'n': 2 }
  */
 function maxBy(array, iteratee) {

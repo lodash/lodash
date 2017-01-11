@@ -14,7 +14,7 @@ import baseSum from './.internal/baseSum.js';
  *
  * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
  *
- * sumBy(objects, o => o.n);
+ * sumBy(objects, ({ n }) => n);
  * // => 20
  */
 function sumBy(array, iteratee) {

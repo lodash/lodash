@@ -1,5 +1,8 @@
 import isArguments from './isArguments.js';
 
+/** Built-in value reference. */
+const spreadableSymbol = Symbol.isConcatSpreadable;
+
 /**
  * Checks if `value` is a flattenable `arguments` object or array.
  *
@@ -9,7 +12,7 @@ import isArguments from './isArguments.js';
  */
 function isFlattenable(value) {
   return Array.isArray(value) || isArguments(value) ||
-    !!(Symbol.isConcatSpreadable && value && value[spreadableSymbol]);
+    !!(spreadableSymbol && value && value[spreadableSymbol]);
 }
 
 export default isFlattenable;

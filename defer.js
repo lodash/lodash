@@ -1,5 +1,3 @@
-import baseDelay from './.internal/baseDelay.js';
-
 /**
  * Defers invoking the `func` until the current call stack has cleared. Any
  * additional arguments are provided to `func` when it's invoked.
@@ -15,7 +13,10 @@ import baseDelay from './.internal/baseDelay.js';
  * // => Logs 'deferred' after one millisecond.
  */
 function defer(func, ...args) {
-  return baseDelay(func, 1, args);
+  if (typeof func != 'function') {
+    throw new TypeError('Expected a function');
+  }
+  return setTimeout(() => func(...args), 1);
 }
 
 export default defer;

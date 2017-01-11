@@ -1,4 +1,3 @@
-import baseDelay from './.internal/baseDelay.js';
 import toNumber from './toNumber.js';
 
 /**
@@ -17,7 +16,10 @@ import toNumber from './toNumber.js';
  * // => Logs 'later' after one second.
  */
 function delay(func, wait, ...args) {
-  return baseDelay(func, toNumber(wait) || 0, args);
+  if (typeof func != 'function') {
+    throw new TypeError('Expected a function');
+  }
+  return setTimeout(() => func(...args), toNumber(wait) || 0);
 }
 
 export default delay;

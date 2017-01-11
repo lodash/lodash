@@ -1,5 +1,5 @@
+import apply from './.internal/apply.js';
 import arrayMap from './.internal/arrayMap.js';
-import createOver from './.internal/createOver.js';
 
 /**
  * Creates a function that invokes `iteratees` with the arguments it receives
@@ -7,7 +7,7 @@ import createOver from './.internal/createOver.js';
  *
  * @since 4.0.0
  * @category Util
- * @param {...(Function|Function[])} [iteratees=[identity]]
+ * @param {Function[]} [iteratees=[identity]]
  *  The iteratees to invoke.
  * @returns {Function} Returns the new function.
  * @example
@@ -17,6 +17,11 @@ import createOver from './.internal/createOver.js';
  * func(1, 2, 3, 4);
  * // => [4, 1]
  */
-const over = createOver(arrayMap);
+function over(iteratees) {
+  return function(...args) {
+    const thisArg = this;
+    return arrayMap(iteratees, iteratee => apply(iteratee, thisArg, args));
+  };
+}
 
 export default over;

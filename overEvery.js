@@ -1,5 +1,5 @@
+import apply from './.internal/apply.js';
 import arrayEvery from './.internal/arrayEvery.js';
-import createOver from './.internal/createOver.js';
 
 /**
  * Creates a function that checks if **all** of the `predicates` return
@@ -7,7 +7,7 @@ import createOver from './.internal/createOver.js';
  *
  * @since 4.0.0
  * @category Util
- * @param {...(Function|Function[])} [predicates=[identity]]
+ * @param {Function[]} [predicates=[identity]]
  *  The predicates to check.
  * @returns {Function} Returns the new function.
  * @example
@@ -23,6 +23,11 @@ import createOver from './.internal/createOver.js';
  * func(NaN);
  * // => false
  */
-const overEvery = createOver(arrayEvery);
+function overEvery(iteratees) {
+  return function(...args) {
+    const thisArg = this;
+    return arrayEvery(iteratees, iteratee => apply(iteratee, thisArg, args));
+  };
+}
 
 export default overEvery;

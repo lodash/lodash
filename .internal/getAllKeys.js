@@ -1,4 +1,3 @@
-import baseGetAllKeys from './.internal/baseGetAllKeys.js';
 import getSymbols from './.internal/getSymbols.js';
 import keys from './keys.js';
 
@@ -10,7 +9,8 @@ import keys from './keys.js';
  * @returns {Array} Returns the array of property names and symbols.
  */
 function getAllKeys(object) {
-  return baseGetAllKeys(object, keys, getSymbols);
+  const result = keys(object);
+  return Array.isArray(object) ? result : arrayPush(result, getSymbols(object));
 }
 
 export default getAllKeys;

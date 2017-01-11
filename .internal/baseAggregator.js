@@ -1,4 +1,4 @@
-import baseEach from './.internal/baseEach.js';
+import baseEach from './baseEach.js';
 
 /**
  * Aggregates elements of `collection` on `accumulator` with keys transformed

@@ -1,8 +1,8 @@
-import baseTimes from './.internal/baseTimes.js';
-import isArguments from './isArguments.js';
-import isBuffer from './isBuffer.js';
-import isIndex from './.internal/isIndex.js';
-import isTypedArray from './isTypedArray.js';
+import baseTimes from './baseTimes.js';
+import isArguments from '../isArguments.js';
+import isBuffer from '../isBuffer.js';
+import isIndex from './isIndex.js';
+import isTypedArray from '../isTypedArray.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

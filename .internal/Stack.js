@@ -1,5 +1,5 @@
-import ListCache from './.internal/ListCache.js';
-import MapCache from './.internal/MapCache.js';
+import ListCache from './ListCache.js';
+import MapCache from './MapCache.js';
 
 /** Used as the size to enable large array optimizations. */
 const LARGE_ARRAY_SIZE = 200;

@@ -1,5 +1,5 @@
-import basePickBy from './.internal/basePickBy.js';
-import hasIn from './hasIn.js';
+import basePickBy from './basePickBy.js';
+import hasIn from '../hasIn.js';
 
 /**
  * The base implementation of `pick` without support for individual

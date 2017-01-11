@@ -1,5 +1,5 @@
-import baseMerge from './.internal/baseMerge.js';
-import isObject from './isObject.js';
+import baseMerge from './baseMerge.js';
+import isObject from '../isObject.js';
 
 /**
  * Used by `defaultsDeep` to customize its `merge` use to merge source

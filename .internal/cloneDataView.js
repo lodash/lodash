@@ -1,4 +1,4 @@
-import cloneArrayBuffer from './.internal/cloneArrayBuffer.js';
+import cloneArrayBuffer from './cloneArrayBuffer.js';
 
 /**
  * Creates a clone of `dataView`.

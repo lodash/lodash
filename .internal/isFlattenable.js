@@ -1,4 +1,4 @@
-import isArguments from './isArguments.js';
+import isArguments from '../isArguments.js';
 
 /** Built-in value reference. */
 const spreadableSymbol = Symbol.isConcatSpreadable;

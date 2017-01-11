@@ -1,5 +1,5 @@
-import copyObject from './.internal/copyObject.js';
-import keysIn from './keysIn.js';
+import copyObject from './copyObject.js';
+import keysIn from '../keysIn.js';
 
 /**
  * The base implementation of `assignIn` without support for multiple sources

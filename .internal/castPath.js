@@ -1,6 +1,6 @@
-import isKey from './.internal/isKey.js';
-import stringToPath from './.internal/stringToPath.js';
-import toString from './toString.js';
+import isKey from './isKey.js';
+import stringToPath from './stringToPath.js';
+import toString from '../toString.js';
 
 /**
  * Casts `value` to a path array if it's not one.

@@ -1,5 +1,5 @@
-import toInteger from './toInteger.js';
-import toLength from './toLength.js';
+import toInteger from '../toInteger.js';
+import toLength from '../toLength.js';
 
 /**
  * The base implementation of `fill` without an iteratee call guard.

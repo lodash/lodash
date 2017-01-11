@@ -1,7 +1,7 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseIndexOf from './.internal/baseIndexOf.js';
-import baseIndexOfWith from './.internal/baseIndexOfWith.js';
-import copyArray from './.internal/copyArray.js';
+import arrayMap from './arrayMap.js';
+import baseIndexOf from './baseIndexOf.js';
+import baseIndexOfWith from './baseIndexOfWith.js';
+import copyArray from './copyArray.js';
 
 /** Built-in value references. */
 const splice = Array.prototype.splice;

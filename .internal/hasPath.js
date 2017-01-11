@@ -1,8 +1,8 @@
-import castPath from './.internal/castPath.js';
-import isArguments from './isArguments.js';
-import isIndex from './.internal/isIndex.js';
-import isLength from './isLength.js';
-import toKey from './.internal/toKey.js';
+import castPath from './castPath.js';
+import isArguments from '../isArguments.js';
+import isIndex from './isIndex.js';
+import isLength from '../isLength.js';
+import toKey from './toKey.js';
 
 /**
  * Checks if `path` exists on `object`.

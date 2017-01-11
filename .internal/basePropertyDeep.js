@@ -1,4 +1,4 @@
-import baseGet from './.internal/baseGet.js';
+import baseGet from './baseGet.js';
 
 /**
  * A specialized version of `baseProperty` which supports deep paths.

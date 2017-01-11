@@ -1,9 +1,9 @@
-import baseRepeat from './.internal/baseRepeat.js';
-import baseToString from './.internal/baseToString.js';
-import castSlice from './.internal/castSlice.js';
-import hasUnicode from './.internal/hasUnicode.js';
-import stringSize from './.internal/stringSize.js';
-import stringToArray from './.internal/stringToArray.js';
+import baseRepeat from './baseRepeat.js';
+import baseToString from './baseToString.js';
+import castSlice from './castSlice.js';
+import hasUnicode from './hasUnicode.js';
+import stringSize from './stringSize.js';
+import stringToArray from './stringToArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeCeil = Math.ceil;

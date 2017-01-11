@@ -1,4 +1,4 @@
-import createBaseFor from './.internal/createBaseFor.js';
+import createBaseFor from './createBaseFor.js';
 
 /**
  * This function is like `baseFor` except that it iterates over properties

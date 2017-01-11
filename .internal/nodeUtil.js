@@ -1,4 +1,4 @@
-import freeGlobal from './.internal/freeGlobal.js';
+import freeGlobal from './freeGlobal.js';
 
 /** Detect free variable `exports`. */
 const freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;

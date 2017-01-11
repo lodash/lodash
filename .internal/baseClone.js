@@ -1,21 +1,25 @@
-import Stack from './.internal/Stack.js';
-import arrayEach from './.internal/arrayEach.js';
-import assignValue from './.internal/assignValue.js';
-import baseAssign from './.internal/baseAssign.js';
-import baseAssignIn from './.internal/baseAssignIn.js';
-import cloneBuffer from './.internal/cloneBuffer.js';
-import copyArray from './.internal/copyArray.js';
-import copySymbols from './.internal/copySymbols.js';
-import copySymbolsIn from './.internal/copySymbolsIn.js';
-import getAllKeys from './.internal/getAllKeys.js';
-import getAllKeysIn from './.internal/getAllKeysIn.js';
-import getTag from './.internal/getTag.js';
-import initCloneArray from './.internal/initCloneArray.js';
-import initCloneByTag from './.internal/initCloneByTag.js';
-import initCloneObject from './.internal/initCloneObject.js';
-import isBuffer from './isBuffer.js';
-import isObject from './isObject.js';
-import keys from './keys.js';
+import Stack from './Stack.js';
+import arrayEach from './arrayEach.js';
+import assignValue from './assignValue.js';
+import baseAssign from './baseAssign.js';
+import baseAssignIn from './baseAssignIn.js';
+import baseCreate from './baseCreate.js';
+import cloneBuffer from './cloneBuffer.js';
+import copyArray from './copyArray.js';
+import copySymbols from './copySymbols.js';
+import copySymbolsIn from './copySymbolsIn.js';
+import getAllKeys from './getAllKeys.js';
+import getAllKeysIn from './getAllKeysIn.js';
+import getTag from './getTag.js';
+import initCloneArray from './initCloneArray.js';
+import initCloneByTag from './initCloneByTag.js';
+import initCloneObject from './initCloneObject.js';
+import isBuffer from '../isBuffer.js';
+import isObject from '../isObject.js';
+import isPrototype from './isPrototype.js';
+import keys from '../keys.js';
+
+
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1;
@@ -66,6 +70,123 @@ cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
 cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
 cloneableTags[errorTag] = cloneableTags[funcTag] =
 cloneableTags[weakMapTag] = false;
+
+
+/**
+ * Initializes an object clone.
+ *
+ * @private
+ * @param {Object} object The object to clone.
+ * @returns {Object} Returns the initialized clone.
+ */
+function initCloneObject(object) {
+  return (typeof object.constructor == 'function' && !isPrototype(object))
+    ? baseCreate(Object.getPrototypeOf(object))
+    : {};
+}
+
+import cloneArrayBuffer from './cloneArrayBuffer.js';
+import cloneDataView from './cloneDataView.js';
+import cloneMap from './cloneMap.js';
+import cloneRegExp from './cloneRegExp.js';
+import cloneSet from './cloneSet.js';
+import cloneSymbol from './cloneSymbol.js';
+import cloneTypedArray from './cloneTypedArray.js';
+
+/** `Object#toString` result references. */
+const boolTag = '[object Boolean]';
+const dateTag = '[object Date]';
+const mapTag = '[object Map]';
+const numberTag = '[object Number]';
+const regexpTag = '[object RegExp]';
+const setTag = '[object Set]';
+const stringTag = '[object String]';
+const symbolTag = '[object Symbol]';
+
+const arrayBufferTag = '[object ArrayBuffer]';
+const dataViewTag = '[object DataView]';
+const float32Tag = '[object Float32Array]';
+const float64Tag = '[object Float64Array]';
+const int8Tag = '[object Int8Array]';
+const int16Tag = '[object Int16Array]';
+const int32Tag = '[object Int32Array]';
+const uint8Tag = '[object Uint8Array]';
+const uint8ClampedTag = '[object Uint8ClampedArray]';
+const uint16Tag = '[object Uint16Array]';
+const uint32Tag = '[object Uint32Array]';
+
+/**
+ * Initializes an object clone based on its `toStringTag`.
+ *
+ * **Note:** This function only supports cloning values with tags of
+ * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+ *
+ * @private
+ * @param {Object} object The object to clone.
+ * @param {string} tag The `toStringTag` of the object to clone.
+ * @param {Function} cloneFunc The function to clone values.
+ * @param {boolean} [isDeep] Specify a deep clone.
+ * @returns {Object} Returns the initialized clone.
+ */
+function initCloneByTag(object, tag, cloneFunc, isDeep) {
+  const Ctor = object.constructor;
+  switch (tag) {
+    case arrayBufferTag:
+      return cloneArrayBuffer(object);
+
+    case boolTag:
+    case dateTag:
+      return new Ctor(+object);
+
+    case dataViewTag:
+      return cloneDataView(object, isDeep);
+
+    case float32Tag: case float64Tag:
+    case int8Tag: case int16Tag: case int32Tag:
+    case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
+      return cloneTypedArray(object, isDeep);
+
+    case mapTag:
+      return cloneMap(object, isDeep, cloneFunc);
+
+    case numberTag:
+    case stringTag:
+      return new Ctor(object);
+
+    case regexpTag:
+      return cloneRegExp(object);
+
+    case setTag:
+      return cloneSet(object, isDeep, cloneFunc);
+
+    case symbolTag:
+      return cloneSymbol(object);
+  }
+}
+
+/** Used to check objects for own properties. */
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * Initializes an array clone.
+ *
+ * @private
+ * @param {Array} array The array to clone.
+ * @returns {Array} Returns the initialized clone.
+ */
+function initCloneArray(array) {
+  const length = array.length;
+  const result = array.constructor(length);
+
+  // Add properties assigned by `RegExp#exec`.
+  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+    result.index = array.index;
+    result.input = array.input;
+  }
+  return result;
+}
+
+
 
 /**
  * The base implementation of `clone` and `cloneDeep` which tracks

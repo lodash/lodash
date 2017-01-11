@@ -1,8 +1,8 @@
-import apply from './.internal/apply.js';
-import castPath from './.internal/castPath.js';
-import last from './last.js';
-import parent from './.internal/parent.js';
-import toKey from './.internal/toKey.js';
+import apply from './apply.js';
+import castPath from './castPath.js';
+import last from '../last.js';
+import parent from './parent.js';
+import toKey from './toKey.js';
 
 /**
  * The base implementation of `invoke` without support for individual

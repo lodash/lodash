@@ -1,8 +1,8 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseMap from './.internal/baseMap.js';
-import baseSortBy from './.internal/baseSortBy.js';
-import compareMultiple from './.internal/compareMultiple.js';
-import identity from './identity.js';
+import arrayMap from './arrayMap.js';
+import baseMap from './baseMap.js';
+import baseSortBy from './baseSortBy.js';
+import compareMultiple from './compareMultiple.js';
+import identity from '../identity.js';
 
 /**
  * The base implementation of `orderBy` without param guards.

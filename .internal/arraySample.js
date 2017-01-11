@@ -1,4 +1,4 @@
-import baseRandom from './.internal/baseRandom.js';
+import baseRandom from './baseRandom.js';
 
 /**
  * A specialized version of `sample` for arrays.

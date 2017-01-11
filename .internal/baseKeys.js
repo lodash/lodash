@@ -1,5 +1,5 @@
-import isPrototype from './.internal/isPrototype.js';
-import nativeKeys from './.internal/nativeKeys.js';
+import isPrototype from './isPrototype.js';
+import nativeKeys from './nativeKeys.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

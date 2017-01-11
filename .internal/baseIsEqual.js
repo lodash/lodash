@@ -1,5 +1,5 @@
-import baseIsEqualDeep from './.internal/baseIsEqualDeep.js';
-import isObjectLike from './isObjectLike.js';
+import baseIsEqualDeep from './baseIsEqualDeep.js';
+import isObjectLike from '../isObjectLike.js';
 
 /**
  * The base implementation of `isEqual` which supports partial comparisons

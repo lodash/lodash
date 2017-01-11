@@ -1,6 +1,6 @@
-import addMapEntry from './.internal/addMapEntry.js';
-import arrayReduce from './.internal/arrayReduce.js';
-import mapToArray from './.internal/mapToArray.js';
+import addMapEntry from './addMapEntry.js';
+import arrayReduce from './arrayReduce.js';
+import mapToArray from './mapToArray.js';
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1;

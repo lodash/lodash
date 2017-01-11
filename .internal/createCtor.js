@@ -1,5 +1,5 @@
-import baseCreate from './.internal/baseCreate.js';
-import isObject from './isObject.js';
+import baseCreate from './baseCreate.js';
+import isObject from '../isObject.js';
 
 /**
  * Creates a function that produces an instance of `Ctor` regardless of

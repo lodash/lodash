@@ -1,4 +1,4 @@
-import memoize from './memoize.js';
+import memoize from '../memoize.js';
 
 /** Used as the maximum memoize cache size. */
 const MAX_MEMOIZE_SIZE = 500;

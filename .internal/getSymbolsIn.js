@@ -1,6 +1,6 @@
-import arrayPush from './.internal/arrayPush.js';
-import getSymbols from './.internal/getSymbols.js';
-import stubArray from './stubArray.js';
+import arrayPush from './arrayPush.js';
+import getSymbols from './getSymbols.js';
+import stubArray from '../stubArray.js';
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeGetSymbols = Object.getOwnPropertySymbols;

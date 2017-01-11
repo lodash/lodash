@@ -1,5 +1,5 @@
-import assignValue from './.internal/assignValue.js';
-import baseAssignValue from './.internal/baseAssignValue.js';
+import assignValue from './assignValue.js';
+import baseAssignValue from './baseAssignValue.js';
 
 /**
  * Copies properties of `source` to `object`.

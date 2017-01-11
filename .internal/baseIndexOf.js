@@ -1,6 +1,6 @@
-import baseFindIndex from './.internal/baseFindIndex.js';
-import baseIsNaN from './.internal/baseIsNaN.js';
-import strictIndexOf from './.internal/strictIndexOf.js';
+import baseFindIndex from './baseFindIndex.js';
+import baseIsNaN from './baseIsNaN.js';
+import strictIndexOf from './strictIndexOf.js';
 
 /**
  * The base implementation of `indexOf` without `fromIndex` bounds checks.

@@ -1,5 +1,5 @@
-import baseForRight from './.internal/baseForRight.js';
-import keys from './keys.js';
+import baseForRight from './baseForRight.js';
+import keys from '../keys.js';
 
 /**
  * The base implementation of `forOwnRight`.

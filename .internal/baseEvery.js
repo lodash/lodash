@@ -1,4 +1,4 @@
-import baseEach from './.internal/baseEach.js';
+import baseEach from './baseEach.js';
 
 /**
  * The base implementation of `every`.

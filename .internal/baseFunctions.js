@@ -1,5 +1,5 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import isFunction from './isFunction.js';
+import arrayFilter from './arrayFilter.js';
+import isFunction from '../isFunction.js';
 
 /**
  * The base implementation of `functions` which creates an array of

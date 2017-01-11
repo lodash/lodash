@@ -1,5 +1,5 @@
-import baseForOwn from './.internal/baseForOwn.js';
-import createBaseEach from './.internal/createBaseEach.js';
+import baseForOwn from './baseForOwn.js';
+import createBaseEach from './createBaseEach.js';
 
 /**
  * The base implementation of `forEach`.

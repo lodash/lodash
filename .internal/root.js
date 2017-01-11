@@ -1,4 +1,4 @@
-import freeGlobal from './.internal/freeGlobal.js';
+import freeGlobal from './freeGlobal.js';
 
 /** Detect free variable `self`. */
 const freeSelf = typeof self == 'object' && self && self.Object === Object && self;

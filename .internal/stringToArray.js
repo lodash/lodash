@@ -1,6 +1,6 @@
-import asciiToArray from './.internal/asciiToArray.js';
-import hasUnicode from './.internal/hasUnicode.js';
-import unicodeToArray from './.internal/unicodeToArray.js';
+import asciiToArray from './asciiToArray.js';
+import hasUnicode from './hasUnicode.js';
+import unicodeToArray from './unicodeToArray.js';
 
 /**
  * Converts `string` to an array.

@@ -1,4 +1,4 @@
-import assocIndexOf from './.internal/assocIndexOf.js';
+import assocIndexOf from './assocIndexOf.js';
 
 /** Built-in value references. */
 const splice = Array.prototype.splice;

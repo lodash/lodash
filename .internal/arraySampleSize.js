@@ -1,6 +1,6 @@
-import baseClamp from './.internal/baseClamp.js';
-import copyArray from './.internal/copyArray.js';
-import shuffleSelf from './.internal/shuffleSelf.js';
+import baseClamp from './baseClamp.js';
+import copyArray from './copyArray.js';
+import shuffleSelf from './shuffleSelf.js';
 
 /**
  * A specialized version of `sampleSize` for arrays.

@@ -1,6 +1,6 @@
-import isObject from './isObject.js';
-import isPrototype from './.internal/isPrototype.js';
-import nativeKeysIn from './.internal/nativeKeysIn.js';
+import isObject from '../isObject.js';
+import isPrototype from './isPrototype.js';
+import nativeKeysIn from './nativeKeysIn.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

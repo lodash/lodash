@@ -1,5 +1,5 @@
-import baseAssignValue from './.internal/baseAssignValue.js';
-import eq from './eq.js';
+import baseAssignValue from './baseAssignValue.js';
+import eq from '../eq.js';
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty;

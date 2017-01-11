@@ -1,5 +1,5 @@
-import copyObject from './.internal/copyObject.js';
-import getSymbols from './.internal/getSymbols.js';
+import copyObject from './copyObject.js';
+import getSymbols from './getSymbols.js';
 
 /**
  * Copies own symbols of `source` to `object`.

@@ -1,4 +1,4 @@
-import eq from './eq.js';
+import eq from '../eq.js';
 
 /** Used for built-in method references. */
 const objectProto = Object.prototype;

@@ -1,5 +1,5 @@
-import baseUnset from './.internal/baseUnset.js';
-import isIndex from './.internal/isIndex.js';
+import baseUnset from './baseUnset.js';
+import isIndex from './isIndex.js';
 
 /** Built-in value references. */
 const splice = Array.prototype.splice;

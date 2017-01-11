@@ -1,5 +1,5 @@
-import shuffleSelf from './.internal/shuffleSelf.js';
-import values from './values.js';
+import shuffleSelf from './shuffleSelf.js';
+import values from '../values.js';
 
 /**
  * The base implementation of `shuffle`.

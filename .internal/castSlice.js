@@ -1,4 +1,4 @@
-import baseSlice from './.internal/baseSlice.js';
+import baseSlice from './baseSlice.js';
 
 /**
  * Casts `array` to a slice if it's needed.

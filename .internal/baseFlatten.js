@@ -1,5 +1,5 @@
-import arrayPush from './.internal/arrayPush.js';
-import isFlattenable from './.internal/isFlattenable.js';
+import arrayPush from './arrayPush.js';
+import isFlattenable from './isFlattenable.js';
 
 /**
  * The base implementation of `flatten` with support for restricting flattening.

@@ -1,6 +1,6 @@
-import baseGet from './.internal/baseGet.js';
-import baseSet from './.internal/baseSet.js';
-import castPath from './.internal/castPath.js';
+import baseGet from './baseGet.js';
+import baseSet from './baseSet.js';
+import castPath from './castPath.js';
 
 /**
  * The base implementation of  `pickBy`.

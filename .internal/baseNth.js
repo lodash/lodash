@@ -1,4 +1,4 @@
-import isIndex from './.internal/isIndex.js';
+import isIndex from './isIndex.js';
 
 /**
  * The base implementation of `nth` which doesn't coerce arguments.

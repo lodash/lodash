@@ -1,4 +1,4 @@
-import baseIndexOf from './.internal/baseIndexOf.js';
+import baseIndexOf from './baseIndexOf.js';
 
 /**
  * Used by `trim` and `trimEnd` to get the index of the last string symbol

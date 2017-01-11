@@ -1,5 +1,5 @@
-import arrayMap from './.internal/arrayMap.js';
-import isSymbol from './isSymbol.js';
+import arrayMap from './arrayMap.js';
+import isSymbol from '../isSymbol.js';
 
 /** Used as references for various `Number` constants. */
 const INFINITY = 1 / 0;

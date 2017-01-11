@@ -1,5 +1,5 @@
-import arraySample from './.internal/arraySample.js';
-import values from './values.js';
+import arraySample from './arraySample.js';
+import values from '../values.js';
 
 /**
  * The base implementation of `sample`.

@@ -1,10 +1,10 @@
-import baseIsEqual from './.internal/baseIsEqual.js';
-import get from './get.js';
-import hasIn from './hasIn.js';
-import isKey from './.internal/isKey.js';
-import isStrictComparable from './.internal/isStrictComparable.js';
-import matchesStrictComparable from './.internal/matchesStrictComparable.js';
-import toKey from './.internal/toKey.js';
+import baseIsEqual from './baseIsEqual.js';
+import get from '../get.js';
+import hasIn from '../hasIn.js';
+import isKey from './isKey.js';
+import isStrictComparable from './isStrictComparable.js';
+import matchesStrictComparable from './matchesStrictComparable.js';
+import toKey from './toKey.js';
 
 /** Used to compose bitmasks for value comparisons. */
 const COMPARE_PARTIAL_FLAG = 1;

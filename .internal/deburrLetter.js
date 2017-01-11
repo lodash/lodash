@@ -1,4 +1,4 @@
-import basePropertyOf from './.internal/basePropertyOf.js';
+import basePropertyOf from './basePropertyOf.js';
 
 /** Used to map Latin Unicode letters to basic Latin letters. */
 const deburredLetters = {

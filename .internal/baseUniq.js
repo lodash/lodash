@@ -1,9 +1,9 @@
-import SetCache from './.internal/SetCache.js';
-import arrayIncludes from './.internal/arrayIncludes.js';
-import arrayIncludesWith from './.internal/arrayIncludesWith.js';
-import cacheHas from './.internal/cacheHas.js';
-import createSet from './.internal/createSet.js';
-import setToArray from './.internal/setToArray.js';
+import SetCache from './SetCache.js';
+import arrayIncludes from './arrayIncludes.js';
+import arrayIncludesWith from './arrayIncludesWith.js';
+import cacheHas from './cacheHas.js';
+import createSet from './createSet.js';
+import setToArray from './setToArray.js';
 
 /** Used as the size to enable large array optimizations. */
 const LARGE_ARRAY_SIZE = 200;

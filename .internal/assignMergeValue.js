@@ -1,5 +1,5 @@
-import baseAssignValue from './.internal/baseAssignValue.js';
-import eq from './eq.js';
+import baseAssignValue from './baseAssignValue.js';
+import eq from '../eq.js';
 
 /**
  * This function is like `assignValue` except that it doesn't assign

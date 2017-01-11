@@ -1,6 +1,6 @@
-import addSetEntry from './.internal/addSetEntry.js';
-import arrayReduce from './.internal/arrayReduce.js';
-import setToArray from './.internal/setToArray.js';
+import addSetEntry from './addSetEntry.js';
+import arrayReduce from './arrayReduce.js';
+import setToArray from './setToArray.js';
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1;

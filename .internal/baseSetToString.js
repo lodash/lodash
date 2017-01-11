@@ -1,5 +1,5 @@
-import constant from './constant.js';
-import identity from './identity.js';
+import constant from '../constant.js';
+import identity from '../identity.js';
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.

@@ -1,7 +1,7 @@
-import castSlice from './.internal/castSlice.js';
-import hasUnicode from './.internal/hasUnicode.js';
-import stringToArray from './.internal/stringToArray.js';
-import toString from './toString.js';
+import castSlice from './castSlice.js';
+import hasUnicode from './hasUnicode.js';
+import stringToArray from './stringToArray.js';
+import toString from '../toString.js';
 
 /**
  * Creates a function like `lowerFirst`.

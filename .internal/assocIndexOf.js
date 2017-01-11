@@ -1,4 +1,4 @@
-import eq from './eq.js';
+import eq from '../eq.js';
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.

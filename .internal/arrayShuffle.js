@@ -1,5 +1,5 @@
-import copyArray from './.internal/copyArray.js';
-import shuffleSelf from './.internal/shuffleSelf.js';
+import copyArray from './copyArray.js';
+import shuffleSelf from './shuffleSelf.js';
 
 /**
  * A specialized version of `shuffle` for arrays.

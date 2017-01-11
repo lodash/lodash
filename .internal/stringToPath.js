@@ -1,4 +1,4 @@
-import memoizeCapped from './.internal/memoizeCapped.js';
+import memoizeCapped from './memoizeCapped.js';
 
 /** Used to match property names within property paths. */
 const reLeadingDot = /^\./;

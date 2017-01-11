@@ -1,4 +1,4 @@
-import baseForOwn from './.internal/baseForOwn.js';
+import baseForOwn from './baseForOwn.js';
 
 /**
  * The base implementation of `invert` and `invertBy` which inverts

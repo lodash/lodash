@@ -1,5 +1,5 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import stubArray from './stubArray.js';
+import arrayFilter from './arrayFilter.js';
+import stubArray from '../stubArray.js';
 
 /** Built-in value references. */
 const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;

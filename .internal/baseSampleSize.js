@@ -1,6 +1,6 @@
-import baseClamp from './.internal/baseClamp.js';
-import shuffleSelf from './.internal/shuffleSelf.js';
-import values from './values.js';
+import baseClamp from './baseClamp.js';
+import shuffleSelf from './shuffleSelf.js';
+import values from '../values.js';
 
 /**
  * The base implementation of `sampleSize` without param guards.

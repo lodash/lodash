@@ -1,4 +1,4 @@
-import isObject from './isObject.js';
+import isObject from '../isObject.js';
 
 /**
  * The base implementation of `create` without support for assigning

@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js';
+import arrayMap from './arrayMap.js';
 
 /**
  * The base implementation of `values` and `valuesIn` which creates an

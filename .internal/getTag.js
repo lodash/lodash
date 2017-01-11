@@ -1,5 +1,5 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import toSource from './.internal/toSource.js';
+import baseGetTag from './baseGetTag.js';
+import toSource from './toSource.js';
 
 /** `Object#toString` result references. */
 const dataViewTag = '[object DataView]';

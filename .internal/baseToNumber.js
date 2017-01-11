@@ -1,4 +1,4 @@
-import isSymbol from './isSymbol.js';
+import isSymbol from '../isSymbol.js';
 
 /** Used as references for various `Number` constants. */
 const NAN = 0 / 0;

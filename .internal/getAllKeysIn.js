@@ -1,5 +1,5 @@
-import getSymbolsIn from './.internal/getSymbolsIn.js';
-import keysIn from './keysIn.js';
+import getSymbolsIn from './getSymbolsIn.js';
+import keysIn from '../keysIn.js';
 
 /**
  * Creates an array of own and inherited enumerable property names and

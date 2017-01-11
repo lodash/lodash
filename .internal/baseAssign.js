@@ -1,5 +1,5 @@
-import copyObject from './.internal/copyObject.js';
-import keys from './keys.js';
+import copyObject from './copyObject.js';
+import keys from '../keys.js';
 
 /**
  * The base implementation of `assign` without support for multiple sources

@@ -1,6 +1,6 @@
-import SetCache from './.internal/SetCache.js';
-import arraySome from './.internal/arraySome.js';
-import cacheHas from './.internal/cacheHas.js';
+import SetCache from './SetCache.js';
+import arraySome from './arraySome.js';
+import cacheHas from './cacheHas.js';
 
 /** Used to compose bitmasks for value comparisons. */
 const COMPARE_PARTIAL_FLAG = 1;

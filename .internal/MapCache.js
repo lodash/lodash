@@ -1,6 +1,6 @@
 
-import Hash from './.internal/Hash.js';
-import ListCache from './.internal/ListCache.js';
+import Hash from './Hash.js';
+import ListCache from './ListCache.js';
 
 /**
  * Gets the data for `map`.

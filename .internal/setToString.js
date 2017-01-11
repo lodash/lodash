@@ -1,5 +1,5 @@
-import baseSetToString from './.internal/baseSetToString.js';
-import shortOut from './.internal/shortOut.js';
+import baseSetToString from './baseSetToString.js';
+import shortOut from './shortOut.js';
 
 /**
  * Sets the `toString` method of `func` to return `string`.

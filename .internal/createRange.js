@@ -1,6 +1,6 @@
-import baseRange from './.internal/baseRange.js';
-import isIterateeCall from './.internal/isIterateeCall.js';
-import toFinite from './toFinite.js';
+import baseRange from './baseRange.js';
+import isIterateeCall from './isIterateeCall.js';
+import toFinite from '../toFinite.js';
 
 /**
  * Creates a `range` or `rangeRight` function.

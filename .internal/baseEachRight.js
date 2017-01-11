@@ -1,5 +1,5 @@
-import baseForOwnRight from './.internal/baseForOwnRight.js';
-import createBaseEach from './.internal/createBaseEach.js';
+import baseForOwnRight from './baseForOwnRight.js';
+import createBaseEach from './createBaseEach.js';
 
 /**
  * The base implementation of `forEachRight`.

@@ -1,5 +1,5 @@
-import baseEach from './.internal/baseEach.js';
-import isArrayLike from './isArrayLike.js';
+import baseEach from './baseEach.js';
+import isArrayLike from '../isArrayLike.js';
 
 /**
  * The base implementation of `map`.

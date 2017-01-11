@@ -1,4 +1,4 @@
-import getAllKeys from './.internal/getAllKeys.js';
+import getAllKeys from './getAllKeys.js';
 
 /** Used to compose bitmasks for value comparisons. */
 const COMPARE_PARTIAL_FLAG = 1;

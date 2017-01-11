@@ -1,5 +1,5 @@
-import Stack from './.internal/Stack.js';
-import baseIsEqual from './.internal/baseIsEqual.js';
+import Stack from './Stack.js';
+import baseIsEqual from './baseIsEqual.js';
 
 /** Used to compose bitmasks for value comparisons. */
 const COMPARE_PARTIAL_FLAG = 1;

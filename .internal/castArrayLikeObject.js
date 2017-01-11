@@ -1,4 +1,4 @@
-import isArrayLikeObject from './isArrayLikeObject.js';
+import isArrayLikeObject from '../isArrayLikeObject.js';
 
 /**
  * Casts `value` to an empty array if it's not an array like object.

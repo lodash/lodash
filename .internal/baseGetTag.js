@@ -1,5 +1,5 @@
-import getRawTag from './.internal/getRawTag.js';
-import objectToString from './.internal/objectToString.js';
+import getRawTag from './getRawTag.js';
+import objectToString from './objectToString.js';
 
 /** `Object#toString` result references. */
 const nullTag = '[object Null]';

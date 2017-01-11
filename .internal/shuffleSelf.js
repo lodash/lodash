@@ -1,4 +1,4 @@
-import baseRandom from './.internal/baseRandom.js';
+import baseRandom from './baseRandom.js';
 
 /**
  * A specialized version of `shuffle` which mutates and sets the size of `array`.

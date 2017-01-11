@@ -1,16 +1,16 @@
-import assignMergeValue from './.internal/assignMergeValue.js';
-import cloneBuffer from './.internal/cloneBuffer.js';
-import cloneTypedArray from './.internal/cloneTypedArray.js';
-import copyArray from './.internal/copyArray.js';
-import initCloneObject from './.internal/initCloneObject.js';
-import isArguments from './isArguments.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
-import isBuffer from './isBuffer.js';
-import isFunction from './isFunction.js';
-import isObject from './isObject.js';
-import isPlainObject from './isPlainObject.js';
-import isTypedArray from './isTypedArray.js';
-import toPlainObject from './toPlainObject.js';
+import assignMergeValue from './assignMergeValue.js';
+import cloneBuffer from './cloneBuffer.js';
+import cloneTypedArray from './cloneTypedArray.js';
+import copyArray from './copyArray.js';
+import initCloneObject from './initCloneObject.js';
+import isArguments from '../isArguments.js';
+import isArrayLikeObject from '../isArrayLikeObject.js';
+import isBuffer from '../isBuffer.js';
+import isFunction from '../isFunction.js';
+import isObject from '../isObject.js';
+import isPlainObject from '../isPlainObject.js';
+import isTypedArray from '../isTypedArray.js';
+import toPlainObject from '../toPlainObject.js';
 
 /**
  * A specialized version of `baseMerge` for arrays and objects which performs

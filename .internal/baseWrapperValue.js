@@ -1,6 +1,6 @@
-import LazyWrapper from './.internal/LazyWrapper.js';
-import arrayPush from './.internal/arrayPush.js';
-import arrayReduce from './.internal/arrayReduce.js';
+import LazyWrapper from './LazyWrapper.js';
+import arrayPush from './arrayPush.js';
+import arrayReduce from './arrayReduce.js';
 
 /**
  * The base implementation of `wrapperValue` which returns the result of

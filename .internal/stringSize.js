@@ -10,9 +10,7 @@ import unicodeSize from './.internal/unicodeSize.js';
  * @returns {number} Returns the string size.
  */
 function stringSize(string) {
-  return hasUnicode(string)
-    ? unicodeSize(string)
-    : asciiSize(string);
+  return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
 }
 
 export default stringSize;

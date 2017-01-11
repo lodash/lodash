@@ -19,6 +19,8 @@ import createCompounder from './.internal/createCompounder.js';
  * kebabCase('__FOO_BAR__');
  * // => 'foo-bar'
  */
-const kebabCase = createCompounder((result, word, index) => result + (index ? '-' : '') + word.toLowerCase());
+const kebabCase = createCompounder((result, word, index) =>
+  result + (index ? '-' : '') + word.toLowerCase()
+);
 
 export default kebabCase;

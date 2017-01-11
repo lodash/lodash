@@ -20,6 +20,8 @@ import upperFirst from './upperFirst.js';
  * startCase('__FOO_BAR__');
  * // => 'FOO BAR'
  */
-const startCase = createCompounder((result, word, index) => result + (index ? ' ' : '') + upperFirst(word));
+const startCase = createCompounder((result, word, index) =>
+  result + (index ? ' ' : '') + upperFirst(word)
+);
 
 export default startCase;

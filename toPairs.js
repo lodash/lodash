@@ -1,4 +1,7 @@
-import createToPairs from './.internal/createToPairs.js';
+import arrayMap from './.internal/arrayMap.js';
+import getTag from './.internal/getTag.js';
+import mapToArray from './.internal/mapToArray.js';
+import setToPairs from './.internal/setToPairs.js';
 import keys from './keys.js';
 
 /**
@@ -23,6 +26,15 @@ import keys from './keys.js';
  * toPairs(new Foo);
  * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
  */
-const toPairs = createToPairs(keys);
+function toPairs(object) {
+  const tag = getTag(object);
+  if (tag == '[object Map]') {
+    return mapToArray(object);
+  }
+  if (tag == '[object Set]') {
+    return setToPairs(object);
+  }
+  return arrayMap(keys(object), key => [key, object[key]]);
+}
 
 export default toPairs;

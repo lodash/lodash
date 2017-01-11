@@ -1,4 +1,4 @@
-import createFlow from './.internal/createFlow.js';
+import flow from './flow.js';
 
 /**
  * This method is like `flow` except that it creates a function that
@@ -6,7 +6,7 @@ import createFlow from './.internal/createFlow.js';
  *
  * @since 3.0.0
  * @category Util
- * @param {...(Function|Function[])} [funcs] The functions to invoke.
+ * @param {Function[]} [funcs] The functions to invoke.
  * @returns {Function} Returns the new composite function.
  * @see flow
  * @example
@@ -19,6 +19,8 @@ import createFlow from './.internal/createFlow.js';
  * addSquare(1, 2);
  * // => 9
  */
-const flowRight = createFlow(true);
+function flowRight(funcs) {
+  return flow(funcs.reverse());
+}
 
 export default flowRight;

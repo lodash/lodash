@@ -2,9 +2,6 @@ import toInteger from './toInteger.js';
 import toNumber from './toNumber.js';
 import toString from './toString.js';
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min;
-
 /**
  * Creates a function like `round`.
  *
@@ -16,7 +13,7 @@ function createRound(methodName) {
   const func = Math[methodName];
   return (number, precision) => {
     number = toNumber(number);
-    precision = precision == null ? 0 : nativeMin(toInteger(precision), 292);
+    precision = precision == null ? 0 : Math.min(toInteger(precision), 292);
     if (precision) {
       // Shift with exponential notation to avoid floating-point issues.
       // See [MDN](https://mdn.io/round#Examples) for more details.

@@ -1,5 +1,13 @@
-import escapeHtmlChar from './.internal/escapeHtmlChar.js';
 import toString from './toString.js';
+
+/** Used to map characters to HTML entities. */
+const htmlEscapes = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+};
 
 /** Used to match HTML entities and HTML characters. */
 const reUnescapedHtml = /[&<>"']/g;
@@ -34,7 +42,7 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
 function escape(string) {
   string = toString(string);
   return (string && reHasUnescapedHtml.test(string))
-    ? string.replace(reUnescapedHtml, escapeHtmlChar)
+    ? string.replace(reUnescapedHtml, chr => htmlEscapes[chr])
     : string;
 }
 

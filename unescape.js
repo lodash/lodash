@@ -1,5 +1,13 @@
 import toString from './toString.js';
-import unescapeHtmlChar from './.internal/unescapeHtmlChar.js';
+
+/** Used to map HTML entities to characters. */
+const htmlUnescapes = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
+};
 
 /** Used to match HTML entities and HTML characters. */
 const reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
@@ -25,7 +33,7 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source);
 function unescape(string) {
   string = toString(string);
   return (string && reHasEscapedHtml.test(string))
-    ? string.replace(reEscapedHtml, unescapeHtmlChar)
+    ? string.replace(reEscapedHtml, entity => htmlUnescapes[entity])
     : string;
 }
 

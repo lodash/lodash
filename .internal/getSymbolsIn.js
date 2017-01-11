@@ -1,5 +1,4 @@
 import arrayPush from './.internal/arrayPush.js';
-import getPrototype from './.internal/getPrototype.js';
 import getSymbols from './.internal/getSymbols.js';
 import stubArray from './stubArray.js';
 
@@ -17,7 +16,7 @@ const getSymbolsIn = !nativeGetSymbols ? stubArray : object => {
   const result = [];
   while (object) {
     arrayPush(result, getSymbols(object));
-    object = getPrototype(object);
+    object = Object.getPrototypeOf(Object(object));
   }
   return result;
 };

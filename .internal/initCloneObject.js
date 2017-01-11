@@ -1,5 +1,4 @@
 import baseCreate from './.internal/baseCreate.js';
-import getPrototype from './.internal/getPrototype.js';
 import isPrototype from './.internal/isPrototype.js';
 
 /**
@@ -11,7 +10,7 @@ import isPrototype from './.internal/isPrototype.js';
  */
 function initCloneObject(object) {
   return (typeof object.constructor == 'function' && !isPrototype(object))
-    ? baseCreate(getPrototype(object))
+    ? baseCreate(Object.getPrototypeOf(object))
     : {};
 }
 

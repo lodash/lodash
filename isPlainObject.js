@@ -1,5 +1,4 @@
 import baseGetTag from './.internal/baseGetTag.js';
-import getPrototype from './.internal/getPrototype.js';
 import isObjectLike from './isObjectLike.js';
 
 /** Used to resolve the decompiled source of functions. */
@@ -41,7 +40,7 @@ function isPlainObject(value) {
   if (!isObjectLike(value) || baseGetTag(value) != '[object Object]') {
     return false;
   }
-  const proto = getPrototype(value);
+  const proto = Object.getPrototypeOf(value);
   if (proto === null) {
     return true;
   }

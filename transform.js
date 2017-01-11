@@ -1,7 +1,6 @@
 import arrayEach from './.internal/arrayEach.js';
 import baseCreate from './.internal/baseCreate.js';
 import baseForOwn from './.internal/baseForOwn.js';
-import getPrototype from './.internal/getPrototype.js';
 import isBuffer from './isBuffer.js';
 import isFunction from './isFunction.js';
 import isObject from './isObject.js';
@@ -45,13 +44,14 @@ function transform(object, iteratee, accumulator) {
       accumulator = isArr ? new Ctor : [];
     }
     else if (isObject(object)) {
-      accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
+      accumulator = isFunction(Ctor) ? baseCreate(Object.getPrototypeOf(object)) : {};
     }
     else {
       accumulator = {};
     }
   }
-  (isArrLike ? arrayEach : baseForOwn)(object, (value, index, object) => iteratee(accumulator, value, index, object));
+  (isArrLike ? arrayEach : baseForOwn)(object, (value, index, object) =>
+    iteratee(accumulator, value, index, object));
   return accumulator;
 }
 

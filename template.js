@@ -2,7 +2,6 @@ import assignInWith from './assignInWith.js';
 import attempt from './attempt.js';
 import baseValues from './.internal/baseValues.js';
 import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
-import escapeStringChar from './.internal/escapeStringChar.js';
 import isError from './isError.js';
 import isIterateeCall from './.internal/isIterateeCall.js';
 import keys from './keys.js';
@@ -26,6 +25,16 @@ const reNoMatch = /($^)/;
 
 /** Used to match unescaped characters in compiled string literals. */
 const reUnescapedString = /['\n\r\u2028\u2029\\]/g;
+
+/** Used to escape characters for inclusion in compiled string literals. */
+const stringEscapes = {
+  '\\': '\\',
+  "'": "'",
+  '\n': 'n',
+  '\r': 'r',
+  '\u2028': 'u2028',
+  '\u2029': 'u2029'
+};
 
 /**
  * Creates a compiled template function that can interpolate data properties
@@ -161,7 +170,9 @@ function template(string, options, guard) {
   , 'g');
 
   // Use a sourceURL for easier debugging.
-  const sourceURL = 'sourceURL' in options ? `//# sourceURL=${ options.sourceURL }\n` : '';
+  const sourceURL = 'sourceURL' in options
+    ? `//# sourceURL=${ options.sourceURL }\n`
+    : '';
 
   string.replace(reDelimiters, (
     match,
@@ -174,7 +185,9 @@ function template(string, options, guard) {
     interpolateValue || (interpolateValue = esTemplateValue);
 
     // Escape characters that can't be included in string literals.
-    source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
+    source += string
+      .slice(index, offset)
+      .replace(reUnescapedString, chr => `\\${ stringEscapes[chr] }`);
 
     // Replace delimiters with snippets.
     if (escapeValue) {
@@ -227,7 +240,9 @@ function template(string, options, guard) {
     source +
     'return __p\n}';
 
-  const result = attempt(() => Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues);
+  const result = attempt(() => (
+    Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues)
+  );
 
   // Provide the compiled function's source by its `toString` method or
   // the `source` property as a convenience for inlining compiled templates.

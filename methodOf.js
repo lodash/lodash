@@ -1,4 +1,4 @@
-import baseInvoke from './.internal/baseInvoke.js';
+import invoke from './invoke.js';
 
 /**
  * The opposite of `method`; this method creates a function that invokes
@@ -8,7 +8,7 @@ import baseInvoke from './.internal/baseInvoke.js';
  * @since 3.7.0
  * @category Util
  * @param {Object} object The object to query.
- * @param {...*} [args] The arguments to invoke the method with.
+ * @param {Array} [args] The arguments to invoke the method with.
  * @returns {Function} Returns the new invoker function.
  * @example
  *
@@ -21,8 +21,8 @@ import baseInvoke from './.internal/baseInvoke.js';
  * map([['a', '2'], ['c', '0']], methodOf(object));
  * // => [2, 0]
  */
-function methodOf(object, ...args) {
-  return path => baseInvoke(object, path, args);
+function methodOf(object, args) {
+  return path => invoke(object, path, args);
 }
 
 export default methodOf;

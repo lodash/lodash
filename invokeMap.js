@@ -1,6 +1,6 @@
 import apply from './.internal/apply.js';
 import baseEach from './.internal/baseEach.js';
-import baseInvoke from './.internal/baseInvoke.js';
+import invoke from './invoke.js';
 import isArrayLike from './isArrayLike.js';
 
 /**
@@ -14,23 +14,23 @@ import isArrayLike from './isArrayLike.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Array|Function|string} path The path of the method to invoke or
  *  the function invoked per iteration.
- * @param {...*} [args] The arguments to invoke each method with.
+ * @param {Array} [args] The arguments to invoke each method with.
  * @returns {Array} Returns the array of results.
  * @example
  *
  * invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
  * // => [[1, 5, 7], [1, 2, 3]]
  *
- * invokeMap([123, 456], String.prototype.split, '');
+ * invokeMap([123, 456], String.prototype.split, ['']);
  * // => [['1', '2', '3'], ['4', '5', '6']]
  */
-function invokeMap(collection, path, ...args) {
+function invokeMap(collection, path, args) {
   let index = -1;
   const isFunc = typeof path == 'function';
   const result = isArrayLike(collection) ? Array(collection.length) : [];
 
   baseEach(collection, value => {
-    result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
+    result[++index] = isFunc ? apply(path, value, args) : invoke(value, path, args);
   });
   return result;
 }

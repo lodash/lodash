@@ -1,4 +1,8 @@
-import baseInvoke from './.internal/baseInvoke.js';
+import apply from './apply.js';
+import castPath from './castPath.js';
+import last from '../last.js';
+import parent from './parent.js';
+import toKey from './toKey.js';
 
 /**
  * Invokes the method at `path` of `object`.
@@ -7,17 +11,20 @@ import baseInvoke from './.internal/baseInvoke.js';
  * @category Object
  * @param {Object} object The object to query.
  * @param {Array|string} path The path of the method to invoke.
- * @param {...*} [args] The arguments to invoke the method with.
+ * @param {Array} [args] The arguments to invoke the method with.
  * @returns {*} Returns the result of the invoked method.
  * @example
  *
  * const object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
  *
- * invoke(object, 'a[0].b.c.slice', 1, 3);
+ * invoke(object, 'a[0].b.c.slice', [1, 3]);
  * // => [2, 3]
  */
-function invoke(object, path, ...args) {
-  return baseInvoke(object, path, args);
+function invoke(object, path, args) {
+  path = castPath(path, object);
+  object = parent(object, path);
+  const func = object == null ? object : object[toKey(last(path))];
+  return func == null ? undefined : apply(func, object, args);
 }
 
 export default invoke;

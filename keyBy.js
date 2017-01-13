@@ -12,7 +12,7 @@ import reduce from './reduce.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} iteratee The iteratee to transform keys.
  * @returns {Object} Returns the composed aggregate object.
- * @related [groupBy](#groupBy), [partition](#partition)
+ * @see [groupBy](#groupBy), [partition](#partition)
  * @example
  *
  * const array = [

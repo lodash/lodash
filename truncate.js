@@ -28,6 +28,7 @@ const reFlags = /\w*$/;
  * @param {string} [options.omission='...'] The string to indicate text is omitted.
  * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
  * @returns {string} Returns the truncated string.
+ * @see replace
  * @example
  *
  * truncate('hi-diddly-ho there, neighborino');

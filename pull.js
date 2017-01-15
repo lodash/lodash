@@ -13,6 +13,7 @@ import pullAll from './pullAll.js';
  * @param {Array} array The array to modify.
  * @param {...*} [values] The values to remove.
  * @returns {Array} Returns `array`.
+ * @see pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
  * const array = ['a', 'b', 'c', 'a', 'b', 'c'];

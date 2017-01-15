@@ -10,6 +10,7 @@ let idCounter = 0;
  * @category Util
  * @param {string} [prefix=''] The value to prefix the ID with.
  * @returns {string} Returns the unique ID.
+ * @see random
  * @example
  *
  * uniqueId('contact_');

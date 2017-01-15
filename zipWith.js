@@ -11,6 +11,7 @@ import unzipWith from './unzipWith.js';
  * @param {Function} iteratee The function to combine
  *  grouped values.
  * @returns {Array} Returns the new array of grouped elements.
+ * @see zip, zipObject, zipObjectDeep, zipWith, unzip, unzipWith
  * @example
  *
  * zipWith([1, 2], [10, 20], [100, 200], (a, b, c) => a + b + c);

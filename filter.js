@@ -13,7 +13,7 @@ import baseFilter from './.internal/baseFilter.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
- * @see reject
+ * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
  * const users = [

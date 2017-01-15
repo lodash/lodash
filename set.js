@@ -14,6 +14,7 @@ import baseSet from './.internal/baseSet.js';
  * @param {Array|string} path The path of the property to set.
  * @param {*} value The value to set.
  * @returns {Object} Returns `object`.
+ * @see has, hasIn, get, unset
  * @example
  *
  * const object = { 'a': [{ 'b': { 'c': 3 } }] };

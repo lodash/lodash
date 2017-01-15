@@ -10,6 +10,7 @@ import toFinite from './toFinite.js';
  * @category Lang
  * @param {*} value The value to convert.
  * @returns {number} Returns the converted integer.
+ * @see isInteger, isNumber, toNumber
  * @example
  *
  * toInteger(3.2);

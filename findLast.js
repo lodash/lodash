@@ -11,6 +11,7 @@ import findLastIndex from './findLastIndex.js';
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} [fromIndex=collection.length-1] The index to search from.
  * @returns {*} Returns the matched element, else `undefined`.
+ * @see find, findIndex, findKey, findLastIndex, findLastKey
  * @example
  *
  * findLast([1, 2, 3, 4], n => n % 2 == 1);

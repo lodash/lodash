@@ -11,6 +11,7 @@ import reduce from './reduce.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the array of grouped elements.
+ * @see groupBy, keyBy
  * @example
  *
  * const users = [

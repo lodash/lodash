@@ -11,6 +11,7 @@ import baseUniq from './.internal/baseUniq.js';
  * @param {Array} array The array to inspect.
  * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns the new duplicate free array.
+ * @see uniq, uniqBy
  * @example
  *
  * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];

@@ -13,6 +13,7 @@ import basePullAt from './.internal/basePullAt.js';
  * @param {Array} array The array to modify.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new array of removed elements.
+ * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, reject, filter
  * @example
  *
  * const array = [1, 2, 3, 4];

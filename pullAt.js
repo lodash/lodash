@@ -15,6 +15,7 @@ import isIndex from './.internal/isIndex.js';
  * @param {Array} array The array to modify.
  * @param {...(number|number[])} [indexes] The indexes of elements to remove.
  * @returns {Array} Returns the new array of removed elements.
+ * @see pull, pullAll, pullAllBy, pullAllWith, remove, reject
  * @example
  *
  * const array = ['a', 'b', 'c', 'd'];

@@ -34,6 +34,7 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
  * @category String
  * @param {string} [string=''] The string to escape.
  * @returns {string} Returns the escaped string.
+ * @see unescape, escapeRegExp
  * @example
  *
  * escape('fred, barney, & pebbles');

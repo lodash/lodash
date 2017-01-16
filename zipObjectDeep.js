@@ -9,6 +9,7 @@ import baseZipObject from './.internal/baseZipObject.js';
  * @param {Array} [props=[]] The property identifiers.
  * @param {Array} [values=[]] The property values.
  * @returns {Object} Returns the new object.
+ * @see zip, zipObject, zipWith, unzip, unzipWith
  * @example
  *
  * zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);

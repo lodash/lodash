@@ -11,6 +11,7 @@ import isObjectLike from './isObjectLike.js';
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a number, else `false`.
+ * @see isInteger, toInteger, toNumber
  * @example
  *
  * isNumber(3);

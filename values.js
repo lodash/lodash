@@ -10,6 +10,7 @@ import keys from './keys.js';
  * @category Object
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of property values.
+ * @see keys, valuesIn
  * @example
  *
  * function Foo() {

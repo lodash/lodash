@@ -15,6 +15,7 @@ const reHasRegExpChar = RegExp(reRegExpChar.source);
  * @category String
  * @param {string} [string=''] The string to escape.
  * @returns {string} Returns the escaped string.
+ * @see unescape, escape, escapeRegExp
  * @example
  *
  * escapeRegExp('[lodash](https://lodash.com/)');

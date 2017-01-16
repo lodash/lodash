@@ -11,7 +11,7 @@ import negate from './negate.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
- * @see filter
+ * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, filter
  * @example
  *
  * const users = [

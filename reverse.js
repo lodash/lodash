@@ -12,6 +12,7 @@ const nativeReverse = Array.prototype.reverse;
  * @category Array
  * @param {Array} array The array to modify.
  * @returns {Array} Returns `array`.
+ * @see flip, sortBy
  * @example
  *
  * const array = [1, 2, 3];

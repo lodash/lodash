@@ -15,6 +15,7 @@ const nativeMin = Math.min;
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} [fromIndex=array.length-1] The index to search from.
  * @returns {number} Returns the index of the found element, else `-1`.
+ * @see find, findIndex, findKey, findLast, findLastKey
  * @example
  *
  * const users = [

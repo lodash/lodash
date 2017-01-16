@@ -16,6 +16,7 @@ const reTrimStart = /^\s+/;
  * @param {string} [chars=whitespace] The characters to trim.
  * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {string} Returns the trimmed string.
+ * @see trim, trimEnd
  * @example
  *
  * trimStart('  abc  ');

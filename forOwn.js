@@ -11,7 +11,7 @@ import baseForOwn from './.internal/baseForOwn.js';
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns `object`.
- * @see forOwnRight
+ * @see forEach, forEachRight, forIn, forInRight, forOwnRight
  * @example
  *
  * function Foo() {

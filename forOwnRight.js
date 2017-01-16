@@ -9,7 +9,7 @@ import baseForOwnRight from './.internal/baseForOwnRight.js';
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns `object`.
- * @see forOwn
+ * @see forEach, forEachRight, forIn, forInRight, forOwn
  * @example
  *
  * function Foo() {

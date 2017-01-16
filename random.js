@@ -24,6 +24,7 @@ const nativeRandom = Math.random;
  * @param {number} [upper=1] The upper bound.
  * @param {boolean} [floating] Specify returning a floating-point number.
  * @returns {number} Returns the random number.
+ * @see uniqueId
  * @example
  *
  * random(0, 5);

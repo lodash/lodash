@@ -6,6 +6,7 @@
  * @category Array
  * @param {Array} array The array to query.
  * @returns {*} Returns the first element of `array`.
+ * @see last
  * @example
  *
  * head([1, 2, 3]);

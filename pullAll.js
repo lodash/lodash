@@ -10,6 +10,7 @@ import basePullAll from './.internal/basePullAll.js';
  * @param {Array} array The array to modify.
  * @param {Array} values The values to remove.
  * @returns {Array} Returns `array`.
+ * @see pull, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
  * const array = ['a', 'b', 'c', 'a', 'b', 'c'];

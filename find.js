@@ -12,6 +12,7 @@ import findIndex from './findIndex.js';
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} [fromIndex=0] The index to search from.
  * @returns {*} Returns the matched element, else `undefined`.
+ * @see findIndex, findKey, findLast, findLastIndex, findLastKey
  * @example
  *
  * const users = [

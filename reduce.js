@@ -23,7 +23,7 @@ import baseReduce from './.internal/baseReduce.js';
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The initial value.
  * @returns {*} Returns the accumulated value.
- * @see reduceRight
+ * @see reduceRight, transform
  * @example
  *
  * reduce([1, 2], (sum, n) => sum + n, 0);

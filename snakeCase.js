@@ -8,6 +8,7 @@ import createCompounder from './.internal/createCompounder.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the snake cased string.
+ * @see upperCase, lowerCase, upperFirst, camelCase, kebabCase, startCase
  * @example
  *
  * snakeCase('Foo Bar');

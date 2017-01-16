@@ -13,6 +13,7 @@ import toString from './toString.js';
  * @param {number} [position=string.length] The position to search up to.
  * @returns {boolean} Returns `true` if `string` ends with `target`,
  *  else `false`.
+ * @see includes, startsWith
  * @example
  *
  * endsWith('abc', 'c');

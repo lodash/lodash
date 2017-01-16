@@ -8,6 +8,7 @@ import createCompounder from './.internal/createCompounder.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the kebab cased string.
+ * @see upperCase, lowerCase, upperFirst, camelCase, snakeCase, startCase
  * @example
  *
  * kebabCase('Foo Bar');

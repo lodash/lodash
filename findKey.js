@@ -11,6 +11,7 @@ import baseForOwn from './.internal/baseForOwn.js';
  * @param {Function} predicate The function invoked per iteration.
  * @returns {string|undefined} Returns the key of the matched element,
  *  else `undefined`.
+ * @see find, findIndex, findLast, findLastIndex, findLastKey
  * @example
  *
  * const users = {

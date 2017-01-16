@@ -14,6 +14,7 @@ const nativeMax = Math.max;
  * @param {Function} predicate The function invoked per iteration.
  * @param {number} [fromIndex=0] The index to search from.
  * @returns {number} Returns the index of the found element, else `-1`.
+ * @see find, findKey, findLast, findLastIndex, findLastKey
  * @example
  *
  * const users = [

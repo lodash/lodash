@@ -15,7 +15,7 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * @param {Array} array The array to inspect.
  * @param {...Array} [values] The values to exclude.
  * @returns {Array} Returns the new array of filtered values.
- * @see without, xor
+ * @see without, xor, xorBy, xorWith, union, unionBy, unionWith
  * @example
  *
  * difference([2, 1], [2, 3]);

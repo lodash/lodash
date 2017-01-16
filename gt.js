@@ -9,7 +9,7 @@ import toNumber from './toNumber.js';
  * @param {*} other The other value to compare.
  * @returns {boolean} Returns `true` if `value` is greater than `other`,
  *  else `false`.
- * @see lt
+ * @see lt, gte, lte
  * @example
  *
  * gt(3, 1);

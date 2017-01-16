@@ -21,6 +21,7 @@ const nativeMax = Math.max;
  * @param {number} [fromIndex=0] The index to search from.
  * @param- {Object} [guard] Enables use as an iteratee for methods like `reduce`.
  * @returns {boolean} Returns `true` if `value` is found, else `false`.
+ * @see startsWith, endsWith
  * @example
  *
  * includes([1, 2, 3], 1);

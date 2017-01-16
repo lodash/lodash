@@ -11,7 +11,7 @@ import baseEachRight from './.internal/baseEachRight.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
- * @see forEach
+ * @see forEach, forIn, forInRight, forOwn, forOwnRight
  * @example
  *
  * forEachRight([1, 2], value => console.log(value));

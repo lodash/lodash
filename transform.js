@@ -21,6 +21,7 @@ import isTypedArray from './isTypedArray.js';
  * @param {Function} iteratee The function invoked per iteration.
  * @param {*} [accumulator] The custom accumulator value.
  * @returns {*} Returns the accumulated value.
+ * @see reduce, reduceRight
  * @example
  *
  * transform([2, 3, 4], (result, n) => {

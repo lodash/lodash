@@ -9,6 +9,7 @@ import unzip from './unzip.js';
  * @category Array
  * @param {...Array} [arrays] The arrays to process.
  * @returns {Array} Returns the new array of grouped elements.
+ * @see zipObject, zipObjectDeep, zipWith, unzip, unzipWith
  * @example
  *
  * zip(['a', 'b'], [1, 2], [true, false]);

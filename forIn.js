@@ -12,7 +12,7 @@ import keysIn from './keysIn.js';
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns `object`.
- * @see forInRight
+ * @see forEach, forEachRight, forInRight, forOwn, forOwnRight
  * @example
  *
  * function Foo() {

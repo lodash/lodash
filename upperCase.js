@@ -7,6 +7,7 @@ import createCompounder from './.internal/createCompounder.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the upper cased string.
+ * @see lowerCase, upperFirst, camelCase, kebabCase, snakeCase, startCase
  * @example
  *
  * upperCase('--foo-bar');

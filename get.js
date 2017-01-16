@@ -10,6 +10,7 @@ import baseGet from './.internal/baseGet.js';
  * @param {Array|string} path The path of the property to get.
  * @param {*} [defaultValue] The value returned for `undefined` resolved values.
  * @returns {*} Returns the resolved value.
+ * @see has, hasIn, set, unset
  * @example
  *
  * const object = { 'a': [{ 'b': { 'c': 3 } }] };

@@ -10,6 +10,7 @@ const WRAP_FLIP_FLAG = 512;
  * @category Function
  * @param {Function} func The function to flip arguments for.
  * @returns {Function} Returns the new flipped function.
+ * @see reverse
  * @example
  *
  * const flipped = flip((...args) => args);

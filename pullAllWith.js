@@ -13,6 +13,7 @@ import basePullAll from './.internal/basePullAll.js';
  * @param {Array} values The values to remove.
  * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns `array`.
+ * @see pull, pullAll, pullAllBy, pullAt, remove, reject
  * @example
  *
  * const array = [{ 'x': 1, 'y': 2 }, { 'x': 3, 'y': 4 }, { 'x': 5, 'y': 6 }];

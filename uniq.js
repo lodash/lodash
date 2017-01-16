@@ -11,6 +11,7 @@ import baseUniq from './.internal/baseUniq.js';
  * @category Array
  * @param {Array} array The array to inspect.
  * @returns {Array} Returns the new duplicate free array.
+ * @see uniqBy, uniqWith
  * @example
  *
  * uniq([2, 1, 2]);

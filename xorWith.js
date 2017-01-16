@@ -14,6 +14,7 @@ import last from './last.js';
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns the new array of filtered values.
+ * @see difference, without, xor, xorBy, union, unionBy, unionWith
  * @example
  *
  * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];

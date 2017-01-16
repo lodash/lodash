@@ -15,6 +15,7 @@ import last from './last.js';
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of combined values.
+ * @see union, unionWith, difference, without, xor, xorBy
  * @example
  *
  * unionBy([2.1], [1.2, 2.3], Math.floor);

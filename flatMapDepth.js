@@ -12,6 +12,7 @@ import toInteger from './toInteger.js';
  * @param {Function} iteratee The function invoked per iteration.
  * @param {number} [depth=1] The maximum recursion depth.
  * @returns {Array} Returns the new flattened array.
+ * @see map, mapKeys, mapValues, flatMap, flatMapDeep, flatten, flattenDeep, flattenDepth
  * @example
  *
  * function duplicate(n) {

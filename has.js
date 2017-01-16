@@ -9,6 +9,7 @@ import hasPath from './.internal/hasPath.js';
  * @param {Object} object The object to query.
  * @param {Array|string} path The path to check.
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ * @see hasIn, set, get
  * @example
  *
  * const object = { 'a': { 'b': 2 } };

@@ -10,6 +10,7 @@ import toInteger from './toInteger.js';
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is an integer, else `false`.
+ * @see toInteger, isNumber, toNumber
  * @example
  *
  * isInteger(3);

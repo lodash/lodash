@@ -26,6 +26,7 @@ const freeParseInt = parseInt;
  * @category Lang
  * @param {*} value The value to process.
  * @returns {number} Returns the number.
+ * @see isInteger, toInteger, isNumber
  * @example
  *
  * toNumber(3.2);

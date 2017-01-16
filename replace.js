@@ -12,6 +12,7 @@ import toString from './toString.js';
  * @param {RegExp|string} pattern The pattern to replace.
  * @param {Function|string} replacement The match replacement.
  * @returns {string} Returns the modified string.
+ * @see truncate, trim
  * @example
  *
  * replace('Hi Fred', 'Fred', 'Barney');

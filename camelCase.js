@@ -8,6 +8,7 @@ import createCompounder from './.internal/createCompounder.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the camel cased string.
+ * @see upperCase, lowerCase, upperFirst, kebabCase, snakeCase, startCase
  * @example
  *
  * camelCase('Foo Bar');

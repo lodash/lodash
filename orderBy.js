@@ -14,6 +14,7 @@ import baseOrderBy from './.internal/baseOrderBy.js';
  * @param {string[]} [orders] The sort orders of `iteratees`.
  * @param- {Object} [guard] Enables use as an iteratee for methods like `reduce`.
  * @returns {Array} Returns the new sorted array.
+ * @see reverse
  * @example
  *
  * const users = [

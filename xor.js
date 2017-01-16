@@ -12,7 +12,7 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of filtered values.
- * @see difference, without
+ * @see difference, without, xorBy, xorWith, union, unionBy, unionWith
  * @example
  *
  * xor([2, 1], [2, 3]);

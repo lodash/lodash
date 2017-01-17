@@ -7,7 +7,7 @@ import createCompounder from './.internal/createCompounder.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the lower cased string.
- * @see upperCase, upperFirst, camelCase, kebabCase, snakeCase, startCase
+ * @see camelCase, kebabCase, snakeCase, startCase, upperCase, upperFirst
  * @example
  *
  * lowerCase('--Foo-Bar--');

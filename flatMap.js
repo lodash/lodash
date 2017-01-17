@@ -11,7 +11,7 @@ import map from './map.js';
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new flattened array.
- * @see map, mapKeys, mapValues, flatMapDeep, flatMapDepth, flatten, flattenDeep, flattenDepth
+ * @see flatMapDeep, flatMapDepth, flatten, flattenDeep, flattenDepth, map, mapKeys, mapValues
  * @example
  *
  * function duplicate(n) {

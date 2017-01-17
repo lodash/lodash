@@ -13,7 +13,7 @@ const INFINITY = 1 / 0;
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new flattened array.
- * @see map, mapKeys, mapValues, flatMap, flatMapDepth, flatten, flattenDeep, flattenDepth
+ * @see flatMap, flatMapDepth, flatten, flattenDeep, flattenDepth, map, mapKeys, mapValues
  * @example
  *
  * function duplicate(n) {

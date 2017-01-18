@@ -14,7 +14,7 @@ import last from './last.js';
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} [comparator] The comparator invoked per element.
  * @returns {Array} Returns the new array of combined values.
- * @see union, unionBy, difference, without, xor, xorBy
+ * @see difference, union, unionBy, without, xor, xorBy
  * @example
  *
  * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];

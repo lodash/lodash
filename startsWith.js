@@ -13,7 +13,7 @@ import toString from './toString.js';
  * @param {number} [position=0] The position to search from.
  * @returns {boolean} Returns `true` if `string` starts with `target`,
  *  else `false`.
- * @see includes, endsWith
+ * @see endsWith, includes
  * @example
  *
  * startsWith('abc', 'a');

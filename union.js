@@ -11,7 +11,7 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * @category Array
  * @param {...Array} [arrays] The arrays to inspect.
  * @returns {Array} Returns the new array of combined values.
- * @see unionBy, unionWith, difference, without, xor, xorBy
+ * @see difference, unionBy, unionWith, without, xor, xorBy
  * @example
  *
  * union([2], [1, 2]);

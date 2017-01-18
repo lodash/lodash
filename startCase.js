@@ -9,7 +9,7 @@ import upperFirst from './upperFirst.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the start cased string.
- * @see upperCase, lowerCase, upperFirst, camelCase, kebabCase, snakeCase
+ * @see camelCase, lowerCase, kebabCase, snakeCase, upperCase, upperFirst
  * @example
  *
  * startCase('--foo-bar--');

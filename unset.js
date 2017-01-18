@@ -10,7 +10,7 @@ import baseUnset from './.internal/baseUnset.js';
  * @param {Object} object The object to modify.
  * @param {Array|string} path The path of the property to unset.
  * @returns {boolean} Returns `true` if the property is deleted, else `false`.
- * @see has, set, get
+ * @see get, has, set
  * @example
  *
  * const object = { 'a': [{ 'b': { 'c': 7 } }] };

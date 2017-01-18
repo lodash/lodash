@@ -12,18 +12,10 @@
  * // => [1, 2, 3]
  */
 function compact(array) {
-  let index = -1;
-  const length = array == null ? 0 : array.length;
-  let resIndex = 0;
-  const result = [];
-
-  while (++index < length) {
-    const value = array[index];
-    if (value) {
-      result[resIndex++] = value;
-    }
+  if(!Array.isArray(array)) {
+     throw new Error('The argument to the "compact" function must be an array');
   }
-  return result;
+  return array.filter(item => !!item);
 }
 
 export default compact;

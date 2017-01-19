@@ -1,4 +1,4 @@
-# Notice
+# :construction: Notice :construction:
 
 Pardon the mess. The `master` branch is in flux while we work on Lodash v5. This
 means things like npm scripts, which we encourage using for contributions, may

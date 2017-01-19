@@ -15,7 +15,7 @@ import last from './last.js';
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {Array} Returns the new array of filtered values.
- * @see difference, without, xor, xorWith, union, unionBy, unionWith
+ * @see difference, union, unionBy, unionWith, without, xor, xorWith
  * @example
  *
  * xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);

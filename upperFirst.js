@@ -7,7 +7,7 @@ import createCaseFirst from './.internal/createCaseFirst.js';
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the converted string.
- * @see upperCase, lowerCase, camelCase, kebabCase, snakeCase, startCase
+ * @see camelCase, kebabCase, lowerCase, snakeCase, startCase, upperCase
  * @example
  *
  * upperFirst('fred');

@@ -16,7 +16,7 @@ const nativeMax = Math.max;
  * @category Array
  * @param {Array} array The array of grouped elements to process.
  * @returns {Array} Returns the new array of regrouped elements.
- * @see zip, zipObject, zipObjectDeep, zipWith, unzipWith
+ * @see unzipWith, zip, zipObject, zipObjectDeep, zipWith
  * @example
  *
  * const zipped = zip(['a', 'b'], [1, 2], [true, false]);

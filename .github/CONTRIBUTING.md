@@ -1,3 +1,7 @@
+# Notice
+
+Work continues on version 5.0.0 of Lodash and the `master` branch is ['in flux right now'](https://github.com/lodash/lodash/commit/2900cfd288f72671c335021fa3220818445f9123#commitcomment-20478564). Unfortunately that also means the `package.json` scripts, which we suggest using for your contributions in our guide below, currently aren't working (e.g. `npm run build`, `npm test`). The last commit with working scripts is the [v4.17.4 release](https://github.com/lodash/lodash/tree/912d6b04a1f6b732508a6da72a95ec4f96bda154). Thank you for understanding! 
+
 # Contributing to Lodash
 
 Contributions are always welcome. Before contributing please read the

@@ -1,3 +1,9 @@
+# Notice
+
+Pardon the mess. The `master` branch is in flux while we work on Lodash v5. This
+means things like npm scripts, which we encourage using for contributions, may
+not be working. Thank you for your patience.
+
 # Contributing to Lodash
 
 Contributions are always welcome. Before contributing please read the

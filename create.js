@@ -1,4 +1,3 @@
-import baseAssign from './.internal/baseAssign.js';
 import baseCreate from './.internal/baseCreate.js';
 
 /**
@@ -35,7 +34,7 @@ import baseCreate from './.internal/baseCreate.js';
  */
 function create(prototype, properties) {
   const result = baseCreate(prototype);
-  return properties == null ? result : baseAssign(result, properties);
+  return properties == null ? result : Object.assign(result, properties);
 }
 
 export default create;

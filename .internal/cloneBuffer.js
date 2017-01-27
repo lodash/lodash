@@ -13,7 +13,7 @@ const moduleExports = freeModule && freeModule.exports === freeExports;
 const Buffer = moduleExports ? root.Buffer : undefined, allocUnsafe = Buffer ? Buffer.allocUnsafe : undefined;
 
 /**
- * Creates a clone of  `buffer`.
+ * Creates a clone of `buffer`.
  *
  * @private
  * @param {Buffer} buffer The buffer to clone.

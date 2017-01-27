@@ -2,7 +2,7 @@ import baseSet from './.internal/baseSet.js';
 
 /**
  * This method is like `set` except that it accepts `customizer` which is
- * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
+ * invoked to produce the objects of `path`. If `customizer` returns `undefined`
  * path creation is handled by the method instead. The `customizer` is invoked
  * with three arguments: (nsValue, key, nsObject).
  *

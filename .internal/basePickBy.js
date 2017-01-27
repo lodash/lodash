@@ -3,7 +3,7 @@ import baseSet from './baseSet.js';
 import castPath from './castPath.js';
 
 /**
- * The base implementation of  `pickBy`.
+ * The base implementation of `pickBy`.
  *
  * @private
  * @param {Object} object The source object.

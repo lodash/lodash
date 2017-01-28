@@ -6,6 +6,13 @@ import baseAssignIn from './baseAssignIn.js';
 import baseCreate from './baseCreate.js';
 import cloneBuffer from './cloneBuffer.js';
 import copyArray from './copyArray.js';
+import cloneArrayBuffer from './cloneArrayBuffer.js';
+import cloneDataView from './cloneDataView.js';
+import cloneMap from './cloneMap.js';
+import cloneRegExp from './cloneRegExp.js';
+import cloneSet from './cloneSet.js';
+import cloneSymbol from './cloneSymbol.js';
+import cloneTypedArray from './cloneTypedArray.js';
 import copySymbols from './copySymbols.js';
 import copySymbolsIn from './copySymbolsIn.js';
 import getAllKeys from './getAllKeys.js';
@@ -18,8 +25,6 @@ import isBuffer from '../isBuffer.js';
 import isObject from '../isObject.js';
 import isPrototype from './isPrototype.js';
 import keys from '../keys.js';
-
-
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1;
@@ -71,6 +76,8 @@ cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
 cloneableTags[errorTag] = cloneableTags[funcTag] =
 cloneableTags[weakMapTag] = false;
 
+/** Used to check objects for own properties. */
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * Initializes an object clone.
@@ -84,36 +91,6 @@ function initCloneObject(object) {
     ? baseCreate(Object.getPrototypeOf(object))
     : {};
 }
-
-import cloneArrayBuffer from './cloneArrayBuffer.js';
-import cloneDataView from './cloneDataView.js';
-import cloneMap from './cloneMap.js';
-import cloneRegExp from './cloneRegExp.js';
-import cloneSet from './cloneSet.js';
-import cloneSymbol from './cloneSymbol.js';
-import cloneTypedArray from './cloneTypedArray.js';
-
-/** `Object#toString` result references. */
-const boolTag = '[object Boolean]';
-const dateTag = '[object Date]';
-const mapTag = '[object Map]';
-const numberTag = '[object Number]';
-const regexpTag = '[object RegExp]';
-const setTag = '[object Set]';
-const stringTag = '[object String]';
-const symbolTag = '[object Symbol]';
-
-const arrayBufferTag = '[object ArrayBuffer]';
-const dataViewTag = '[object DataView]';
-const float32Tag = '[object Float32Array]';
-const float64Tag = '[object Float64Array]';
-const int8Tag = '[object Int8Array]';
-const int16Tag = '[object Int16Array]';
-const int32Tag = '[object Int32Array]';
-const uint8Tag = '[object Uint8Array]';
-const uint8ClampedTag = '[object Uint8ClampedArray]';
-const uint16Tag = '[object Uint16Array]';
-const uint32Tag = '[object Uint32Array]';
 
 /**
  * Initializes an object clone based on its `toStringTag`.
@@ -164,9 +141,6 @@ function initCloneByTag(object, tag, cloneFunc, isDeep) {
   }
 }
 
-/** Used to check objects for own properties. */
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 /**
  * Initializes an array clone.
  *
@@ -185,8 +159,6 @@ function initCloneArray(array) {
   }
   return result;
 }
-
-
 
 /**
  * The base implementation of `clone` and `cloneDeep` which tracks

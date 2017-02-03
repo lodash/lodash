@@ -23,7 +23,7 @@ import copyArray from './.internal/copyArray.js';
  * // => [1]
  */
 function concat(array, ...values) {
-  return arrayPush(Array.isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1));
+  return arrayPush(Array.isArray(array) ? copyArray(array) : [array], baseFlatten(values, 1));
 }
 
 export default concat;

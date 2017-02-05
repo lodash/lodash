@@ -9,15 +9,15 @@
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function baseIndexOfWith(array, value, fromIndex, comparator) {
-  let index = fromIndex - 1;
-  const length = array.length;
+  let index = fromIndex - 1
+  const length = array.length
 
   while (++index < length) {
     if (comparator(array[index], value)) {
-      return index;
+      return index
     }
   }
-  return -1;
+  return -1
 }
 
-export default baseIndexOfWith;
+export default baseIndexOfWith

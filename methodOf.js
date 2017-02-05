@@ -1,7 +1,7 @@
-import invoke from './invoke.js';
+import invoke from './invoke.js'
 
 /**
- * The opposite of `method`; this method creates a function that invokes
+ * The opposite of `method` this method creates a function that invokes
  * the method at a given path of `object`. Any additional arguments are
  * provided to the invoked method.
  *
@@ -12,17 +12,17 @@ import invoke from './invoke.js';
  * @returns {Function} Returns the new invoker function.
  * @example
  *
- * const array = times(3, constant);
- * const object = { 'a': array, 'b': array, 'c': array };
+ * const array = times(3, constant)
+ * const object = { 'a': array, 'b': array, 'c': array }
  *
- * map(['a[2]', 'c[0]'], methodOf(object));
+ * map(['a[2]', 'c[0]'], methodOf(object))
  * // => [2, 0]
  *
- * map([['a', '2'], ['c', '0']], methodOf(object));
+ * map([['a', '2'], ['c', '0']], methodOf(object))
  * // => [2, 0]
  */
 function methodOf(object, args) {
-  return path => invoke(object, path, args);
+  return path => invoke(object, path, args)
 }
 
-export default methodOf;
+export default methodOf

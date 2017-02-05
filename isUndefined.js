@@ -7,14 +7,14 @@
  * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
  * @example
  *
- * isUndefined(void 0);
+ * isUndefined(void 0)
  * // => true
  *
- * isUndefined(null);
+ * isUndefined(null)
  * // => false
  */
 function isUndefined(value) {
-  return value === undefined;
+  return value === undefined
 }
 
-export default isUndefined;
+export default isUndefined

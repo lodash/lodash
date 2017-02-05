@@ -1,5 +1,5 @@
-import arrayFilter from './arrayFilter.js';
-import isFunction from '../isFunction.js';
+import arrayFilter from './arrayFilter.js'
+import isFunction from '../isFunction.js'
 
 /**
  * The base implementation of `functions` which creates an array of
@@ -11,7 +11,7 @@ import isFunction from '../isFunction.js';
  * @returns {Array} Returns the function names.
  */
 function baseFunctions(object, props) {
-  return arrayFilter(props, key => isFunction(object[key]));
+  return arrayFilter(props, key => isFunction(object[key]))
 }
 
-export default baseFunctions;
+export default baseFunctions

@@ -1,5 +1,5 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import isObjectLike from './isObjectLike.js';
+import baseGetTag from './.internal/baseGetTag.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * Checks if `value` is classified as a `WeakSet` object.
@@ -10,14 +10,14 @@ import isObjectLike from './isObjectLike.js';
  * @returns {boolean} Returns `true` if `value` is a weak set, else `false`.
  * @example
  *
- * isWeakSet(new WeakSet);
+ * isWeakSet(new WeakSet)
  * // => true
  *
- * isWeakSet(new Set);
+ * isWeakSet(new Set)
  * // => false
  */
 function isWeakSet(value) {
-  return isObjectLike(value) && baseGetTag(value) == '[object WeakSet]';
+  return isObjectLike(value) && baseGetTag(value) == '[object WeakSet]'
 }
 
-export default isWeakSet;
+export default isWeakSet

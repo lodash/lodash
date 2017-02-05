@@ -1,5 +1,5 @@
-import baseCreate from './baseCreate.js';
-import isObject from '../isObject.js';
+import baseCreate from './baseCreate.js'
+import isObject from '../isObject.js'
 
 /**
  * Creates a function that produces an instance of `Ctor` regardless of
@@ -15,22 +15,22 @@ function createCtor(Ctor) {
     // http://ecma-international.org/ecma-262/7.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
     // for more details.
     switch (args.length) {
-      case 0: return new Ctor;
-      case 1: return new Ctor(args[0]);
-      case 2: return new Ctor(args[0], args[1]);
-      case 3: return new Ctor(args[0], args[1], args[2]);
-      case 4: return new Ctor(args[0], args[1], args[2], args[3]);
-      case 5: return new Ctor(args[0], args[1], args[2], args[3], args[4]);
-      case 6: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5]);
-      case 7: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+      case 0: return new Ctor
+      case 1: return new Ctor(args[0])
+      case 2: return new Ctor(args[0], args[1])
+      case 3: return new Ctor(args[0], args[1], args[2])
+      case 4: return new Ctor(args[0], args[1], args[2], args[3])
+      case 5: return new Ctor(args[0], args[1], args[2], args[3], args[4])
+      case 6: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5])
+      case 7: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
     }
-    const thisBinding = baseCreate(Ctor.prototype);
-    const result = Ctor.apply(thisBinding, args);
+    const thisBinding = baseCreate(Ctor.prototype)
+    const result = Ctor.apply(thisBinding, args)
 
     // Mimic the constructor's `return` behavior.
     // See https://es5.github.io/#x13.2.2 for more details.
-    return isObject(result) ? result : thisBinding;
-  };
+    return isObject(result) ? result : thisBinding
+  }
 }
 
-export default createCtor;
+export default createCtor

@@ -1,4 +1,4 @@
-import baseUniq from './.internal/baseUniq.js';
+import baseUniq from './.internal/baseUniq.js'
 
 /**
  * Creates a duplicate-free version of an array, using
@@ -14,11 +14,11 @@ import baseUniq from './.internal/baseUniq.js';
  * @see uniqBy, uniqWith
  * @example
  *
- * uniq([2, 1, 2]);
+ * uniq([2, 1, 2])
  * // => [2, 1]
  */
 function uniq(array) {
-  return (array && array.length) ? baseUniq(array) : [];
+  return (array && array.length) ? baseUniq(array) : []
 }
 
-export default uniq;
+export default uniq

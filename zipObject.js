@@ -1,5 +1,5 @@
-import assignValue from './.internal/assignValue.js';
-import baseZipObject from './.internal/baseZipObject.js';
+import assignValue from './.internal/assignValue.js'
+import baseZipObject from './.internal/baseZipObject.js'
 
 /**
  * This method is like `fromPairs` except that it accepts two arrays,
@@ -13,11 +13,11 @@ import baseZipObject from './.internal/baseZipObject.js';
  * @see unzip, unzipWith, zip, zipObjectDeep, zipWith
  * @example
  *
- * zipObject(['a', 'b'], [1, 2]);
+ * zipObject(['a', 'b'], [1, 2])
  * // => { 'a': 1, 'b': 2 }
  */
 function zipObject(props, values) {
-  return baseZipObject(props || [], values || [], assignValue);
+  return baseZipObject(props || [], values || [], assignValue)
 }
 
-export default zipObject;
+export default zipObject

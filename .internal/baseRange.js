@@ -1,6 +1,6 @@
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeCeil = Math.ceil;
-const nativeMax = Math.max;
+const nativeCeil = Math.ceil
+const nativeMax = Math.max
 
 /**
  * The base implementation of `range` and `rangeRight` which doesn't
@@ -14,15 +14,15 @@ const nativeMax = Math.max;
  * @returns {Array} Returns the range of numbers.
  */
 function baseRange(start, end, step, fromRight) {
-  let index = -1;
-  let length = nativeMax(nativeCeil((end - start) / (step || 1)), 0);
-  const result = Array(length);
+  let index = -1
+  let length = nativeMax(nativeCeil((end - start) / (step || 1)), 0)
+  const result = Array(length)
 
   while (length--) {
-    result[fromRight ? length : ++index] = start;
-    start += step;
+    result[fromRight ? length : ++index] = start
+    start += step
   }
-  return result;
+  return result
 }
 
-export default baseRange;
+export default baseRange

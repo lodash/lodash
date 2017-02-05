@@ -1,7 +1,7 @@
-import baseFlatten from './.internal/baseFlatten.js';
-import baseUniq from './.internal/baseUniq.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
-import last from './last.js';
+import baseFlatten from './.internal/baseFlatten.js'
+import baseUniq from './.internal/baseUniq.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
+import last from './last.js'
 
 /**
  * This method is like `union` except that it accepts `comparator` which
@@ -17,16 +17,16 @@ import last from './last.js';
  * @see difference, union, unionBy, without, xor, xorBy
  * @example
  *
- * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
- * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
+ * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }]
  *
- * unionWith(objects, others, isEqual);
+ * unionWith(objects, others, isEqual)
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
 function unionWith(...arrays) {
-  let comparator = last(arrays);
-  comparator = typeof comparator == 'function' ? comparator : undefined;
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator);
+  let comparator = last(arrays)
+  comparator = typeof comparator == 'function' ? comparator : undefined
+  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator)
 }
 
-export default unionWith;
+export default unionWith

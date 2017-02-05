@@ -1,5 +1,5 @@
-import isFunction from './isFunction.js';
-import isLength from './isLength.js';
+import isFunction from './isFunction.js'
+import isLength from './isLength.js'
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -12,20 +12,20 @@ import isLength from './isLength.js';
  * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
  * @example
  *
- * isArrayLike([1, 2, 3]);
+ * isArrayLike([1, 2, 3])
  * // => true
  *
- * isArrayLike(document.body.children);
+ * isArrayLike(document.body.children)
  * // => true
  *
- * isArrayLike('abc');
+ * isArrayLike('abc')
  * // => true
  *
- * isArrayLike(Function);
+ * isArrayLike(Function)
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value);
+  return value != null && isLength(value.length) && !isFunction(value)
 }
 
-export default isArrayLike;
+export default isArrayLike

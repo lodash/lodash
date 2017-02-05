@@ -8,7 +8,7 @@
  * @returns {Array} Returns the array of property names.
  */
 function nativeKeys(object) {
-  return Object.keys(Object(object));
+  return Object.keys(Object(object))
 }
 
-export default nativeKeys;
+export default nativeKeys

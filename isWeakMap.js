@@ -1,5 +1,5 @@
-import getTag from './.internal/getTag.js';
-import isObjectLike from './isObjectLike.js';
+import getTag from './.internal/getTag.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * Checks if `value` is classified as a `WeakMap` object.
@@ -10,14 +10,14 @@ import isObjectLike from './isObjectLike.js';
  * @returns {boolean} Returns `true` if `value` is a weak map, else `false`.
  * @example
  *
- * isWeakMap(new WeakMap);
+ * isWeakMap(new WeakMap)
  * // => true
  *
- * isWeakMap(new Map);
+ * isWeakMap(new Map)
  * // => false
  */
 function isWeakMap(value) {
-  return isObjectLike(value) && getTag(value) == '[object WeakMap]';
+  return isObjectLike(value) && getTag(value) == '[object WeakMap]'
 }
 
-export default isWeakMap;
+export default isWeakMap

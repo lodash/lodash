@@ -1,4 +1,4 @@
-import cloneArrayBuffer from './cloneArrayBuffer.js';
+import cloneArrayBuffer from './cloneArrayBuffer.js'
 
 /**
  * Creates a clone of `typedArray`.
@@ -9,8 +9,8 @@ import cloneArrayBuffer from './cloneArrayBuffer.js';
  * @returns {Object} Returns the cloned typed array.
  */
 function cloneTypedArray(typedArray, isDeep) {
-  const buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
-  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+  const buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer
+  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length)
 }
 
-export default cloneTypedArray;
+export default cloneTypedArray

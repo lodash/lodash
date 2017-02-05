@@ -1,5 +1,5 @@
-import arraySample from './.internal/arraySample.js';
-import baseSample from './.internal/baseSample.js';
+import arraySample from './.internal/arraySample.js'
+import baseSample from './.internal/baseSample.js'
 
 /**
  * Gets a random element from `collection`.
@@ -10,12 +10,12 @@ import baseSample from './.internal/baseSample.js';
  * @returns {*} Returns the random element.
  * @example
  *
- * sample([1, 2, 3, 4]);
+ * sample([1, 2, 3, 4])
  * // => 2
  */
 function sample(collection) {
-  const func = Array.isArray(collection) ? arraySample : baseSample;
-  return func(collection);
+  const func = Array.isArray(collection) ? arraySample : baseSample
+  return func(collection)
 }
 
-export default sample;
+export default sample

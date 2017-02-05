@@ -1,4 +1,4 @@
-import basePullAll from './.internal/basePullAll.js';
+import basePullAll from './.internal/basePullAll.js'
 
 /**
  * This method is like `pullAll` except that it accepts `iteratee` which is
@@ -16,16 +16,16 @@ import basePullAll from './.internal/basePullAll.js';
  * @see pull, pullAll, pullAllWith, pullAt, remove, reject
  * @example
  *
- * const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }];
+ * const array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }]
  *
- * pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x');
- * console.log(array);
+ * pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], 'x')
+ * console.log(array)
  * // => [{ 'x': 2 }]
  */
 function pullAllBy(array, values, iteratee) {
   return (array && array.length && values && values.length)
     ? basePullAll(array, values, iteratee)
-    : array;
+    : array
 }
 
-export default pullAllBy;
+export default pullAllBy

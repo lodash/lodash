@@ -1,1 +1,1 @@
-export default new WeakMap;
+export default new WeakMap

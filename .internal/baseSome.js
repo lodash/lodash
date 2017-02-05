@@ -1,4 +1,4 @@
-import baseEach from './baseEach.js';
+import baseEach from './baseEach.js'
 
 /**
  * The base implementation of `some`.
@@ -10,13 +10,13 @@ import baseEach from './baseEach.js';
  *  else `false`.
  */
 function baseSome(collection, predicate) {
-  let result;
+  let result
 
   baseEach(collection, (value, index, collection) => {
-    result = predicate(value, index, collection);
-    return !result;
-  });
-  return !!result;
+    result = predicate(value, index, collection)
+    return !result
+  })
+  return !!result
 }
 
-export default baseSome;
+export default baseSome

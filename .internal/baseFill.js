@@ -1,5 +1,5 @@
-import toInteger from '../toInteger.js';
-import toLength from '../toLength.js';
+import toInteger from '../toInteger.js'
+import toLength from '../toLength.js'
 
 /**
  * The base implementation of `fill` without an iteratee call guard.
@@ -12,21 +12,21 @@ import toLength from '../toLength.js';
  * @returns {Array} Returns `array`.
  */
 function baseFill(array, value, start, end) {
-  const length = array.length;
+  const length = array.length
 
-  start = toInteger(start);
+  start = toInteger(start)
   if (start < 0) {
-    start = -start > length ? 0 : (length + start);
+    start = -start > length ? 0 : (length + start)
   }
-  end = (end === undefined || end > length) ? length : toInteger(end);
+  end = (end === undefined || end > length) ? length : toInteger(end)
   if (end < 0) {
-    end += length;
+    end += length
   }
-  end = start > end ? 0 : toLength(end);
+  end = start > end ? 0 : toLength(end)
   while (start < end) {
-    array[start++] = value;
+    array[start++] = value
   }
-  return array;
+  return array
 }
 
-export default baseFill;
+export default baseFill

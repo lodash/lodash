@@ -1,7 +1,7 @@
-import baseGet from './.internal/baseGet.js';
+import baseGet from './.internal/baseGet.js'
 
 /**
- * The opposite of `property`; this method creates a function that returns
+ * The opposite of `property`s method creates a function that returns
  * the value at a given path of `object`.
  *
  * @since 3.0.0
@@ -10,17 +10,17 @@ import baseGet from './.internal/baseGet.js';
  * @returns {Function} Returns the new accessor function.
  * @example
  *
- * const array = [0, 1, 2];
- * const object = { 'a': array, 'b': array, 'c': array };
+ * const array = [0, 1, 2]
+ * const object = { 'a': array, 'b': array, 'c': array }
  *
- * map(['a[2]', 'c[0]'], propertyOf(object));
+ * map(['a[2]', 'c[0]'], propertyOf(object))
  * // => [2, 0]
  *
- * map([['a', '2'], ['c', '0']], propertyOf(object));
+ * map([['a', '2'], ['c', '0']], propertyOf(object))
  * // => [2, 0]
  */
 function propertyOf(object) {
-  return path => object == null ? undefined : baseGet(object, path);
+  return path => object == null ? undefined : baseGet(object, path)
 }
 
-export default propertyOf;
+export default propertyOf

@@ -1,4 +1,4 @@
-import baseWhile from './.internal/baseWhile.js';
+import baseWhile from './.internal/baseWhile.js'
 
 /**
  * Creates a slice of `array` excluding elements dropped from the beginning.
@@ -16,15 +16,15 @@ import baseWhile from './.internal/baseWhile.js';
  *   { 'user': 'barney',  'active': true },
  *   { 'user': 'fred',    'active': true },
  *   { 'user': 'pebbles', 'active': false }
- * ];
+ * ]
  *
- * dropWhile(users, ({ active }) => active);
+ * dropWhile(users, ({ active }) => active)
  * // => objects for ['pebbles']
  */
 function dropWhile(array, predicate) {
   return (array && array.length)
     ? baseWhile(array, predicate, true)
-    : [];
+    : []
 }
 
-export default dropWhile;
+export default dropWhile

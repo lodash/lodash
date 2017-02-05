@@ -1,4 +1,4 @@
-import toNumber from './toNumber.js';
+import toNumber from './toNumber.js'
 
 /**
  * Invokes `func` after `wait` milliseconds. Any additional arguments are
@@ -12,14 +12,14 @@ import toNumber from './toNumber.js';
  * @returns {number} Returns the timer id.
  * @example
  *
- * delay(text => console.log(text), 1000, 'later');
+ * delay(text => console.log(text), 1000, 'later')
  * // => Logs 'later' after one second.
  */
 function delay(func, wait, ...args) {
   if (typeof func != 'function') {
-    throw new TypeError('Expected a function');
+    throw new TypeError('Expected a function')
   }
-  return setTimeout(func, toNumber(wait) || 0, ...args);
+  return setTimeout(func, toNumber(wait) || 0, ...args)
 }
 
-export default delay;
+export default delay

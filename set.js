@@ -1,4 +1,4 @@
-import baseSet from './.internal/baseSet.js';
+import baseSet from './.internal/baseSet.js'
 
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
@@ -17,18 +17,18 @@ import baseSet from './.internal/baseSet.js';
  * @see has, hasIn, get, unset
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }] }
  *
- * set(object, 'a[0].b.c', 4);
- * console.log(object.a[0].b.c);
+ * set(object, 'a[0].b.c', 4)
+ * console.log(object.a[0].b.c)
  * // => 4
  *
- * set(object, ['x', '0', 'y', 'z'], 5);
- * console.log(object.x[0].y.z);
+ * set(object, ['x', '0', 'y', 'z'], 5)
+ * console.log(object.x[0].y.z)
  * // => 5
  */
 function set(object, path, value) {
-  return object == null ? object : baseSet(object, path, value);
+  return object == null ? object : baseSet(object, path, value)
 }
 
-export default set;
+export default set

@@ -8,15 +8,15 @@
  *  else `false`.
  */
 function arrayEvery(array, predicate) {
-  let index = -1;
-  const length = array == null ? 0 : array.length;
+  let index = -1
+  const length = array == null ? 0 : array.length
 
   while (++index < length) {
     if (!predicate(array[index], index, array)) {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
 
-export default arrayEvery;
+export default arrayEvery

@@ -1,4 +1,4 @@
-import toString from './toString.js';
+import toString from './toString.js'
 
 /**
  * Converts `string`, as a whole, to lower case just like
@@ -10,17 +10,17 @@ import toString from './toString.js';
  * @returns {string} Returns the lower cased string.
  * @example
  *
- * toLower('--Foo-Bar--');
+ * toLower('--Foo-Bar--')
  * // => '--foo-bar--'
  *
- * toLower('fooBar');
+ * toLower('fooBar')
  * // => 'foobar'
  *
- * toLower('__FOO_BAR__');
+ * toLower('__FOO_BAR__')
  * // => '__foo_bar__'
  */
 function toLower(value) {
-  return toString(value).toLowerCase();
+  return toString(value).toLowerCase()
 }
 
-export default toLower;
+export default toLower

@@ -1,7 +1,7 @@
-import createPadding from './.internal/createPadding.js';
-import stringSize from './.internal/stringSize.js';
-import toInteger from './toInteger.js';
-import toString from './toString.js';
+import createPadding from './.internal/createPadding.js'
+import stringSize from './.internal/stringSize.js'
+import toInteger from './toInteger.js'
+import toString from './toString.js'
 
 /**
  * Pads `string` on the left side if it's shorter than `length`. Padding
@@ -15,23 +15,23 @@ import toString from './toString.js';
  * @returns {string} Returns the padded string.
  * @example
  *
- * padStart('abc', 6);
+ * padStart('abc', 6)
  * // => '   abc'
  *
- * padStart('abc', 6, '_-');
+ * padStart('abc', 6, '_-')
  * // => '_-_abc'
  *
- * padStart('abc', 3);
+ * padStart('abc', 3)
  * // => 'abc'
  */
 function padStart(string, length, chars) {
-  string = toString(string);
-  length = toInteger(length);
+  string = toString(string)
+  length = toInteger(length)
 
-  const strLength = length ? stringSize(string) : 0;
+  const strLength = length ? stringSize(string) : 0
   return (length && strLength < length)
     ? (createPadding(length - strLength, chars) + string)
-    : string;
+    : string
 }
 
-export default padStart;
+export default padStart

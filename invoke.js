@@ -1,8 +1,8 @@
-import apply from './apply.js';
-import castPath from './castPath.js';
-import last from '../last.js';
-import parent from './parent.js';
-import toKey from './toKey.js';
+import apply from './apply.js'
+import castPath from './castPath.js'
+import last from '../last.js'
+import parent from './parent.js'
+import toKey from './toKey.js'
 
 /**
  * Invokes the method at `path` of `object`.
@@ -15,16 +15,16 @@ import toKey from './toKey.js';
  * @returns {*} Returns the result of the invoked method.
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
+ * const object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] }
  *
- * invoke(object, 'a[0].b.c.slice', [1, 3]);
+ * invoke(object, 'a[0].b.c.slice', [1, 3])
  * // => [2, 3]
  */
 function invoke(object, path, args) {
-  path = castPath(path, object);
-  object = parent(object, path);
-  const func = object == null ? object : object[toKey(last(path))];
-  return func == null ? undefined : apply(func, object, args);
+  path = castPath(path, object)
+  object = parent(object, path)
+  const func = object == null ? object : object[toKey(last(path))]
+  return func == null ? undefined : apply(func, object, args)
 }
 
-export default invoke;
+export default invoke

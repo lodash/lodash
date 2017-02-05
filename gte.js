@@ -1,4 +1,4 @@
-import toNumber from './toNumber.js';
+import toNumber from './toNumber.js'
 
 /**
  * Checks if `value` is greater than or equal to `other`.
@@ -12,21 +12,21 @@ import toNumber from './toNumber.js';
  * @see gt, lt, lte
  * @example
  *
- * gte(3, 1);
+ * gte(3, 1)
  * // => true
  *
- * gte(3, 3);
+ * gte(3, 3)
  * // => true
  *
- * gte(1, 3);
+ * gte(1, 3)
  * // => false
  */
 function gte(value, other) {
   if (!(typeof value == 'string' && typeof other == 'string')) {
-    value = toNumber(value);
-    other = toNumber(other);
+    value = toNumber(value)
+    other = toNumber(other)
   }
-  return value >= other;
+  return value >= other
 }
 
-export default gte;
+export default gte

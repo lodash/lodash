@@ -1,5 +1,5 @@
-import baseMerge from './baseMerge.js';
-import isObject from '../isObject.js';
+import baseMerge from './baseMerge.js'
+import isObject from '../isObject.js'
 
 /**
  * Used by `defaultsDeep` to customize its `merge` use to merge source
@@ -18,11 +18,11 @@ import isObject from '../isObject.js';
 function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
   if (isObject(objValue) && isObject(srcValue)) {
     // Recursively merge objects and arrays (susceptible to call stack limits).
-    stack.set(srcValue, objValue);
-    baseMerge(objValue, srcValue, undefined, customDefaultsMerge, stack);
-    stack['delete'](srcValue);
+    stack.set(srcValue, objValue)
+    baseMerge(objValue, srcValue, undefined, customDefaultsMerge, stack)
+    stack['delete'](srcValue)
   }
-  return objValue;
+  return objValue
 }
 
-export default customDefaultsMerge;
+export default customDefaultsMerge

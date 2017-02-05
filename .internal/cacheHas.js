@@ -7,7 +7,7 @@
  * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
  */
 function cacheHas(cache, key) {
-  return cache.has(key);
+  return cache.has(key)
 }
 
-export default cacheHas;
+export default cacheHas

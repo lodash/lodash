@@ -1,5 +1,5 @@
-import baseValues from './.internal/baseValues.js';
-import keys from './keys.js';
+import baseValues from './.internal/baseValues.js'
+import keys from './keys.js'
 
 /**
  * Creates an array of the own enumerable string keyed property values of `object`.
@@ -14,20 +14,20 @@ import keys from './keys.js';
  * @example
  *
  * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
+ *   this.a = 1
+ *   this.b = 2
  * }
  *
- * Foo.prototype.c = 3;
+ * Foo.prototype.c = 3
  *
- * values(new Foo);
+ * values(new Foo)
  * // => [1, 2] (iteration order is not guaranteed)
  *
- * values('hi');
+ * values('hi')
  * // => ['h', 'i']
  */
 function values(object) {
-  return object == null ? [] : baseValues(object, keys(object));
+  return object == null ? [] : baseValues(object, keys(object))
 }
 
-export default values;
+export default values

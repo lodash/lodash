@@ -1,4 +1,4 @@
-import basePropertyOf from './basePropertyOf.js';
+import basePropertyOf from './basePropertyOf.js'
 
 /** Used to map Latin Unicode letters to basic Latin letters. */
 const deburredLetters = {
@@ -56,7 +56,7 @@ const deburredLetters = {
   '\u0132': 'IJ', '\u0133': 'ij',
   '\u0152': 'Oe', '\u0153': 'oe',
   '\u0149': "'n", '\u017f': 's'
-};
+}
 
 /**
  * Used by `deburr` to convert Latin-1 Supplement and Latin Extended-A
@@ -66,6 +66,6 @@ const deburredLetters = {
  * @param {string} letter The matched letter to deburr.
  * @returns {string} Returns the deburred letter.
  */
-const deburrLetter = basePropertyOf(deburredLetters);
+const deburrLetter = basePropertyOf(deburredLetters)
 
-export default deburrLetter;
+export default deburrLetter

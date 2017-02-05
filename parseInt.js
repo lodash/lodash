@@ -1,11 +1,11 @@
-import root from './.internal/root.js';
-import toString from './toString.js';
+import root from './.internal/root.js'
+import toString from './toString.js'
 
 /** Used to match leading and trailing whitespace. */
-const reTrimStart = /^\s+/;
+const reTrimStart = /^\s+/
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeParseInt = root.parseInt;
+const nativeParseInt = root.parseInt
 
 /**
  * Converts `string` to an integer of the specified radix. If `radix` is
@@ -23,19 +23,19 @@ const nativeParseInt = root.parseInt;
  * @returns {number} Returns the converted integer.
  * @example
  *
- * parseInt('08');
+ * parseInt('08')
  * // => 8
  *
- * map(['6', '08', '10'], parseInt);
+ * map(['6', '08', '10'], parseInt)
  * // => [6, 8, 10]
  */
 function parseInt(string, radix, guard) {
   if (guard || radix == null) {
-    radix = 0;
+    radix = 0
   } else if (radix) {
-    radix = +radix;
+    radix = +radix
   }
-  return nativeParseInt(toString(string).replace(reTrimStart, ''), radix || 0);
+  return nativeParseInt(toString(string).replace(reTrimStart, ''), radix || 0)
 }
 
-export default parseInt;
+export default parseInt

@@ -1,6 +1,6 @@
-import baseClamp from './baseClamp.js';
-import shuffleSelf from './shuffleSelf.js';
-import values from '../values.js';
+import baseClamp from './baseClamp.js'
+import shuffleSelf from './shuffleSelf.js'
+import values from '../values.js'
 
 /**
  * The base implementation of `sampleSize` without param guards.
@@ -11,8 +11,8 @@ import values from '../values.js';
  * @returns {Array} Returns the random elements.
  */
 function baseSampleSize(collection, n) {
-  const array = values(collection);
-  return shuffleSelf(array, baseClamp(n, 0, array.length));
+  const array = values(collection)
+  return shuffleSelf(array, baseClamp(n, 0, array.length))
 }
 
-export default baseSampleSize;
+export default baseSampleSize

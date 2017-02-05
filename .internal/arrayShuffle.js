@@ -1,5 +1,5 @@
-import copyArray from './copyArray.js';
-import shuffleSelf from './shuffleSelf.js';
+import copyArray from './copyArray.js'
+import shuffleSelf from './shuffleSelf.js'
 
 /**
  * A specialized version of `shuffle` for arrays.
@@ -9,7 +9,7 @@ import shuffleSelf from './shuffleSelf.js';
  * @returns {Array} Returns the new shuffled array.
  */
 function arrayShuffle(array) {
-  return shuffleSelf(copyArray(array));
+  return shuffleSelf(copyArray(array))
 }
 
-export default arrayShuffle;
+export default arrayShuffle

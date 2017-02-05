@@ -1,4 +1,4 @@
-import baseIsEqual from './.internal/baseIsEqual.js';
+import baseIsEqual from './.internal/baseIsEqual.js'
 
 /**
  * Performs a deep comparison between two values to determine if they are
@@ -17,17 +17,17 @@ import baseIsEqual from './.internal/baseIsEqual.js';
  * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
  * @example
  *
- * const object = { 'a': 1 };
- * const other = { 'a': 1 };
+ * const object = { 'a': 1 }
+ * const other = { 'a': 1 }
  *
- * isEqual(object, other);
+ * isEqual(object, other)
  * // => true
  *
- * object === other;
+ * object === other
  * // => false
  */
 function isEqual(value, other) {
-  return baseIsEqual(value, other);
+  return baseIsEqual(value, other)
 }
 
-export default isEqual;
+export default isEqual

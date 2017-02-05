@@ -1,5 +1,5 @@
 /** Used as references for various `Number` constants. */
-const MAX_SAFE_INTEGER = 9007199254740991;
+const MAX_SAFE_INTEGER = 9007199254740991
 
 /**
  * Checks if `value` is a valid array-like length.
@@ -13,21 +13,21 @@ const MAX_SAFE_INTEGER = 9007199254740991;
  * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
  * @example
  *
- * isLength(3);
+ * isLength(3)
  * // => true
  *
- * isLength(Number.MIN_VALUE);
+ * isLength(Number.MIN_VALUE)
  * // => false
  *
- * isLength(Infinity);
+ * isLength(Infinity)
  * // => false
  *
- * isLength('3');
+ * isLength('3')
  * // => false
  */
 function isLength(value) {
   return typeof value == 'number' &&
-    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER
 }
 
-export default isLength;
+export default isLength

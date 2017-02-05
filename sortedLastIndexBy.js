@@ -1,4 +1,4 @@
-import baseSortedIndexBy from './.internal/baseSortedIndexBy.js';
+import baseSortedIndexBy from './.internal/baseSortedIndexBy.js'
 
 /**
  * This method is like `sortedLastIndex` except that it accepts `iteratee`
@@ -14,13 +14,13 @@ import baseSortedIndexBy from './.internal/baseSortedIndexBy.js';
  *  into `array`.
  * @example
  *
- * const objects = [{ 'n': 4 }, { 'n': 5 }];
+ * const objects = [{ 'n': 4 }, { 'n': 5 }]
  *
- * sortedLastIndexBy(objects, { 'n': 4 }, ({ n }) => n);
+ * sortedLastIndexBy(objects, { 'n': 4 }, ({ n }) => n)
  * // => 1
  */
 function sortedLastIndexBy(array, value, iteratee) {
-  return baseSortedIndexBy(array, value, iteratee, true);
+  return baseSortedIndexBy(array, value, iteratee, true)
 }
 
-export default sortedLastIndexBy;
+export default sortedLastIndexBy

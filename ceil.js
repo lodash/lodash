@@ -1,4 +1,4 @@
-import createRound from './.internal/createRound.js';
+import createRound from './.internal/createRound.js'
 
 /**
  * Computes `number` rounded up to `precision`.
@@ -10,15 +10,15 @@ import createRound from './.internal/createRound.js';
  * @returns {number} Returns the rounded up number.
  * @example
  *
- * ceil(4.006);
+ * ceil(4.006)
  * // => 5
  *
- * ceil(6.004, 2);
+ * ceil(6.004, 2)
  * // => 6.01
  *
- * ceil(6040, -2);
+ * ceil(6040, -2)
  * // => 6100
  */
-const ceil = createRound('ceil');
+const ceil = createRound('ceil')
 
-export default ceil;
+export default ceil

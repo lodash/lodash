@@ -1,5 +1,5 @@
-import baseDifference from './.internal/baseDifference.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
+import baseDifference from './.internal/baseDifference.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
 
 /**
  * Creates an array excluding all given values using
@@ -16,11 +16,11 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * @see difference, union, unionBy, unionWith, xor, xorBy, xorWith
  * @example
  *
- * without([2, 1, 2, 3], 1, 2);
+ * without([2, 1, 2, 3], 1, 2)
  * // => [3]
  */
 function without(array, ...values) {
-  return isArrayLikeObject(array) ? baseDifference(array, values) : [];
+  return isArrayLikeObject(array) ? baseDifference(array, values) : []
 }
 
-export default without;
+export default without

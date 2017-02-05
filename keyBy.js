@@ -1,5 +1,5 @@
-import baseAssignValue from './.internal/baseAssignValue.js';
-import reduce from './reduce.js';
+import baseAssignValue from './.internal/baseAssignValue.js'
+import reduce from './reduce.js'
 
 /**
  * Creates an object composed of keys generated from the results of running
@@ -18,15 +18,15 @@ import reduce from './reduce.js';
  * const array = [
  *   { 'dir': 'left', 'code': 97 },
  *   { 'dir': 'right', 'code': 100 }
- * ];
+ * ]
  *
- * keyBy(array, ({ code }) => String.fromCharCode(code));
+ * keyBy(array, ({ code }) => String.fromCharCode(code))
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  */
 function keyBy(collection, iteratee) {
   return reduce(collection, (result, value, key) => (
     baseAssignValue(result, key, value)
-  ), {});
+  ), {})
 }
 
-export default keyBy;
+export default keyBy

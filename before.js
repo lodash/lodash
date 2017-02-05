@@ -1,4 +1,4 @@
-import toInteger from './toInteger.js';
+import toInteger from './toInteger.js'
 
 /**
  * Creates a function that invokes `func`, with the `this` binding and arguments
@@ -12,24 +12,24 @@ import toInteger from './toInteger.js';
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * jQuery(element).on('click', before(5, addContactToList));
+ * jQuery(element).on('click', before(5, addContactToList))
  * // => Allows adding up to 4 contacts to the list.
  */
 function before(n, func) {
-  let result;
+  let result
   if (typeof func != 'function') {
-    throw new TypeError('Expected a function');
+    throw new TypeError('Expected a function')
   }
-  n = toInteger(n);
+  n = toInteger(n)
   return function(...args) {
     if (--n > 0) {
-      result = func.apply(this, args);
+      result = func.apply(this, args)
     }
     if (n <= 1) {
-      func = undefined;
+      func = undefined
     }
-    return result;
-  };
+    return result
+  }
 }
 
-export default before;
+export default before

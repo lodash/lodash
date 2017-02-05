@@ -8,34 +8,34 @@
  * @returns {Array} Returns the cast array.
  * @example
  *
- * castArray(1);
+ * castArray(1)
  * // => [1]
  *
- * castArray({ 'a': 1 });
+ * castArray({ 'a': 1 })
  * // => [{ 'a': 1 }]
  *
- * castArray('abc');
+ * castArray('abc')
  * // => ['abc']
  *
- * castArray(null);
+ * castArray(null)
  * // => [null]
  *
- * castArray(undefined);
+ * castArray(undefined)
  * // => [undefined]
  *
- * castArray();
+ * castArray()
  * // => []
  *
- * const array = [1, 2, 3];
- * console.log(castArray(array) === array);
+ * const array = [1, 2, 3]
+ * console.log(castArray(array) === array)
  * // => true
  */
 function castArray(...args) {
   if (!args.length) {
-    return [];
+    return []
   }
-  const value = args[0];
-  return Array.isArray(value) ? value : [value];
+  const value = args[0]
+  return Array.isArray(value) ? value : [value]
 }
 
-export default castArray;
+export default castArray

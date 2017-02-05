@@ -1,7 +1,7 @@
-import arraySampleSize from './.internal/arraySampleSize.js';
-import baseSampleSize from './.internal/baseSampleSize.js';
-import isIterateeCall from './.internal/isIterateeCall.js';
-import toInteger from './toInteger.js';
+import arraySampleSize from './.internal/arraySampleSize.js'
+import baseSampleSize from './.internal/baseSampleSize.js'
+import isIterateeCall from './.internal/isIterateeCall.js'
+import toInteger from './toInteger.js'
 
 /**
  * Gets `n` random elements at unique keys from `collection` up to the
@@ -15,20 +15,20 @@ import toInteger from './toInteger.js';
  * @returns {Array} Returns the random elements.
  * @example
  *
- * sampleSize([1, 2, 3], 2);
+ * sampleSize([1, 2, 3], 2)
  * // => [3, 1]
  *
- * sampleSize([1, 2, 3], 4);
+ * sampleSize([1, 2, 3], 4)
  * // => [2, 3, 1]
  */
 function sampleSize(collection, n, guard) {
   if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
-    n = 1;
+    n = 1
   } else {
-    n = toInteger(n);
+    n = toInteger(n)
   }
-  const func = Array.isArray(collection) ? arraySampleSize : baseSampleSize;
-  return func(collection, n);
+  const func = Array.isArray(collection) ? arraySampleSize : baseSampleSize
+  return func(collection, n)
 }
 
-export default sampleSize;
+export default sampleSize

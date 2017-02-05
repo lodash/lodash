@@ -1,5 +1,5 @@
-import baseSlice from './.internal/baseSlice.js';
-import toInteger from './toInteger.js';
+import baseSlice from './.internal/baseSlice.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements taken from the end.
@@ -12,26 +12,26 @@ import toInteger from './toInteger.js';
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * takeRight([1, 2, 3]);
+ * takeRight([1, 2, 3])
  * // => [3]
  *
- * takeRight([1, 2, 3], 2);
+ * takeRight([1, 2, 3], 2)
  * // => [2, 3]
  *
- * takeRight([1, 2, 3], 5);
+ * takeRight([1, 2, 3], 5)
  * // => [1, 2, 3]
  *
- * takeRight([1, 2, 3], 0);
+ * takeRight([1, 2, 3], 0)
  * // => []
  */
 function takeRight(array, n, guard) {
-  const length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length
   if (!length) {
-    return [];
+    return []
   }
-  n = (guard || n === undefined) ? 1 : toInteger(n);
-  n = length - n;
-  return baseSlice(array, n < 0 ? 0 : n, length);
+  n = (guard || n === undefined) ? 1 : toInteger(n)
+  n = length - n
+  return baseSlice(array, n < 0 ? 0 : n, length)
 }
 
-export default takeRight;
+export default takeRight

@@ -1,4 +1,4 @@
-import createMathOperation from './.internal/createMathOperation.js';
+import createMathOperation from './.internal/createMathOperation.js'
 
 /**
  * Divide two numbers.
@@ -10,9 +10,9 @@ import createMathOperation from './.internal/createMathOperation.js';
  * @returns {number} Returns the quotient.
  * @example
  *
- * divide(6, 4);
+ * divide(6, 4)
  * // => 1.5
  */
-const divide = createMathOperation((dividend, divisor) => dividend / divisor, 1);
+const divide = createMathOperation((dividend, divisor) => dividend / divisor, 1)
 
-export default divide;
+export default divide

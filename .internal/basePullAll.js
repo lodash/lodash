@@ -1,10 +1,10 @@
-import arrayMap from './arrayMap.js';
-import baseIndexOf from './baseIndexOf.js';
-import baseIndexOfWith from './baseIndexOfWith.js';
-import copyArray from './copyArray.js';
+import arrayMap from './arrayMap.js'
+import baseIndexOf from './baseIndexOf.js'
+import baseIndexOfWith from './baseIndexOfWith.js'
+import copyArray from './copyArray.js'
 
 /** Built-in value references. */
-const splice = Array.prototype.splice;
+const splice = Array.prototype.splice
 
 /**
  * The base implementation of `pullAllBy`.
@@ -17,31 +17,31 @@ const splice = Array.prototype.splice;
  * @returns {Array} Returns `array`.
  */
 function basePullAll(array, values, iteratee, comparator) {
-  const indexOf = comparator ? baseIndexOfWith : baseIndexOf;
-  const length = values.length;
+  const indexOf = comparator ? baseIndexOfWith : baseIndexOf
+  const length = values.length
 
-  let index = -1;
-  let seen = array;
+  let index = -1
+  let seen = array
 
   if (array === values) {
-    values = copyArray(values);
+    values = copyArray(values)
   }
   if (iteratee) {
-    seen = arrayMap(array, value => iteratee(value));
+    seen = arrayMap(array, value => iteratee(value))
   }
   while (++index < length) {
-    let fromIndex = 0;
-    const value = values[index];
-    const computed = iteratee ? iteratee(value) : value;
+    let fromIndex = 0
+    const value = values[index]
+    const computed = iteratee ? iteratee(value) : value
 
     while ((fromIndex = indexOf(seen, computed, fromIndex, comparator)) > -1) {
       if (seen !== array) {
-        splice.call(seen, fromIndex, 1);
+        splice.call(seen, fromIndex, 1)
       }
-      splice.call(array, fromIndex, 1);
+      splice.call(array, fromIndex, 1)
     }
   }
-  return array;
+  return array
 }
 
-export default basePullAll;
+export default basePullAll

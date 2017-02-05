@@ -1,4 +1,4 @@
-import isObject from '../isObject.js';
+import isObject from '../isObject.js'
 
 /**
  * The base implementation of `create` without support for assigning
@@ -9,7 +9,7 @@ import isObject from '../isObject.js';
  * @returns {Object} Returns the new object.
  */
 function baseCreate(proto) {
-  return isObject(proto) ? Object.create(proto) : {};
+  return isObject(proto) ? Object.create(proto) : {}
 }
 
-export default baseCreate;
+export default baseCreate

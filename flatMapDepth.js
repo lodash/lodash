@@ -1,6 +1,6 @@
-import baseFlatten from './.internal/baseFlatten.js';
-import map from './map.js';
-import toInteger from './toInteger.js';
+import baseFlatten from './.internal/baseFlatten.js'
+import map from './map.js'
+import toInteger from './toInteger.js'
 
 /**
  * This method is like `flatMap` except that it recursively flattens the
@@ -16,15 +16,15 @@ import toInteger from './toInteger.js';
  * @example
  *
  * function duplicate(n) {
- *   return [[[n, n]]];
+ *   return [[[n, n]]]
  * }
  *
- * flatMapDepth([1, 2], duplicate, 2);
+ * flatMapDepth([1, 2], duplicate, 2)
  * // => [[1, 1], [2, 2]]
  */
 function flatMapDepth(collection, iteratee, depth) {
-  depth = depth === undefined ? 1 : toInteger(depth);
-  return baseFlatten(map(collection, iteratee), depth);
+  depth = depth === undefined ? 1 : toInteger(depth)
+  return baseFlatten(map(collection, iteratee), depth)
 }
 
-export default flatMapDepth;
+export default flatMapDepth

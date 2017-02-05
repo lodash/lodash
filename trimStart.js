@@ -1,11 +1,11 @@
-import baseToString from './.internal/baseToString.js';
-import castSlice from './.internal/castSlice.js';
-import charsStartIndex from './.internal/charsStartIndex.js';
-import stringToArray from './.internal/stringToArray.js';
-import toString from './toString.js';
+import baseToString from './.internal/baseToString.js'
+import castSlice from './.internal/castSlice.js'
+import charsStartIndex from './.internal/charsStartIndex.js'
+import stringToArray from './.internal/stringToArray.js'
+import toString from './toString.js'
 
-const stringProto = String.prototype;
-const nativeTrimStart = stringProto.trimLeft || stringProto.trimStart;
+const stringProto = String.prototype
+const nativeTrimStart = stringProto.trimLeft || stringProto.trimStart
 
 /**
  * Removes leading whitespace or specified characters from `string`.
@@ -19,23 +19,23 @@ const nativeTrimStart = stringProto.trimLeft || stringProto.trimStart;
  * @see trim, trimEnd
  * @example
  *
- * trimStart('  abc  ');
+ * trimStart('  abc  ')
  * // => 'abc  '
  *
- * trimStart('-_-abc-_-', '_-');
+ * trimStart('-_-abc-_-', '_-')
  * // => 'abc-_-'
  */
 function trimStart(string, chars, guard) {
-  string = toString(string);
+  string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrimStart.call(string);
+    return nativeTrimStart.call(string)
   }
   if (!string || !(chars = baseToString(chars))) {
-    return string;
+    return string
   }
-  const strSymbols = stringToArray(string);
-  const start = charsStartIndex(strSymbols, stringToArray(chars));
-  return castSlice(strSymbols, start).join('');
+  const strSymbols = stringToArray(string)
+  const start = charsStartIndex(strSymbols, stringToArray(chars))
+  return castSlice(strSymbols, start).join('')
 }
 
-export default trimStart;
+export default trimStart

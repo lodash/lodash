@@ -1,5 +1,5 @@
-import baseFor from './baseFor.js';
-import keys from '../keys.js';
+import baseFor from './baseFor.js'
+import keys from '../keys.js'
 
 /**
  * The base implementation of `forOwn`.
@@ -10,7 +10,7 @@ import keys from '../keys.js';
  * @returns {Object} Returns `object`.
  */
 function baseForOwn(object, iteratee) {
-  return object && baseFor(object, iteratee, keys);
+  return object && baseFor(object, iteratee, keys)
 }
 
-export default baseForOwn;
+export default baseForOwn

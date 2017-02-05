@@ -1,1 +1,1 @@
-export { default } from './forEach.js';
+export { default } from './forEach.js'

@@ -1,5 +1,5 @@
-import baseSum from './.internal/baseSum.js';
-import identity from './identity.js';
+import baseSum from './.internal/baseSum.js'
+import identity from './identity.js'
 
 /**
  * Computes the sum of the values in `array`.
@@ -10,13 +10,13 @@ import identity from './identity.js';
  * @returns {number} Returns the sum.
  * @example
  *
- * sum([4, 2, 8, 6]);
+ * sum([4, 2, 8, 6])
  * // => 20
  */
 function sum(array) {
   return (array && array.length)
     ? baseSum(array, identity)
-    : 0;
+    : 0
 }
 
-export default sum;
+export default sum

@@ -1,11 +1,11 @@
-import arrayFilter from './arrayFilter.js';
-import stubArray from '../stubArray.js';
+import arrayFilter from './arrayFilter.js'
+import stubArray from '../stubArray.js'
 
 /** Built-in value references. */
-const propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
+const propertyIsEnumerable = Object.prototype.propertyIsEnumerable
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeGetSymbols = Object.getOwnPropertySymbols;
+const nativeGetSymbols = Object.getOwnPropertySymbols
 
 /**
  * Creates an array of the own enumerable symbols of `object`.
@@ -16,10 +16,10 @@ const nativeGetSymbols = Object.getOwnPropertySymbols;
  */
 const getSymbols = !nativeGetSymbols ? stubArray : object => {
   if (object == null) {
-    return [];
+    return []
   }
-  object = Object(object);
-  return arrayFilter(nativeGetSymbols(object), symbol => propertyIsEnumerable.call(object, symbol));
-};
+  object = Object(object)
+  return arrayFilter(nativeGetSymbols(object), symbol => propertyIsEnumerable.call(object, symbol))
+}
 
-export default getSymbols;
+export default getSymbols

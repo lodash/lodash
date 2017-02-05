@@ -1,5 +1,5 @@
-import baseForRight from './baseForRight.js';
-import keys from '../keys.js';
+import baseForRight from './baseForRight.js'
+import keys from '../keys.js'
 
 /**
  * The base implementation of `forOwnRight`.
@@ -10,7 +10,7 @@ import keys from '../keys.js';
  * @returns {Object} Returns `object`.
  */
 function baseForOwnRight(object, iteratee) {
-  return object && baseForRight(object, iteratee, keys);
+  return object && baseForRight(object, iteratee, keys)
 }
 
-export default baseForOwnRight;
+export default baseForOwnRight

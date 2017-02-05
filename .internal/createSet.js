@@ -1,7 +1,7 @@
-import setToArray from './setToArray.js';
+import setToArray from './setToArray.js'
 
 /** Used as references for various `Number` constants. */
-const INFINITY = 1 / 0;
+const INFINITY = 1 / 0
 
 /**
  * Creates a set object of `values`.
@@ -12,6 +12,6 @@ const INFINITY = 1 / 0;
  */
 const createSet = (Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY)
   ? values => new Set(values)
-  : () => {};
+  : () => {}
 
-export default createSet;
+export default createSet

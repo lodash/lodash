@@ -1,7 +1,7 @@
-import createWrap from './.internal/createWrap.js';
+import createWrap from './.internal/createWrap.js'
 
 /** Used to compose bitmasks for function metadata. */
-const WRAP_REARG_FLAG = 256;
+const WRAP_REARG_FLAG = 256
 
 /**
  * Creates a function that invokes `func` with arguments arranged according
@@ -16,13 +16,13 @@ const WRAP_REARG_FLAG = 256;
  * @returns {Function} Returns the new function.
  * @example
  *
- * const rearged = rearg((a, b, c) => [a, b, c], [2, 0, 1]);
+ * const rearged = rearg((a, b, c) => [a, b, c], [2, 0, 1])
  *
- * rearged('b', 'c', 'a');
+ * rearged('b', 'c', 'a')
  * // => ['a', 'b', 'c']
  */
 function rearg(func, ...indexes) {
-  return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes);
+  return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes)
 }
 
-export default rearg;
+export default rearg

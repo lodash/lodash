@@ -1,4 +1,4 @@
-import baseEach from './baseEach.js';
+import baseEach from './baseEach.js'
 
 /**
  * The base implementation of `every`.
@@ -10,12 +10,12 @@ import baseEach from './baseEach.js';
  *  else `false`
  */
 function baseEvery(collection, predicate) {
-  let result = true;
+  let result = true
   baseEach(collection, (value, index, collection) => {
-    result = !!predicate(value, index, collection);
-    return result;
-  });
-  return result;
+    result = !!predicate(value, index, collection)
+    return result
+  })
+  return result
 }
 
-export default baseEvery;
+export default baseEvery

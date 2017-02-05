@@ -1,5 +1,5 @@
-import baseSetToString from './baseSetToString.js';
-import shortOut from './shortOut.js';
+import baseSetToString from './baseSetToString.js'
+import shortOut from './shortOut.js'
 
 /**
  * Sets the `toString` method of `func` to return `string`.
@@ -9,6 +9,6 @@ import shortOut from './shortOut.js';
  * @param {Function} string The `toString` result.
  * @returns {Function} Returns `func`.
  */
-const setToString = shortOut(baseSetToString);
+const setToString = shortOut(baseSetToString)
 
-export default setToString;
+export default setToString

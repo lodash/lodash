@@ -1,5 +1,5 @@
-import baseFunctions from './.internal/baseFunctions.js';
-import keys from './keys.js';
+import baseFunctions from './.internal/baseFunctions.js'
+import keys from './keys.js'
 
 /**
  * Creates an array of function property names from own enumerable properties
@@ -13,17 +13,17 @@ import keys from './keys.js';
  * @example
  *
  * function Foo() {
- *   this.a = constant('a');
- *   this.b = constant('b');
+ *   this.a = constant('a')
+ *   this.b = constant('b')
  * }
  *
- * Foo.prototype.c = constant('c');
+ * Foo.prototype.c = constant('c')
  *
- * functions(new Foo);
+ * functions(new Foo)
  * // => ['a', 'b']
  */
 function functions(object) {
-  return object == null ? [] : baseFunctions(object, keys(object));
+  return object == null ? [] : baseFunctions(object, keys(object))
 }
 
-export default functions;
+export default functions

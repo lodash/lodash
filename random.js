@@ -1,13 +1,13 @@
-import baseRandom from './.internal/baseRandom.js';
-import isIterateeCall from './.internal/isIterateeCall.js';
-import toFinite from './toFinite.js';
+import baseRandom from './.internal/baseRandom.js'
+import isIterateeCall from './.internal/isIterateeCall.js'
+import toFinite from './toFinite.js'
 
 /** Built-in method references without a dependency on `root`. */
-const freeParseFloat = parseFloat;
+const freeParseFloat = parseFloat
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min;
-const nativeRandom = Math.random;
+const nativeMin = Math.min
+const nativeRandom = Math.random
 
 /**
  * Produces a random number between the inclusive `lower` and `upper` bounds.
@@ -27,55 +27,55 @@ const nativeRandom = Math.random;
  * @see uniqueId
  * @example
  *
- * random(0, 5);
+ * random(0, 5)
  * // => an integer between 0 and 5
  *
- * random(5);
+ * random(5)
  * // => also an integer between 0 and 5
  *
- * random(5, true);
+ * random(5, true)
  * // => a floating-point number between 0 and 5
  *
- * random(1.2, 5.2);
+ * random(1.2, 5.2)
  * // => a floating-point number between 1.2 and 5.2
  */
 function random(lower, upper, floating) {
   if (floating && typeof floating != 'boolean' && isIterateeCall(lower, upper, floating)) {
-    upper = floating = undefined;
+    upper = floating = undefined
   }
   if (floating === undefined) {
     if (typeof upper == 'boolean') {
-      floating = upper;
-      upper = undefined;
+      floating = upper
+      upper = undefined
     }
     else if (typeof lower == 'boolean') {
-      floating = lower;
-      lower = undefined;
+      floating = lower
+      lower = undefined
     }
   }
   if (lower === undefined && upper === undefined) {
-    lower = 0;
-    upper = 1;
+    lower = 0
+    upper = 1
   }
   else {
-    lower = toFinite(lower);
+    lower = toFinite(lower)
     if (upper === undefined) {
-      upper = lower;
-      lower = 0;
+      upper = lower
+      lower = 0
     } else {
-      upper = toFinite(upper);
+      upper = toFinite(upper)
     }
   }
   if (lower > upper) {
-    const temp = lower;
-    lower = upper;
-    upper = temp;
+    const temp = lower
+    lower = upper
+    upper = temp
   }
   if (floating || lower % 1 || upper % 1) {
-    const rand = nativeRandom();
-    return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper);
+    const rand = nativeRandom()
+    return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper)
   }
-  return baseRandom(lower, upper);
+  return baseRandom(lower, upper)
 }
 
-export default random;
+export default random

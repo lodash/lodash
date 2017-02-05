@@ -1,4 +1,4 @@
-import baseRandom from './baseRandom.js';
+import baseRandom from './baseRandom.js'
 
 /**
  * A specialized version of `shuffle` which mutates and sets the size of `array`.
@@ -9,20 +9,20 @@ import baseRandom from './baseRandom.js';
  * @returns {Array} Returns `array`.
  */
 function shuffleSelf(array, size) {
-  let index = -1;
-  const length = array.length;
-  const lastIndex = length - 1;
+  let index = -1
+  const length = array.length
+  const lastIndex = length - 1
 
-  size = size === undefined ? length : size;
+  size = size === undefined ? length : size
   while (++index < size) {
-    const rand = baseRandom(index, lastIndex);
-    const value = array[rand];
+    const rand = baseRandom(index, lastIndex)
+    const value = array[rand]
 
-    array[rand] = array[index];
-    array[index] = value;
+    array[rand] = array[index]
+    array[index] = value
   }
-  array.length = size;
-  return array;
+  array.length = size
+  return array
 }
 
-export default shuffleSelf;
+export default shuffleSelf

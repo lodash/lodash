@@ -1,4 +1,4 @@
-import createCaseFirst from './.internal/createCaseFirst.js';
+import createCaseFirst from './.internal/createCaseFirst.js'
 
 /**
  * Converts the first character of `string` to lower case.
@@ -9,12 +9,12 @@ import createCaseFirst from './.internal/createCaseFirst.js';
  * @returns {string} Returns the converted string.
  * @example
  *
- * lowerFirst('Fred');
+ * lowerFirst('Fred')
  * // => 'fred'
  *
- * lowerFirst('FRED');
+ * lowerFirst('FRED')
  * // => 'fRED'
  */
-const lowerFirst = createCaseFirst('toLowerCase');
+const lowerFirst = createCaseFirst('toLowerCase')
 
-export default lowerFirst;
+export default lowerFirst

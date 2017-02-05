@@ -1,11 +1,11 @@
-import createWrap from './.internal/createWrap.js';
-import getHolder from './.internal/getHolder.js';
-import replaceHolders from './.internal/replaceHolders.js';
+import createWrap from './.internal/createWrap.js'
+import getHolder from './.internal/getHolder.js'
+import replaceHolders from './.internal/replaceHolders.js'
 
 /** Used to compose bitmasks for function metadata. */
-const WRAP_BIND_FLAG = 1;
-const WRAP_BIND_KEY_FLAG = 2;
-const WRAP_PARTIAL_FLAG = 32;
+const WRAP_BIND_FLAG = 1
+const WRAP_BIND_KEY_FLAG = 2
+const WRAP_PARTIAL_FLAG = 32
 
 /**
  * Creates a function that invokes the method at `object[key]` with `partials`
@@ -30,37 +30,37 @@ const WRAP_PARTIAL_FLAG = 32;
  * const object = {
  *   'user': 'fred',
  *   'greet': function(greeting, punctuation) {
- *     return greeting + ' ' + this.user + punctuation;
+ *     return greeting + ' ' + this.user + punctuation
  *   }
- * };
+ * }
  *
- * const bound = bindKey(object, 'greet', 'hi');
- * bound('!');
+ * const bound = bindKey(object, 'greet', 'hi')
+ * bound('!')
  * // => 'hi fred!'
  *
  * object.greet = function(greeting, punctuation) {
- *   return greeting + 'ya ' + this.user + punctuation;
- * };
+ *   return greeting + 'ya ' + this.user + punctuation
+ * }
  *
- * bound('!');
+ * bound('!')
  * // => 'hiya fred!'
  *
  * // Bound with placeholders.
- * const bound = bindKey(object, 'greet', _, '!');
- * bound('hi');
+ * const bound = bindKey(object, 'greet', _, '!')
+ * bound('hi')
  * // => 'hiya fred!'
  */
 function bindKey(object, key, ...partials) {
-  let holders;
-  let bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
+  let holders
+  let bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG
   if (partials.length) {
-    holders = replaceHolders(partials, getHolder(bindKey));
-    bitmask |= WRAP_PARTIAL_FLAG;
+    holders = replaceHolders(partials, getHolder(bindKey))
+    bitmask |= WRAP_PARTIAL_FLAG
   }
-  return createWrap(key, bitmask, object, partials, holders);
+  return createWrap(key, bitmask, object, partials, holders)
 }
 
 // Assign default placeholders.
-bindKey.placeholder = {};
+bindKey.placeholder = {}
 
-export default bindKey;
+export default bindKey

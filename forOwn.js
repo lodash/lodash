@@ -1,4 +1,4 @@
-import baseForOwn from './.internal/baseForOwn.js';
+import baseForOwn from './.internal/baseForOwn.js'
 
 /**
  * Iterates over own enumerable string keyed properties of an object and
@@ -15,19 +15,19 @@ import baseForOwn from './.internal/baseForOwn.js';
  * @example
  *
  * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
+ *   this.a = 1
+ *   this.b = 2
  * }
  *
- * Foo.prototype.c = 3;
+ * Foo.prototype.c = 3
  *
  * forOwn(new Foo, function(value, key) {
- *   console.log(key);
- * });
+ *   console.log(key)
+ * })
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, iteratee);
+  return object && baseForOwn(object, iteratee)
 }
 
-export default forOwn;
+export default forOwn

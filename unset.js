@@ -1,4 +1,4 @@
-import baseUnset from './.internal/baseUnset.js';
+import baseUnset from './.internal/baseUnset.js'
 
 /**
  * Removes the property at `path` of `object`.
@@ -13,21 +13,21 @@ import baseUnset from './.internal/baseUnset.js';
  * @see get, has, set
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 7 } }] };
- * unset(object, 'a[0].b.c');
+ * const object = { 'a': [{ 'b': { 'c': 7 } }] }
+ * unset(object, 'a[0].b.c')
  * // => true
  *
- * console.log(object);
- * // => { 'a': [{ 'b': {} }] };
+ * console.log(object)
+ * // => { 'a': [{ 'b': {} }] }
  *
- * unset(object, ['a', '0', 'b', 'c']);
+ * unset(object, ['a', '0', 'b', 'c'])
  * // => true
  *
- * console.log(object);
- * // => { 'a': [{ 'b': {} }] };
+ * console.log(object)
+ * // => { 'a': [{ 'b': {} }] }
  */
 function unset(object, path) {
-  return object == null ? true : baseUnset(object, path);
+  return object == null ? true : baseUnset(object, path)
 }
 
-export default unset;
+export default unset

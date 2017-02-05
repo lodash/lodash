@@ -1,4 +1,4 @@
-import createBaseFor from './createBaseFor.js';
+import createBaseFor from './createBaseFor.js'
 
 /**
  * The base implementation of `baseForOwn` which iterates over `object`
@@ -11,6 +11,6 @@ import createBaseFor from './createBaseFor.js';
  * @param {Function} keysFunc The function to get the keys of `object`.
  * @returns {Object} Returns `object`.
  */
-const baseFor = createBaseFor();
+const baseFor = createBaseFor()
 
-export default baseFor;
+export default baseFor

@@ -1,20 +1,20 @@
-import root from './.internal/root.js';
-import stubFalse from './stubFalse.js';
+import root from './.internal/root.js'
+import stubFalse from './stubFalse.js'
 
 /** Detect free variable `exports`. */
-const freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
+const freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports
 
 /** Detect free variable `module`. */
-const freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
+const freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module
 
 /** Detect the popular CommonJS extension `module.exports`. */
-const moduleExports = freeModule && freeModule.exports === freeExports;
+const moduleExports = freeModule && freeModule.exports === freeExports
 
 /** Built-in value references. */
-const Buffer = moduleExports ? root.Buffer : undefined;
+const Buffer = moduleExports ? root.Buffer : undefined
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
+const nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined
 
 /**
  * Checks if `value` is a buffer.
@@ -25,12 +25,12 @@ const nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
  * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
  * @example
  *
- * isBuffer(new Buffer(2));
+ * isBuffer(new Buffer(2))
  * // => true
  *
- * isBuffer(new Uint8Array(2));
+ * isBuffer(new Uint8Array(2))
  * // => false
  */
-const isBuffer = nativeIsBuffer || stubFalse;
+const isBuffer = nativeIsBuffer || stubFalse
 
-export default isBuffer;
+export default isBuffer

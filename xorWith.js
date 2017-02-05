@@ -1,7 +1,7 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import baseXor from './.internal/baseXor.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
-import last from './last.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import baseXor from './.internal/baseXor.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
+import last from './last.js'
 
 /**
  * This method is like `xor` except that it accepts `comparator` which is
@@ -17,16 +17,16 @@ import last from './last.js';
  * @see difference, union, unionBy, unionWith, without, xor, xorBy
  * @example
  *
- * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
- * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
+ * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }]
  *
- * xorWith(objects, others, isEqual);
+ * xorWith(objects, others, isEqual)
  * // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
  */
 function xorWith(...arrays) {
-  let comparator = last(arrays);
-  comparator = typeof comparator == 'function' ? comparator : undefined;
-  return baseXor(arrayFilter(arrays, isArrayLikeObject), undefined, comparator);
+  let comparator = last(arrays)
+  comparator = typeof comparator == 'function' ? comparator : undefined
+  return baseXor(arrayFilter(arrays, isArrayLikeObject), undefined, comparator)
 }
 
-export default xorWith;
+export default xorWith

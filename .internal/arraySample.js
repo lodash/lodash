@@ -1,4 +1,4 @@
-import baseRandom from './baseRandom.js';
+import baseRandom from './baseRandom.js'
 
 /**
  * A specialized version of `sample` for arrays.
@@ -8,8 +8,8 @@ import baseRandom from './baseRandom.js';
  * @returns {*} Returns the random element.
  */
 function arraySample(array) {
-  const length = array.length;
-  return length ? array[baseRandom(0, length - 1)] : undefined;
+  const length = array.length
+  return length ? array[baseRandom(0, length - 1)] : undefined
 }
 
-export default arraySample;
+export default arraySample

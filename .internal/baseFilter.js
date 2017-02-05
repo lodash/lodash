@@ -1,4 +1,4 @@
-import baseEach from './baseEach.js';
+import baseEach from './baseEach.js'
 
 /**
  * The base implementation of `filter`.
@@ -9,13 +9,13 @@ import baseEach from './baseEach.js';
  * @returns {Array} Returns the new filtered array.
  */
 function baseFilter(collection, predicate) {
-  const result = [];
+  const result = []
   baseEach(collection, (value, index, collection) => {
     if (predicate(value, index, collection)) {
-      result.push(value);
+      result.push(value)
     }
-  });
-  return result;
+  })
+  return result
 }
 
-export default baseFilter;
+export default baseFilter

@@ -1,4 +1,4 @@
-import baseSlice from './baseSlice.js';
+import baseSlice from './baseSlice.js'
 
 /**
  * Casts `array` to a slice if it's needed.
@@ -10,9 +10,9 @@ import baseSlice from './baseSlice.js';
  * @returns {Array} Returns the cast slice.
  */
 function castSlice(array, start, end) {
-  const length = array.length;
-  end = end === undefined ? length : end;
-  return (!start && end >= length) ? array : baseSlice(array, start, end);
+  const length = array.length
+  end = end === undefined ? length : end
+  return (!start && end >= length) ? array : baseSlice(array, start, end)
 }
 
-export default castSlice;
+export default castSlice

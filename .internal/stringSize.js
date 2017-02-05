@@ -1,6 +1,6 @@
-import asciiSize from './asciiSize.js';
-import hasUnicode from './hasUnicode.js';
-import unicodeSize from './unicodeSize.js';
+import asciiSize from './asciiSize.js'
+import hasUnicode from './hasUnicode.js'
+import unicodeSize from './unicodeSize.js'
 
 /**
  * Gets the number of symbols in `string`.
@@ -10,7 +10,7 @@ import unicodeSize from './unicodeSize.js';
  * @returns {number} Returns the string size.
  */
 function stringSize(string) {
-  return hasUnicode(string) ? unicodeSize(string) : asciiSize(string);
+  return hasUnicode(string) ? unicodeSize(string) : asciiSize(string)
 }
 
-export default stringSize;
+export default stringSize

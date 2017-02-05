@@ -9,10 +9,10 @@
  */
 function baseClamp(number, lower, upper) {
   if (number === number) {
-    number = number <= upper ? number : upper;
-    number = number >= lower ? number : lower;
+    number = number <= upper ? number : upper
+    number = number >= lower ? number : lower
   }
-  return number;
+  return number
 }
 
-export default baseClamp;
+export default baseClamp

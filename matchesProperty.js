@@ -1,8 +1,8 @@
-import baseClone from './.internal/baseClone.js';
-import baseMatchesProperty from './.internal/baseMatchesProperty.js';
+import baseClone from './.internal/baseClone.js'
+import baseMatchesProperty from './.internal/baseMatchesProperty.js'
 
 /** Used to compose bitmasks for cloning. */
-const CLONE_DEEP_FLAG = 1;
+const CLONE_DEEP_FLAG = 1
 
 /**
  * Creates a function that performs a partial deep comparison between the
@@ -23,13 +23,13 @@ const CLONE_DEEP_FLAG = 1;
  * const objects = [
  *   { 'a': 1, 'b': 2, 'c': 3 },
  *   { 'a': 4, 'b': 5, 'c': 6 }
- * ];
+ * ]
  *
- * find(objects, matchesProperty('a', 4));
+ * find(objects, matchesProperty('a', 4))
  * // => { 'a': 4, 'b': 5, 'c': 6 }
  */
 function matchesProperty(path, srcValue) {
-  return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
+  return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG))
 }
 
-export default matchesProperty;
+export default matchesProperty

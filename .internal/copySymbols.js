@@ -1,5 +1,5 @@
-import copyObject from './copyObject.js';
-import getSymbols from './getSymbols.js';
+import copyObject from './copyObject.js'
+import getSymbols from './getSymbols.js'
 
 /**
  * Copies own symbols of `source` to `object`.
@@ -10,7 +10,7 @@ import getSymbols from './getSymbols.js';
  * @returns {Object} Returns `object`.
  */
 function copySymbols(source, object) {
-  return copyObject(source, getSymbols(source), object);
+  return copyObject(source, getSymbols(source), object)
 }
 
-export default copySymbols;
+export default copySymbols

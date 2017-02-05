@@ -1,5 +1,5 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseMap from './.internal/baseMap.js';
+import arrayMap from './.internal/arrayMap.js'
+import baseMap from './.internal/baseMap.js'
 
 /**
  * Creates an array of values by running each element in `collection` thru
@@ -23,18 +23,18 @@ import baseMap from './.internal/baseMap.js';
  * @example
  *
  * function square(n) {
- *   return n * n;
+ *   return n * n
  * }
  *
- * map([4, 8], square);
+ * map([4, 8], square)
  * // => [16, 64]
  *
- * map({ 'a': 4, 'b': 8 }, square);
+ * map({ 'a': 4, 'b': 8 }, square)
  * // => [16, 64] (iteration order is not guaranteed)
  */
 function map(collection, iteratee) {
-  const func = Array.isArray(collection) ? arrayMap : baseMap;
-  return func(collection, iteratee);
+  const func = Array.isArray(collection) ? arrayMap : baseMap
+  return func(collection, iteratee)
 }
 
-export default map;
+export default map

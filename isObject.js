@@ -9,21 +9,21 @@
  * @returns {boolean} Returns `true` if `value` is an object, else `false`.
  * @example
  *
- * isObject({});
+ * isObject({})
  * // => true
  *
- * isObject([1, 2, 3]);
+ * isObject([1, 2, 3])
  * // => true
  *
- * isObject(Function);
+ * isObject(Function)
  * // => true
  *
- * isObject(null);
+ * isObject(null)
  * // => false
  */
 function isObject(value) {
-  const type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
+  const type = typeof value
+  return value != null && (type == 'object' || type == 'function')
 }
 
-export default isObject;
+export default isObject

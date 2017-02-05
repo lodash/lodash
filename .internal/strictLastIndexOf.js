@@ -9,13 +9,13 @@
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function strictLastIndexOf(array, value, fromIndex) {
-  let index = fromIndex + 1;
+  let index = fromIndex + 1
   while (index--) {
     if (array[index] === value) {
-      return index;
+      return index
     }
   }
-  return index;
+  return index
 }
 
-export default strictLastIndexOf;
+export default strictLastIndexOf

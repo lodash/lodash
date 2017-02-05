@@ -14,10 +14,10 @@ function baseAssignValue(object, key, value) {
       'enumerable': true,
       'value': value,
       'writable': true
-    });
+    })
   } else {
-    object[key] = value;
+    object[key] = value
   }
 }
 
-export default baseAssignValue;
+export default baseAssignValue

@@ -8,15 +8,15 @@
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
 function arrayIncludesWith(array, value, comparator) {
-  let index = -1;
-  const length = array == null ? 0 : array.length;
+  let index = -1
+  const length = array == null ? 0 : array.length
 
   while (++index < length) {
     if (comparator(value, array[index])) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
-export default arrayIncludesWith;
+export default arrayIncludesWith

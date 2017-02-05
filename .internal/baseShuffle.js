@@ -1,5 +1,5 @@
-import shuffleSelf from './shuffleSelf.js';
-import values from '../values.js';
+import shuffleSelf from './shuffleSelf.js'
+import values from '../values.js'
 
 /**
  * The base implementation of `shuffle`.
@@ -9,7 +9,7 @@ import values from '../values.js';
  * @returns {Array} Returns the new shuffled array.
  */
 function baseShuffle(collection) {
-  return shuffleSelf(values(collection));
+  return shuffleSelf(values(collection))
 }
 
-export default baseShuffle;
+export default baseShuffle

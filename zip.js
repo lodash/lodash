@@ -1,4 +1,4 @@
-import unzip from './unzip.js';
+import unzip from './unzip.js'
 
 /**
  * Creates an array of grouped elements, the first of which contains the
@@ -12,11 +12,11 @@ import unzip from './unzip.js';
  * @see unzip, unzipWith, zipObject, zipObjectDeep, zipWith
  * @example
  *
- * zip(['a', 'b'], [1, 2], [true, false]);
+ * zip(['a', 'b'], [1, 2], [true, false])
  * // => [['a', 1, true], ['b', 2, false]]
  */
 function zip(...arrays) {
-  return unzip(arrays);
+  return unzip(arrays)
 }
 
-export default zip;
+export default zip

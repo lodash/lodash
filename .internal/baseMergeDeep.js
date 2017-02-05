@@ -1,16 +1,16 @@
-import assignMergeValue from './assignMergeValue.js';
-import cloneBuffer from './cloneBuffer.js';
-import cloneTypedArray from './cloneTypedArray.js';
-import copyArray from './copyArray.js';
-import initCloneObject from './initCloneObject.js';
-import isArguments from '../isArguments.js';
-import isArrayLikeObject from '../isArrayLikeObject.js';
-import isBuffer from '../isBuffer.js';
-import isFunction from '../isFunction.js';
-import isObject from '../isObject.js';
-import isPlainObject from '../isPlainObject.js';
-import isTypedArray from '../isTypedArray.js';
-import toPlainObject from '../toPlainObject.js';
+import assignMergeValue from './assignMergeValue.js'
+import cloneBuffer from './cloneBuffer.js'
+import cloneTypedArray from './cloneTypedArray.js'
+import copyArray from './copyArray.js'
+import initCloneObject from './initCloneObject.js'
+import isArguments from '../isArguments.js'
+import isArrayLikeObject from '../isArrayLikeObject.js'
+import isBuffer from '../isBuffer.js'
+import isFunction from '../isFunction.js'
+import isObject from '../isObject.js'
+import isPlainObject from '../isPlainObject.js'
+import isTypedArray from '../isTypedArray.js'
+import toPlainObject from '../toPlainObject.js'
 
 /**
  * A specialized version of `baseMerge` for arrays and objects which performs
@@ -28,65 +28,65 @@ import toPlainObject from '../toPlainObject.js';
  *  counterparts.
  */
 function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-  const objValue = object[key];
-  const srcValue = source[key];
-  const stacked = stack.get(srcValue);
+  const objValue = object[key]
+  const srcValue = source[key]
+  const stacked = stack.get(srcValue)
 
   if (stacked) {
-    assignMergeValue(object, key, stacked);
-    return;
+    assignMergeValue(object, key, stacked)
+    return
   }
   let newValue = customizer
     ? customizer(objValue, srcValue, `${ key }`, object, source, stack)
-    : undefined;
+    : undefined
 
-  let isCommon = newValue === undefined;
+  let isCommon = newValue === undefined
 
   if (isCommon) {
-    const isArr = Array.isArray(srcValue);
-    const isBuff = !isArr && isBuffer(srcValue);
-    const isTyped = !isArr && !isBuff && isTypedArray(srcValue);
+    const isArr = Array.isArray(srcValue)
+    const isBuff = !isArr && isBuffer(srcValue)
+    const isTyped = !isArr && !isBuff && isTypedArray(srcValue)
 
-    newValue = srcValue;
+    newValue = srcValue
     if (isArr || isBuff || isTyped) {
       if (Array.isArray(objValue)) {
-        newValue = objValue;
+        newValue = objValue
       }
       else if (isArrayLikeObject(objValue)) {
-        newValue = copyArray(objValue);
+        newValue = copyArray(objValue)
       }
       else if (isBuff) {
-        isCommon = false;
-        newValue = cloneBuffer(srcValue, true);
+        isCommon = false
+        newValue = cloneBuffer(srcValue, true)
       }
       else if (isTyped) {
-        isCommon = false;
-        newValue = cloneTypedArray(srcValue, true);
+        isCommon = false
+        newValue = cloneTypedArray(srcValue, true)
       }
       else {
-        newValue = [];
+        newValue = []
       }
     }
     else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-      newValue = objValue;
+      newValue = objValue
       if (isArguments(objValue)) {
-        newValue = toPlainObject(objValue);
+        newValue = toPlainObject(objValue)
       }
       else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
-        newValue = initCloneObject(srcValue);
+        newValue = initCloneObject(srcValue)
       }
     }
     else {
-      isCommon = false;
+      isCommon = false
     }
   }
   if (isCommon) {
     // Recursively merge objects and arrays (susceptible to call stack limits).
-    stack.set(srcValue, newValue);
-    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
-    stack['delete'](srcValue);
+    stack.set(srcValue, newValue)
+    mergeFunc(newValue, srcValue, srcIndex, customizer, stack)
+    stack['delete'](srcValue)
   }
-  assignMergeValue(object, key, newValue);
+  assignMergeValue(object, key, newValue)
 }
 
-export default baseMergeDeep;
+export default baseMergeDeep

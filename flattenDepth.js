@@ -1,5 +1,5 @@
-import baseFlatten from './.internal/baseFlatten.js';
-import toInteger from './toInteger.js';
+import baseFlatten from './.internal/baseFlatten.js'
+import toInteger from './toInteger.js'
 
 /**
  * Recursively flatten `array` up to `depth` times.
@@ -12,21 +12,21 @@ import toInteger from './toInteger.js';
  * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep
  * @example
  *
- * const array = [1, [2, [3, [4]], 5]];
+ * const array = [1, [2, [3, [4]], 5]]
  *
- * flattenDepth(array, 1);
+ * flattenDepth(array, 1)
  * // => [1, 2, [3, [4]], 5]
  *
- * flattenDepth(array, 2);
+ * flattenDepth(array, 2)
  * // => [1, 2, 3, [4], 5]
  */
 function flattenDepth(array, depth) {
-  const length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length
   if (!length) {
-    return [];
+    return []
   }
-  depth = depth === undefined ? 1 : toInteger(depth);
-  return baseFlatten(array, depth);
+  depth = depth === undefined ? 1 : toInteger(depth)
+  return baseFlatten(array, depth)
 }
 
-export default flattenDepth;
+export default flattenDepth

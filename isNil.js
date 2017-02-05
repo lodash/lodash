@@ -7,17 +7,17 @@
  * @returns {boolean} Returns `true` if `value` is nullish, else `false`.
  * @example
  *
- * isNil(null);
+ * isNil(null)
  * // => true
  *
- * isNil(void 0);
+ * isNil(void 0)
  * // => true
  *
- * isNil(NaN);
+ * isNil(NaN)
  * // => false
  */
 function isNil(value) {
-  return value == null;
+  return value == null
 }
 
-export default isNil;
+export default isNil

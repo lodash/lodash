@@ -1,6 +1,6 @@
-import apply from './.internal/apply.js';
-import customDefaultsMerge from './.internal/customDefaultsMerge.js';
-import mergeWith from './mergeWith.js';
+import apply from './.internal/apply.js'
+import customDefaultsMerge from './.internal/customDefaultsMerge.js'
+import mergeWith from './mergeWith.js'
 
 /**
  * This method is like `defaults` except that it recursively assigns
@@ -16,12 +16,12 @@ import mergeWith from './mergeWith.js';
  * @see defaults
  * @example
  *
- * defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } });
+ * defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } })
  * // => { 'a': { 'b': 2, 'c': 3 } }
  */
 function defaultsDeep(...args) {
-  args.push(undefined, customDefaultsMerge);
-  return apply(mergeWith, undefined, args);
+  args.push(undefined, customDefaultsMerge)
+  return apply(mergeWith, undefined, args)
 }
 
-export default defaultsDeep;
+export default defaultsDeep

@@ -1,7 +1,7 @@
-import baseClamp from './.internal/baseClamp.js';
-import baseToString from './.internal/baseToString.js';
-import toInteger from './toInteger.js';
-import toString from './toString.js';
+import baseClamp from './.internal/baseClamp.js'
+import baseToString from './.internal/baseToString.js'
+import toInteger from './toInteger.js'
+import toString from './toString.js'
 
 /**
  * Checks if `string` starts with the given target string.
@@ -16,23 +16,23 @@ import toString from './toString.js';
  * @see endsWith, includes
  * @example
  *
- * startsWith('abc', 'a');
+ * startsWith('abc', 'a')
  * // => true
  *
- * startsWith('abc', 'b');
+ * startsWith('abc', 'b')
  * // => false
  *
- * startsWith('abc', 'b', 1);
+ * startsWith('abc', 'b', 1)
  * // => true
  */
 function startsWith(string, target, position) {
-  string = toString(string);
+  string = toString(string)
   position = position == null
     ? 0
-    : baseClamp(toInteger(position), 0, string.length);
+    : baseClamp(toInteger(position), 0, string.length)
 
-  target = baseToString(target);
-  return string.slice(position, position + target.length) == target;
+  target = baseToString(target)
+  return string.slice(position, position + target.length) == target
 }
 
-export default startsWith;
+export default startsWith

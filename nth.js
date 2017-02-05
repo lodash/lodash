@@ -1,5 +1,5 @@
-import baseNth from './.internal/baseNth.js';
-import toInteger from './toInteger.js';
+import baseNth from './.internal/baseNth.js'
+import toInteger from './toInteger.js'
 
 /**
  * Gets the element at index `n` of `array`. If `n` is negative, the nth
@@ -12,16 +12,16 @@ import toInteger from './toInteger.js';
  * @returns {*} Returns the nth element of `array`.
  * @example
  *
- * const array = ['a', 'b', 'c', 'd'];
+ * const array = ['a', 'b', 'c', 'd']
  *
- * nth(array, 1);
+ * nth(array, 1)
  * // => 'b'
  *
- * nth(array, -2);
- * // => 'c';
+ * nth(array, -2)
+ * // => 'c'
  */
 function nth(array, n) {
-  return (array && array.length) ? baseNth(array, toInteger(n)) : undefined;
+  return (array && array.length) ? baseNth(array, toInteger(n)) : undefined
 }
 
-export default nth;
+export default nth

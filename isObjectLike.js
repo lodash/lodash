@@ -8,20 +8,20 @@
  * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
  *
- * isObjectLike({});
+ * isObjectLike({})
  * // => true
  *
- * isObjectLike([1, 2, 3]);
+ * isObjectLike([1, 2, 3])
  * // => true
  *
- * isObjectLike(Function);
+ * isObjectLike(Function)
  * // => false
  *
- * isObjectLike(null);
+ * isObjectLike(null)
  * // => false
  */
 function isObjectLike(value) {
-  return value != null && typeof value == 'object';
+  return value != null && typeof value == 'object'
 }
 
-export default isObjectLike;
+export default isObjectLike

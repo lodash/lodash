@@ -1,9 +1,9 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import baseFilter from './.internal/baseFilter.js';
-import negate from './negate.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import baseFilter from './.internal/baseFilter.js'
+import negate from './negate.js'
 
 /**
- * The opposite of `filter`; this method returns the elements of `collection`
+ * The opposite of `filter` this method returns the elements of `collection`
  * that `predicate` does **not** return truthy for.
  *
  * @since 0.1.0
@@ -17,14 +17,14 @@ import negate from './negate.js';
  * const users = [
  *   { 'user': 'barney', 'active': true },
  *   { 'user': 'fred',   'active': false }
- * ];
+ * ]
  *
- * reject(users, ({ active }) => active);
+ * reject(users, ({ active }) => active)
  * // => objects for ['fred']
  */
 function reject(collection, predicate) {
-  const func = Array.isArray(collection) ? arrayFilter : baseFilter;
-  return func(collection, negate(predicate));
+  const func = Array.isArray(collection) ? arrayFilter : baseFilter
+  return func(collection, negate(predicate))
 }
 
-export default reject;
+export default reject

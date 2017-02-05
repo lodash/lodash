@@ -1,4 +1,4 @@
-import flow from './flow.js';
+import flow from './flow.js'
 
 /**
  * This method is like `flow` except that it creates a function that
@@ -12,15 +12,15 @@ import flow from './flow.js';
  * @example
  *
  * function square(n) {
- *   return n * n;
+ *   return n * n
  * }
  *
- * const addSquare = flowRight([square, add]);
- * addSquare(1, 2);
+ * const addSquare = flowRight([square, add])
+ * addSquare(1, 2)
  * // => 9
  */
 function flowRight(funcs) {
-  return flow(funcs.reverse());
+  return flow(funcs.reverse())
 }
 
-export default flowRight;
+export default flowRight

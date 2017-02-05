@@ -1,4 +1,4 @@
-import createCompounder from './.internal/createCompounder.js';
+import createCompounder from './.internal/createCompounder.js'
 
 /**
  * Converts `string` to
@@ -11,17 +11,17 @@ import createCompounder from './.internal/createCompounder.js';
  * @see camelCase, lowerCase, kebabCase, startCase, upperCase, upperFirst
  * @example
  *
- * snakeCase('Foo Bar');
+ * snakeCase('Foo Bar')
  * // => 'foo_bar'
  *
- * snakeCase('fooBar');
+ * snakeCase('fooBar')
  * // => 'foo_bar'
  *
- * snakeCase('--FOO-BAR--');
+ * snakeCase('--FOO-BAR--')
  * // => 'foo_bar'
  */
 const snakeCase = createCompounder((result, word, index) =>
   result + (index ? '_' : '') + word.toLowerCase()
-);
+)
 
-export default snakeCase;
+export default snakeCase

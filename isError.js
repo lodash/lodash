@@ -1,6 +1,6 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import isObjectLike from './isObjectLike.js';
-import isPlainObject from './isPlainObject.js';
+import baseGetTag from './.internal/baseGetTag.js'
+import isObjectLike from './isObjectLike.js'
+import isPlainObject from './isPlainObject.js'
 
 /**
  * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
@@ -12,19 +12,19 @@ import isPlainObject from './isPlainObject.js';
  * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
  * @example
  *
- * isError(new Error);
+ * isError(new Error)
  * // => true
  *
- * isError(Error);
+ * isError(Error)
  * // => false
  */
 function isError(value) {
   if (!isObjectLike(value)) {
-    return false;
+    return false
   }
-  const tag = baseGetTag(value);
+  const tag = baseGetTag(value)
   return tag == '[object Error]' || tag == '[object DOMException]' ||
-    (typeof value.message == 'string' && typeof value.name == 'string' && !isPlainObject(value));
+    (typeof value.message == 'string' && typeof value.name == 'string' && !isPlainObject(value))
 }
 
-export default isError;
+export default isError

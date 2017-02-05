@@ -1,5 +1,5 @@
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeReverse = Array.prototype.reverse;
+const nativeReverse = Array.prototype.reverse
 
 /**
  * Reverses `array` so that the first element becomes the last, the second
@@ -15,16 +15,16 @@ const nativeReverse = Array.prototype.reverse;
  * @see flip, sortBy
  * @example
  *
- * const array = [1, 2, 3];
+ * const array = [1, 2, 3]
  *
- * reverse(array);
+ * reverse(array)
  * // => [3, 2, 1]
  *
- * console.log(array);
+ * console.log(array)
  * // => [3, 2, 1]
  */
 function reverse(array) {
-  return array == null ? array : nativeReverse.call(array);
+  return array == null ? array : nativeReverse.call(array)
 }
 
-export default reverse;
+export default reverse

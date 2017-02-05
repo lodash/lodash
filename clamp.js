@@ -1,5 +1,5 @@
-import baseClamp from './.internal/baseClamp.js';
-import toNumber from './toNumber.js';
+import baseClamp from './.internal/baseClamp.js'
+import toNumber from './toNumber.js'
 
 /**
  * Clamps `number` within the inclusive `lower` and `upper` bounds.
@@ -12,20 +12,20 @@ import toNumber from './toNumber.js';
  * @returns {number} Returns the clamped number.
  * @example
  *
- * clamp(-10, -5, 5);
+ * clamp(-10, -5, 5)
  * // => -5
  *
- * clamp(10, -5, 5);
+ * clamp(10, -5, 5)
  * // => 5
  */
 function clamp(number, lower, upper) {
-  lower = toNumber(lower);
-  lower = lower === lower ? lower : 0;
+  lower = toNumber(lower)
+  lower = lower === lower ? lower : 0
 
-  upper = toNumber(upper);
-  upper = upper === upper ? upper : 0;
+  upper = toNumber(upper)
+  upper = upper === upper ? upper : 0
 
-  return baseClamp(toNumber(number), lower, upper);
+  return baseClamp(toNumber(number), lower, upper)
 }
 
-export default clamp;
+export default clamp

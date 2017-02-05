@@ -1,6 +1,6 @@
-import arrayMap from './.internal/arrayMap.js';
-import basePickBy from './.internal/basePickBy.js';
-import getAllKeysIn from './.internal/getAllKeysIn.js';
+import arrayMap from './.internal/arrayMap.js'
+import basePickBy from './.internal/basePickBy.js'
+import getAllKeysIn from './.internal/getAllKeysIn.js'
 
 /**
  * Creates an object composed of the `object` properties `predicate` returns
@@ -13,17 +13,17 @@ import getAllKeysIn from './.internal/getAllKeysIn.js';
  * @returns {Object} Returns the new object.
  * @example
  *
- * const object = { 'a': 1, 'b': '2', 'c': 3 };
+ * const object = { 'a': 1, 'b': '2', 'c': 3 }
  *
- * pickBy(object, isNumber);
+ * pickBy(object, isNumber)
  * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
   if (object == null) {
-    return {};
+    return {}
   }
-  const props = arrayMap(getAllKeysIn(object), prop => [prop]);
-  return basePickBy(object, props, (value, path) => predicate(value, path[0]));
+  const props = arrayMap(getAllKeysIn(object), prop => [prop])
+  return basePickBy(object, props, (value, path) => predicate(value, path[0]))
 }
 
-export default pickBy;
+export default pickBy

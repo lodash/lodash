@@ -1,4 +1,4 @@
-import baseToString from './.internal/baseToString.js';
+import baseToString from './.internal/baseToString.js'
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -10,17 +10,17 @@ import baseToString from './.internal/baseToString.js';
  * @returns {string} Returns the converted string.
  * @example
  *
- * toString(null);
+ * toString(null)
  * // => ''
  *
- * toString(-0);
+ * toString(-0)
  * // => '-0'
  *
- * toString([1, 2, 3]);
+ * toString([1, 2, 3])
  * // => '1,2,3'
  */
 function toString(value) {
-  return value == null ? '' : baseToString(value);
+  return value == null ? '' : baseToString(value)
 }
 
-export default toString;
+export default toString

@@ -1,9 +1,9 @@
-import arrayMap from './.internal/arrayMap.js';
-import copyArray from './.internal/copyArray.js';
-import isSymbol from './isSymbol.js';
-import stringToPath from './.internal/stringToPath.js';
-import toKey from './.internal/toKey.js';
-import toString from './toString.js';
+import arrayMap from './.internal/arrayMap.js'
+import copyArray from './.internal/copyArray.js'
+import isSymbol from './isSymbol.js'
+import stringToPath from './.internal/stringToPath.js'
+import toKey from './.internal/toKey.js'
+import toString from './toString.js'
 
 /**
  * Converts `value` to a property path array.
@@ -14,17 +14,17 @@ import toString from './toString.js';
  * @returns {Array} Returns the new property path array.
  * @example
  *
- * toPath('a.b.c');
+ * toPath('a.b.c')
  * // => ['a', 'b', 'c']
  *
- * toPath('a[0].b.c');
+ * toPath('a[0].b.c')
  * // => ['a', '0', 'b', 'c']
  */
 function toPath(value) {
   if (Array.isArray(value)) {
-    return arrayMap(value, toKey);
+    return arrayMap(value, toKey)
   }
-  return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)));
+  return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)))
 }
 
-export default toPath;
+export default toPath

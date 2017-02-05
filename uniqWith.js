@@ -1,4 +1,4 @@
-import baseUniq from './.internal/baseUniq.js';
+import baseUniq from './.internal/baseUniq.js'
 
 /**
  * This method is like `uniq` except that it accepts `comparator` which
@@ -14,14 +14,14 @@ import baseUniq from './.internal/baseUniq.js';
  * @see uniq, uniqBy
  * @example
  *
- * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }, { 'x': 1, 'y': 2 }]
  *
- * uniqWith(objects, isEqual);
+ * uniqWith(objects, isEqual)
  * // => [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
  */
 function uniqWith(array, comparator) {
-  comparator = typeof comparator == 'function' ? comparator : undefined;
-  return (array && array.length) ? baseUniq(array, undefined, comparator) : [];
+  comparator = typeof comparator == 'function' ? comparator : undefined
+  return (array && array.length) ? baseUniq(array, undefined, comparator) : []
 }
 
-export default uniqWith;
+export default uniqWith

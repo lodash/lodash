@@ -1,5 +1,5 @@
-import baseMerge from './.internal/baseMerge.js';
-import createAssigner from './.internal/createAssigner.js';
+import baseMerge from './.internal/baseMerge.js'
+import createAssigner from './.internal/createAssigner.js'
 
 /**
  * This method is like `merge` except that it accepts `customizer` which
@@ -20,18 +20,18 @@ import createAssigner from './.internal/createAssigner.js';
  *
  * function customizer(objValue, srcValue) {
  *   if (Array.isArray(objValue)) {
- *     return objValue.concat(srcValue);
+ *     return objValue.concat(srcValue)
  *   }
  * }
  *
- * const object = { 'a': [1], 'b': [2] };
- * const other = { 'a': [3], 'b': [4] };
+ * const object = { 'a': [1], 'b': [2] }
+ * const other = { 'a': [3], 'b': [4] }
  *
- * mergeWith(object, other, customizer);
+ * mergeWith(object, other, customizer)
  * // => { 'a': [1, 3], 'b': [2, 4] }
  */
 const mergeWith = createAssigner((object, source, srcIndex, customizer) => {
-  baseMerge(object, source, srcIndex, customizer);
-});
+  baseMerge(object, source, srcIndex, customizer)
+})
 
-export default mergeWith;
+export default mergeWith

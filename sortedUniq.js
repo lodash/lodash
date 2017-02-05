@@ -1,4 +1,4 @@
-import baseSortedUniq from './.internal/baseSortedUniq.js';
+import baseSortedUniq from './.internal/baseSortedUniq.js'
 
 /**
  * This method is like `uniq` except that it's designed and optimized
@@ -10,13 +10,13 @@ import baseSortedUniq from './.internal/baseSortedUniq.js';
  * @returns {Array} Returns the new duplicate free array.
  * @example
  *
- * sortedUniq([1, 1, 2]);
+ * sortedUniq([1, 1, 2])
  * // => [1, 2]
  */
 function sortedUniq(array) {
   return (array && array.length)
     ? baseSortedUniq(array)
-    : [];
+    : []
 }
 
-export default sortedUniq;
+export default sortedUniq

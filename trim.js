@@ -1,11 +1,11 @@
-import baseToString from './.internal/baseToString.js';
-import castSlice from './.internal/castSlice.js';
-import charsEndIndex from './.internal/charsEndIndex.js';
-import charsStartIndex from './.internal/charsStartIndex.js';
-import stringToArray from './.internal/stringToArray.js';
-import toString from './toString.js';
+import baseToString from './.internal/baseToString.js'
+import castSlice from './.internal/castSlice.js'
+import charsEndIndex from './.internal/charsEndIndex.js'
+import charsStartIndex from './.internal/charsStartIndex.js'
+import stringToArray from './.internal/stringToArray.js'
+import toString from './toString.js'
 
-const nativeTrim = String.prototype.trim;
+const nativeTrim = String.prototype.trim
 
 /**
  * Removes leading and trailing whitespace or specified characters from `string`.
@@ -19,29 +19,29 @@ const nativeTrim = String.prototype.trim;
  * @see trimEnd, trimStart
  * @example
  *
- * trim('  abc  ');
+ * trim('  abc  ')
  * // => 'abc'
  *
- * trim('-_-abc-_-', '_-');
+ * trim('-_-abc-_-', '_-')
  * // => 'abc'
  *
- * map(['  foo  ', '  bar  '], trim);
+ * map(['  foo  ', '  bar  '], trim)
  * // => ['foo', 'bar']
  */
 function trim(string, chars, guard) {
-  string = toString(string);
+  string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrim.call(string);
+    return nativeTrim.call(string)
   }
   if (!string || !(chars = baseToString(chars))) {
-    return string;
+    return string
   }
-  const strSymbols = stringToArray(string);
-  const chrSymbols = stringToArray(chars);
-  const start = charsStartIndex(strSymbols, chrSymbols);
-  const end = charsEndIndex(strSymbols, chrSymbols) + 1;
+  const strSymbols = stringToArray(string)
+  const chrSymbols = stringToArray(chars)
+  const start = charsStartIndex(strSymbols, chrSymbols)
+  const end = charsEndIndex(strSymbols, chrSymbols) + 1
 
-  return castSlice(strSymbols, start, end).join('');
+  return castSlice(strSymbols, start, end).join('')
 }
 
-export default trim;
+export default trim

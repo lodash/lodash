@@ -9,14 +9,14 @@
  * @see last
  * @example
  *
- * head([1, 2, 3]);
+ * head([1, 2, 3])
  * // => 1
  *
- * head([]);
+ * head([])
  * // => undefined
  */
 function head(array) {
-  return (array && array.length) ? array[0] : undefined;
+  return (array && array.length) ? array[0] : undefined
 }
 
-export default head;
+export default head

@@ -1,4 +1,4 @@
-import basePick from './.internal/basePick.js';
+import basePick from './.internal/basePick.js'
 
 /**
  * Creates an object composed of the picked `object` properties.
@@ -10,13 +10,13 @@ import basePick from './.internal/basePick.js';
  * @returns {Object} Returns the new object.
  * @example
  *
- * const object = { 'a': 1, 'b': '2', 'c': 3 };
+ * const object = { 'a': 1, 'b': '2', 'c': 3 }
  *
- * pick(object, ['a', 'c']);
+ * pick(object, ['a', 'c'])
  * // => { 'a': 1, 'c': 3 }
  */
 function pick(object, ...paths) {
-  return object == null ? {} : basePick(object, paths);
+  return object == null ? {} : basePick(object, paths)
 }
 
-export default pick;
+export default pick

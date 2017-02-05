@@ -1,4 +1,4 @@
-import unzipWith from './unzipWith.js';
+import unzipWith from './unzipWith.js'
 
 /**
  * This method is like `zip` except that it accepts `iteratee` to specify
@@ -14,14 +14,14 @@ import unzipWith from './unzipWith.js';
  * @see unzip, unzipWith, zip, zipObject, zipObjectDeep, zipWith
  * @example
  *
- * zipWith([1, 2], [10, 20], [100, 200], (a, b, c) => a + b + c);
+ * zipWith([1, 2], [10, 20], [100, 200], (a, b, c) => a + b + c)
  * // => [111, 222]
  */
 function zipWith(...arrays) {
-  const length = arrays.length;
-  let iteratee = length > 1 ? arrays[length - 1] : undefined;
-  iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined;
-  return unzipWith(arrays, iteratee);
+  const length = arrays.length
+  let iteratee = length > 1 ? arrays[length - 1] : undefined
+  iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined
+  return unzipWith(arrays, iteratee)
 }
 
-export default zipWith;
+export default zipWith

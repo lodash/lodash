@@ -1,5 +1,5 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import isObjectLike from './isObjectLike.js';
+import baseGetTag from './.internal/baseGetTag.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * Checks if `value` is classified as a `Number` primitive or object.
@@ -14,21 +14,21 @@ import isObjectLike from './isObjectLike.js';
  * @see isInteger, toInteger, toNumber
  * @example
  *
- * isNumber(3);
+ * isNumber(3)
  * // => true
  *
- * isNumber(Number.MIN_VALUE);
+ * isNumber(Number.MIN_VALUE)
  * // => true
  *
- * isNumber(Infinity);
+ * isNumber(Infinity)
  * // => true
  *
- * isNumber('3');
+ * isNumber('3')
  * // => false
  */
 function isNumber(value) {
   return typeof value == 'number' ||
-    (isObjectLike(value) && baseGetTag(value) == '[object Number]');
+    (isObjectLike(value) && baseGetTag(value) == '[object Number]')
 }
 
-export default isNumber;
+export default isNumber

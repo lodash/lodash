@@ -1,4 +1,4 @@
-import createMathOperation from './.internal/createMathOperation.js';
+import createMathOperation from './.internal/createMathOperation.js'
 
 /**
  * Adds two numbers.
@@ -10,9 +10,9 @@ import createMathOperation from './.internal/createMathOperation.js';
  * @returns {number} Returns the total.
  * @example
  *
- * add(6, 4);
+ * add(6, 4)
  * // => 10
  */
-const add = createMathOperation((augend, addend) => augend + addend, 0);
+const add = createMathOperation((augend, addend) => augend + addend, 0)
 
-export default add;
+export default add

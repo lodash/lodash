@@ -1,7 +1,7 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseIntersection from './.internal/baseIntersection.js';
-import castArrayLikeObject from './.internal/castArrayLikeObject.js';
-import last from './last.js';
+import arrayMap from './.internal/arrayMap.js'
+import baseIntersection from './.internal/baseIntersection.js'
+import castArrayLikeObject from './.internal/castArrayLikeObject.js'
+import last from './last.js'
 
 /**
  * This method is like `intersection` except that it accepts `comparator`
@@ -16,23 +16,23 @@ import last from './last.js';
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }];
- * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }];
+ * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
+ * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }]
  *
- * intersectionWith(objects, others, isEqual);
+ * intersectionWith(objects, others, isEqual)
  * // => [{ 'x': 1, 'y': 2 }]
  */
 function intersectionWith(...arrays) {
-  let comparator = last(arrays);
-  const mapped = arrayMap(arrays, castArrayLikeObject);
+  let comparator = last(arrays)
+  const mapped = arrayMap(arrays, castArrayLikeObject)
 
-  comparator = typeof comparator == 'function' ? comparator : undefined;
+  comparator = typeof comparator == 'function' ? comparator : undefined
   if (comparator) {
-    mapped.pop();
+    mapped.pop()
   }
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped, undefined, comparator)
-    : [];
+    : []
 }
 
-export default intersectionWith;
+export default intersectionWith

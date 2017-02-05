@@ -1,4 +1,4 @@
-import isArrayLikeObject from '../isArrayLikeObject.js';
+import isArrayLikeObject from '../isArrayLikeObject.js'
 
 /**
  * Casts `value` to an empty array if it's not an array like object.
@@ -8,7 +8,7 @@ import isArrayLikeObject from '../isArrayLikeObject.js';
  * @returns {Array|Object} Returns the cast array-like object.
  */
 function castArrayLikeObject(value) {
-  return isArrayLikeObject(value) ? value : [];
+  return isArrayLikeObject(value) ? value : []
 }
 
-export default castArrayLikeObject;
+export default castArrayLikeObject

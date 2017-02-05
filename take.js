@@ -1,5 +1,5 @@
-import baseSlice from './.internal/baseSlice.js';
-import toInteger from './toInteger.js';
+import baseSlice from './.internal/baseSlice.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements taken from the beginning.
@@ -12,24 +12,24 @@ import toInteger from './toInteger.js';
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * take([1, 2, 3]);
+ * take([1, 2, 3])
  * // => [1]
  *
- * take([1, 2, 3], 2);
+ * take([1, 2, 3], 2)
  * // => [1, 2]
  *
- * take([1, 2, 3], 5);
+ * take([1, 2, 3], 5)
  * // => [1, 2, 3]
  *
- * take([1, 2, 3], 0);
+ * take([1, 2, 3], 0)
  * // => []
  */
 function take(array, n, guard) {
   if (!(array && array.length)) {
-    return [];
+    return []
   }
-  n = (guard || n === undefined) ? 1 : toInteger(n);
-  return baseSlice(array, 0, n < 0 ? 0 : n);
+  n = (guard || n === undefined) ? 1 : toInteger(n)
+  return baseSlice(array, 0, n < 0 ? 0 : n)
 }
 
-export default take;
+export default take

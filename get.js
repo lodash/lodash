@@ -1,4 +1,4 @@
-import baseGet from './.internal/baseGet.js';
+import baseGet from './.internal/baseGet.js'
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -13,20 +13,20 @@ import baseGet from './.internal/baseGet.js';
  * @see has, hasIn, set, unset
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 3 } }] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }] }
  *
- * get(object, 'a[0].b.c');
+ * get(object, 'a[0].b.c')
  * // => 3
  *
- * get(object, ['a', '0', 'b', 'c']);
+ * get(object, ['a', '0', 'b', 'c'])
  * // => 3
  *
- * get(object, 'a.b.c', 'default');
+ * get(object, 'a.b.c', 'default')
  * // => 'default'
  */
 function get(object, path, defaultValue) {
-  const result = object == null ? undefined : baseGet(object, path);
-  return result === undefined ? defaultValue : result;
+  const result = object == null ? undefined : baseGet(object, path)
+  return result === undefined ? defaultValue : result
 }
 
-export default get;
+export default get

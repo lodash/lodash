@@ -1,7 +1,7 @@
-import escape from './escape.js';
-import reEscape from './.internal/reEscape.js';
-import reEvaluate from './.internal/reEvaluate.js';
-import reInterpolate from './.internal/reInterpolate.js';
+import escape from './escape.js'
+import reEscape from './.internal/reEscape.js'
+import reEvaluate from './.internal/reEvaluate.js'
+import reInterpolate from './.internal/reInterpolate.js'
 
 /**
  * By default, the template delimiters used by lodash are like those in
@@ -60,6 +60,6 @@ const templateSettings = {
      */
     '_': { 'escape': escape }
   }
-};
+}
 
-export default templateSettings;
+export default templateSettings

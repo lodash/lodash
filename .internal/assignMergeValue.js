@@ -1,5 +1,5 @@
-import baseAssignValue from './baseAssignValue.js';
-import eq from '../eq.js';
+import baseAssignValue from './baseAssignValue.js'
+import eq from '../eq.js'
 
 /**
  * This function is like `assignValue` except that it doesn't assign
@@ -13,8 +13,8 @@ import eq from '../eq.js';
 function assignMergeValue(object, key, value) {
   if ((value !== undefined && !eq(object[key], value)) ||
       (value === undefined && !(key in object))) {
-    baseAssignValue(object, key, value);
+    baseAssignValue(object, key, value)
   }
 }
 
-export default assignMergeValue;
+export default assignMergeValue

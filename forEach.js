@@ -1,5 +1,5 @@
-import arrayEach from './.internal/arrayEach.js';
-import baseEach from './.internal/baseEach.js';;
+import arrayEach from './.internal/arrayEach.js'
+import baseEach from './.internal/baseEach.js'
 
 /**
  * Iterates over elements of `collection` and invokes `iteratee` for each element.
@@ -19,15 +19,15 @@ import baseEach from './.internal/baseEach.js';;
  * @see forEachRight, forIn, forInRight, forOwn, forOwnRight
  * @example
  *
- * forEach([1, 2], value => console.log(value));
+ * forEach([1, 2], value => console.log(value))
  * // => Logs `1` then `2`.
  *
- * forEach({ 'a': 1, 'b': 2 }, (value, key) => console.log(key));
+ * forEach({ 'a': 1, 'b': 2 }, (value, key) => console.log(key))
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forEach(collection, iteratee) {
-  const func = Array.isArray(collection) ? arrayEach : baseEach;
-  return func(collection, iteratee);
+  const func = Array.isArray(collection) ? arrayEach : baseEach
+  return func(collection, iteratee)
 }
 
-export default forEach;
+export default forEach

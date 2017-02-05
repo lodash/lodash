@@ -1,5 +1,5 @@
-import baseFindKey from './.internal/baseFindKey.js';
-import baseForOwn from './.internal/baseForOwn.js';
+import baseFindKey from './.internal/baseFindKey.js'
+import baseForOwn from './.internal/baseForOwn.js'
 
 /**
  * This method is like `find` except that it returns the key of the first
@@ -18,13 +18,13 @@ import baseForOwn from './.internal/baseForOwn.js';
  *   'barney':  { 'age': 36, 'active': true },
  *   'fred':    { 'age': 40, 'active': false },
  *   'pebbles': { 'age': 1,  'active': true }
- * };
+ * }
  *
- * findKey(users, ({ age }) => age < 40);
+ * findKey(users, ({ age }) => age < 40)
  * // => 'barney' (iteration order is not guaranteed)
  */
 function findKey(object, predicate) {
-  return baseFindKey(object, predicate, baseForOwn);
+  return baseFindKey(object, predicate, baseForOwn)
 }
 
-export default findKey;
+export default findKey

@@ -1,4 +1,4 @@
-import baseOrderBy from './.internal/baseOrderBy.js';
+import baseOrderBy from './.internal/baseOrderBy.js'
 
 /**
  * This method is like `sortBy` except that it allows specifying the sort
@@ -22,24 +22,24 @@ import baseOrderBy from './.internal/baseOrderBy.js';
  *   { 'user': 'barney', 'age': 34 },
  *   { 'user': 'fred',   'age': 40 },
  *   { 'user': 'barney', 'age': 36 }
- * ];
+ * ]
  *
  * // Sort by `user` in ascending order and by `age` in descending order.
- * orderBy(users, ['user', 'age'], ['asc', 'desc']);
+ * orderBy(users, ['user', 'age'], ['asc', 'desc'])
  * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
  */
 function orderBy(collection, iteratees, orders, guard) {
   if (collection == null) {
-    return [];
+    return []
   }
   if (!Array.isArray(iteratees)) {
-    iteratees = iteratees == null ? [] : [iteratees];
+    iteratees = iteratees == null ? [] : [iteratees]
   }
-  orders = guard ? undefined : orders;
+  orders = guard ? undefined : orders
   if (!Array.isArray(orders)) {
-    orders = orders == null ? [] : [orders];
+    orders = orders == null ? [] : [orders]
   }
-  return baseOrderBy(collection, iteratees, orders);
+  return baseOrderBy(collection, iteratees, orders)
 }
 
-export default orderBy;
+export default orderBy

@@ -1,11 +1,11 @@
-import baseToString from './.internal/baseToString.js';
-import castSlice from './.internal/castSlice.js';
-import charsEndIndex from './.internal/charsEndIndex.js';
-import stringToArray from './.internal/stringToArray.js';
-import toString from './toString.js';
+import baseToString from './.internal/baseToString.js'
+import castSlice from './.internal/castSlice.js'
+import charsEndIndex from './.internal/charsEndIndex.js'
+import stringToArray from './.internal/stringToArray.js'
+import toString from './toString.js'
 
-const stringProto = String.prototype;
-const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd;
+const stringProto = String.prototype
+const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd
 
 
 /**
@@ -20,23 +20,23 @@ const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd;
  * @see trim, trimStart
  * @example
  *
- * trimEnd('  abc  ');
+ * trimEnd('  abc  ')
  * // => '  abc'
  *
- * trimEnd('-_-abc-_-', '_-');
+ * trimEnd('-_-abc-_-', '_-')
  * // => '-_-abc'
  */
 function trimEnd(string, chars, guard) {
-  string = toString(string);
+  string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrimEnd.call(string);
+    return nativeTrimEnd.call(string)
   }
   if (!string || !(chars = baseToString(chars))) {
-    return string;
+    return string
   }
-  const strSymbols = stringToArray(string);
-  const end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
-  return castSlice(strSymbols, 0, end).join('');
+  const strSymbols = stringToArray(string)
+  const end = charsEndIndex(strSymbols, stringToArray(chars)) + 1
+  return castSlice(strSymbols, 0, end).join('')
 }
 
-export default trimEnd;
+export default trimEnd

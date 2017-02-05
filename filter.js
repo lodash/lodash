@@ -1,5 +1,5 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import baseFilter from './.internal/baseFilter.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import baseFilter from './.internal/baseFilter.js'
 
 /**
  * Iterates over elements of `collection`, returning an array of all elements
@@ -19,14 +19,14 @@ import baseFilter from './.internal/baseFilter.js';
  * const users = [
  *   { 'user': 'barney', 'active': true },
  *   { 'user': 'fred',   'active': false }
- * ];
+ * ]
  *
- * filter(users, ({ active }) => active);
+ * filter(users, ({ active }) => active)
  * // => objects for ['barney']
  */
 function filter(collection, predicate) {
-  const func = Array.isArray(collection) ? arrayFilter : baseFilter;
-  return func(collection, predicate);
+  const func = Array.isArray(collection) ? arrayFilter : baseFilter
+  return func(collection, predicate)
 }
 
-export default filter;
+export default filter

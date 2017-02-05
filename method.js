@@ -1,4 +1,4 @@
-import invoke from './invoke.js';
+import invoke from './invoke.js'
 
 /**
  * Creates a function that invokes the method at `path` of a given object.
@@ -14,16 +14,16 @@ import invoke from './invoke.js';
  * const objects = [
  *   { 'a': { 'b': constant(2) } },
  *   { 'a': { 'b': constant(1) } }
- * ];
+ * ]
  *
- * map(objects, method('a.b'));
+ * map(objects, method('a.b'))
  * // => [2, 1]
  *
- * map(objects, method(['a', 'b']));
+ * map(objects, method(['a', 'b']))
  * // => [2, 1]
  */
 function method(path, args) {
-  return object => invoke(object, path, args);
+  return object => invoke(object, path, args)
 }
 
-export default method;
+export default method

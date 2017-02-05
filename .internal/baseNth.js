@@ -1,4 +1,4 @@
-import isIndex from './isIndex.js';
+import isIndex from './isIndex.js'
 
 /**
  * The base implementation of `nth` which doesn't coerce arguments.
@@ -9,12 +9,12 @@ import isIndex from './isIndex.js';
  * @returns {*} Returns the nth element of `array`.
  */
 function baseNth(array, n) {
-  const length = array.length;
+  const length = array.length
   if (!length) {
-    return;
+    return
   }
-  n += n < 0 ? length : 0;
-  return isIndex(n, length) ? array[n] : undefined;
+  n += n < 0 ? length : 0
+  return isIndex(n, length) ? array[n] : undefined
 }
 
-export default baseNth;
+export default baseNth

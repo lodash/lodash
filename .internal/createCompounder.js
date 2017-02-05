@@ -1,9 +1,9 @@
-import arrayReduce from './arrayReduce.js';
-import toString from '../toString.js';
-import words from '../words.js';
+import arrayReduce from './arrayReduce.js'
+import toString from '../toString.js'
+import words from '../words.js'
 
 /** Used to match apostrophes. */
-const reApos = /['\u2019]/g;
+const reApos = /['\u2019]/g
 
 /**
  * Creates a function like `camelCase`.
@@ -15,7 +15,7 @@ const reApos = /['\u2019]/g;
 function createCompounder(callback) {
   return string => (
     arrayReduce(words(toString(string).replace(reApos, '')), callback, '')
-  );
+  )
 }
 
-export default createCompounder;
+export default createCompounder

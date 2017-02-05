@@ -1,5 +1,5 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import isObjectLike from './isObjectLike.js';
+import baseGetTag from './.internal/baseGetTag.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * Checks if `value` is classified as a boolean primitive or object.
@@ -10,15 +10,15 @@ import isObjectLike from './isObjectLike.js';
  * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
  * @example
  *
- * isBoolean(false);
+ * isBoolean(false)
  * // => true
  *
- * isBoolean(null);
+ * isBoolean(null)
  * // => false
  */
 function isBoolean(value) {
   return value === true || value === false ||
-    (isObjectLike(value) && baseGetTag(value) == '[object Boolean]');
+    (isObjectLike(value) && baseGetTag(value) == '[object Boolean]')
 }
 
-export default isBoolean;
+export default isBoolean

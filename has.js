@@ -1,5 +1,5 @@
-import baseHas from './.internal/baseHas.js';
-import hasPath from './.internal/hasPath.js';
+import baseHas from './.internal/baseHas.js'
+import hasPath from './.internal/hasPath.js'
 
 /**
  * Checks if `path` is a direct property of `object`.
@@ -12,23 +12,23 @@ import hasPath from './.internal/hasPath.js';
  * @see hasIn, set, get
  * @example
  *
- * const object = { 'a': { 'b': 2 } };
- * const other = create({ 'a': create({ 'b': 2 }) });
+ * const object = { 'a': { 'b': 2 } }
+ * const other = create({ 'a': create({ 'b': 2 }) })
  *
- * has(object, 'a');
+ * has(object, 'a')
  * // => true
  *
- * has(object, 'a.b');
+ * has(object, 'a.b')
  * // => true
  *
- * has(object, ['a', 'b']);
+ * has(object, ['a', 'b'])
  * // => true
  *
- * has(other, 'a');
+ * has(other, 'a')
  * // => false
  */
 function has(object, path) {
-  return object != null && hasPath(object, path, baseHas);
+  return object != null && hasPath(object, path, baseHas)
 }
 
-export default has;
+export default has

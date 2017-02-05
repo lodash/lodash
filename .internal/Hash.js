@@ -1,5 +1,5 @@
 /** Used to stand-in for `undefined` hash values. */
-const HASH_UNDEFINED = '__lodash_hash_undefined__';
+const HASH_UNDEFINED = '__lodash_hash_undefined__'
 
 class Hash {
 
@@ -11,13 +11,13 @@ class Hash {
    * @param {Array} [entries] The key-value pairs to cache.
    */
   constructor(entries) {
-    let index = -1;
-    const length = entries == null ? 0 : entries.length;
+    let index = -1
+    const length = entries == null ? 0 : entries.length
 
-    this.clear();
+    this.clear()
     while (++index < length) {
-      const entry = entries[index];
-      this.set(entry[0], entry[1]);
+      const entry = entries[index]
+      this.set(entry[0], entry[1])
     }
   }
 
@@ -27,8 +27,8 @@ class Hash {
    * @memberOf Hash
    */
   clear() {
-    this.__data__ = Object.create(null);
-    this.size = 0;
+    this.__data__ = Object.create(null)
+    this.size = 0
   }
 
   /**
@@ -40,9 +40,9 @@ class Hash {
    * @returns {boolean} Returns `true` if the entry was removed, else `false`.
    */
   delete(key) {
-    const result = this.has(key) && delete this.__data__[key];
-    this.size -= result ? 1 : 0;
-    return result;
+    const result = this.has(key) && delete this.__data__[key]
+    this.size -= result ? 1 : 0
+    return result
   }
 
   /**
@@ -53,9 +53,9 @@ class Hash {
    * @returns {*} Returns the entry value.
    */
   get(key) {
-    const data = this.__data__;
-    const result = data[key];
-    return result === HASH_UNDEFINED ? undefined : result;
+    const data = this.__data__
+    const result = data[key]
+    return result === HASH_UNDEFINED ? undefined : result
   }
 
   /**
@@ -66,8 +66,8 @@ class Hash {
    * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
    */
   has(key) {
-    const data = this.__data__;
-    return data[key] !== undefined;
+    const data = this.__data__
+    return data[key] !== undefined
   }
 
   /**
@@ -79,11 +79,11 @@ class Hash {
    * @returns {Object} Returns the hash instance.
    */
   set(key, value) {
-    const data = this.__data__;
-    this.size += this.has(key) ? 0 : 1;
-    data[key] = value === undefined ? HASH_UNDEFINED : value;
-    return this;
+    const data = this.__data__
+    this.size += this.has(key) ? 0 : 1
+    data[key] = value === undefined ? HASH_UNDEFINED : value
+    return this
   }
 }
 
-export default Hash;
+export default Hash

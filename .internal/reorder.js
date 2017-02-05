@@ -1,8 +1,8 @@
-import copyArray from './copyArray.js';
-import isIndex from './isIndex.js';
+import copyArray from './copyArray.js'
+import isIndex from './isIndex.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min;
+const nativeMin = Math.min
 
 /**
  * Reorder `array` according to the specified indexes where the element at
@@ -15,15 +15,15 @@ const nativeMin = Math.min;
  * @returns {Array} Returns `array`.
  */
 function reorder(array, indexes) {
-  const arrLength = array.length;
-  let length = nativeMin(indexes.length, arrLength);
-  const oldArray = copyArray(array);
+  const arrLength = array.length
+  let length = nativeMin(indexes.length, arrLength)
+  const oldArray = copyArray(array)
 
   while (length--) {
-    const index = indexes[length];
-    array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined;
+    const index = indexes[length]
+    array[length] = isIndex(index, arrLength) ? oldArray[index] : undefined
   }
-  return array;
+  return array
 }
 
-export default reorder;
+export default reorder

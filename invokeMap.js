@@ -1,7 +1,7 @@
-import apply from './.internal/apply.js';
-import baseEach from './.internal/baseEach.js';
-import invoke from './invoke.js';
-import isArrayLike from './isArrayLike.js';
+import apply from './.internal/apply.js'
+import baseEach from './.internal/baseEach.js'
+import invoke from './invoke.js'
+import isArrayLike from './isArrayLike.js'
 
 /**
  * Invokes the method at `path` of each element in `collection`, returning
@@ -18,21 +18,21 @@ import isArrayLike from './isArrayLike.js';
  * @returns {Array} Returns the array of results.
  * @example
  *
- * invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
+ * invokeMap([[5, 1, 7], [3, 2, 1]], 'sort')
  * // => [[1, 5, 7], [1, 2, 3]]
  *
- * invokeMap([123, 456], String.prototype.split, ['']);
+ * invokeMap([123, 456], String.prototype.split, [''])
  * // => [['1', '2', '3'], ['4', '5', '6']]
  */
 function invokeMap(collection, path, args) {
-  let index = -1;
-  const isFunc = typeof path == 'function';
-  const result = isArrayLike(collection) ? Array(collection.length) : [];
+  let index = -1
+  const isFunc = typeof path == 'function'
+  const result = isArrayLike(collection) ? Array(collection.length) : []
 
   baseEach(collection, value => {
-    result[++index] = isFunc ? apply(path, value, args) : invoke(value, path, args);
-  });
-  return result;
+    result[++index] = isFunc ? apply(path, value, args) : invoke(value, path, args)
+  })
+  return result
 }
 
-export default invokeMap;
+export default invokeMap

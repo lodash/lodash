@@ -8,7 +8,7 @@
  * @returns {number} Returns the random number.
  */
 function baseRandom(lower, upper) {
-  return lower + Math.floor(Math.random() * (upper - lower + 1));
+  return lower + Math.floor(Math.random() * (upper - lower + 1))
 }
 
-export default baseRandom;
+export default baseRandom

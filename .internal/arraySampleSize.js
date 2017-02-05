@@ -1,6 +1,6 @@
-import baseClamp from './baseClamp.js';
-import copyArray from './copyArray.js';
-import shuffleSelf from './shuffleSelf.js';
+import baseClamp from './baseClamp.js'
+import copyArray from './copyArray.js'
+import shuffleSelf from './shuffleSelf.js'
 
 /**
  * A specialized version of `sampleSize` for arrays.
@@ -11,7 +11,7 @@ import shuffleSelf from './shuffleSelf.js';
  * @returns {Array} Returns the random elements.
  */
 function arraySampleSize(array, n) {
-  return shuffleSelf(copyArray(array), baseClamp(n, 0, array.length));
+  return shuffleSelf(copyArray(array), baseClamp(n, 0, array.length))
 }
 
-export default arraySampleSize;
+export default arraySampleSize

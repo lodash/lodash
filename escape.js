@@ -1,17 +1,17 @@
-import toString from './toString.js';
+import toString from './toString.js'
 
 /** Used to map characters to HTML entities. */
 const htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-};
+  '&': '&amp',
+  '<': '&lt',
+  '>': '&gt',
+  '"': '&quot',
+  "'": '&#39'
+}
 
 /** Used to match HTML entities and HTML characters. */
-const reUnescapedHtml = /[&<>"']/g;
-const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
+const reUnescapedHtml = /[&<>"']/g
+const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
 
 /**
  * Converts the characters "&", "<", ">", '"', and "'" in `string` to their
@@ -37,14 +37,14 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
  * @see escapeRegExp, unescape
  * @example
  *
- * escape('fred, barney, & pebbles');
- * // => 'fred, barney, &amp; pebbles'
+ * escape('fred, barney, & pebbles')
+ * // => 'fred, barney, &amp pebbles'
  */
 function escape(string) {
-  string = toString(string);
+  string = toString(string)
   return (string && reHasUnescapedHtml.test(string))
     ? string.replace(reUnescapedHtml, chr => htmlEscapes[chr])
-    : string;
+    : string
 }
 
-export default escape;
+export default escape

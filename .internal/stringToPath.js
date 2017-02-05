@@ -1,11 +1,11 @@
-import memoizeCapped from './memoizeCapped.js';
+import memoizeCapped from './memoizeCapped.js'
 
 /** Used to match property names within property paths. */
-const reLeadingDot = /^\./;
-const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+const reLeadingDot = /^\./
+const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g
 
 /** Used to match backslashes in property paths. */
-const reEscapeChar = /\\(\\)?/g;
+const reEscapeChar = /\\(\\)?/g
 
 /**
  * Converts `string` to a property path array.
@@ -15,14 +15,14 @@ const reEscapeChar = /\\(\\)?/g;
  * @returns {Array} Returns the property path array.
  */
 const stringToPath = memoizeCapped(string => {
-  const result = [];
+  const result = []
   if (reLeadingDot.test(string)) {
-    result.push('');
+    result.push('')
   }
   string.replace(rePropName, (match, number, quote, string) => {
-    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
-  });
-  return result;
-});
+    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match))
+  })
+  return result
+})
 
-export default stringToPath;
+export default stringToPath

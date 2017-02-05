@@ -1,4 +1,4 @@
-import baseCreate from './.internal/baseCreate.js';
+import baseCreate from './.internal/baseCreate.js'
 
 /**
  * Creates an object that inherits from the `prototype` object. If a
@@ -13,28 +13,28 @@ import baseCreate from './.internal/baseCreate.js';
  * @example
  *
  * function Shape() {
- *   this.x = 0;
- *   this.y = 0;
+ *   this.x = 0
+ *   this.y = 0
  * }
  *
  * function Circle() {
- *   Shape.call(this);
+ *   Shape.call(this)
  * }
  *
  * Circle.prototype = create(Shape.prototype, {
  *   'constructor': Circle
- * });
+ * })
  *
- * const circle = new Circle;
- * circle instanceof Circle;
+ * const circle = new Circle
+ * circle instanceof Circle
  * // => true
  *
- * circle instanceof Shape;
+ * circle instanceof Shape
  * // => true
  */
 function create(prototype, properties) {
-  const result = baseCreate(prototype);
-  return properties == null ? result : Object.assign(result, properties);
+  const result = baseCreate(prototype)
+  return properties == null ? result : Object.assign(result, properties)
 }
 
-export default create;
+export default create

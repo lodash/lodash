@@ -1,18 +1,18 @@
 /** Used for built-in method references. */
-const objectProto = Object.prototype;
+const objectProto = Object.prototype
 
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty
 
 /**
  * Used to resolve the
  * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
  * of values.
  */
-const nativeObjectToString = objectProto.toString;
+const nativeObjectToString = objectProto.toString
 
 /** Built-in value references. */
-const symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+const symToStringTag = Symbol ? Symbol.toStringTag : undefined
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -22,24 +22,24 @@ const symToStringTag = Symbol ? Symbol.toStringTag : undefined;
  * @returns {string} Returns the raw `toStringTag`.
  */
 function getRawTag(value) {
-  const isOwn = hasOwnProperty.call(value, symToStringTag);
-  const tag = value[symToStringTag];
-  let unmasked = false;
+  const isOwn = hasOwnProperty.call(value, symToStringTag)
+  const tag = value[symToStringTag]
+  let unmasked = false
 
   try {
-    value[symToStringTag] = undefined;
-    unmasked = true;
+    value[symToStringTag] = undefined
+    unmasked = true
   } catch (e) {}
 
-  const result = nativeObjectToString.call(value);
+  const result = nativeObjectToString.call(value)
   if (unmasked) {
     if (isOwn) {
-      value[symToStringTag] = tag;
+      value[symToStringTag] = tag
     } else {
-      delete value[symToStringTag];
+      delete value[symToStringTag]
     }
   }
-  return result;
+  return result
 }
 
-export default getRawTag;
+export default getRawTag

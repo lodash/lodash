@@ -1,5 +1,5 @@
-import apply from './.internal/apply.js';
-import arraySome from './.internal/arraySome.js';
+import apply from './.internal/apply.js'
+import arraySome from './.internal/arraySome.js'
 
 /**
  * Creates a function that checks if **any** of the `predicates` return
@@ -12,22 +12,22 @@ import arraySome from './.internal/arraySome.js';
  * @returns {Function} Returns the new function.
  * @example
  *
- * const func = overSome([Boolean, isFinite]);
+ * const func = overSome([Boolean, isFinite])
  *
- * func('1');
+ * func('1')
  * // => true
  *
- * func(null);
+ * func(null)
  * // => true
  *
- * func(NaN);
+ * func(NaN)
  * // => false
  */
 function overSome(iteratees) {
   return function(...args) {
-    const thisArg = this;
-    return arraySome(iteratees, iteratee => apply(iteratee, thisArg, args));
-  };
+    const thisArg = this
+    return arraySome(iteratees, iteratee => apply(iteratee, thisArg, args))
+  }
 }
 
-export default overSome;
+export default overSome

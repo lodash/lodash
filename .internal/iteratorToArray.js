@@ -6,13 +6,13 @@
  * @returns {Array} Returns the converted array.
  */
 function iteratorToArray(iterator) {
-  let data;
-  const result = [];
+  let data
+  const result = []
 
   while (!(data = iterator.next()).done) {
-    result.push(data.value);
+    result.push(data.value)
   }
-  return result;
+  return result
 }
 
-export default iteratorToArray;
+export default iteratorToArray

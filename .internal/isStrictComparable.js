@@ -1,4 +1,4 @@
-import isObject from '../isObject.js';
+import isObject from '../isObject.js'
 
 /**
  * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -9,7 +9,7 @@ import isObject from '../isObject.js';
  *  equality comparisons, else `false`.
  */
 function isStrictComparable(value) {
-  return value === value && !isObject(value);
+  return value === value && !isObject(value)
 }
 
-export default isStrictComparable;
+export default isStrictComparable

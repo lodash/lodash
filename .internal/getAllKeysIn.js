@@ -1,5 +1,5 @@
-import getSymbolsIn from './getSymbolsIn.js';
-import keysIn from '../keysIn.js';
+import getSymbolsIn from './getSymbolsIn.js'
+import keysIn from '../keysIn.js'
 
 /**
  * Creates an array of own and inherited enumerable property names and
@@ -10,8 +10,8 @@ import keysIn from '../keysIn.js';
  * @returns {Array} Returns the array of property names and symbols.
  */
 function getAllKeysIn(object) {
-  const result = keysIn(object);
-  return Array.isArray(object) ? result : arrayPush(result, getSymbolsIn(object));
+  const result = keysIn(object)
+  return Array.isArray(object) ? result : arrayPush(result, getSymbolsIn(object))
 }
 
-export default getAllKeysIn;
+export default getAllKeysIn

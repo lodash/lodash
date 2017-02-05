@@ -1,11 +1,11 @@
-import baseFindIndex from './.internal/baseFindIndex.js';
-import baseIsNaN from './.internal/baseIsNaN.js';
-import strictLastIndexOf from './.internal/strictLastIndexOf.js';
-import toInteger from './toInteger.js';
+import baseFindIndex from './.internal/baseFindIndex.js'
+import baseIsNaN from './.internal/baseIsNaN.js'
+import strictLastIndexOf from './.internal/strictLastIndexOf.js'
+import toInteger from './toInteger.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max;
-const nativeMin = Math.min;
+const nativeMax = Math.max
+const nativeMin = Math.min
 
 /**
  * This method is like `indexOf` except that it iterates over elements of
@@ -19,26 +19,26 @@ const nativeMin = Math.min;
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * lastIndexOf([1, 2, 1, 2], 2);
+ * lastIndexOf([1, 2, 1, 2], 2)
  * // => 3
  *
  * // Search from the `fromIndex`.
- * lastIndexOf([1, 2, 1, 2], 2, 2);
+ * lastIndexOf([1, 2, 1, 2], 2, 2)
  * // => 1
  */
 function lastIndexOf(array, value, fromIndex) {
-  const length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length
   if (!length) {
-    return -1;
+    return -1
   }
-  let index = length;
+  let index = length
   if (fromIndex !== undefined) {
-    index = toInteger(fromIndex);
-    index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);
+    index = toInteger(fromIndex)
+    index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1)
   }
   return value === value
     ? strictLastIndexOf(array, value, index)
-    : baseFindIndex(array, baseIsNaN, index, true);
+    : baseFindIndex(array, baseIsNaN, index, true)
 }
 
-export default lastIndexOf;
+export default lastIndexOf

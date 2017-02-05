@@ -1,9 +1,9 @@
-import getTag from './.internal/getTag.js';
-import isObjectLike from './isObjectLike.js';
-import nodeUtil from './.internal/nodeUtil.js';
+import getTag from './.internal/getTag.js'
+import isObjectLike from './isObjectLike.js'
+import nodeUtil from './.internal/nodeUtil.js'
 
 /* Node.js helper references. */
-const nodeIsMap = nodeUtil && nodeUtil.isMap;
+const nodeIsMap = nodeUtil && nodeUtil.isMap
 
 /**
  * Checks if `value` is classified as a `Map` object.
@@ -14,14 +14,14 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap;
  * @returns {boolean} Returns `true` if `value` is a map, else `false`.
  * @example
  *
- * isMap(new Map);
+ * isMap(new Map)
  * // => true
  *
- * isMap(new WeakMap);
+ * isMap(new WeakMap)
  * // => false
  */
 const isMap = nodeIsMap
   ? value => nodeIsMap(value)
-  : value => isObjectLike(value) && getTag(value) == '[object Map]';
+  : value => isObjectLike(value) && getTag(value) == '[object Map]'
 
-export default isMap;
+export default isMap

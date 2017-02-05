@@ -1,5 +1,5 @@
-import copyObject from './copyObject.js';
-import keys from '../keys.js';
+import copyObject from './copyObject.js'
+import keys from '../keys.js'
 
 /**
  * The base implementation of `assign` without support for multiple sources
@@ -11,7 +11,7 @@ import keys from '../keys.js';
  * @returns {Object} Returns `object`.
  */
 function baseAssign(object, source) {
-  return object && copyObject(source, keys(source), object);
+  return object && copyObject(source, keys(source), object)
 }
 
-export default baseAssign;
+export default baseAssign

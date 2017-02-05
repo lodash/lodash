@@ -8,15 +8,15 @@
  *  else `false`.
  */
 function arraySome(array, predicate) {
-  let index = -1;
-  const length = array == null ? 0 : array.length;
+  let index = -1
+  const length = array == null ? 0 : array.length
 
   while (++index < length) {
     if (predicate(array[index], index, array)) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
-export default arraySome;
+export default arraySome

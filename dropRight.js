@@ -1,5 +1,5 @@
-import baseSlice from './.internal/baseSlice.js';
-import toInteger from './toInteger.js';
+import baseSlice from './.internal/baseSlice.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements dropped from the end.
@@ -12,26 +12,26 @@ import toInteger from './toInteger.js';
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
- * dropRight([1, 2, 3]);
+ * dropRight([1, 2, 3])
  * // => [1, 2]
  *
- * dropRight([1, 2, 3], 2);
+ * dropRight([1, 2, 3], 2)
  * // => [1]
  *
- * dropRight([1, 2, 3], 5);
+ * dropRight([1, 2, 3], 5)
  * // => []
  *
- * dropRight([1, 2, 3], 0);
+ * dropRight([1, 2, 3], 0)
  * // => [1, 2, 3]
  */
 function dropRight(array, n, guard) {
-  const length = array == null ? 0 : array.length;
+  const length = array == null ? 0 : array.length
   if (!length) {
-    return [];
+    return []
   }
-  n = (guard || n === undefined) ? 1 : toInteger(n);
-  n = length - n;
-  return baseSlice(array, 0, n < 0 ? 0 : n);
+  n = (guard || n === undefined) ? 1 : toInteger(n)
+  n = length - n
+  return baseSlice(array, 0, n < 0 ? 0 : n)
 }
 
-export default dropRight;
+export default dropRight

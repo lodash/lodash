@@ -1,4 +1,4 @@
-import basePullAll from './.internal/basePullAll.js';
+import basePullAll from './.internal/basePullAll.js'
 
 /**
  * This method is like `pull` except that it accepts an array of values to remove.
@@ -13,16 +13,16 @@ import basePullAll from './.internal/basePullAll.js';
  * @see pull, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
- * const array = ['a', 'b', 'c', 'a', 'b', 'c'];
+ * const array = ['a', 'b', 'c', 'a', 'b', 'c']
  *
- * pullAll(array, ['a', 'c']);
- * console.log(array);
+ * pullAll(array, ['a', 'c'])
+ * console.log(array)
  * // => ['b', 'b']
  */
 function pullAll(array, values) {
   return (array && array.length && values && values.length)
     ? basePullAll(array, values)
-    : array;
+    : array
 }
 
-export default pullAll;
+export default pullAll

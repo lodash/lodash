@@ -1,4 +1,4 @@
-import before from './before.js';
+import before from './before.js'
 
 /**
  * Creates a function that is restricted to invoking `func` once. Repeat calls
@@ -11,13 +11,13 @@ import before from './before.js';
  * @returns {Function} Returns the new restricted function.
  * @example
  *
- * const initialize = once(createApplication);
- * initialize();
- * initialize();
+ * const initialize = once(createApplication)
+ * initialize()
+ * initialize()
  * // => `createApplication` is invoked once
  */
 function once(func) {
-  return before(2, func);
+  return before(2, func)
 }
 
-export default once;
+export default once

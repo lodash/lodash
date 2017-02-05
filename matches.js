@@ -1,8 +1,8 @@
-import baseClone from './.internal/baseClone.js';
-import baseMatches from './.internal/baseMatches.js';
+import baseClone from './.internal/baseClone.js'
+import baseMatches from './.internal/baseMatches.js'
 
 /** Used to compose bitmasks for cloning. */
-const CLONE_DEEP_FLAG = 1;
+const CLONE_DEEP_FLAG = 1
 
 /**
  * Creates a function that performs a partial deep comparison between a given
@@ -25,13 +25,13 @@ const CLONE_DEEP_FLAG = 1;
  * const objects = [
  *   { 'a': 1, 'b': 2, 'c': 3 },
  *   { 'a': 4, 'b': 5, 'c': 6 }
- * ];
+ * ]
  *
- * filter(objects, matches({ 'a': 4, 'c': 6 }));
+ * filter(objects, matches({ 'a': 4, 'c': 6 }))
  * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
  */
 function matches(source) {
-  return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
+  return baseMatches(baseClone(source, CLONE_DEEP_FLAG))
 }
 
-export default matches;
+export default matches

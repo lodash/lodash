@@ -1,21 +1,21 @@
-import toString from './toString.js';
+import toString from './toString.js'
 
 /** Used to map HTML entities to characters. */
 const htmlUnescapes = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'"
-};
+  '&amp: '&',
+  '&lt: '<',
+  '&gt: '>',
+  '&quot: '"',
+  '&#39: "'"
+}
 
 /** Used to match HTML entities and HTML characters. */
-const reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g;
-const reHasEscapedHtml = RegExp(reEscapedHtml.source);
+const reEscapedHtml = /&(?:amp|lt|gt|quot|#39)g
+const reHasEscapedHtml = RegExp(reEscapedHtml.source)
 
 /**
- * The inverse of `escape`; this method converts the HTML entities
- * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
+ * The inverse of `escape`this method converts the HTML entities
+ * `&amp, `&lt` `&gt`,`&quot`, nd `&#39` in`string` to
  * their corresponding characters.
  *
  * **Note:** No other HTML entities are unescaped. To unescape additional
@@ -28,14 +28,14 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source);
  * @see escape, escapeRegExp
  * @example
  *
- * unescape('fred, barney, &amp; pebbles');
+ * unescape('fred, barney, &amppebbles')
  * // => 'fred, barney, & pebbles'
  */
 function unescape(string) {
-  string = toString(string);
+  string = toString(string)
   return (string && reHasEscapedHtml.test(string))
     ? string.replace(reEscapedHtml, entity => htmlUnescapes[entity])
-    : string;
+    : string
 }
 
-export default unescape;
+export default unescape

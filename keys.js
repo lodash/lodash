@@ -1,6 +1,6 @@
-import arrayLikeKeys from './.internal/arrayLikeKeys.js';
-import baseKeys from './.internal/baseKeys.js';
-import isArrayLike from './isArrayLike.js';
+import arrayLikeKeys from './.internal/arrayLikeKeys.js'
+import baseKeys from './.internal/baseKeys.js'
+import isArrayLike from './isArrayLike.js'
 
 /**
  * Creates an array of the own enumerable property names of `object`.
@@ -17,20 +17,20 @@ import isArrayLike from './isArrayLike.js';
  * @example
  *
  * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
+ *   this.a = 1
+ *   this.b = 2
  * }
  *
- * Foo.prototype.c = 3;
+ * Foo.prototype.c = 3
  *
- * keys(new Foo);
+ * keys(new Foo)
  * // => ['a', 'b'] (iteration order is not guaranteed)
  *
- * keys('hi');
+ * keys('hi')
  * // => ['0', '1']
  */
 function keys(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object)
 }
 
-export default keys;
+export default keys

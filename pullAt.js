@@ -1,8 +1,8 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseAt from './.internal/baseAt.js';
-import basePullAt from './.internal/basePullAt.js';
-import compareAscending from './.internal/compareAscending.js';
-import isIndex from './.internal/isIndex.js';
+import arrayMap from './.internal/arrayMap.js'
+import baseAt from './.internal/baseAt.js'
+import basePullAt from './.internal/basePullAt.js'
+import compareAscending from './.internal/compareAscending.js'
+import isIndex from './.internal/isIndex.js'
 
 /**
  * Removes elements from `array` corresponding to `indexes` and returns an
@@ -18,21 +18,21 @@ import isIndex from './.internal/isIndex.js';
  * @see pull, pullAll, pullAllBy, pullAllWith, remove, reject
  * @example
  *
- * const array = ['a', 'b', 'c', 'd'];
- * const pulled = pullAt(array, [1, 3]);
+ * const array = ['a', 'b', 'c', 'd']
+ * const pulled = pullAt(array, [1, 3])
  *
- * console.log(array);
+ * console.log(array)
  * // => ['a', 'c']
  *
- * console.log(pulled);
+ * console.log(pulled)
  * // => ['b', 'd']
  */
 function pullAt(array, ...indexes) {
-  const length = array == null ? 0 : array.length;
-  const result = baseAt(array, indexes);
+  const length = array == null ? 0 : array.length
+  const result = baseAt(array, indexes)
 
-  basePullAt(array, arrayMap(indexes, index => isIndex(index, length) ? +index : index).sort(compareAscending));
-  return result;
+  basePullAt(array, arrayMap(indexes, index => isIndex(index, length) ? +index : index).sort(compareAscending))
+  return result
 }
 
-export default pullAt;
+export default pullAt

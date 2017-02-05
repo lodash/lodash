@@ -1,8 +1,8 @@
-import baseAssignValue from './.internal/baseAssignValue.js';
-import reduce from './reduce.js';
+import baseAssignValue from './.internal/baseAssignValue.js'
+import reduce from './reduce.js'
 
 /** Used to check objects for own properties. */
-const hasOwnProperty = Object.prototype.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
  * Creates an object composed of keys generated from the results of running
@@ -18,18 +18,18 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * groupBy([6.1, 4.2, 6.3], Math.floor);
+ * groupBy([6.1, 4.2, 6.3], Math.floor)
  * // => { '4': [4.2], '6': [6.1, 6.3] }
  */
 function groupBy(collection, iteratee) {
   return reduce(collection, (result, value, key) => {
     if (hasOwnProperty.call(result, key)) {
-      result[key].push(value);
+      result[key].push(value)
     } else {
-      baseAssignValue(result, key, [value]);
+      baseAssignValue(result, key, [value])
     }
-    return result;
-  }, {});
+    return result
+  }, {})
 }
 
-export default groupBy;
+export default groupBy

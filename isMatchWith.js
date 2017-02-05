@@ -1,5 +1,5 @@
-import baseIsMatch from './.internal/baseIsMatch.js';
-import getMatchData from './.internal/getMatchData.js';
+import baseIsMatch from './.internal/baseIsMatch.js'
+import getMatchData from './.internal/getMatchData.js'
 
 /**
  * This method is like `isMatch` except that it accepts `customizer` which
@@ -16,24 +16,24 @@ import getMatchData from './.internal/getMatchData.js';
  * @example
  *
  * function isGreeting(value) {
- *   return /^h(?:i|ello)$/.test(value);
+ *   return /^h(?:i|ello)$/.test(value)
  * }
  *
  * function customizer(objValue, srcValue) {
  *   if (isGreeting(objValue) && isGreeting(srcValue)) {
- *     return true;
+ *     return true
  *   }
  * }
  *
- * const object = { 'greeting': 'hello' };
- * const source = { 'greeting': 'hi' };
+ * const object = { 'greeting': 'hello' }
+ * const source = { 'greeting': 'hi' }
  *
- * isMatchWith(object, source, customizer);
+ * isMatchWith(object, source, customizer)
  * // => true
  */
 function isMatchWith(object, source, customizer) {
-  customizer = typeof customizer == 'function' ? customizer : undefined;
-  return baseIsMatch(object, source, getMatchData(source), customizer);
+  customizer = typeof customizer == 'function' ? customizer : undefined
+  return baseIsMatch(object, source, getMatchData(source), customizer)
 }
 
-export default isMatchWith;
+export default isMatchWith

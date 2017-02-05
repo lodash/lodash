@@ -1,5 +1,5 @@
-import constant from '../constant.js';
-import identity from '../identity.js';
+import constant from '../constant.js'
+import identity from '../identity.js'
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
@@ -15,7 +15,7 @@ function baseSetToString(func, string){
     'enumerable': false,
     'value': constant(string),
     'writable': true
-  });
+  })
 }
 
-export default baseSetToString;
+export default baseSetToString

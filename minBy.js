@@ -1,4 +1,4 @@
-import isSymbol from './isSymbol.js';
+import isSymbol from './isSymbol.js'
 
 /**
  * This method is like `min` except that it accepts `iteratee` which is
@@ -12,30 +12,30 @@ import isSymbol from './isSymbol.js';
  * @returns {*} Returns the minimum value.
  * @example
  *
- * const objects = [{ 'n': 1 }, { 'n': 2 }];
+ * const objects = [{ 'n': 1 }, { 'n': 2 }]
  *
- * minBy(objects, ({ n }) => n);
+ * minBy(objects, ({ n }) => n)
  * // => { 'n': 1 }
  */
 function minBy(array, iteratee) {
-  let result;
-  let index = -1;
-  const length = array ? array.length : 0;
+  let result
+  let index = -1
+  const length = array ? array.length : 0
 
   while (++index < length) {
-    let computed;
-    const value = array[index];
-    const current = iteratee(value);
+    let computed
+    const value = array[index]
+    const current = iteratee(value)
 
     if (current != null && (computed === undefined
           ? (current === current && !isSymbol(current))
           : (current < computed)
         )) {
-      computed = current;
-      result = value;
+      computed = current
+      result = value
     }
   }
-  return result;
+  return result
 }
 
-export default minBy;
+export default minBy

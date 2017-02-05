@@ -1,4 +1,4 @@
-import baseForOwnRight from './.internal/baseForOwnRight.js';
+import baseForOwnRight from './.internal/baseForOwnRight.js'
 
 /**
  * This method is like `forOwn` except that it iterates over properties of
@@ -13,19 +13,19 @@ import baseForOwnRight from './.internal/baseForOwnRight.js';
  * @example
  *
  * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
+ *   this.a = 1
+ *   this.b = 2
  * }
  *
- * Foo.prototype.c = 3;
+ * Foo.prototype.c = 3
  *
  * forOwnRight(new Foo, function(value, key) {
- *   console.log(key);
- * });
+ *   console.log(key)
+ * })
  * // => Logs 'b' then 'a' assuming `forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, iteratee);
+  return object && baseForOwnRight(object, iteratee)
 }
 
-export default forOwnRight;
+export default forOwnRight

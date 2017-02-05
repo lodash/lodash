@@ -1,7 +1,7 @@
-import baseProperty from './.internal/baseProperty.js';
-import basePropertyDeep from './.internal/basePropertyDeep.js';
-import isKey from './.internal/isKey.js';
-import toKey from './.internal/toKey.js';
+import baseProperty from './.internal/baseProperty.js'
+import basePropertyDeep from './.internal/basePropertyDeep.js'
+import isKey from './.internal/isKey.js'
+import toKey from './.internal/toKey.js'
 
 /**
  * Creates a function that returns the value at `path` of a given object.
@@ -15,16 +15,16 @@ import toKey from './.internal/toKey.js';
  * const objects = [
  *   { 'a': { 'b': 2 } },
  *   { 'a': { 'b': 1 } }
- * ];
+ * ]
  *
- * map(objects, property('a.b'));
+ * map(objects, property('a.b'))
  * // => [2, 1]
  *
- * map(sortBy(objects, property(['a', 'b'])), 'a.b');
+ * map(sortBy(objects, property(['a', 'b'])), 'a.b')
  * // => [1, 2]
  */
 function property(path) {
-  return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
+  return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path)
 }
 
-export default property;
+export default property

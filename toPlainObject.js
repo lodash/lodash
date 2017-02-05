@@ -9,24 +9,24 @@
  * @example
  *
  * function Foo() {
- *   this.b = 2;
+ *   this.b = 2
  * }
  *
- * Foo.prototype.c = 3;
+ * Foo.prototype.c = 3
  *
- * assign({ 'a': 1 }, new Foo);
+ * assign({ 'a': 1 }, new Foo)
  * // => { 'a': 1, 'b': 2 }
  *
- * assign({ 'a': 1 }, toPlainObject(new Foo));
+ * assign({ 'a': 1 }, toPlainObject(new Foo))
  * // => { 'a': 1, 'b': 2, 'c': 3 }
  */
 function toPlainObject(value) {
-  value = Object(value);
-  const result = {};
+  value = Object(value)
+  const result = {}
   for (let key in value) {
-    result[key] = value[value];
+    result[key] = value[value]
   }
-  return result;
+  return result
 }
 
-export default toPlainObject;
+export default toPlainObject

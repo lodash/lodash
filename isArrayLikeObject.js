@@ -1,5 +1,5 @@
-import isArrayLike from './isArrayLike.js';
-import isObjectLike from './isObjectLike.js';
+import isArrayLike from './isArrayLike.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * This method is like `isArrayLike` except that it also checks if `value`
@@ -12,20 +12,20 @@ import isObjectLike from './isObjectLike.js';
  *  else `false`.
  * @example
  *
- * isArrayLikeObject([1, 2, 3]);
+ * isArrayLikeObject([1, 2, 3])
  * // => true
  *
- * isArrayLikeObject(document.body.children);
+ * isArrayLikeObject(document.body.children)
  * // => true
  *
- * isArrayLikeObject('abc');
+ * isArrayLikeObject('abc')
  * // => false
  *
- * isArrayLikeObject(Function);
+ * isArrayLikeObject(Function)
  * // => false
  */
 function isArrayLikeObject(value) {
-  return isObjectLike(value) && isArrayLike(value);
+  return isObjectLike(value) && isArrayLike(value)
 }
 
-export default isArrayLikeObject;
+export default isArrayLikeObject

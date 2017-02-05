@@ -1,5 +1,5 @@
 /** Used to match words composed of alphanumeric characters. */
-const reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
+const reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g
 
 /**
  * Splits an ASCII `string` into an array of its words.
@@ -9,7 +9,7 @@ const reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
  * @returns {Array} Returns the words of `string`.
  */
 function asciiWords(string) {
-  return string.match(reAsciiWord) || [];
+  return string.match(reAsciiWord) || []
 }
 
-export default asciiWords;
+export default asciiWords

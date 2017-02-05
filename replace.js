@@ -1,4 +1,4 @@
-import toString from './toString.js';
+import toString from './toString.js'
 
 /**
  * Replaces matches for `pattern` in `string` with `replacement`.
@@ -15,14 +15,14 @@ import toString from './toString.js';
  * @see truncate, trim
  * @example
  *
- * replace('Hi Fred', 'Fred', 'Barney');
+ * replace('Hi Fred', 'Fred', 'Barney')
  * // => 'Hi Barney'
  */
 function replace() {
-  const args = arguments;
-  const string = toString(args[0]);
+  const args = arguments
+  const string = toString(args[0])
 
-  return args.length < 3 ? string : string.replace(args[1], args[2]);
+  return args.length < 3 ? string : string.replace(args[1], args[2])
 }
 
-export default replace;
+export default replace

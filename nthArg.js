@@ -1,5 +1,5 @@
-import baseNth from './.internal/baseNth.js';
-import toInteger from './toInteger.js';
+import baseNth from './.internal/baseNth.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates a function that gets the argument at index `n`. If `n` is negative,
@@ -11,17 +11,17 @@ import toInteger from './toInteger.js';
  * @returns {Function} Returns the new pass-thru function.
  * @example
  *
- * const func = nthArg(1);
- * func('a', 'b', 'c', 'd');
+ * const func = nthArg(1)
+ * func('a', 'b', 'c', 'd')
  * // => 'b'
  *
- * const func = nthArg(-2);
- * func('a', 'b', 'c', 'd');
+ * const func = nthArg(-2)
+ * func('a', 'b', 'c', 'd')
  * // => 'c'
  */
 function nthArg(n) {
-  n = toInteger(n);
-  return (...args) => baseNth(args, n);
+  n = toInteger(n)
+  return (...args) => baseNth(args, n)
 }
 
-export default nthArg;
+export default nthArg

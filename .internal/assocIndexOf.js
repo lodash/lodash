@@ -1,4 +1,4 @@
-import eq from '../eq.js';
+import eq from '../eq.js'
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -9,13 +9,13 @@ import eq from '../eq.js';
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function assocIndexOf(array, key) {
-  let length = array.length;
+  let length = array.length
   while (length--) {
     if (eq(array[length][0], key)) {
-      return length;
+      return length
     }
   }
-  return -1;
+  return -1
 }
 
-export default assocIndexOf;
+export default assocIndexOf

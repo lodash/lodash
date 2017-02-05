@@ -9,13 +9,13 @@
  * @returns {Array} Returns `array`.
  */
 function baseSortBy(array, comparer) {
-  let length = array.length;
+  let length = array.length
 
-  array.sort(comparer);
+  array.sort(comparer)
   while (length--) {
-    array[length] = array[length].value;
+    array[length] = array[length].value
   }
-  return array;
+  return array
 }
 
-export default baseSortBy;
+export default baseSortBy

@@ -1,6 +1,6 @@
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max;
-const nativeMin = Math.min;
+const nativeMax = Math.max
+const nativeMin = Math.min
 
 /**
  * The base implementation of `inRange` which doesn't coerce arguments.
@@ -12,7 +12,7 @@ const nativeMin = Math.min;
  * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
  */
 function baseInRange(number, start, end) {
-  return number >= nativeMin(start, end) && number < nativeMax(start, end);
+  return number >= nativeMin(start, end) && number < nativeMax(start, end)
 }
 
-export default baseInRange;
+export default baseInRange

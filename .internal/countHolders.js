@@ -7,15 +7,15 @@
  * @returns {number} Returns the placeholder count.
  */
 function countHolders(array, placeholder) {
-  let length = array.length;
-  let result = 0;
+  let length = array.length
+  let result = 0
 
   while (length--) {
     if (array[length] === placeholder) {
-      ++result;
+      ++result
     }
   }
-  return result;
+  return result
 }
 
-export default countHolders;
+export default countHolders

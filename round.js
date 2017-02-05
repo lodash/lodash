@@ -1,4 +1,4 @@
-import createRound from './.internal/createRound.js';
+import createRound from './.internal/createRound.js'
 
 /**
  * Computes `number` rounded to `precision`.
@@ -10,15 +10,15 @@ import createRound from './.internal/createRound.js';
  * @returns {number} Returns the rounded number.
  * @example
  *
- * round(4.006);
+ * round(4.006)
  * // => 4
  *
- * round(4.006, 2);
+ * round(4.006, 2)
  * // => 4.01
  *
- * round(4060, -2);
+ * round(4060, -2)
  * // => 4100
  */
-const round = createRound('round');
+const round = createRound('round')
 
-export default round;
+export default round

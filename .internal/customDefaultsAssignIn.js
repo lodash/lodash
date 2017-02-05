@@ -1,10 +1,10 @@
-import eq from '../eq.js';
+import eq from '../eq.js'
 
 /** Used for built-in method references. */
-const objectProto = Object.prototype;
+const objectProto = Object.prototype
 
 /** Used to check objects for own properties. */
-const hasOwnProperty = objectProto.hasOwnProperty;
+const hasOwnProperty = objectProto.hasOwnProperty
 
 /**
  * Used by `defaults` to customize its `assignIn` use to assign properties
@@ -21,9 +21,9 @@ const hasOwnProperty = objectProto.hasOwnProperty;
 function customDefaultsAssignIn(objValue, srcValue, key, object) {
   if (objValue === undefined ||
       (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-    return srcValue;
+    return srcValue
   }
-  return objValue;
+  return objValue
 }
 
-export default customDefaultsAssignIn;
+export default customDefaultsAssignIn

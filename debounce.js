@@ -1,9 +1,9 @@
-import isObject from './isObject.js';
-import toNumber from './toNumber.js';
+import isObject from './isObject.js'
+import toNumber from './toNumber.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max;
-const nativeMin = Math.min;
+const nativeMax = Math.max
+const nativeMin = Math.min
 
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
@@ -41,21 +41,21 @@ const nativeMin = Math.min;
  * @example
  *
  * // Avoid costly calculations while the window size is in flux.
- * jQuery(window).on('resize', debounce(calculateLayout, 150));
+ * jQuery(window).on('resize', debounce(calculateLayout, 150))
  *
  * // Invoke `sendMail` when clicked, debouncing subsequent calls.
  * jQuery(element).on('click', debounce(sendMail, 300, {
  *   'leading': true,
  *   'trailing': false
- * }));
+ * }))
  *
  * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
- * const debounced = debounce(batchLog, 250, { 'maxWait': 1000 });
- * const source = new EventSource('/stream');
- * jQuery(source).on('message', debounced);
+ * const debounced = debounce(batchLog, 250, { 'maxWait': 1000 })
+ * const source = new EventSource('/stream')
+ * jQuery(source).on('message', debounced)
  *
  * // Cancel the trailing debounced invocation.
- * jQuery(window).on('popstate', debounced.cancel);
+ * jQuery(window).on('popstate', debounced.cancel)
  */
 function debounce(func, wait, options) {
   let lastArgs,
@@ -63,121 +63,121 @@ function debounce(func, wait, options) {
       maxWait,
       result,
       timerId,
-      lastCallTime;
+      lastCallTime
 
-  let lastInvokeTime = 0;
-  let leading = false;
-  let maxing = false;
-  let trailing = true;
+  let lastInvokeTime = 0
+  let leading = false
+  let maxing = false
+  let trailing = true
 
   if (typeof func != 'function') {
-    throw new TypeError('Expected a function');
+    throw new TypeError('Expected a function')
   }
-  wait = toNumber(wait) || 0;
+  wait = toNumber(wait) || 0
   if (isObject(options)) {
-    leading = !!options.leading;
-    maxing = 'maxWait' in options;
-    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
+    leading = !!options.leading
+    maxing = 'maxWait' in options
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait
+    trailing = 'trailing' in options ? !!options.trailing : trailing
   }
 
   function invokeFunc(time) {
-    const args = lastArgs;
-    const thisArg = lastThis;
+    const args = lastArgs
+    const thisArg = lastThis
 
-    lastArgs = lastThis = undefined;
-    lastInvokeTime = time;
-    result = func.apply(thisArg, args);
-    return result;
+    lastArgs = lastThis = undefined
+    lastInvokeTime = time
+    result = func.apply(thisArg, args)
+    return result
   }
 
   function leadingEdge(time) {
     // Reset any `maxWait` timer.
-    lastInvokeTime = time;
+    lastInvokeTime = time
     // Start the timer for the trailing edge.
-    timerId = setTimeout(timerExpired, wait);
+    timerId = setTimeout(timerExpired, wait)
     // Invoke the leading edge.
-    return leading ? invokeFunc(time) : result;
+    return leading ? invokeFunc(time) : result
   }
 
   function remainingWait(time) {
-    const timeSinceLastCall = time - lastCallTime;
-    const timeSinceLastInvoke = time - lastInvokeTime;
-    const result = wait - timeSinceLastCall;
+    const timeSinceLastCall = time - lastCallTime
+    const timeSinceLastInvoke = time - lastInvokeTime
+    const result = wait - timeSinceLastCall
 
-    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result
   }
 
   function shouldInvoke(time) {
-    const timeSinceLastCall = time - lastCallTime;
-    const timeSinceLastInvoke = time - lastInvokeTime;
+    const timeSinceLastCall = time - lastCallTime
+    const timeSinceLastInvoke = time - lastInvokeTime
 
     // Either this is the first call, activity has stopped and we're at the
     // trailing edge, the system time has gone backwards and we're treating
     // it as the trailing edge, or we've hit the `maxWait` limit.
     return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
-      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait))
   }
 
   function timerExpired() {
-    const time = Date.now();
+    const time = Date.now()
     if (shouldInvoke(time)) {
-      return trailingEdge(time);
+      return trailingEdge(time)
     }
     // Restart the timer.
-    timerId = setTimeout(timerExpired, remainingWait(time));
+    timerId = setTimeout(timerExpired, remainingWait(time))
   }
 
   function trailingEdge(time) {
-    timerId = undefined;
+    timerId = undefined
 
     // Only invoke if we have `lastArgs` which means `func` has been
     // debounced at least once.
     if (trailing && lastArgs) {
-      return invokeFunc(time);
+      return invokeFunc(time)
     }
-    lastArgs = lastThis = undefined;
-    return result;
+    lastArgs = lastThis = undefined
+    return result
   }
 
   function cancel() {
     if (timerId !== undefined) {
-      clearTimeout(timerId);
+      clearTimeout(timerId)
     }
-    lastInvokeTime = 0;
-    lastArgs = lastCallTime = lastThis = timerId = undefined;
+    lastInvokeTime = 0
+    lastArgs = lastCallTime = lastThis = timerId = undefined
   }
 
   function flush() {
-    return timerId === undefined ? result : trailingEdge(Date.now());
+    return timerId === undefined ? result : trailingEdge(Date.now())
   }
 
   function debounced(...args) {
-    const time = Date.now();
-    const isInvoking = shouldInvoke(time);
+    const time = Date.now()
+    const isInvoking = shouldInvoke(time)
 
-    lastArgs = args;
-    lastThis = this;
-    lastCallTime = time;
+    lastArgs = args
+    lastThis = this
+    lastCallTime = time
 
     if (isInvoking) {
       if (timerId === undefined) {
-        return leadingEdge(lastCallTime);
+        return leadingEdge(lastCallTime)
       }
       if (maxing) {
         // Handle invocations in a tight loop.
-        timerId = setTimeout(timerExpired, wait);
-        return invokeFunc(lastCallTime);
+        timerId = setTimeout(timerExpired, wait)
+        return invokeFunc(lastCallTime)
       }
     }
     if (timerId === undefined) {
-      timerId = setTimeout(timerExpired, wait);
+      timerId = setTimeout(timerExpired, wait)
     }
-    return result;
+    return result
   }
-  debounced.cancel = cancel;
-  debounced.flush = flush;
-  return debounced;
+  debounced.cancel = cancel
+  debounced.flush = flush
+  return debounced
 }
 
-export default debounce;
+export default debounce

@@ -7,18 +7,18 @@
  * @returns {Array} Returns the new filtered array.
  */
 function arrayFilter(array, predicate) {
-  let index = -1;
-  let resIndex = 0;
-  const length = array == null ? 0 : array.length;
-  const result = [];
+  let index = -1
+  let resIndex = 0
+  const length = array == null ? 0 : array.length
+  const result = []
 
   while (++index < length) {
-    const value = array[index];
+    const value = array[index]
     if (predicate(value, index, array)) {
-      result[resIndex++] = value;
+      result[resIndex++] = value
     }
   }
-  return result;
+  return result
 }
 
-export default arrayFilter;
+export default arrayFilter

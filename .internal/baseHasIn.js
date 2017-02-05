@@ -7,7 +7,7 @@
  * @returns {boolean} Returns `true` if `key` exists, else `false`.
  */
 function baseHasIn(object, key) {
-  return object != null && key in Object(object);
+  return object != null && key in Object(object)
 }
 
-export default baseHasIn;
+export default baseHasIn

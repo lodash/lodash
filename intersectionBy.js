@@ -1,7 +1,7 @@
-import arrayMap from './.internal/arrayMap.js';
-import baseIntersection from './.internal/baseIntersection.js';
-import castArrayLikeObject from './.internal/castArrayLikeObject.js';
-import last from './last.js';
+import arrayMap from './.internal/arrayMap.js'
+import baseIntersection from './.internal/baseIntersection.js'
+import castArrayLikeObject from './.internal/castArrayLikeObject.js'
+import last from './last.js'
 
 /**
  * This method is like `intersection` except that it accepts `iteratee`
@@ -17,21 +17,21 @@ import last from './last.js';
  * @returns {Array} Returns the new array of intersecting values.
  * @example
  *
- * intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+ * intersectionBy([2.1, 1.2], [2.3, 3.4], Math.floor)
  * // => [2.1]
  */
 function intersectionBy(...arrays) {
-  let iteratee = last(arrays);
-  const mapped = arrayMap(arrays, castArrayLikeObject);
+  let iteratee = last(arrays)
+  const mapped = arrayMap(arrays, castArrayLikeObject)
 
   if (iteratee === last(mapped)) {
-    iteratee = undefined;
+    iteratee = undefined
   } else {
-    mapped.pop();
+    mapped.pop()
   }
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped, iteratee)
-    : [];
+    : []
 }
 
-export default intersectionBy;
+export default intersectionBy

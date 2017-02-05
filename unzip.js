@@ -1,11 +1,11 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import arrayMap from './.internal/arrayMap.js';
-import baseProperty from './.internal/baseProperty.js';
-import baseTimes from './.internal/baseTimes.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import arrayMap from './.internal/arrayMap.js'
+import baseProperty from './.internal/baseProperty.js'
+import baseTimes from './.internal/baseTimes.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max;
+const nativeMax = Math.max
 
 /**
  * This method is like `zip` except that it accepts an array of grouped
@@ -19,24 +19,24 @@ const nativeMax = Math.max;
  * @see unzipWith, zip, zipObject, zipObjectDeep, zipWith
  * @example
  *
- * const zipped = zip(['a', 'b'], [1, 2], [true, false]);
+ * const zipped = zip(['a', 'b'], [1, 2], [true, false])
  * // => [['a', 1, true], ['b', 2, false]]
  *
- * unzip(zipped);
+ * unzip(zipped)
  * // => [['a', 'b'], [1, 2], [true, false]]
  */
 function unzip(array) {
   if (!(array && array.length)) {
-    return [];
+    return []
   }
-  let length = 0;
+  let length = 0
   array = arrayFilter(array, group => {
     if (isArrayLikeObject(group)) {
-      length = nativeMax(group.length, length);
-      return true;
+      length = nativeMax(group.length, length)
+      return true
     }
-  });
-  return baseTimes(length, index => arrayMap(array, baseProperty(index)));
+  })
+  return baseTimes(length, index => arrayMap(array, baseProperty(index)))
 }
 
-export default unzip;
+export default unzip

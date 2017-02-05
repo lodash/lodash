@@ -1,7 +1,7 @@
-import baseClone from './.internal/baseClone.js';
+import baseClone from './.internal/baseClone.js'
 
 /** Used to compose bitmasks for cloning. */
-const CLONE_SYMBOLS_FLAG = 4;
+const CLONE_SYMBOLS_FLAG = 4
 
 /**
  * Creates a shallow clone of `value`.
@@ -21,14 +21,14 @@ const CLONE_SYMBOLS_FLAG = 4;
  * @see cloneDeep
  * @example
  *
- * const objects = [{ 'a': 1 }, { 'b': 2 }];
+ * const objects = [{ 'a': 1 }, { 'b': 2 }]
  *
- * const shallow = clone(objects);
- * console.log(shallow[0] === objects[0]);
+ * const shallow = clone(objects)
+ * console.log(shallow[0] === objects[0])
  * // => true
  */
 function clone(value) {
-  return baseClone(value, CLONE_SYMBOLS_FLAG);
+  return baseClone(value, CLONE_SYMBOLS_FLAG)
 }
 
-export default clone;
+export default clone

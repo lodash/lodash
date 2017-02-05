@@ -1,8 +1,8 @@
-import baseFlatten from './.internal/baseFlatten.js';
-import map from './map.js';
+import baseFlatten from './.internal/baseFlatten.js'
+import map from './map.js'
 
 /** Used as references for various `Number` constants. */
-const INFINITY = 1 / 0;
+const INFINITY = 1 / 0
 
 /**
  * This method is like `flatMap` except that it recursively flattens the
@@ -17,14 +17,14 @@ const INFINITY = 1 / 0;
  * @example
  *
  * function duplicate(n) {
- *   return [[[n, n]]];
+ *   return [[[n, n]]]
  * }
  *
- * flatMapDeep([1, 2], duplicate);
+ * flatMapDeep([1, 2], duplicate)
  * // => [1, 1, 2, 2]
  */
 function flatMapDeep(collection, iteratee) {
-  return baseFlatten(map(collection, iteratee), INFINITY);
+  return baseFlatten(map(collection, iteratee), INFINITY)
 }
 
-export default flatMapDeep;
+export default flatMapDeep

@@ -1,5 +1,5 @@
 /** Used to check objects for own properties. */
-const hasOwnProperty = Object.prototype.hasOwnProperty;
+const hasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
  * The base implementation of `has` without support for deep paths.
@@ -10,7 +10,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @returns {boolean} Returns `true` if `key` exists, else `false`.
  */
 function baseHas(object, key) {
-  return object != null && hasOwnProperty.call(object, key);
+  return object != null && hasOwnProperty.call(object, key)
 }
 
-export default baseHas;
+export default baseHas

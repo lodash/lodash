@@ -1,5 +1,5 @@
 /** Used to match `RegExp` flags from their coerced string values. */
-const reFlags = /\w*$/;
+const reFlags = /\w*$/
 
 /**
  * Creates a clone of `regexp`.
@@ -9,9 +9,9 @@ const reFlags = /\w*$/;
  * @returns {Object} Returns the cloned regexp.
  */
 function cloneRegExp(regexp) {
-  const result = new regexp.constructor(regexp.source, reFlags.exec(regexp));
-  result.lastIndex = regexp.lastIndex;
-  return result;
+  const result = new regexp.constructor(regexp.source, reFlags.exec(regexp))
+  result.lastIndex = regexp.lastIndex
+  return result
 }
 
-export default cloneRegExp;
+export default cloneRegExp

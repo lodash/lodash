@@ -1,4 +1,4 @@
-import pullAll from './pullAll.js';
+import pullAll from './pullAll.js'
 
 /**
  * Removes all given values from `array` using
@@ -16,14 +16,14 @@ import pullAll from './pullAll.js';
  * @see pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
- * const array = ['a', 'b', 'c', 'a', 'b', 'c'];
+ * const array = ['a', 'b', 'c', 'a', 'b', 'c']
  *
- * pull(array, 'a', 'c');
- * console.log(array);
+ * pull(array, 'a', 'c')
+ * console.log(array)
  * // => ['b', 'b']
  */
 function pull(array, ...values) {
-  return pullAll(array, values);
+  return pullAll(array, values)
 }
 
-export default pull;
+export default pull

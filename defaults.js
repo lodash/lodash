@@ -1,6 +1,6 @@
-import apply from './.internal/apply.js';
-import assignInWith from './assignInWith.js';
-import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
+import apply from './.internal/apply.js'
+import assignInWith from './assignInWith.js'
+import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js'
 
 /**
  * Assigns own and inherited enumerable string keyed properties of source
@@ -18,12 +18,12 @@ import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js';
  * @see defaultsDeep
  * @example
  *
- * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+ * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 })
  * // => { 'a': 1, 'b': 2 }
  */
 function defaults(...args) {
-  args.push(undefined, customDefaultsAssignIn);
-  return apply(assignInWith, undefined, args);
+  args.push(undefined, customDefaultsAssignIn)
+  return apply(assignInWith, undefined, args)
 }
 
-export default defaults;
+export default defaults

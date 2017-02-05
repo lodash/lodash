@@ -1,5 +1,5 @@
-import arrayShuffle from './.internal/arrayShuffle.js';
-import baseShuffle from './.internal/baseShuffle.js';
+import arrayShuffle from './.internal/arrayShuffle.js'
+import baseShuffle from './.internal/baseShuffle.js'
 
 /**
  * Creates an array of shuffled values, using a version of the
@@ -11,12 +11,12 @@ import baseShuffle from './.internal/baseShuffle.js';
  * @returns {Array} Returns the new shuffled array.
  * @example
  *
- * shuffle([1, 2, 3, 4]);
+ * shuffle([1, 2, 3, 4])
  * // => [4, 1, 3, 2]
  */
 function shuffle(collection) {
-  const func = Array.isArray(collection) ? arrayShuffle : baseShuffle;
-  return func(collection);
+  const func = Array.isArray(collection) ? arrayShuffle : baseShuffle
+  return func(collection)
 }
 
-export default shuffle;
+export default shuffle

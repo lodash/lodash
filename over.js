@@ -1,5 +1,5 @@
-import apply from './.internal/apply.js';
-import arrayMap from './.internal/arrayMap.js';
+import apply from './.internal/apply.js'
+import arrayMap from './.internal/arrayMap.js'
 
 /**
  * Creates a function that invokes `iteratees` with the arguments it receives
@@ -12,16 +12,16 @@ import arrayMap from './.internal/arrayMap.js';
  * @returns {Function} Returns the new function.
  * @example
  *
- * const func = over([Math.max, Math.min]);
+ * const func = over([Math.max, Math.min])
  *
- * func(1, 2, 3, 4);
+ * func(1, 2, 3, 4)
  * // => [4, 1]
  */
 function over(iteratees) {
   return function(...args) {
-    const thisArg = this;
-    return arrayMap(iteratees, iteratee => apply(iteratee, thisArg, args));
-  };
+    const thisArg = this
+    return arrayMap(iteratees, iteratee => apply(iteratee, thisArg, args))
+  }
 }
 
-export default over;
+export default over

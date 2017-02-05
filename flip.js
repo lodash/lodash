@@ -1,7 +1,7 @@
-import createWrap from './.internal/createWrap.js';
+import createWrap from './.internal/createWrap.js'
 
 /** Used to compose bitmasks for function metadata. */
-const WRAP_FLIP_FLAG = 512;
+const WRAP_FLIP_FLAG = 512
 
 /**
  * Creates a function that invokes `func` with arguments reversed.
@@ -13,13 +13,13 @@ const WRAP_FLIP_FLAG = 512;
  * @see reverse
  * @example
  *
- * const flipped = flip((...args) => args);
+ * const flipped = flip((...args) => args)
  *
- * flipped('a', 'b', 'c', 'd');
+ * flipped('a', 'b', 'c', 'd')
  * // => ['d', 'c', 'b', 'a']
  */
 function flip(func) {
-  return createWrap(func, WRAP_FLIP_FLAG);
+  return createWrap(func, WRAP_FLIP_FLAG)
 }
 
-export default flip;
+export default flip

@@ -1,5 +1,5 @@
-import baseAssignValue from './.internal/baseAssignValue.js';
-import baseForOwn from './.internal/baseForOwn.js';
+import baseAssignValue from './.internal/baseAssignValue.js'
+import baseForOwn from './.internal/baseForOwn.js'
 
 /**
  * Creates an object with the same keys as `object` and values generated
@@ -18,17 +18,17 @@ import baseForOwn from './.internal/baseForOwn.js';
  * const users = {
  *   'fred':    { 'user': 'fred',    'age': 40 },
  *   'pebbles': { 'user': 'pebbles', 'age': 1 }
- * };
+ * }
  *
- * mapValues(users, ({ age }) => age);
+ * mapValues(users, ({ age }) => age)
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValues(object, iteratee) {
-  const result = {};
+  const result = {}
   baseForOwn(object, (value, key, object) => {
-    baseAssignValue(result, key, iteratee(value, key, object));
-  });
-  return result;
+    baseAssignValue(result, key, iteratee(value, key, object))
+  })
+  return result
 }
 
-export default mapValues;
+export default mapValues

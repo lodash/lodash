@@ -1,7 +1,7 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import baseXor from './.internal/baseXor.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
-import last from './last.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import baseXor from './.internal/baseXor.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
+import last from './last.js'
 
 /**
  * This method is like `xor` except that it accepts `iteratee` which is
@@ -18,15 +18,15 @@ import last from './last.js';
  * @see difference, union, unionBy, unionWith, without, xor, xorWith
  * @example
  *
- * xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
+ * xorBy([2.1, 1.2], [2.3, 3.4], Math.floor)
  * // => [1.2, 3.4]
  */
 function xorBy(...arrays) {
-  let iteratee = last(arrays);
+  let iteratee = last(arrays)
   if (isArrayLikeObject(iteratee)) {
-    iteratee = undefined;
+    iteratee = undefined
   }
-  return baseXor(arrayFilter(arrays, isArrayLikeObject), iteratee);
+  return baseXor(arrayFilter(arrays, isArrayLikeObject), iteratee)
 }
 
-export default xorBy;
+export default xorBy

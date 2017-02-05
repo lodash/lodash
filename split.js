@@ -1,13 +1,13 @@
-import baseToString from './.internal/baseToString.js';
-import castSlice from './.internal/castSlice.js';
-import hasUnicode from './.internal/hasUnicode.js';
-import isIterateeCall from './.internal/isIterateeCall.js';
-import isRegExp from './isRegExp.js';
-import stringToArray from './.internal/stringToArray.js';
-import toString from './toString.js';
+import baseToString from './.internal/baseToString.js'
+import castSlice from './.internal/castSlice.js'
+import hasUnicode from './.internal/hasUnicode.js'
+import isIterateeCall from './.internal/isIterateeCall.js'
+import isRegExp from './isRegExp.js'
+import stringToArray from './.internal/stringToArray.js'
+import toString from './toString.js'
 
 /** Used as references for the maximum length and index of an array. */
-const MAX_ARRAY_LENGTH = 4294967295;
+const MAX_ARRAY_LENGTH = 4294967295
 
 /**
  * Splits `string` by `separator`.
@@ -23,28 +23,28 @@ const MAX_ARRAY_LENGTH = 4294967295;
  * @returns {Array} Returns the string segments.
  * @example
  *
- * split('a-b-c', '-', 2);
+ * split('a-b-c', '-', 2)
  * // => ['a', 'b']
  */
 function split(string, separator, limit) {
   if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
-    separator = limit = undefined;
+    separator = limit = undefined
   }
-  limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0;
+  limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0
   if (!limit) {
-    return [];
+    return []
   }
-  string = toString(string);
+  string = toString(string)
   if (string && (
         typeof separator == 'string' ||
         (separator != null && !isRegExp(separator))
       )) {
-    separator = baseToString(separator);
+    separator = baseToString(separator)
     if (!separator && hasUnicode(string)) {
-      return castSlice(stringToArray(string), 0, limit);
+      return castSlice(stringToArray(string), 0, limit)
     }
   }
-  return string.split(separator, limit);
+  return string.split(separator, limit)
 }
 
-export default split;
+export default split

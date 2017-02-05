@@ -1,5 +1,5 @@
-import baseForOwn from './baseForOwn.js';
-import createBaseEach from './createBaseEach.js';
+import baseForOwn from './baseForOwn.js'
+import createBaseEach from './createBaseEach.js'
 
 /**
  * The base implementation of `forEach`.
@@ -9,6 +9,6 @@ import createBaseEach from './createBaseEach.js';
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
  */
-const baseEach = createBaseEach(baseForOwn);
+const baseEach = createBaseEach(baseForOwn)
 
-export default baseEach;
+export default baseEach

@@ -1,5 +1,5 @@
-import baseToNumber from './baseToNumber.js';
-import baseToString from './baseToString.js';
+import baseToNumber from './baseToNumber.js'
+import baseToString from './baseToString.js'
 
 /**
  * Creates a function that performs a mathematical operation on two values.
@@ -11,28 +11,28 @@ import baseToString from './baseToString.js';
  */
 function createMathOperation(operator, defaultValue) {
   return (value, other) => {
-    let result;
+    let result
     if (value === undefined && other === undefined) {
-      return defaultValue;
+      return defaultValue
     }
     if (value !== undefined) {
-      result = value;
+      result = value
     }
     if (other !== undefined) {
       if (result === undefined) {
-        return other;
+        return other
       }
       if (typeof value == 'string' || typeof other == 'string') {
-        value = baseToString(value);
-        other = baseToString(other);
+        value = baseToString(value)
+        other = baseToString(other)
       } else {
-        value = baseToNumber(value);
-        other = baseToNumber(other);
+        value = baseToNumber(value)
+        other = baseToNumber(other)
       }
-      result = operator(value, other);
+      result = operator(value, other)
     }
-    return result;
-  };
+    return result
+  }
 }
 
-export default createMathOperation;
+export default createMathOperation

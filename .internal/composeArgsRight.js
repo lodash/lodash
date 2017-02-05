@@ -1,5 +1,5 @@
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max;
+const nativeMax = Math.max
 
 /**
  * This function is like `composeArgs` except that the arguments composition
@@ -13,30 +13,30 @@ const nativeMax = Math.max;
  * @returns {Array} Returns the new array of composed arguments.
  */
 function composeArgsRight(args, partials, holders, isCurried) {
-  let argsIndex = -1;
-  let holdersIndex = -1;
-  let rightIndex = -1;
+  let argsIndex = -1
+  let holdersIndex = -1
+  let rightIndex = -1
 
-  const argsLength = args.length;
-  const holdersLength = holders.length;
-  const rightLength = partials.length;
-  const rangeLength = nativeMax(argsLength - holdersLength, 0);
-  const result = Array(rangeLength + rightLength);
-  const isUncurried = !isCurried;
+  const argsLength = args.length
+  const holdersLength = holders.length
+  const rightLength = partials.length
+  const rangeLength = nativeMax(argsLength - holdersLength, 0)
+  const result = Array(rangeLength + rightLength)
+  const isUncurried = !isCurried
 
   while (++argsIndex < rangeLength) {
-    result[argsIndex] = args[argsIndex];
+    result[argsIndex] = args[argsIndex]
   }
-  const offset = argsIndex;
+  const offset = argsIndex
   while (++rightIndex < rightLength) {
-    result[offset + rightIndex] = partials[rightIndex];
+    result[offset + rightIndex] = partials[rightIndex]
   }
   while (++holdersIndex < holdersLength) {
     if (isUncurried || argsIndex < argsLength) {
-      result[offset + holders[holdersIndex]] = args[argsIndex++];
+      result[offset + holders[holdersIndex]] = args[argsIndex++]
     }
   }
-  return result;
+  return result
 }
 
-export default composeArgsRight;
+export default composeArgsRight

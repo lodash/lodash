@@ -1,4 +1,4 @@
-import baseUpdate from './.internal/baseUpdate.js';
+import baseUpdate from './.internal/baseUpdate.js'
 
 /**
  * This method is like `update` except that it accepts `customizer` which is
@@ -17,14 +17,14 @@ import baseUpdate from './.internal/baseUpdate.js';
  * @returns {Object} Returns `object`.
  * @example
  *
- * const object = {};
+ * const object = {}
  *
- * updateWith(object, '[0][1]', constant('a'), Object);
+ * updateWith(object, '[0][1]', constant('a'), Object)
  * // => { '0': { '1': 'a' } }
  */
 function updateWith(object, path, updater, customizer) {
-  customizer = typeof customizer == 'function' ? customizer : undefined;
-  return object == null ? object : baseUpdate(object, path, updater, customizer);
+  customizer = typeof customizer == 'function' ? customizer : undefined
+  return object == null ? object : baseUpdate(object, path, updater, customizer)
 }
 
-export default updateWith;
+export default updateWith

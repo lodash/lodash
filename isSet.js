@@ -1,9 +1,9 @@
-import getTag from './.internal/getTag.js';
-import isObjectLike from './isObjectLike.js';
-import nodeUtil from './.internal/nodeUtil.js';
+import getTag from './.internal/getTag.js'
+import isObjectLike from './isObjectLike.js'
+import nodeUtil from './.internal/nodeUtil.js'
 
 /* Node.js helper references. */
-const nodeIsSet = nodeUtil && nodeUtil.isSet;
+const nodeIsSet = nodeUtil && nodeUtil.isSet
 
 /**
  * Checks if `value` is classified as a `Set` object.
@@ -14,14 +14,14 @@ const nodeIsSet = nodeUtil && nodeUtil.isSet;
  * @returns {boolean} Returns `true` if `value` is a set, else `false`.
  * @example
  *
- * isSet(new Set);
+ * isSet(new Set)
  * // => true
  *
- * isSet(new WeakSet);
+ * isSet(new WeakSet)
  * // => false
  */
 const isSet = nodeIsSet
   ? value => nodeIsSet(value)
-  : value => isObjectLike(value) && getTag(value) == '[object Set]';
+  : value => isObjectLike(value) && getTag(value) == '[object Set]'
 
-export default isSet;
+export default isSet

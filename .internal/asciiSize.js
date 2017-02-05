@@ -6,7 +6,7 @@
  * @returns {number} Returns the string size.
  */
 function asciiSize({ length }) {
-  return length;
+  return length
 }
 
-export default asciiSize;
+export default asciiSize

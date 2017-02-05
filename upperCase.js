@@ -1,4 +1,4 @@
-import createCompounder from './.internal/createCompounder.js';
+import createCompounder from './.internal/createCompounder.js'
 
 /**
  * Converts `string`, as space separated words, to upper case.
@@ -10,17 +10,17 @@ import createCompounder from './.internal/createCompounder.js';
  * @see camelCase, kebabCase, lowerCase, snakeCase, startCase, upperFirst
  * @example
  *
- * upperCase('--foo-bar');
+ * upperCase('--foo-bar')
  * // => 'FOO BAR'
  *
- * upperCase('fooBar');
+ * upperCase('fooBar')
  * // => 'FOO BAR'
  *
- * upperCase('__foo_bar__');
+ * upperCase('__foo_bar__')
  * // => 'FOO BAR'
  */
 const upperCase = createCompounder((result, word, index) =>
   result + (index ? ' ' : '') + word.toUpperCase()
-);
+)
 
-export default upperCase;
+export default upperCase

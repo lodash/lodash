@@ -1,5 +1,5 @@
-import copyObject from './copyObject.js';
-import keysIn from '../keysIn.js';
+import copyObject from './copyObject.js'
+import keysIn from '../keysIn.js'
 
 /**
  * The base implementation of `assignIn` without support for multiple sources
@@ -11,7 +11,7 @@ import keysIn from '../keysIn.js';
  * @returns {Object} Returns `object`.
  */
 function baseAssignIn(object, source) {
-  return object && copyObject(source, keysIn(source), object);
+  return object && copyObject(source, keysIn(source), object)
 }
 
-export default baseAssignIn;
+export default baseAssignIn

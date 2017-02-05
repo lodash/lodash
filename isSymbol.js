@@ -1,5 +1,5 @@
-import baseGetTag from './.internal/baseGetTag.js';
-import isObjectLike from './isObjectLike.js';
+import baseGetTag from './.internal/baseGetTag.js'
+import isObjectLike from './isObjectLike.js'
 
 /**
  * Checks if `value` is classified as a `Symbol` primitive or object.
@@ -10,15 +10,15 @@ import isObjectLike from './isObjectLike.js';
  * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
  * @example
  *
- * isSymbol(Symbol.iterator);
+ * isSymbol(Symbol.iterator)
  * // => true
  *
- * isSymbol('abc');
+ * isSymbol('abc')
  * // => false
  */
 function isSymbol(value) {
   return typeof value == 'symbol' ||
-    (isObjectLike(value) && baseGetTag(value) == '[object Symbol]');
+    (isObjectLike(value) && baseGetTag(value) == '[object Symbol]')
 }
 
-export default isSymbol;
+export default isSymbol

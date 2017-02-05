@@ -1,6 +1,6 @@
-import apply from './.internal/apply.js';
-import arrayMap from './.internal/arrayMap.js';
-import unzip from './unzip.js';
+import apply from './.internal/apply.js'
+import arrayMap from './.internal/arrayMap.js'
+import unzip from './unzip.js'
 
 /**
  * This method is like `unzip` except that it accepts `iteratee` to specify
@@ -15,18 +15,18 @@ import unzip from './unzip.js';
  * @returns {Array} Returns the new array of regrouped elements.
  * @example
  *
- * const zipped = zip([1, 2], [10, 20], [100, 200]);
+ * const zipped = zip([1, 2], [10, 20], [100, 200])
  * // => [[1, 10, 100], [2, 20, 200]]
  *
- * unzipWith(zipped, add);
+ * unzipWith(zipped, add)
  * // => [3, 30, 300]
  */
 function unzipWith(array, iteratee) {
   if (!(array && array.length)) {
-    return [];
+    return []
   }
-  const result = unzip(array);
-  return arrayMap(result, group => apply(iteratee, undefined, group));
+  const result = unzip(array)
+  return arrayMap(result, group => apply(iteratee, undefined, group))
 }
 
-export default unzipWith;
+export default unzipWith

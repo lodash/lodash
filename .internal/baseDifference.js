@@ -1,11 +1,11 @@
-import SetCache from './SetCache.js';
-import arrayIncludes from './arrayIncludes.js';
-import arrayIncludesWith from './arrayIncludesWith.js';
-import arrayMap from './arrayMap.js';
-import cacheHas from './cacheHas.js';
+import SetCache from './SetCache.js'
+import arrayIncludes from './arrayIncludes.js'
+import arrayIncludesWith from './arrayIncludesWith.js'
+import arrayMap from './arrayMap.js'
+import cacheHas from './cacheHas.js'
 
 /** Used as the size to enable large array optimizations. */
-const LARGE_ARRAY_SIZE = 200;
+const LARGE_ARRAY_SIZE = 200
 
 /**
  * The base implementation of methods like `difference` without support
@@ -19,48 +19,48 @@ const LARGE_ARRAY_SIZE = 200;
  * @returns {Array} Returns the new array of filtered values.
  */
 function baseDifference(array, values, iteratee, comparator) {
-  let index = -1;
-  let includes = arrayIncludes;
-  let isCommon = true;
-  const length = array.length;
-  const result = [];
-  const valuesLength = values.length;
+  let index = -1
+  let includes = arrayIncludes
+  let isCommon = true
+  const length = array.length
+  const result = []
+  const valuesLength = values.length
 
   if (!length) {
-    return result;
+    return result
   }
   if (iteratee) {
-    values = arrayMap(values, value => iteratee(value));
+    values = arrayMap(values, value => iteratee(value))
   }
   if (comparator) {
-    includes = arrayIncludesWith;
-    isCommon = false;
+    includes = arrayIncludesWith
+    isCommon = false
   }
   else if (values.length >= LARGE_ARRAY_SIZE) {
-    includes = cacheHas;
-    isCommon = false;
-    values = new SetCache(values);
+    includes = cacheHas
+    isCommon = false
+    values = new SetCache(values)
   }
   outer:
   while (++index < length) {
-    let value = array[index];
-    const computed = iteratee == null ? value : iteratee(value);
+    let value = array[index]
+    const computed = iteratee == null ? value : iteratee(value)
 
-    value = (comparator || value !== 0) ? value : 0;
+    value = (comparator || value !== 0) ? value : 0
     if (isCommon && computed === computed) {
-      let valuesIndex = valuesLength;
+      let valuesIndex = valuesLength
       while (valuesIndex--) {
         if (values[valuesIndex] === computed) {
-          continue outer;
+          continue outer
         }
       }
-      result.push(value);
+      result.push(value)
     }
     else if (!includes(values, computed, comparator)) {
-      result.push(value);
+      result.push(value)
     }
   }
-  return result;
+  return result
 }
 
-export default baseDifference;
+export default baseDifference

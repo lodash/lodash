@@ -1,4 +1,4 @@
-import apply from './.internal/apply.js';
+import apply from './.internal/apply.js'
 
 /**
  * Creates a function that invokes `func` with its arguments transformed.
@@ -12,31 +12,31 @@ import apply from './.internal/apply.js';
  * @example
  *
  * function doubled(n) {
- *   return n * 2;
+ *   return n * 2
  * }
  *
  * function square(n) {
- *   return n * n;
+ *   return n * n
  * }
  *
- * const func = overArgs((x, y) => [x, y], [square, doubled]);
+ * const func = overArgs((x, y) => [x, y], [square, doubled])
  *
- * func(9, 3);
+ * func(9, 3)
  * // => [81, 6]
  *
- * func(10, 5);
+ * func(10, 5)
  * // => [100, 10]
  */
 function overArgs(func, transforms) {
-  const funcsLength = transforms.length;
+  const funcsLength = transforms.length
   return function(...args) {
-    let index = -1;
-    const length = Math.min(args.length, funcsLength);
+    let index = -1
+    const length = Math.min(args.length, funcsLength)
     while (++index < length) {
-      args[index] = transforms[index].call(this, args[index]);
+      args[index] = transforms[index].call(this, args[index])
     }
-    return apply(func, this, args);
-  };
+    return apply(func, this, args)
+  }
 }
 
-export default overArgs;
+export default overArgs

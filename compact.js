@@ -8,22 +8,22 @@
  * @returns {Array} Returns the new array of filtered values.
  * @example
  *
- * compact([0, 1, false, 2, '', 3]);
+ * compact([0, 1, false, 2, '', 3])
  * // => [1, 2, 3]
  */
 function compact(array) {
-  let index = -1;
-  const length = array == null ? 0 : array.length;
-  let resIndex = 0;
-  const result = [];
+  let index = -1
+  const length = array == null ? 0 : array.length
+  let resIndex = 0
+  const result = []
 
   while (++index < length) {
-    const value = array[index];
+    const value = array[index]
     if (value) {
-      result[resIndex++] = value;
+      result[resIndex++] = value
     }
   }
-  return result;
+  return result
 }
 
-export default compact;
+export default compact

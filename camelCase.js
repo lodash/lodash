@@ -1,5 +1,5 @@
-import capitalize from './capitalize.js';
-import createCompounder from './.internal/createCompounder.js';
+import capitalize from './capitalize.js'
+import createCompounder from './.internal/createCompounder.js'
 
 /**
  * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
@@ -11,18 +11,18 @@ import createCompounder from './.internal/createCompounder.js';
  * @see lowerCase, kebabCase, snakeCase, startCase, upperCase, upperFirst
  * @example
  *
- * camelCase('Foo Bar');
+ * camelCase('Foo Bar')
  * // => 'fooBar'
  *
- * camelCase('--foo-bar--');
+ * camelCase('--foo-bar--')
  * // => 'fooBar'
  *
- * camelCase('__FOO_BAR__');
+ * camelCase('__FOO_BAR__')
  * // => 'fooBar'
  */
 const camelCase = createCompounder((result, word, index) => {
-  word = word.toLowerCase();
-  return result + (index ? capitalize(word) : word);
-});
+  word = word.toLowerCase()
+  return result + (index ? capitalize(word) : word)
+})
 
-export default camelCase;
+export default camelCase

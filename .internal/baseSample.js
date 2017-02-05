@@ -1,5 +1,5 @@
-import arraySample from './arraySample.js';
-import values from '../values.js';
+import arraySample from './arraySample.js'
+import values from '../values.js'
 
 /**
  * The base implementation of `sample`.
@@ -9,7 +9,7 @@ import values from '../values.js';
  * @returns {*} Returns the random element.
  */
 function baseSample(collection) {
-  return arraySample(values(collection));
+  return arraySample(values(collection))
 }
 
-export default baseSample;
+export default baseSample

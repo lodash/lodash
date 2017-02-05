@@ -1,4 +1,4 @@
-import baseSum from './.internal/baseSum.js';
+import baseSum from './.internal/baseSum.js'
 
 /**
  * This method is like `sum` except that it accepts `iteratee` which is
@@ -12,15 +12,15 @@ import baseSum from './.internal/baseSum.js';
  * @returns {number} Returns the sum.
  * @example
  *
- * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
+ * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }]
  *
- * sumBy(objects, ({ n }) => n);
+ * sumBy(objects, ({ n }) => n)
  * // => 20
  */
 function sumBy(array, iteratee) {
   return (array && array.length)
     ? baseSum(array, iteratee)
-    : 0;
+    : 0
 }
 
-export default sumBy;
+export default sumBy

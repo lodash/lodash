@@ -1,4 +1,4 @@
-import isSymbol from './isSymbol.js';
+import isSymbol from './isSymbol.js'
 
 /**
  * This method is like `max` except that it accepts `iteratee` which is
@@ -12,30 +12,30 @@ import isSymbol from './isSymbol.js';
  * @returns {*} Returns the maximum value.
  * @example
  *
- * const objects = [{ 'n': 1 }, { 'n': 2 }];
+ * const objects = [{ 'n': 1 }, { 'n': 2 }]
  *
- * maxBy(objects, ({ n }) => n);
+ * maxBy(objects, ({ n }) => n)
  * // => { 'n': 2 }
  */
 function maxBy(array, iteratee) {
-  let result;
-  let index = -1;
-  const length = array ? array.length : 0;
+  let result
+  let index = -1
+  const length = array ? array.length : 0
 
   while (++index < length) {
-    let computed;
-    const value = array[index];
-    const current = iteratee(value);
+    let computed
+    const value = array[index]
+    const current = iteratee(value)
 
     if (current != null && (computed === undefined
           ? (current === current && !isSymbol(current))
           : (current > computed)
         )) {
-      computed = current;
-      result = value;
+      computed = current
+      result = value
     }
   }
-  return result;
+  return result
 }
 
-export default maxBy;
+export default maxBy

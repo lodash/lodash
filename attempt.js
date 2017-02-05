@@ -1,5 +1,5 @@
-import apply from './.internal/apply.js';
-import isError from './isError.js';
+import apply from './.internal/apply.js'
+import isError from './isError.js'
 
 /**
  * Attempts to invoke `func`, returning either the result or the caught error
@@ -14,18 +14,18 @@ import isError from './isError.js';
  *
  * // Avoid throwing errors for invalid selectors.
  * const elements = attempt(selector =>
- *   document.querySelectorAll(selector), '>_>');
+ *   document.querySelectorAll(selector), '>_>')
  *
  * if (isError(elements)) {
- *   elements = [];
+ *   elements = []
  * }
  */
 function attempt(func, ...args) {
   try {
-    return apply(func, undefined, args);
+    return apply(func, undefined, args)
   } catch (e) {
-    return isError(e) ? e : new Error(e);
+    return isError(e) ? e : new Error(e)
   }
 }
 
-export default attempt;
+export default attempt

@@ -1,5 +1,5 @@
-import debounce from './debounce.js';
-import isObject from './isObject.js';
+import debounce from './debounce.js'
+import isObject from './isObject.js'
 
 /**
  * Creates a throttled function that only invokes `func` at most once per
@@ -34,31 +34,31 @@ import isObject from './isObject.js';
  * @example
  *
  * // Avoid excessively updating the position while scrolling.
- * jQuery(window).on('scroll', throttle(updatePosition, 100));
+ * jQuery(window).on('scroll', throttle(updatePosition, 100))
  *
  * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
- * const throttled = throttle(renewToken, 300000, { 'trailing': false });
- * jQuery(element).on('click', throttled);
+ * const throttled = throttle(renewToken, 300000, { 'trailing': false })
+ * jQuery(element).on('click', throttled)
  *
  * // Cancel the trailing throttled invocation.
- * jQuery(window).on('popstate', throttled.cancel);
+ * jQuery(window).on('popstate', throttled.cancel)
  */
 function throttle(func, wait, options) {
-  let leading = true;
-  let trailing = true;
+  let leading = true
+  let trailing = true
 
   if (typeof func != 'function') {
-    throw new TypeError('Expected a function');
+    throw new TypeError('Expected a function')
   }
   if (isObject(options)) {
-    leading = 'leading' in options ? !!options.leading : leading;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
+    leading = 'leading' in options ? !!options.leading : leading
+    trailing = 'trailing' in options ? !!options.trailing : trailing
   }
   return debounce(func, wait, {
     'leading': leading,
     'maxWait': wait,
     'trailing': trailing
-  });
+  })
 }
 
-export default throttle;
+export default throttle

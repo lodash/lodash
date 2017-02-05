@@ -1,5 +1,5 @@
-import createFind from './.internal/createFind.js';
-import findIndex from './findIndex.js';
+import createFind from './.internal/createFind.js'
+import findIndex from './findIndex.js'
 
 /**
  * Iterates over elements of `collection`, returning the first element
@@ -19,11 +19,11 @@ import findIndex from './findIndex.js';
  *   { 'user': 'barney',  'age': 36, 'active': true },
  *   { 'user': 'fred',    'age': 40, 'active': false },
  *   { 'user': 'pebbles', 'age': 1,  'active': true }
- * ];
+ * ]
  *
- * find(users, ({ age }) => age < 40);
+ * find(users, ({ age }) => age < 40)
  * // => object for 'barney'
  */
-const find = createFind(findIndex);
+const find = createFind(findIndex)
 
-export default find;
+export default find

@@ -1,4 +1,4 @@
-import baseAt from './.internal/baseAt.js';
+import baseAt from './.internal/baseAt.js'
 
 /**
  * Creates an array of values corresponding to `paths` of `object`.
@@ -10,13 +10,13 @@ import baseAt from './.internal/baseAt.js';
  * @returns {Array} Returns the picked values.
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
+ * const object = { 'a': [{ 'b': { 'c': 3 } }, 4] }
  *
- * at(object, ['a[0].b.c', 'a[1]']);
+ * at(object, ['a[0].b.c', 'a[1]'])
  * // => [3, 4]
  */
 function at(...paths) {
-  return baseAt(paths);
+  return baseAt(paths)
 }
 
-export default at;
+export default at

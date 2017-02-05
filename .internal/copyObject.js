@@ -1,5 +1,5 @@
-import assignValue from './assignValue.js';
-import baseAssignValue from './baseAssignValue.js';
+import assignValue from './assignValue.js'
+import baseAssignValue from './baseAssignValue.js'
 
 /**
  * Copies properties of `source` to `object`.
@@ -12,29 +12,29 @@ import baseAssignValue from './baseAssignValue.js';
  * @returns {Object} Returns `object`.
  */
 function copyObject(source, props, object, customizer) {
-  const isNew = !object;
-  object || (object = {});
+  const isNew = !object
+  object || (object = {})
 
-  let index = -1;
-  const length = props.length;
+  let index = -1
+  const length = props.length
 
   while (++index < length) {
-    const key = props[index];
+    const key = props[index]
 
     let newValue = customizer
       ? customizer(object[key], source[key], key, object, source)
-      : undefined;
+      : undefined
 
     if (newValue === undefined) {
-      newValue = source[key];
+      newValue = source[key]
     }
     if (isNew) {
-      baseAssignValue(object, key, newValue);
+      baseAssignValue(object, key, newValue)
     } else {
-      assignValue(object, key, newValue);
+      assignValue(object, key, newValue)
     }
   }
-  return object;
+  return object
 }
 
-export default copyObject;
+export default copyObject

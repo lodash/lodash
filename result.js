@@ -1,6 +1,6 @@
-import castPath from './.internal/castPath.js';
-import isFunction from './isFunction.js';
-import toKey from './.internal/toKey.js';
+import castPath from './.internal/castPath.js'
+import isFunction from './isFunction.js'
+import toKey from './.internal/toKey.js'
 
 /**
  * This method is like `get` except that if the resolved value is a
@@ -15,40 +15,40 @@ import toKey from './.internal/toKey.js';
  * @returns {*} Returns the resolved value.
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c1': 3, 'c2': constant(4) } }] };
+ * const object = { 'a': [{ 'b': { 'c1': 3, 'c2': constant(4) } }] }
  *
- * result(object, 'a[0].b.c1');
+ * result(object, 'a[0].b.c1')
  * // => 3
  *
- * result(object, 'a[0].b.c2');
+ * result(object, 'a[0].b.c2')
  * // => 4
  *
- * result(object, 'a[0].b.c3', 'default');
+ * result(object, 'a[0].b.c3', 'default')
  * // => 'default'
  *
- * result(object, 'a[0].b.c3', constant('default'));
+ * result(object, 'a[0].b.c3', constant('default'))
  * // => 'default'
  */
 function result(object, path, defaultValue) {
-  path = castPath(path, object);
+  path = castPath(path, object)
 
-  let index = -1;
-  let length = path.length;
+  let index = -1
+  let length = path.length
 
   // Ensure the loop is entered when path is empty.
   if (!length) {
-    length = 1;
-    object = undefined;
+    length = 1
+    object = undefined
   }
   while (++index < length) {
-    let value = object == null ? undefined : object[toKey(path[index])];
+    let value = object == null ? undefined : object[toKey(path[index])]
     if (value === undefined) {
-      index = length;
-      value = defaultValue;
+      index = length
+      value = defaultValue
     }
-    object = isFunction(value) ? value.call(object) : value;
+    object = isFunction(value) ? value.call(object) : value
   }
-  return object;
+  return object
 }
 
-export default result;
+export default result

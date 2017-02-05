@@ -10,14 +10,14 @@
  * @returns {*} Returns the resolved value.
  * @example
  *
- * defaultTo(1, 10);
+ * defaultTo(1, 10)
  * // => 1
  *
- * defaultTo(undefined, 10);
+ * defaultTo(undefined, 10)
  * // => 10
  */
 function defaultTo(value, defaultValue) {
-  return (value == null || value !== value) ? defaultValue : value;
+  return (value == null || value !== value) ? defaultValue : value
 }
 
-export default defaultTo;
+export default defaultTo

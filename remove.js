@@ -1,4 +1,4 @@
-import basePullAt from './.internal/basePullAt.js';
+import basePullAt from './.internal/basePullAt.js'
 
 /**
  * Removes all elements from `array` that `predicate` returns truthy for
@@ -16,33 +16,33 @@ import basePullAt from './.internal/basePullAt.js';
  * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, reject, filter
  * @example
  *
- * const array = [1, 2, 3, 4];
- * const evens = remove(array, n => n % 2 == 0);
+ * const array = [1, 2, 3, 4]
+ * const evens = remove(array, n => n % 2 == 0)
  *
- * console.log(array);
+ * console.log(array)
  * // => [1, 3]
  *
- * console.log(evens);
+ * console.log(evens)
  * // => [2, 4]
  */
 function remove(array, predicate) {
-  const result = [];
+  const result = []
   if (!(array && array.length)) {
-    return result;
+    return result
   }
-  let index = -1;
-  const indexes = [];
-  const length = array.length;
+  let index = -1
+  const indexes = []
+  const length = array.length
 
   while (++index < length) {
-    const value = array[index];
+    const value = array[index]
     if (predicate(value, index, array)) {
-      result.push(value);
-      indexes.push(index);
+      result.push(value)
+      indexes.push(index)
     }
   }
-  basePullAt(array, indexes);
-  return result;
+  basePullAt(array, indexes)
+  return result
 }
 
-export default remove;
+export default remove

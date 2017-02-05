@@ -1,7 +1,7 @@
-import baseRepeat from './.internal/baseRepeat.js';
-import isIterateeCall from './.internal/isIterateeCall.js';
-import toInteger from './toInteger.js';
-import toString from './toString.js';
+import baseRepeat from './.internal/baseRepeat.js'
+import isIterateeCall from './.internal/isIterateeCall.js'
+import toInteger from './toInteger.js'
+import toString from './toString.js'
 
 /**
  * Repeats the given string `n` times.
@@ -14,22 +14,22 @@ import toString from './toString.js';
  * @returns {string} Returns the repeated string.
  * @example
  *
- * repeat('*', 3);
+ * repeat('*', 3)
  * // => '***'
  *
- * repeat('abc', 2);
+ * repeat('abc', 2)
  * // => 'abcabc'
  *
- * repeat('abc', 0);
+ * repeat('abc', 0)
  * // => ''
  */
 function repeat(string, n, guard) {
   if ((guard ? isIterateeCall(string, n, guard) : n === undefined)) {
-    n = 1;
+    n = 1
   } else {
-    n = toInteger(n);
+    n = toInteger(n)
   }
-  return baseRepeat(toString(string), n);
+  return baseRepeat(toString(string), n)
 }
 
-export default repeat;
+export default repeat

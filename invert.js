@@ -1,4 +1,4 @@
-import baseForOwn from './baseForOwn.js';
+import baseForOwn from './baseForOwn.js'
 
 /**
  * Creates an object composed of the inverted keys and values of `object`.
@@ -11,17 +11,17 @@ import baseForOwn from './baseForOwn.js';
  * @returns {Object} Returns the new inverted object.
  * @example
  *
- * const object = { 'a': 1, 'b': 2, 'c': 1 };
+ * const object = { 'a': 1, 'b': 2, 'c': 1 }
  *
- * invert(object);
+ * invert(object)
  * // => { '1': 'c', '2': 'b' }
  */
 function invert(object) {
-  const result = {};
+  const result = {}
   baseForOwn(object, (value, key) => {
-    result[value] = key;
-  });
-  return result;
+    result[value] = key
+  })
+  return result
 }
 
-export default invert;
+export default invert

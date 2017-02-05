@@ -1,6 +1,6 @@
-import copyObject from './.internal/copyObject.js';
-import createAssigner from './.internal/createAssigner.js';
-import keys from './keys.js';
+import copyObject from './.internal/copyObject.js'
+import createAssigner from './.internal/createAssigner.js'
+import keys from './keys.js'
 
 /**
  * This method is like `assign` except that it accepts `customizer`
@@ -20,16 +20,16 @@ import keys from './keys.js';
  * @example
  *
  * function customizer(objValue, srcValue) {
- *   return isUndefined(objValue) ? srcValue : objValue;
+ *   return isUndefined(objValue) ? srcValue : objValue
  * }
  *
- * const defaults = partialRight(assignWith, customizer);
+ * const defaults = partialRight(assignWith, customizer)
  *
- * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+ * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 })
  * // => { 'a': 1, 'b': 2 }
  */
 const assignWith = createAssigner((object, source, srcIndex, customizer) => {
-  copyObject(source, keys(source), object, customizer);
-});
+  copyObject(source, keys(source), object, customizer)
+})
 
-export default assignWith;
+export default assignWith

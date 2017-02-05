@@ -1,4 +1,4 @@
-import baseIndexOf from './baseIndexOf.js';
+import baseIndexOf from './baseIndexOf.js'
 
 /**
  * A specialized version of `includes` for arrays without support for
@@ -10,8 +10,8 @@ import baseIndexOf from './baseIndexOf.js';
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
 function arrayIncludes(array, value) {
-  const length = array == null ? 0 : array.length;
-  return !!length && baseIndexOf(array, value, 0) > -1;
+  const length = array == null ? 0 : array.length
+  return !!length && baseIndexOf(array, value, 0) > -1
 }
 
-export default arrayIncludes;
+export default arrayIncludes

@@ -1,6 +1,6 @@
-import arrayFilter from './.internal/arrayFilter.js';
-import baseXor from './.internal/baseXor.js';
-import isArrayLikeObject from './isArrayLikeObject.js';
+import arrayFilter from './.internal/arrayFilter.js'
+import baseXor from './.internal/baseXor.js'
+import isArrayLikeObject from './isArrayLikeObject.js'
 
 /**
  * Creates an array of unique values that is the
@@ -15,11 +15,11 @@ import isArrayLikeObject from './isArrayLikeObject.js';
  * @see difference, union, unionBy, unionWith, without, xorBy, xorWith
  * @example
  *
- * xor([2, 1], [2, 3]);
+ * xor([2, 1], [2, 3])
  * // => [1, 3]
  */
 function xor(...arrays) {
-  return baseXor(arrayFilter(arrays, isArrayLikeObject));
+  return baseXor(arrayFilter(arrays, isArrayLikeObject))
 }
 
-export default xor;
+export default xor

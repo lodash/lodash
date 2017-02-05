@@ -1,10 +1,10 @@
-import SetCache from './SetCache.js';
-import arraySome from './arraySome.js';
-import cacheHas from './cacheHas.js';
+import SetCache from './SetCache.js'
+import arraySome from './arraySome.js'
+import cacheHas from './cacheHas.js'
 
 /** Used to compose bitmasks for value comparisons. */
-const COMPARE_PARTIAL_FLAG = 1;
-const COMPARE_UNORDERED_FLAG = 2;
+const COMPARE_PARTIAL_FLAG = 1
+const COMPARE_UNORDERED_FLAG = 2
 
 /**
  * A specialized version of `baseIsEqualDeep` for arrays with support for
@@ -20,65 +20,65 @@ const COMPARE_UNORDERED_FLAG = 2;
  * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
  */
 function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
-  const isPartial = bitmask & COMPARE_PARTIAL_FLAG;
-  const arrLength = array.length;
-  const othLength = other.length;
+  const isPartial = bitmask & COMPARE_PARTIAL_FLAG
+  const arrLength = array.length
+  const othLength = other.length
 
   if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
-    return false;
+    return false
   }
   // Assume cyclic values are equal.
-  const stacked = stack.get(array);
+  const stacked = stack.get(array)
   if (stacked && stack.get(other)) {
-    return stacked == other;
+    return stacked == other
   }
-  let index = -1;
-  let result = true;
-  const seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined;
+  let index = -1
+  let result = true
+  const seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined
 
-  stack.set(array, other);
-  stack.set(other, array);
+  stack.set(array, other)
+  stack.set(other, array)
 
   // Ignore non-index properties.
   while (++index < arrLength) {
-    let compared;
-    const arrValue = array[index];
-    const othValue = other[index];
+    let compared
+    const arrValue = array[index]
+    const othValue = other[index]
 
     if (customizer) {
       compared = isPartial
         ? customizer(othValue, arrValue, index, other, array, stack)
-        : customizer(arrValue, othValue, index, array, other, stack);
+        : customizer(arrValue, othValue, index, array, other, stack)
     }
     if (compared !== undefined) {
       if (compared) {
-        continue;
+        continue
       }
-      result = false;
-      break;
+      result = false
+      break
     }
     // Recursively compare arrays (susceptible to call stack limits).
     if (seen) {
       if (!arraySome(other, (othValue, othIndex) => {
             if (!cacheHas(seen, othIndex) &&
                 (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-              return seen.push(othIndex);
+              return seen.push(othIndex)
             }
           })) {
-        result = false;
-        break;
+        result = false
+        break
       }
     } else if (!(
           arrValue === othValue ||
             equalFunc(arrValue, othValue, bitmask, customizer, stack)
         )) {
-      result = false;
-      break;
+      result = false
+      break
     }
   }
-  stack['delete'](array);
-  stack['delete'](other);
-  return result;
+  stack['delete'](array)
+  stack['delete'](other)
+  return result
 }
 
-export default equalArrays;
+export default equalArrays

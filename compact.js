@@ -13,8 +13,8 @@
  */
 function compact(array) {
   let index = -1
-  const length = array == null ? 0 : array.length
   let resIndex = 0
+  const length = array == null ? 0 : array.length
   const result = []
 
   while (++index < length) {

@@ -1,4 +1,3 @@
-import baseCreate from './baseCreate.js'
 import isObject from '../isObject.js'
 
 /**
@@ -24,7 +23,8 @@ function createCtor(Ctor) {
       case 6: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5])
       case 7: return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
     }
-    const thisBinding = baseCreate(Ctor.prototype)
+    const proto = Ctor.prototype
+    const thisBinding = proto == null ? {} : Object.create(Object(proto))
     const result = Ctor.apply(thisBinding, args)
 
     // Mimic the constructor's `return` behavior.

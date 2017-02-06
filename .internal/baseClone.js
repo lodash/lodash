@@ -3,7 +3,6 @@ import arrayEach from './arrayEach.js'
 import assignValue from './assignValue.js'
 import baseAssign from './baseAssign.js'
 import baseAssignIn from './baseAssignIn.js'
-import baseCreate from './baseCreate.js'
 import cloneBuffer from './cloneBuffer.js'
 import copyArray from './copyArray.js'
 import cloneArrayBuffer from './cloneArrayBuffer.js'
@@ -88,7 +87,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  */
 function initCloneObject(object) {
   return (typeof object.constructor == 'function' && !isPrototype(object))
-    ? baseCreate(Object.getPrototypeOf(object))
+    ? Object.create(Object.getPrototypeOf(object))
     : {}
 }
 
@@ -150,7 +149,7 @@ function initCloneByTag(object, tag, cloneFunc, isDeep) {
  */
 function initCloneArray(array) {
   const length = array.length
-  const result = array.constructor(length)
+  const result = new array.constructor(length)
 
   // Add properties assigned by `RegExp#exec`.
   if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {

@@ -1,5 +1,3 @@
-import baseCreate from './.internal/baseCreate.js'
-
 /**
  * Creates an object that inherits from the `prototype` object. If a
  * `properties` object is given, its own enumerable string keyed properties
@@ -33,7 +31,8 @@ import baseCreate from './.internal/baseCreate.js'
  * // => true
  */
 function create(prototype, properties) {
-  const result = baseCreate(prototype)
+  prototype = prototype === null ? null : Object(prototype)
+  const result = Object.create(prototype)
   return properties == null ? result : Object.assign(result, properties)
 }
 

@@ -10,7 +10,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  */
 function initCloneArray(array) {
   const length = array.length
-  const result = array.constructor(length)
+  const result = new array.constructor(length)
 
   // Add properties assigned by `RegExp#exec`.
   if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {

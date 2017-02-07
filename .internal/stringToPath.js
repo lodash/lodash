@@ -3,19 +3,19 @@ import memoizeCapped from './memoizeCapped.js'
 /** Used to match property names within property paths. */
 const reLeadingDot = /^\./
 
-const rePropName = RegExp([
+const rePropName = RegExp(
   // Match anything that isn't a dot or bracket.
-  '[^.[\\]]+',
+  '[^.[\\]]+' + '|' +
   // Or match property names within brackets.
   '\\[(?:' +
     // Match numbers.
     '(-?\\d+(?:\\.\\d+)?)' + '|' +
     // Or match strings (supports escaping quotation marks).
     '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
-  ')\\]',
+  ')\\]'+ '|' +
   // Or match "" as the space between consecutive dots or empty brackets.
   '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
-].join('|'), 'g')
+, 'g')
 
 /** Used to match backslashes in property paths. */
 const reEscapeChar = /\\(\\)?/g

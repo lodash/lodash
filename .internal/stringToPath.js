@@ -7,8 +7,8 @@ const rePropName = RegExp(
   '[^.[\\]]+' + '|' +
   // Or match property names within brackets.
   '\\[(?:' +
-    // Match numbers.
-    '(-?\\d+(?:\\.\\d+)?)' + '|' +
+    // Match a non-string expression.
+    '([^"\'].*)' + '|' +
     // Or match strings (supports escaping characters).
     '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
   ')\\]'+ '|' +
@@ -28,8 +28,15 @@ const stringToPath = memoizeCapped(string => {
   if (reLeadingDot.test(string)) {
     result.push('')
   }
-  string.replace(rePropName, (match, number, quote, string) => {
-    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match))
+  string.replace(rePropName, (match, expression, quote, string) => {
+    let key = match
+    if (quote) {
+      key = string.replace(reEscapeChar, '$1')
+    }
+    else if (expression) {
+      key = expression.trim()
+    }
+    result.push(key)
   })
   return result
 })

@@ -7,7 +7,6 @@ import toString from './toString.js'
 const stringProto = String.prototype
 const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd
 
-
 /**
  * Removes trailing whitespace or specified characters from `string`.
  *

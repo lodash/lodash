@@ -9,7 +9,7 @@ const rePropName = RegExp(
   '\\[(?:' +
     // Match numbers.
     '(-?\\d+(?:\\.\\d+)?)' + '|' +
-    // Or match strings (supports escaping quotation marks).
+    // Or match strings (supports escaping characters).
     '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
   ')\\]'+ '|' +
   // Or match "" as the space between consecutive dots or empty brackets.

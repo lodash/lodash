@@ -1,7 +1,7 @@
 import flow from './flow.js'
 
 /**
- * This method is like `flow` except that it creates a function that
+ * This method is like `flow` except that it composes a function that
  * invokes the given functions from right to left.
  *
  * @since 3.0.0

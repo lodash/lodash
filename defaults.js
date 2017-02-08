@@ -1,6 +1,11 @@
-import apply from './.internal/apply.js'
-import assignInWith from './assignInWith.js'
-import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js'
+import eq from './eq.js'
+import keysIn from './keysIn.js'
+
+/** Used for built-in method references. */
+const objectProto = Object.prototype
+
+/** Used to check objects for own properties. */
+const hasOwnProperty = objectProto.hasOwnProperty
 
 /**
  * Assigns own and inherited enumerable string keyed properties of source
@@ -21,9 +26,25 @@ import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js'
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 })
  * // => { 'a': 1, 'b': 2 }
  */
-function defaults(...args) {
-  args.push(undefined, customDefaultsAssignIn)
-  return apply(assignInWith, undefined, args)
+function defaults(object, ...sources) {
+  object = Object(object)
+  let length = sources.length
+  while (length--) {
+    const source = sources[length]
+    const props = keysIn(source)
+    let index = -1
+    const propsLength = props.length
+
+    while (++index < propsLength) {
+      const key = props[index]
+      const value = object[key]
+      if (value === undefined ||
+           (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+        object[key] = source[key]
+      }
+    }
+  }
+  return object
 }
 
 export default defaults

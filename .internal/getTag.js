@@ -34,7 +34,7 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
   getTag = value => {
     const result = baseGetTag(value)
     const Ctor = result == objectTag ? value.constructor : undefined
-    const ctorString = Ctor ? toSource(Ctor) : ''
+    const ctorString = Ctor ? toSource(Ctor) : undefined
 
     if (ctorString) {
       switch (ctorString) {

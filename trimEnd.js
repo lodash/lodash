@@ -4,8 +4,7 @@ import charsEndIndex from './.internal/charsEndIndex.js'
 import stringToArray from './.internal/stringToArray.js'
 import toString from './toString.js'
 
-const stringProto = String.prototype
-const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd
+const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
 
 /**
  * Removes trailing whitespace or specified characters from `string`.
@@ -28,7 +27,7 @@ const nativeTrimEnd = stringProto.trimRight || stringProto.trimEnd
 function trimEnd(string, chars, guard) {
   string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrimEnd.call(string)
+    return string[methodName]()
   }
   if (!string || !(chars = baseToString(chars))) {
     return string

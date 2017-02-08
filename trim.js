@@ -5,8 +5,6 @@ import charsStartIndex from './.internal/charsStartIndex.js'
 import stringToArray from './.internal/stringToArray.js'
 import toString from './toString.js'
 
-const nativeTrim = String.prototype.trim
-
 /**
  * Removes leading and trailing whitespace or specified characters from `string`.
  *
@@ -31,7 +29,7 @@ const nativeTrim = String.prototype.trim
 function trim(string, chars, guard) {
   string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrim.call(string)
+    return string.trim()
   }
   if (!string || !(chars = baseToString(chars))) {
     return string

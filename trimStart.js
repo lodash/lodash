@@ -4,8 +4,7 @@ import charsStartIndex from './.internal/charsStartIndex.js'
 import stringToArray from './.internal/stringToArray.js'
 import toString from './toString.js'
 
-const stringProto = String.prototype
-const nativeTrimStart = stringProto.trimLeft || stringProto.trimStart
+const methodName =  ''.trimLeft ? 'trimLeft' : 'trimStart'
 
 /**
  * Removes leading whitespace or specified characters from `string`.
@@ -28,7 +27,7 @@ const nativeTrimStart = stringProto.trimLeft || stringProto.trimStart
 function trimStart(string, chars, guard) {
   string = toString(string)
   if (string && (guard || chars === undefined)) {
-    return nativeTrimStart.call(string)
+    return string[methodName]()
   }
   if (!string || !(chars = baseToString(chars))) {
     return string

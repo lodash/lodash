@@ -2,11 +2,11 @@ import toString from './toString.js'
 
 /** Used to map HTML entities to characters. */
 const htmlUnescapes = {
-  '&amp: '&',
-  '&lt: '<',
-  '&gt: '>',
-  '&quot: '"',
-  '&#39: "'"
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
 }
 
 /** Used to match HTML entities and HTML characters. */

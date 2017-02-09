@@ -1,5 +1,4 @@
 import baseSum from './.internal/baseSum.js'
-import identity from './identity.js'
 
 /**
  * Computes the sum of the values in `array`.
@@ -15,7 +14,7 @@ import identity from './identity.js'
  */
 function sum(array) {
   return (array && array.length)
-    ? baseSum(array, identity)
+    ? baseSum(array, value => value)
     : 0
 }
 

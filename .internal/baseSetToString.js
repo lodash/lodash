@@ -1,6 +1,3 @@
-import constant from '../constant.js'
-import identity from '../identity.js'
-
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
  *
@@ -13,7 +10,7 @@ function baseSetToString(func, string){
   return Object.defineProperty(func, 'toString', {
     'configurable': true,
     'enumerable': false,
-    'value': constant(string),
+    'value': () => string,
     'writable': true
   })
 }

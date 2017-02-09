@@ -1,5 +1,4 @@
 import baseSortedIndexBy from './baseSortedIndexBy.js'
-import identity from '../identity.js'
 import isSymbol from '../isSymbol.js'
 
 /** Used as references for the maximum length and index of an array. */
@@ -35,7 +34,7 @@ function baseSortedIndex(array, value, retHighest) {
     }
     return high
   }
-  return baseSortedIndexBy(array, value, identity, retHighest)
+  return baseSortedIndexBy(array, value, value => value, retHighest)
 }
 
 export default baseSortedIndex

@@ -1,5 +1,4 @@
 import baseMean from './meanBy.js'
-import identity from './identity.js'
 
 /**
  * Computes the mean of the values in `array`.
@@ -14,7 +13,7 @@ import identity from './identity.js'
  * // => 5
  */
 function mean(array) {
-  return baseMean(array, identity)
+  return baseMean(array, value => value)
 }
 
 export default mean

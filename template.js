@@ -10,9 +10,9 @@ import templateSettings from './templateSettings.js'
 import toString from './toString.js'
 
 /** Used to match empty string literals in compiled template source. */
-const reEmptyStringLeading = /\b__p \+= ''g
+const reEmptyStringLeading = /\b__p \+= '';/g
 const reEmptyStringMiddle = /\b(__p \+=) '' \+/g
-const reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n''g
+const reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g
 
 /**
  * Used to match
@@ -81,7 +81,7 @@ const stringEscapes = {
  * // Use the HTML "escape" delimiter to escape data property values.
  * let compiled = template('<b><%- value %></b>')
  * compiled({ 'value': '<script>' })
- * // => '<b>&ltcript&gt<b>'
+ * // => '<b>&lt;script&gt;</b>'
  *
  * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
  * let compiled = template('<% forEach(users, function(user) { %><li><%- user %></li><% })%>')
@@ -119,9 +119,9 @@ const stringEscapes = {
  * let compiled = template('hi <%= data.user %>!', { 'variable': 'data' })
  * compiled.source
  * // => function(data) {
- * //   const __t, __p = ''
- * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!'
- * //   return __p
+ * //   const __t, __p = '';
+ * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
+ * //   return __p;
  * // }
  *
  * // Use custom template delimiters.
@@ -135,7 +135,7 @@ const stringEscapes = {
  * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
  *   const JST = {\
  *     "main": ' + template(mainText).source + '\
- *   }
+ *   };\
  * ')
  */
 function template(string, options, guard) {
@@ -196,7 +196,7 @@ function template(string, options, guard) {
     }
     if (evaluateValue) {
       isEvaluating = true
-      source += `'n${ evaluateValue }\__p += '`
+      source += `';\n${ evaluateValue };\n__p += '`
     }
     if (interpolateValue) {
       source += `' +\n((__t = (${ interpolateValue })) == null ? '' : __t) +\n'`
@@ -208,7 +208,7 @@ function template(string, options, guard) {
     return match
   })
 
-  source += "'n"
+  source += "';\n"
 
   // If `variable` is not specified wrap a with-statement around the generated
   // code to add the data object to the top of the scope chain.
@@ -219,13 +219,13 @@ function template(string, options, guard) {
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
     .replace(reEmptyStringMiddle, '$1')
-    .replace(reEmptyStringTrailing, '$1)
+    .replace(reEmptyStringTrailing, '$1;')
 
   // Frame code as the function body.
   source = `function(${ variable || 'obj' }) {\n` +
     (variable
       ? ''
-      : 'obj || (obj = {})n'
+      : 'obj || (obj = {});\n'
     ) +
     "const __t, __p = ''" +
     (isEscaping
@@ -233,9 +233,9 @@ function template(string, options, guard) {
        : ''
     ) +
     (isEvaluating
-      ? ', __j = Array.prototype.joinn' +
+      ? ', __j = Array.prototype.join;\n' +
         "function print() { __p += __j.call(arguments, '') }\n"
-      : 'n'
+      : ';\n'
     ) +
     source +
     'return __p\n}'

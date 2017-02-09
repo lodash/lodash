@@ -30,7 +30,7 @@ function unzip(array) {
     return []
   }
   let length = 0
-  array = arrayFilter(array, group => {
+  array = arrayFilter(array, (group) => {
     if (isArrayLikeObject(group)) {
       length = nativeMax(group.length, length)
       return true

@@ -1,5 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
-import isObjectLike from './isObjectLike.js'
+import getTag from './.internal/getTag.js'
 
 /**
  * Checks if `value` is classified as a `String` primitive or object.
@@ -17,8 +16,8 @@ import isObjectLike from './isObjectLike.js'
  * // => false
  */
 function isString(value) {
-  return typeof value == 'string' ||
-    (!Array.isArray(value) && isObjectLike(value) && baseGetTag(value) == '[object String]')
+  const type = typeof value
+  return type == 'string' || (type == 'object' && value != null && !Array.isArray(value) && getTag(value) == '[object String]')
 }
 
 export default isString

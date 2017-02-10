@@ -1,5 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
-import isObjectLike from './isObjectLike.js'
+import getTag from './.internal/getTag.js'
 
 /**
  * Checks if `value` is likely an `arguments` object.
@@ -7,8 +6,7 @@ import isObjectLike from './isObjectLike.js'
  * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
- *  else `false`.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
  * @example
  *
  * isArguments(function() { return arguments }())
@@ -18,7 +16,7 @@ import isObjectLike from './isObjectLike.js'
  * // => false
  */
 function isArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == '[object Arguments]'
+  return typeof value == 'object' && value != null && getTag(value) == '[object Arguments]'
 }
 
 export default isArguments

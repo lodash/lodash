@@ -1,6 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
-import isLength from './isLength.js'
-import isObjectLike from './isObjectLike.js'
+import getTag from './.internal/getTag.js'
 import nodeUtil from './.internal/nodeUtil.js'
 
 /** Used to match `toStringTag` values of typed arrays. */
@@ -26,6 +24,6 @@ const nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray
  */
 const isTypedArray = nodeIsTypedArray
   ? value => nodeIsTypedArray(value)
-  : value => isObjectLike(value) && isLength(value.length) && reTypedTag.test(baseGetTag(value))
+  : value => typeof value == 'object' && value != null && reTypedTag.test(getTag(value))
 
 export default isTypedArray

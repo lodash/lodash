@@ -17,7 +17,7 @@ function isKey(value, object) {
     return false
   }
   const type = typeof value
-  if (type == 'number' || type == 'symbol' || type == 'boolean' ||
+  if (type == 'number' || type == 'boolean' ||
       value == null || isSymbol(value)) {
     return true
   }

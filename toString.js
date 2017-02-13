@@ -1,4 +1,12 @@
-import baseToString from './.internal/baseToString.js'
+import arrayMap from './.internal/arrayMap.js'
+import isSymbol from './isSymbol.js'
+
+/** Used as references for various `Number` constants. */
+const INFINITY = 1 / 0
+
+/** Used to convert symbols to primitives and strings. */
+const symbolProto = Symbol ? Symbol.prototype : undefined
+const symbolToString = symbolProto ? symbolProto.toString : undefined
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -20,7 +28,22 @@ import baseToString from './.internal/baseToString.js'
  * // => '1,2,3'
  */
 function toString(value) {
-  return value == null ? '' : baseToString(value)
+  if (value == null) {
+    return '';
+  }
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value
+  }
+  if (Array.isArray(value)) {
+    // Recursively convert values (susceptible to call stack limits).
+    return `${ arrayMap(value, toString) }`
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : ''
+  }
+  const result = `${ value }`
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result
 }
 
 export default toString

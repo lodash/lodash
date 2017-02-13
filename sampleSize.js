@@ -1,4 +1,5 @@
 import isIterateeCall from './.internal/isIterateeCall.js'
+import copyArray from './.internal/copyArray.js'
 import toInteger from './toInteger.js'
 
 /**
@@ -20,7 +21,7 @@ import toInteger from './toInteger.js'
  * // => [2, 3, 1]
  */
 function sampleSize(array, n, guard) {
-  if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
+  if ((guard ? isIterateeCall(array, n, guard) : n === undefined)) {
     n = 1
   } else {
     n = toInteger(n)

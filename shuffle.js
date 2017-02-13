@@ -1,4 +1,4 @@
-import copyArray from './copyArray.js'
+import copyArray from './.internal/copyArray.js'
 
 /**
  * Creates an array of shuffled values, using a version of the

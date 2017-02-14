@@ -28,15 +28,15 @@ const hasOwnProperty = objectProto.hasOwnProperty
  */
 function defaults(object, ...sources) {
   object = Object(object)
-  let length = sources.length
-  while (length--) {
-    const source = sources[length]
+  let srcIndex = -1
+  let srcLength = sources.length
+  while (++srcIndex < srcLength) {
+    const source = sources[srcIndex]
     const props = keysIn(source)
-    let index = -1
+    let propsIndex = -1
     const propsLength = props.length
-
-    while (++index < propsLength) {
-      const key = props[index]
+    while (++propsIndex < propsLength) {
+      const key = props[propsIndex]
       const value = object[key]
       if (value === undefined ||
            (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {

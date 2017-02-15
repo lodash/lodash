@@ -31,7 +31,7 @@ function baseIntersection(arrays, iteratee, comparator) {
   while (othIndex--) {
     array = arrays[othIndex]
     if (othIndex && iteratee) {
-      array = arrayMap(array, valye => iteratee(value))
+      array = arrayMap(array, value => iteratee(value))
     }
     maxLength = nativeMin(array.length, maxLength)
     caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))

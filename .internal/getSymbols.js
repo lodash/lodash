@@ -1,5 +1,4 @@
 import arrayFilter from './arrayFilter.js'
-import stubArray from '../stubArray.js'
 
 /** Built-in value references. */
 const propertyIsEnumerable = Object.prototype.propertyIsEnumerable
@@ -14,7 +13,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-const getSymbols = !nativeGetSymbols ? stubArray : object => {
+const getSymbols = !nativeGetSymbols ? () => [] : object => {
   if (object == null) {
     return []
   }

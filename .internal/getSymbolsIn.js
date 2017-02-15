@@ -1,6 +1,5 @@
 import arrayPush from './arrayPush.js'
 import getSymbols from './getSymbols.js'
-import stubArray from '../stubArray.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeGetSymbols = Object.getOwnPropertySymbols
@@ -12,7 +11,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-const getSymbolsIn = !nativeGetSymbols ? stubArray : object => {
+const getSymbolsIn = !nativeGetSymbols ? () => [] : object => {
   const result = []
   while (object) {
     arrayPush(result, getSymbols(object))

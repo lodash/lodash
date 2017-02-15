@@ -1,5 +1,4 @@
 import root from './.internal/root.js'
-import stubFalse from './stubFalse.js'
 
 /** Detect free variable `exports`. */
 const freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports
@@ -31,6 +30,6 @@ const nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined
  * isBuffer(new Uint8Array(2))
  * // => false
  */
-const isBuffer = nativeIsBuffer || stubFalse
+const isBuffer = nativeIsBuffer || (() => false)
 
 export default isBuffer

@@ -29,7 +29,7 @@ const symbolToString = symbolProto ? symbolProto.toString : undefined
  */
 function toString(value) {
   if (value == null) {
-    return '';
+    return ''
   }
   // Exit early for strings to avoid a performance hit in some environments.
   if (typeof value == 'string') {

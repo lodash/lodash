@@ -1,4 +1,3 @@
-import baseRandom from './.internal/baseRandom.js'
 import isIterateeCall from './.internal/isIterateeCall.js'
 import toFinite from './toFinite.js'
 
@@ -8,6 +7,7 @@ const freeParseFloat = parseFloat
 /* Built-in method references for those with the same name as other `lodash` methods. */
 const nativeMin = Math.min
 const nativeRandom = Math.random
+const nativeFloor = Math.floor
 
 /**
  * Produces a random number between the inclusive `lower` and `upper` bounds.
@@ -75,7 +75,7 @@ function random(lower, upper, floating) {
     const rand = nativeRandom()
     return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper)
   }
-  return baseRandom(lower, upper)
+  return lower + nativeFloor(nativeRandom() * (upper - lower + 1))
 }
 
 export default random

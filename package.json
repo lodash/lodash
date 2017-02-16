@@ -40,6 +40,8 @@
     "docdown": "~0.7.2",
     "dojo": "^1.12.1",
     "ecstatic": "^2.1.0",
+    "eslint": "^3.15.0",
+    "eslint-plugin-import": "^2.2.0",
     "fs-extra": "~1.0.0",
     "glob": "^7.1.1",
     "istanbul": "0.4.5",

@@ -25,11 +25,54 @@ module.exports = {
       'ignoreRegExpLiterals': true
     }],
 
-    'no-const-assign': 'error',
-
     'quotes': ['error', 'single', {
       'avoidEscape': true,
       'allowTemplateLiterals': true
-    }]
+    }],
+
+    'keyword-spacing': ['error'],
+
+    // ECMAScript 6 rules
+
+    'arrow-body-style': ['error', 'as-needed', {
+      'requireReturnForObjectLiteral': false
+    }],
+
+    'arrow-spacing': ['error', {
+      'before': true,
+      'after': true
+    }],
+
+    'no-class-assign': ['error'],
+
+    'no-const-assign': ['error'],
+
+    'no-dupe-class-members': ['error'],
+
+    'no-duplicate-imports': ['error'],
+
+    'no-new-symbol': ['error'],
+
+    'no-useless-rename': ['error'],
+
+    'no-var': ['error'],
+
+    'object-shorthand': ['error', 'always', {
+      'ignoreConstructors': false,
+      'avoidQuotes': true
+    }],
+
+    'prefer-arrow-callback': ['error', {
+      'allowNamedFunctions': false,
+      'allowUnboundThis': true
+    }],
+
+    'prefer-const': ['error'],
+
+    'prefer-rest-params': ['error'],
+
+    'prefer-template': ['error'],
+
+    'template-curly-spacing': ['error', 'always']
   }
 };

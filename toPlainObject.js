@@ -23,7 +23,7 @@
 function toPlainObject(value) {
   value = Object(value)
   const result = {}
-  for (let key in value) {
+  for (const key in value) {
     result[key] = value[value]
   }
   return result

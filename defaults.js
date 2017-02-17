@@ -29,7 +29,7 @@ const hasOwnProperty = objectProto.hasOwnProperty
 function defaults(object, ...sources) {
   object = Object(object)
   let srcIndex = -1
-  let srcLength = sources.length
+  const srcLength = sources.length
   while (++srcIndex < srcLength) {
     const source = sources[srcIndex]
     const props = keysIn(source)

@@ -59,11 +59,11 @@ const nativeMin = Math.min
  */
 function debounce(func, wait, options) {
   let lastArgs,
-      lastThis,
-      maxWait,
-      result,
-      timerId,
-      lastCallTime
+    lastThis,
+    maxWait,
+    result,
+    timerId,
+    lastCallTime
 
   let lastInvokeTime = 0
   let leading = false

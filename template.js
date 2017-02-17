@@ -142,7 +142,7 @@ function template(string, options, guard) {
   // Based on John Resig's `tmpl` implementation
   // (http://ejohn.org/blog/javascript-micro-templating/)
   // and Laura Doktorova's doT.js (https://github.com/olado/doT).
-  let settings = templateSettings.imports.templateSettings || templateSettings
+  const settings = templateSettings.imports.templateSettings || templateSettings
 
   if (guard && isIterateeCall(string, options, guard)) {
     options = undefined

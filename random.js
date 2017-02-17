@@ -73,7 +73,8 @@ function random(lower, upper, floating) {
   }
   if (floating || lower % 1 || upper % 1) {
     const rand = nativeRandom()
-    return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper)
+    const randLength = `${ rand }`.length - 1
+    return nativeMin(lower + (rand * (upper - lower + freeParseFloat(`1e-${ randLength }`)), upper))
   }
   return lower + nativeFloor(nativeRandom() * (upper - lower + 1))
 }

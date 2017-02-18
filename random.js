@@ -5,9 +5,7 @@ import toFinite from './toFinite.js'
 const freeParseFloat = parseFloat
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min
 const nativeRandom = Math.random
-const nativeFloor = Math.floor
 
 /**
  * Produces a random number between the inclusive `lower` and `upper` bounds.
@@ -74,9 +72,9 @@ function random(lower, upper, floating) {
   if (floating || lower % 1 || upper % 1) {
     const rand = nativeRandom()
     const randLength = `${ rand }`.length - 1
-    return nativeMin(lower + (rand * (upper - lower + freeParseFloat(`1e-${ randLength }`)), upper))
+    return Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${ randLength }`)), upper))
   }
-  return lower + nativeFloor(nativeRandom() * (upper - lower + 1))
+  return lower + Math.floor(nativeRandom() * (upper - lower + 1))
 }
 
 export default random

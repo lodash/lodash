@@ -25,7 +25,7 @@ import reduce from './reduce.js'
  */
 function partition(collection, predicate) {
   return reduce(collection, (result, value, key) => (
-    result[key ? 0 : 1].push(value)
+    result[predicate(value) ? 0 : 1].push(value), result
   ), [[], []])
 }
 

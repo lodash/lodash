@@ -26,7 +26,7 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
       baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack)
     }
     else {
-      const newValue = customizer
+      let newValue = customizer
         ? customizer(object[key], srcValue, `${ key }`, object, source, stack)
         : undefined
 

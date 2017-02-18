@@ -47,7 +47,7 @@ const rsEmoji = `(?:${ [rsDingbat, rsRegional, rsSurrPair].join('|') })${ rsSeq 
 const reUnicodeWord = RegExp([
   `${ rsUpper }?${ rsLower }+${ rsOptContrLower }(?=${ [rsBreak, rsUpper, '$'].join('|') })`,
   `${ rsMiscUpper }+${ rsOptContrUpper }(?=${ [rsBreak, rsUpper + rsMiscLower, '$'].join('|') })`,
-  `${ rsUpper }?${ rsMiscLower}+${ rsOptContrLower }`,
+  `${ rsUpper }?${ rsMiscLower }+${ rsOptContrLower }`,
   `${ rsUpper }+${ rsOptContrUpper }`,
   rsOrdUpper,
   rsOrdLower,

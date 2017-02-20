@@ -162,12 +162,12 @@ function template(string, options, guard) {
   let source = "__p += '"
 
   // Compile the regexp to match each delimiter.
-  const reDelimiters = RegExp(
-    (options.escape || reNoMatch).source + '|' +
-    interpolate.source + '|' +
-    (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
-    (options.evaluate || reNoMatch).source + '|$'
-  , 'g')
+  const reDelimiters = RegExp(`${ [
+    (options.escape || reNoMatch).source,
+    interpolate.source,
+    (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source,
+    (options.evaluate || reNoMatch).source
+  ].join('|') }|$`, 'g')
 
   // Use a sourceURL for easier debugging.
   const sourceURL = 'sourceURL' in options
@@ -223,22 +223,11 @@ function template(string, options, guard) {
 
   // Frame code as the function body.
   source = `function(${ variable || 'obj' }) {\n` +
-    (variable
-      ? ''
-      : 'obj || (obj = {});\n'
-    ) +
-    "const __t, __p = ''" +
-    (isEscaping
-       ? ', __e = _.escape'
-       : ''
-    ) +
-    (isEvaluating
-      ? ', __j = Array.prototype.join;\n' +
-        "function print() { __p += __j.call(arguments, '') }\n"
-      : ';\n'
-    ) +
-    source +
-    'return __p\n}'
+    `${ variable ? '' : 'obj || (obj = {});\n' }` +
+    `var __t, __p = ''` +
+    `${ isEscaping ? ', __e = _.escape' : '' }` +
+    `${ isEvaluating ? ', __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, \'\') }\n' : ';\n' }` +
+    `${ source } return __p;\n}`
 
   const result = attempt(() => (
     Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues)

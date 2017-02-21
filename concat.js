@@ -1,4 +1,3 @@
-import arrayPush from './.internal/arrayPush.js'
 import baseFlatten from './.internal/baseFlatten.js'
 import copyArray from './.internal/copyArray.js'
 
@@ -23,7 +22,9 @@ import copyArray from './.internal/copyArray.js'
  * // => [1]
  */
 function concat(array, ...values) {
-  return arrayPush(Array.isArray(array) ? copyArray(array) : [array], baseFlatten(values, 1))
+  const result = Array.isArray(array) ? copyArray(array) : [array]
+  result.push(...baseFlatten(values, 1))
+  return result
 }
 
 export default concat

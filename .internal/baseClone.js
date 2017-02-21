@@ -17,12 +17,9 @@ import copySymbolsIn from './copySymbolsIn.js'
 import getAllKeys from './getAllKeys.js'
 import getAllKeysIn from './getAllKeysIn.js'
 import getTag from './getTag.js'
-import initCloneArray from './initCloneArray.js'
-import initCloneByTag from './initCloneByTag.js'
 import initCloneObject from './initCloneObject.js'
 import isBuffer from '../isBuffer.js'
 import isObject from '../isObject.js'
-import isPrototype from './isPrototype.js'
 import keys from '../keys.js'
 
 /** Used to compose bitmasks for cloning. */
@@ -77,19 +74,6 @@ cloneableTags[weakMapTag] = false
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
-
-/**
- * Initializes an object clone.
- *
- * @private
- * @param {Object} object The object to clone.
- * @returns {Object} Returns the initialized clone.
- */
-function initCloneObject(object) {
-  return (typeof object.constructor == 'function' && !isPrototype(object))
-    ? Object.create(Object.getPrototypeOf(object))
-    : {}
-}
 
 /**
  * Initializes an object clone based on its `toStringTag`.

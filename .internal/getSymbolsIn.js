@@ -1,4 +1,3 @@
-import arrayPush from './arrayPush.js'
 import getSymbols from './getSymbols.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -14,7 +13,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
 const getSymbolsIn = !nativeGetSymbols ? () => [] : object => {
   const result = []
   while (object) {
-    arrayPush(result, getSymbols(object))
+    result.push(...getSymbols(object))
     object = Object.getPrototypeOf(Object(object))
   }
   return result

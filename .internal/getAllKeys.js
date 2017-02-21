@@ -1,4 +1,3 @@
-import arrayPush from './arrayPush.js'
 import getSymbols from './getSymbols.js'
 import keys from '../keys.js'
 
@@ -11,7 +10,10 @@ import keys from '../keys.js'
  */
 function getAllKeys(object) {
   const result = keys(object)
-  return Array.isArray(object) ? result : arrayPush(result, getSymbols(object))
+  if (!Array.isArray(object)) {
+    result.push(...getSymbols(object))
+  }
+  return result
 }
 
 export default getAllKeys

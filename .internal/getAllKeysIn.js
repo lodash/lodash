@@ -1,10 +1,8 @@
-import arrayPush from './arrayPush.js'
 import getSymbolsIn from './getSymbolsIn.js'
 import keysIn from '../keysIn.js'
 
 /**
- * Creates an array of own and inherited enumerable property names and
- * symbols of `object`.
+ * Creates an array of own and inherited enumerable property names and symbols of `object`.
  *
  * @private
  * @param {Object} object The object to query.
@@ -12,7 +10,10 @@ import keysIn from '../keysIn.js'
  */
 function getAllKeysIn(object) {
   const result = keysIn(object)
-  return Array.isArray(object) ? result : arrayPush(result, getSymbolsIn(object))
+  if (!Array.isArray(object)) {
+    result.push(...getSymbolsIn(object))
+  }
+  return result
 }
 
 export default getAllKeysIn

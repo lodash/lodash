@@ -1,4 +1,3 @@
-import arrayPush from './arrayPush.js'
 import isFlattenable from './isFlattenable.js'
 
 /**
@@ -26,7 +25,7 @@ function baseFlatten(array, depth, predicate, isStrict, result) {
         // Recursively flatten arrays (susceptible to call stack limits).
         baseFlatten(value, depth - 1, predicate, isStrict, result)
       } else {
-        arrayPush(result, value)
+        result.push(...value)
       }
     } else if (!isStrict) {
       result[result.length] = value

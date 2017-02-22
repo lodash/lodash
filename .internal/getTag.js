@@ -26,6 +26,7 @@ const weakMapCtorString = toSource(WeakMap)
 let getTag = baseGetTag
 
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
+// Promise solving without any arguments will throw an error in webmaf, lg (smarttv) browsers
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
     (getTag(new Map) != mapTag) ||
     (getTag(Promise.resolve(undefined)) != promiseTag) ||

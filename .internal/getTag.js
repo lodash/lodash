@@ -28,7 +28,7 @@ let getTag = baseGetTag
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
 if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
     (getTag(new Map) != mapTag) ||
-    (getTag(Promise.resolve()) != promiseTag) ||
+    (getTag(Promise.resolve(undefined)) != promiseTag) ||
     (getTag(new Set) != setTag) ||
     (getTag(new WeakMap) != weakMapTag)) {
   getTag = value => {

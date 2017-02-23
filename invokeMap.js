@@ -29,7 +29,7 @@ function invokeMap(collection, path, args) {
   const isFunc = typeof path == 'function'
   const result = isArrayLike(collection) ? Array(collection.length) : []
 
-  baseEach(collection, value => {
+  baseEach(collection, (value) => {
     result[++index] = isFunc ? apply(path, value, args) : invoke(value, path, args)
   })
   return result

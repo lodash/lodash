@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import castPath from './.internal/castPath.js'
 import last from './last.js'
 import parent from './.internal/parent.js'
@@ -24,7 +23,7 @@ function invoke(object, path, args) {
   path = castPath(path, object)
   object = parent(object, path)
   const func = object == null ? object : object[toKey(last(path))]
-  return func == null ? undefined : apply(func, object, args)
+  return func == null ? undefined : func.apply(object, args)
 }
 
 export default invoke

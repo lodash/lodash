@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import arrayEvery from './.internal/arrayEvery.js'
 
 /**
@@ -25,8 +24,7 @@ import arrayEvery from './.internal/arrayEvery.js'
  */
 function overEvery(iteratees) {
   return function(...args) {
-    const thisArg = this
-    return arrayEvery(iteratees, iteratee => apply(iteratee, thisArg, args))
+    return arrayEvery(iteratees, iteratee => iteratee.apply(this, args))
   }
 }
 

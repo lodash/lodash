@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import isError from './isError.js'
 
 /**
@@ -22,7 +21,7 @@ import isError from './isError.js'
  */
 function attempt(func, ...args) {
   try {
-    return apply(func, undefined, args)
+    return func.apply(undefined, args)
   } catch (e) {
     return isError(e) ? e : new Error(e)
   }

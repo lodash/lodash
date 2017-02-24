@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import customDefaultsMerge from './.internal/customDefaultsMerge.js'
 import mergeWith from './mergeWith.js'
 
@@ -21,7 +20,7 @@ import mergeWith from './mergeWith.js'
  */
 function defaultsDeep(...args) {
   args.push(undefined, customDefaultsMerge)
-  return apply(mergeWith, undefined, args)
+  return mergeWith.apply(undefined, args)
 }
 
 export default defaultsDeep

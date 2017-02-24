@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import baseEach from './.internal/baseEach.js'
 import invoke from './invoke.js'
 import isArrayLike from './isArrayLike.js'
@@ -30,7 +29,7 @@ function invokeMap(collection, path, args) {
   const result = isArrayLike(collection) ? Array(collection.length) : []
 
   baseEach(collection, value => {
-    result[++index] = isFunc ? apply(path, value, args) : invoke(value, path, args)
+    result[++index] = isFunc ? path.apply(value, args) : invoke(value, path, args)
   })
   return result
 }

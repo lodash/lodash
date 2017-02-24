@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import arrayMap from './.internal/arrayMap.js'
 
 /**
@@ -42,8 +41,8 @@ function cond(pairs) {
     let index = -1
     while (++index < length) {
       const pair = pairs[index]
-      if (apply(pair[0], this, args)) {
-        return apply(pair[1], this, args)
+      if (pair[0].apply(this, args)) {
+        return pair[1].apply(this, args)
       }
     }
   }

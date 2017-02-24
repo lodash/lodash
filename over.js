@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import arrayMap from './.internal/arrayMap.js'
 
 /**
@@ -19,8 +18,7 @@ import arrayMap from './.internal/arrayMap.js'
  */
 function over(iteratees) {
   return function(...args) {
-    const thisArg = this
-    return arrayMap(iteratees, iteratee => apply(iteratee, thisArg, args))
+    return arrayMap(iteratees, iteratee => iteratee.apply(this, args))
   }
 }
 

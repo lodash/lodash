@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 
 /**
  * Creates a function that invokes `func` with its arguments transformed.
@@ -35,7 +34,7 @@ function overArgs(func, transforms) {
     while (++index < length) {
       args[index] = transforms[index].call(this, args[index])
     }
-    return apply(func, this, args)
+    return func.apply(this, args)
   }
 }
 

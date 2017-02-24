@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import arrayMap from './.internal/arrayMap.js'
 import unzip from './unzip.js'
 
@@ -26,7 +25,7 @@ function unzipWith(array, iteratee) {
     return []
   }
   const result = unzip(array)
-  return arrayMap(result, group => apply(iteratee, undefined, group))
+  return arrayMap(result, group => iteratee.apply(undefined, group))
 }
 
 export default unzipWith

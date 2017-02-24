@@ -1,4 +1,3 @@
-import apply from './.internal/apply.js'
 import arraySome from './.internal/arraySome.js'
 
 /**
@@ -25,8 +24,7 @@ import arraySome from './.internal/arraySome.js'
  */
 function overSome(iteratees) {
   return function(...args) {
-    const thisArg = this
-    return arraySome(iteratees, iteratee => apply(iteratee, thisArg, args))
+    return arraySome(iteratees, iteratee => iteratee.apply(this, args))
   }
 }
 

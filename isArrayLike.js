@@ -1,4 +1,3 @@
-import isFunction from './isFunction.js'
 import isLength from './isLength.js'
 
 /**
@@ -25,7 +24,7 @@ import isLength from './isLength.js'
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value)
+  return value != null && typeof value != 'function' && isLength(value.length)
 }
 
 export default isArrayLike

@@ -6,7 +6,6 @@ import initCloneObject from './initCloneObject.js'
 import isArguments from '../isArguments.js'
 import isArrayLikeObject from '../isArrayLikeObject.js'
 import isBuffer from '../isBuffer.js'
-import isFunction from '../isFunction.js'
 import isObject from '../isObject.js'
 import isPlainObject from '../isPlainObject.js'
 import isTypedArray from '../isTypedArray.js'
@@ -72,7 +71,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       if (isArguments(objValue)) {
         newValue = toPlainObject(objValue)
       }
-      else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+      else if ((srcIndex && typeof objValue == 'function') || !isObject(objValue)) {
         newValue = initCloneObject(srcValue)
       }
     }

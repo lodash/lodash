@@ -1,5 +1,4 @@
 import castPath from './.internal/castPath.js'
-import isFunction from './isFunction.js'
 import toKey from './.internal/toKey.js'
 
 /**
@@ -46,7 +45,7 @@ function result(object, path, defaultValue) {
       index = length
       value = defaultValue
     }
-    object = isFunction(value) ? value.call(object) : value
+    object = typeof value == 'function' ? value.call(object) : value
   }
   return object
 }

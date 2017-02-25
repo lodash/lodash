@@ -1,7 +1,6 @@
 import arrayEach from './.internal/arrayEach.js'
 import baseForOwn from './.internal/baseForOwn.js'
 import isBuffer from './isBuffer.js'
-import isFunction from './isFunction.js'
 import isObject from './isObject.js'
 import isTypedArray from './isTypedArray.js'
 
@@ -44,7 +43,9 @@ function transform(object, iteratee, accumulator) {
       accumulator = isArr ? new Ctor : []
     }
     else if (isObject(object)) {
-      accumulator = isFunction(Ctor) ? Object.create(Object.getPrototypeOf(object)) : {}
+      accumulator = typeof Ctor == 'function'
+        ? Object.create(Object.getPrototypeOf(object))
+        : {}
     }
     else {
       accumulator = {}

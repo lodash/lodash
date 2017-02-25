@@ -1,4 +1,4 @@
-import baseFunctions from './.internal/baseFunctions.js'
+import arrayFilter from './arrayFilter.js'
 import keys from './keys.js'
 
 /**
@@ -23,7 +23,9 @@ import keys from './keys.js'
  * // => ['a', 'b']
  */
 function functions(object) {
-  return object == null ? [] : baseFunctions(object, keys(object))
+  return object == null
+    ? []
+    : arrayFilter(keys(object), key => typeof object[key] == 'function')
 }
 
 export default functions

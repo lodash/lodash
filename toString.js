@@ -37,7 +37,7 @@ function toString(value) {
   }
   if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return `${ arrayMap(value, toString) }`
+    return `${ arrayMap(value, (other) => other == null ? other : toString(other)) }`
   }
   if (isSymbol(value)) {
     return symbolToString ? symbolToString.call(value) : ''

@@ -1,15 +1,15 @@
-import baseHas from './.internal/baseHas.js'
-import hasPath from './.internal/hasPath.js'
+/** Used to check objects for own properties. */
+const hasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
- * Checks if `path` is a direct property of `object`.
+ * Checks if `key` is a direct property of `object`.
  *
  * @since 0.1.0
  * @category Object
  * @param {Object} object The object to query.
- * @param {Array|string} path The path to check.
- * @returns {boolean} Returns `true` if `path` exists, else `false`.
- * @see hasIn, set, get
+ * @param {string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ * @see hasIn, hasPath, hasPathIn
  * @example
  *
  * const object = { 'a': { 'b': 2 } }
@@ -18,17 +18,11 @@ import hasPath from './.internal/hasPath.js'
  * has(object, 'a')
  * // => true
  *
- * has(object, 'a.b')
- * // => true
- *
- * has(object, ['a', 'b'])
- * // => true
- *
  * has(other, 'a')
  * // => false
  */
-function has(object, path) {
-  return object != null && hasPath(object, path, baseHas)
+function has(object, key) {
+  return object != null && hasOwnProperty.call(object, key)
 }
 
 export default has

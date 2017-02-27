@@ -22,7 +22,7 @@ function baseMatchesProperty(path, srcValue) {
   if (isKey(path) && isStrictComparable(srcValue)) {
     return matchesStrictComparable(toKey(path), srcValue)
   }
-  return object => {
+  return (object) => {
     const objValue = get(object, path)
     return (objValue === undefined && objValue === srcValue)
       ? hasIn(object, path)

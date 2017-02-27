@@ -13,7 +13,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-const getSymbols = !nativeGetSymbols ? () => [] : object => {
+const getSymbols = !nativeGetSymbols ? () => [] : (object) => {
   if (object == null) {
     return []
   }

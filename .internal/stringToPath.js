@@ -23,7 +23,7 @@ const rePropName = RegExp(
  * @param {string} string The string to convert.
  * @returns {Array} Returns the property path array.
  */
-const stringToPath = memoizeCapped(string => {
+const stringToPath = memoizeCapped((string) => {
   const result = []
   if (reLeadingDot.test(string)) {
     result.push('')

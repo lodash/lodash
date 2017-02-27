@@ -30,7 +30,7 @@ import arrayMap from './.internal/arrayMap.js'
 function cond(pairs) {
   const length = pairs == null ? 0 : pairs.length
 
-  pairs = !length ? [] : arrayMap(pairs, pair => {
+  pairs = !length ? [] : arrayMap(pairs, (pair) => {
     if (typeof pair[1] != 'function') {
       throw new TypeError('Expected a function')
     }

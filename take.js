@@ -25,7 +25,7 @@ import toInteger from './toInteger.js'
  * // => []
  */
 function take(array, n, guard) {
-  if (!(array && array.length)) {
+  if (!(array != null && array.length)) {
     return []
   }
   n = (guard || n === undefined) ? 1 : toInteger(n)

@@ -20,7 +20,7 @@ import basePullAll from './.internal/basePullAll.js'
  * // => ['b', 'b']
  */
 function pullAll(array, values) {
-  return (array && array.length && values && values.length)
+  return (array != null && array.length && values != null && values.length)
     ? basePullAll(array, values)
     : array
 }

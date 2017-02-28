@@ -19,7 +19,7 @@ import baseUniq from './.internal/baseUniq.js'
  * // => [2.1, 1.2]
  */
 function uniqBy(array, iteratee) {
-  return (array && array.length) ? baseUniq(array, iteratee) : []
+  return (array != null && array.length) ? baseUniq(array, iteratee) : []
 }
 
 export default uniqBy

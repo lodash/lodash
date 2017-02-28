@@ -20,7 +20,7 @@ import isSymbol from './isSymbol.js'
 function maxBy(array, iteratee) {
   let result
   let index = -1
-  const length = array ? array.length : 0
+  const length = array == null ? 0 : array.length
 
   while (++index < length) {
     let computed

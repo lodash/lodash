@@ -26,7 +26,7 @@ const nativeMax = Math.max
  * // => [['a', 'b'], [1, 2], [true, false]]
  */
 function unzip(array) {
-  if (!(array && array.length)) {
+  if (!(array != null && array.length)) {
     return []
   }
   let length = 0

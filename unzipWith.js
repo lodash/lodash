@@ -21,7 +21,7 @@ import unzip from './unzip.js'
  * // => [3, 30, 300]
  */
 function unzipWith(array, iteratee) {
-  if (!(array && array.length)) {
+  if (!(array != null && array.length)) {
     return []
   }
   const result = unzip(array)

@@ -27,7 +27,7 @@ import basePullAt from './.internal/basePullAt.js'
  */
 function remove(array, predicate) {
   const result = []
-  if (!(array && array.length)) {
+  if (!(array != null && array.length)) {
     return result
   }
   let index = -1

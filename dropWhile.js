@@ -22,7 +22,7 @@ import baseWhile from './.internal/baseWhile.js'
  * // => objects for ['pebbles']
  */
 function dropWhile(array, predicate) {
-  return (array && array.length)
+  return (array != null && array.length)
     ? baseWhile(array, predicate, true)
     : []
 }

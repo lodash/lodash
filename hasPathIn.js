@@ -27,13 +27,12 @@ import toKey from './.internal/toKey.js'
 function hasPathIn(object, path) {
   path = castPath(path, object)
 
-  let key
   let index = -1
   let length = path.length
   let result = false
 
   while (++index < length) {
-    key = toKey(path[index])
+    const key = toKey(path[index])
     if (!(result = object != null && key in Object(object))) {
       break
     }
@@ -47,4 +46,4 @@ function hasPathIn(object, path) {
     (Array.isArray(object) || isArguments(object))
 }
 
-export default hasPath
+export default hasPathIn

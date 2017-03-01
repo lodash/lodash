@@ -1,5 +1,5 @@
 import eq from './eq.js'
-import keysIn from './keysIn.js'
+import baseKeysIn from './.internal/baseKeysIn.js'
 
 /** Used for built-in method references. */
 const objectProto = Object.prototype
@@ -32,7 +32,7 @@ function defaults(object, ...sources) {
   const srcLength = sources.length
   while (++srcIndex < srcLength) {
     const source = sources[srcIndex]
-    const props = keysIn(source)
+    const props = baseKeysIn(source)
     let propsIndex = -1
     const propsLength = props.length
     while (++propsIndex < propsLength) {

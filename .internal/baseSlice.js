@@ -8,8 +8,8 @@
  * @returns {Array} Returns the slice of `array`.
  */
 function baseSlice(array, start, end) {
-  let index = -1,
-      length = array.length
+  let index = -1
+  let length = array.length
 
   if (start < 0) {
     start = -start > length ? 0 : (length + start)

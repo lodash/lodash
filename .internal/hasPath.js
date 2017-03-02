@@ -16,13 +16,12 @@ import toKey from './toKey.js'
 function hasPath(object, path, hasFunc) {
   path = castPath(path, object)
 
-  let key
   let index = -1
   let length = path.length
   let result = false
 
   while (++index < length) {
-    key = toKey(path[index])
+    const key = toKey(path[index])
     if (!(result = object != null && hasFunc(object, key))) {
       break
     }

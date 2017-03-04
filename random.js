@@ -1,4 +1,3 @@
-import isIterateeCall from './.internal/isIterateeCall.js'
 import toFinite from './toFinite.js'
 
 /** Built-in method references without a dependency on `root`. */
@@ -38,9 +37,6 @@ const nativeRandom = Math.random
  * // => a floating-point number between 1.2 and 5.2
  */
 function random(lower, upper, floating) {
-  if (floating && typeof floating != 'boolean' && isIterateeCall(lower, upper, floating)) {
-    upper = floating = undefined
-  }
   if (floating === undefined) {
     if (typeof upper == 'boolean') {
       floating = upper

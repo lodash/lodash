@@ -1,7 +1,6 @@
 import baseToString from './.internal/baseToString.js'
 import castSlice from './.internal/castSlice.js'
 import hasUnicode from './.internal/hasUnicode.js'
-import isIterateeCall from './.internal/isIterateeCall.js'
 import isRegExp from './isRegExp.js'
 import stringToArray from './.internal/stringToArray.js'
 import toString from './toString.js'
@@ -27,9 +26,6 @@ const MAX_ARRAY_LENGTH = 4294967295
  * // => ['a', 'b']
  */
 function split(string, separator, limit) {
-  if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
-    separator = limit = undefined
-  }
   limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0
   if (!limit) {
     return []

@@ -1,5 +1,4 @@
 import baseRange from './baseRange.js'
-import isIterateeCall from './isIterateeCall.js'
 import toFinite from '../toFinite.js'
 
 /**
@@ -11,9 +10,6 @@ import toFinite from '../toFinite.js'
  */
 function createRange(fromRight) {
   return (start, end, step) => {
-    if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
-      end = step = undefined
-    }
     // Ensure the sign of `-0` is preserved.
     start = toFinite(start)
     if (end === undefined) {

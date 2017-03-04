@@ -3,7 +3,6 @@ import attempt from './attempt.js'
 import baseValues from './.internal/baseValues.js'
 import customDefaultsAssignIn from './.internal/customDefaultsAssignIn.js'
 import isError from './isError.js'
-import isIterateeCall from './.internal/isIterateeCall.js'
 import keys from './keys.js'
 import reInterpolate from './.internal/reInterpolate.js'
 import templateSettings from './templateSettings.js'
@@ -69,7 +68,6 @@ const stringEscapes = {
  *  The sourceURL of the compiled template.
  * @param {string} [options.variable='obj']
  *  The data object variable name.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Function} Returns the compiled template function.
  * @example
  *
@@ -138,15 +136,12 @@ const stringEscapes = {
  *   };\
  * ')
  */
-function template(string, options, guard) {
+function template(string, options) {
   // Based on John Resig's `tmpl` implementation
   // (http://ejohn.org/blog/javascript-micro-templating/)
   // and Laura Doktorova's doT.js (https://github.com/olado/doT).
   const settings = templateSettings.imports.templateSettings || templateSettings
 
-  if (guard && isIterateeCall(string, options, guard)) {
-    options = undefined
-  }
   string = toString(string)
   options = assignInWith({}, options, settings, customDefaultsAssignIn)
 

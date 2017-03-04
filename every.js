@@ -1,6 +1,5 @@
 import arrayEvery from './.internal/arrayEvery.js'
 import baseEvery from './.internal/baseEvery.js'
-import isIterateeCall from './.internal/isIterateeCall.js'
 
 /**
  * Checks if `predicate` returns truthy for **all** elements of `collection`.
@@ -16,7 +15,6 @@ import isIterateeCall from './.internal/isIterateeCall.js'
  * @category Collection
  * @param {Array|Object} collection The collection to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {boolean} Returns `true` if all elements pass the predicate check,
  *  else `false`.
  * @example
@@ -24,11 +22,8 @@ import isIterateeCall from './.internal/isIterateeCall.js'
  * every([true, 1, null, 'yes'], Boolean)
  * // => false
  */
-function every(collection, predicate, guard) {
+function every(collection, predicate) {
   const func = Array.isArray(collection) ? arrayEvery : baseEvery
-  if (guard && isIterateeCall(collection, predicate, guard)) {
-    predicate = undefined
-  }
   return func(collection, predicate)
 }
 

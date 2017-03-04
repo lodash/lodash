@@ -1,4 +1,3 @@
-import isIterateeCall from './.internal/isIterateeCall.js'
 import copyArray from './.internal/copyArray.js'
 import toInteger from './toInteger.js'
 
@@ -10,7 +9,6 @@ import toInteger from './toInteger.js'
  * @category Array
  * @param {Array} array The array to sample.
  * @param {number} [n=1] The number of elements to sample.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Array} Returns the random elements.
  * @example
  *
@@ -20,12 +18,8 @@ import toInteger from './toInteger.js'
  * sampleSize([1, 2, 3], 4)
  * // => [2, 3, 1]
  */
-function sampleSize(array, n, guard) {
-  if ((guard ? isIterateeCall(array, n, guard) : n === undefined)) {
-    n = 1
-  } else {
-    n = toInteger(n)
-  }
+function sampleSize(array, n) {
+  n = toInteger(n)
   const length = array == null ? 0 : array.length
   if (!length || n < 1) {
     return []

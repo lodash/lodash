@@ -12,7 +12,6 @@ import toString from './toString.js'
  * @category String
  * @param {string} [string=''] The string to trim.
  * @param {string} [chars=whitespace] The characters to trim.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {string} Returns the trimmed string.
  * @see trimEnd, trimStart
  * @example
@@ -26,9 +25,9 @@ import toString from './toString.js'
  * map(['  foo  ', '  bar  '], trim)
  * // => ['foo', 'bar']
  */
-function trim(string, chars, guard) {
+function trim(string, chars) {
   string = toString(string)
-  if (string && (guard || chars === undefined)) {
+  if (string && chars === undefined) {
     return string.trim()
   }
   if (!string || !(chars = baseToString(chars))) {

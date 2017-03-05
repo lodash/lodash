@@ -8,7 +8,6 @@ import toInteger from './toInteger.js'
  * @category Array
  * @param {Array} array The array to query.
  * @param {number} [n=1] The number of elements to take.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Array} Returns the slice of `array`.
  * @example
  *
@@ -24,11 +23,11 @@ import toInteger from './toInteger.js'
  * take([1, 2, 3], 0)
  * // => []
  */
-function take(array, n, guard) {
+function take(array, n=1) {
   if (!(array != null && array.length)) {
     return []
   }
-  n = (guard || n === undefined) ? 1 : toInteger(n)
+  n = toInteger(n)
   return baseSlice(array, 0, n < 0 ? 0 : n)
 }
 

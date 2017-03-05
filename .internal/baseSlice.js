@@ -1,5 +1,5 @@
 /**
- * The base implementation of `slice` without an iteratee call guard.
+ * The base implementation of `slice`.
  *
  * @private
  * @param {Array} array The array to slice.

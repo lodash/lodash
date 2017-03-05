@@ -12,7 +12,6 @@ import baseOrderBy from './.internal/baseOrderBy.js'
  * @param {Array[]|Function[]|Object[]|string[]} [iteratees=[identity]]
  *  The iteratees to sort by.
  * @param {string[]} [orders] The sort orders of `iteratees`.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `reduce`.
  * @returns {Array} Returns the new sorted array.
  * @see reverse
  * @example
@@ -28,14 +27,13 @@ import baseOrderBy from './.internal/baseOrderBy.js'
  * orderBy(users, ['user', 'age'], ['asc', 'desc'])
  * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
  */
-function orderBy(collection, iteratees, orders, guard) {
+function orderBy(collection, iteratees, orders) {
   if (collection == null) {
     return []
   }
   if (!Array.isArray(iteratees)) {
     iteratees = iteratees == null ? [] : [iteratees]
   }
-  orders = guard ? undefined : orders
   if (!Array.isArray(orders)) {
     orders = orders == null ? [] : [orders]
   }

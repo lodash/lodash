@@ -19,7 +19,6 @@ const nativeParseInt = root.parseInt
  * @category String
  * @param {string} string The string to convert.
  * @param {number} [radix=10] The radix to interpret `value` by.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {number} Returns the converted integer.
  * @example
  *
@@ -29,8 +28,8 @@ const nativeParseInt = root.parseInt
  * map(['6', '08', '10'], parseInt)
  * // => [6, 8, 10]
  */
-function parseInt(string, radix, guard) {
-  if (guard || radix == null) {
+function parseInt(string, radix) {
+  if (radix == null) {
     radix = 0
   } else if (radix) {
     radix = +radix

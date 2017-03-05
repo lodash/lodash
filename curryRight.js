@@ -16,7 +16,6 @@ const WRAP_CURRY_RIGHT_FLAG = 16
  * @category Function
  * @param {Function} func The function to curry.
  * @param {number} [arity=func.length] The arity of `func`.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {Function} Returns the new curried function.
  * @example
  *
@@ -39,8 +38,7 @@ const WRAP_CURRY_RIGHT_FLAG = 16
  * curried(3)(1, _)(2)
  * // => [1, 2, 3]
  */
-function curryRight(func, arity, guard) {
-  arity = guard ? undefined : arity
+function curryRight(func, arity) {
   const result = createWrap(func, WRAP_CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity)
   result.placeholder = curryRight.placeholder
   return result

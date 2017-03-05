@@ -13,7 +13,6 @@ const methodName =  ''.trimLeft ? 'trimLeft' : 'trimStart'
  * @category String
  * @param {string} [string=''] The string to trim.
  * @param {string} [chars=whitespace] The characters to trim.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {string} Returns the trimmed string.
  * @see trim, trimEnd
  * @example
@@ -24,9 +23,9 @@ const methodName =  ''.trimLeft ? 'trimLeft' : 'trimStart'
  * trimStart('-_-abc-_-', '_-')
  * // => 'abc-_-'
  */
-function trimStart(string, chars, guard) {
+function trimStart(string, chars) {
   string = toString(string)
-  if (string && (guard || chars === undefined)) {
+  if (string && chars === undefined) {
     return string[methodName]()
   }
   if (!string || !(chars = baseToString(chars))) {

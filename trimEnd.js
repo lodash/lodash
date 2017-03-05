@@ -13,7 +13,6 @@ const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
  * @category String
  * @param {string} [string=''] The string to trim.
  * @param {string} [chars=whitespace] The characters to trim.
- * @param- {Object} [guard] Enables use as an iteratee for methods like `map`.
  * @returns {string} Returns the trimmed string.
  * @see trim, trimStart
  * @example
@@ -24,9 +23,9 @@ const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
  * trimEnd('-_-abc-_-', '_-')
  * // => '-_-abc'
  */
-function trimEnd(string, chars, guard) {
+function trimEnd(string, chars) {
   string = toString(string)
-  if (string && (guard || chars === undefined)) {
+  if (string && chars === undefined) {
     return string[methodName]()
   }
   if (!string || !(chars = baseToString(chars))) {

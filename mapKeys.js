@@ -1,5 +1,4 @@
 import baseAssignValue from './.internal/baseAssignValue.js'
-import baseForOwn from './.internal/baseForOwn.js'
 
 /**
  * The opposite of `mapValues` this method creates an object with the
@@ -22,7 +21,7 @@ import baseForOwn from './.internal/baseForOwn.js'
  */
 function mapKeys(object, iteratee) {
   const result = {}
-  baseForOwn(object, (value, key, object) => {
+  Object.keys(object).forEach((value, key, object) => {
     baseAssignValue(result, iteratee(value, key, object), value)
   })
   return result

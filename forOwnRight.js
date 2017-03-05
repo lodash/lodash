@@ -1,5 +1,3 @@
-import baseForOwnRight from './.internal/baseForOwnRight.js'
-
 /**
  * This method is like `forOwn` except that it iterates over properties of
  * `object` in the opposite order.
@@ -25,7 +23,14 @@ import baseForOwnRight from './.internal/baseForOwnRight.js'
  * // => Logs 'b' then 'a' assuming `forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  return object && baseForOwnRight(object, iteratee)
+  if (object == null) {
+    return
+  }
+  const props = Object.keys(object)
+  const length = props.length
+  while (length--) {
+    iteratee(object[props[length]], iteratee, object)
+  }
 }
 
 export default forOwnRight

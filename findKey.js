@@ -1,6 +1,3 @@
-import baseFindKey from './.internal/baseFindKey.js'
-import baseForOwn from './.internal/baseForOwn.js'
-
 /**
  * This method is like `find` except that it returns the key of the first
  * element `predicate` returns truthy for instead of the element itself.
@@ -24,7 +21,18 @@ import baseForOwn from './.internal/baseForOwn.js'
  * // => 'barney' (iteration order is not guaranteed)
  */
 function findKey(object, predicate) {
-  return baseFindKey(object, predicate, baseForOwn)
+  let result
+  if (object == null) {
+    return result
+  }
+  Object.keys(object).some((key) => {
+    const value = object[key]
+    if (predicate(value, key, object)) {
+      result = value
+      return true
+    }
+  })
+  return result
 }
 
 export default findKey

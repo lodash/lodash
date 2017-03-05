@@ -1,5 +1,3 @@
-import baseForOwn from './.internal/baseForOwn.js'
-
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
@@ -24,8 +22,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  */
 function invertBy(object, iteratee) {
   const result = {}
-  baseForOwn(object, (value, key) => {
-
+  Object.keys(object).forEach((value, key) => {
     value = iteratee(value)
     if (hasOwnProperty.call(result, value)) {
       result[value].push(key)

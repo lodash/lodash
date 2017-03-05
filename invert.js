@@ -1,5 +1,3 @@
-import baseForOwn from './.internal/baseForOwn.js'
-
 /**
  * Creates an object composed of the inverted keys and values of `object`.
  * If `object` contains duplicate values, subsequent values overwrite
@@ -18,7 +16,7 @@ import baseForOwn from './.internal/baseForOwn.js'
  */
 function invert(object) {
   const result = {}
-  baseForOwn(object, (value, key) => {
+  Object.keys(object).forEach((value, key) => {
     result[value] = key
   })
   return result

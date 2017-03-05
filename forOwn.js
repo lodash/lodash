@@ -1,5 +1,3 @@
-import baseForOwn from './.internal/baseForOwn.js'
-
 /**
  * Iterates over own enumerable string keyed properties of an object and
  * invokes `iteratee` for each property. The iteratee is invoked with three
@@ -10,7 +8,6 @@ import baseForOwn from './.internal/baseForOwn.js'
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @returns {Object} Returns `object`.
  * @see forEach, forEachRight, forIn, forInRight, forOwnRight
  * @example
  *
@@ -27,7 +24,9 @@ import baseForOwn from './.internal/baseForOwn.js'
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  return object && baseForOwn(object, iteratee)
+  if (object != null) {
+    Object.keys(Object(object)).forEach((key) => iteratee(object[key], key, object))
+  }
 }
 
 export default forOwn

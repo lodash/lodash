@@ -25,7 +25,7 @@
  */
 function forOwn(object, iteratee) {
   if (object != null) {
-    Object.keys(Object(object)).forEach((key) => iteratee(object[key], key, object))
+    Object.keys(Object(object)).forEach(key => iteratee(object[key], key, object))
   }
 }
 

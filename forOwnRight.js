@@ -27,7 +27,7 @@ function forOwnRight(object, iteratee) {
     return
   }
   const props = Object.keys(object)
-  const length = props.length
+  let length = props.length
   while (length--) {
     iteratee(object[props[length]], iteratee, object)
   }

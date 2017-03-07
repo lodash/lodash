@@ -18,7 +18,7 @@ import arrayMap from './.internal/arrayMap.js'
  */
 function over(iteratees) {
   return function(...args) {
-    return arrayMap(iteratees, iteratee => iteratee.apply(this, args))
+    return arrayMap(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

@@ -11,7 +11,7 @@ import arrayMap from './arrayMap.js'
  * @returns {Object} Returns the array of property values.
  */
 function baseValues(object, props) {
-  return arrayMap(props, key => object[key])
+  return arrayMap(props, (key) => object[key])
 }
 
 export default baseValues

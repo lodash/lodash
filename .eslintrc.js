@@ -38,9 +38,7 @@ module.exports = {
       'requireReturnForObjectLiteral': false
     }],
 
-    'arrow-parens': ['error', 'as-needed', {
-      'requireForBlockBody': true
-    }],
+    'arrow-parens': ['error', 'always'],
 
     'arrow-spacing': ['error', {
       'before': true,

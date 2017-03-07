@@ -20,7 +20,7 @@ const nodeIsSet = nodeUtil && nodeUtil.isSet
  * // => false
  */
 const isSet = nodeIsSet
-  ? value => nodeIsSet(value)
-  : value => typeof value == 'object' && value != null && getTag(value) == '[object Set]'
+  ? (value) => nodeIsSet(value)
+  : (value) => typeof value == 'object' && value != null && getTag(value) == '[object Set]'
 
 export default isSet

@@ -23,7 +23,7 @@ import invoke from './invoke.js'
  * // => [2, 1]
  */
 function method(path, args) {
-  return object => invoke(object, path, args)
+  return (object) => invoke(object, path, args)
 }
 
 export default method

@@ -13,7 +13,7 @@ import baseMean from './meanBy.js'
  * // => 5
  */
 function mean(array) {
-  return baseMean(array, value => value)
+  return baseMean(array, (value) => value)
 }
 
 export default mean

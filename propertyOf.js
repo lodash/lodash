@@ -20,7 +20,7 @@ import baseGet from './.internal/baseGet.js'
  * // => [2, 0]
  */
 function propertyOf(object) {
-  return path => object == null ? undefined : baseGet(object, path)
+  return (path) => object == null ? undefined : baseGet(object, path)
 }
 
 export default propertyOf

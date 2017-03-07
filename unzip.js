@@ -36,7 +36,7 @@ function unzip(array) {
       return true
     }
   })
-  return baseTimes(length, index => arrayMap(array, baseProperty(index)))
+  return baseTimes(length, (index) => arrayMap(array, baseProperty(index)))
 }
 
 export default unzip

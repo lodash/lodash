@@ -182,7 +182,7 @@ function template(string, options) {
     // Escape characters that can't be included in string literals.
     source += string
       .slice(index, offset)
-      .replace(reUnescapedString, chr => `\\${ stringEscapes[chr] }`)
+      .replace(reUnescapedString, (chr) => `\\${ stringEscapes[chr] }`)
 
     // Replace delimiters with snippets.
     if (escapeValue) {

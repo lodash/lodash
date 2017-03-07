@@ -24,7 +24,7 @@ import arraySome from './.internal/arraySome.js'
  */
 function overSome(iteratees) {
   return function(...args) {
-    return arraySome(iteratees, iteratee => iteratee.apply(this, args))
+    return arraySome(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

@@ -21,7 +21,7 @@ const nodeIsMap = nodeUtil && nodeUtil.isMap
  * // => false
  */
 const isMap = nodeIsMap
-  ? value => nodeIsMap(value)
-  : value => isObjectLike(value) && getTag(value) == '[object Map]'
+  ? (value) => nodeIsMap(value)
+  : (value) => isObjectLike(value) && getTag(value) == '[object Map]'
 
 export default isMap

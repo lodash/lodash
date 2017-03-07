@@ -21,7 +21,7 @@ const nodeIsDate = nodeUtil && nodeUtil.isDate
  * // => false
  */
 const isDate = nodeIsDate
-  ? value => nodeIsDate(value)
-  : value => isObjectLike(value) && baseGetTag(value) == '[object Date]'
+  ? (value) => nodeIsDate(value)
+  : (value) => isObjectLike(value) && baseGetTag(value) == '[object Date]'
 
 export default isDate

@@ -14,7 +14,7 @@ import baseSum from './.internal/baseSum.js'
  */
 function sum(array) {
   return (array != null && array.length)
-    ? baseSum(array, value => value)
+    ? baseSum(array, (value) => value)
     : 0
 }
 

@@ -24,7 +24,7 @@ import arrayEvery from './.internal/arrayEvery.js'
  */
 function overEvery(iteratees) {
   return function(...args) {
-    return arrayEvery(iteratees, iteratee => iteratee.apply(this, args))
+    return arrayEvery(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

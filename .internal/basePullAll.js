@@ -27,7 +27,7 @@ function basePullAll(array, values, iteratee, comparator) {
     values = copyArray(values)
   }
   if (iteratee) {
-    seen = arrayMap(array, value => iteratee(value))
+    seen = arrayMap(array, (value) => iteratee(value))
   }
   while (++index < length) {
     let fromIndex = 0

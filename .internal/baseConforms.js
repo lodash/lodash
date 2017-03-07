@@ -10,7 +10,7 @@ import keys from '../keys.js'
  */
 function baseConforms(source) {
   const props = keys(source)
-  return object => baseConformsTo(object, source, props)
+  return (object) => baseConformsTo(object, source, props)
 }
 
 export default baseConforms

@@ -18,7 +18,7 @@ const getSymbols = !nativeGetSymbols ? () => [] : (object) => {
     return []
   }
   object = Object(object)
-  return arrayFilter(nativeGetSymbols(object), symbol => propertyIsEnumerable.call(object, symbol))
+  return arrayFilter(nativeGetSymbols(object), (symbol) => propertyIsEnumerable.call(object, symbol))
 }
 
 export default getSymbols

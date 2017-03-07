@@ -22,7 +22,7 @@ import invoke from './invoke.js'
  * // => [2, 0]
  */
 function methodOf(object, args) {
-  return path => invoke(object, path, args)
+  return (path) => invoke(object, path, args)
 }
 
 export default methodOf

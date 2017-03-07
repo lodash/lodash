@@ -30,7 +30,7 @@ function baseDifference(array, values, iteratee, comparator) {
     return result
   }
   if (iteratee) {
-    values = arrayMap(values, value => iteratee(value))
+    values = arrayMap(values, (value) => iteratee(value))
   }
   if (comparator) {
     includes = arrayIncludesWith

@@ -14,7 +14,7 @@ function baseMatches(source) {
   if (matchData.length == 1 && matchData[0][2]) {
     return matchesStrictComparable(matchData[0][0], matchData[0][1])
   }
-  return object => object === source || baseIsMatch(object, source, matchData)
+  return (object) => object === source || baseIsMatch(object, source, matchData)
 }
 
 export default baseMatches

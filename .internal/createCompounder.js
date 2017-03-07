@@ -13,7 +13,7 @@ const reApos = /['\u2019]/g
  * @returns {Function} Returns the new compounder function.
  */
 function createCompounder(callback) {
-  return string => (
+  return (string) => (
     arrayReduce(words(toString(string).replace(reApos, '')), callback, '')
   )
 }

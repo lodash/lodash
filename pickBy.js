@@ -22,7 +22,7 @@ function pickBy(object, predicate) {
   if (object == null) {
     return {}
   }
-  const props = arrayMap(getAllKeysIn(object), prop => [prop])
+  const props = arrayMap(getAllKeysIn(object), (prop) => [prop])
   return basePickBy(object, props, (value, path) => predicate(value, path[0]))
 }
 

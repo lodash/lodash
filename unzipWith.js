@@ -25,7 +25,7 @@ function unzipWith(array, iteratee) {
     return []
   }
   const result = unzip(array)
-  return arrayMap(result, group => iteratee.apply(undefined, group))
+  return arrayMap(result, (group) => iteratee.apply(undefined, group))
 }
 
 export default unzipWith

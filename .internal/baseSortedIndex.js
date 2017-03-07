@@ -34,7 +34,7 @@ function baseSortedIndex(array, value, retHighest) {
     }
     return high
   }
-  return baseSortedIndexBy(array, value, value => value, retHighest)
+  return baseSortedIndexBy(array, value, (value) => value, retHighest)
 }
 
 export default baseSortedIndex

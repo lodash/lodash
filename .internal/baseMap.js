@@ -11,7 +11,7 @@ import isArrayLike from '../isArrayLike.js'
  */
 function baseMap(collection, iteratee) {
   let index = -1
-  const result = isArrayLike(collection) ? Array(collection.length) : []
+  const result = isArrayLike(collection) ? new Array(collection.length) : []
 
   baseEach(collection, (value, key, collection) => {
     result[++index] = iteratee(value, key, collection)

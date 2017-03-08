@@ -16,7 +16,7 @@ const nativeMax = Math.max
 function baseRange(start, end, step, fromRight) {
   let index = -1
   let length = nativeMax(nativeCeil((end - start) / (step || 1)), 0)
-  const result = Array(length)
+  const result = new Array(length)
 
   while (length--) {
     result[fromRight ? length : ++index] = start

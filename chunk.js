@@ -31,7 +31,7 @@ function chunk(array, size) {
   }
   let index = 0
   let resIndex = 0
-  const result = Array(nativeCeil(length / size))
+  const result = new Array(nativeCeil(length / size))
 
   while (index < length) {
     result[resIndex++] = baseSlice(array, index, (index += size))

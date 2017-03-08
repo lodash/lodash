@@ -7,7 +7,7 @@
  */
 function setToPairs(set) {
   let index = -1
-  const result = Array(set.size)
+  const result = new Array(set.size)
 
   set.forEach((value) =>
     result[++index] = [value, value]

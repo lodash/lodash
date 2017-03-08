@@ -21,7 +21,7 @@ function baseSlice(array, start, end) {
   length = start > end ? 0 : ((end - start) >>> 0)
   start >>>= 0
 
-  const result = Array(length)
+  const result = new Array(length)
   while (++index < length) {
     result[index] = array[index + start]
   }

@@ -18,7 +18,7 @@ function baseXor(arrays, iteratee, comparator) {
     return length ? baseUniq(arrays[0]) : []
   }
   let index = -1
-  const result = Array(length)
+  const result = new Array(length)
 
   while (++index < length) {
     const array = arrays[index]

@@ -30,7 +30,7 @@ function times(n, iteratee) {
   }
   let index = -1
   const length = Math.min(n, MAX_ARRAY_LENGTH)
-  const result = Array(length)
+  const result = new Array(length)
   while (++index < length) {
     result[index] = iteratee(index)
   }

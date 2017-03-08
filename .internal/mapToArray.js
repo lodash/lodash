@@ -7,7 +7,7 @@
  */
 function mapToArray(map) {
   let index = -1
-  const result = Array(map.size)
+  const result = new Array(map.size)
 
   map.forEach((value, key) => {
     result[++index] = [key, value]

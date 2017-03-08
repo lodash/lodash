@@ -21,7 +21,7 @@ function baseIntersection(arrays, iteratee, comparator) {
   const includes = comparator ? arrayIncludesWith : arrayIncludes
   const length = arrays[0].length
   const othLength = arrays.length
-  const caches = Array(othLength)
+  const caches = new Array(othLength)
   const result = []
 
   let array

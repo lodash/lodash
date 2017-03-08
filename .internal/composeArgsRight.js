@@ -21,7 +21,7 @@ function composeArgsRight(args, partials, holders, isCurried) {
   const holdersLength = holders.length
   const rightLength = partials.length
   const rangeLength = nativeMax(argsLength - holdersLength, 0)
-  const result = Array(rangeLength + rightLength)
+  const result = new Array(rangeLength + rightLength)
   const isUncurried = !isCurried
 
   while (++argsIndex < rangeLength) {

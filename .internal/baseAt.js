@@ -11,7 +11,7 @@ import get from '../get.js'
 function baseAt(object, paths) {
   let index = -1
   const length = paths.length
-  const result = Array(length)
+  const result = new Array(length)
   const skip = object == null
 
   while (++index < length) {

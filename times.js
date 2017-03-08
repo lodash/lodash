@@ -1,4 +1,3 @@
-import baseTimes from './.internal/baseTimes.js'
 import toInteger from './toInteger.js'
 
 /** Used as references for various `Number` constants. */
@@ -6,9 +5,6 @@ const MAX_SAFE_INTEGER = 9007199254740991
 
 /** Used as references for the maximum length and index of an array. */
 const MAX_ARRAY_LENGTH = 4294967295
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min
 
 /**
  * Invokes the iteratee `n` times, returning an array of the results of
@@ -32,10 +28,13 @@ function times(n, iteratee) {
   if (n < 1 || n > MAX_SAFE_INTEGER) {
     return []
   }
-  let index = MAX_ARRAY_LENGTH
-  const length = nativeMin(n, MAX_ARRAY_LENGTH)
-  const result = baseTimes(length, iteratee)
-
+  let index = -1
+  const length = Math.min(n, MAX_ARRAY_LENGTH)
+  const result = Array(length)
+  while (++index < length) {
+    result[index] = iteratee(index)
+  }
+  index = MAX_ARRAY_LENGTH
   n -= MAX_ARRAY_LENGTH
   while (++index < n) {
     iteratee(index)

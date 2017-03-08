@@ -1,7 +1,6 @@
 import arrayFilter from './.internal/arrayFilter.js'
 import arrayMap from './.internal/arrayMap.js'
 import baseProperty from './.internal/baseProperty.js'
-import baseTimes from './.internal/baseTimes.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -36,7 +35,12 @@ function unzip(array) {
       return true
     }
   })
-  return baseTimes(length, (index) => arrayMap(array, baseProperty(index)))
+  let index = -1
+  const result = new Array(length)
+  while (++index < length) {
+    result[index] = arrayMap(array, baseProperty(index))
+  }
+  return result
 }
 
 export default unzip

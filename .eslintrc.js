@@ -13,7 +13,15 @@ module.exports = {
     }
   },
   'rules': {
+    'array-bracket-spacing': ['error', 'never'],
+
     'comma-dangle': ['error', 'never'],
+
+    'camelcase': ['error', {
+      'properties': 'never'
+    }],
+
+    'eol-last': ['error'],
 
     'indent': ['error', 2, {
       'SwitchCase': 1
@@ -31,6 +39,36 @@ module.exports = {
     }],
 
     'keyword-spacing': ['error'],
+
+    'curly': ['error', 'all'],
+
+    'no-else-return': ['error'],
+
+    'no-mixed-spaces-and-tabs': ['error'],
+
+    'no-multiple-empty-lines': ['error'],
+
+    'no-trailing-spaces': ['error'],
+
+    'no-spaced-func': ['error'],
+
+    'no-unused-vars': ['error', {
+      'vars': 'all',
+      'args': 'none'
+    }],
+
+    'space-unary-ops': ['error', {
+      'nonwords': false,
+      'overrides': {}
+    }],
+
+    'space-before-function-paren': ['error', 'never'],
+
+    'space-before-blocks': ['error', 'always'],
+
+    'space-in-parens': ['error', 'never'],
+
+    // 'valid-jsdoc': ['error'],
 
     // ECMAScript 6 rules
 

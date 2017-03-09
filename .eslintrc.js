@@ -15,11 +15,13 @@ module.exports = {
   'rules': {
     'array-bracket-spacing': ['error', 'never'],
 
-    'comma-dangle': ['error', 'never'],
-
     'camelcase': ['error', {
       'properties': 'never'
     }],
+
+    'comma-dangle': ['error', 'never'],
+
+    'curly': ['error', 'all'],
 
     'eol-last': ['error'],
 
@@ -27,20 +29,13 @@ module.exports = {
       'SwitchCase': 1
     }],
 
+    'keyword-spacing': ['error'],
+
     'max-len': ['error', {
       'code': 180,
       'ignoreComments': true,
       'ignoreRegExpLiterals': true
     }],
-
-    'quotes': ['error', 'single', {
-      'avoidEscape': true,
-      'allowTemplateLiterals': true
-    }],
-
-    'keyword-spacing': ['error'],
-
-    'curly': ['error', 'all'],
 
     'no-else-return': ['error'],
 
@@ -48,27 +43,32 @@ module.exports = {
 
     'no-multiple-empty-lines': ['error'],
 
-    'no-trailing-spaces': ['error'],
-
     'no-spaced-func': ['error'],
 
+    'no-trailing-spaces': ['error'],
+
     'no-unused-vars': ['error', {
-      'vars': 'all',
-      'args': 'none'
+      'args': 'none',
+      'vars': 'all'
     }],
+
+    'quotes': ['error', 'single', {
+      'allowTemplateLiterals': true,
+      'avoidEscape': true
+    }],
+
+    'space-before-blocks': ['error', 'always'],
+
+    'space-before-function-paren': ['error', 'never'],
+
+    'space-in-parens': ['error', 'never'],
 
     'space-unary-ops': ['error', {
       'nonwords': false,
       'overrides': {}
     }],
 
-    'space-before-function-paren': ['error', 'never'],
-
-    'space-before-blocks': ['error', 'always'],
-
-    'space-in-parens': ['error', 'never'],
-
-    // 'valid-jsdoc': ['error'],
+    // 'valid-jsdoc': ['error']
 
     // ECMAScript 6 rules
 
@@ -79,8 +79,8 @@ module.exports = {
     'arrow-parens': ['error', 'always'],
 
     'arrow-spacing': ['error', {
-      'before': true,
-      'after': true
+      'after': true,
+      'before': true
     }],
 
     'no-class-assign': ['error'],
@@ -98,8 +98,8 @@ module.exports = {
     'no-var': ['error'],
 
     'object-shorthand': ['error', 'always', {
-      'ignoreConstructors': false,
-      'avoidQuotes': true
+      'avoidQuotes': true,
+      'ignoreConstructors': false
     }],
 
     'prefer-arrow-callback': ['error', {

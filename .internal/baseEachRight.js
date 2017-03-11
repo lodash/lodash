@@ -1,5 +1,5 @@
 import baseForOwnRight from './baseForOwnRight.js'
-import createBaseEach from './createBaseEach.js'
+import isArrayLike from '../isArrayLike.js'
 
 /**
  * The base implementation of `forEachRight`.
@@ -9,6 +9,22 @@ import createBaseEach from './createBaseEach.js'
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array|Object} Returns `collection`.
  */
-const baseEachRight = createBaseEach(baseForOwnRight, true)
+function baseEachRight(collection, iteratee) {
+  if (collection == null) {
+    return collection
+  }
+  if (!isArrayLike(collection)) {
+    return baseForOwnRight(collection, iteratee)
+  }
+  var length = collection.length,
+      iterable = Object(collection)
+
+  while (length--) {
+    if (iteratee(iterable[length], length, iterable) === false) {
+      break
+    }
+  }
+  return collection
+}
 
 export default baseEachRight

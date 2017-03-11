@@ -55,6 +55,7 @@ function throttle(func, wait, options) {
     trailing = 'trailing' in options ? !!options.trailing : trailing
   }
   return debounce(func, wait, {
+    'cooldown': wait,
     'leading': leading,
     'maxWait': wait,
     'trailing': trailing

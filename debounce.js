@@ -117,7 +117,7 @@ function debounce(func, wait, options) {
       return cooldownRemaining;
     }
 
-    return maxing ? nativeMin(remaining, maxWaitRemaining, cooldownRemaining) : remaining
+    return maxing ? nativeMin(remaining, maxWaitRemaining) : remaining
   }
 
   function shouldInvoke(time) {

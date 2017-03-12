@@ -1,4 +1,3 @@
-import baseClamp from './.internal/baseClamp.js'
 import baseToString from './.internal/baseToString.js'
 import toInteger from './toInteger.js'
 import toString from './toString.js'
@@ -29,11 +28,14 @@ function endsWith(string, target, position) {
   string = toString(string)
   target = baseToString(target)
 
-  const length = string.length
-  position = position === undefined
-    ? length
-    : baseClamp(toInteger(position), 0, length)
-
+  const { length } = string
+  position = position === undefined ? length : toInteger(position)
+  if (position < 0) {
+    position = 0
+  }
+  else if (position > length) {
+    position = length
+  }
   const end = position
   position -= target.length
   return position >= 0 && string.slice(position, end) == target

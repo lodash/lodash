@@ -1,4 +1,3 @@
-import baseClamp from './.internal/baseClamp.js'
 import baseToString from './.internal/baseToString.js'
 import toInteger from './toInteger.js'
 import toString from './toString.js'
@@ -27,10 +26,15 @@ import toString from './toString.js'
  */
 function startsWith(string, target, position) {
   string = toString(string)
-  position = position == null
-    ? 0
-    : baseClamp(toInteger(position), 0, string.length)
 
+  const { length } = string
+  position = position == null ? 0 : toInteger(position)
+  if (position < 0) {
+    position = 0
+  }
+  else if (position > length) {
+    position = length
+  }
   target = baseToString(target)
   return string.slice(position, position + target.length) == target
 }

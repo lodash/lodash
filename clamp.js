@@ -1,4 +1,3 @@
-import baseClamp from './.internal/baseClamp.js'
 import toNumber from './toNumber.js'
 
 /**
@@ -19,13 +18,17 @@ import toNumber from './toNumber.js'
  * // => 5
  */
 function clamp(number, lower, upper) {
+  number = toNumber(number)
   lower = toNumber(lower)
-  lower = lower === lower ? lower : 0
-
   upper = toNumber(upper)
-  upper = upper === upper ? upper : 0
 
-  return baseClamp(toNumber(number), lower, upper)
+  lower = lower === lower ? lower : 0
+  upper = upper === upper ? upper : 0
+  if (number === number) {
+    number = number <= upper ? number : upper
+    number = number >= lower ? number : lower
+  }
+  return number
 }
 
 export default clamp

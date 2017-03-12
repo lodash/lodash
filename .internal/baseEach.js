@@ -16,9 +16,9 @@ function baseEach(collection, iteratee) {
   if (!isArrayLike(collection)) {
     return baseForOwn(collection, iteratee)
   }
-  var length = collection.length,
-      index = -1,
-      iterable = Object(collection)
+  const length = collection.length
+  const iterable = Object(collection)
+  let index = -1
 
   while (++index < length) {
     if (iteratee(iterable[index], index, iterable) === false) {

@@ -16,8 +16,8 @@ function baseEachRight(collection, iteratee) {
   if (!isArrayLike(collection)) {
     return baseForOwnRight(collection, iteratee)
   }
-  var length = collection.length,
-      iterable = Object(collection)
+  const iterable = Object(collection)
+  let length = collection.length
 
   while (length--) {
     if (iteratee(iterable[length], length, iterable) === false) {

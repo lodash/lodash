@@ -67,7 +67,7 @@ established in the code.
   [JSDoc-style](http://www.2ality.com/2011/08/jsdoc-intro.html) comments for
   functions.
 
-Guidelines are enforced using [JSCS](https://www.npmjs.com/package/jscs):
+Guidelines are enforced using [ESLint](https://www.npmjs.com/package/eslint):
 ```bash
 $ npm run style
 ```

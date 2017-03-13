@@ -31,6 +31,9 @@ const nativeMin = Math.min
  * @param {Function} func The function to debounce.
  * @param {number} [wait=0] The number of milliseconds to delay.
  * @param {Object} [options={}] The options object.
+ * @param {number} [options.cooldown]
+ *  The minimum amount of time between the trailing edge
+  * and the next leading edge. Takes precedence over maxWait.
  * @param {boolean} [options.leading=false]
  *  Specify invoking on the leading edge of the timeout.
  * @param {number} [options.maxWait]
@@ -65,6 +68,7 @@ function debounce(func, wait, options) {
     timerId,
     lastCallTime
 
+  let cooldown = 0
   let lastInvokeTime = 0
   let leading = false
   let maxing = false
@@ -75,6 +79,7 @@ function debounce(func, wait, options) {
   }
   wait = toNumber(wait) || 0
   if (isObject(options)) {
+    cooldown = 'cooldown' in options ? toNumber(options.cooldown || 0) : cooldown
     leading = !!options.leading
     maxing = 'maxWait' in options
     maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait
@@ -103,20 +108,31 @@ function debounce(func, wait, options) {
   function remainingWait(time) {
     const timeSinceLastCall = time - lastCallTime
     const timeSinceLastInvoke = time - lastInvokeTime
-    const result = wait - timeSinceLastCall
 
-    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result
+    const remaining = wait - timeSinceLastCall
+    const maxWaitRemaining = maxWait - timeSinceLastInvoke
+    const cooldownRemaining = cooldown - timeSinceLastInvoke
+
+    if (cooldownRemaining > 0) {
+      return cooldownRemaining;
+    }
+
+    return maxing ? nativeMin(remaining, maxWaitRemaining) : remaining
   }
 
   function shouldInvoke(time) {
     const timeSinceLastCall = time - lastCallTime
     const timeSinceLastInvoke = time - lastInvokeTime
 
-    // Either this is the first call, activity has stopped and we're at the
-    // trailing edge, the system time has gone backwards and we're treating
-    // it as the trailing edge, or we've hit the `maxWait` limit.
-    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
-      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait))
+    const isFirstCall = lastCallTime === undefined
+    const timeWentBackwards = timeSinceLastCall < 0
+
+    const cooldownInProgress = cooldown && timeSinceLastInvoke < cooldown
+    const maxWaitExpired = maxing && timeSinceLastInvoke >= maxWait
+    const activityHasStopped = timeSinceLastCall >= wait
+    const isEdge = !cooldownInProgress && (maxWaitExpired || activityHasStopped)
+
+    return (isFirstCall || timeWentBackwards || isEdge)
   }
 
   function timerExpired() {
@@ -171,7 +187,7 @@ function debounce(func, wait, options) {
       }
     }
     if (timerId === undefined) {
-      timerId = setTimeout(timerExpired, wait)
+      timerId = setTimeout(timerExpired, remainingWait(time))
     }
     return result
   }

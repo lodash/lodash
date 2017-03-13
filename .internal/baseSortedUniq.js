@@ -13,7 +13,7 @@ function baseSortedUniq(array, iteratee) {
   let index = -1
   let resIndex = 0
 
-  const length = array.length
+  const { length } = array
   const result = []
 
   while (++index < length) {

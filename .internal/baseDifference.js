@@ -22,7 +22,7 @@ function baseDifference(array, values, iteratee, comparator) {
   let index = -1
   let includes = arrayIncludes
   let isCommon = true
-  const length = array.length
+  const { length } = array
   const result = []
   const valuesLength = values.length
 

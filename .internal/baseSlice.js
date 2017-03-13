@@ -9,7 +9,7 @@
  */
 function baseSlice(array, start, end) {
   let index = -1
-  let length = array.length
+  let { length } = array
 
   if (start < 0) {
     start = -start > length ? 0 : (length + start)

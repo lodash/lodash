@@ -22,7 +22,7 @@ function baseUniq(array, iteratee, comparator) {
   let includes = arrayIncludes
   let isCommon = true
 
-  const length = array.length
+  const { length } = array
   const result = []
   let seen = result
 

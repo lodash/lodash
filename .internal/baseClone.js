@@ -132,7 +132,7 @@ function initCloneByTag(object, tag, cloneFunc, isDeep) {
  * @returns {Array} Returns the initialized clone.
  */
 function initCloneArray(array) {
-  const length = array.length
+  const { length } = array
   const result = new array.constructor(length)
 
   // Add properties assigned by `RegExp#exec`.

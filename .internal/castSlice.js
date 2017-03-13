@@ -10,7 +10,7 @@ import baseSlice from './baseSlice.js'
  * @returns {Array} Returns the cast slice.
  */
 function castSlice(array, start, end) {
-  const length = array.length
+  const { length } = array
   end = end === undefined ? length : end
   return (!start && end >= length) ? array : baseSlice(array, start, end)
 }

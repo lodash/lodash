@@ -13,7 +13,7 @@ import isFlattenable from './isFlattenable.js'
  */
 function baseFlatten(array, depth, predicate, isStrict, result) {
   let index = -1
-  const length = array.length
+  const { length } = array
 
   predicate || (predicate = isFlattenable)
   result || (result = [])

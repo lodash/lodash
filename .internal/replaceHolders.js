@@ -12,7 +12,7 @@ const PLACEHOLDER = '__lodash_placeholder__'
  */
 function replaceHolders(array, placeholder) {
   let index = -1
-  const length = array.length
+  const { length } = array
   let resIndex = 0
   const result = []
 

@@ -11,7 +11,7 @@ import baseSlice from './baseSlice.js'
  * @returns {Array} Returns the slice of `array`.
  */
 function baseWhile(array, predicate, isDrop, fromRight) {
-  const length = array.length
+  const { length } = array
   let index = fromRight ? length : -1
 
   while ((fromRight ? index-- : ++index < length) &&

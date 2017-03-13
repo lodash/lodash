@@ -32,7 +32,7 @@ function remove(array, predicate) {
   }
   let index = -1
   const indexes = []
-  const length = array.length
+  const { length } = array
 
   while (++index < length) {
     const value = array[index]

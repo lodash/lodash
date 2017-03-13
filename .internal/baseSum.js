@@ -9,7 +9,7 @@
 function baseSum(array, iteratee) {
   let result
   let index = -1
-  const length = array.length
+  const { length } = array
 
   while (++index < length) {
     const current = iteratee(array[index])

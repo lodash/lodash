@@ -1,5 +1,4 @@
-import baseNth from './.internal/baseNth.js'
-import toInteger from './toInteger.js'
+import nth from './nth.js'
 
 /**
  * Creates a function that gets the argument at index `n`. If `n` is negative,
@@ -20,8 +19,7 @@ import toInteger from './toInteger.js'
  * // => 'c'
  */
 function nthArg(n) {
-  n = toInteger(n)
-  return (...args) => baseNth(args, n)
+  return (...args) => nth(args, n)
 }
 
 export default nthArg

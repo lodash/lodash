@@ -1,4 +1,4 @@
-import baseNth from './.internal/baseNth.js'
+import isIndex from './.internal/isIndex.js'
 import toInteger from './toInteger.js'
 
 /**
@@ -21,7 +21,13 @@ import toInteger from './toInteger.js'
  * // => 'c'
  */
 function nth(array, n) {
-  return (array != null && array.length) ? baseNth(array, toInteger(n)) : undefined
+  const length = array == null ? 0 : array.length
+  if (!length) {
+    return
+  }
+  n = toInteger(n)
+  n += n < 0 ? length : 0
+  return isIndex(n, length) ? array[n] : undefined
 }
 
 export default nth

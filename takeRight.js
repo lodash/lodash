@@ -1,5 +1,4 @@
 import baseSlice from './.internal/baseSlice.js'
-import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements taken from the end.
@@ -28,7 +27,6 @@ function takeRight(array, n=1) {
   if (!length) {
     return []
   }
-  n = toInteger(n)
   n = length - n
   return baseSlice(array, n < 0 ? 0 : n, length)
 }

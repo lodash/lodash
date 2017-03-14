@@ -1,5 +1,4 @@
 import copyArray from './.internal/copyArray.js'
-import toInteger from './toInteger.js'
 
 /**
  * Gets `n` random elements at unique keys from `array` up to the
@@ -19,7 +18,6 @@ import toInteger from './toInteger.js'
  * // => [2, 3, 1]
  */
 function sampleSize(array, n) {
-  n = toInteger(n)
   const length = array == null ? 0 : array.length
   if (!length || n < 1) {
     return []

@@ -1,5 +1,4 @@
 import baseSlice from './.internal/baseSlice.js'
-import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` from `start` up to, but not including, `end`.
@@ -20,8 +19,8 @@ function slice(array, start, end) {
   if (!length) {
     return []
   }
-  start = start == null ? 0 : toInteger(start)
-  end = end === undefined ? length : toInteger(end)
+  start = start == null ? 0 : start
+  end = end === undefined ? length : end
   return baseSlice(array, start, end)
 }
 

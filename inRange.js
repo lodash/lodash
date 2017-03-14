@@ -1,6 +1,4 @@
 import baseInRange from './.internal/baseInRange.js'
-import toFinite from './toFinite.js'
-import toNumber from './toNumber.js'
 
 /**
  * Checks if `n` is between `start` and up to, but not including, `end`. If
@@ -39,15 +37,11 @@ import toNumber from './toNumber.js'
  * // => true
  */
 function inRange(number, start, end) {
-  start = toFinite(start)
   if (end === undefined) {
     end = start
     start = 0
-  } else {
-    end = toFinite(end)
   }
-  number = toNumber(number)
-  return baseInRange(number, start, end)
+  return baseInRange(+number, +start, +end)
 }
 
 export default inRange

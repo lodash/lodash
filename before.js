@@ -1,5 +1,3 @@
-import toInteger from './toInteger.js'
-
 /**
  * Creates a function that invokes `func`, with the `this` binding and arguments
  * of the created function, while it's called less than `n` times. Subsequent
@@ -20,7 +18,6 @@ function before(n, func) {
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
   }
-  n = toInteger(n)
   return function(...args) {
     if (--n > 0) {
       result = func.apply(this, args)

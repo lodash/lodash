@@ -1,9 +1,4 @@
 import baseFindIndex from './.internal/baseFindIndex.js'
-import toInteger from './toInteger.js'
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max
-const nativeMin = Math.min
 
 /**
  * This method is like `findIndex` except that it iterates over elements
@@ -34,10 +29,9 @@ function findLastIndex(array, predicate, fromIndex) {
   }
   let index = length - 1
   if (fromIndex !== undefined) {
-    index = toInteger(fromIndex)
     index = fromIndex < 0
-      ? nativeMax(length + index, 0)
-      : nativeMin(index, length - 1)
+      ? Math.max(length + fromIndex, 0)
+      : Math.min(fromIndex, length - 1)
   }
   return baseFindIndex(array, predicate, index, true)
 }

@@ -1,6 +1,5 @@
 import baseFlatten from './.internal/baseFlatten.js'
 import map from './map.js'
-import toInteger from './toInteger.js'
 
 /**
  * This method is like `flatMap` except that it recursively flattens the
@@ -23,7 +22,7 @@ import toInteger from './toInteger.js'
  * // => [[1, 1], [2, 2]]
  */
 function flatMapDepth(collection, iteratee, depth) {
-  depth = depth === undefined ? 1 : toInteger(depth)
+  depth = depth === undefined ? 1 : +depth
   return baseFlatten(map(collection, iteratee), depth)
 }
 

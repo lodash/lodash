@@ -1,5 +1,3 @@
-import toInteger from './toInteger.js'
-
 /**
  * The opposite of `before`his method creates a function that invokes
  * `func` once it's called `n` or more times.
@@ -21,7 +19,6 @@ function after(n, func) {
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
   }
-  n = toInteger(n)
   return function(...args) {
     if (--n < 1) {
       return func.apply(this, args)

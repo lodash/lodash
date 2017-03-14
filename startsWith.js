@@ -1,7 +1,3 @@
-import baseToString from './.internal/baseToString.js'
-import toInteger from './toInteger.js'
-import toString from './toString.js'
-
 /**
  * Checks if `string` starts with the given target string.
  *
@@ -25,17 +21,15 @@ import toString from './toString.js'
  * // => true
  */
 function startsWith(string, target, position) {
-  string = toString(string)
-
   const { length } = string
-  position = position == null ? 0 : toInteger(position)
+  position = position == null ? 0 : position
   if (position < 0) {
     position = 0
   }
   else if (position > length) {
     position = length
   }
-  target = baseToString(target)
+  target = (target + '')
   return string.slice(position, position + target.length) == target
 }
 

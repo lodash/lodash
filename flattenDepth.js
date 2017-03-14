@@ -1,5 +1,4 @@
 import baseFlatten from './.internal/baseFlatten.js'
-import toInteger from './toInteger.js'
 
 /**
  * Recursively flatten `array` up to `depth` times.
@@ -25,7 +24,7 @@ function flattenDepth(array, depth) {
   if (!length) {
     return []
   }
-  depth = depth === undefined ? 1 : toInteger(depth)
+  depth = depth === undefined ? 1 : +depth
   return baseFlatten(array, depth)
 }
 

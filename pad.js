@@ -1,11 +1,5 @@
 import createPadding from './.internal/createPadding.js'
 import stringSize from './.internal/stringSize.js'
-import toInteger from './toInteger.js'
-import toString from './toString.js'
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeCeil = Math.ceil
-const nativeFloor = Math.floor
 
 /**
  * Pads `string` on the left and right sides if it's shorter than `length`.
@@ -29,18 +23,15 @@ const nativeFloor = Math.floor
  * // => 'abc'
  */
 function pad(string, length, chars) {
-  string = toString(string)
-  length = toInteger(length)
-
   const strLength = length ? stringSize(string) : 0
   if (!length || strLength >= length) {
     return string
   }
   const mid = (length - strLength) / 2
   return (
-    createPadding(nativeFloor(mid), chars) +
+    createPadding(Math.floor(mid), chars) +
     string +
-    createPadding(nativeCeil(mid), chars)
+    createPadding(Math.ceil(mid), chars)
   )
 }
 

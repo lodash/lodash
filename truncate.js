@@ -5,8 +5,6 @@ import isObject from './isObject.js'
 import isRegExp from './isRegExp.js'
 import stringSize from './.internal/stringSize.js'
 import stringToArray from './.internal/stringToArray.js'
-import toInteger from './toInteger.js'
-import toString from './toString.js'
 
 /** Used as default options for `truncate`. */
 const DEFAULT_TRUNC_LENGTH = 30
@@ -58,11 +56,9 @@ function truncate(string, options) {
 
   if (isObject(options)) {
     separator = 'separator' in options ? options.separator : separator
-    length = 'length' in options ? toInteger(options.length) : length
+    length = 'length' in options ? options.length : length
     omission = 'omission' in options ? baseToString(options.omission) : omission
   }
-  string = toString(string)
-
   let strSymbols
   let strLength = string.length
   if (hasUnicode(string)) {
@@ -93,7 +89,7 @@ function truncate(string, options) {
       const substring = result
 
       if (!separator.global) {
-        separator = RegExp(separator.source, `${ toString(reFlags.exec(separator)) }g`)
+        separator = RegExp(separator.source, `${ reFlags.exec(separator) || '' }g`)
       }
       separator.lastIndex = 0
       while ((match = separator.exec(substring))) {

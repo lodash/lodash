@@ -1,5 +1,4 @@
 import isIndex from './.internal/isIndex.js'
-import toInteger from './toInteger.js'
 
 /**
  * Gets the element at index `n` of `array`. If `n` is negative, the nth
@@ -25,7 +24,6 @@ function nth(array, n) {
   if (!length) {
     return
   }
-  n = toInteger(n)
   n += n < 0 ? length : 0
   return isIndex(n, length) ? array[n] : undefined
 }

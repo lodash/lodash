@@ -1,5 +1,3 @@
-import toInteger from './toInteger.js'
-
 /** Used as references for various `Number` constants. */
 const MAX_SAFE_INTEGER = 9007199254740991
 
@@ -24,7 +22,6 @@ const MAX_ARRAY_LENGTH = 4294967295
  * // => [0, 0, 0, 0]
  */
 function times(n, iteratee) {
-  n = toInteger(n)
   if (n < 1 || n > MAX_SAFE_INTEGER) {
     return []
   }

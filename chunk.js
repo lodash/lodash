@@ -1,9 +1,4 @@
 import baseSlice from './.internal/baseSlice.js'
-import toInteger from './toInteger.js'
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeCeil = Math.ceil
-const nativeMax = Math.max
 
 /**
  * Creates an array of elements split into groups the length of `size`.
@@ -24,14 +19,14 @@ const nativeMax = Math.max
  * // => [['a', 'b', 'c'], ['d']]
  */
 function chunk(array, size) {
-  size = nativeMax(toInteger(size), 0)
+  size = Math.max(size, 0)
   const length = array == null ? 0 : array.length
   if (!length || size < 1) {
     return []
   }
   let index = 0
   let resIndex = 0
-  const result = new Array(nativeCeil(length / size))
+  const result = new Array(Math.ceil(length / size))
 
   while (index < length) {
     result[resIndex++] = baseSlice(array, index, (index += size))

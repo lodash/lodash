@@ -1,5 +1,3 @@
-import toNumber from './toNumber.js'
-
 /**
  * Checks if `value` is less than `other`.
  *
@@ -23,8 +21,8 @@ import toNumber from './toNumber.js'
  */
 function lt(value, other) {
   if (!(typeof value == 'string' && typeof other == 'string')) {
-    value = toNumber(value)
-    other = toNumber(other)
+    value = +value
+    other = +other
   }
   return value < other
 }

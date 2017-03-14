@@ -1,9 +1,4 @@
 import isObject from './isObject.js'
-import toNumber from './toNumber.js'
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max
-const nativeMin = Math.min
 
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
@@ -73,11 +68,11 @@ function debounce(func, wait, options) {
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
   }
-  wait = toNumber(wait) || 0
+  wait = +wait || 0
   if (isObject(options)) {
     leading = !!options.leading
     maxing = 'maxWait' in options
-    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait
+    maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait
     trailing = 'trailing' in options ? !!options.trailing : trailing
   }
 
@@ -105,7 +100,7 @@ function debounce(func, wait, options) {
     const timeSinceLastInvoke = time - lastInvokeTime
     const result = wait - timeSinceLastCall
 
-    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result
+    return maxing ? Math.min(result, maxWait - timeSinceLastInvoke) : result
   }
 
   function shouldInvoke(time) {

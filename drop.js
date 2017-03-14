@@ -1,5 +1,4 @@
 import baseSlice from './.internal/baseSlice.js'
-import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements dropped from the beginning.
@@ -25,11 +24,9 @@ import toInteger from './toInteger.js'
  */
 function drop(array, n=1) {
   const length = array == null ? 0 : array.length
-  if (!length) {
-    return []
-  }
-  n = toInteger(n)
-  return baseSlice(array, n < 0 ? 0 : n, length)
+  return length
+    ? baseSlice(array, n < 0 ? 0 : n, length)
+    : []
 }
 
 export default drop

@@ -1,7 +1,3 @@
-import baseToString from './.internal/baseToString.js'
-import toInteger from './toInteger.js'
-import toString from './toString.js'
-
 /**
  * Checks if `string` ends with the given target string.
  *
@@ -24,13 +20,10 @@ import toString from './toString.js'
  * endsWith('abc', 'b', 2)
  * // => true
  */
-function endsWith(string, target, position) {
-  string = toString(string)
-  target = baseToString(target)
-
+function endsWith(string, target, position) {)
   const { length } = string
-  position = position === undefined ? length : toInteger(position)
-  if (position < 0) {
+  position = position === undefined ? length : +position
+  if (position < 0 || position != position) {
     position = 0
   }
   else if (position > length) {

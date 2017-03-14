@@ -1,5 +1,3 @@
-import toNumber from './toNumber.js'
-
 /**
  * Clamps `number` within the inclusive `lower` and `upper` bounds.
  *
@@ -18,10 +16,9 @@ import toNumber from './toNumber.js'
  * // => 5
  */
 function clamp(number, lower, upper) {
-  number = toNumber(number)
-  lower = toNumber(lower)
-  upper = toNumber(upper)
-
+  number = +number
+  lower = +lower
+  upper = +upper
   lower = lower === lower ? lower : 0
   upper = upper === upper ? upper : 0
   if (number === number) {

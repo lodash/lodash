@@ -1,4 +1,4 @@
-import toString from './toString.js'
+
 
 /**
  * Converts `string`, as a whole, to upper case just like

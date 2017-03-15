@@ -1,8 +1,6 @@
-import baseToString from './.internal/baseToString.js'
 import castSlice from './.internal/castSlice.js'
 import charsEndIndex from './.internal/charsEndIndex.js'
 import stringToArray from './.internal/stringToArray.js'
-import toString from './toString.js'
 
 const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
 
@@ -24,11 +22,10 @@ const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
  * // => '-_-abc'
  */
 function trimEnd(string, chars) {
-  string = toString(string)
   if (string && chars === undefined) {
     return string[methodName]()
   }
-  if (!string || !(chars = baseToString(chars))) {
+  if (!string || !chars) {
     return string
   }
   const strSymbols = stringToArray(string)

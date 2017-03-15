@@ -1,5 +1,3 @@
-import toString from './toString.js'
-
 /** Used to generate unique IDs. */
 let idCounter = 0
 
@@ -21,7 +19,7 @@ let idCounter = 0
  */
 function uniqueId(prefix) {
   const id = ++idCounter
-  return toString(prefix) + id
+  return `${ prefix + id }`
 }
 
 export default uniqueId

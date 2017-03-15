@@ -1,5 +1,3 @@
-import toString from './toString.js'
-
 /**
  * Used to match `RegExp`
  * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
@@ -22,7 +20,6 @@ const reHasRegExpChar = RegExp(reRegExpChar.source)
  * // => '\[lodash\]\(https://lodash\.com/\)'
  */
 function escapeRegExp(string) {
-  string = toString(string)
   return (string && reHasRegExpChar.test(string))
     ? string.replace(reRegExpChar, '\\$&')
     : string

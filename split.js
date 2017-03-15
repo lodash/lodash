@@ -1,9 +1,7 @@
-import baseToString from './.internal/baseToString.js'
 import castSlice from './.internal/castSlice.js'
 import hasUnicode from './.internal/hasUnicode.js'
 import isRegExp from './isRegExp.js'
 import stringToArray from './.internal/stringToArray.js'
-import toString from './toString.js'
 
 /** Used as references for the maximum length and index of an array. */
 const MAX_ARRAY_LENGTH = 4294967295
@@ -30,12 +28,10 @@ function split(string, separator, limit) {
   if (!limit) {
     return []
   }
-  string = toString(string)
   if (string && (
         typeof separator == 'string' ||
         (separator != null && !isRegExp(separator))
       )) {
-    separator = baseToString(separator)
     if (!separator && hasUnicode(string)) {
       return castSlice(stringToArray(string), 0, limit)
     }

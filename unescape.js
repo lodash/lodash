@@ -1,5 +1,3 @@
-import toString from './toString.js'
-
 /** Used to map HTML entities to characters. */
 const htmlUnescapes = {
   '&amp;': '&',
@@ -32,7 +30,6 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source)
  * // => 'fred, barney, & pebbles'
  */
 function unescape(string) {
-  string = toString(string)
   return (string && reHasEscapedHtml.test(string))
     ? string.replace(reEscapedHtml, (entity) => htmlUnescapes[entity])
     : string

@@ -3,7 +3,6 @@ import copyArray from './.internal/copyArray.js'
 import isSymbol from './isSymbol.js'
 import stringToPath from './.internal/stringToPath.js'
 import toKey from './.internal/toKey.js'
-import toString from './toString.js'
 
 /**
  * Converts `value` to a property path array.
@@ -24,7 +23,7 @@ function toPath(value) {
   if (Array.isArray(value)) {
     return arrayMap(value, toKey)
   }
-  return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)))
+  return isSymbol(value) ? [value] : copyArray(stringToPath(value))
 }
 
 export default toPath

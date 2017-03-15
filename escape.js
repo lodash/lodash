@@ -1,5 +1,3 @@
-import toString from './toString.js'
-
 /** Used to map characters to HTML entities. */
 const htmlEscapes = {
   '&': '&amp',
@@ -41,7 +39,6 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source)
  * // => 'fred, barney, &amp pebbles'
  */
 function escape(string) {
-  string = toString(string)
   return (string && reHasUnescapedHtml.test(string))
     ? string.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
     : string

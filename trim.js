@@ -1,9 +1,7 @@
-import baseToString from './.internal/baseToString.js'
 import castSlice from './.internal/castSlice.js'
 import charsEndIndex from './.internal/charsEndIndex.js'
 import charsStartIndex from './.internal/charsStartIndex.js'
 import stringToArray from './.internal/stringToArray.js'
-import toString from './toString.js'
 
 /**
  * Removes leading and trailing whitespace or specified characters from `string`.
@@ -26,11 +24,10 @@ import toString from './toString.js'
  * // => ['foo', 'bar']
  */
 function trim(string, chars) {
-  string = toString(string)
   if (string && chars === undefined) {
     return string.trim()
   }
-  if (!string || !(chars = baseToString(chars))) {
+  if (!string || !chars) {
     return string
   }
   const strSymbols = stringToArray(string)

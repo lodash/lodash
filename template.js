@@ -6,7 +6,6 @@ import isError from './isError.js'
 import keys from './keys.js'
 import reInterpolate from './.internal/reInterpolate.js'
 import templateSettings from './templateSettings.js'
-import toString from './toString.js'
 
 /** Used to match empty string literals in compiled template source. */
 const reEmptyStringLeading = /\b__p \+= '';/g
@@ -142,7 +141,6 @@ function template(string, options) {
   // and Laura Doktorova's doT.js (https://github.com/olado/doT).
   const settings = templateSettings.imports.templateSettings || templateSettings
 
-  string = toString(string)
   options = assignInWith({}, options, settings, customDefaultsAssignIn)
 
   const imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn)

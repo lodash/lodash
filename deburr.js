@@ -1,5 +1,4 @@
 import deburrLetter from './.internal/deburrLetter.js'
-import toString from './toString.js'
 
 /** Used to match Latin Unicode letters (excluding mathematical operators). */
 const reLatin = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g
@@ -36,7 +35,6 @@ const reComboMark = RegExp(rsCombo, 'g')
  * // => 'deja vu'
  */
 function deburr(string) {
-  string = toString(string)
   return string && string.replace(reLatin, deburrLetter).replace(reComboMark, '')
 }
 

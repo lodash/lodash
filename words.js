@@ -1,6 +1,5 @@
 import asciiWords from './.internal/asciiWords.js'
 import hasUnicodeWord from './.internal/hasUnicodeWord.js'
-import toString from './toString.js'
 import unicodeWords from './.internal/unicodeWords.js'
 
 /**
@@ -20,7 +19,6 @@ import unicodeWords from './.internal/unicodeWords.js'
  * // => ['fred', 'barney', '&', 'pebbles']
  */
 function words(string, pattern) {
-  string = toString(string)
   if (pattern === undefined) {
     return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string)
   }

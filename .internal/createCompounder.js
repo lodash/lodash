@@ -1,4 +1,3 @@
-import arrayReduce from './arrayReduce.js'
 import words from '../words.js'
 
 /** Used to match apostrophes. */
@@ -13,7 +12,7 @@ const reApos = /['\u2019]/g
  */
 function createCompounder(callback) {
   return (string) => (
-    arrayReduce(words(`${ string }`.replace(reApos, '')), callback, '')
+    words(`${ string }`.replace(reApos, '')).reduce(callback, '')
   )
 }
 

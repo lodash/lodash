@@ -1,7 +1,6 @@
 import castSlice from './castSlice.js'
 import hasUnicode from './hasUnicode.js'
 import stringToArray from './stringToArray.js'
-import toString from '../toString.js'
 
 /**
  * Creates a function like `lowerFirst`.
@@ -12,8 +11,6 @@ import toString from '../toString.js'
  */
 function createCaseFirst(methodName) {
   return (string) => {
-    string = toString(string)
-
     const strSymbols = hasUnicode(string)
       ? stringToArray(string)
       : undefined

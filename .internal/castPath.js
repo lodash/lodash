@@ -1,6 +1,5 @@
 import isKey from './isKey.js'
 import stringToPath from './stringToPath.js'
-import toString from '../toString.js'
 
 /**
  * Casts `value` to a path array if it's not one.
@@ -14,7 +13,7 @@ function castPath(value, object) {
   if (Array.isArray(value)) {
     return value
   }
-  return isKey(value, object) ? [value] : stringToPath(toString(value))
+  return isKey(value, object) ? [value] : stringToPath(value)
 }
 
 export default castPath

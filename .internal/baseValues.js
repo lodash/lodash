@@ -1,5 +1,3 @@
-import arrayMap from './arrayMap.js'
-
 /**
  * The base implementation of `values` and `valuesIn` which creates an
  * array of `object` property values corresponding to the property names
@@ -11,7 +9,7 @@ import arrayMap from './arrayMap.js'
  * @returns {Object} Returns the array of property values.
  */
 function baseValues(object, props) {
-  return arrayMap(props, (key) => object[key])
+  return props == null ? [] : props.map((key) => object[key])
 }
 
 export default baseValues

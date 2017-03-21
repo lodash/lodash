@@ -1,4 +1,3 @@
-import arrayMap from './arrayMap.js'
 import baseMap from './baseMap.js'
 import baseSortBy from './baseSortBy.js'
 import compareMultiple from './compareMultiple.js'
@@ -17,7 +16,7 @@ function baseOrderBy(collection, iteratees, orders) {
   iteratees = iteratees.length ? iteratees : [(value) => value]
 
   const result = baseMap(collection, (value, key, collection) => {
-    const criteria = arrayMap(iteratees, (iteratee) => iteratee(value))
+    const criteria = iteratees.map((iteratee) => iteratee(value))
     return { 'criteria': criteria, 'index': ++index, 'value': value }
   })
 

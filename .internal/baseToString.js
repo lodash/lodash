@@ -1,4 +1,3 @@
-import arrayMap from './arrayMap.js'
 import isSymbol from '../isSymbol.js'
 
 /** Used as references for various `Number` constants. */
@@ -23,7 +22,7 @@ function baseToString(value) {
   }
   if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return `${ arrayMap(value, baseToString) }`
+    return `${ value.map(baseToString) }`
   }
   if (isSymbol(value)) {
     return symbolToString ? symbolToString.call(value) : ''

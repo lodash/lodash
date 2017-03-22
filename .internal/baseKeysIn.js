@@ -1,6 +1,5 @@
 import isObject from '../isObject.js'
 import isPrototype from './isPrototype.js'
-import nativeKeysIn from './nativeKeysIn.js'
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -13,12 +12,17 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * @returns {Array} Returns the array of property names.
  */
 function baseKeysIn(object) {
+  const result = []
+  if (object == null) {
+    return result
+  }
   if (!isObject(object)) {
-    return nativeKeysIn(object)
+    for (const key in Object(object)) {
+      result.push(key)
+    }
+    return result
   }
   const isProto = isPrototype(object)
-  const result = []
-
   for (const key in object) {
     if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
       result.push(key)

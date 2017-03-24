@@ -1,5 +1,3 @@
-import baseSlice from './.internal/baseSlice.js'
-
 /**
  * Gets all but the first element of `array`.
  *
@@ -14,7 +12,11 @@ import baseSlice from './.internal/baseSlice.js'
  */
 function tail(array) {
   const length = array == null ? 0 : array.length
-  return length ? baseSlice(array, 1, length) : []
+  if (!length) {
+    return []
+  }
+  const [head, ...result] = array
+  return result
 }
 
 export default tail

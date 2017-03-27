@@ -1,4 +1,4 @@
-import createCompounder from './.internal/createCompounder.js'
+import words from './words.js'
 
 /**
  * Converts `string` to
@@ -20,8 +20,10 @@ import createCompounder from './.internal/createCompounder.js'
  * snakeCase('--FOO-BAR--')
  * // => 'foo_bar'
  */
-const snakeCase = createCompounder((result, word, index) =>
-  result + (index ? '_' : '') + word.toLowerCase()
+const snakeCase = (string) => (
+  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    result + (index ? '_' : '') + word.toLowerCase()
+  ), '')
 )
 
 export default snakeCase

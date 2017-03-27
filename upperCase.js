@@ -1,4 +1,4 @@
-import createCompounder from './.internal/createCompounder.js'
+import words from './words.js'
 
 /**
  * Converts `string`, as space separated words, to upper case.
@@ -19,8 +19,10 @@ import createCompounder from './.internal/createCompounder.js'
  * upperCase('__foo_bar__')
  * // => 'FOO BAR'
  */
-const upperCase = createCompounder((result, word, index) =>
-  result + (index ? ' ' : '') + word.toUpperCase()
+const upperCase = (string) => (
+  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    result + (index ? ' ' : '') + word.toUpperCase()
+  ), '')
 )
 
 export default upperCase

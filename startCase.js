@@ -1,5 +1,5 @@
-import createCompounder from './.internal/createCompounder.js'
 import upperFirst from './upperFirst.js'
+import words from './words.js'
 
 /**
  * Converts `string` to
@@ -21,8 +21,10 @@ import upperFirst from './upperFirst.js'
  * startCase('__FOO_BAR__')
  * // => 'FOO BAR'
  */
-const startCase = createCompounder((result, word, index) =>
-  result + (index ? ' ' : '') + upperFirst(word)
+const startCase = (string) => (
+  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    result + (index ? ' ' : '') + upperFirst(word)
+  ), '')
 )
 
 export default startCase

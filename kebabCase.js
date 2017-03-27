@@ -1,4 +1,4 @@
-import createCompounder from './.internal/createCompounder.js'
+import words from './words.js'
 
 /**
  * Converts `string` to
@@ -20,8 +20,10 @@ import createCompounder from './.internal/createCompounder.js'
  * kebabCase('__FOO_BAR__')
  * // => 'foo-bar'
  */
-const kebabCase = createCompounder((result, word, index) =>
-  result + (index ? '-' : '') + word.toLowerCase()
+const kebabCase = (string) => (
+  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    result + (index ? '-' : '') + word.toLowerCase()
+  ), '')
 )
 
 export default kebabCase

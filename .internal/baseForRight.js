@@ -1,5 +1,3 @@
-import createBaseFor from './createBaseFor.js'
-
 /**
  * This function is like `baseFor` except that it iterates over properties
  * in the opposite order.
@@ -10,6 +8,18 @@ import createBaseFor from './createBaseFor.js'
  * @param {Function} keysFunc The function to get the keys of `object`.
  * @returns {Object} Returns `object`.
  */
-const baseForRight = createBaseFor(true)
+function baseForRight(object, iteratee, keysFunc) {
+  const iterable = Object(object)
+  const props = keysFunc(object)
+  let { length } = props;
+
+  while (length--) {
+    const key = props[length];
+    if (iteratee(iterable[key], key, iterable) === false) {
+      break;
+    }
+  }
+  return object
+}
 
 export default baseForRight

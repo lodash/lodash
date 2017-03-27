@@ -1,5 +1,3 @@
-import createBaseFor from './createBaseFor.js'
-
 /**
  * The base implementation of `baseForOwn` which iterates over `object`
  * properties returned by `keysFunc` and invokes `iteratee` for each property.
@@ -11,6 +9,19 @@ import createBaseFor from './createBaseFor.js'
  * @param {Function} keysFunc The function to get the keys of `object`.
  * @returns {Object} Returns `object`.
  */
-const baseFor = createBaseFor()
+function baseFor(object, iteratee, keysFunc) {
+  const iterable = Object(object)
+  const props = keysFunc(object)
+  let { length } = props;
+  let index = -1;
+
+  while (length--) {
+    const key = props[++index];
+    if (iteratee(iterable[key], key, iterable) === false) {
+      break;
+    }
+  }
+  return object
+}
 
 export default baseFor

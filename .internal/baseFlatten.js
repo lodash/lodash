@@ -11,27 +11,17 @@ import isFlattenable from './isFlattenable.js'
  * @param {Array} [result=[]] The initial result value.
  * @returns {Array} Returns the new flattened array.
  */
-function baseFlatten(array, depth, predicate, isStrict, result) {
-  let index = -1
-  const { length } = array
-
+function baseFlatten(array, depth, predicate, isStrict, init = []) {
   predicate || (predicate = isFlattenable)
-  result || (result = [])
 
-  while (++index < length) {
-    const value = array[index]
+  return array.reduce((result, value) => {
     if (depth > 0 && predicate(value)) {
-      if (depth > 1) {
-        // Recursively flatten arrays (susceptible to call stack limits).
-        baseFlatten(value, depth - 1, predicate, isStrict, result)
-      } else {
-        result.push(...value)
-      }
-    } else if (!isStrict) {
-      result[result.length] = value
-    }
-  }
-  return result
+      if (depth > 1) baseFlatten(value, depth - 1, predicate, isStrict, result)
+      else result.push(value)
+    } else if (!isStrict) result[result.length] = value
+
+    return result
+  }, init)
 }
 
 export default baseFlatten

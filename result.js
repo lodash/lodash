@@ -14,7 +14,7 @@ import toKey from './.internal/toKey.js'
  * @returns {*} Returns the resolved value.
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c1': 3, 'c2': constant(4) } }] }
+ * const object = { 'a': [{ 'b': { 'c1': 3, 'c2': () => 4 } }] }
  *
  * result(object, 'a[0].b.c1')
  * // => 3
@@ -25,7 +25,7 @@ import toKey from './.internal/toKey.js'
  * result(object, 'a[0].b.c3', 'default')
  * // => 'default'
  *
- * result(object, 'a[0].b.c3', constant('default'))
+ * result(object, 'a[0].b.c3', () => 'default')
  * // => 'default'
  */
 function result(object, path, defaultValue) {

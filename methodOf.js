@@ -12,14 +12,14 @@ import invoke from './invoke.js'
  * @returns {Function} Returns the new invoker function.
  * @example
  *
- * const array = times(3, constant)
+ * const array = times(3, i => () => i)
  * const object = { 'a': array, 'b': array, 'c': array }
  *
  * map(['a[2]', 'c[0]'], methodOf(object))
  * // => [2, 0]
  *
  * map([['a', '2'], ['c', '0']], methodOf(object))
- * // => [2, 0]
+ * // => [2, 0]f
  */
 function methodOf(object, args) {
   return (path) => invoke(object, path, args)

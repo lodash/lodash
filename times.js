@@ -18,7 +18,7 @@ const MAX_ARRAY_LENGTH = 4294967295
  * times(3, String)
  * // => ['0', '1', '2']
  *
- *  times(4, constant(0))
+ *  times(4, () => 0)
  * // => [0, 0, 0, 0]
  */
 function times(n, iteratee) {

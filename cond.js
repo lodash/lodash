@@ -13,9 +13,9 @@ import arrayMap from './.internal/arrayMap.js'
  * @example
  *
  * const func = cond([
- *   [matches({ 'a': 1 }),         constant('matches A')],
- *   [conforms({ 'b': isNumber }), constant('matches B')],
- *   [() => true,                  constant('no match')]
+ *   [matches({ 'a': 1 }),         () => 'matches A'],
+ *   [conforms({ 'b': isNumber }), () => 'matches B'],
+ *   [() => true,                  () => 'no match']
  * ])
  *
  * func({ 'a': 1, 'b': 2 })

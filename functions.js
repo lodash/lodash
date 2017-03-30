@@ -10,11 +10,11 @@
  * @example
  *
  * function Foo() {
- *   this.a = constant('a')
- *   this.b = constant('b')
+ *   this.a = () => 'a'
+ *   this.b = () => 'b'
  * }
  *
- * Foo.prototype.c = constant('c')
+ * Foo.prototype.c = () => 'c'
  *
  * functions(new Foo)
  * // => ['a', 'b']

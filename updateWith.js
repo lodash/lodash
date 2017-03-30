@@ -19,7 +19,7 @@ import baseUpdate from './.internal/baseUpdate.js'
  *
  * const object = {}
  *
- * updateWith(object, '[0][1]', constant('a'), Object)
+ * updateWith(object, '[0][1]', () => 'a', Object)
  * // => { '0': { '1': 'a' } }
  */
 function updateWith(object, path, updater, customizer) {

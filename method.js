@@ -12,8 +12,8 @@ import invoke from './invoke.js'
  * @example
  *
  * const objects = [
- *   { 'a': { 'b': constant(2) } },
- *   { 'a': { 'b': constant(1) } }
+ *   { 'a': { 'b': () => 2 } },
+ *   { 'a': { 'b': () => 1 } }
  * ]
  *
  * map(objects, method('a.b'))

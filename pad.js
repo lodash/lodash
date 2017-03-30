@@ -19,7 +19,7 @@ import stringSize from './.internal/stringSize.js'
  * pad('abc', 8, '_-')
  * // => '_-abc_-_'
  *
- * pad('abc', 3)
+ * pad('abc', 2)
  * // => 'abc'
  */
 function pad(string, length, chars) {

@@ -1,5 +1,6 @@
-import createFind from './.internal/createFind.js'
 import findIndex from './findIndex.js'
+import isArrayLike from './isArrayLike'
+import keys from './keys'
 
 /**
  * Iterates over elements of `collection`, returning the first element
@@ -24,6 +25,14 @@ import findIndex from './findIndex.js'
  * find(users, ({ age }) => age < 40)
  * // => object for 'barney'
  */
-const find = createFind(findIndex)
+function find(collection, predicate, fromIndex) {
+  var iterable = Object(collection);
+  if (!isArrayLike(collection)) {
+    collection = keys(collection);
+    predicate = function(key) { return iteratee(iterable[key], key, iterable); };
+  }
+  var index = findIndex(collection, predicate, fromIndex);
+  return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined;
+}
 
 export default find

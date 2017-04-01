@@ -1,8 +1,9 @@
 import baseGet from './.internal/baseGet.js'
 
 /**
- * Gets the value at `path` of `object` or `undefined` if the path cannot be evaluated.  If 
- * the resolved value is `undefined`, the `defaultValue` is returned in its place.
+ * Gets the value at `path` of `object` or gets `undefined` if the 
+ * path cannot be evaluated.  If the resolved value is `undefined`, 
+ * the `defaultValue` is returned in its place.
  *
  * @since 3.7.0
  * @category Object

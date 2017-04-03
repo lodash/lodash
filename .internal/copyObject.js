@@ -15,12 +15,7 @@ function copyObject(source, props, object, customizer) {
   const isNew = !object
   object || (object = {})
 
-  let index = -1
-  const length = props.length
-
-  while (++index < length) {
-    const key = props[index]
-
+  for (const key of props) {
     let newValue = customizer
       ? customizer(object[key], source[key], key, object, source)
       : undefined

@@ -8,11 +8,9 @@
  */
 function baseSum(array, iteratee) {
   let result
-  let index = -1
-  const { length } = array
 
-  while (++index < length) {
-    const current = iteratee(array[index])
+  for (value of array) {
+    const current = iteratee(value)
     if (current !== undefined) {
       result = result === undefined ? current : (result + current)
     }

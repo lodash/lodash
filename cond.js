@@ -38,9 +38,7 @@ function cond(pairs) {
   })
 
   return (...args) => {
-    let index = -1
-    while (++index < length) {
-      const pair = pairs[index]
+    for (const pair of pairs) {
       if (pair[0].apply(this, args)) {
         return pair[1].apply(this, args)
       }

@@ -12,12 +12,11 @@
  * // => { 'a': 1, 'b': 2 }
  */
 function fromPairs(pairs) {
-  let index = -1
-  const length = pairs == null ? 0 : pairs.length
   const result = {}
-
-  while (++index < length) {
-    const pair = pairs[index]
+  if (pairs == null) {
+    return result
+  }
+  for (const pair of pairs) {
     result[pair[0]] = pair[1]
   }
   return result

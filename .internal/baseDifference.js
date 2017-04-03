@@ -19,14 +19,12 @@ const LARGE_ARRAY_SIZE = 200
  * @returns {Array} Returns the new array of filtered values.
  */
 function baseDifference(array, values, iteratee, comparator) {
-  let index = -1
   let includes = arrayIncludes
   let isCommon = true
-  const { length } = array
   const result = []
   const valuesLength = values.length
 
-  if (!length) {
+  if (!array.length) {
     return result
   }
   if (iteratee) {
@@ -42,8 +40,7 @@ function baseDifference(array, values, iteratee, comparator) {
     values = new SetCache(values)
   }
   outer:
-  while (++index < length) {
-    let value = array[index]
+  for (let value of array) {
     const computed = iteratee == null ? value : iteratee(value)
 
     value = (comparator || value !== 0) ? value : 0

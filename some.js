@@ -1,14 +1,11 @@
-import arraySome from './.internal/arraySome.js'
-import baseSome from './.internal/baseSome.js'
-
 /**
- * Checks if `predicate` returns truthy for **any** element of `collection`.
+ * Checks if `predicate` returns truthy for **any** element of `array`.
  * Iteration is stopped once `predicate` returns truthy. The predicate is
- * invoked with three arguments: (value, index|key, collection).
+ * invoked with three arguments: (value, index, array).
  *
- * @since 0.1.0
- * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
+ * @since 5.0.0
+ * @category array
+ * @param {Array|Object} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {boolean} Returns `true` if any element passes the predicate check,
  *  else `false`.
@@ -17,9 +14,16 @@ import baseSome from './.internal/baseSome.js'
  * some([null, 0, 'yes', false], Boolean)
  * // => true
  */
-function some(collection, predicate) {
-  const func = Array.isArray(collection) ? arraySome : baseSome
-  return func(collection, predicate)
+function some(array, predicate) {
+  let index = -1
+  const length = array == null ? 0 : array.length
+
+  while (++index < length) {
+    if (predicate(array[index], index, array)) {
+      return true
+    }
+  }
+  return false
 }
 
 export default some

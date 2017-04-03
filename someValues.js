@@ -11,17 +11,17 @@
  *  else `false`.
  * @example
  *
- * some([null, 0, 'yes', false], Boolean)
+ * someValues({ 'a': 0, 'b': 'yes', 'c': false }, Boolean)
  * // => true
  */
-function someObj(object, predicate) {
-  let result
-
-  Object.keys(object).forEach((key) => {
-    result = predicate(object[key], key, object)
-    return !result
-  })
-  return !!result
+function someValues(object, predicate) {
+  const props = Object.keys(Object(object))
+  for (key of props) {
+    if (predicate(object[key], key, object)) {
+      return true
+    }
+  }
+  return false
 }
 
-export default someObj
+export default someValues

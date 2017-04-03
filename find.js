@@ -26,13 +26,13 @@ import keys from './keys'
  * // => object for 'barney'
  */
 function find(collection, predicate, fromIndex) {
-  var iterable = Object(collection);
+  const iterable = Object(collection)
   if (!isArrayLike(collection)) {
-    collection = keys(collection);
-    predicate = function(key) { return iteratee(iterable[key], key, iterable); };
+    collection = keys(collection)
+    predicate = (key) => iteratee(iterable[key], key, iterable)
   }
-  var index = findIndex(collection, predicate, fromIndex);
-  return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined;
+  const index = findIndex(collection, predicate, fromIndex)
+  return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined
 }
 
 export default find

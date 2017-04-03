@@ -57,6 +57,8 @@ module.exports = {
       'avoidEscape': true
     }],
 
+    'semi': ['error', 'never'],
+
     'space-before-blocks': ['error', 'always'],
 
     'space-before-function-paren': ['error', 'never'],

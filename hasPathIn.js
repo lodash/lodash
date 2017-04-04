@@ -28,11 +28,12 @@ function hasPathIn(object, path) {
   path = castPath(path, object)
 
   let index = -1
-  let length = path.length
+  let { length } = path
   let result = false
+  let key
 
   while (++index < length) {
-    const key = toKey(path[index])
+    key = toKey(path[index])
     if (!(result = object != null && key in Object(object))) {
       break
     }

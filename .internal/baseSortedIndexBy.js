@@ -4,9 +4,6 @@ import isSymbol from '../isSymbol.js'
 const MAX_ARRAY_LENGTH = 4294967295
 const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeFloor = Math.floor, nativeMin = Math.min
-
 /**
  * The base implementation of `sortedIndexBy` and `sortedLastIndexBy`
  * which invokes `iteratee` for `value` and each element of `array` to compute
@@ -32,7 +29,7 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
 
   while (low < high) {
     let setLow
-    const mid = nativeFloor((low + high) / 2)
+    const mid = Math.floor((low + high) / 2)
     const computed = iteratee(array[mid])
     const othIsDefined = computed !== undefined
     const othIsNull = computed === null
@@ -58,7 +55,7 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
       high = mid
     }
   }
-  return nativeMin(high, MAX_ARRAY_INDEX)
+  return Math.min(high, MAX_ARRAY_INDEX)
 }
 
 export default baseSortedIndexBy

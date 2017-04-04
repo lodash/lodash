@@ -1,9 +1,3 @@
-/* Used as references for the maximum safe integer in JavaScript Math.pow(2, 53) - 1 */
-const MAX_SAFE_INTEGER = 9007199254740991
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeFloor = Math.floor
-
 /**
  * Repeats the given string `n` times.
  *
@@ -25,7 +19,7 @@ const nativeFloor = Math.floor
  */
 function repeat(string, n) {
   let result = ''
-  if (!string || n < 1 || n > MAX_SAFE_INTEGER) {
+  if (!string || n < 1 || n > Number.MAX_SAFE_INTEGER) {
     return result
   }
   // Leverage the exponentiation by squaring algorithm for a faster repeat.
@@ -34,7 +28,7 @@ function repeat(string, n) {
     if (n % 2) {
       result += string
     }
-    n = nativeFloor(n / 2)
+    n = Math.floor(n / 2)
     if (n) {
       string += string
     }

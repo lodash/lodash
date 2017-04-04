@@ -4,9 +4,6 @@ import arrayIncludesWith from './arrayIncludesWith.js'
 import arrayMap from './arrayMap.js'
 import cacheHas from './cacheHas.js'
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min
-
 /**
  * The base implementation of methods like `intersection` that accepts an
  * array of arrays to inspect.
@@ -33,7 +30,7 @@ function baseIntersection(arrays, iteratee, comparator) {
     if (othIndex && iteratee) {
       array = arrayMap(array, (value) => iteratee(value))
     }
-    maxLength = nativeMin(array.length, maxLength)
+    maxLength = Math.min(array.length, maxLength)
     caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
       ? new SetCache(othIndex && array)
       : undefined

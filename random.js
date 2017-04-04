@@ -3,9 +3,6 @@ import toFinite from './toFinite.js'
 /** Built-in method references without a dependency on `root`. */
 const freeParseFloat = parseFloat
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeRandom = Math.random
-
 /**
  * Produces a random number between the inclusive `lower` and `upper` bounds.
  * If only one argument is provided a number between `0` and the given number
@@ -66,11 +63,11 @@ function random(lower, upper, floating) {
     upper = temp
   }
   if (floating || lower % 1 || upper % 1) {
-    const rand = nativeRandom()
+    const rand = Math.random()
     const randLength = `${ rand }`.length - 1
     return Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${ randLength }`)), upper))
   }
-  return lower + Math.floor(nativeRandom() * (upper - lower + 1))
+  return lower + Math.floor(Math.random() * (upper - lower + 1))
 }
 
 export default random

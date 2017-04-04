@@ -1,6 +1,3 @@
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max
-
 /**
  * This function is like `composeArgs` except that the arguments composition
  * is tailored for `partialRight`.
@@ -20,7 +17,7 @@ function composeArgsRight(args, partials, holders, isCurried) {
   const argsLength = args.length
   const holdersLength = holders.length
   const rightLength = partials.length
-  const rangeLength = nativeMax(argsLength - holdersLength, 0)
+  const rangeLength = Math.max(argsLength - holdersLength, 0)
   const result = new Array(rangeLength + rightLength)
   const isUncurried = !isCurried
 

@@ -5,9 +5,6 @@ import hasUnicode from './hasUnicode.js'
 import stringSize from './stringSize.js'
 import stringToArray from './stringToArray.js'
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeCeil = Math.ceil
-
 /**
  * Creates the padding for `string` based on `length`. The `chars` string
  * is truncated if the number of characters exceeds `length`.
@@ -24,7 +21,7 @@ function createPadding(length, chars) {
   if (charsLength < 2) {
     return charsLength ? baseRepeat(chars, length) : chars
   }
-  const result = baseRepeat(chars, nativeCeil(length / stringSize(chars)))
+  const result = baseRepeat(chars, Math.ceil(length / stringSize(chars)))
   return hasUnicode(chars)
     ? castSlice(stringToArray(result), 0, length).join('')
     : result.slice(0, length)

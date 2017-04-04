@@ -1,6 +1,3 @@
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMax = Math.max
-
 /**
  * Creates an array that is the composition of partially applied arguments,
  * placeholders, and provided arguments into a single array of arguments.
@@ -19,7 +16,7 @@ function composeArgs(args, partials, holders, isCurried) {
 
   let argsIndex = -1
   let leftIndex = -1
-  let rangeLength = nativeMax(argsLength - holdersLength, 0)
+  let rangeLength = Math.max(argsLength - holdersLength, 0)
 
   const result = new Array(leftLength + rangeLength)
   const isUncurried = !isCurried

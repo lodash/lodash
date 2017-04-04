@@ -13,9 +13,6 @@ const WRAP_CURRY_FLAG = 8
 const WRAP_ARY_FLAG = 128
 const WRAP_REARG_FLAG = 256
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeMin = Math.min
-
 /**
  * Merges the function metadata of `source` into `data`.
  *
@@ -76,7 +73,7 @@ function mergeData(data, source) {
   }
   // Use source `ary` if it's smaller.
   if (srcBitmask & WRAP_ARY_FLAG) {
-    data[8] = data[8] == null ? source[8] : nativeMin(data[8], source[8])
+    data[8] = data[8] == null ? source[8] : Math.min(data[8], source[8])
   }
   // Use source `arity` if one is not provided.
   if (data[9] == null) {

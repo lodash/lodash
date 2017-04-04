@@ -1,7 +1,3 @@
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeCeil = Math.ceil
-const nativeMax = Math.max
-
 /**
  * The base implementation of `range` and `rangeRight` which doesn't
  * coerce arguments.
@@ -15,7 +11,7 @@ const nativeMax = Math.max
  */
 function baseRange(start, end, step, fromRight) {
   let index = -1
-  let length = nativeMax(nativeCeil((end - start) / (step || 1)), 0)
+  let length = Math.max(Math.ceil((end - start) / (step || 1)), 0)
   const result = new Array(length)
 
   while (length--) {

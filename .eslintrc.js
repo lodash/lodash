@@ -2,7 +2,8 @@ module.exports = {
   'extends': ['plugin:import/errors'],
   'plugins': ['import'],
   'env': {
-    'es6': true
+    'es6': true,
+    'node': true
   },
   'parserOptions': {
     'ecmaVersion': 6,
@@ -46,6 +47,8 @@ module.exports = {
     'no-spaced-func': ['error'],
 
     'no-trailing-spaces': ['error'],
+
+    'no-undef': ['error'],
 
     'no-unused-vars': ['error', {
       'args': 'none',

@@ -16,7 +16,7 @@
  */
 function someValues(object, predicate) {
   const props = Object.keys(Object(object))
-  for (key of props) {
+  for (const key of props) {
     if (predicate(object[key], key, object)) {
       return true
     }

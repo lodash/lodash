@@ -12,14 +12,14 @@ import isFlattenable from './isFlattenable.js'
  * @returns {Array} Returns the new flattened array.
  */
 function baseFlatten(array, depth, predicate, isStrict, result) {
-  let index = -1
-  const { length } = array
-
   predicate || (predicate = isFlattenable)
   result || (result = [])
 
-  while (++index < length) {
-    const value = array[index]
+  if (array == null) {
+    return result
+  }
+
+  for (const value of array) {
     if (depth > 0 && predicate(value)) {
       if (depth > 1) {
         // Recursively flatten arrays (susceptible to call stack limits).

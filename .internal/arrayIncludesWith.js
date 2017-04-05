@@ -7,12 +7,13 @@
  * @param {Function} comparator The comparator invoked per element.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
-function arrayIncludesWith(array, value, comparator) {
-  let index = -1
-  const length = array == null ? 0 : array.length
+function arrayIncludesWith(array, target, comparator) {
+  if (array == null) {
+    return false
+  }
 
-  while (++index < length) {
-    if (comparator(value, array[index])) {
+  for (const value of array) {
+    if (comparator(target, value)) {
       return true
     }
   }

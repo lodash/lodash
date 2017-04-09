@@ -10,7 +10,7 @@ const rsVarRange = '\\ufe0e\\ufe0f'
 const rsZWJ = '\\u200d'
 
 /** Used to detect strings with [zero-width joiners or code points from the astral planes](http://eev.ee/blog/2015/09/12/dark-corners-of-unicode/). */
-const reHasUnicode = RegExp(`[${ rsZWJ + rsAstralRange + rsComboRange + rsVarRange }]`)
+const reHasUnicode = RegExp(`[${rsZWJ + rsAstralRange + rsComboRange + rsVarRange}]`)
 
 /**
  * Checks if `string` contains Unicode symbols.

@@ -16,32 +16,32 @@ const rsBreakRange = rsMathOpRange + rsNonCharRange + rsPunctuationRange + rsSpa
 
 /** Used to compose unicode capture groups. */
 const rsApos = "['\u2019]"
-const rsBreak = `[${ rsBreakRange }]`
-const rsCombo = `[${ rsComboRange }]`
+const rsBreak = `[${rsBreakRange}]`
+const rsCombo = `[${rsComboRange}]`
 const rsDigits = '\\d+'
-const rsDingbat = `[${ rsDingbatRange }]`
-const rsLower = `[${ rsLowerRange }]`
-const rsMisc = `[^${ rsAstralRange }${ rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange }]`
+const rsDingbat = `[${rsDingbatRange}]`
+const rsLower = `[${rsLowerRange}]`
+const rsMisc = `[^${rsAstralRange}${rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange}]`
 const rsFitz = '\\ud83c[\\udffb-\\udfff]'
-const rsModifier = `(?:${ rsCombo }|${ rsFitz })`
-const rsNonAstral = `[^${ rsAstralRange }]`
+const rsModifier = `(?:${rsCombo}|${rsFitz})`
+const rsNonAstral = `[^${rsAstralRange}]`
 const rsRegional = '(?:\\ud83c[\\udde6-\\uddff]){2}'
 const rsSurrPair = '[\\ud800-\\udbff][\\udc00-\\udfff]'
-const rsUpper = `[${ rsUpperRange }]`
+const rsUpper = `[${rsUpperRange}]`
 const rsZWJ = '\\u200d'
 
 /** Used to compose unicode regexes. */
-const rsMiscLower = `(?:${ rsLower }|${ rsMisc })`
-const rsMiscUpper = `(?:${ rsUpper }|${ rsMisc })`
-const rsOptContrLower = `(?:${ rsApos }(?:d|ll|m|re|s|t|ve))?`
-const rsOptContrUpper = `(?:${ rsApos }(?:D|LL|M|RE|S|T|VE))?`
-const reOptMod = `${ rsModifier }?`
-const rsOptVar = `[${ rsVarRange }]?`
-const rsOptJoin = `(?:${ rsZWJ }(?:${ [rsNonAstral, rsRegional, rsSurrPair].join('|') })${ rsOptVar + reOptMod })*`
+const rsMiscLower = `(?:${rsLower}|${rsMisc})`
+const rsMiscUpper = `(?:${rsUpper}|${rsMisc})`
+const rsOptContrLower = `(?:${rsApos}(?:d|ll|m|re|s|t|ve))?`
+const rsOptContrUpper = `(?:${rsApos}(?:D|LL|M|RE|S|T|VE))?`
+const reOptMod = `${rsModifier}?`
+const rsOptVar = `[${rsVarRange}]?`
+const rsOptJoin = `(?:${rsZWJ}(?:${[rsNonAstral, rsRegional, rsSurrPair].join('|')})${rsOptVar + reOptMod})*`
 const rsOrdLower = '\\d*(?:(?:1st|2nd|3rd|(?![123])\\dth)\\b)'
 const rsOrdUpper = '\\d*(?:(?:1ST|2ND|3RD|(?![123])\\dTH)\\b)'
 const rsSeq = rsOptVar + reOptMod + rsOptJoin
-const rsEmoji = `(?:${ [rsDingbat, rsRegional, rsSurrPair].join('|') })${ rsSeq }`
+const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
 
 /**
  * Splits a Unicode `string` into an array of its words.
@@ -51,10 +51,10 @@ const rsEmoji = `(?:${ [rsDingbat, rsRegional, rsSurrPair].join('|') })${ rsSeq 
  * @returns {Array} Returns the words of `string`.
  */
 const unicodeWords = RegExp.prototype.exec.bind(RegExp([
-  `${ rsUpper }?${ rsLower }+${ rsOptContrLower }(?=${ [rsBreak, rsUpper, '$'].join('|') })`,
-  `${ rsMiscUpper }+${ rsOptContrUpper }(?=${ [rsBreak, rsUpper + rsMiscLower, '$'].join('|') })`,
-  `${ rsUpper }?${ rsMiscLower }+${ rsOptContrLower }`,
-  `${ rsUpper }+${ rsOptContrUpper }`,
+  `${rsUpper}?${rsLower}+${rsOptContrLower}(?=${[rsBreak, rsUpper, '$'].join('|')})`,
+  `${rsMiscUpper}+${rsOptContrUpper}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
+  `${rsUpper}?${rsMiscLower}+${rsOptContrLower}`,
+  `${rsUpper}+${rsOptContrUpper}`,
   rsOrdUpper,
   rsOrdLower,
   rsDigits,

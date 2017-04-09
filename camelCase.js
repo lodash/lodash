@@ -21,7 +21,7 @@ import words from './words.js'
  * // => 'fooBar'
  */
 const camelCase = (string) => (
-  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => {
+  words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => {
     word = word.toLowerCase()
     return result + (index ? capitalize(word) : word)
   }, '')

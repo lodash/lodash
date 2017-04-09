@@ -20,7 +20,7 @@ import words from './words.js'
  * // => 'FOO BAR'
  */
 const upperCase = (string) => (
-  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+  words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
     result + (index ? ' ' : '') + word.toUpperCase()
   ), '')
 )

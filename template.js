@@ -155,16 +155,16 @@ function template(string, options) {
   let source = "__p += '"
 
   // Compile the regexp to match each delimiter.
-  const reDelimiters = RegExp(`${ [
+  const reDelimiters = RegExp(`${[
     (options.escape || reNoMatch).source,
     interpolate.source,
     (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source,
     (options.evaluate || reNoMatch).source
-  ].join('|') }|$`, 'g')
+  ].join('|')}|$`, 'g')
 
   // Use a sourceURL for easier debugging.
   const sourceURL = 'sourceURL' in options
-    ? `//# sourceURL=${ options.sourceURL }\n`
+    ? `//# sourceURL=${options.sourceURL}\n`
     : ''
 
   string.replace(reDelimiters, (
@@ -180,19 +180,19 @@ function template(string, options) {
     // Escape characters that can't be included in string literals.
     source += string
       .slice(index, offset)
-      .replace(reUnescapedString, (chr) => `\\${ stringEscapes[chr] }`)
+      .replace(reUnescapedString, (chr) => `\\${stringEscapes[chr]}`)
 
     // Replace delimiters with snippets.
     if (escapeValue) {
       isEscaping = true
-      source += `' +\n__e(${ escapeValue }) +\n'`
+      source += `' +\n__e(${escapeValue}) +\n'`
     }
     if (evaluateValue) {
       isEvaluating = true
-      source += `';\n${ evaluateValue };\n__p += '`
+      source += `';\n${evaluateValue};\n__p += '`
     }
     if (interpolateValue) {
-      source += `' +\n((__t = (${ interpolateValue })) == null ? '' : __t) +\n'`
+      source += `' +\n((__t = (${interpolateValue})) == null ? '' : __t) +\n'`
     }
     index = offset + match.length
 
@@ -207,7 +207,7 @@ function template(string, options) {
   // code to add the data object to the top of the scope chain.
   const variable = options.variable
   if (!variable) {
-    source = `with (obj) {\n${ source }\n}\n`
+    source = `with (obj) {\n${source}\n}\n`
   }
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
@@ -215,15 +215,15 @@ function template(string, options) {
     .replace(reEmptyStringTrailing, '$1;')
 
   // Frame code as the function body.
-  source = `function(${ variable || 'obj' }) {\n` +
-    `${ variable ? '' : 'obj || (obj = {});\n' }` +
+  source = `function(${variable || 'obj'}) {\n` +
+    `${variable ? '' : 'obj || (obj = {});\n'}` +
     `var __t, __p = ''` +
-    `${ isEscaping ? ', __e = _.escape' : '' }` +
-    `${ isEvaluating ? ', __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, \'\') }\n' : ';\n' }` +
-    `${ source } return __p;\n}`
+    `${isEscaping ? ', __e = _.escape' : ''}` +
+    `${isEvaluating ? ', __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, \'\') }\n' : ';\n'}` +
+    `${source} return __p;\n}`
 
   const result = attempt(() => (
-    Function(importsKeys, `${ sourceURL }return ${ source }`))(...importsValues)
+    Function(importsKeys, `${sourceURL}return ${source}`))(...importsValues)
   )
 
   // Provide the compiled function's source by its `toString` method or

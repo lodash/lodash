@@ -50,7 +50,7 @@ function toNumber(value) {
   }
   if (isObject(value)) {
     const other = typeof value.valueOf == 'function' ? value.valueOf() : value
-    value = isObject(other) ? `${ other }` : other
+    value = isObject(other) ? `${other}` : other
   }
   if (typeof value != 'string') {
     return value === 0 ? value : +value

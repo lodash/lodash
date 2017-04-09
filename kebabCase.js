@@ -21,7 +21,7 @@ import words from './words.js'
  * // => 'foo-bar'
  */
 const kebabCase = (string) => (
-  words(`${ string }`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+  words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
     result + (index ? '-' : '') + word.toLowerCase()
   ), '')
 )

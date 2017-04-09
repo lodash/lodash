@@ -29,7 +29,7 @@ function startsWith(string, target, position) {
   else if (position > length) {
     position = length
   }
-  target = `${ target }`
+  target = `${target}`
   return string.slice(position, position + target.length) == target
 }
 

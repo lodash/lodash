@@ -10,7 +10,7 @@ const rsComboSymbolsRange = '\\u20d0-\\u20ff'
 const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange
 
 /** Used to compose unicode capture groups. */
-const rsCombo = `[${ rsComboRange }]`
+const rsCombo = `[${rsComboRange}]`
 
 /**
  * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks) and

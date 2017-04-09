@@ -24,7 +24,7 @@ function arrayLikeKeys(value, inherited) {
   const result = new Array(skipIndexes ? length : 0)
   let index = skipIndexes ? -1 : length
   while (++index < length) {
-    result[index] = `${ index }`
+    result[index] = `${index}`
   }
   for (const key in value) {
     if ((inherited || hasOwnProperty.call(value, key)) &&

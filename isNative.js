@@ -1,15 +1,10 @@
-import isFunction from './isFunction.js'
 import isObject from './isObject.js'
-import toSource from './.internal/toSource.js'
 
 /**
  * Used to match `RegExp`
  * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
 const reRegExpChar = /[\\^$.*+?()[\]{}|]/g
-
-/** Used to detect host constructors (Safari). */
-const reIsHostCtor = /^\[object .+?Constructor\]$/
 
 /** Used to detect if a method is native. */
 const reIsNative = RegExp(`^${
@@ -35,11 +30,7 @@ const reIsNative = RegExp(`^${
  * // => false
  */
 function isNative(value) {
-  if (!isObject(value)) {
-    return false
-  }
-  const pattern = isFunction(value) ? reIsNative : reIsHostCtor
-  return pattern.test(toSource(value))
+  return isObject(value) && reIsNative.test(value)
 }
 
 export default isNative

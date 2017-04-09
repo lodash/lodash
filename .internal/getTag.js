@@ -1,5 +1,4 @@
 import baseGetTag from './baseGetTag.js'
-import toSource from './toSource.js'
 
 /** `Object#toString` result references. */
 const dataViewTag = '[object DataView]'
@@ -10,11 +9,11 @@ const setTag = '[object Set]'
 const weakMapTag = '[object WeakMap]'
 
 /** Used to detect maps, sets, and weakmaps. */
-const dataViewCtorString = toSource(DataView)
-const mapCtorString = toSource(Map)
-const promiseCtorString = toSource(Promise)
-const setCtorString = toSource(Set)
-const weakMapCtorString = toSource(WeakMap)
+const dataViewCtorString = `${ DataView }`
+const mapCtorString = `${ Map }`
+const promiseCtorString = `${ Promise }`
+const setCtorString = `${ Set }`
+const weakMapCtorString = `${ WeakMap }`
 
 /**
  * Gets the `toStringTag` of `value`.
@@ -34,7 +33,7 @@ if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
   getTag = (value) => {
     const result = baseGetTag(value)
     const Ctor = result == objectTag ? value.constructor : undefined
-    const ctorString = Ctor ? toSource(Ctor) : ''
+    const ctorString = Ctor ? `${ Ctor }` : ''
 
     if (ctorString) {
       switch (ctorString) {

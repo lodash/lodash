@@ -13,7 +13,7 @@ function createRound(methodName) {
       // Shift with exponential notation to avoid floating-point issues.
       // See [MDN](https://mdn.io/round#Examples) for more details.
       let pair = `${number}e`.split('e')
-      const value = func(`${pair[0]}e${ +pair[1] + precision }`)
+      const value = func(`${pair[0]}e${+pair[1] + precision}`)
 
       pair = `${value}e`.split('e')
       return +`${pair[0]}e${+pair[1] - precision}`

@@ -118,6 +118,6 @@ module.exports = {
 
     'prefer-template': ['error'],
 
-    'template-curly-spacing': ['error', 'always']
+    'template-curly-spacing': ['error', 'never']
   }
 };

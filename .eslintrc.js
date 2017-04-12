@@ -50,6 +50,8 @@ module.exports = {
 
     'no-undef': ['error'],
 
+    'no-unexpected-multiline': ['error'],
+
     'no-unused-vars': ['error', {
       'args': 'none',
       'vars': 'all'

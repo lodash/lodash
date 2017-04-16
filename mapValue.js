@@ -1,5 +1,3 @@
-import baseAssignValue from './.internal/baseAssignValue.js'
-
 /**
  * Creates an object with the same keys as `object` and values generated
  * by running each own enumerable string keyed property of `object` thru
@@ -24,8 +22,8 @@ import baseAssignValue from './.internal/baseAssignValue.js'
  */
 function mapValue(object, iteratee) {
   const result = {}
-  Object.keys(object).forEach((value, key, object) => {
-    baseAssignValue(result, key, iteratee(value, key, object))
+  Object.keys(Object(object)).forEach((key) => {
+    result[key] = iteratee(object[value], key, object)
   })
   return result
 }

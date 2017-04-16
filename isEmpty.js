@@ -1,4 +1,3 @@
-import baseKeys from './.internal/baseKeys.js'
 import getTag from './.internal/getTag.js'
 import isArguments from './isArguments.js'
 import isArrayLike from './isArrayLike.js'
@@ -54,7 +53,7 @@ function isEmpty(value) {
     return !value.size
   }
   if (isPrototype(value)) {
-    return !baseKeys(value).length
+    return !Object.keys(value).length
   }
   for (const key in value) {
     if (hasOwnProperty.call(value, key)) {

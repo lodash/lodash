@@ -1,4 +1,3 @@
-import baseKeys from './.internal/baseKeys.js'
 import getTag from './.internal/getTag.js'
 import isArrayLike from './isArrayLike.js'
 import isString from './isString.js'
@@ -38,7 +37,7 @@ function size(collection) {
   if (tag == mapTag || tag == setTag) {
     return collection.size
   }
-  return baseKeys(collection).length
+  return Object.keys(collection).length
 }
 
 export default size

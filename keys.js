@@ -1,5 +1,4 @@
 import arrayLikeKeys from './.internal/arrayLikeKeys.js'
-import baseKeys from './.internal/baseKeys.js'
 import isArrayLike from './isArrayLike.js'
 
 /**
@@ -30,7 +29,9 @@ import isArrayLike from './isArrayLike.js'
  * // => ['0', '1']
  */
 function keys(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object)
+  return isArrayLike(object)
+    ? arrayLikeKeys(object)
+    : Object.keys(Object(object))
 }
 
 export default keys

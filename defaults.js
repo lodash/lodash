@@ -1,5 +1,4 @@
 import eq from './eq.js'
-import baseKeysIn from './.internal/baseKeysIn.js'
 
 /** Used for built-in method references. */
 const objectProto = Object.prototype
@@ -28,22 +27,18 @@ const hasOwnProperty = objectProto.hasOwnProperty
  */
 function defaults(object, ...sources) {
   object = Object(object)
-  let srcIndex = -1
-  const srcLength = sources.length
-  while (++srcIndex < srcLength) {
-    const source = sources[srcIndex]
-    const props = baseKeysIn(source)
-    let propsIndex = -1
-    const propsLength = props.length
-    while (++propsIndex < propsLength) {
-      const key = props[propsIndex]
-      const value = object[key]
-      if (value === undefined ||
-           (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-        object[key] = source[key]
+  sources.forEach((source) => {
+    if (source != null) {
+      source = Object(source)
+      for (const key in source) {
+        const value = object[key]
+        if (value === undefined ||
+            (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+          object[key] = source[key]
+        }
       }
     }
-  }
+  })
   return object
 }
 

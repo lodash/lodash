@@ -9,7 +9,7 @@
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Object} Returns the new mapped object.
- * @see mapValues
+ * @see mapValue
  * @example
  *
  * mapKey({ 'a': 1, 'b': 2 }, function(value, key) {
@@ -26,4 +26,4 @@ function mapKey(object, iteratee) {
   return result
 }
 
-export default mapKeys
+export default mapKey

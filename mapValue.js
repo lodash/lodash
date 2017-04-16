@@ -23,9 +23,9 @@
 function mapValue(object, iteratee) {
   const result = {}
   Object.keys(Object(object)).forEach((key) => {
-    result[key] = iteratee(object[value], key, object)
+    result[key] = iteratee(object[key], key, object)
   })
   return result
 }
 
-export default mapValues
+export default mapValue

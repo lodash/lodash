@@ -17,7 +17,7 @@
  * // => [16, 64] (iteration order is not guaranteed)
  */
 function mapObject(object, iteratee) {
-  const props = Object.keys(object);
+  const props = Object.keys(object)
   const result = new Array(props.length)
 
   props.forEach((key, index) => {

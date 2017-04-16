@@ -19,7 +19,8 @@
 function filterObject(object, predicate) {
   const result = []
   Object.keys(Object(object)).forEach((key) => {
-    if (predicate(object[key], key, object)) {
+    const value = object[key]
+    if (predicate(value, key, object)) {
       result.push(value)
     }
   })

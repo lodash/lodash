@@ -20,7 +20,9 @@
  * // => false
  */
 function everyValue(object, predicate) {
-  const props = Object.keys(Object(object))
+  object = Object(object)
+  const props = Object.keys(object)
+
   for (const key of props) {
     if (!predicate(object[key], key, object)) {
       return false

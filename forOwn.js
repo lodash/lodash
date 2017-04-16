@@ -24,9 +24,8 @@
  * // => Logs 'a' then 'b' (iteration order is not guaranteed).
  */
 function forOwn(object, iteratee) {
-  if (object != null) {
-    Object.keys(Object(object)).forEach((key) => iteratee(object[key], key, object))
-  }
+  object = Object(object)
+  Object.keys(object).forEach((key) => iteratee(object[key], key, object))
 }
 
 export default forOwn

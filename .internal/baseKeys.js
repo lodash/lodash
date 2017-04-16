@@ -11,11 +11,12 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * @returns {Array} Returns the array of property names.
  */
 function baseKeys(object) {
+  object = Object(object)
   if (!isPrototype(object)) {
-    return Object.keys(Object(object))
+    return Object.keys(object)
   }
   const result = []
-  for (const key in Object(object)) {
+  for (const key in object) {
     if (hasOwnProperty.call(object, key) && key != 'constructor') {
       result.push(key)
     }

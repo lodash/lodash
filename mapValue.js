@@ -21,8 +21,10 @@
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
 function mapValue(object, iteratee) {
+  object = Object(object)
   const result = {}
-  Object.keys(Object(object)).forEach((key) => {
+
+  Object.keys(object).forEach((key) => {
     result[key] = iteratee(object[key], key, object)
   })
   return result

@@ -4,8 +4,8 @@
  * invoked with three arguments: (value, index, array).
  *
  * @since 5.0.0
- * @category array
- * @param {Array|Object} array The array to iterate over.
+ * @category Array
+ * @param {Array} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {boolean} Returns `true` if any element passes the predicate check,
  *  else `false`.

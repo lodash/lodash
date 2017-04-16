@@ -9,7 +9,7 @@
  * elements of empty arrays.
  *
  * @since 5.0.0
- * @category array
+ * @category Array
  * @param {Array} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {boolean} Returns `true` if all elements pass the predicate check,

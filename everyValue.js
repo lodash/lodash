@@ -9,7 +9,7 @@
  * elements of empty objects.
  *
  * @since 5.0.0
- * @category object
+ * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {boolean} Returns `true` if all properties pass the predicate check,

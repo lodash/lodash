@@ -19,10 +19,10 @@ import baseAssignValue from './.internal/baseAssignValue.js'
  *   'pebbles': { 'user': 'pebbles', 'age': 1 }
  * }
  *
- * mapValues(users, ({ age }) => age)
+ * mapValue(users, ({ age }) => age)
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
-function mapValues(object, iteratee) {
+function mapValue(object, iteratee) {
   const result = {}
   Object.keys(object).forEach((value, key, object) => {
     baseAssignValue(result, key, iteratee(value, key, object))

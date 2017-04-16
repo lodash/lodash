@@ -1,16 +1,13 @@
-import arrayFilter from './.internal/arrayFilter.js'
-import baseFilter from './.internal/baseFilter.js'
-
 /**
- * Iterates over elements of `collection`, returning an array of all elements
+ * Iterates over elements of `array`, returning an array of all elements
  * `predicate` returns truthy for. The predicate is invoked with three
- * arguments: (value, index|key, collection).
+ * arguments: (value, index, array).
  *
  * **Note:** Unlike `remove`, this method returns a new array.
  *
- * @since 0.1.0
- * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
+ * @since 5.0.0
+ * @category Array
+ * @param {Array} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
  * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
@@ -24,9 +21,19 @@ import baseFilter from './.internal/baseFilter.js'
  * filter(users, ({ active }) => active)
  * // => objects for ['barney']
  */
-function filter(collection, predicate) {
-  const func = Array.isArray(collection) ? arrayFilter : baseFilter
-  return func(collection, predicate)
+function filter(array, predicate) {
+  let index = -1
+  let resIndex = 0
+  const length = array == null ? 0 : array.length
+  const result = []
+
+  while (++index < length) {
+    const value = array[index]
+    if (predicate(value, index, array)) {
+      result[resIndex++] = value
+    }
+  }
+  return result
 }
 
 export default filter

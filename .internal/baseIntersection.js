@@ -1,7 +1,7 @@
 import SetCache from './SetCache.js'
 import arrayIncludes from './arrayIncludes.js'
 import arrayIncludesWith from './arrayIncludesWith.js'
-import arrayMap from './arrayMap.js'
+import map from '../map.js'
 import cacheHas from './cacheHas.js'
 
 /**
@@ -28,7 +28,7 @@ function baseIntersection(arrays, iteratee, comparator) {
   while (othIndex--) {
     array = arrays[othIndex]
     if (othIndex && iteratee) {
-      array = arrayMap(array, (value) => iteratee(value))
+      array = map(array, (value) => iteratee(value))
     }
     maxLength = Math.min(array.length, maxLength)
     caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))

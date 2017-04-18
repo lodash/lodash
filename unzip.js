@@ -1,5 +1,5 @@
 import arrayFilter from './.internal/arrayFilter.js'
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import baseProperty from './.internal/baseProperty.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
 
@@ -35,7 +35,7 @@ function unzip(array) {
   let index = -1
   const result = new Array(length)
   while (++index < length) {
-    result[index] = arrayMap(array, baseProperty(index))
+    result[index] = map(array, baseProperty(index))
   }
   return result
 }

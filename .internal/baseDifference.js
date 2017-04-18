@@ -1,7 +1,7 @@
 import SetCache from './SetCache.js'
 import arrayIncludes from './arrayIncludes.js'
 import arrayIncludesWith from './arrayIncludesWith.js'
-import arrayMap from './arrayMap.js'
+import map from '../map.js'
 import cacheHas from './cacheHas.js'
 
 /** Used as the size to enable large array optimizations. */
@@ -28,7 +28,7 @@ function baseDifference(array, values, iteratee, comparator) {
     return result
   }
   if (iteratee) {
-    values = arrayMap(values, (value) => iteratee(value))
+    values = map(values, (value) => iteratee(value))
   }
   if (comparator) {
     includes = arrayIncludesWith

@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 
 /**
  * Creates a function that iterates over `pairs` and invokes the corresponding
@@ -30,7 +30,7 @@ import arrayMap from './.internal/arrayMap.js'
 function cond(pairs) {
   const length = pairs == null ? 0 : pairs.length
 
-  pairs = !length ? [] : arrayMap(pairs, (pair) => {
+  pairs = !length ? [] : map(pairs, (pair) => {
     if (typeof pair[1] != 'function') {
       throw new TypeError('Expected a function')
     }

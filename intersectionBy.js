@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import baseIntersection from './.internal/baseIntersection.js'
 import castArrayLikeObject from './.internal/castArrayLikeObject.js'
 import last from './last.js'
@@ -22,7 +22,7 @@ import last from './last.js'
  */
 function intersectionBy(...arrays) {
   let iteratee = last(arrays)
-  const mapped = arrayMap(arrays, castArrayLikeObject)
+  const mapped = map(arrays, castArrayLikeObject)
 
   if (iteratee === last(mapped)) {
     iteratee = undefined

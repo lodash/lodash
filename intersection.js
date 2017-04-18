@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import baseIntersection from './.internal/baseIntersection.js'
 import castArrayLikeObject from './.internal/castArrayLikeObject.js'
 
@@ -18,7 +18,7 @@ import castArrayLikeObject from './.internal/castArrayLikeObject.js'
  * // => [2]
  */
 function intersection(...arrays) {
-  const mapped = arrayMap(arrays, castArrayLikeObject)
+  const mapped = map(arrays, castArrayLikeObject)
   return (mapped.length && mapped[0] === arrays[0])
     ? baseIntersection(mapped)
     : []

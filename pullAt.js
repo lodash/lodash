@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import baseAt from './.internal/baseAt.js'
 import basePullAt from './.internal/basePullAt.js'
 import compareAscending from './.internal/compareAscending.js'
@@ -31,7 +31,7 @@ function pullAt(array, ...indexes) {
   const length = array == null ? 0 : array.length
   const result = baseAt(array, indexes)
 
-  basePullAt(array, arrayMap(indexes, (index) => isIndex(index, length) ? +index : index).sort(compareAscending))
+  basePullAt(array, map(indexes, (index) => isIndex(index, length) ? +index : index).sort(compareAscending))
   return result
 }
 

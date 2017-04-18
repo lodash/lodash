@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import basePickBy from './.internal/basePickBy.js'
 import getAllKeysIn from './.internal/getAllKeysIn.js'
 
@@ -22,7 +22,7 @@ function pickBy(object, predicate) {
   if (object == null) {
     return {}
   }
-  const props = arrayMap(getAllKeysIn(object), (prop) => [prop])
+  const props = map(getAllKeysIn(object), (prop) => [prop])
   return basePickBy(object, props, (value, path) => predicate(value, path[0]))
 }
 

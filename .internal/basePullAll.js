@@ -1,4 +1,4 @@
-import arrayMap from './arrayMap.js'
+import map from '../map.js'
 import baseIndexOf from './baseIndexOf.js'
 import baseIndexOfWith from './baseIndexOfWith.js'
 import copyArray from './copyArray.js'
@@ -27,7 +27,7 @@ function basePullAll(array, values, iteratee, comparator) {
     values = copyArray(values)
   }
   if (iteratee) {
-    seen = arrayMap(array, (value) => iteratee(value))
+    seen = map(array, (value) => iteratee(value))
   }
   while (++index < length) {
     let fromIndex = 0

@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import copyArray from './.internal/copyArray.js'
 import isSymbol from './isSymbol.js'
 import stringToPath from './.internal/stringToPath.js'
@@ -21,7 +21,7 @@ import toKey from './.internal/toKey.js'
  */
 function toPath(value) {
   if (Array.isArray(value)) {
-    return arrayMap(value, toKey)
+    return map(value, toKey)
   }
   return isSymbol(value) ? [value] : copyArray(stringToPath(value))
 }

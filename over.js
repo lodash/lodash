@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 
 /**
  * Creates a function that invokes `iteratees` with the arguments it receives
@@ -18,7 +18,7 @@ import arrayMap from './.internal/arrayMap.js'
  */
 function over(iteratees) {
   return function(...args) {
-    return arrayMap(iteratees, (iteratee) => iteratee.apply(this, args))
+    return map(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

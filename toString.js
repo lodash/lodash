@@ -1,4 +1,4 @@
-import arrayMap from './.internal/arrayMap.js'
+import map from './map.js'
 import isSymbol from './isSymbol.js'
 
 /** Used as references for various `Number` constants. */
@@ -37,7 +37,7 @@ function toString(value) {
   }
   if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return `${arrayMap(value, (other) => other == null ? other : toString(other))}`
+    return `${map(value, (other) => other == null ? other : toString(other))}`
   }
   if (isSymbol(value)) {
     return symbolToString ? symbolToString.call(value) : ''

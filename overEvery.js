@@ -1,4 +1,4 @@
-import arrayEvery from './.internal/arrayEvery.js'
+import every from './every.js'
 
 /**
  * Creates a function that checks if **all** of the `predicates` return
@@ -24,7 +24,7 @@ import arrayEvery from './.internal/arrayEvery.js'
  */
 function overEvery(iteratees) {
   return function(...args) {
-    return arrayEvery(iteratees, (iteratee) => iteratee.apply(this, args))
+    return every(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

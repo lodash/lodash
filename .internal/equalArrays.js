@@ -1,5 +1,5 @@
 import SetCache from './SetCache.js'
-import arraySome from './arraySome.js'
+import some from '../some.js'
 import cacheHas from './cacheHas.js'
 
 /** Used to compose bitmasks for value comparisons. */
@@ -59,7 +59,7 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
     }
     // Recursively compare arrays (susceptible to call stack limits).
     if (seen) {
-      if (!arraySome(other, (othValue, othIndex) => {
+      if (!some(other, (othValue, othIndex) => {
         if (!cacheHas(seen, othIndex) &&
           (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
           return seen.push(othIndex)

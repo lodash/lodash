@@ -1,4 +1,4 @@
-import arraySome from './.internal/arraySome.js'
+import some from './some.js'
 
 /**
  * Creates a function that checks if **any** of the `predicates` return
@@ -24,7 +24,7 @@ import arraySome from './.internal/arraySome.js'
  */
 function overSome(iteratees) {
   return function(...args) {
-    return arraySome(iteratees, (iteratee) => iteratee.apply(this, args))
+    return some(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }
 

@@ -1,4 +1,4 @@
-import baseSlice from './.internal/baseSlice.js'
+import slice from './slice.js'
 
 /**
  * Creates a slice of `array` with `n` elements taken from the end.
@@ -28,7 +28,7 @@ function takeRight(array, n=1) {
     return []
   }
   n = length - n
-  return baseSlice(array, n < 0 ? 0 : n, length)
+  return slice(array, n < 0 ? 0 : n, length)
 }
 
 export default takeRight

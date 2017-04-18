@@ -1,4 +1,4 @@
-import baseSlice from './.internal/baseSlice.js'
+import slice from './slice.js'
 
 /**
  * Creates an array of elements split into groups the length of `size`.
@@ -29,7 +29,7 @@ function chunk(array, size) {
   const result = new Array(Math.ceil(length / size))
 
   while (index < length) {
-    result[resIndex++] = baseSlice(array, index, (index += size))
+    result[resIndex++] = slice(array, index, (index += size))
   }
   return result
 }

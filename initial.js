@@ -1,4 +1,4 @@
-import baseSlice from './.internal/baseSlice.js'
+import slice from './slice.js'
 
 /**
  * Gets all but the last element of `array`.
@@ -14,7 +14,7 @@ import baseSlice from './.internal/baseSlice.js'
  */
 function initial(array) {
   const length = array == null ? 0 : array.length
-  return length ? baseSlice(array, 0, -1) : []
+  return length ? slice(array, 0, -1) : []
 }
 
 export default initial

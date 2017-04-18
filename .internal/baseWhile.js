@@ -1,4 +1,4 @@
-import baseSlice from './baseSlice.js'
+import slice from '../slice.js'
 
 /**
  * The base implementation of methods like `dropWhile` and `takeWhile`.
@@ -18,8 +18,8 @@ function baseWhile(array, predicate, isDrop, fromRight) {
     predicate(array[index], index, array)) {}
 
   return isDrop
-    ? baseSlice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
-    : baseSlice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index))
+    ? slice(array, (fromRight ? 0 : index), (fromRight ? index + 1 : length))
+    : slice(array, (fromRight ? index + 1 : 0), (fromRight ? length : index))
 }
 
 export default baseWhile

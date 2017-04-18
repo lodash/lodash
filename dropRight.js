@@ -1,4 +1,4 @@
-import baseSlice from './.internal/baseSlice.js'
+import slice from './slice.js'
 
 /**
  * Creates a slice of `array` with `n` elements dropped from the end.
@@ -28,7 +28,7 @@ function dropRight(array, n=1) {
     return []
   }
   n = length - n
-  return baseSlice(array, 0, n < 0 ? 0 : n)
+  return slice(array, 0, n < 0 ? 0 : n)
 }
 
 export default dropRight

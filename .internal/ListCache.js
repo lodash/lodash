@@ -1,8 +1,5 @@
 import assocIndexOf from './assocIndexOf.js'
 
-/** Built-in value references. */
-const splice = Array.prototype.splice
-
 class ListCache {
 
   /**
@@ -51,7 +48,7 @@ class ListCache {
     if (index == lastIndex) {
       data.pop()
     } else {
-      splice.call(data, index, 1)
+      data.splice(index, 1)
     }
     --this.size
     return true

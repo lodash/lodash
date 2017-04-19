@@ -3,9 +3,6 @@ import baseIndexOf from './baseIndexOf.js'
 import baseIndexOfWith from './baseIndexOfWith.js'
 import copyArray from './copyArray.js'
 
-/** Built-in value references. */
-const splice = Array.prototype.splice
-
 /**
  * The base implementation of `pullAllBy`.
  *
@@ -36,9 +33,9 @@ function basePullAll(array, values, iteratee, comparator) {
 
     while ((fromIndex = indexOf(seen, computed, fromIndex, comparator)) > -1) {
       if (seen !== array) {
-        splice.call(seen, fromIndex, 1)
+        seen.splice(fromIndex, 1)
       }
-      splice.call(array, fromIndex, 1)
+      array.splice(fromIndex, 1)
     }
   }
   return array

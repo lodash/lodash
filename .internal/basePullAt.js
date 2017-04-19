@@ -1,9 +1,6 @@
 import baseUnset from './baseUnset.js'
 import isIndex from './isIndex.js'
 
-/** Built-in value references. */
-const splice = Array.prototype.splice
-
 /**
  * The base implementation of `pullAt` without support for individual
  * indexes or capturing the removed elements.
@@ -23,7 +20,7 @@ function basePullAt(array, indexes) {
     if (length == lastIndex || index !== previous) {
       previous = index
       if (isIndex(index)) {
-        splice.call(array, index, 1)
+        array.splice(index, 1)
       } else {
         baseUnset(array, index)
       }

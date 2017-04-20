@@ -1,4 +1,4 @@
-import arrayFilter from './arrayFilter.js'
+import filter from '../filter.js'
 
 /** Built-in value references. */
 const propertyIsEnumerable = Object.prototype.propertyIsEnumerable
@@ -18,7 +18,7 @@ const getSymbols = !nativeGetSymbols ? () => [] : (object) => {
     return []
   }
   object = Object(object)
-  return arrayFilter(nativeGetSymbols(object), (symbol) => propertyIsEnumerable.call(object, symbol))
+  return filter(nativeGetSymbols(object), (symbol) => propertyIsEnumerable.call(object, symbol))
 }
 
 export default getSymbols

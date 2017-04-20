@@ -1,4 +1,4 @@
-import arrayFilter from './.internal/arrayFilter.js'
+import filter from './filter.js'
 import baseXor from './.internal/baseXor.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
 import last from './last.js'
@@ -26,7 +26,7 @@ function xorBy(...arrays) {
   if (isArrayLikeObject(iteratee)) {
     iteratee = undefined
   }
-  return baseXor(arrayFilter(arrays, isArrayLikeObject), iteratee)
+  return baseXor(filter(arrays, isArrayLikeObject), iteratee)
 }
 
 export default xorBy

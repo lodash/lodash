@@ -1,4 +1,4 @@
-import arrayFilter from './.internal/arrayFilter.js'
+import filter from './filter.js'
 import map from './map.js'
 import baseProperty from './.internal/baseProperty.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
@@ -26,7 +26,7 @@ function unzip(array) {
     return []
   }
   let length = 0
-  array = arrayFilter(array, (group) => {
+  array = filter(array, (group) => {
     if (isArrayLikeObject(group)) {
       length = Math.max(group.length, length)
       return true

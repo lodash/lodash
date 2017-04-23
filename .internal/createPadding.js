@@ -1,4 +1,4 @@
-import baseRepeat from './baseRepeat.js'
+import repeat from '../repeat.js'
 import baseToString from './baseToString.js'
 import castSlice from './castSlice.js'
 import hasUnicode from './hasUnicode.js'
@@ -19,9 +19,9 @@ function createPadding(length, chars) {
 
   const charsLength = chars.length
   if (charsLength < 2) {
-    return charsLength ? baseRepeat(chars, length) : chars
+    return charsLength ? repeat(chars, length) : chars
   }
-  const result = baseRepeat(chars, Math.ceil(length / stringSize(chars)))
+  const result = repeat(chars, Math.ceil(length / stringSize(chars)))
   return hasUnicode(chars)
     ? castSlice(stringToArray(result), 0, length).join('')
     : result.slice(0, length)

@@ -16,7 +16,7 @@ import getTag from './.internal/getTag.js'
  * // => false
  */
 function isWeakMap(value) {
-  return typeof value == 'object' && value != null && getTag(value) == '[object WeakMap]'
+  return typeof value == 'object' && value !== null && getTag(value) == '[object WeakMap]'
 }
 
 export default isWeakMap

@@ -16,7 +16,7 @@ import getTag from './.internal/getTag.js'
  * // => false
  */
 function isArguments(value) {
-  return typeof value == 'object' && value != null && getTag(value) == '[object Arguments]'
+  return typeof value == 'object' && value !== null && getTag(value) == '[object Arguments]'
 }
 
 export default isArguments

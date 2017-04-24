@@ -21,7 +21,7 @@
  * // => false
  */
 function isObjectLike(value) {
-  return value != null && typeof value == 'object'
+  return typeof value == 'object' && value !== null
 }
 
 export default isObjectLike

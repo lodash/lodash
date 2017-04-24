@@ -7,9 +7,7 @@ import cloneBuffer from './cloneBuffer.js'
 import copyArray from './copyArray.js'
 import cloneArrayBuffer from './cloneArrayBuffer.js'
 import cloneDataView from './cloneDataView.js'
-import cloneMap from './cloneMap.js'
 import cloneRegExp from './cloneRegExp.js'
-import cloneSet from './cloneSet.js'
 import cloneSymbol from './cloneSymbol.js'
 import cloneTypedArray from './cloneTypedArray.js'
 import copySymbols from './copySymbols.js'
@@ -19,7 +17,9 @@ import getAllKeysIn from './getAllKeysIn.js'
 import getTag from './getTag.js'
 import initCloneObject from './initCloneObject.js'
 import isBuffer from '../isBuffer.js'
+import isMap from '../isMap.js'
 import isObject from '../isObject.js'
+import isSet from '../isSet.js'
 import keys from '../keys.js'
 
 /** Used to compose bitmasks for cloning. */
@@ -79,16 +79,15 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * Initializes an object clone based on its `toStringTag`.
  *
  * **Note:** This function only supports cloning values with tags of
- * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+ * `Boolean`, `Date`, `Error`, `Map`, `Number`, `RegExp`, `Set`, or `String`.
  *
  * @private
  * @param {Object} object The object to clone.
  * @param {string} tag The `toStringTag` of the object to clone.
- * @param {Function} cloneFunc The function to clone values.
  * @param {boolean} [isDeep] Specify a deep clone.
  * @returns {Object} Returns the initialized clone.
  */
-function initCloneByTag(object, tag, cloneFunc, isDeep) {
+function initCloneByTag(object, tag, isDeep) {
   const Ctor = object.constructor
   switch (tag) {
     case arrayBufferTag:
@@ -107,7 +106,7 @@ function initCloneByTag(object, tag, cloneFunc, isDeep) {
       return cloneTypedArray(object, isDeep)
 
     case mapTag:
-      return cloneMap(object, isDeep, cloneFunc)
+      return new Ctor
 
     case numberTag:
     case stringTag:
@@ -117,7 +116,7 @@ function initCloneByTag(object, tag, cloneFunc, isDeep) {
       return cloneRegExp(object)
 
     case setTag:
-      return cloneSet(object, isDeep, cloneFunc)
+      return new Ctor
 
     case symbolTag:
       return cloneSymbol(object)
@@ -198,7 +197,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       if (!cloneableTags[tag]) {
         return object ? value : {}
       }
-      result = initCloneByTag(value, tag, baseClone, isDeep)
+      result = initCloneByTag(value, tag, isDeep)
     }
   }
   // Check for circular references and return its corresponding clone.
@@ -208,6 +207,20 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     return stacked
   }
   stack.set(value, result)
+
+  if (isSet(value)) {
+    value.forEach(subValue => {
+      result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
+    })
+    return result
+  }
+
+  if (isMap(value)) {
+    value.forEach((subValue, key) => {
+      result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack))
+    })
+    return result
+  }
 
   const keysFunc = isFull
     ? (isFlat ? getAllKeysIn : getAllKeys)

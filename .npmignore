@@ -1,0 +1,12 @@
+.DS_Store
+*.custom.*
+*.log
+*.map
+lodash.compat.min.js
+
+# Development files
+/test/
+/perf/
+/vendor/
+/.travis.yml
+/.editorconfig

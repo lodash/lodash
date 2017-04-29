@@ -1,0 +1,8 @@
+/doc/
+/perf/
+/vendor/
+/test/
+.*
+lodash.js
+lodash.min.js
+

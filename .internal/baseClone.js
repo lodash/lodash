@@ -17,9 +17,7 @@ import getAllKeysIn from './getAllKeysIn.js'
 import getTag from './getTag.js'
 import initCloneObject from './initCloneObject.js'
 import isBuffer from '../isBuffer.js'
-import isMap from '../isMap.js'
 import isObject from '../isObject.js'
-import isSet from '../isSet.js'
 import keys from '../keys.js'
 
 /** Used to compose bitmasks for cloning. */
@@ -33,8 +31,6 @@ const arrayTag = '[object Array]'
 const boolTag = '[object Boolean]'
 const dateTag = '[object Date]'
 const errorTag = '[object Error]'
-const funcTag = '[object Function]'
-const genTag = '[object GeneratorFunction]'
 const mapTag = '[object Map]'
 const numberTag = '[object Number]'
 const objectTag = '[object Object]'
@@ -69,8 +65,7 @@ cloneableTags[regexpTag] = cloneableTags[setTag] =
 cloneableTags[stringTag] = cloneableTags[symbolTag] =
 cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
 cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true
-cloneableTags[errorTag] = cloneableTags[funcTag] =
-cloneableTags[weakMapTag] = false
+cloneableTags[errorTag] = cloneableTags[weakMapTag] = false
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -181,7 +176,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     }
   } else {
     const tag = getTag(value)
-    const isFunc = tag == funcTag || tag == genTag
+    const isFunc = typeof value == 'function'
 
     if (isBuffer(value)) {
       return cloneBuffer(value, isDeep)
@@ -194,7 +189,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
           : copySymbols(value, baseAssign(result, value))
       }
     } else {
-      if (!cloneableTags[tag]) {
+      if (isFunc || !cloneableTags[tag]) {
         return object ? value : {}
       }
       result = initCloneByTag(value, tag, isDeep)
@@ -208,16 +203,16 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
   stack.set(value, result)
 
-  if (isSet(value)) {
-    value.forEach(subValue => {
-      result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
+  if (tag == mapTag) {
+    value.forEach((subValue, key) => {
+      result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack))
     })
     return result
   }
 
-  if (isMap(value)) {
-    value.forEach((subValue, key) => {
-      result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack))
+  if (tag == setTag) {
+    value.forEach(subValue => {
+      result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
     })
     return result
   }

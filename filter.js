@@ -3,6 +3,8 @@
  * `predicate` returns truthy for. The predicate is invoked with three
  * arguments: (value, index, array).
  *
+ * The opposite functionality can be achieved by `reject`, which returns 
+ * all elements `predicate` not returns truthy for.
  * **Note:** Unlike `remove`, this method returns a new array.
  *
  * @since 5.0.0

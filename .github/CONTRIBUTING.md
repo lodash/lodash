@@ -7,7 +7,7 @@ not be working. Thank you for your patience.
 # Contributing to Lodash
 
 Contributions are always welcome. Before contributing please read the
-[code of conduct](https://js.foundation/conduct/) &
+[code of conduct](https://js.foundation/community/code-of-conduct) &
 [search the issue tracker](https://github.com/lodash/lodash/issues); your issue
 may have already been discussed or fixed in `master`. To contribute,
 [fork](https://help.github.com/articles/fork-a-repo/) Lodash, commit your changes,

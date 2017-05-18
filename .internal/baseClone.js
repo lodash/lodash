@@ -155,6 +155,7 @@ function initCloneArray(array) {
  */
 function baseClone(value, bitmask, customizer, key, object, stack) {
   let result
+  let tag
   const isDeep = bitmask & CLONE_DEEP_FLAG
   const isFlat = bitmask & CLONE_FLAT_FLAG
   const isFull = bitmask & CLONE_SYMBOLS_FLAG
@@ -175,7 +176,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       return copyArray(value, result)
     }
   } else {
-    const tag = getTag(value)
+    tag = getTag(value)
     const isFunc = typeof value == 'function'
 
     if (isBuffer(value)) {

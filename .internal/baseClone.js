@@ -211,7 +211,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
 
   if (tag == setTag) {
-    value.forEach(subValue => {
+    value.forEach((subValue) => {
       result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
     })
     return result

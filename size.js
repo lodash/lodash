@@ -25,6 +25,12 @@ const setTag = '[object Set]'
  *
  * size('pebbles')
  * // => 7
+ *
+ * size(undefined)
+ * // => 0
+ *
+ * size(null)
+ * // => 0
  */
 function size(collection) {
   if (collection == null) {

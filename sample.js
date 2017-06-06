@@ -11,8 +11,8 @@
  * // => 2
  */
 function sample(array) {
-  const length = array == null ? 0 : array.length
-  return length ? array[Math.floor(Math.random() * length)] : undefined
+  if (array === null || array === undefined || array.length === 0) { return undefined }
+  return array[Math.floor(Math.random() * array.length)]
 }
 
 export default sample

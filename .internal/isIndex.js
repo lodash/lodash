@@ -13,10 +13,13 @@ const reIsUint = /^(?:0|[1-9]\d*)$/
  * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
  */
 function isIndex(value, length) {
+  const type = typeof value
   length = length == null ? MAX_SAFE_INTEGER : length
+
   return !!length &&
-    (typeof value == 'number' || reIsUint.test(value)) &&
-    (value > -1 && value % 1 == 0 && value < length)
+    (type == 'number' ||
+      (type != 'symbol' && reIsUint.test(value))) &&
+        (value > -1 && value % 1 == 0 && value < length)
 }
 
 export default isIndex

@@ -67,6 +67,8 @@ const stringEscapes = {
  *  The sourceURL of the compiled template.
  * @param {string} [options.variable='obj']
  *  The data object variable name.
+ * @param {boolean} [options.async=false]
+ *  Create an async function instead of a regular function.
  * @returns {Function} Returns the compiled template function.
  * @example
  *
@@ -120,6 +122,10 @@ const stringEscapes = {
  * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
  * //   return __p;
  * // }
+ * 
+ * let compiled = template('hi <%= await user.getName() %>!', { 'async': true })
+ * compiled({ user: ... })
+ * // => Promise<'hi pebbles!'>
  *
  * // Use custom template delimiters.
  * templateSettings.interpolate = /{{([\s\S]+?)}}/g
@@ -215,7 +221,7 @@ function template(string, options) {
     .replace(reEmptyStringTrailing, '$1;')
 
   // Frame code as the function body.
-  source = `function(${variable || 'obj'}) {\n` +
+  source = `${options.async ? 'async ' : ''}function(${variable || 'obj'}) {\n` +
     `${variable ? '' : 'obj || (obj = {});\n'}` +
     `var __t, __p = ''` +
     `${isEscaping ? ', __e = _.escape' : ''}` +

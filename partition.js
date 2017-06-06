@@ -1,4 +1,4 @@
-import reduce from './reduce.js'
+import families from './families.js'
 
 /**
  * Creates an array of elements split into two groups, the first of which
@@ -24,9 +24,7 @@ import reduce from './reduce.js'
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
 function partition(collection, predicate) {
-  return reduce(collection, (result, value, key) => (
-    result[predicate(value) ? 0 : 1].push(value), result
-  ), [[], []])
+  return families(collection, (x,y) => predicate(x) == predicate(y));
 }
 
 export default partition

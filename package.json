@@ -1,9 +1,26 @@
 {
   "name": "lodash",
+  "description": "A modern Javascript utility library delivering modularity, performance, & extras.",
   "version": "4.17.4",
   "license": "MIT",
+  "homepage": "https://lodash.com/",
+  "repository": "lodash/lodash",
   "private": true,
   "main": "lodash.js",
+  "bugs": {
+    "url": "https://github.com/lodash/lodash/issues"
+  },
+  "keywords": [
+    "javascript",
+    "library",
+    "modular",
+    "util",
+    "utility",
+    "utilities",
+    "performance",
+    "array",
+    "arrays"
+  ],
   "engines": {
     "node": ">=4.0.0"
   },

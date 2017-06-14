@@ -2138,6 +2138,16 @@
       assert.strictEqual(typeof actual.a.b, 'number');
     });
 
+    QUnit.test('should not convert uncloneables to objects', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': { 'b': _.constant(true) } },
+          actual = fp.update('a.b')(_.identity)(object);
+
+      assert.strictEqual(typeof object.a.b, 'function')
+      assert.strictEqual(object.a.b, actual.a.b);
+    });
+
     QUnit.test('should not mutate values', function(assert) {
       assert.expect(2);
 

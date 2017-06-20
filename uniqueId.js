@@ -17,7 +17,7 @@ let idCounter = 0
  * uniqueId()
  * // => '105'
  */
-function uniqueId(prefix) {
+function uniqueId(prefix='') {
   const id = ++idCounter
   return `${prefix + id}`
 }

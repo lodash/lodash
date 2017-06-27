@@ -28,10 +28,10 @@ const stringToPath = memoizeCapped((string) => {
   if (reLeadingDot.test(string)) {
     result.push('')
   }
-  string.replace(rePropName, (match, expression, quote, string) => {
+  string.replace(rePropName, (match, expression, quote, subString) => {
     let key = match
     if (quote) {
-      key = string.replace(reEscapeChar, '$1')
+      key = subString.replace(reEscapeChar, '$1')
     }
     else if (expression) {
       key = expression.trim()

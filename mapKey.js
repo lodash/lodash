@@ -21,10 +21,12 @@ function mapKey(object, iteratee) {
   object = Object(object)
   const result = {}
 
-  Object.keys(object).forEach((key) => {
+  const keys = Object.Keys(object)
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
     const value = object[key]
     result[iteratee(value, key, object)] = value
-  })
+  }
   return result
 }
 

@@ -20,9 +20,12 @@ function mapObject(object, iteratee) {
   const props = Object.keys(object)
   const result = new Array(props.length)
 
-  props.forEach((key, index) => {
-    result[index] = iteratee(object[key], key, object)
-  })
+  for (let index = 0; index < props.length; index++) {
+    const key = props[index]
+    const value = object[key]
+    result[index] = iteratee(value, key, object)
+  }
+
   return result
 }
 

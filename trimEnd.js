@@ -18,7 +18,7 @@ const methodName = ''.trimRight ? 'trimRight': 'trimEnd'
  * trimEnd('  abc  ')
  * // => '  abc'
  *
- * trimEnd('-_-abc-_-', '_-')
+ * trimEnd('-_-abc-_-', '-_-')
  * // => '-_-abc'
  */
 function trimEnd(string, chars) {

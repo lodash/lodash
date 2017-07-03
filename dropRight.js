@@ -23,12 +23,8 @@ import slice from './slice.js'
  * // => [1, 2, 3]
  */
 function dropRight(array, n=1) {
-  const length = array == null ? 0 : array.length
-  if (!length) {
-    return []
-  }
-  n = length - n
-  return slice(array, 0, n < 0 ? 0 : n)
+  const length = array == null ? 0 : array.length;
+  return length ? slice(array, 0, n < 0 ? 0 : -n) : [];
 }
 
 export default dropRight

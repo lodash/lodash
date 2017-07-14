@@ -22,8 +22,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  */
 function invertBy(object, iteratee) {
   const result = {}
-  Object.keys(object).forEach((value, key) => {
-    value = iteratee(value)
+  Object.keys(object).forEach((key) => {
+    const value = iteratee(object[key])
     if (hasOwnProperty.call(result, value)) {
       result[value].push(key)
     } else {

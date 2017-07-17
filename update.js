@@ -1,7 +1,7 @@
 import baseUpdate from './.internal/baseUpdate.js'
 
 /**
- * This method is like `set` except that accepts `updater` to produce the
+ * This method is like `set` except that it accepts `updater` to produce the
  * value to set. Use `updateWith` to customize `path` creation. The `updater`
  * is invoked with one argument: (value).
  *

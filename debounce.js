@@ -98,9 +98,11 @@ function debounce(func, wait, options) {
   function remainingWait(time) {
     const timeSinceLastCall = time - lastCallTime
     const timeSinceLastInvoke = time - lastInvokeTime
-    const result = wait - timeSinceLastCall
+    const timeWaiting = wait - timeSinceLastCall
 
-    return maxing ? Math.min(result, maxWait - timeSinceLastInvoke) : result
+    return maxing
+      ? Math.min(timeWaiting, maxWait - timeSinceLastInvoke)
+      : timeWaiting
   }
 
   function shouldInvoke(time) {

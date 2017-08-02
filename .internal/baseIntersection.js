@@ -45,7 +45,6 @@ function baseIntersection(arrays, iteratee, comparator) {
     let value = array[index]
     const computed = iteratee ? iteratee(value) : value
 
-    value = (comparator || value !== 0) ? value : 0
     if (!(seen
           ? cacheHas(seen, computed)
           : includes(result, computed, comparator)

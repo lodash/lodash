@@ -19,7 +19,7 @@ import getAllKeysIn from './.internal/getAllKeysIn.js'
  * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
-  if (object == null) {
+  if (object === null) {
     return {}
   }
   const props = map(getAllKeysIn(object), (prop) => [prop])

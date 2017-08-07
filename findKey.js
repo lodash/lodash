@@ -28,7 +28,7 @@ function findKey(object, predicate) {
   Object.keys(object).some((key) => {
     const value = object[key]
     if (predicate(value, key, object)) {
-      result = value
+      result = key
       return true
     }
   })

@@ -1,7 +1,7 @@
 /**
  * Checks if `value` is not `undefined`.
  *
- * @since 0.1.0
+ * @since 4.17.5
  * @category Lang
  * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is not `undefined`, else `false`.
@@ -16,7 +16,7 @@
  * This is the inverse of _.isUndefined(value)
  */
 function isDefined(value) {
-  return !(value === undefined)
+  return value !== undefined
 }
 
 export default isDefined

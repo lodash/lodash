@@ -1,7 +1,7 @@
 import memoizeCapped from './memoizeCapped.js'
 
+const charCodeOfDot = '.'.charCodeAt(0)
 const reEscapeChar = /\\(\\)?/g
-const reLeadingDot = /^\./
 const rePropName = RegExp(
   // Match anything that isn't a dot or bracket.
   '[^.[\\]]+' + '|' +
@@ -25,7 +25,7 @@ const rePropName = RegExp(
  */
 const stringToPath = memoizeCapped((string) => {
   const result = []
-  if (reLeadingDot.test(string)) {
+  if (string.charCodeAt(0) === charCodeOfDot) {
     result.push('')
   }
   string.replace(rePropName, (match, expression, quote, subString) => {

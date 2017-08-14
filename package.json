@@ -1,7 +1,7 @@
 {
   "name": "lodash",
   "version": "4.17.4",
-  "license": "MIT",
+  "license": "CC0-1.0",
   "private": true,
   "main": "lodash.js",
   "engines": {

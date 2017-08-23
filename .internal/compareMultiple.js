@@ -27,7 +27,7 @@ function compareMultiple(object, other, orders) {
       if (index >= ordersLength) {
         return result
       }
-      const order = orders[index]
+      const order = orders[index].toLowerCase()
       return result * (order == 'desc' ? -1 : 1)
     }
   }

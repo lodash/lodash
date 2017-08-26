@@ -17,6 +17,9 @@
  * // => [16, 64]
  */
 function map(array, iteratee) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   let index = -1
   const length = array == null ? 0 : array.length
   const result = new Array(length)

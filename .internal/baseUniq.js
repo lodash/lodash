@@ -18,6 +18,9 @@ const LARGE_ARRAY_SIZE = 200
  * @returns {Array} Returns the new duplicate free array.
  */
 function baseUniq(array, iteratee, comparator) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   let index = -1
   let includes = arrayIncludes
   let isCommon = true

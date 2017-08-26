@@ -19,6 +19,9 @@ const LARGE_ARRAY_SIZE = 200
  * @returns {Array} Returns the new array of filtered values.
  */
 function baseDifference(array, values, iteratee, comparator) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   let includes = arrayIncludes
   let isCommon = true
   const result = []

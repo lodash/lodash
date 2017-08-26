@@ -14,6 +14,9 @@ import copyArray from './copyArray.js'
  * @returns {Array} Returns `array`.
  */
 function basePullAll(array, values, iteratee, comparator) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   const indexOf = comparator ? baseIndexOfWith : baseIndexOf
   const length = values.length
 

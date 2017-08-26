@@ -15,6 +15,9 @@ import cacheHas from './cacheHas.js'
  * @returns {Array} Returns the new array of shared values.
  */
 function baseIntersection(arrays, iteratee, comparator) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   const includes = comparator ? arrayIncludesWith : arrayIncludes
   const length = arrays[0].length
   const othLength = arrays.length

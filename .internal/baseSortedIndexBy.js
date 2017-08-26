@@ -18,6 +18,9 @@ const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1
  *  into `array`.
  */
 function baseSortedIndexBy(array, value, iteratee, retHighest) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   value = iteratee(value)
 
   let low = 0

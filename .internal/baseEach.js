@@ -10,6 +10,9 @@ import isArrayLike from '../isArrayLike.js'
  * @returns {Array|Object} Returns `collection`.
  */
 function baseEach(collection, iteratee) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   if (collection == null) {
     return collection
   }

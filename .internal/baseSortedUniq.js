@@ -9,6 +9,9 @@ import eq from '../eq.js'
  * @returns {Array} Returns the new duplicate free array.
  */
 function baseSortedUniq(array, iteratee) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   let seen
   let index = -1
   let resIndex = 0

@@ -10,6 +10,9 @@
  * @returns {Object} Returns `object`.
  */
 function baseFor(object, iteratee, keysFunc) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   const iterable = Object(object)
   const props = keysFunc(object)
   let { length } = props

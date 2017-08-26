@@ -12,6 +12,9 @@
  * @returns {*} Returns the accumulated value.
  */
 function baseReduce(collection, iteratee, accumulator, initAccum, eachFunc) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   eachFunc(collection, (value, index, collection) => {
     accumulator = initAccum
       ? (initAccum = false, value)

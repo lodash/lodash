@@ -13,6 +13,9 @@ import baseUniq from './baseUniq.js'
  * @returns {Array} Returns the new array of values.
  */
 function baseXor(arrays, iteratee, comparator) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   const length = arrays.length
   if (length < 2) {
     return length ? baseUniq(arrays[0]) : []

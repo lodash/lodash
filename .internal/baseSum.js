@@ -7,6 +7,9 @@
  * @returns {number} Returns the sum.
  */
 function baseSum(array, iteratee) {
+  if (typeof iteratee != 'function') {
+    throw new TypeError('Expected a function')
+  }
   let result
 
   for (const value of array) {

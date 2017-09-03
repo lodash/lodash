@@ -18,19 +18,15 @@ function baseXor(arrays, iteratee, comparator) {
     return length ? baseUniq(arrays[0]) : []
   }
   let index = -1
-  const result = new Array(length)
+  let result = []
 
   while (++index < length) {
-    const array = arrays[index]
-    let othIndex = -1
-
-    while (++othIndex < length) {
-      if (othIndex != index) {
-        result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator)
-      }
-    }
+    result = baseFlatten([
+      baseDifference(result, arrays[index], iteratee, comparator),
+      baseDifference(arrays[index], result, iteratee, comparator)
+    ], 1)
   }
-  return baseUniq(baseFlatten(result, 1), iteratee, comparator)
+  return baseUniq(result, iteratee, comparator)
 }
 
 export default baseXor

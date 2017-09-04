@@ -15,6 +15,9 @@
  *
  * replace('Hi Fred', 'Fred', 'Barney')
  * // => 'Hi Barney'
+ *
+ * replace('Hi Fred! Bye Fred.', new RegExp("Fred", "g"), "Barney");
+ * // => 'Hi Barney! Bye Barney.'
  */
 function replace(...args) {
   const string = `${args[0]}`

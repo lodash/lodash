@@ -143,7 +143,7 @@ function initCloneArray(array) {
  *
  * @private
  * @param {*} value The value to clone.
- * @param {boolean} bitmask The bitmask flags.
+ * @param {number} bitmask The bitmask flags.
  *  1 - Deep clone
  *  2 - Flatten inherited properties
  *  4 - Clone symbols

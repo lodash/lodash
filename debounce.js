@@ -52,8 +52,8 @@ import isObject from './isObject.js'
  * // Cancel the trailing debounced invocation.
  * jQuery(window).on('popstate', debounced.cancel)
  * 
- * // Check whether there are currently pending invocations.
- * debounced.pending()
+ * // Check for pending invocations.
+ * const status = debounced.pending() ? "Pending…" : "Ready"
  */
 function debounce(func, wait, options) {
   let lastArgs,

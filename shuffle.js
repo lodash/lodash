@@ -1,9 +1,5 @@
-import copyArray from './.internal/copyArray.js'
-
 /**
- * Creates an array of shuffled values, using a version of the
- * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
- *
+ * Creates an array of shuffled values
  * @since 0.1.0
  * @category Array
  * @param {Array} array The array to shuffle.
@@ -14,20 +10,13 @@ import copyArray from './.internal/copyArray.js'
  * // => [4, 1, 3, 2]
  */
 function shuffle(array) {
-  const length = array == null ? 0 : array.length
-  if (!length) {
-    return []
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
-  let index = -1
-  const lastIndex = length - 1
-  const result = copyArray(array)
-  while (++index < length) {
-    const rand = index + Math.floor(Math.random() * (lastIndex - index + 1))
-    const value = result[rand]
-    result[rand] = result[index]
-    result[index] = value
-  }
-  return result
+  return array;
 }
 
 export default shuffle

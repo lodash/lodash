@@ -51,9 +51,9 @@ import isObject from './isObject.js'
  *
  * // Cancel the trailing debounced invocation.
  * jQuery(window).on('popstate', debounced.cancel)
- * 
+ *
  * // Check for pending invocations.
- * const status = debounced.pending() ? "Pending…" : "Ready"
+ * const status = debounced.pending() ? "Pending..." : "Ready"
  */
 function debounce(func, wait, options) {
   let lastArgs,
@@ -151,7 +151,7 @@ function debounce(func, wait, options) {
   function flush() {
     return timerId === undefined ? result : trailingEdge(Date.now())
   }
-  
+
   function pending() {
     return timerId !== undefined
   }

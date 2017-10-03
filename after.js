@@ -1,5 +1,5 @@
 /**
- * The opposite of `before`his method creates a function that invokes
+ * The opposite of `before`. This method creates a function that invokes
  * `func` once it's called `n` or more times.
  *
  * @since 0.1.0

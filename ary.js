@@ -18,7 +18,10 @@ const WRAP_ARY_FLAG = 128
  * // => [6, 8, 10]
  */
 function ary(func, n) {
-  n = (func && n == null) ? func.length : n
+   if (typeof func != 'function') {
+    throw new TypeError('Expected a function')
+  }
+  n = (n === null) ? func.length : n
   return createWrap(func, WRAP_ARY_FLAG, undefined, undefined, undefined, undefined, n)
 }
 

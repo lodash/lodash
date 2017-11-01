@@ -74,7 +74,7 @@ function truncate(string, options) {
   }
   let result = strSymbols
     ? castSlice(strSymbols, 0, end).join('')
-    : (' ' + string.slice(0, end)).substr(1) // https://bugs.chromium.org/p/v8/issues/detail?id=2869
+    : ` ${string.slice(0, end)}`.substr(1) // https://bugs.chromium.org/p/v8/issues/detail?id=2869
 
   if (separator === undefined) {
     return result + omission

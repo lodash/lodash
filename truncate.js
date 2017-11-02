@@ -72,9 +72,14 @@ function truncate(string, options) {
   if (end < 1) {
     return omission
   }
-  let result = strSymbols
-    ? castSlice(strSymbols, 0, end).join('')
-    : string.slice(0, end)
+  let result
+  if (strSymbols) {
+    result = castSlice(strSymbols, 0, end).join('')
+  } else {
+    result = string.slice(0, end)
+    // Try to force a flatten: https://github.com/davidmarkclements/flatstr
+    Number(result)
+  }
 
   if (separator === undefined) {
     return result + omission

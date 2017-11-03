@@ -37,16 +37,13 @@ const objectCtorString = funcToString.call(Object)
  * // => true
  */
 function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != '[object Object]') {
-    return false
-  }
-  const proto = Object.getPrototypeOf(value)
-  if (proto === null) {
-    return true
-  }
-  const Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor
-  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-    funcToString.call(Ctor) == objectCtorString
+  return (
+    value !== null &&
+    value !== undefined && (
+      Object.getPrototypeOf(value) === null ||
+      Object.getPrototypeOf(value).constructor === Object
+    )
+  )
 }
 
 export default isPlainObject

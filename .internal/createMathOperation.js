@@ -11,27 +11,24 @@ import baseToString from './baseToString.js'
  */
 function createMathOperation(operator, defaultValue) {
   return (value, other) => {
-    let result
     if (value === undefined && other === undefined) {
       return defaultValue
     }
-    if (value !== undefined) {
-      result = value
+    if (value != undefined && other === undefined){
+      return value
     }
-    if (other !== undefined) {
-      if (result === undefined) {
-        return other
-      }
-      if (typeof value == 'string' || typeof other == 'string') {
-        value = baseToString(value)
-        other = baseToString(other)
-      } else {
-        value = baseToNumber(value)
-        other = baseToNumber(other)
-      }
-      result = operator(value, other)
+    if (other !== undefined && value === undefined) {
+      return other
     }
-    return result
+    if (typeof value == 'string' || typeof other == 'string') {
+      value = baseToString(value)
+      other = baseToString(other)
+    }
+    else {
+      value = baseToNumber(value)
+      other = baseToNumber(other)
+    }
+    return operator(value, other)
   }
 }
 

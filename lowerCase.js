@@ -19,8 +19,9 @@ import words from './words.js'
  * lowerCase('__FOO_BAR__')
  * // => 'foo bar'
  */
+const reQuotes = /['\u2019]/g
 const lowerCase = (string) => (
-  words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+  words(`${string}`.replace(reQuotes, '')).reduce((result, word, index) => (
     result + (index ? ' ' : '') + word.toLowerCase()
   ), '')
 )

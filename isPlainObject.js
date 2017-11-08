@@ -34,7 +34,7 @@ function isPlainObject(value) {
   if (Object.getPrototypeOf(value) === null) {
     return true
   }
-  var proto = value
+  let proto = value
   while (Object.getPrototypeOf(proto) !== null) {
     proto = Object.getPrototypeOf(proto)
   }

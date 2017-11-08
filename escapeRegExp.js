@@ -6,7 +6,7 @@ const reRegExpChar = /[\\^$.*+?()[\]{}|]/g
 const reHasRegExpChar = RegExp(reRegExpChar.source)
 
 /**
- * Escapes the `RegExp` special characters "^", "$", "\\", ".", "*", "+",
+ * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
  * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
  *
  * @since 3.0.0

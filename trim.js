@@ -19,9 +19,6 @@ import stringToArray from './.internal/stringToArray.js'
  *
  * trim('-_-abc-_-', '_-')
  * // => 'abc'
- *
- * map(['  foo  ', '  bar  '], trim)
- * // => ['foo', 'bar']
  */
 function trim(string, chars) {
   if (string && chars === undefined) {

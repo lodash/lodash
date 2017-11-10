@@ -23,9 +23,6 @@ const nativeParseInt = root.parseInt
  *
  * parseInt('08')
  * // => 8
- *
- * map(['6', '08', '10'], parseInt)
- * // => [6, 8, 10]
  */
 function parseInt(string, radix) {
   if (radix == null) {

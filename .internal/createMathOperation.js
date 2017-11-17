@@ -14,7 +14,7 @@ function createMathOperation(operator, defaultValue) {
     if (value === undefined && other === undefined) {
       return defaultValue
     }
-    if (value != undefined && other === undefined) {
+    if (value !== undefined && other === undefined) {
       return value
     }
     if (other !== undefined && value === undefined) {

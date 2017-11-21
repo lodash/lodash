@@ -7,6 +7,10 @@
  * @returns {Array} Returns `array`.
  */
 function copyArray(source, array) {
+  if (source.length <= array.length) {
+    return source.slice()
+  }
+
   let index = -1
   const length = source.length
 

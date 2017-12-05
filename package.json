@@ -7,6 +7,7 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "sideEffects": false,
   "scripts": {
     "build": "npm run build:main && npm run build:fp",
     "build:fp": "node lib/fp/build-dist.js",

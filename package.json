@@ -1,3 +1,4 @@
+
 {
   "name": "lodash",
   "version": "4.17.4",
@@ -7,6 +8,7 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "sideEffects": false,
   "scripts": {
     "build": "npm run build:main && npm run build:fp",
     "build:fp": "node lib/fp/build-dist.js",

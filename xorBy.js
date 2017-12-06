@@ -6,7 +6,7 @@ import last from './last.js'
 /**
  * This method is like `xor` except that it accepts `iteratee` which is
  * invoked for each element of each `arrays` to generate the criterion by
- * which by which they're compared. The order of result values is determined
+ * which they're compared. The order of result values is determined
  * by the order they occur in the arrays. The iteratee is invoked with one
  * argument: (value).
  *

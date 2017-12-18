@@ -16,7 +16,12 @@ function baseGet(object, path) {
   const length = path.length
 
   while (object != null && index < length) {
-    object = object[toKey(path[index++])]
+    const key = toKey(path[index++])
+    if (object instanceof Map) {
+      object = object.get(key)
+    } else {
+      object = object[key]
+    }
   }
   return (index && index == length) ? object : undefined
 }

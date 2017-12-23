@@ -16,7 +16,9 @@ import isObject from './isObject.js'
  * is invoked more than once during the `wait` timeout.
  *
  * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
- * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`, unless
+ * `useRAF` is `true` in which invocation will be deferred until the next
+ * browser draw frame (typically about 16ms).
  *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `throttle` and `debounce`.
@@ -30,6 +32,8 @@ import isObject from './isObject.js'
  *  Specify invoking on the leading edge of the timeout.
  * @param {boolean} [options.trailing=true]
  *  Specify invoking on the trailing edge of the timeout.
+ * @param {boolean} [options.useRAF=false]
+ *  Use requestAnimationFrame instead of setTimeout.
  * @returns {Function} Returns the new throttled function.
  * @example
  *
@@ -46,6 +50,7 @@ import isObject from './isObject.js'
 function throttle(func, wait, options) {
   let leading = true
   let trailing = true
+  let useRAF = false
 
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
@@ -53,11 +58,13 @@ function throttle(func, wait, options) {
   if (isObject(options)) {
     leading = 'leading' in options ? !!options.leading : leading
     trailing = 'trailing' in options ? !!options.trailing : trailing
+    useRAF = 'useRAF' in options ? !!options.useRAF : useRAF
   }
   return debounce(func, wait, {
     'leading': leading,
     'maxWait': wait,
-    'trailing': trailing
+    'trailing': trailing,
+    'useRAF': useRAF
   })
 }
 

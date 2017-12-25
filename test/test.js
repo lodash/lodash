@@ -20056,7 +20056,7 @@
     QUnit.test('`_.' + methodName + '` should handle complex paths', function(assert) {
       assert.expect(2);
 
-      var object = { 'a': { '1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': oldValue } } } } } } } };
+      var object = { 'a': { '-1.23': { '["b"]': { 'c': { "['d']": { '\ne\n': { 'f': { 'g': oldValue } } } } } } } };
 
       var paths = [
         'a[-1.23]["[\\"b\\"]"].c[\'[\\\'d\\\']\'][\ne\n][f].g',

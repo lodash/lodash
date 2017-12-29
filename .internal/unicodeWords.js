@@ -38,8 +38,8 @@ const rsOptContrUpper = `(?:${rsApos}(?:D|LL|M|RE|S|T|VE))?`
 const reOptMod = `${rsModifier}?`
 const rsOptVar = `[${rsVarRange}]?`
 const rsOptJoin = `(?:${rsZWJ}(?:${[rsNonAstral, rsRegional, rsSurrPair].join('|')})${rsOptVar + reOptMod})*`
-const rsOrdLower = '\\d*(?:(?:1st|2nd|3rd|(?![123])\\dth)\\b)'
-const rsOrdUpper = '\\d*(?:(?:1ST|2ND|3RD|(?![123])\\dTH)\\b)'
+const rsOrdLower = '\\d*(?:1st|2nd|3rd|(?![123])\\dth)(?=\\b|[A-Z_])'
+const rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])'
 const rsSeq = rsOptVar + reOptMod + rsOptJoin
 const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
 

@@ -1,15 +1,16 @@
 import isObject from './isObject.js'
+import root from './.internal/root.js'
 
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
  * milliseconds have elapsed since the last time the debounced function was
- * invoked. The debounced function comes with a `cancel` method to cancel
- * delayed `func` invocations and a `flush` method to immediately invoke them.
- * Provide `options` to indicate whether `func` should be invoked on the
- * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
- * with the last arguments provided to the debounced function. Subsequent
- * calls to the debounced function return the result of the last `func`
- * invocation.
+ * invoked, or until the next browser frame is drawn. The debounced function
+ * comes with a `cancel` method to cancel delayed `func` invocations and a
+ * `flush` method to immediately invoke them. Provide `options` to indicate
+ * whether `func` should be invoked on the leading and/or trailing edge of the
+ * `wait` timeout. The `func` is invoked with the last arguments provided to the
+ * debounced function. Subsequent calls to the debounced function return the
+ * result of the last `func` invocation.
  *
  * **Note:** If `leading` and `trailing` options are `true`, `func` is
  * invoked on the trailing edge of the timeout only if the debounced function
@@ -18,13 +19,19 @@ import isObject from './isObject.js'
  * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
  * until the next tick, similar to `setTimeout` with a timeout of `0`.
  *
+ * If `wait` is omitted in an environment with `requestAnimationFrame`, `func`
+ * invocation will be deferred until the next frame is drawn (typically about
+ * 16ms).
+ *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `debounce` and `throttle`.
  *
  * @since 0.1.0
  * @category Function
  * @param {Function} func The function to debounce.
- * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {number} [wait=0]
+ *  The number of milliseconds to delay; if omitted, `requestAnimationFrame` is
+ *  used (if available).
  * @param {Object} [options={}] The options object.
  * @param {boolean} [options.leading=false]
  *  Specify invoking on the leading edge of the timeout.
@@ -68,6 +75,9 @@ function debounce(func, wait, options) {
   let maxing = false
   let trailing = true
 
+  // Bypass `requestAnimationFrame` by explicitly setting `wait=0`.
+  const useRAF = (!wait && wait !== 0 && typeof root.requestAnimationFrame === 'function')
+
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
   }
@@ -89,11 +99,25 @@ function debounce(func, wait, options) {
     return result
   }
 
+  function startTimer(pendingFunc, wait) {
+    if (useRAF) {
+      return root.requestAnimationFrame(pendingFunc)
+    }
+    return setTimeout(pendingFunc, wait)
+  }
+
+  function cancelTimer(id) {
+    if (useRAF) {
+      return root.cancelAnimationFrame(id)
+    }
+    clearTimeout(id)
+  }
+
   function leadingEdge(time) {
     // Reset any `maxWait` timer.
     lastInvokeTime = time
     // Start the timer for the trailing edge.
-    timerId = setTimeout(timerExpired, wait)
+    timerId = startTimer(timerExpired, wait)
     // Invoke the leading edge.
     return leading ? invokeFunc(time) : result
   }
@@ -125,7 +149,7 @@ function debounce(func, wait, options) {
       return trailingEdge(time)
     }
     // Restart the timer.
-    timerId = setTimeout(timerExpired, remainingWait(time))
+    timerId = startTimer(timerExpired, remainingWait(time))
   }
 
   function trailingEdge(time) {
@@ -142,7 +166,7 @@ function debounce(func, wait, options) {
 
   function cancel() {
     if (timerId !== undefined) {
-      clearTimeout(timerId)
+      cancelTimer(timerId)
     }
     lastInvokeTime = 0
     lastArgs = lastCallTime = lastThis = timerId = undefined
@@ -170,12 +194,12 @@ function debounce(func, wait, options) {
       }
       if (maxing) {
         // Handle invocations in a tight loop.
-        timerId = setTimeout(timerExpired, wait)
+        timerId = startTimer(timerExpired, wait)
         return invokeFunc(lastCallTime)
       }
     }
     if (timerId === undefined) {
-      timerId = setTimeout(timerExpired, wait)
+      timerId = startTimer(timerExpired, wait)
     }
     return result
   }

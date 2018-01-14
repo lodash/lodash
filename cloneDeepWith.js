@@ -6,6 +6,8 @@ const CLONE_SYMBOLS_FLAG = 4
 
 /**
  * This method is like `cloneWith` except that it recursively clones `value`.
+ * The customizer is invoked with up to four arguments
+ * (value [, index|key, object, stack]).
  *
  * @since 4.0.0
  * @category Lang

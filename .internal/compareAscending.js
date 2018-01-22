@@ -22,7 +22,7 @@ function compareAscending(value, other) {
 
     let val = 0
     if (typeof value == 'string') {
-      val = value.localeCompare(other)
+      val = value.localeCompare(other,'zh')
     } else {
       val = value - other
     }

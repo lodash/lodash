@@ -20,14 +20,21 @@ function compareAscending(value, other) {
     const othIsReflexive = other === other
     const othIsSymbol = isSymbol(other)
 
-    if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
+    let val = 0
+    if (typeof value == 'string') {
+      val = value.localeCompare(other,'zh')
+    } else {
+      val = value - other
+    }
+
+    if ((!othIsNull && !othIsSymbol && !valIsSymbol && val>0) ||
         (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||
         (valIsNull && othIsDefined && othIsReflexive) ||
         (!valIsDefined && othIsReflexive) ||
         !valIsReflexive) {
       return 1
     }
-    if ((!valIsNull && !valIsSymbol && !othIsSymbol && value < other) ||
+    if ((!valIsNull && !valIsSymbol && !othIsSymbol && val<0) ||
         (othIsSymbol && valIsDefined && valIsReflexive && !valIsNull && !valIsSymbol) ||
         (othIsNull && valIsDefined && valIsReflexive) ||
         (!othIsDefined && valIsReflexive) ||

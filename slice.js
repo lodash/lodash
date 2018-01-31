@@ -11,6 +11,13 @@
  * @param {number} [start=0] The start position.
  * @param {number} [end=array.length] The end position.
  * @returns {Array} Returns the slice of `array`.
+ *
+ * const array = [1, 2, 3, 4]
+ * _.slice(a, 2)
+ * // => [3, 4]
+ *
+ * _.slice(a, 1, 3)
+ * // => [2, 3]
  */
 function slice(array, start, end) {
   let length = array == null ? 0 : array.length

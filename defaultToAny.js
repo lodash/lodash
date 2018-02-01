@@ -6,7 +6,6 @@ import defaultTo from './defaultTo.js'
  * `NaN`, `null`, or `undefined`.
  *
  * @since 5.0.0
- * @alias coalesce
  * @category Util
  * @param {*} value The value to check.
  * @param {...*} defaultValues The default values.

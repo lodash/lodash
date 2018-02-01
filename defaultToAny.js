@@ -1,4 +1,4 @@
-import reduce from './reduce.js'
+import arrayReduce from './.internal/arrayReduce'
 import defaultTo from './defaultTo.js'
 
 /**
@@ -26,7 +26,7 @@ import defaultTo from './defaultTo.js'
  * // => NaN
  */
 function defaultToAny(value, ...defaultValues) {
-  return reduce(defaultValues, defaultTo, value)
+  return arrayReduce(defaultValues, defaultTo, value)
 }
 
 export default defaultToAny

@@ -2958,7 +2958,7 @@
           assert.deepEqual(getSymbols(actual.a.b), [symbol]);
           assert.deepEqual(actual.a.b[symbol], object.a.b[symbol]);
           assert.deepEqual(actual.a.b[symbol2], object.a.b[symbol2]);
-          assert.deepEqual(actual.a.b[symbol3], object.a.b[symbol3])
+          assert.deepEqual(actual.a.b[symbol3], object.a.b[symbol3]);
         }
         else {
           skipAssert(assert, 7);
@@ -7546,7 +7546,7 @@
       if (JSON) {
         _.merge({}, JSON.parse('{"__proto__":{"a":1}}'));
 
-        var actual = "a" in objectProto;
+        var actual = 'a' in objectProto;
         delete objectProto.a;
 
         assert.notOk(actual);

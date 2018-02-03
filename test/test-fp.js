@@ -2144,7 +2144,7 @@
       var object = { 'a': { 'b': _.constant(true) } },
           actual = fp.update('a.b')(_.identity)(object);
 
-      assert.strictEqual(typeof object.a.b, 'function')
+      assert.strictEqual(typeof object.a.b, 'function');
       assert.strictEqual(object.a.b, actual.a.b);
     });
 

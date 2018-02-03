@@ -4,6 +4,7 @@ import baseFor from './_baseFor.js';
 import baseMergeDeep from './_baseMergeDeep.js';
 import isObject from './isObject.js';
 import keysIn from './keysIn.js';
+import safeGet from './_safeGet.js';
 
 /**
  * The base implementation of `_.merge` without support for multiple sources.
@@ -27,7 +28,7 @@ function baseMerge(object, source, srcIndex, customizer, stack) {
     }
     else {
       var newValue = customizer
-        ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+        ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
         : undefined;
 
       if (newValue === undefined) {

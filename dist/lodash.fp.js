@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var baseConvert = __webpack_require__(1);
 
@@ -74,9 +74,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = browserConvert;
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var mapping = __webpack_require__(2),
 	    fallbackHolder = __webpack_require__(3);
@@ -251,7 +251,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'curry': util.curry,
 	    'forEach': util.forEach,
 	    'isArray': util.isArray,
+	    'isError': util.isError,
 	    'isFunction': util.isFunction,
+	    'isWeakMap': util.isWeakMap,
 	    'iteratee': util.iteratee,
 	    'keys': util.keys,
 	    'rearg': util.rearg,
@@ -265,7 +267,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      curry = helpers.curry,
 	      each = helpers.forEach,
 	      isArray = helpers.isArray,
+	      isError = helpers.isError,
 	      isFunction = helpers.isFunction,
+	      isWeakMap = helpers.isWeakMap,
 	      keys = helpers.keys,
 	      rearg = helpers.rearg,
 	      toInteger = helpers.toInteger,
@@ -435,8 +439,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var key = path[index],
 	          value = nested[key];
 
-	      if (value != null) {
-	        nested[path[index]] = clone(index == lastIndex ? value : Object(value));
+	      if (value != null &&
+	          !(isFunction(value) || isError(value) || isWeakMap(value))) {
+	        nested[key] = clone(index == lastIndex ? value : Object(value));
 	      }
 	      nested = nested[key];
 	    }
@@ -648,9 +653,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = baseConvert;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/** Used to map aliases to their real names. */
 	exports.aliasToReal = {
@@ -1022,9 +1027,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * The default argument placeholder value for methods.
@@ -1034,7 +1039,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = {};
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

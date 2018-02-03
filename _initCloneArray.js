@@ -15,7 +15,7 @@ define([], function() {
    */
   function initCloneArray(array) {
     var length = array.length,
-        result = array.constructor(length);
+        result = new array.constructor(length);
 
     // Add properties assigned by `RegExp#exec`.
     if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {

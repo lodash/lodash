@@ -1,4 +1,4 @@
-define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseAssignIn', './_cloneBuffer', './_copyArray', './_copySymbols', './_copySymbolsIn', './_getAllKeys', './_getAllKeysIn', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './isObject', './keys'], function(Stack, arrayEach, assignValue, baseAssign, baseAssignIn, cloneBuffer, copyArray, copySymbols, copySymbolsIn, getAllKeys, getAllKeysIn, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isObject, keys) {
+define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseAssignIn', './_cloneBuffer', './_copyArray', './_copySymbols', './_copySymbolsIn', './_getAllKeys', './_getAllKeysIn', './_getTag', './_initCloneArray', './_initCloneByTag', './_initCloneObject', './isArray', './isBuffer', './isMap', './isObject', './isSet', './keys'], function(Stack, arrayEach, assignValue, baseAssign, baseAssignIn, cloneBuffer, copyArray, copySymbols, copySymbolsIn, getAllKeys, getAllKeysIn, getTag, initCloneArray, initCloneByTag, initCloneObject, isArray, isBuffer, isMap, isObject, isSet, keys) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -108,7 +108,7 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseA
         if (!cloneableTags[tag]) {
           return object ? value : {};
         }
-        result = initCloneByTag(value, tag, baseClone, isDeep);
+        result = initCloneByTag(value, tag, isDeep);
       }
     }
     // Check for circular references and return its corresponding clone.
@@ -118,6 +118,22 @@ define(['./_Stack', './_arrayEach', './_assignValue', './_baseAssign', './_baseA
       return stacked;
     }
     stack.set(value, result);
+
+    if (isSet(value)) {
+      value.forEach(function(subValue) {
+        result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
+      });
+
+      return result;
+    }
+
+    if (isMap(value)) {
+      value.forEach(function(subValue, key) {
+        result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
+      });
+
+      return result;
+    }
 
     var keysFunc = isFull
       ? (isFlat ? getAllKeysIn : getAllKeys)

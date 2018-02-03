@@ -109,9 +109,11 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
     function remainingWait(time) {
       var timeSinceLastCall = time - lastCallTime,
           timeSinceLastInvoke = time - lastInvokeTime,
-          result = wait - timeSinceLastCall;
+          timeWaiting = wait - timeSinceLastCall;
 
-      return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+      return maxing
+        ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+        : timeWaiting;
     }
 
     function shouldInvoke(time) {

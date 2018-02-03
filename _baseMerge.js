@@ -1,4 +1,4 @@
-define(['./_Stack', './_assignMergeValue', './_baseFor', './_baseMergeDeep', './isObject', './keysIn'], function(Stack, assignMergeValue, baseFor, baseMergeDeep, isObject, keysIn) {
+define(['./_Stack', './_assignMergeValue', './_baseFor', './_baseMergeDeep', './isObject', './keysIn', './_safeGet'], function(Stack, assignMergeValue, baseFor, baseMergeDeep, isObject, keysIn, safeGet) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -25,7 +25,7 @@ define(['./_Stack', './_assignMergeValue', './_baseFor', './_baseMergeDeep', './
       }
       else {
         var newValue = customizer
-          ? customizer(object[key], srcValue, (key + ''), object, source, stack)
+          ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
           : undefined;
 
         if (newValue === undefined) {

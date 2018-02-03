@@ -1,6 +1,6 @@
 {
   "name": "lodash-amd",
-  "version": "4.17.4",
+  "version": "4.17.5",
   "description": "Lodash exported as AMD modules.",
   "keywords": "amd, modules, stdlib, util",
   "homepage": "https://lodash.com/custom-builds",
@@ -14,5 +14,5 @@
     "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
     "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
   ],
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
+  "scripts": { "test": "echo \"See https://travis-ci.org/lodash-archive/lodash-cli for testing details.\"" }
 }

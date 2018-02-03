@@ -15,10 +15,13 @@ define([], function() {
    * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
    */
   function isIndex(value, length) {
+    var type = typeof value;
     length = length == null ? MAX_SAFE_INTEGER : length;
+
     return !!length &&
-      (typeof value == 'number' || reIsUint.test(value)) &&
-      (value > -1 && value % 1 == 0 && value < length);
+      (type == 'number' ||
+        (type != 'symbol' && reIsUint.test(value))) &&
+          (value > -1 && value % 1 == 0 && value < length);
   }
 
   return isIndex;

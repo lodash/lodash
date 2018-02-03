@@ -1,4 +1,4 @@
-define(['./_assignMergeValue', './_cloneBuffer', './_cloneTypedArray', './_copyArray', './_initCloneObject', './isArguments', './isArray', './isArrayLikeObject', './isBuffer', './isFunction', './isObject', './isPlainObject', './isTypedArray', './toPlainObject'], function(assignMergeValue, cloneBuffer, cloneTypedArray, copyArray, initCloneObject, isArguments, isArray, isArrayLikeObject, isBuffer, isFunction, isObject, isPlainObject, isTypedArray, toPlainObject) {
+define(['./_assignMergeValue', './_cloneBuffer', './_cloneTypedArray', './_copyArray', './_initCloneObject', './isArguments', './isArray', './isArrayLikeObject', './isBuffer', './isFunction', './isObject', './isPlainObject', './isTypedArray', './_safeGet', './toPlainObject'], function(assignMergeValue, cloneBuffer, cloneTypedArray, copyArray, initCloneObject, isArguments, isArray, isArrayLikeObject, isBuffer, isFunction, isObject, isPlainObject, isTypedArray, safeGet, toPlainObject) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
@@ -19,8 +19,8 @@ define(['./_assignMergeValue', './_cloneBuffer', './_cloneTypedArray', './_copyA
    *  counterparts.
    */
   function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-    var objValue = object[key],
-        srcValue = source[key],
+    var objValue = safeGet(object, key),
+        srcValue = safeGet(source, key),
         stacked = stack.get(srcValue);
 
     if (stacked) {

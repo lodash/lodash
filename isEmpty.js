@@ -36,6 +36,9 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * isEmpty([1, 2, 3])
  * // => false
  *
+ * isEmpty('abc')
+ * // => false
+ *
  * isEmpty({ 'a': 1 })
  * // => false
  */

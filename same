@@ -1,0 +1,28 @@
+import difference from './.difference.js'
+import isEmpty from './isEmpty.js'
+
+/**
+ * Checks if `array` and `values` have all the same items. Duplicate items are ignored.
+ *
+ * @since 0.1.0
+ * @param {Array} array The array to inspect.
+ * @param {Array} values The values to compare.
+ * @returns {boolean} Returns `true` if `array` and `values` have all the same items, else `false`.
+ * @see difference
+ * @example
+ *
+ * same([2, 1, 3], [1, 2, 3])
+ * // => true
+ *
+ * same([2, 1, 3], [1, 2])
+ * // => false
+ *
+ * same([2, 4], [1, 2, 3])
+ * // => false
+ */
+function same(array, values) {
+  return _.isEmpty(_.difference(array, values))
+      && _.isEmpty(_.difference(values, array));
+}
+
+export default same

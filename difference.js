@@ -1,6 +1,8 @@
 import baseDifference from './.internal/baseDifference.js'
 import baseFlatten from './.internal/baseFlatten.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
+import every from './every.js'
+import eq from './eq.js'
 
 /**
  * Creates an array of `array` values not included in the other given arrays
@@ -22,9 +24,11 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  * // => [1]
  */
 function difference(array, ...values) {
-  return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
-    : []
+  if (!isArrayLikeObject(array) || every(values, currentValue => eq(currentValue, array))) {
+    return [];
+  }
+  
+  return baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true));
 }
 
 export default difference

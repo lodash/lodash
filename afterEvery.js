@@ -14,7 +14,7 @@
  *
  * forEach(notifications, message => asyncFetch({ 'message': message, 'fetch': group }))
  * // => Logs 'You have 2 new notifications' twice after the four async fetches have 
- * completed.
+ * // completed.
  */
 function afterEvery(n, func) {
   if (typeof func != 'function') {

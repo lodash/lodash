@@ -15,10 +15,11 @@
  * })
  * 
  * fn(23) 
- * fn(12) // Prints "12"
- * fn(24) // Prints "24"
+ * fn(12)
+ * fn(24)
  * fn(11) 
- * fn(14) 
+ * fn(14)
+ * => //Logs "12" and "24" 
  */
 function afterBefore(start, end, func) {
   if (typeof func != 'function') {

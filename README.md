@@ -74,7 +74,7 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
 
 Lodash is available in a [variety of builds](https://lodash.com/custom-builds) & module formats.
 
- * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
+ * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/search?q=keywords:lodash-modularized)
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)

@@ -13,10 +13,16 @@ const moduleExports = freeModule && freeModule.exports === freeExports
 const freeProcess = moduleExports && freeGlobal.process
 
 /** Used to access faster Node.js helpers. */
-const nodeUtil = ((() => {
+const nodeTypes = ((() => {
   try {
-    return freeProcess && freeProcess.binding && freeProcess.binding('util')
+    /* Detect public `util.types` helpers for Node.js v10+. */
+    /* Node.js deprecation code: DEP0103. */
+    const typesHelper = freeModule && freeModule.require && freeModule.require('util').types
+    return typesHelper
+      ? typesHelper
+      /* Legacy process.binding('util') for Node.js earlier than v10. */
+      : freeProcess && freeProcess.binding && freeProcess.binding('util')
   } catch (e) {}
 })())
 
-export default nodeUtil
+export default nodeTypes

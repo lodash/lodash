@@ -1,9 +1,9 @@
 import baseGetTag from './.internal/baseGetTag.js'
 import isObjectLike from './isObjectLike.js'
-import nodeUtil from './.internal/nodeUtil.js'
+import nodeTypes from './.internal/nodeTypes.js'
 
 /* Node.js helper references. */
-const nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer
+const nodeIsArrayBuffer = nodeTypes && nodeTypes.isArrayBuffer
 
 /**
  * Checks if `value` is classified as an `ArrayBuffer` object.

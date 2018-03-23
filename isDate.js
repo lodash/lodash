@@ -1,9 +1,9 @@
 import baseGetTag from './.internal/baseGetTag.js'
 import isObjectLike from './isObjectLike.js'
-import nodeUtil from './.internal/nodeUtil.js'
+import nodeTypes from './.internal/nodeTypes.js'
 
 /* Node.js helper references. */
-const nodeIsDate = nodeUtil && nodeUtil.isDate
+const nodeIsDate = nodeTypes && nodeTypes.isDate
 
 /**
  * Checks if `value` is classified as a `Date` object.

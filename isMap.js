@@ -1,9 +1,9 @@
 import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
-import nodeUtil from './.internal/nodeUtil.js'
+import nodeTypes from './.internal/nodeTypes.js'
 
 /* Node.js helper references. */
-const nodeIsMap = nodeUtil && nodeUtil.isMap
+const nodeIsMap = nodeTypes && nodeTypes.isMap
 
 /**
  * Checks if `value` is classified as a `Map` object.

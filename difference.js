@@ -29,7 +29,7 @@ function difference(array, ...values) {
   
   const patched = map(values, x => x === array ? [] : x);
   
-  return baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true));
+  return baseDifference(array, baseFlatten(patched, 1, isArrayLikeObject, true));
 }
 
 export default difference

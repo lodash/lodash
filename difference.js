@@ -1,6 +1,7 @@
 import baseDifference from './.internal/baseDifference.js'
 import baseFlatten from './.internal/baseFlatten.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
+import map from './map.js'
 
 /**
  * Creates an array of `array` values not included in the other given arrays
@@ -22,9 +23,13 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  * // => [1]
  */
 function difference(array, ...values) {
-  return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true))
-    : []
+  if (!isArrayLikeObject(array)) {
+    return [];
+  }
+  
+  const patched = map(values, x => x === array ? [] : x);
+  
+  return baseDifference(array, baseFlatten(patched, 1, isArrayLikeObject, true));
 }
 
 export default difference

@@ -1,8 +1,7 @@
 import baseDifference from './.internal/baseDifference.js'
 import baseFlatten from './.internal/baseFlatten.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
-import every from './every.js'
-import eq from './eq.js'
+import map from './map.js'
 
 /**
  * Creates an array of `array` values not included in the other given arrays
@@ -24,9 +23,11 @@ import eq from './eq.js'
  * // => [1]
  */
 function difference(array, ...values) {
-  if (!isArrayLikeObject(array) || every(values, currentValue => eq(currentValue, array))) {
+  if (!isArrayLikeObject(array)) {
     return [];
   }
+  
+  const patched = map(values, x => x === array ? [] : x);
   
   return baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true));
 }

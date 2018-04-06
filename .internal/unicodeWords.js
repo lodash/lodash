@@ -18,10 +18,10 @@ const rsBreakRange = rsMathOpRange + rsNonCharRange + rsPunctuationRange + rsSpa
 const rsApos = "['\u2019]"
 const rsBreak = `[${rsBreakRange}]`
 const rsCombo = `[${rsComboRange}]`
-const rsDigits = '\\d+'
+const rsDigit = '\\d'
 const rsDingbat = `[${rsDingbatRange}]`
 const rsLower = `[${rsLowerRange}]`
-const rsMisc = `[^${rsAstralRange}${rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange}]`
+const rsMisc = `[^${rsAstralRange}${rsBreakRange + rsDigit + rsDingbatRange + rsLowerRange + rsUpperRange}]`
 const rsFitz = '\\ud83c[\\udffb-\\udfff]'
 const rsModifier = `(?:${rsCombo}|${rsFitz})`
 const rsNonAstral = `[^${rsAstralRange}]`
@@ -57,7 +57,7 @@ const unicodeWords = RegExp.prototype.exec.bind(RegExp([
   `${rsUpper}+${rsOptContrUpper}`,
   rsOrdUpper,
   rsOrdLower,
-  rsDigits,
+  `${rsDigit}+`,
   rsEmoji
 ].join('|'), 'g'))
 

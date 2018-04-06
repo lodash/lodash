@@ -35,7 +35,7 @@ function orderBy(collection, iteratees, orders) {
     iteratees = iteratees == null ? [] : [iteratees]
   }
   if (!Array.isArray(orders)) {
-    orders = orders == null ? [] : [orders]
+    orders = orders == null ? [] : [...Array(iteratees.length)].map(arrPos => orders);
   }
   return baseOrderBy(collection, iteratees, orders)
 }

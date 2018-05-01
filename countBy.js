@@ -17,8 +17,14 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * @returns {Object} Returns the composed aggregate object.
  * @example
  *
- * countBy([6.1, 4.2, 6.3], Math.floor)
- * // => { '4': 1, '6': 2 }
+ * const users = [
+ *   { 'user': 'barney', 'active': true },
+ *   { 'user': 'betty', 'active': true },
+ *   { 'user': 'fred', 'active': false }
+ * ]
+ *
+ * countBy(users, 'active');
+ * // => { 'true': 2, 'false': 1 }
  */
 function countBy(collection, iteratee) {
   return reduce(collection, (result, value, key) => {

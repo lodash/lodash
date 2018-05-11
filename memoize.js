@@ -47,13 +47,13 @@ function memoize(func, resolver) {
     throw new TypeError('Expected a function')
   }
   const memoized = function(...args) {
-    const key = resolver ? resolver.apply(this, args) : args[0]
+    const key = resolver ? resolver(...args) : args[0]
     const cache = memoized.cache
 
     if (cache.has(key)) {
       return cache.get(key)
     }
-    const result = func.apply(this, args)
+    const result = func(...args)
     memoized.cache = cache.set(key, result) || cache
     return result
   }

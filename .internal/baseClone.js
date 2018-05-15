@@ -219,7 +219,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
 
   if (isTypedArray(value)) {
-    return result;
+    return result
   }
 
   const keysFunc = isFull

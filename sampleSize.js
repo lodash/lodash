@@ -34,7 +34,7 @@ function sampleSize(array, n) {
     result[rand] = result[index]
     result[index] = value
   }
-  return slice(result, 0, n);
+  return slice(result, 0, n)
 }
 
 export default sampleSize

@@ -5,9 +5,7 @@ import eq from '../eq.js'
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
- * Assigns `value` to `key` of `object` if the existing value is not equivalent
- * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * for equality comparisons.
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent.
  *
  * @private
  * @param {Object} object The object to modify.
@@ -16,8 +14,12 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  */
 function assignValue(object, key, value) {
   const objValue = object[key]
-  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
-      (value === undefined && !(key in object))) {
+
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value))) {
+    if (value !== 0 || (1 / value) == (1 / objValue)) {
+      baseAssignValue(object, key, value)
+    }
+  } else if (value === undefined && !(key in object)) {
     baseAssignValue(object, key, value)
   }
 }

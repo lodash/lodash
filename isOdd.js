@@ -23,7 +23,7 @@
  * // => false
  */
 function isOdd(value) {
-  return Number.isInteger(value) && value % 2 !== 0
+  return Number.isInteger(value) && value % 2 === 1
 }
 
 export default isOdd

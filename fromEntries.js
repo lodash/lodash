@@ -1,5 +1,5 @@
 /**
- * The inverse of `toPairs`is method returns an object composed
+ * The inverse of `entries`is method returns an object composed
  * from key-value `pairs`.
  *
  * @since 4.0.0
@@ -8,10 +8,10 @@
  * @returns {Object} Returns the new object.
  * @example
  *
- * fromPairs([['a', 1], ['b', 2]])
+ * fromEntries([['a', 1], ['b', 2]])
  * // => { 'a': 1, 'b': 2 }
  */
-function fromPairs(pairs) {
+function fromEntries(pairs) {
   const result = {}
   if (pairs == null) {
     return result
@@ -22,4 +22,4 @@ function fromPairs(pairs) {
   return result
 }
 
-export default fromPairs
+export default fromEntries

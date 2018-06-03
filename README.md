@@ -9,58 +9,6 @@
 [Twitter](https://twitter.com/bestiejs) |
 [Chat](https://gitter.im/lodash/lodash)
 
-The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
-
-Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```shell
-$ npm run build
-$ lodash -o ./dist/lodash.js
-$ lodash core -o ./dist/lodash.core.js
-```
-
-## Download
-
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.min.js))
- * [CDN copies](https://www.jsdelivr.com/projects/lodash) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/lodash/badge)](https://www.jsdelivr.com/package/npm/lodash)
-
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE) & supports modern environments.<br>
-Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
-
-## Installation
-
-In a browser:
-```html
-<script src="lodash.js"></script>
-```
-
-Using npm:
-```shell
-$ npm i -g npm
-$ npm i --save lodash
-```
-
-In Node.js:
-```js
-// Load the full build.
-var _ = require('lodash');
-// Load the core build.
-var _ = require('lodash/core');
-// Load the FP build for immutable auto-curried iteratee-first data-last methods.
-var fp = require('lodash/fp');
-
-// Load method categories.
-var array = require('lodash/array');
-var object = require('lodash/fp/object');
-
-// Cherry-pick methods for smaller browserify/rollup/webpack bundles.
-var at = require('lodash/at');
-var curryN = require('lodash/fp/curryN');
-```
-
-**Note:**<br>
-Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
-
 ## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
@@ -70,11 +18,73 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
  * Manipulating & testing values
  * Creating composite functions
 
-## Module Formats
+## Installation
 
-Lodash is available in a [variety of builds](https://lodash.com/custom-builds) & module formats.
+```shell
+$ npm i lodash
+# or:
+$ npm i lodash-es
+```
 
- * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/search?q=keywords:lodash-modularized)
- * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
- * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
- * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
+```js
+// Load the full build.
+var _ = require('lodash');
+// Load the core build.
+var _ = require('lodash/core');
+// Load the FP build for immutable auto-curried iteratee-first data-last methods.
+var fp = require('lodash/fp');
+
+// Cherry-pick methods for smaller browserify/rollup/webpack bundles.
+var at = require('lodash/at');
+var curryN = require('lodash/fp/curryN');
+
+// Easier cherry-picking for tree-shaking compilers such as rollup and webpack.
+import { at, curryN } from 'lodash-es';
+
+// Compromise: Load method categories.
+var array = require('lodash/array');
+var object = require('lodash/fp/object');
+```
+
+### Keeping your browser bundles small
+
+If you import the entire `lodash` package but only use a couple of functions from it, you end up shipping a lot of unnecessary code to your users, which takes time to download and parse.
+
+Instead, you can import just the functions you need:
+
+```js
+var at = require('lodash/at');
+var curryN = require('lodash/fp/curryN');
+```
+
+(Note: The above is recommended over the to-be-deprecated [per method packages](https://www.npmjs.com/search?q=keywords:lodash-modularized).)
+
+If that sounds tedious, you can use [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash) to do it for you.
+
+If you use [webpack](https://webpack.js.org/) or [rollup](https://rollupjs.org/) you can use [lodash-es](https://www.npmjs.com/package/lodash-es) instead:
+
+```js
+import { at, curryN } from 'lodash-es';
+```
+
+There’s also [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin) for optimizing the size even further.
+
+To help you choose, read [this blog post.](https://nolanlawson.com/2018/03/20/smaller-lodash-bundles-with-webpack-and-babel/)
+
+## Good ol’ script tags
+
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.min.js))
+ * [CDN copies](https://www.jsdelivr.com/projects/lodash) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/lodash/badge)](https://www.jsdelivr.com/package/npm/lodash)
+
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) and pick one that’s right for you.
+
+Finally, add a script tag pointing to the file you downloaded.
+
+```html
+<script src="lodash.js"></script>
+```
+
+## License
+
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE).

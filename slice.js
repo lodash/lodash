@@ -15,7 +15,7 @@
  *
  * var array = [1, 2, 3, 4]
  *
- * _.slice(array, 2);
+ * _.slice(array, 2)
  * // => [3, 4]
  */
 function slice(array, start, end) {

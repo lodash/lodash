@@ -15,7 +15,7 @@ function tail(array) {
   if (!length) {
     return []
   }
-  const [head, ...result] = array
+  const [, ...result] = array
   return result
 }
 

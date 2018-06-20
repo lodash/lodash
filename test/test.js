@@ -14830,7 +14830,7 @@
   }());
 
   /*--------------------------------------------------------------------------*/
-
+// sina
   QUnit.module('lodash.merge');
 
   (function() {
@@ -14911,8 +14911,28 @@
       assert.strictEqual(Foo.a, 1);
     });
 
+    QUnit.test('should merge first source object properties to function', function(assert) {
+      assert.expect(1);
+
+      const Foo = function () {};
+      var object = { prop: {} },
+        actual = _.merge({prop: Foo}, object);
+
+      assert.deepEqual(actual, object);
+    });
+
+    QUnit.test('should merge first and second source object properties to function', function(assert) {
+      assert.expect(1);
+
+      const fn = function () {};
+      var object = { prop: {} },
+        actual = _.merge({prop: fn}, {prop: fn}, object);
+
+      assert.deepEqual(actual, object);
+    });
+
     QUnit.test('should not merge onto function values of sources', function(assert) {
-      assert.expect(3);
+      assert.expect(2);
 
       var source1 = { 'a': function() {} },
           source2 = { 'a': { 'b': 2 } },
@@ -14921,8 +14941,6 @@
       assert.deepEqual(actual, { 'a': { 'b': 2 } });
 
       actual = _.merge(source1, source2);
-
-      assert.strictEqual(typeof actual.a, 'function');
       assert.strictEqual(actual.a.b, 2);
     });
 

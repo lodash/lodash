@@ -5,9 +5,9 @@ import baseGet from './.internal/baseGet.js'
  * `undefined`, the `defaultValue` is returned in its place.
  *
  * @since 3.7.0
- * @category Object
- * @param {Object} object The object to query.
- * @param {Array|string} path The path of the property to get.
+ * @category Collection
+ * @param {Array|Object} collection The collection to query.
+ * @param {Array|string|number} path The path of the property to get.
  * @param {*} [defaultValue] The value returned for `undefined` resolved values.
  * @returns {*} Returns the resolved value.
  * @see has, hasIn, set, unset
@@ -23,9 +23,15 @@ import baseGet from './.internal/baseGet.js'
  *
  * get(object, 'a.b.c', 'default')
  * // => 'default'
+ *
+ * const array = [{'a': 1}]
+ *
+ * get(array, [0, 'a'])
+ * // => 1
+ *
  */
-function get(object, path, defaultValue) {
-  const result = object == null ? undefined : baseGet(object, path)
+function get(collection, path, defaultValue) {
+  const result = collection == null ? undefined : baseGet(collection, path)
   return result === undefined ? defaultValue : result
 }
 

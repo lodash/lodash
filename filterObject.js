@@ -3,7 +3,7 @@
  * `predicate` returns truthy for. The predicate is invoked with three
  * arguments: (value, key, object).
  *
- * **Note:** If you want an object in return, consider `pickBy`.
+ * If you want an object in return, consider `pickBy`.
  *
  * @since 5.0.0
  * @category Object

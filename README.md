@@ -12,7 +12,8 @@
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-![alt text](https://i.imgur.com/3tFnLLe.png)
+
+<img src="https://i.imgur.com/3tFnLLe.png" width="50%" height="50%">
 
 ## Download
 
@@ -26,12 +27,15 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
 ## Installation
 
 In a browser:
-![alt text](https://i.imgur.com/H7iuTHa.png)
+
+<img src="https://i.imgur.com/H7iuTHa.png" width="40%" height="40%">
 
 Using npm:
-![alt text](https://i.imgur.com/kgJvK7l.png)
+
+<img src="https://i.imgur.com/kgJvK7l.png" width="40%" height="40%">
 
 In Node.js:
+
 ![alt text](https://i.imgur.com/fVzHj3Q.png)
 
 **Note:**<br>

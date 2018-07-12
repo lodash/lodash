@@ -32,7 +32,7 @@ In a browser:
 
 Using npm:
 
-<img src="https://i.imgur.com/kgJvK7l.png" width="40%" height="40%">
+<img src="https://i.imgur.com/kgJvK7l.png" width="30%" height="30%">
 
 In Node.js:
 

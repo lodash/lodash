@@ -12,11 +12,8 @@
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
-```shell
-$ npm run build
-$ lodash -o ./dist/lodash.js
-$ lodash core -o ./dist/lodash.core.js
-```
+
+<img src="https://i.imgur.com/3tFnLLe.png" width="50%" height="50%">
 
 ## Download
 
@@ -30,33 +27,16 @@ Review the [build differences](https://github.com/lodash/lodash/wiki/build-diffe
 ## Installation
 
 In a browser:
-```html
-<script src="lodash.js"></script>
-```
+
+<img src="https://i.imgur.com/H7iuTHa.png" width="40%" height="40%">
 
 Using npm:
-```shell
-$ npm i -g npm
-$ npm i --save lodash
-```
+
+<img src="https://i.imgur.com/kgJvK7l.png" width="30%" height="30%">
 
 In Node.js:
-```js
-// Load the full build.
-var _ = require('lodash');
-// Load the core build.
-var _ = require('lodash/core');
-// Load the FP build for immutable auto-curried iteratee-first data-last methods.
-var fp = require('lodash/fp');
 
-// Load method categories.
-var array = require('lodash/array');
-var object = require('lodash/fp/object');
-
-// Cherry-pick methods for smaller browserify/rollup/webpack bundles.
-var at = require('lodash/at');
-var curryN = require('lodash/fp/curryN');
-```
+![alt text](https://i.imgur.com/fVzHj3Q.png)
 
 **Note:**<br>
 Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.

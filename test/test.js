@@ -25206,6 +25206,22 @@
 
       assert.deepEqual(actual, [['a'], ['b'], ['c']]);
     });
+
+    var maxMs = 5;
+    QUnit.test(`should take less than ${maxMs} ms to prevent ReDoS`, function(assert) {
+      assert.expect(3);
+
+      var hugeWordLen = 50000;
+      var hugeWord = 'A'.repeat(hugeWordLen);
+      var startTime = Date.now();
+      assert.deepEqual(_.words(hugeWord+'AeiouAreVowels'), [hugeWord, 'Aeiou', 'Are', 'Vowels']);
+      assert.deepEqual(_.words(hugeWord+'ÆiouAreVowels'), [hugeWord, 'Æiou', 'Are', 'Vowels']);
+      var endTime = Date.now();
+      var timeSpent = endTime - startTime;
+
+      assert.ok(timeSpent < maxMs, `operation took ${timeSpent} ms`);
+    });
+
   }());
 
   /*--------------------------------------------------------------------------*/

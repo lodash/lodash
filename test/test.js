@@ -25359,21 +25359,21 @@
       assert.deepEqual(actual, [['a'], ['b'], ['c']]);
     });
 
-    var maxMs = 5;
-    QUnit.test(`should take less than ${maxMs} ms to prevent ReDoS`, function(assert) {
-      assert.expect(3);
+    QUnit.test('should prevent ReDoS', function(assert) {
+      assert.expect(2);
 
-      var hugeWordLen = 50000;
-      var hugeWord = 'A'.repeat(hugeWordLen);
-      var startTime = Date.now();
-      assert.deepEqual(_.words(hugeWord+'AeiouAreVowels'), [hugeWord, 'Aeiou', 'Are', 'Vowels']);
-      assert.deepEqual(_.words(hugeWord+'ÆiouAreVowels'), [hugeWord, 'Æiou', 'Are', 'Vowels']);
-      var endTime = Date.now();
-      var timeSpent = endTime - startTime;
+      var largeWordLen = 50000,
+          largeWord = 'A'.repeat(largeWordLen),
+          maxMs = 1000,
+          startTime = lodashStable.now();
 
-      assert.ok(timeSpent < maxMs, `operation took ${timeSpent} ms`);
+      assert.deepEqual(_.words(largeWord + 'ÆiouAreVowels'), [largeWord, 'Æiou', 'Are', 'Vowels']);
+
+      var endTime = lodashStable.now(),
+          timeSpent = endTime - startTime;
+
+      assert.ok(timeSpent < maxMs, 'operation took ' + timeSpent + 'ms');
     });
-
   }());
 
   /*--------------------------------------------------------------------------*/

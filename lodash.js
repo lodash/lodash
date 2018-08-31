@@ -6605,7 +6605,7 @@
     }
 
     /**
-     * Gets the value at `key`, unless `key` is "__proto__" or "prototype".
+     * Gets the value at `key`, unless `key` is "__proto__".
      *
      * @private
      * @param {Object} object The object to query.
@@ -6617,14 +6617,7 @@
         return;
       }
 
-      var value = object[key];
-
-      if (key == 'prototype' &&
-          value === objectProto) {
-        return;
-      }
-
-      return value;
+      return object[key];
     }
 
     /**

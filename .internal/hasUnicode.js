@@ -3,7 +3,9 @@ const rsAstralRange = '\\ud800-\\udfff'
 const rsComboMarksRange = '\\u0300-\\u036f'
 const reComboHalfMarksRange = '\\ufe20-\\ufe2f'
 const rsComboSymbolsRange = '\\u20d0-\\u20ff'
-const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange
+const rsComboMarksExtendedRange = '\\u1ab0-\\u1aff'
+const rsComboMarksSupplementRange = '\\u1dc0-\\u1dff'
+const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange + rsComboMarksExtendedRange + rsComboMarksSupplementRange
 const rsVarRange = '\\ufe0e\\ufe0f'
 
 /** Used to compose unicode capture groups. */

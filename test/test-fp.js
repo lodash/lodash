@@ -233,25 +233,14 @@
       assert.strictEqual(add('2')('1'), '12');
     });
 
-    QUnit.test('should only add a `placeholder` property if needed', function(assert) {
+    QUnit.test('should add a `placeholder` property', function(assert) {
       assert.expect(2);
 
       if (!document) {
-        var methodNames = _.keys(mapping.placeholder),
-            expected = _.map(methodNames, _.constant(true));
-
-        var actual = _.map(methodNames, function(methodName) {
-          var object = {};
-          object[methodName] = _[methodName];
-
-          var lodash = convert(object);
-          return methodName in lodash;
-        });
-
-        assert.deepEqual(actual, expected);
-
         var lodash = convert({ 'add': _.add });
-        assert.notOk('placeholder' in lodash);
+
+        assert.strictEqual(lodash.placeholder, lodash);
+        assert.strictEqual(lodash.add.placeholder, lodash)
       }
       else {
         skipAssert(assert, 2);
@@ -645,7 +634,16 @@
       });
     });
 
-    _.forOwn(mapping.placeholder, function(truthy, methodName) {
+    var methodNames = [
+      'bind',
+      'bindKey',
+      'curry',
+      'curryRight',
+      'partial',
+      'partialRight'
+    ]
+
+    _.each(methodNames, function(methodName) {
       var func = fp[methodName];
 
       QUnit.test('fp.' + methodName + '` should have a `placeholder` property', function(assert) {

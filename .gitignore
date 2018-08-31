@@ -2,4 +2,3 @@
 *.log
 doc/*.html
 node_modules
-.idea

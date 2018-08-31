@@ -240,7 +240,7 @@
         var lodash = convert({ 'add': _.add });
 
         assert.strictEqual(lodash.placeholder, lodash);
-        assert.strictEqual(lodash.add.placeholder, lodash)
+        assert.strictEqual(lodash.add.placeholder, lodash);
       }
       else {
         skipAssert(assert, 2);
@@ -641,7 +641,7 @@
       'curryRight',
       'partial',
       'partialRight'
-    ]
+    ];
 
     _.each(methodNames, function(methodName) {
       var func = fp[methodName];

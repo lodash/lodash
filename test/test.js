@@ -7555,13 +7555,31 @@
       }
     });
 
-    QUnit.test('should not merge `Object.prototype` properties', function(assert) {
-      assert.expect(1);
+    QUnit.test('should not indirectly merge builtin prototype properties', function(assert) {
+      assert.expect(2);
+
+      _.merge({}, { 'toString': { 'constructor': { 'prototype': { 'a': 1 } } } });
+
+      var actual = 'a' in funcProto;
+      delete funcProto.a;
+
+      assert.notOk(actual);
 
       _.merge({}, { 'constructor': { 'prototype': { 'a': 1 } } });
 
-      var actual = 'a' in objectProto;
+      actual = 'a' in objectProto;
       delete objectProto.a;
+
+      assert.notOk(actual);
+    });
+
+    QUnit.test('should not indirectly merge `Object` properties', function(assert) {
+      assert.expect(1);
+
+      _.merge({}, { 'constructor': { 'a': 1 } });
+
+      var actual = 'a' in Object;
+      delete Object.a;
 
       assert.notOk(actual);
     });

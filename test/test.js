@@ -4235,6 +4235,28 @@
       }, 128);
     });
 
+    QUnit.test('subsequent debounced calls in lazy mode return the first `func` result', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      var debounced = _.debounce(identity, 32, {lazy: true});
+      debounced('z');
+      debounced('k');
+      debounced('v');
+
+      setTimeout(function() {
+        assert.strictEqual(debounced('b'), 'z');
+      }, 64);
+
+      debounced('m');
+
+      setTimeout(function() {
+        assert.strictEqual(debounced('c'), 'b');
+        done();
+      }, 128);
+    });
+
     QUnit.test('should not immediately call `func` when `wait` is `0`', function(assert) {
       assert.expect(2);
 

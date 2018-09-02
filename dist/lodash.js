@@ -10311,7 +10311,8 @@
           lastInvokeTime = 0,
           leading = false,
           maxing = false,
-          trailing = true;
+          trailing = true,
+          storeArgs = true;
 
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
@@ -10328,6 +10329,7 @@
         var args = lastArgs,
             thisArg = lastThis;
 
+        storeArgs = true;
         lastArgs = lastThis = undefined;
         lastInvokeTime = time;
         result = func.apply(thisArg, args);
@@ -10401,8 +10403,11 @@
         var time = now(),
             isInvoking = shouldInvoke(time);
 
-        lastArgs = arguments;
-        lastThis = this;
+        if (storeArgs || !(options || {}).lazy) {
+          lastArgs = arguments;
+          lastThis = this;
+          storeArgs = false;
+        }
         lastCallTime = time;
 
         if (isInvoking) {

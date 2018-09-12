@@ -63,7 +63,7 @@ define(['./_assignMergeValue', './_cloneBuffer', './_cloneTypedArray', './_copyA
         if (isArguments(objValue)) {
           newValue = toPlainObject(objValue);
         }
-        else if (!isObject(objValue) || (srcIndex && isFunction(objValue))) {
+        else if (!isObject(objValue) || isFunction(objValue)) {
           newValue = initCloneObject(srcValue);
         }
       }

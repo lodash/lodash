@@ -1,8 +1,5 @@
 define([], function() {
 
-  /** Used as a safe reference for `undefined` in pre-ES5 environments. */
-  var undefined;
-
   /**
    * Gets the value at `key`, unless `key` is "__proto__".
    *
@@ -12,9 +9,11 @@ define([], function() {
    * @returns {*} Returns the property value.
    */
   function safeGet(object, key) {
-    return key == '__proto__'
-      ? undefined
-      : object[key];
+    if (key == '__proto__') {
+      return;
+    }
+
+    return object[key];
   }
 
   return safeGet;

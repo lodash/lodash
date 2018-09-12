@@ -1,4 +1,4 @@
-# lodash v4.17.10
+# lodash v4.17.11
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
@@ -20,11 +20,11 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.10/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.10/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.11/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.11/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.11/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.11/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.10/LICENSE) & supports modern environments.<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.11/LICENSE) & supports modern environments.<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
 ## Installation

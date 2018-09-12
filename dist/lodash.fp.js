@@ -216,8 +216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Function|Object} Returns the converted function or object.
 	 */
 	function baseConvert(util, name, func, options) {
-	  var setPlaceholder,
-	      isLib = typeof name == 'function',
+	  var isLib = typeof name == 'function',
 	      isObj = name === Object(name);
 
 	  if (isObj) {
@@ -238,10 +237,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'rearg': 'rearg' in options ? options.rearg : true
 	  };
 
-	  var forceCurry = ('curry' in options) && options.curry,
+	  var defaultHolder = isLib ? func : fallbackHolder,
+	      forceCurry = ('curry' in options) && options.curry,
 	      forceFixed = ('fixed' in options) && options.fixed,
 	      forceRearg = ('rearg' in options) && options.rearg,
-	      placeholder = isLib ? func : fallbackHolder,
 	      pristine = isLib ? func.runInContext() : undefined;
 
 	  var helpers = isLib ? func : {
@@ -546,7 +545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {Function} func The function to wrap.
 	   * @returns {Function} Returns the converted function.
 	   */
-	  function wrap(name, func) {
+	  function wrap(name, func, placeholder) {
 	    var result,
 	        realName = mapping.aliasToReal[name] || name,
 	        wrapped = func,
@@ -591,17 +590,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 	    }
 	    result.convert = createConverter(realName, func);
-	    if (mapping.placeholder[realName]) {
-	      setPlaceholder = true;
-	      result.placeholder = func.placeholder = placeholder;
-	    }
+	    result.placeholder = func.placeholder = placeholder;
+
 	    return result;
 	  }
 
 	  /*--------------------------------------------------------------------------*/
 
 	  if (!isObj) {
-	    return wrap(name, func);
+	    return wrap(name, func, defaultHolder);
 	  }
 	  var _ = func;
 
@@ -611,7 +608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    each(mapping.aryMethod[aryKey], function(key) {
 	      var func = _[mapping.remap[key] || key];
 	      if (func) {
-	        pairs.push([key, wrap(key, func)]);
+	        pairs.push([key, wrap(key, func, _)]);
 	      }
 	    });
 	  });
@@ -637,9 +634,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 
 	  _.convert = convertLib;
-	  if (setPlaceholder) {
-	    _.placeholder = placeholder;
-	  }
+	  _.placeholder = _;
+
 	  // Assign aliases.
 	  each(keys(_), function(key) {
 	    each(mapping.realToAlias[key] || [], function(alias) {
@@ -918,16 +914,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'update': true,
 	    'updateWith': true
 	  }
-	};
-
-	/** Used to track methods with placeholder support */
-	exports.placeholder = {
-	  'bind': true,
-	  'bindKey': true,
-	  'curry': true,
-	  'curryRight': true,
-	  'partial': true,
-	  'partialRight': true
 	};
 
 	/** Used to map real names to their aliases. */

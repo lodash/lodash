@@ -24,7 +24,7 @@ import isArrayLike from './isArrayLike.js'
  * // => false
  */
 function isJSON(value) {
-  return isObjectLike(value) && !isArrayLike(value) && obj.constructor === {}.constructor
+  return isObjectLike(value) && !isArrayLike(value) && value.constructor === {}.constructor
 }
 
 export default isJSON

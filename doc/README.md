@@ -3469,10 +3469,12 @@ var users = [
 ];
 
 _.sortBy(users, [function(o) { return o.user; }]);
-// => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
+// => objects for [{age: 36, user: 'barney'}, {age: 34, user: 'barney'}, {age: 48, user: 'fred'}, {age: 40, user: 'fred'}]
 
 _.sortBy(users, ['user', 'age']);
-// => objects for [['barney', 34], ['barney', 36], ['fred', 40], ['fred', 48]]
+// => objects for [{age: 34, user: 'barney'}, {age: 36, user: 'barney'}, {age: 40, user: 'fred'}, {age: 48, user: 'fred'}]
+
+
 ```
 ---
 

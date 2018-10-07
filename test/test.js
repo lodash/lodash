@@ -3855,7 +3855,7 @@
     });
 
     QUnit.test('should support placeholders', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       var curried = _.curry(fn),
           ph = curried.placeholder;
@@ -3864,6 +3864,26 @@
       assert.deepEqual(curried(ph, 2)(1)(ph, 4)(3), [1, 2, 3, 4]);
       assert.deepEqual(curried(ph, ph, 3)(ph, 2)(ph, 4)(1), [1, 2, 3, 4]);
       assert.deepEqual(curried(ph, ph, ph, 4)(ph, ph, 3)(ph, 2)(1), [1, 2, 3, 4]);
+      assert.deepEqual(curried(_, 2)(_, 3)(_, 4)(1), [1, 2, 3, 4]);
+      assert.deepEqual(curried(_, 3)(4, _)(_, 1)(2), [4, 3, 2, 1]);
+    });
+
+    QUnit.test('Should ignore arguments outside of original arity of fn', function(assert) {
+      assert.expect(5);
+
+      var returnsArgs = function(a, b) {
+        return [a, b];
+      }
+
+      var curried = _.curry(returnsArgs),
+          ph = curried.placeholder,
+          actual = [1, 2];
+
+      assert.deepEqual(actual, curried(1, ph)(2));
+      assert.deepEqual(actual, curried(1, ph, 0)(2));
+      assert.deepEqual(actual, curried(1, ph, 0, 2, 4)(2));
+      assert.deepEqual(actual, curried(1, ph, ph)(2));
+      assert.deepEqual(actual, curried(1, ph, ph)(ph, 2)(2));
     });
 
     QUnit.test('should persist placeholders', function(assert) {

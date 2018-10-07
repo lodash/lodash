@@ -1084,6 +1084,7 @@
         ++result;
       }
     }
+
     return result;
   }
 
@@ -1221,6 +1222,7 @@
         result[resIndex++] = index;
       }
     }
+
     return result;
   }
 
@@ -4680,14 +4682,17 @@
       while (++leftIndex < leftLength) {
         result[leftIndex] = partials[leftIndex];
       }
+
       while (++argsIndex < holdersLength) {
         if (isUncurried || argsIndex < argsLength) {
           result[holders[argsIndex]] = args[argsIndex];
         }
       }
+
       while (rangeLength--) {
         result[leftIndex++] = args[argsIndex++];
       }
+
       return result;
     }
 
@@ -5025,16 +5030,19 @@
         while (index--) {
           args[index] = arguments[index];
         }
+
         var holders = (length < 3 && args[0] !== placeholder && args[length - 1] !== placeholder)
           ? []
           : replaceHolders(args, placeholder);
 
         length -= holders.length;
-        if (length < arity) {
+
+        if (length < arity || holders.length) {
           return createRecurry(
             func, bitmask, createHybrid, wrapper.placeholder, undefined,
             args, holders, undefined, undefined, arity - length);
         }
+
         var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
         return apply(fn, this, args);
       }
@@ -5157,6 +5165,7 @@
         while (index--) {
           args[index] = arguments[index];
         }
+
         if (isCurried) {
           var placeholder = getHolder(wrapper),
               holdersCount = countHolders(args, placeholder);
@@ -5167,9 +5176,12 @@
         if (partialsRight) {
           args = composeArgsRight(args, partialsRight, holdersRight, isCurried);
         }
+
         length -= holdersCount;
-        if (isCurried && length < arity) {
+
+        if ((isCurried && length < arity) || holdersCount) {
           var newHolders = replaceHolders(args, placeholder);
+
           return createRecurry(
             func, bitmask, createHybrid, wrapper.placeholder, thisArg,
             args, newHolders, argPos, ary, arity - length
@@ -5179,17 +5191,21 @@
             fn = isBindKey ? thisBinding[func] : func;
 
         length = args.length;
+
         if (argPos) {
           args = reorder(args, argPos);
         } else if (isFlip && length > 1) {
           args.reverse();
         }
+
         if (isAry && ary < length) {
           args.length = ary;
         }
+
         if (this && this !== root && this instanceof wrapper) {
           fn = Ctor || createCtor(fn);
         }
+
         return fn.apply(thisBinding, args);
       }
       return wrapper;
@@ -5391,15 +5407,18 @@
       if (!(bitmask & WRAP_CURRY_BOUND_FLAG)) {
         bitmask &= ~(WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG);
       }
+
       var newData = [
         func, bitmask, thisArg, newPartials, newHolders, newPartialsRight,
         newHoldersRight, argPos, ary, arity
       ];
 
       var result = wrapFunc.apply(undefined, newData);
+
       if (isLaziable(func)) {
         setData(result, newData);
       }
+
       result.placeholder = placeholder;
       return setWrapToString(result, func, bitmask);
     }
@@ -5487,10 +5506,12 @@
      */
     function createWrap(func, bitmask, thisArg, partials, holders, argPos, ary, arity) {
       var isBindKey = bitmask & WRAP_BIND_KEY_FLAG;
+
       if (!isBindKey && typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       var length = partials ? partials.length : 0;
+
       if (!length) {
         bitmask &= ~(WRAP_PARTIAL_FLAG | WRAP_PARTIAL_RIGHT_FLAG);
         partials = holders = undefined;
@@ -10194,10 +10215,11 @@
     function curry(func, arity, guard) {
       arity = guard ? undefined : arity;
       var result = createWrap(func, WRAP_CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
+
       result.placeholder = curry.placeholder;
       return result;
     }
-
+    
     /**
      * This method is like `_.curry` except that arguments are applied to `func`
      * in the manner of `_.partialRight` instead of `_.partial`.

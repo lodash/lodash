@@ -19,6 +19,9 @@ import words from './words.js'
  *
  * snakeCase('--FOO-BAR--')
  * // => 'foo_bar'
+ *
+ * snakeCase('foo2bar')
+ * // => 'foo_2_bar'
  */
 const snakeCase = (string) => (
   words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => (

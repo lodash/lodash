@@ -3,7 +3,7 @@ import baseUniq from './.internal/baseUniq.js'
 /**
  * This method is like `uniq` except that it accepts `comparator` which
  * is invoked to compare elements of `array`. The order of result values is
- * determined by the order they occur in the array.The comparator is invoked
+ * determined by the order they occur in the array. The comparator is invoked
  * with two arguments: (arrVal, othVal).
  *
  * @since 4.0.0

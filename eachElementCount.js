@@ -29,4 +29,4 @@ function eachElementCount(array) {
   return elementCount;
 };
 
-// module.eports = { eachElementCount }
+export default eachElementCount

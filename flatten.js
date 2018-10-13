@@ -7,7 +7,7 @@ import baseFlatten from './.internal/baseFlatten.js'
  * @category Array
  * @param {Array} array The array to flatten.
  * @returns {Array} Returns the new flattened array.
- * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flattenDepth
+ * @see flatMap, flatMapDeep, flatMapDepth, flattenDeep, flat
  * @example
  *
  * flatten([1, [2, [3, [4]], 5]])

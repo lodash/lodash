@@ -11,7 +11,7 @@ import map from './map.js'
  * @param {Function} iteratee The function invoked per iteration.
  * @param {number} [depth=1] The maximum recursion depth.
  * @returns {Array} Returns the new flattened array.
- * @see flatMap, flatMapDeep, flatten, flattenDeep, flattenDepth, map, mapKeys, mapValues
+ * @see flatMap, flatMapDeep, flatten, flattenDeep, flat, map, mapKeys, mapValues
  * @example
  *
  * function duplicate(n) {

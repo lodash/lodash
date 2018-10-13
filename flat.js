@@ -13,13 +13,13 @@ import baseFlatten from './.internal/baseFlatten.js'
  *
  * const array = [1, [2, [3, [4]], 5]]
  *
- * flattenDepth(array, 1)
+ * flat(array, 1)
  * // => [1, 2, [3, [4]], 5]
  *
- * flattenDepth(array, 2)
+ * flat(array, 2)
  * // => [1, 2, 3, [4], 5]
  */
-function flattenDepth(array, depth) {
+function flat(array, depth) {
   const length = array == null ? 0 : array.length
   if (!length) {
     return []
@@ -28,4 +28,4 @@ function flattenDepth(array, depth) {
   return baseFlatten(array, depth)
 }
 
-export default flattenDepth
+export default flat

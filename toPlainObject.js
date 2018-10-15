@@ -22,7 +22,7 @@
  */
 function toPlainObject(value) {
   value = Object(value)
-  const result = {}
+  const result = Object.create(null)
   for (const key in value) {
     result[key] = value[value]
   }

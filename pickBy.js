@@ -20,7 +20,7 @@ import getAllKeysIn from './.internal/getAllKeysIn.js'
  */
 function pickBy(object, predicate) {
   if (object == null) {
-    return {}
+    return Object.create(null)
   }
   const props = map(getAllKeysIn(object), (prop) => [prop])
   return basePickBy(object, props, (value, path) => predicate(value, path[0]))

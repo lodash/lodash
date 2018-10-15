@@ -35,7 +35,7 @@ function countBy(collection, iteratee) {
       baseAssignValue(result, key, 1)
     }
     return result
-  }, {})
+  }, Object.create(null))
 }
 
 export default countBy

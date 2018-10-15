@@ -22,7 +22,7 @@
  */
 function mapValue(object, iteratee) {
   object = Object(object)
-  const result = {}
+  const result = Object.create(null)
 
   Object.keys(object).forEach((key) => {
     result[key] = iteratee(object[key], key, object)

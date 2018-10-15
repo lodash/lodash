@@ -41,14 +41,12 @@ function transform(object, iteratee, accumulator) {
     const Ctor = object && object.constructor
     if (isArrLike) {
       accumulator = isArr ? new Ctor : []
-    }
-    else if (isObject(object)) {
-      accumulator = typeof Ctor == 'function'
-        ? Object.create(Object.getPrototypeOf(object))
-        : {}
-    }
-    else {
-      accumulator = {}
+    } else if (isObject(object)) {
+      accumulator = typeof Ctor == 'function' ?
+        Object.create(Object.getPrototypeOf(object)) :
+        Object.create(null)
+    } else {
+      accumulator = Object.create(null)
     }
   }
   (isArrLike ? arrayEach : baseForOwn)(object, (value, index, object) =>

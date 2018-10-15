@@ -16,7 +16,7 @@ import basePick from './.internal/basePick.js'
  * // => { 'a': 1, 'c': 3 }
  */
 function pick(object, ...paths) {
-  return object == null ? {} : basePick(object, paths)
+  return object == null ? Object.create(null) : basePick(object, paths)
 }
 
 export default pick

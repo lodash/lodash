@@ -12,7 +12,7 @@
  * // => { 'a': 1, 'b': 2 }
  */
 function fromEntries(pairs) {
-  const result = {}
+  const result = Object.create(null)
   if (pairs == null) {
     return result
   }

@@ -21,7 +21,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
  */
 function invertBy(object, iteratee) {
-  const result = {}
+  const result = Object.create(null)
   Object.keys(object).forEach((key) => {
     const value = iteratee(object[key])
     if (hasOwnProperty.call(result, value)) {

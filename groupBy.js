@@ -30,7 +30,7 @@ function groupBy(collection, iteratee) {
       baseAssignValue(result, key, [value])
     }
     return result
-  }, {})
+  }, Object.create(null))
 }
 
 export default groupBy

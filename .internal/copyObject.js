@@ -13,12 +13,12 @@ import baseAssignValue from './baseAssignValue.js'
  */
 function copyObject(source, props, object, customizer) {
   const isNew = !object
-  object || (object = {})
+  object || (object = Object.create(null))
 
   for (const key of props) {
-    let newValue = customizer
-      ? customizer(object[key], source[key], key, object, source)
-      : undefined
+    let newValue = customizer ?
+      customizer(object[key], source[key], key, object, source) :
+      undefined
 
     if (newValue === undefined) {
       newValue = source[key]

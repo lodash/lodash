@@ -26,7 +26,7 @@ import reduce from './reduce.js'
 function keyBy(collection, iteratee) {
   return reduce(collection, (result, value, key) => (
     baseAssignValue(result, iteratee(value), value), result
-  ), {})
+  ), Object.create(null))
 }
 
 export default keyBy

@@ -19,7 +19,7 @@
  */
 function mapKey(object, iteratee) {
   object = Object(object)
-  const result = {}
+  const result = Object.create(null)
 
   Object.keys(object).forEach((key) => {
     const value = object[key]

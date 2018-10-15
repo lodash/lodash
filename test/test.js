@@ -16516,12 +16516,12 @@
     });
 
     QUnit.test('should not mutate `object`', function(assert) {
-      assert.expect(4);
+      assert.expect(5);
 
-      lodashStable.each(['a', ['a'], 'a.b', ['a.b']], function(path) {
-        var object = { 'a': { 'b': 2 } };
+      lodashStable.each(['a', ['a'], 'a.b', ['a.b'], 'c[0]'], function(path) {
+        var object = { 'a': { 'b': 2 }, c: [{ 'd': 0 }, { 'd': 1 }] };
         _.omit(object, path);
-        assert.deepEqual(object, { 'a': { 'b': 2 } });
+        assert.deepEqual(object, { 'a': { 'b': 2 }, c: [{ 'd': 0 }, { 'd': 1 }] });
       });
     });
   }());

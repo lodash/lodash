@@ -1,3 +1,5 @@
+import castArray from './castArray.js'
+
 /**
  * Composes a function that returns the result of invoking the given functions
  * with the `this` binding of the created function, where each successive
@@ -19,20 +21,11 @@
  * // => 9
  */
 function flow(funcs) {
-  const length = funcs ? funcs.length : 0
-  let index = length
-  while (index--) {
-    if (typeof funcs[index] != 'function') {
-      throw new TypeError('Expected a function')
-    }
+  if (funcs && funcs.includes((func) => typeof func !== 'function')) {
+    throw new TypeError('Expected a function')
   }
   return function(...args) {
-    let index = 0
-    let result = length ? funcs[index].apply(this, args) : args[0]
-    while (++index < length) {
-      result = funcs[index].call(this, result)
-    }
-    return result
+    return funcs ? funcs.reduce((prev, func) => func(...castArray(prev)), args) : args[0]
   }
 }
 

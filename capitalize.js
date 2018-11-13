@@ -13,8 +13,7 @@ import upperFirst from './upperFirst.js'
  * capitalize('FRED')
  * // => 'Fred'
  */
-function capitalize(string) {
-  return upperFirst(string.toLowerCase())
-}
+const capitalize = (string) =>  upperFirst(string.toLowerCase())
+
 
 export default capitalize

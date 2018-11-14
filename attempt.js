@@ -19,9 +19,9 @@ import isError from './isError.js'
  *   elements = []
  * }
  */
-function attempt(func, ...args) {
+const attempt = (func, ...args) => {
   try {
-    return func.apply(undefined, args)
+    return func(args)
   } catch (e) {
     return isError(e) ? e : new Error(e)
   }

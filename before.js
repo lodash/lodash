@@ -18,7 +18,7 @@ const before = (n, func) => {
   if (typeof func != 'function') {
     throw new TypeError('Expected a function')
   }
-  return (...args) => {
+  return function(...args) {
     if (--n > 0) {
       result = func.apply(this, args)
     }

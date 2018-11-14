@@ -30,7 +30,7 @@
  * console.log(castArray(array) === array)
  * // => true
  */
-function castArray(...args) {
+const castArray = (...args) => {
   if (!args.length) {
     return []
   }

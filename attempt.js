@@ -21,7 +21,8 @@ import isError from './isError.js'
  */
 const attempt = (func, ...args) => {
   try {
-    return func(args)
+    console.log(args)
+    return func(...args)
   } catch (e) {
     return isError(e) ? e : new Error(e)
   }

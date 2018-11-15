@@ -27,7 +27,7 @@ import map from './map.js'
  * func({ 'a': '1', 'b': '2' })
  * // => 'no match'
  */
-const cond = (pairs) => {
+function cond(pairs) {
   const length = pairs == null ? 0 : pairs.length
 
   pairs = !length ? [] : map(pairs, (pair) => {

@@ -23,6 +23,8 @@ import keys from './keys.js'
  * conformsTo(object, { 'b': function(n) { return n > 2 } })
  * // => false
  */
-const conformsTo = (object, source) =>  source == null || baseConformsTo(object, source, keys(source))
+function conformsTo(object, source) {
+  return source == null || baseConformsTo(object, source, keys(source))
+}
 
 export default conformsTo

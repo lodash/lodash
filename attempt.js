@@ -19,7 +19,7 @@ import isError from './isError.js'
  *   elements = []
  * }
  */
-const attempt = (func, ...args) => {
+function attempt(func, ...args) {
   try {
     console.log(args)
     return func(...args)

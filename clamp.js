@@ -15,7 +15,7 @@
  * clamp(10, -5, 5)
  * // => 5
  */
-const clamp = (number, lower, upper) => {
+function clamp(number, lower, upper) {
   number = +number
   lower = +lower
   upper = +upper

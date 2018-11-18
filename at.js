@@ -15,8 +15,6 @@ import baseAt from './.internal/baseAt.js'
  * at(object, ['a[0].b.c', 'a[1]'])
  * // => [3, 4]
  */
-function at(...paths) {
-  return baseAt(paths)
-}
+const at = (...paths) => baseAt(paths)
 
 export default at

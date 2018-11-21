@@ -17742,9 +17742,10 @@
     });
 
     QUnit.test('should support deep paths', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
-      assert.deepEqual(_.pick(nested, 'b.c'), { 'b': { 'c': 2 } });
+      assert.deepEqual(_.pick(nested, 'b'), { 'b': { 'c': 2, 'd': 3 } });
+      assert.deepEqual(_.pick(nested, ['b']), { 'b': { 'c': 2, 'd': 3 } });
     });
 
     QUnit.test('should support path arrays', function(assert) {

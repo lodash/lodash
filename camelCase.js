@@ -1,4 +1,4 @@
-import capitalize from './capitalize.js'
+import upperFirst from './upperFirst.js'
 import words from './words.js'
 
 /**
@@ -23,7 +23,7 @@ import words from './words.js'
 const camelCase = (string) => (
   words(`${string}`.replace(/['\u2019]/g, '')).reduce((result, word, index) => {
     word = word.toLowerCase()
-    return result + (index ? capitalize(word) : word)
+    return result + (index ? upperFirst(word) : word)
   }, '')
 )
 

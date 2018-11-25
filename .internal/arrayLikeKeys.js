@@ -31,8 +31,7 @@ function arrayLikeKeys(value, inherited) {
         !(skipIndexes && (
            // Safari 9 has enumerable `arguments.length` in strict mode.
            (key == 'length' ||
-           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) || // Skip index properties.
+           // Skip index properties.
            isIndex(key, length))
         ))) {
       result.push(key)

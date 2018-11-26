@@ -1,6 +1,9 @@
 {
-  "name": "lodash",
+  "name": "@aorinevo/lodash",
   "version": "4.17.4",
+  "repository": {
+    "url": "https://github.com/aorinevo/lodash.git"
+  },
   "license": "MIT",
   "private": true,
   "main": "lodash.js",

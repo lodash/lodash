@@ -10,8 +10,19 @@ function createRound(methodName) {
   return (number, precision) => {
     precision = precision == null ? 0 : (precision >= 0 ? Math.min(precision, 292) : Math.max(precision, -292))
     if (precision) {
-	    const modifier = Math.pow(10, precision)
-	    return func(number * modifier) / modifier
+      precision = Number.isInteger(precision) ? precision : Math.floor(precision)
+      let modifier = 1
+      if (precision > 0) {
+        for (let i = 0; i < precision; i++) {
+          number *= 10
+          modifier *= 10
+        }
+      } else {
+        modifier = Math.pow(10, precision)
+        number *= modifier
+      }
+
+      return func(number) / modifier
     }
     return func(number)
   }

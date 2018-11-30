@@ -1,6 +1,5 @@
 
 import Hash from './Hash.js'
-import ListCache from './ListCache.js'
 
 /**
  * Gets the data for `map`.
@@ -60,7 +59,7 @@ class MapCache {
     this.size = 0
     this.__data__ = {
       'hash': new Hash,
-      'map': new (Map || ListCache),
+      'map': new Map,
       'string': new Hash
     }
   }

@@ -77,7 +77,7 @@ class Stack {
     let data = this.__data__
     if (data instanceof ListCache) {
       const pairs = data.__data__
-      if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+      if (pairs.length < LARGE_ARRAY_SIZE - 1) {
         pairs.push([key, value])
         this.size = ++data.size
         return this

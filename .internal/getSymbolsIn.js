@@ -1,8 +1,5 @@
 import getSymbols from './getSymbols.js'
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-const nativeGetSymbols = Object.getOwnPropertySymbols
-
 /**
  * Creates an array of the own and inherited enumerable symbols of `object`.
  *
@@ -10,7 +7,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-const getSymbolsIn = !nativeGetSymbols ? () => [] : (object) => {
+function getSymbolsIn (object) {
   const result = []
   while (object) {
     result.push(...getSymbols(object))

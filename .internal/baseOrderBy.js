@@ -1,4 +1,4 @@
-import baseMap from './baseMap.js'
+import baseEach from './baseEach.js'
 import baseSortBy from './baseSortBy.js'
 import compareMultiple from './compareMultiple.js'
 
@@ -12,12 +12,15 @@ import compareMultiple from './compareMultiple.js'
  * @returns {Array} Returns the new sorted array.
  */
 function baseOrderBy(collection, iteratees, orders) {
-  let index = -1
+  let criteriaIndex = -1
+  let eachIndex = -1
   iteratees = iteratees.length ? iteratees : [(value) => value]
 
-  const result = baseMap(collection, (value, key, collection) => {
+  const result = isArrayLike(collection) ? new Array(collection.length) : []
+
+  baseEach(collection, (value) => {
     const criteria = iteratees.map((iteratee) => iteratee(value))
-    return { 'criteria': criteria, 'index': ++index, 'value': value }
+    result[++eachIndex] = { 'criteria': criteria, 'index': ++criteriaIndex, 'value': value }
   })
 
   return baseSortBy(result, (object, other) => compareMultiple(object, other, orders))

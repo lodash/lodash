@@ -1,10 +1,9 @@
 import Stack from './Stack.js'
 import arrayEach from './arrayEach.js'
 import assignValue from './assignValue.js'
-import baseAssign from './baseAssign.js'
-import baseAssignIn from './baseAssignIn.js'
 import cloneBuffer from './cloneBuffer.js'
 import copyArray from './copyArray.js'
+import copyObject from './copyObject.js'
 import cloneArrayBuffer from './cloneArrayBuffer.js'
 import cloneDataView from './cloneDataView.js'
 import cloneRegExp from './cloneRegExp.js'
@@ -186,8 +185,8 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       result = (isFlat || isFunc) ? {} : initCloneObject(value)
       if (!isDeep) {
         return isFlat
-          ? copySymbolsIn(value, baseAssignIn(result, value))
-          : copySymbols(value, baseAssign(result, value))
+          ? copySymbolsIn(value, copyObject(value, keysIn(value), result))
+          : copySymbols(value, Object.assign(result, value))
       }
     } else {
       if (isFunc || !cloneableTags[tag]) {

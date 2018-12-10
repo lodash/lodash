@@ -1,7 +1,7 @@
 const objectProto = Object.prototype
 const hasOwnProperty = objectProto.hasOwnProperty
 const toString = objectProto.toString
-const symToStringTag = typeof Symbol != 'undefined' ? Symbol.toStringTag : undefined
+const symToStringTag = Symbol.toStringTag
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -14,7 +14,7 @@ function baseGetTag(value) {
   if (value == null) {
     return value === undefined ? '[object Undefined]' : '[object Null]'
   }
-  if (!(symToStringTag && symToStringTag in Object(value))) {
+  if (!(symToStringTag in Object(value))) {
     return toString.call(value)
   }
   const isOwn = hasOwnProperty.call(value, symToStringTag)

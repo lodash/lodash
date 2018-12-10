@@ -4,8 +4,7 @@ import isSymbol from '../isSymbol.js'
 const INFINITY = 1 / 0
 
 /** Used to convert symbols to primitives and strings. */
-const symbolProto = Symbol ? Symbol.prototype : undefined
-const symbolToString = symbolProto ? symbolProto.toString : undefined
+const symbolToString = Symbol.prototype.toString
 
 /**
  * The base implementation of `toString` which doesn't convert nullish

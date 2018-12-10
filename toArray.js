@@ -13,7 +13,7 @@ const mapTag = '[object Map]'
 const setTag = '[object Set]'
 
 /** Built-in value references. */
-const symIterator = Symbol ? Symbol.iterator : undefined
+const symIterator = Symbol.iterator
 
 /**
  * Converts `value` to an array.

@@ -2,7 +2,7 @@ import Stack from './Stack.js'
 import equalArrays from './equalArrays.js'
 import equalByTag from './equalByTag.js'
 import equalObjects from './equalObjects.js'
-import getTag from './getTag.js'
+import baseGetTag from './baseGetTag.js'
 import isBuffer from '../isBuffer.js'
 import isTypedArray from '../isTypedArray.js'
 
@@ -34,8 +34,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
   let objIsArr = Array.isArray(object)
   const othIsArr = Array.isArray(other)
-  let objTag = objIsArr ? arrayTag : getTag(object)
-  let othTag = othIsArr ? arrayTag : getTag(other)
+  let objTag = objIsArr ? arrayTag : baseGetTag(object)
+  let othTag = othIsArr ? arrayTag : baseGetTag(other)
 
   objTag = objTag == argsTag ? objectTag : objTag
   othTag = othTag == argsTag ? objectTag : othTag

@@ -1,4 +1,4 @@
-import getTag from './.internal/getTag.js'
+import baseGetTag from './.internal/baseGetTag.js'
 import nodeTypes from './.internal/nodeTypes.js'
 import isObjectLike from './isObjectLike'
 
@@ -25,6 +25,6 @@ const nodeIsTypedArray = nodeTypes && nodeTypes.isTypedArray
  */
 const isTypedArray = nodeIsTypedArray
   ? (value) => nodeIsTypedArray(value)
-  : (value) => isObjectLike(value) && reTypedTag.test(getTag(value))
+  : (value) => isObjectLike(value) && reTypedTag.test(baseGetTag(value))
 
 export default isTypedArray

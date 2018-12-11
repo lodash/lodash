@@ -22,8 +22,7 @@ const arrayBufferTag = '[object ArrayBuffer]'
 const dataViewTag = '[object DataView]'
 
 /** Used to convert symbols to primitives and strings. */
-const symbolProto = Symbol ? Symbol.prototype : undefined
-const symbolValueOf = symbolProto ? symbolProto.valueOf : undefined
+const symbolValueOf = Symbol.prototype.valueOf
 
 /**
  * A specialized version of `baseIsEqualDeep` for comparing objects of

@@ -1,4 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
 
 /**
@@ -28,7 +28,7 @@ import isObjectLike from './isObjectLike.js'
  */
 function isNumber(value) {
   return typeof value == 'number' ||
-    (isObjectLike(value) && baseGetTag(value) == '[object Number]')
+    (isObjectLike(value) && getTag(value) == '[object Number]')
 }
 
 export default isNumber

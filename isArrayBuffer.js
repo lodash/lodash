@@ -1,4 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
 import nodeTypes from './.internal/nodeTypes.js'
 
@@ -22,6 +22,6 @@ const nodeIsArrayBuffer = nodeTypes && nodeTypes.isArrayBuffer
  */
 const isArrayBuffer = nodeIsArrayBuffer
   ? (value) => nodeIsArrayBuffer(value)
-  : (value) => isObjectLike(value) && baseGetTag(value) == '[object ArrayBuffer]'
+  : (value) => isObjectLike(value) && getTag(value) == '[object ArrayBuffer]'
 
 export default isArrayBuffer

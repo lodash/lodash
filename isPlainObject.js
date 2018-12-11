@@ -1,4 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
 
 /**
@@ -28,7 +28,7 @@ import isObjectLike from './isObjectLike.js'
  * // => true
  */
 function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != '[object Object]') {
+  if (!isObjectLike(value) || getTag(value) != '[object Object]') {
     return false
   }
   if (Object.getPrototypeOf(value) === null) {

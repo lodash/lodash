@@ -1,4 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike'
 
 /**
@@ -17,7 +17,7 @@ import isObjectLike from './isObjectLike'
  * // => false
  */
 function isArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == '[object Arguments]'
+  return isObjectLike(value) && getTag(value) == '[object Arguments]'
 }
 
 export default isArguments

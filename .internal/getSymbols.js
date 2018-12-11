@@ -1,5 +1,3 @@
-import filter from '../filter.js'
-
 /** Built-in value references. */
 const propertyIsEnumerable = Object.prototype.propertyIsEnumerable
 
@@ -18,7 +16,7 @@ function getSymbols (object) {
     return []
   }
   object = Object(object)
-  return filter(nativeGetSymbols(object), (symbol) => propertyIsEnumerable.call(object, symbol))
+  return nativeGetSymbols(object).filter((symbol) => propertyIsEnumerable.call(object, symbol))
 }
 
 export default getSymbols

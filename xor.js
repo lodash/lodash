@@ -1,4 +1,3 @@
-import filter from './filter.js'
 import baseXor from './.internal/baseXor.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
 
@@ -19,7 +18,7 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  * // => [1, 3]
  */
 function xor(...arrays) {
-  return baseXor(filter(arrays, isArrayLikeObject))
+  return baseXor(arrays.filter(isArrayLikeObject))
 }
 
 export default xor

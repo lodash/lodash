@@ -20650,6 +20650,45 @@
       assert.deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 
+    QUnit.test('should not invoke iteratees not needed to break ties', function(assert) {
+      // The behavior tested by this test case is an internal
+      // performance optimization and is not guaranteed by the
+      // specification.
+      assert.expect(1);
+
+      var input = [{ 'x': 2 }, { 'x': 1 }];
+      var actual = _.sortBy(input, 'x', function() {
+        throw new Error('should not be called');
+      });
+      var expected = [{ 'x': 1 }, { 'x': 2 }];
+      assert.deepEqual(actual, expected);
+    });
+
+    QUnit.test('should invoke tie-breaking iteratees selectively', function(assert) {
+      // The behavior tested by this test case is an internal
+      // performance optimization and is not guaranteed by the
+      // specification.
+      assert.expect(2);
+
+      var input = [
+        { 'x': 2, 'y': 2 },
+        { 'x': 2, 'y': 1 },
+        { 'x': 1, 'y': 3 },
+      ];
+      var invokedFallbackOnYValues = {};
+      var actual = _.sortBy(input, 'x', function(o) {
+        invokedFallbackOnYValues[o.y] = true;
+        return o.y;
+      });
+      var expected = [
+        { 'x': 1, 'y': 3 },
+        { 'x': 2, 'y': 1 },
+        { 'x': 2, 'y': 2 },
+      ];
+      assert.deepEqual(actual, expected);
+      assert.deepEqual(invokedFallbackOnYValues, { '1': true, '2': true });
+    });
+
     QUnit.test('should work with an object for `collection`', function(assert) {
       assert.expect(1);
 

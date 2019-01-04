@@ -3724,7 +3724,7 @@
 
       var result = baseMap(collection, function(value, key, collection) {
         var criteria = arrayMap(iteratees, function(iteratee) {
-          return iteratee(value);
+          return { 'computed': false, 'iteratee': iteratee, 'element': value };
         });
         return { 'criteria': criteria, 'index': ++index, 'value': value };
       });
@@ -4637,7 +4637,9 @@
           ordersLength = orders.length;
 
       while (++index < length) {
-        var result = compareAscending(objCriteria[index], othCriteria[index]);
+        var result = compareAscending(
+            forceCriterion(objCriteria[index]),
+            forceCriterion(othCriteria[index]));
         if (result) {
           if (index >= ordersLength) {
             return result;
@@ -4654,6 +4656,23 @@
       // This also ensures a stable sort in V8 and other engines.
       // See https://bugs.chromium.org/p/v8/issues/detail?id=90 for more details.
       return object.index - other.index;
+    }
+
+    /**
+     * Used by `compareMultiple` to evaluate a criterion, either reusing its
+     * computed result or computing it for the first time and then caching the
+     * result.
+     *
+     * @private
+     * @param {Object} criterion The criterion to evaluate
+     * @return {*} The comparison key
+     */
+    function forceCriterion(criterion) {
+      if (!criterion.computed) {
+        criterion.value = criterion.iteratee(criterion.element);
+        criterion.computed = true;
+      }
+      return criterion.value;
     }
 
     /**

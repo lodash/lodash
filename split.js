@@ -1,7 +1,9 @@
 import castSlice from './.internal/castSlice.js'
 import hasUnicode from './.internal/hasUnicode.js'
-import isRegExp from './isRegExp.js'
 import stringToArray from './.internal/stringToArray.js'
+import isNull from './isNull'
+import isRegExp from './isRegExp.js'
+import isUndefined from './isUndefined'
 
 /** Used as references for the maximum length and index of an array. */
 const MAX_ARRAY_LENGTH = 4294967295
@@ -23,14 +25,22 @@ const MAX_ARRAY_LENGTH = 4294967295
  * split('a-b-c', '-', 2)
  * // => ['a', 'b']
  */
+
+/**
+ *
+ * @param string
+ * @param separator
+ * @param limit
+ * @returns {*}
+ */
 function split(string, separator, limit) {
-  limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0
+  limit = isUndefined(limit) ? MAX_ARRAY_LENGTH : limit >>> 0
   if (!limit) {
     return []
   }
   if (string && (
         typeof separator == 'string' ||
-        (separator != null && !isRegExp(separator))
+        (!isNull(separator) && !isRegExp(separator))
       )) {
     if (!separator && hasUnicode(string)) {
       return castSlice(stringToArray(string), 0, limit)

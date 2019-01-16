@@ -12,9 +12,6 @@ import slice from './slice.js'
  * initial([1, 2, 3])
  * // => [1, 2]
  */
-function initial(array) {
-  const length = array == null ? 0 : array.length
-  return length ? slice(array, 0, -1) : []
-}
+const initial = array => Array.isArray(array) && array.length ? slice(array, 0, -1) : [];
 
 export default initial

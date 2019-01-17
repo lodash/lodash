@@ -374,6 +374,11 @@
     return Function('return function*(){}');
   });
 
+  /** Used to test async generator functions. */
+  var asyncGenFunc = lodashStable.attempt(function() {
+    return Function('return async function*(){}');
+  });
+
   /** Used to restore the `_` reference. */
   var oldDash = root._;
 
@@ -10618,13 +10623,19 @@
     QUnit.test('should return `true` for async functions', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.isFunction(asyncFunc), typeof asyncFunc == 'function');
+      assert.strictEqual(_.isFunction(asyncFunc()), typeof asyncFunc == 'function');
     });
 
     QUnit.test('should return `true` for generator functions', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.isFunction(genFunc), typeof genFunc == 'function');
+      assert.strictEqual(_.isFunction(genFunc()), typeof genFunc == 'function');
+    });
+
+    QUnit.test('should return `true` for async generator functions', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isFunction(asyncGenFunc()), typeof asyncGenFunc == 'function');
     });
 
     QUnit.test('should return `true` for the `Proxy` constructor', function(assert) {

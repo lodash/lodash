@@ -1,6 +1,6 @@
 import getTag from './.internal/getTag.js'
 import nodeTypes from './.internal/nodeTypes.js'
-import isObjectLike from './isObjectLike'
+import isObjectLike from './isObjectLike.js'
 
 /* Node.js helper references. */
 const nodeIsSet = nodeTypes && nodeTypes.isSet

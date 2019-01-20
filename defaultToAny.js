@@ -1,4 +1,4 @@
-import arrayReduce from './.internal/arrayReduce'
+import arrayReduce from './.internal/arrayReduce.js'
 import defaultTo from './defaultTo.js'
 
 /**

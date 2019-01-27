@@ -22,7 +22,7 @@
  */
 function keysIn(object) {
   const result = []
-  for (key in object) {
+  for (const key in object) {
     result.push(key)
   }
   return result

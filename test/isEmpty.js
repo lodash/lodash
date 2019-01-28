@@ -50,7 +50,7 @@ describe('isEmpty', function() {
     assert.strictEqual(isEmpty(args), false);
   });
 
-  it('should work with prototytpe objects', function() {
+  it('should work with prototype objects', function() {
     function Foo() {}
     Foo.prototype = { 'constructor': Foo };
 

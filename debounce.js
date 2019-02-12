@@ -78,7 +78,7 @@ function debounce(func, wait, options) {
   // Bypass `requestAnimationFrame` by explicitly setting `wait=0`.
   const useRAF = (!wait && wait !== 0 && typeof root.requestAnimationFrame === 'function')
 
-  if (typeof func != 'function') {
+  if (typeof func !== 'function') {
     throw new TypeError('Expected a function')
   }
   wait = +wait || 0
@@ -101,6 +101,7 @@ function debounce(func, wait, options) {
 
   function startTimer(pendingFunc, wait) {
     if (useRAF) {
+      root.cancelAnimationFrame(timerId);
       return root.requestAnimationFrame(pendingFunc)
     }
     return setTimeout(pendingFunc, wait)

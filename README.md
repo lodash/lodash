@@ -39,6 +39,7 @@ Using npm:
 $ npm i -g npm
 $ npm i lodash
 ```
+Note: add --save if you are using npm < 5.0.0
 
 In Node.js:
 ```js

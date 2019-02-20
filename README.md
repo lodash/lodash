@@ -37,8 +37,9 @@ In a browser:
 Using npm:
 ```shell
 $ npm i -g npm
-$ npm i --save lodash
+$ npm i lodash
 ```
+Note: add --save if you are using npm < 5.0.0
 
 In Node.js:
 ```js

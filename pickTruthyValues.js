@@ -11,7 +11,11 @@ import transform from './transform'
  * @returns {Object} Returns filtered object which does not containy any falsy values.
  * @example
  *
+ * pickTruthyValues({ a: null, b: undefined, c: '' })
+ * // => {}
  * 
+ * pickTruthyValues({ a: 'test', b: { c: '', d: null }, e: [ { f: 'test', g: null } ] })
+ * // => { a: 'test', e: [ { f: 'test' } ] }
  */
  function pickTruthyValues(object) {
   return transform(object, (result, value, key) => {

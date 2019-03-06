@@ -55,6 +55,7 @@ describe('lodash methods', function() {
   var returnArrays = [
     'at',
     'chunk',
+    'chunk2',
     'compact',
     'difference',
     'drop',

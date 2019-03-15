@@ -6,6 +6,7 @@ const CLONE_SYMBOLS_FLAG = 4
 
 /**
  * This method is like `clone` except that it recursively clones `value`.
+ * Object inheritance is preserved.
  *
  * @since 1.0.0
  * @category Lang

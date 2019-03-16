@@ -4669,7 +4669,8 @@
      */
     function forceCriterion(criterion) {
       if (!criterion.computed) {
-        criterion.value = criterion.iteratee(criterion.element);
+        const iteratee = criterion.iteratee;
+        criterion.value = iteratee(criterion.element);
         criterion.computed = true;
       }
       return criterion.value;

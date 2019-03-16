@@ -20650,6 +20650,16 @@
       assert.deepEqual(actual, [1, 2, 3, 4, undefined]);
     });
 
+    QUnit.test('should invoke iteratees with unbound `this`', function(assert) {
+      assert.expect(1);
+      var input = [1, 2];
+      var that = 'never invoked';
+      _.sortBy(input, function() {
+        that = this;
+      });
+      assert.strictEqual(that, function() { return this; }());
+    });
+
     QUnit.test('should not invoke iteratees not needed to break ties', function(assert) {
       // The behavior tested by this test case is an internal
       // performance optimization and is not guaranteed by the

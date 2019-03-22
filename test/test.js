@@ -15280,18 +15280,21 @@
     });
 
     QUnit.test('should provide `stack` to `customizer`', function(assert) {
-      assert.expect(1);
+      assert.expect(4);
 
-      var actual;
+      var actual = [];
 
-      _.mergeWith({}, { 'a': { 'b': 2 } }, function() {
-        actual = _.last(arguments);
+      _.mergeWith({}, { 'z': 1, 'a': { 'b': 2 } }, function() {
+        actual.push(_.last(arguments));
       });
 
-      assert.ok(isNpm
-        ? actual.constructor.name == 'Stack'
-        : actual instanceof mapCaches.Stack
-      );
+      assert.strictEqual(actual.length, 3);
+      _.each(actual, function(a) {
+        assert.ok(isNpm
+          ? a.constructor.name == 'Stack'
+          : a instanceof mapCaches.Stack
+        );
+      });
     });
 
     QUnit.test('should overwrite primitives with source object clones', function(assert) {

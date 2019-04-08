@@ -1,4 +1,5 @@
 import findLastIndex from './findLastIndex.js'
+import isArrayLike from './isArrayLike.js'
 
 /**
  * This method is like `find` except that it iterates over elements of

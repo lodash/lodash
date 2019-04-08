@@ -7,7 +7,9 @@
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
 [Code of Conduct](https://js.foundation/community/code-of-conduct) |
 [Twitter](https://twitter.com/bestiejs) |
-[Chat](https://gitter.im/lodash/lodash)
+[Chat](https://gitter.im/lodash/lodash) |
+[Components](https://bit.dev/lodash/lodash) 
+
 
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 

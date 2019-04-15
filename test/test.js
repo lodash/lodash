@@ -14,7 +14,7 @@
 
   /** Used as the maximum memoize cache size. */
   var MAX_MEMOIZE_SIZE = 500;
-
+ 
   /** Used as references for various `Number` constants. */
   var MAX_SAFE_INTEGER = 9007199254740991,
       MAX_INTEGER = 1.7976931348623157e+308;
@@ -19809,6 +19809,20 @@
           actual = lodashStable.map(results, lodashStable.isNaN);
 
       assert.deepEqual(actual, expected);
+    });
+    
+    QUnit.test('`_.' + methodName + '` should return Infinity without a precision', function(assert) {
+      assert.expect(1);
+
+      var actual = func(Infinity);
+      assert.strictEqual(actual, Infinity);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return Infinity with a precision', function(assert) {
+      assert.expect(1);
+
+      var actual = func(Infinity, 2);
+      assert.strictEqual(actual, Infinity);
     });
   });
 

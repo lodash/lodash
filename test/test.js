@@ -19810,6 +19810,50 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('`_.' + methodName + '` should return `Infinity` given `Infinity` regardless of `precision`', function(assert) {
+      assert.expect(6);
+
+      var actual = func(Infinity);
+      assert.strictEqual(actual, Infinity);
+
+      actual = func(Infinity, 0)
+      assert.strictEqual(actual, Infinity);
+
+      actual = func(Infinity, 2)
+      assert.strictEqual(actual, Infinity);
+
+      actual = func(Infinity, -2)
+      assert.strictEqual(actual, Infinity);
+
+      actual = func(Infinity, 2);
+      assert.strictEqual(actual, isFloor ? Infinity : Infinity);
+
+      actual = func(Infinity, 2);
+      assert.strictEqual(actual, isCeil ? Infinity : Infinity);
+    });
+
+    QUnit.test('`_.' + methodName + '` should return `-Infinity` given `-Infinity` regardless of `precision`', function(assert) {
+      assert.expect(6);
+
+      var actual = func(-Infinity);
+      assert.strictEqual(actual, -Infinity);
+
+      actual = func(-Infinity, 0)
+      assert.strictEqual(actual, -Infinity);
+
+      actual = func(-Infinity, 2)
+      assert.strictEqual(actual, -Infinity);
+
+      actual = func(-Infinity, -2)
+      assert.strictEqual(actual, -Infinity);
+
+      actual = func(-Infinity, 2);
+      assert.strictEqual(actual, isFloor ? -Infinity : -Infinity);
+
+      actual = func(-Infinity, 2);
+      assert.strictEqual(actual, isCeil ? -Infinity : -Infinity);
+    });
   });
 
   /*--------------------------------------------------------------------------*/

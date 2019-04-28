@@ -6,7 +6,7 @@ const MAX_ARRAY_LENGTH = 4294967295
 
 /**
  * Invokes the iteratee `n` times, returning an array of the results of
- * each invocation. The iteratee is invoked with one argumentindex).
+ * each invocation. The iteratee is invoked with one argument: (index).
  *
  * @since 0.1.0
  * @category Util

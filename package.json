@@ -16,5 +16,6 @@
     "John-David Dalton <john.david.dalton@gmail.com>",
     "Mathias Bynens <mathias@qiwi.be>"
   ],
+  "type": "module",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash-archive/lodash-cli for testing details.\"" }
 }

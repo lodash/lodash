@@ -59,7 +59,26 @@ var at = require('lodash/at');
 var curryN = require('lodash/fp/curryN');
 ```
 
-Looking for Lodash modules written in ES6 or smaller bundle sizes? Check out [lodash-es](https://www.npmjs.com/package/lodash-es).
+Looking for Lodash npm modules written in ES6 or smaller bundle sizes? Check out [lodash-es](https://www.npmjs.com/package/lodash-es).
+
+In [Deno](https://deno.land/):
+```js
+// Load the full build
+import _ from 'http://deno.land/x/lodash@4.17.11-es/lodash.js';
+
+// Load method categories
+import array from 'http://deno.land/x/lodash@4.17.11-es/array.js';
+import object from 'http://deno.land/x/lodash@4.17.11-es/object.js';
+
+// Cherry-pick specific methods
+import at from 'http://deno.land/x/lodash@4.17.11-es/at.js';
+import clone from 'http://deno.land/x/lodash@4.17.11-es/clone.js';
+
+// Or import them from the main entry
+import {at, clone} from 'http://deno.land/x/lodash@4.17.11-es/lodash.js';
+```
+Deno supports ES6 modules so pick any `-es` Lodash release tag. The `http://deno.land/x` service is just a redirect to the raw github files.
+
 
 ## Why Lodash?
 

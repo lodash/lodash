@@ -8,7 +8,7 @@ const rePropName = RegExp(
   // Or match property names within brackets.
   '\\[(?:' +
     // Match a non-string expression.
-    '([^"\'].*)' + '|' +
+    '([^"\'][^[]*)' + '|' +
     // Or match strings (supports escaping characters).
     '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
   ')\\]'+ '|' +

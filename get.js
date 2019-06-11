@@ -9,11 +9,12 @@ import baseGet from './.internal/baseGet.js'
  * @param {Object} object The object to query.
  * @param {Array|string} path The path of the property to get.
  * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+ * @param {Boolean} [isLoose] Determines whether or not to do a strict comparison to undefined
  * @returns {*} Returns the resolved value.
  * @see has, hasIn, set, unset
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 3 } }] }
+ * const object = { 'a': [{ 'b': { 'c': 3 } }], 'd': null }
  *
  * get(object, 'a[0].b.c')
  * // => 3
@@ -23,10 +24,15 @@ import baseGet from './.internal/baseGet.js'
  *
  * get(object, 'a.b.c', 'default')
  * // => 'default'
+ *
+ * get(object, 'd', [], true)
+ * // => []
  */
-function get(object, path, defaultValue) {
+function get(object, path, defaultValue, isLoose) {
   const result = object == null ? undefined : baseGet(object, path)
-  return result === undefined ? defaultValue : result
+  return isLoose
+    ? !!result ? result : defaultValue
+    : result === undefined ? defaultValue : result
 }
 
 export default get

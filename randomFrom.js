@@ -15,7 +15,7 @@ import flattenDeep from './flattenDeep.js'
  * // => 'F6ABG9'
  *
  * randomFrom(['Ford', ['#b2fe94', ['!@(%)', ['42']]]], 16)
- * => '#!)4dr(@!94e4)e@'
+ * // => '#!)4dr(@!94e4)e@'
  */
 function randomFrom(collection = '', length = 6) {
   let result = ''
@@ -34,3 +34,5 @@ function randomFrom(collection = '', length = 6) {
 
   return result
 }
+
+export default randomFrom

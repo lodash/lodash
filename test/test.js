@@ -4712,6 +4712,17 @@
       var actual = _.defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
       assert.deepEqual(actual.a, ['abc']);
     });
+
+    QUnit.test('should not indirectly merge `Object` properties', function(assert) {
+      assert.expect(1);
+
+      _.defaultsDeep({}, { 'constructor': { 'a': 1 } });
+
+      var actual = 'a' in Object;
+      delete Object.a;
+
+      assert.notOk(actual);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

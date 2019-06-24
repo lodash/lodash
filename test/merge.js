@@ -325,7 +325,7 @@ describe('merge', function() {
     assert.deepStrictEqual(actual, { 'a': [] });
   });
 
-  it('should not convert strings to arrays when merging arrays of `source`', function() {
+  it('should convert strings to arrays when merging arrays of `source`', function() {
     var object = { 'a': 'abcde' },
         actual = merge(object, { 'a': ['x', 'y', 'z'] });
 

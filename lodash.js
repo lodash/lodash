@@ -6610,7 +6610,7 @@
       if (key === 'constructor' && typeof object[key] === 'function') {
         return;
       }
-      
+
       if (key == '__proto__') {
         return;
       }

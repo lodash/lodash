@@ -1,4 +1,4 @@
-define(['./toInteger', './toNumber', './toString'], function(toInteger, toNumber, toString) {
+define(['./_root', './toInteger', './toNumber', './toString'], function(root, toInteger, toNumber, toString) {
 
   /* Built-in method references for those with the same name as other `lodash` methods. */
   var nativeIsFinite = root.isFinite,

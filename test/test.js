@@ -25481,7 +25481,7 @@
       assert.expect(2);
 
       var largeWordLen = 50000,
-          largeWord = 'A'.repeat(largeWordLen),
+          largeWord = _.repeat('A', largeWordLen),
           maxMs = 1000,
           startTime = lodashStable.now();
 

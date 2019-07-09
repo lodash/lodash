@@ -1,3 +1,4 @@
+import root from './_root.js';
 import toInteger from './toInteger.js';
 import toNumber from './toNumber.js';
 import toString from './toString.js';

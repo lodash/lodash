@@ -1,4 +1,5 @@
-var toInteger = require('./toInteger'),
+var root = require('./_root'),
+    toInteger = require('./toInteger'),
     toNumber = require('./toNumber'),
     toString = require('./toString');
 

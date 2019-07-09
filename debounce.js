@@ -174,6 +174,7 @@ define(['./isObject', './now', './toNumber'], function(isObject, now, toNumber) 
         }
         if (maxing) {
           // Handle invocations in a tight loop.
+          clearTimeout(timerId);
           timerId = setTimeout(timerExpired, wait);
           return invokeFunc(lastCallTime);
         }

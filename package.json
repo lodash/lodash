@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "4.17.11",
+  "version": "4.17.12",
   "description": "Lodash modular utilities.",
   "keywords": "modules, stdlib, util",
   "homepage": "https://lodash.com/",
@@ -8,10 +8,10 @@
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
   "main": "lodash.js",
-  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+  "author": "John-David Dalton <john.david.dalton@gmail.com>",
   "contributors": [
-    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
+    "John-David Dalton <john.david.dalton@gmail.com>",
+    "Mathias Bynens <mathias@qiwi.be>"
   ],
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash-archive/lodash-cli for testing details.\"" }
 }

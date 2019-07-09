@@ -23598,9 +23598,9 @@
     QUnit.test('`_.' + methodName + '` should convert binary/octal strings to numbers', function(assert) {
       assert.expect(1);
 
-      var numbers = [42, 5349, 1715004, 63, 42798, 27440068],
+      var numbers = [42, 5349, 1715004],
           transforms = [identity, pad],
-          values = ['0b101010', '0o12345', '0x1a2b3c', '   0b111111 ', '  0o123456    ', '    0x1a2b3c4  ' ];
+          values = ['0b101010', '0o12345', '0x1a2b3c'];
 
       var expected = lodashStable.map(numbers, function(n) {
         return lodashStable.times(8, lodashStable.constant(n));
@@ -23620,7 +23620,7 @@
       assert.expect(1);
 
       var transforms = [identity, pad, positive, negative],
-          values = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x', '+0b101010', '+0o12345', '+0x1a2b3c'];
+          values = ['0b', '0o', '0x', '0b1010102', '0o123458', '0x1a2b3x'];
 
       var expected = lodashStable.map(values, function(n) {
         return lodashStable.times(8, lodashStable.constant(isToNumber ? NaN : 0));

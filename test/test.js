@@ -346,12 +346,12 @@
 
   /** Used to test pseudo private map caches. */
   var mapCaches = (function() {
-    var MapCache = _.memoize.Cache;
+    var MapCache = (_.memoize || lodashStable.memoize).Cache;
     var result = {
       'Hash': new MapCache().__data__.hash.constructor,
       'MapCache': MapCache
     };
-    _.isMatchWith({ 'a': 1 }, { 'a': 1 }, function() {
+    (_.isMatchWith || lodashStable.isMatchWith)({ 'a': 1 }, { 'a': 1 }, function() {
       var stack = lodashStable.last(arguments);
       result.ListCache = stack.__data__.constructor;
       result.Stack = stack.constructor;

@@ -19828,13 +19828,13 @@
       var actual = func(Infinity);
       assert.strictEqual(actual, Infinity);
 
-      actual = func(Infinity, 0)
+      actual = func(Infinity, 0);
       assert.strictEqual(actual, Infinity);
 
-      actual = func(Infinity, 2)
+      actual = func(Infinity, 2);
       assert.strictEqual(actual, Infinity);
 
-      actual = func(Infinity, -2)
+      actual = func(Infinity, -2);
       assert.strictEqual(actual, Infinity);
 
       actual = func(Infinity, 2);
@@ -19850,13 +19850,13 @@
       var actual = func(-Infinity);
       assert.strictEqual(actual, -Infinity);
 
-      actual = func(-Infinity, 0)
+      actual = func(-Infinity, 0);
       assert.strictEqual(actual, -Infinity);
 
-      actual = func(-Infinity, 2)
+      actual = func(-Infinity, 2);
       assert.strictEqual(actual, -Infinity);
 
-      actual = func(-Infinity, -2)
+      actual = func(-Infinity, -2);
       assert.strictEqual(actual, -Infinity);
 
       actual = func(-Infinity, 2);
@@ -19869,16 +19869,16 @@
     QUnit.test('`_.' + methodName + '` should return `NaN` given `NaN` regardless of `precision`', function(assert) {
       assert.expect(6);
 
-      var actual = func(NaN)
+      var actual = func(NaN);
       assert.deepEqual(actual, NaN);
 
-      actual = func(NaN, 0)
+      actual = func(NaN, 0);
       assert.deepEqual(actual, NaN);
 
-      actual = func(NaN, 2)
+      actual = func(NaN, 2);
       assert.deepEqual(actual, NaN);
 
-      actual = func(NaN, -2)
+      actual = func(NaN, -2);
       assert.deepEqual(actual, NaN);
 
       actual = func(NaN, 2);
@@ -19887,8 +19887,6 @@
       actual = func(NaN, 2);
       assert.deepEqual(actual, isCeil ? NaN : NaN);
     });
-
-
   });
 
   /*--------------------------------------------------------------------------*/

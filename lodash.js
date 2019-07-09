@@ -17045,10 +17045,9 @@
       if (lodashFunc) {
         var key = lodashFunc.name + '';
         if (!hasOwnProperty.call(realNames, key)) {
-          return;
+          realNames[key] = [];
         }
-        var names = realNames[key] || (realNames[key] = []);
-        names.push({ 'name': methodName, 'func': lodashFunc });
+        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
       }
     });
 

@@ -2,7 +2,7 @@
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="es" -o ./`
- * Copyright JS Foundation and other contributors <https://js.foundation/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -45,7 +45,7 @@ import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.17.11';
+var VERSION = '4.17.12';
 
 /** Used to compose bitmasks for function metadata. */
 var WRAP_BIND_KEY_FLAG = 2;
@@ -606,10 +606,11 @@ arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(method
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
   var lodashFunc = lodash[methodName];
   if (lodashFunc) {
-    var key = (lodashFunc.name + ''),
-        names = realNames[key] || (realNames[key] = []);
-
-    names.push({ 'name': methodName, 'func': lodashFunc });
+    var key = lodashFunc.name + '';
+    if (!hasOwnProperty.call(realNames, key)) {
+      realNames[key] = [];
+    }
+    realNames[key].push({ 'name': methodName, 'func': lodashFunc });
   }
 });
 

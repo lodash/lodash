@@ -16,7 +16,7 @@
  * map([4, 8], square)
  * // => [16, 64]
  */
-const map => (array, iteratee) {
+const map = (array, iteratee) => {
   let index = -1
   const length = array == null ? 0 : array.length
   const result = new Array(length)

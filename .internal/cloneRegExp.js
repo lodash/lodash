@@ -9,7 +9,8 @@ const reFlags = /\w*$/
  * @returns {Object} Returns the cloned regexp.
  */
 function cloneRegExp(regexp) {
-  const result = new regexp.constructor(regexp.source, reFlags.exec(regexp))
+  const flags = reFlags.exec(regexp);
+  const result = new regexp.constructor(regexp.source, flags[0] === 'undefined' ? undefined : flags);
   result.lastIndex = regexp.lastIndex
   return result
 }

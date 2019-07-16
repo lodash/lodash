@@ -62,6 +62,7 @@ describe('clone methods', function() {
     'numbers': 0,
     'number objects': Object(0),
     'regexes': /a/gim,
+    'regexes without flags': /a/,
     'sets': set,
     'strings': 'a',
     'string objects': Object('a'),

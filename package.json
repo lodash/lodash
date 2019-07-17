@@ -1,6 +1,6 @@
 {
   "name": "lodash",
-  "version": "4.17.14",
+  "version": "4.17.15",
   "license": "MIT",
   "private": true,
   "main": "lodash.js",
@@ -30,7 +30,7 @@
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {
-    "async": "^2.6.2",
+    "async": "^2.6.3",
     "benchmark": "^2.1.3",
     "chalk": "^1.1.3",
     "cheerio": "^0.22.0",
@@ -45,14 +45,14 @@
     "istanbul": "0.4.5",
     "jquery": "^3.4.1",
     "jscs": "^3.0.7",
-    "lodash": "4.17.13",
+    "lodash": "4.17.14",
     "lodash-doc-globals": "^0.1.1",
     "markdown-doctest": "^0.9.1",
     "optional-dev-dependency": "^2.0.0",
     "platform": "^1.3.3",
     "qunit-extras": "^3.0.0",
     "qunitjs": "^2.1.0",
-    "request": "^2.79.0",
+    "request": "^2.88.0",
     "requirejs": "^2.3.6",
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.5",

@@ -9,7 +9,7 @@ const CLONE_SYMBOLS_FLAG = 4
  * This method is like `clone` except that it recursively clones `value`. and __proto__
  * Object inheritance is preserved.
  *
- * @since 1.0.0
+ * @since 5.0.0
  * @category Lang
  * @param {*} value The value to recursively clone.
  * @returns {*} Returns the deep cloned value with __proto__.

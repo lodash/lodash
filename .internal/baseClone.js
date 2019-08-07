@@ -19,6 +19,7 @@ import isBuffer from '../isBuffer.js'
 import isObject from '../isObject.js'
 import keys from '../keys.js'
 import keysIn from '../keysIn.js'
+import isTypedArray from '../isTypedArray'
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1
@@ -69,6 +70,18 @@ cloneableTags[errorTag] = cloneableTags[weakMapTag] = false
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
+
+function updateParentObject(object, key, value){
+  const tag = getTag(object)
+  if(tag === mapTag){
+    object.set(key, value)
+  }else if(tag === setTag){
+    object.add(value)
+  } else {
+    assignValue(object, key, value)
+  }
+}
+
 
 /**
  * Initializes an object clone based on its `toStringTag`.
@@ -148,93 +161,111 @@ function initCloneArray(array) {
  *  2 - Flatten inherited properties
  *  4 - Clone symbols
  * @param {Function} [customizer] The function to customize cloning.
- * @param {string} [key] The key of `value`.
- * @param {Object} [object] The parent object of `value`.
- * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
  * @returns {*} Returns the cloned value.
  */
-function baseClone(value, bitmask, customizer, key, object, stack) {
-  let result
+function baseClone(value, bitmask, customizer) {
+  let clonedWrapper = {};
+  const clonedKey = 'wrappedInstance';
+  const callStack = [{value,  key: clonedKey, object:clonedWrapper}];
   const isDeep = bitmask & CLONE_DEEP_FLAG
   const isFlat = bitmask & CLONE_FLAT_FLAG
   const isFull = bitmask & CLONE_SYMBOLS_FLAG
 
-  if (customizer) {
-    result = object ? customizer(value, key, object, stack) : customizer(value)
-  }
-  if (result !== undefined) {
-    return result
-  }
-  if (!isObject(value)) {
-    return value
-  }
-  const isArr = Array.isArray(value)
-  const tag = getTag(value)
-  if (isArr) {
-    result = initCloneArray(value)
-    if (!isDeep) {
-      return copyArray(value, result)
-    }
-  } else {
-    const isFunc = typeof value == 'function'
+  while(callStack.length){
+    let {value,  key, object, stack} = callStack.pop();
+    let result
 
-    if (isBuffer(value)) {
-      return cloneBuffer(value, isDeep)
+
+    if (customizer) {
+      result = (object !== clonedWrapper) ? customizer(value, key, object, stack) : customizer(value)
     }
-    if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-      result = (isFlat || isFunc) ? {} : initCloneObject(value)
+    if (result !== undefined) {
+      updateParentObject(object, key, result);
+      break;
+    }
+    if (!isObject(value)) {
+      updateParentObject(object, key, value);
+      break;
+    }
+    const isArr = Array.isArray(value)
+    const tag = getTag(value)
+    if (isArr) {
+      result = initCloneArray(value)
       if (!isDeep) {
-        return isFlat
-          ? copySymbolsIn(value, copyObject(value, keysIn(value), result))
-          : copySymbols(value, Object.assign(result, value))
+        updateParentObject(object, key, copyArray(value, result));
+        break;
       }
     } else {
-      if (isFunc || !cloneableTags[tag]) {
-        return object ? value : {}
+      const isFunc = typeof value == 'function'
+
+      if (isBuffer(value)) {
+        updateParentObject(object, key, cloneBuffer(value, isDeep))
+        break;
       }
-      result = initCloneByTag(value, tag, isDeep)
+      if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
+        result = (isFlat || isFunc) ? {} : initCloneObject(value)
+        if (!isDeep) {
+          updateParentObject(object, key, isFlat
+            ? copySymbolsIn(value, copyObject(value, keysIn(value), result))
+            : copySymbols(value, Object.assign(result, value))
+          )
+          break;
+        }
+      } else {
+        if (isFunc || !cloneableTags[tag]) {
+          updateParentObject(object, key, (object !== clonedWrapper) ? value : {})
+          break;
+        }
+        result = initCloneByTag(value, tag, isDeep)
+      }
     }
-  }
-  // Check for circular references and return its corresponding clone.
-  stack || (stack = new Stack)
-  const stacked = stack.get(value)
-  if (stacked) {
-    return stacked
-  }
-  stack.set(value, result)
-
-  if (tag == mapTag) {
-    value.forEach((subValue, key) => {
-      result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack))
-    })
-    return result
-  }
-
-  if (tag == setTag) {
-    value.forEach((subValue) => {
-      result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
-    })
-    return result
-  }
-
-  if (isTypedArray(value)) {
-    return result
-  }
-
-  const keysFunc = isFull
-    ? (isFlat ? getAllKeysIn : getAllKeys)
-    : (isFlat ? keysIn : keys)
-
-  const props = isArr ? undefined : keysFunc(value)
-  arrayEach(props || value, (subValue, key) => {
-    if (props) {
-      key = subValue
-      subValue = value[key]
+    // Check for circular references and return its corresponding clone.
+    stack || (stack = new Stack)
+    const stacked = stack.get(value)
+    if (stacked) {
+      updateParentObject(object, key, stacked)
+      break;
     }
-    // Recursively populate clone (susceptible to call stack limits).
-    assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack))
-  })
-  return result
+    stack.set(value, result)
+
+    if (tag == mapTag) {
+      value.forEach((subValue, key) => {
+        callStack.push({value: subValue, key, object: result, stack})
+      })
+      updateParentObject(object, key, result)
+      break;
+    }
+
+    if (tag == setTag) {
+      value.forEach((subValue) => {
+        callStack.push({value: subValue, key, object: result, stack})
+      })
+      updateParentObject(object, key, result)
+      break;
+    }
+
+    if (isTypedArray(value)) {
+      updateParentObject(object, key, result)
+      break;
+    }
+
+    const keysFunc = isFull
+      ? (isFlat ? getAllKeysIn : getAllKeys)
+      : (isFlat ? keysIn : keys)
+
+    const props = isArr ? undefined : keysFunc(value)
+    arrayEach(props || value, (subValue, key) => {
+      if (props) {
+        key = subValue
+        subValue = value[key]
+      }
+      callStack.push({value: subValue,  key, object: result, stack})
+    })
+
+    updateParentObject(object, key, result)
+  }
+
+  return clonedWrapper[clonedKey];
 }
 
 export default baseClone

@@ -23,7 +23,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *   { 'user': 'fred', 'active': false }
  * ]
  *
- * countBy(users, 'active');
+ * countBy(users, value => value.active);
  * // => { 'true': 2, 'false': 1 }
  */
 function countBy(collection, iteratee) {

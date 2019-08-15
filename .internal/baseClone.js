@@ -17,6 +17,7 @@ import getTag from './getTag.js'
 import initCloneObject from './initCloneObject.js'
 import isBuffer from '../isBuffer.js'
 import isObject from '../isObject.js'
+import isTypedArray from '../isTypedArray.js'
 import keys from '../keys.js'
 import keysIn from '../keysIn.js'
 

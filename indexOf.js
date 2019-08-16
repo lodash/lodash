@@ -1,4 +1,5 @@
 import baseIndexOf from './.internal/baseIndexOf.js'
+import toInteger from './toInteger.js'
 
 /**
  * Gets the index at which the first occurrence of `value` is found in `array`
@@ -26,7 +27,7 @@ function indexOf(array, value, fromIndex) {
   if (!length) {
     return -1
   }
-  let index = fromIndex == null ? 0 : +fromIndex
+  let index = fromIndex == null ? 0 : toInteger(fromIndex)
   if (index < 0) {
     index = Math.max(length + index, 0)
   }

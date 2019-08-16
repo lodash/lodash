@@ -1,4 +1,5 @@
 import slice from './slice.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates a slice of `array` with `n` elements dropped from the end.
@@ -24,7 +25,8 @@ import slice from './slice.js'
  */
 function dropRight(array, n=1) {
   const length = array == null ? 0 : array.length
-  return length ? slice(array, 0, n < 0 ? 0 : -n) : []
+  n = length - toInteger(n)
+  return length ? slice(array, 0, n < 0 ? 0 : n) : []
 }
 
 export default dropRight

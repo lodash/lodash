@@ -83,7 +83,7 @@ module.exports = {
       'requireReturnForObjectLiteral': false
     }],
 
-    // 'arrow-parens': ['error', 'always'],
+    'arrow-parens': ['error', 'always'],
 
     'arrow-spacing': ['error', {
       'after': true,

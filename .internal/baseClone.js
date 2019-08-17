@@ -20,7 +20,6 @@ import isObject from '../isObject.js'
 import isTypedArray from '../isTypedArray.js'
 import keys from '../keys.js'
 import keysIn from '../keysIn.js'
-import isTypedArray from '../isTypedArray.js'
 
 /** Used to compose bitmasks for cloning. */
 const CLONE_DEEP_FLAG = 1

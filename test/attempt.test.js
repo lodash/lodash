@@ -9,7 +9,7 @@ describe('attempt', () => {
   })
 
   it('should provide additional arguments to `func`', () => {
-    const actual = attempt(function() { return slice.call(arguments) }, 1, 2)
+    const actual = attempt((...rest) => slice.call(rest), 1, 2)
     assert.deepStrictEqual(actual, [1, 2])
   })
 

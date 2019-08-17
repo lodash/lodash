@@ -230,9 +230,9 @@ describe('debounce', () => {
       callCount = 0
     const  object = {}
 
-    const debounced = debounce(function(value) {
+    const debounced = debounce(function(...rest) {
       actual = [this]
-      push.apply(actual, arguments)
+      push.apply(actual, rest)
       return ++callCount != 2
     }, 32, { 'leading': true, 'maxWait': 64 })
 

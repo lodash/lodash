@@ -3,8 +3,8 @@ import { slice } from './utils.js'
 import flip from '../flip.js'
 
 describe('flip', () => {
-  function fn() {
-    return slice.call(arguments)
+  function fn(...rest) {
+    return slice.call(rest)
   }
 
   it('should flip arguments provided to `func`', () => {

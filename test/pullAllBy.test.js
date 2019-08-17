@@ -15,8 +15,8 @@ describe('pullAllBy', () => {
     let args
     const  array = [{ 'x': 1 }, { 'x': 2 }, { 'x': 3 }, { 'x': 1 }]
 
-    pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], function() {
-      args || (args = slice.call(arguments))
+    pullAllBy(array, [{ 'x': 1 }, { 'x': 3 }], (...rest) => {
+      args || (args = slice.call(rest))
     })
 
     assert.deepStrictEqual(args, [{ 'x': 1 }])

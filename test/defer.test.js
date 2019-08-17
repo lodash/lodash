@@ -16,8 +16,8 @@ describe('defer', () => {
   it('should provide additional arguments to `func`', (done) => {
     let args
 
-    defer(function() {
-      args = slice.call(arguments)
+    defer((...rest) => {
+      args = slice.call(rest)
     }, 1, 2)
 
     setTimeout(() => {

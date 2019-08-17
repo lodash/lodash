@@ -1,6 +1,7 @@
 import baseEach from './baseEach.js'
 import baseSortBy from './baseSortBy.js'
 import compareMultiple from './compareMultiple.js'
+import isArrayLike from '../isArrayLike.js'
 
 /**
  * The base implementation of `orderBy` without param guards.

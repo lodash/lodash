@@ -101,7 +101,7 @@ function debounce(func, wait, options) {
 
   function startTimer(pendingFunc, wait) {
     if (useRAF) {
-      root.cancelAnimationFrame(timerId);
+      root.cancelAnimationFrame(timerId)
       return root.requestAnimationFrame(pendingFunc)
     }
     return setTimeout(pendingFunc, wait)

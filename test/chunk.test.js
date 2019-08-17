@@ -42,9 +42,4 @@ describe('chunk', function() {
   it('should coerce `size` to an integer', function() {
     assert.deepStrictEqual(chunk(array, array.length / 4), [[0], [1], [2], [3], [4], [5]]);
   });
-
-  it('should work as an iteratee for methods like `_.map`', function() {
-    var actual = lodashStable.map([[1, 2], [3, 4]], chunk);
-    assert.deepStrictEqual(actual, [[[1], [2]], [[3], [4]]]);
-  });
 });

@@ -1,4 +1,5 @@
 import slice from './slice.js'
+import toInteger from './toInteger.js'
 
 /**
  * Creates an array of elements split into groups the length of `size`.
@@ -18,8 +19,8 @@ import slice from './slice.js'
  * chunk(['a', 'b', 'c', 'd'], 3)
  * // => [['a', 'b', 'c'], ['d']]
  */
-function chunk(array, size) {
-  size = Math.max(size, 0)
+function chunk(array, size = 1) {
+  size = Math.max(toInteger(size), 0)
   const length = array == null ? 0 : array.length
   if (!length || size < 1) {
     return []

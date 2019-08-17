@@ -38,13 +38,6 @@ describe('dropRight', function() {
     assert.deepStrictEqual(dropRight(array, 1.6), [1, 2]);
   });
 
-  it('should work as an iteratee for methods like `_.map`', function() {
-    var array = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
-        actual = lodashStable.map(array, dropRight);
-
-    assert.deepStrictEqual(actual, [[1, 2], [4, 5], [7, 8]]);
-  });
-
   it('should work in a lazy sequence', function() {
     var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 1),
         predicate = function(value) { values.push(value); return isEven(value); },

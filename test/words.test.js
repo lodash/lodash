@@ -1,6 +1,7 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
 import { burredLetters, _, stubArray } from './utils.js';
+import words from '../words.js'
 
 describe('words', function() {
   it('should match words containing Latin Unicode letters', function() {
@@ -9,36 +10,36 @@ describe('words', function() {
     });
 
     var actual = lodashStable.map(burredLetters, function(letter) {
-      return _.words(letter);
+      return words(letter);
     });
 
     assert.deepStrictEqual(actual, expected);
   });
 
   it('should support a `pattern`', function() {
-    assert.deepStrictEqual(_.words('abcd', /ab|cd/g), ['ab', 'cd']);
-    assert.deepStrictEqual(_.words('abcd', 'ab|cd'), ['ab']);
+    assert.deepStrictEqual(words('abcd', /ab|cd/g), ['ab', 'cd']);
+    assert.deepStrictEqual(Array.from(words('abcd', 'ab|cd')), ['ab']);
   });
 
   it('should work with compound words', function() {
-    assert.deepStrictEqual(_.words('12ft'), ['12', 'ft']);
-    assert.deepStrictEqual(_.words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
-    assert.deepStrictEqual(_.words('enable 6h format'), ['enable', '6', 'h', 'format']);
-    assert.deepStrictEqual(_.words('enable 24H format'), ['enable', '24', 'H', 'format']);
-    assert.deepStrictEqual(_.words('isISO8601'), ['is', 'ISO', '8601']);
-    assert.deepStrictEqual(_.words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
-    assert.deepStrictEqual(_.words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
-    assert.deepStrictEqual(_.words('walk500Miles'), ['walk', '500', 'Miles']);
-    assert.deepStrictEqual(_.words('xhr2Request'), ['xhr', '2', 'Request']);
-    assert.deepStrictEqual(_.words('XMLHttp'), ['XML', 'Http']);
-    assert.deepStrictEqual(_.words('XmlHTTP'), ['Xml', 'HTTP']);
-    assert.deepStrictEqual(_.words('XmlHttp'), ['Xml', 'Http']);
+    assert.deepStrictEqual(words('12ft'), ['12', 'ft']);
+    assert.deepStrictEqual(words('aeiouAreVowels'), ['aeiou', 'Are', 'Vowels']);
+    assert.deepStrictEqual(words('enable 6h format'), ['enable', '6', 'h', 'format']);
+    assert.deepStrictEqual(words('enable 24H format'), ['enable', '24', 'H', 'format']);
+    assert.deepStrictEqual(words('isISO8601'), ['is', 'ISO', '8601']);
+    assert.deepStrictEqual(words('LETTERSAeiouAreVowels'), ['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+    assert.deepStrictEqual(words('tooLegit2Quit'), ['too', 'Legit', '2', 'Quit']);
+    assert.deepStrictEqual(words('walk500Miles'), ['walk', '500', 'Miles']);
+    assert.deepStrictEqual(words('xhr2Request'), ['xhr', '2', 'Request']);
+    assert.deepStrictEqual(words('XMLHttp'), ['XML', 'Http']);
+    assert.deepStrictEqual(words('XmlHTTP'), ['Xml', 'HTTP']);
+    assert.deepStrictEqual(words('XmlHttp'), ['Xml', 'Http']);
   });
 
   it('should work with compound words containing diacritical marks', function() {
-    assert.deepStrictEqual(_.words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
-    assert.deepStrictEqual(_.words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
-    assert.deepStrictEqual(_.words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
+    assert.deepStrictEqual(words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are', 'Vowels']);
+    assert.deepStrictEqual(words('æiouAreVowels'), ['æiou', 'Are', 'Vowels']);
+    assert.deepStrictEqual(words('æiou2Consonants'), ['æiou', '2', 'Consonants']);
   });
 
   it('should not treat contractions as separate words', function() {
@@ -48,7 +49,7 @@ describe('words', function() {
       lodashStable.times(2, function(index) {
         var actual = lodashStable.map(postfixes, function(postfix) {
           var string = 'a b' + apos + postfix +  ' c';
-          return _.words(string[index ? 'toUpperCase' : 'toLowerCase']());
+          return words(string[index ? 'toUpperCase' : 'toLowerCase']());
         });
 
         var expected = lodashStable.map(postfixes, function(postfix) {
@@ -71,8 +72,8 @@ describe('words', function() {
         return [ordinal[index ? 'toUpperCase' : 'toLowerCase']()];
       });
 
-      var actual = lodashStable.map(expected, function(words) {
-        return _.words(words[0]);
+      var actual = lodashStable.map(expected, function(expectedWords) {
+        return words(expectedWords[0]);
       });
 
       assert.deepStrictEqual(actual, expected);
@@ -82,7 +83,7 @@ describe('words', function() {
   it('should not treat mathematical operators as words', function() {
     var operators = ['\xac', '\xb1', '\xd7', '\xf7'],
         expected = lodashStable.map(operators, stubArray),
-        actual = lodashStable.map(operators, _.words);
+        actual = lodashStable.map(operators, words);
 
     assert.deepStrictEqual(actual, expected);
   });
@@ -95,16 +96,9 @@ describe('words', function() {
     ];
 
     var expected = lodashStable.map(marks, stubArray),
-        actual = lodashStable.map(marks, _.words);
+        actual = lodashStable.map(marks, words);
 
     assert.deepStrictEqual(actual, expected);
-  });
-
-  it('should work as an iteratee for methods like `_.map`', function() {
-    var strings = lodashStable.map(['a', 'b', 'c'], Object),
-        actual = lodashStable.map(strings, _.words);
-
-    assert.deepStrictEqual(actual, [['a'], ['b'], ['c']]);
   });
 
   it('should prevent ReDoS', function() {
@@ -113,7 +107,7 @@ describe('words', function() {
         maxMs = 1000,
         startTime = lodashStable.now();
 
-    assert.deepStrictEqual(_.words(largeWord + 'ÆiouAreVowels'), [largeWord, 'Æiou', 'Are', 'Vowels']);
+    assert.deepStrictEqual(words(largeWord + 'ÆiouAreVowels'), [largeWord, 'Æiou', 'Are', 'Vowels']);
 
     var endTime = lodashStable.now(),
         timeSpent = endTime - startTime;

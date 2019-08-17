@@ -5,7 +5,7 @@ import isArrayLike from '../isArrayLike.js'
 
 describe('isArrayLike', () => {
   it('should return `true` for array-like values', () => {
-    let values = [args, [1, 2, 3], { '0': 'a', 'length': 1 }, 'a'],
+    const values = [args, [1, 2, 3], { '0': 'a', 'length': 1 }, 'a'],
       expected = lodashStable.map(values, stubTrue),
       actual = lodashStable.map(values, isArrayLike)
 
@@ -34,7 +34,7 @@ describe('isArrayLike', () => {
 
   it('should work with an array from another realm', () => {
     if (realm.object) {
-      let values = [realm.arguments, realm.array, realm.string],
+      const values = [realm.arguments, realm.array, realm.string],
         expected = lodashStable.map(values, stubTrue),
         actual = lodashStable.map(values, isArrayLike)
 

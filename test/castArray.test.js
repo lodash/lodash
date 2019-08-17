@@ -5,7 +5,7 @@ import castArray from '../castArray.js'
 
 describe('castArray', () => {
   it('should wrap non-array items in an array', () => {
-    let values = falsey.concat(true, 1, 'a', { 'a': 1 }),
+    const values = falsey.concat(true, 1, 'a', { 'a': 1 }),
       expected = lodashStable.map(values, (value) => [value]),
       actual = lodashStable.map(values, castArray)
 

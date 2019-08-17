@@ -3,7 +3,7 @@ import invert from '../invert.js'
 
 describe('invert', () => {
   it('should invert an object', () => {
-    let object = { 'a': 1, 'b': 2 },
+    const object = { 'a': 1, 'b': 2 },
       actual = invert(object)
 
     assert.deepStrictEqual(actual, { '1': 'a', '2': 'b' })
@@ -21,7 +21,7 @@ describe('invert', () => {
   })
 
   it('should return a wrapped value when chaining', () => {
-    let object = { 'a': 1, 'b': 2 },
+    const object = { 'a': 1, 'b': 2 },
       wrapped = _(object).invert()
 
     assert.ok(wrapped instanceof _)

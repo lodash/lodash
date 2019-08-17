@@ -33,7 +33,7 @@ describe('isWeakMap', () => {
   })
 
   it('should work for objects with a non-function `constructor` (test in IE 11)', () => {
-    let values = [false, true],
+    const values = [false, true],
       expected = lodashStable.map(values, stubFalse)
 
     const actual = lodashStable.map(values, (value) => isWeakMap({ 'constructor': value }))

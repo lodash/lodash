@@ -51,7 +51,7 @@ describe('memoize', () => {
   })
 
   it('should support a `resolver`', () => {
-    let fn = function(a, b, c) { return a + b + c },
+    const fn = function(a, b, c) { return a + b + c },
       memoized = memoize(fn, fn)
 
     assert.strictEqual(memoized(1, 2, 3), 6)
@@ -59,7 +59,7 @@ describe('memoize', () => {
   })
 
   it('should use `this` binding of function for `resolver`', () => {
-    let fn = function(a, b, c) { return a + this.b + this.c },
+    const fn = function(a, b, c) { return a + this.b + this.c },
       memoized = memoize(fn, fn)
 
     const object = { 'memoized': memoized, 'b': 2, 'c': 3 }
@@ -75,7 +75,7 @@ describe('memoize', () => {
   })
 
   it('should not error if `resolver` is nullish', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, stubTrue)
 
     const actual = lodashStable.map(values, (resolver, index) => {
@@ -106,12 +106,12 @@ describe('memoize', () => {
   })
 
   it('should cache the `__proto__` key', () => {
-    let array = [],
+    const array = [],
       key = '__proto__'
 
     lodashStable.times(2, (index) => {
-      let count = 0,
-        resolver = index ? identity : undefined
+      let count = 0
+      const  resolver = index ? identity : undefined
 
       const memoized = memoize(() => {
         count++
@@ -136,7 +136,7 @@ describe('memoize', () => {
 
     const memoized = memoize((object) => object.id)
 
-    let cache = memoized.cache,
+    const cache = memoized.cache,
       key1 = { 'id': 'a' },
       key2 = { 'id': 'b' }
 
@@ -155,7 +155,7 @@ describe('memoize', () => {
 
     const memoized = memoize((object) => object.id)
 
-    let key1 = { 'id': 'a' },
+    const key1 = { 'id': 'a' },
       key2 = { 'id': 'b' }
 
     memoized(key1)

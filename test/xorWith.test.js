@@ -4,7 +4,7 @@ import xorWith from '../xorWith.js'
 
 describe('xorWith', () => {
   it('should work with a `comparator`', () => {
-    let objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+    const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
       others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
       actual = xorWith(objects, others, lodashStable.isEqual)
 

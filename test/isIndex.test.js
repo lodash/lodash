@@ -8,7 +8,7 @@ describe('isIndex', () => {
 
   it('should return `true` for indexes', () => {
     if (func) {
-      let values = [[0], ['0'], ['1'], [3, 4], [MAX_SAFE_INTEGER - 1]],
+      const values = [[0], ['0'], ['1'], [3, 4], [MAX_SAFE_INTEGER - 1]],
         expected = lodashStable.map(values, stubTrue)
 
       const actual = lodashStable.map(values, (args) => func.apply(undefined, args))
@@ -19,7 +19,7 @@ describe('isIndex', () => {
 
   it('should return `false` for non-indexes', () => {
     if (func) {
-      let values = [['1abc'], ['07'], ['0001'], [-1], [3, 3], [1.1], [MAX_SAFE_INTEGER]],
+      const values = [['1abc'], ['07'], ['0001'], [-1], [3, 3], [1.1], [MAX_SAFE_INTEGER]],
         expected = lodashStable.map(values, stubFalse)
 
       const actual = lodashStable.map(values, (args) => func.apply(undefined, args))

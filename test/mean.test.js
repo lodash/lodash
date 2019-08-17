@@ -10,7 +10,7 @@ describe('mean', () => {
   })
 
   it('should return `NaN` when passing empty `array` values', () => {
-    let expected = lodashStable.map(empties, stubNaN),
+    const expected = lodashStable.map(empties, stubNaN),
       actual = lodashStable.map(empties, mean)
 
     assert.deepStrictEqual(actual, expected)

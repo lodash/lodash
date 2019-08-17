@@ -25,7 +25,7 @@ describe('chunk', () => {
   })
 
   it('should ensure the minimum `size` is `0`', () => {
-    let values = lodashStable.reject(falsey, lodashStable.isUndefined).concat(-1, -Infinity),
+    const values = lodashStable.reject(falsey, lodashStable.isUndefined).concat(-1, -Infinity),
       expected = lodashStable.map(values, stubArray)
 
     const actual = lodashStable.map(values, (n) => chunk(array, n))

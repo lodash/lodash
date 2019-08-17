@@ -8,7 +8,7 @@ describe('without', () => {
   })
 
   it('should use strict equality to determine the values to reject', () => {
-    let object1 = { 'a': 1 },
+    const object1 = { 'a': 1 },
       object2 = { 'b': 2 },
       array = [object1, object2]
 

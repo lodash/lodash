@@ -10,7 +10,7 @@ describe('deburr', () => {
   })
 
   it('should not deburr Latin mathematical operators', () => {
-    let operators = ['\xd7', '\xf7'],
+    const operators = ['\xd7', '\xf7'],
       actual = lodashStable.map(operators, deburr)
 
     assert.deepStrictEqual(actual, operators)

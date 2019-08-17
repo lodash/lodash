@@ -35,9 +35,9 @@ describe('drop', () => {
   })
 
   it('should work in a lazy sequence', () => {
-    var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 1),
-      predicate = function(value) { values.push(value); return isEven(value) },
-      values = [],
+    const array = lodashStable.range(1, LARGE_ARRAY_SIZE + 1),
+      predicate = function(value) { values.push(value); return isEven(value) }
+    let  values = [],
       actual = _(array).drop(2).drop().value()
 
     assert.deepEqual(actual, array.slice(3))

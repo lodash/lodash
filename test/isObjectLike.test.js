@@ -17,7 +17,7 @@ describe('isObjectLike', () => {
   })
 
   it('should return `false` for non-objects', () => {
-    let values = falsey.concat(true, _, slice, 1, 'a', symbol),
+    const values = falsey.concat(true, _, slice, 1, 'a', symbol),
       expected = lodashStable.map(values, stubFalse)
 
     const actual = lodashStable.map(values, (value, index) => index ? isObjectLike(value) : isObjectLike())

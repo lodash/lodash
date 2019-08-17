@@ -5,7 +5,7 @@ import toString from '../toString.js'
 
 describe('toString', () => {
   it('should treat nullish values as empty strings', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, stubString)
 
     const actual = lodashStable.map(values, (value, index) => index ? toString(value) : toString())
@@ -14,7 +14,7 @@ describe('toString', () => {
   })
 
   it('should preserve the sign of `0`', () => {
-    let values = [-0, Object(-0), 0, Object(0)],
+    const values = [-0, Object(-0), 0, Object(0)],
       expected = ['-0', '-0', '0', '0'],
       actual = lodashStable.map(values, toString)
 

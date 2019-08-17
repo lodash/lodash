@@ -4,7 +4,7 @@ import functions from '../functions.js'
 
 describe('functions', () => {
   it('should return the function names of an object', () => {
-    let object = { 'a': 'a', 'b': identity, 'c': /x/, 'd': noop },
+    const object = { 'a': 'a', 'b': identity, 'c': /x/, 'd': noop },
       actual = functions(object).sort()
 
     assert.deepStrictEqual(actual, ['b', 'd'])

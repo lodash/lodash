@@ -15,7 +15,7 @@ describe('indexOf', () => {
   })
 
   it('`_.indexOf` should work with a `fromIndex` >= `length`', () => {
-    let values = [6, 8, Math.pow(2, 32), Infinity],
+    const values = [6, 8, Math.pow(2, 32), Infinity],
       expected = lodashStable.map(values, lodashStable.constant([-1, -1, -1]))
 
     const actual = lodashStable.map(values, (fromIndex) => [
@@ -32,7 +32,7 @@ describe('indexOf', () => {
   })
 
   it('`_.indexOf` should work with a negative `fromIndex` <= `-length`', () => {
-    let values = [-6, -8, -Infinity],
+    const values = [-6, -8, -Infinity],
       expected = lodashStable.map(values, stubZero)
 
     const actual = lodashStable.map(values, (fromIndex) => indexOf(array, 1, fromIndex))

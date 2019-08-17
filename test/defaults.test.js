@@ -10,8 +10,8 @@ describe('defaults', () => {
   })
 
   it('should accept multiple sources', () => {
-    let expected = { 'a': 1, 'b': 2, 'c': 3 },
-      actual = defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 })
+    const expected = { 'a': 1, 'b': 2, 'c': 3 }
+    let  actual = defaults({ 'a': 1, 'b': 2 }, { 'b': 3 }, { 'c': 3 })
 
     assert.deepStrictEqual(actual, expected)
 
@@ -30,7 +30,7 @@ describe('defaults', () => {
   })
 
   it('should assign `undefined` values', () => {
-    let source = { 'a': undefined, 'b': 1 },
+    const source = { 'a': undefined, 'b': 1 },
       actual = defaults({}, source)
 
     assert.deepStrictEqual(actual, { 'a': undefined, 'b': 1 })

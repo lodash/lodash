@@ -5,7 +5,7 @@ import intersectionWith from '../intersectionWith.js'
 
 describe('intersectionWith', () => {
   it('should work with a `comparator`', () => {
-    let objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
+    const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }],
       others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }],
       actual = intersectionWith(objects, others, lodashStable.isEqual)
 
@@ -13,7 +13,7 @@ describe('intersectionWith', () => {
   })
 
   it('should preserve the sign of `0`', () => {
-    let array = [-0],
+    const array = [-0],
       largeArray = lodashStable.times(LARGE_ARRAY_SIZE, stubZero),
       others = [[0], largeArray],
       expected = lodashStable.map(others, lodashStable.constant(['-0']))

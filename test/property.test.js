@@ -43,7 +43,7 @@ describe('property', () => {
   })
 
   it('should preserve the sign of `0`', () => {
-    let object = { '-0': 'a', '0': 'b' },
+    const object = { '-0': 'a', '0': 'b' },
       props = [-0, Object(-0), 0, Object(0)]
 
     const actual = lodashStable.map(props, (key) => {
@@ -58,7 +58,7 @@ describe('property', () => {
     function fn() {}
     fn.toString = lodashStable.constant('fn')
 
-    let expected = [1, 2, 3, 4],
+    const expected = [1, 2, 3, 4],
       object = { 'null': 1, 'undefined': 2, 'fn': 3, '[object Object]': 4 },
       paths = [null, undefined, fn, {}]
 
@@ -82,7 +82,7 @@ describe('property', () => {
   })
 
   it('should return `undefined` when `object` is nullish', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, noop)
 
     lodashStable.each(['constructor', ['constructor']], (path) => {
@@ -95,7 +95,7 @@ describe('property', () => {
   })
 
   it('should return `undefined` for deep paths when `object` is nullish', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, noop)
 
     lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], (path) => {

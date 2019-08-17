@@ -8,7 +8,7 @@ describe('memoizeCapped', () => {
 
   it('should enforce a max cache size of `MAX_MEMOIZE_SIZE`', () => {
     if (func) {
-      let memoized = func(identity),
+      const memoized = func(identity),
         cache = memoized.cache
 
       lodashStable.times(MAX_MEMOIZE_SIZE, memoized)

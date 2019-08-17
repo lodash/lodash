@@ -27,8 +27,8 @@ describe('defer', () => {
   })
 
   it('should be cancelable', (done) => {
-    let pass = true,
-      timerId = defer(() => { pass = false })
+    let pass = true
+    const  timerId = defer(() => { pass = false })
 
     clearTimeout(timerId)
 

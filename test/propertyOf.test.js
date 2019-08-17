@@ -5,7 +5,7 @@ import propertyOf from '../propertyOf.js'
 
 describe('propertyOf', () => {
   it('should create a function that plucks a property value of a given key', () => {
-    let object = { 'a': 1 },
+    const object = { 'a': 1 },
       propOf = propertyOf(object)
 
     assert.strictEqual(propOf.length, 1)
@@ -15,7 +15,7 @@ describe('propertyOf', () => {
   })
 
   it('should pluck deep property values', () => {
-    let object = { 'a': { 'b': 2 } },
+    const object = { 'a': { 'b': 2 } },
       propOf = propertyOf(object)
 
     lodashStable.each(['a.b', ['a', 'b']], (path) => {
@@ -37,7 +37,7 @@ describe('propertyOf', () => {
   })
 
   it('should work with a non-string `path`', () => {
-    let array = [1, 2, 3],
+    const array = [1, 2, 3],
       propOf = propertyOf(array)
 
     lodashStable.each([1, [1]], (path) => {
@@ -46,7 +46,7 @@ describe('propertyOf', () => {
   })
 
   it('should preserve the sign of `0`', () => {
-    let object = { '-0': 'a', '0': 'b' },
+    const object = { '-0': 'a', '0': 'b' },
       props = [-0, Object(-0), 0, Object(0)]
 
     const actual = lodashStable.map(props, (key) => {
@@ -61,7 +61,7 @@ describe('propertyOf', () => {
     function fn() {}
     fn.toString = lodashStable.constant('fn')
 
-    let expected = [1, 2, 3, 4],
+    const expected = [1, 2, 3, 4],
       object = { 'null': 1, 'undefined': 2, 'fn': 3, '[object Object]': 4 },
       paths = [null, undefined, fn, {}]
 
@@ -76,7 +76,7 @@ describe('propertyOf', () => {
   })
 
   it('should pluck a key over a path', () => {
-    let object = { 'a.b': 1, 'a': { 'b': 2 } },
+    const object = { 'a.b': 1, 'a': { 'b': 2 } },
       propOf = propertyOf(object)
 
     lodashStable.each(['a.b', ['a.b']], (path) => {
@@ -85,7 +85,7 @@ describe('propertyOf', () => {
   })
 
   it('should return `undefined` when `object` is nullish', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, noop)
 
     lodashStable.each(['constructor', ['constructor']], (path) => {
@@ -99,7 +99,7 @@ describe('propertyOf', () => {
   })
 
   it('should return `undefined` for deep paths when `object` is nullish', () => {
-    let values = [, null, undefined],
+    const values = [, null, undefined],
       expected = lodashStable.map(values, noop)
 
     lodashStable.each(['constructor.prototype.valueOf', ['constructor', 'prototype', 'valueOf']], (path) => {

@@ -44,8 +44,8 @@ describe('debounce', () => {
   })
 
   it('should not immediately call `func` when `wait` is `0`', (done) => {
-    let callCount = 0,
-      debounced = debounce(() => { ++callCount }, 0)
+    let callCount = 0
+    const  debounced = debounce(() => { ++callCount }, 0)
 
     debounced()
     debounced()
@@ -58,8 +58,8 @@ describe('debounce', () => {
   })
 
   it('should apply default options', (done) => {
-    let callCount = 0,
-      debounced = debounce(() => { callCount++ }, 32, {})
+    let callCount = 0
+    const debounced = debounce(() => { callCount++ }, 32, {})
 
     debounced()
     assert.strictEqual(callCount, 0)
@@ -99,7 +99,7 @@ describe('debounce', () => {
   })
 
   it('subsequent leading debounced calls return the last `func` result', (done) => {
-    let debounced = debounce(identity, 32, { 'leading': true, 'trailing': false }),
+    const debounced = debounce(identity, 32, { 'leading': true, 'trailing': false }),
       results = [debounced('a'), debounced('b')]
 
     assert.deepStrictEqual(results, ['a', 'a'])
@@ -162,8 +162,8 @@ describe('debounce', () => {
   })
 
   it('should support `maxWait` in a tight loop', (done) => {
-    let limit = (argv || isPhantom) ? 1000 : 320,
-      withCount = 0,
+    const limit = (argv || isPhantom) ? 1000 : 320
+    let  withCount = 0,
       withoutCount = 0
 
     const withMaxWait = debounce(() => {
@@ -227,8 +227,8 @@ describe('debounce', () => {
 
   it('should invoke the trailing call with the correct arguments and `this` binding', (done) => {
     let actual,
-      callCount = 0,
-      object = {}
+      callCount = 0
+    const  object = {}
 
     const debounced = debounce(function(value) {
       actual = [this]

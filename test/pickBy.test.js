@@ -12,7 +12,7 @@ describe('pickBy', () => {
   })
 
   it('should not treat keys with dots as deep paths', () => {
-    let object = { 'a.b.c': 1 },
+    const object = { 'a.b.c': 1 },
       actual = pickBy(object, stubTrue)
 
     assert.deepStrictEqual(actual, { 'a.b.c': 1 })

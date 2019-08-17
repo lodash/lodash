@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { falsey, stubObject, primitives, stubTrue } from './utils.js';
+import { falsey, primitives, stubTrue } from './utils.js';
 import create from '../create.js';
 import keys from '../keys.js';
 
@@ -33,7 +33,10 @@ describe('create', function() {
 
     assert.ok(actual instanceof Circle);
     assert.ok(actual instanceof Shape);
-    assert.deepStrictEqual(Circle.prototype, expected);
+    assert.deepStrictEqual(Object.keys(Circle.prototype), Object.keys(expected));
+    Object.keys(expected).forEach(property => {
+      assert.strictEqual(Circle.prototype[property], expected[property]);
+    });
   });
 
   it('should assign own properties', function() {
@@ -43,7 +46,13 @@ describe('create', function() {
     }
     Foo.prototype.b = 2;
 
-    assert.deepStrictEqual(create({}, new Foo), { 'a': 1, 'c': 3 });
+    var actual = create({}, new Foo);
+    var expected = { 'a': 1, 'c': 3 };
+
+    assert.deepStrictEqual(Object.keys(actual), Object.keys(expected));
+    Object.keys(expected).forEach(property => {
+      assert.strictEqual(actual[property], expected[property]);
+    });    
   });
 
   it('should assign properties that shadow those of `prototype`', function() {
@@ -55,23 +64,23 @@ describe('create', function() {
   });
 
   it('should accept a falsey `prototype`', function() {
-    var expected = lodashStable.map(falsey, stubObject);
-
     var actual = lodashStable.map(falsey, function(prototype, index) {
       return index ? create(prototype) : create();
     });
 
-    assert.deepStrictEqual(actual, expected);
+    actual.forEach(value => {
+      assert.ok(value && typeof value === 'object');
+    });
   });
 
-  it('should ignore a primitive `prototype` and use an empty object instead', function() {
-    var expected = lodashStable.map(primitives, stubTrue);
-
+  it('should accept a primitive `prototype`', function() {
     var actual = lodashStable.map(primitives, function(value, index) {
-      return lodashStable.isPlainObject(index ? create(value) : create());
+      return index ? create(value) : create();
     });
 
-    assert.deepStrictEqual(actual, expected);
+    actual.forEach(value => {
+      assert.ok(value && typeof value === 'object');
+    });
   });
 
   it('should work as an iteratee for methods like `_.map`', function() {

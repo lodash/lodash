@@ -7,7 +7,7 @@ import getSymbols from './getSymbols.js'
  * @param {Object} object The object to query.
  * @returns {Array} Returns the array of symbols.
  */
-function getSymbolsIn (object) {
+function getSymbolsIn(object) {
   const result = []
   while (object) {
     result.push(...getSymbols(object))

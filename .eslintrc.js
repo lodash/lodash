@@ -6,6 +6,9 @@ module.exports = {
     'node': true,
     'mocha': true
   },
+  'globals': {
+    '_': 'readonly'
+  },
   'parserOptions': {
     'ecmaVersion': 6,
     'sourceType': 'module',

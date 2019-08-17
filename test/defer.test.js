@@ -1,40 +1,40 @@
-import assert from 'assert';
-import { slice } from './utils.js';
-import defer from '../defer.js';
+import assert from 'assert'
+import { slice } from './utils.js'
+import defer from '../defer.js'
 
-describe('defer', function() {
-  it('should defer `func` execution', function(done) {
-    var pass = false;
-    defer(function() { pass = true; });
+describe('defer', () => {
+  it('should defer `func` execution', (done) => {
+    let pass = false
+    defer(() => { pass = true })
 
-    setTimeout(function() {
-      assert.ok(pass);
-      done();
-    }, 32);
-  });
+    setTimeout(() => {
+      assert.ok(pass)
+      done()
+    }, 32)
+  })
 
-  it('should provide additional arguments to `func`', function(done) {
-    var args;
+  it('should provide additional arguments to `func`', (done) => {
+    let args
 
     defer(function() {
-      args = slice.call(arguments);
-    }, 1, 2);
+      args = slice.call(arguments)
+    }, 1, 2)
 
-    setTimeout(function() {
-      assert.deepStrictEqual(args, [1, 2]);
-      done();
-    }, 32);
-  });
+    setTimeout(() => {
+      assert.deepStrictEqual(args, [1, 2])
+      done()
+    }, 32)
+  })
 
-  it('should be cancelable', function(done) {
-    var pass = true,
-        timerId = defer(function() { pass = false; });
+  it('should be cancelable', (done) => {
+    let pass = true,
+      timerId = defer(() => { pass = false })
 
-    clearTimeout(timerId);
+    clearTimeout(timerId)
 
-    setTimeout(function() {
-      assert.ok(pass);
-      done();
-    }, 32);
-  });
-});
+    setTimeout(() => {
+      assert.ok(pass)
+      done()
+    }, 32)
+  })
+})

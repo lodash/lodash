@@ -45,14 +45,7 @@ const rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])'
 const rsSeq = rsOptVar + reOptMod + rsOptJoin
 const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
 
-/**
- * Splits a Unicode `string` into an array of its words.
- *
- * @private
- * @param {string} The string to inspect.
- * @returns {Array} Returns the words of `string`.
- */
-const unicodeWords = RegExp.prototype.exec.bind(RegExp([
+const reUnicodeWords = RegExp([
   `${rsUpper}?${rsLower}+${rsOptContrLower}(?=${[rsBreak, rsUpper, '$'].join('|')})`,
   `${rsMiscUpper}+${rsOptContrUpper}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
   `${rsUpper}?${rsMiscLower}+${rsOptContrLower}`,
@@ -61,6 +54,17 @@ const unicodeWords = RegExp.prototype.exec.bind(RegExp([
   rsOrdLower,
   `${rsDigit}+`,
   rsEmoji
-].join('|'), 'g'))
+].join('|'), 'g')
+
+/**
+ * Splits a Unicode `string` into an array of its words.
+ *
+ * @private
+ * @param {string} The string to inspect.
+ * @returns {Array} Returns the words of `string`.
+ */
+function unicodeWords(string) {
+  return string.match(reUnicodeWords)
+}
 
 export default unicodeWords

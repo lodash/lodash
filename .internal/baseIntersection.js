@@ -47,16 +47,16 @@ function baseIntersection(arrays, iteratee, comparator) {
 
     value = (comparator || value !== 0) ? value : 0
     if (!(seen
-          ? cacheHas(seen, computed)
-          : includes(result, computed, comparator)
-        )) {
+      ? cacheHas(seen, computed)
+      : includes(result, computed, comparator)
+    )) {
       othIndex = othLength
       while (--othIndex) {
         const cache = caches[othIndex]
         if (!(cache
-              ? cacheHas(cache, computed)
-              : includes(arrays[othIndex], computed, comparator))
-            ) {
+          ? cacheHas(cache, computed)
+          : includes(arrays[othIndex], computed, comparator))
+        ) {
           continue outer
         }
       }

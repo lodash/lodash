@@ -60,9 +60,9 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
     }
     // Recursively compare objects (susceptible to call stack limits).
     if (!(compared === undefined
-          ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
-          : compared
-        )) {
+      ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
+      : compared
+    )) {
       result = false
       break
     }

@@ -69,7 +69,7 @@ describe('create', function() {
     });
 
     actual.forEach(value => {
-      assert.ok(value && typeof value === 'object');
+      assert.ok(lodashStable.isObject(value));
     });
   });
 
@@ -79,7 +79,7 @@ describe('create', function() {
     });
 
     actual.forEach(value => {
-      assert.ok(value && typeof value === 'object');
+      assert.ok(lodashStable.isObject(value));
     });
   });
 

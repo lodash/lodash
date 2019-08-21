@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { args, typedArrays, stubTrue, defineProperty, document } from './utils.js';
+import { args, typedArrays, stubTrue, defineProperty, document, root } from './utils.js';
 import merge from '../merge.js';
 import isArguments from '../isArguments.js';
 

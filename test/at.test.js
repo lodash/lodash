@@ -43,7 +43,7 @@ describe('at', function() {
   });
 
   it('should work with a falsey `object` when keys are given', function() {
-    var expected = lodashStable.map(falsey, lodashStable.constant(Array(4)));
+    var expected = lodashStable.map(falsey, lodashStable.constant(Array(4).fill(undefined)));
 
     var actual = lodashStable.map(falsey, function(object) {
       try {

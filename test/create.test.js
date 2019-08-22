@@ -35,7 +35,7 @@ describe('create', function() {
     assert.ok(actual instanceof Circle);
     assert.ok(actual instanceof Shape);
     assert.deepStrictEqual(Object.keys(Circle.prototype), properties);
-    properties.forEach(property => {
+    properties.forEach((property) => {
       assert.strictEqual(Circle.prototype[property], expected[property]);
     });
   });
@@ -52,7 +52,7 @@ describe('create', function() {
     var properties = Object.keys(expected);
 
     assert.deepStrictEqual(Object.keys(actual), properties);
-    properties.forEach(property => {
+    properties.forEach((property) => {
       assert.strictEqual(actual[property], expected[property]);
     });    
   });
@@ -70,7 +70,7 @@ describe('create', function() {
       return index ? create(prototype) : create();
     });
 
-    actual.forEach(value => {
+    actual.forEach((value) => {
       assert.ok(lodashStable.isObject(value));
     });
   });
@@ -80,7 +80,7 @@ describe('create', function() {
       return index ? create(value) : create();
     });
 
-    actual.forEach(value => {
+    actual.forEach((value) => {
       assert.ok(lodashStable.isObject(value));
     });
   });

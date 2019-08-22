@@ -733,6 +733,7 @@ export {
   params,
   push,
   realm,
+  root,
   slice,
   strictArgs,
   arrayBuffer,

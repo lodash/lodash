@@ -27,14 +27,15 @@ describe('create', function() {
 
   it('should assign `properties` to the created object', function() {
     var expected = { 'constructor': Circle, 'radius': 0 };
+    var properties = Object.keys(expected);
     Circle.prototype = create(Shape.prototype, expected);
 
     var actual = new Circle;
 
     assert.ok(actual instanceof Circle);
     assert.ok(actual instanceof Shape);
-    assert.deepStrictEqual(Object.keys(Circle.prototype), Object.keys(expected));
-    Object.keys(expected).forEach(property => {
+    assert.deepStrictEqual(Object.keys(Circle.prototype), properties);
+    properties.forEach(property => {
       assert.strictEqual(Circle.prototype[property], expected[property]);
     });
   });
@@ -48,9 +49,10 @@ describe('create', function() {
 
     var actual = create({}, new Foo);
     var expected = { 'a': 1, 'c': 3 };
+    var properties = Object.keys(expected);
 
-    assert.deepStrictEqual(Object.keys(actual), Object.keys(expected));
-    Object.keys(expected).forEach(property => {
+    assert.deepStrictEqual(Object.keys(actual), properties);
+    properties.forEach(property => {
       assert.strictEqual(actual[property], expected[property]);
     });    
   });

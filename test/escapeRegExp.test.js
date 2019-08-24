@@ -4,7 +4,7 @@ import { stubString } from './utils.js'
 import escapeRegExp from '../escapeRegExp.js'
 
 describe('escapeRegExp', () => {
-  let escaped = '\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
+  const escaped = '\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
     unescaped = '^$.*+?()[]{}|\\'
 
   it('should escape values', () => {
@@ -16,7 +16,7 @@ describe('escapeRegExp', () => {
   })
 
   it('should return an empty string for empty values', () => {
-    let values = [, null, undefined, ''],
+    const values = [, null, undefined, ''],
       expected = lodashStable.map(values, stubString)
 
     const actual = lodashStable.map(values, (value, index) => index ? escapeRegExp(value) : escapeRegExp())

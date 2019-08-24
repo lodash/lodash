@@ -4,7 +4,7 @@ import { empties, stubOne, falsey, args, LARGE_ARRAY_SIZE, square, identity } fr
 import at from '../at.js'
 
 describe('at', () => {
-  let array = ['a', 'b', 'c'],
+  const array = ['a', 'b', 'c'],
     object = { 'a': [{ 'b': { 'c': 3 } }, 4] }
 
   it('should return the elements corresponding to the specified keys', () => {
@@ -24,7 +24,7 @@ describe('at', () => {
       result[value] = 1
     }, [])
 
-    let expected = lodashStable.map(values, stubOne),
+    const expected = lodashStable.map(values, stubOne),
       actual = at(array, values)
 
     assert.deepStrictEqual(actual, expected)
@@ -78,12 +78,12 @@ describe('at', () => {
   })
 
   it('should work in a lazy sequence', () => {
-    let largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
+    const largeArray = lodashStable.range(LARGE_ARRAY_SIZE),
       smallArray = array
 
     lodashStable.each([[2], ['2'], [2, 1]], (paths) => {
       lodashStable.times(2, (index) => {
-        let array = index ? largeArray : smallArray,
+        const array = index ? largeArray : smallArray,
           wrapped = _(array).map(identity).at(paths)
 
         assert.deepEqual(wrapped.value(), at(_.map(array, identity), paths))
@@ -92,15 +92,15 @@ describe('at', () => {
   })
 
   it('should support shortcut fusion', () => {
-    let array = lodashStable.range(LARGE_ARRAY_SIZE),
-      count = 0,
+    let count = 0
+    const array = lodashStable.range(LARGE_ARRAY_SIZE),
       iteratee = function(value) { count++; return square(value) },
       lastIndex = LARGE_ARRAY_SIZE - 1
 
     lodashStable.each([lastIndex, `${lastIndex}`, LARGE_ARRAY_SIZE, []], (n, index) => {
       count = 0
-      let actual = _(array).map(iteratee).at(n).value(),
-        expected = index < 2 ? 1 : 0
+      const actual = _(array).map(iteratee).at(n).value()
+      let expected = index < 2 ? 1 : 0
 
       assert.strictEqual(count, expected)
 
@@ -110,8 +110,8 @@ describe('at', () => {
   })
 
   it('work with an object for `object` when chaining', () => {
-    let paths = ['a[0].b.c', 'a[1]'],
-      actual = _(object).map(identity).at(paths).value()
+    const paths = ['a[0].b.c', 'a[1]']
+    let actual = _(object).map(identity).at(paths).value()
 
     assert.deepEqual(actual, at(_.map(object, identity), paths))
 

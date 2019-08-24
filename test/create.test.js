@@ -82,7 +82,7 @@ describe('create', () => {
   })
 
   it('should work as an iteratee for methods like `_.map`', () => {
-    let array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
+    const array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
       expected = lodashStable.map(array, stubTrue),
       objects = lodashStable.map(array, create)
 

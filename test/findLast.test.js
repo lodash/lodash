@@ -80,7 +80,7 @@ describe('findLast', () => {
     })
 
     it(`should work with ${key} and a negative \`fromIndex\` <= \`-length\``, () => {
-      let indexes = [-4, -6, -Infinity],
+      const indexes = [-4, -6, -Infinity],
         expected = lodashStable.map(indexes, lodashStable.constant(values[0]))
 
       const actual = lodashStable.map(indexes, (fromIndex) => findLast(collection, resolve(values[0]), fromIndex))

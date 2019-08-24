@@ -21,7 +21,7 @@ describe('after', () => {
   })
 
   it('should use `this` binding of function', () => {
-    let afterFn = after(1, function() { return ++this.count }),
+    const afterFn = after(1, function() { return ++this.count }),
       object = { 'after': afterFn, 'count': 0 }
 
     object.after()

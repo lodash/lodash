@@ -5,6 +5,7 @@ import isObject from './isObject.js'
 import isRegExp from './isRegExp.js'
 import stringSize from './.internal/stringSize.js'
 import stringToArray from './.internal/stringToArray.js'
+import toString from './toString.js'
 
 /** Used as default options for `truncate`. */
 const DEFAULT_TRUNC_LENGTH = 30
@@ -59,6 +60,9 @@ function truncate(string, options) {
     length = 'length' in options ? options.length : length
     omission = 'omission' in options ? baseToString(options.omission) : omission
   }
+
+  string = toString(string)
+
   let strSymbols
   let strLength = string.length
   if (hasUnicode(string)) {

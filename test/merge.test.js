@@ -58,7 +58,7 @@ describe('merge', () => {
   })
 
   it('should work with four arguments', () => {
-    let expected = { 'a': 4 },
+    const expected = { 'a': 4 },
       actual = merge({ 'a': 1 }, { 'a': 2 }, { 'a': 3 }, expected)
 
     assert.deepStrictEqual(actual, expected)
@@ -67,7 +67,7 @@ describe('merge', () => {
   it('should merge onto function `object` values', () => {
     function Foo() {}
 
-    let source = { 'a': 1 },
+    const source = { 'a': 1 },
       actual = merge(Foo, source)
 
     assert.strictEqual(actual, Foo)
@@ -75,7 +75,7 @@ describe('merge', () => {
   })
 
   it('should merge first source object properties to function', () => {
-    let fn = function() {},
+    const fn = function() {},
       object = { 'prop': {} },
       actual = merge({ 'prop': fn }, object)
 
@@ -83,7 +83,7 @@ describe('merge', () => {
   })
 
   it('should merge first and second source object properties to function', () => {
-    let fn = function() {},
+    const fn = function() {},
       object = { 'prop': {} },
       actual = merge({ 'prop': fn }, { 'prop': fn }, object)
 
@@ -91,10 +91,10 @@ describe('merge', () => {
   })
 
   it('should not merge onto function values of sources', () => {
-    let source1 = { 'a': function() {} },
+    const source1 = { 'a': function() {} },
       source2 = { 'a': { 'b': 2 } },
-      expected = { 'a': { 'b': 2 } },
-      actual = merge({}, source1, source2)
+      expected = { 'a': { 'b': 2 } }
+    let  actual = merge({}, source1, source2)
 
     assert.deepStrictEqual(actual, expected)
     assert.ok(!('b' in source1.a))
@@ -106,7 +106,7 @@ describe('merge', () => {
   it('should merge onto non-plain `object` values', () => {
     function Foo() {}
 
-    let object = new Foo,
+    const object = new Foo,
       actual = merge(object, { 'a': 1 })
 
     assert.strictEqual(actual, object)
@@ -117,7 +117,7 @@ describe('merge', () => {
     const array = [1]
     array[2] = 3
 
-    let actual = merge([], array),
+    const actual = merge([], array),
       expected = array.slice()
 
     expected[1] = undefined
@@ -127,9 +127,9 @@ describe('merge', () => {
   })
 
   it('should merge `arguments` objects', () => {
-    let object1 = { 'value': args },
-      object2 = { 'value': { '3': 4 } },
-      expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
+    const object1 = { 'value': args },
+      object2 = { 'value': { '3': 4 } }
+    let  expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
       actual = merge(object1, object2)
 
     assert.ok(!('3' in args))
@@ -149,12 +149,11 @@ describe('merge', () => {
   })
 
   it('should merge typed arrays', () => {
-    let array1 = [0],
+    const array1 = [0],
       array2 = [0, 0],
       array3 = [0, 0, 0, 0],
-      array4 = [0, 0, 0, 0, 0, 0, 0, 0]
-
-    let arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
+      array4 = [0, 0, 0, 0, 0, 0, 0, 0],
+      arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
       buffer = ArrayBuffer && new ArrayBuffer(8)
 
     let expected = lodashStable.map(typedArrays, (type, index) => {
@@ -178,7 +177,7 @@ describe('merge', () => {
     })
 
     actual = lodashStable.map(typedArrays, (type, index) => {
-      let Ctor = root[type],
+      const Ctor = root[type],
         array = lodashStable.range(arrays[index].length)
 
       array.push(1)
@@ -197,7 +196,7 @@ describe('merge', () => {
   it('should assign non array/buffer/typed-array/plain-object source values directly', () => {
     function Foo() {}
 
-    let values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp],
+    const values = [new Foo, new Boolean, new Date, Foo, new Number, new String, new RegExp],
       expected = lodashStable.map(values, stubTrue)
 
     const actual = lodashStable.map(values, (value) => {
@@ -210,7 +209,7 @@ describe('merge', () => {
 
   it('should clone buffer source values', () => {
     if (Buffer) {
-      let buffer = new Buffer([1]),
+      const buffer = new Buffer([1]),
         actual = merge({}, { 'value': buffer }).value
 
       assert.ok(lodashStable.isBuffer(actual))
@@ -224,12 +223,12 @@ describe('merge', () => {
       ? new Uint8Array([1])
       : { 'buffer': [1] }
 
-    let props = ['0', 'buffer', 'a'],
+    const props = ['0', 'buffer', 'a'],
       values = [[{ 'a': 1 }], typedArray, { 'a': [1] }],
       expected = lodashStable.map(values, stubTrue)
 
     const actual = lodashStable.map(values, (value, index) => {
-      let key = props[index],
+      const key = props[index],
         object = merge({}, { 'value': value }),
         subValue = value[key],
         newValue = object.value,
@@ -246,7 +245,7 @@ describe('merge', () => {
   })
 
   it('should not augment source objects', () => {
-    var source1 = { 'a': [{ 'a': 1 }] },
+    let source1 = { 'a': [{ 'a': 1 }] },
       source2 = { 'a': [{ 'b': 2 }] },
       actual = merge({}, source1, source2)
 
@@ -254,9 +253,9 @@ describe('merge', () => {
     assert.deepStrictEqual(source2.a, [{ 'b': 2 }])
     assert.deepStrictEqual(actual.a, [{ 'a': 1, 'b': 2 }])
 
-    var source1 = { 'a': [[1, 2, 3]] },
-      source2 = { 'a': [[3, 4]] },
-      actual = merge({}, source1, source2)
+    source1 = { 'a': [[1, 2, 3]] }
+    source2 = { 'a': [[3, 4]] }
+    actual = merge({}, source1, source2)
 
     assert.deepStrictEqual(source1.a, [[1, 2, 3]])
     assert.deepStrictEqual(source2.a, [[3, 4]])
@@ -268,8 +267,8 @@ describe('merge', () => {
       lodashStable.assign(this, object)
     }
 
-    let object = { 'a': 1 },
-      actual = merge(new Foo, object)
+    const object = { 'a': 1 }
+    let  actual = merge(new Foo, object)
 
     assert.ok(actual instanceof Foo)
     assert.deepStrictEqual(actual, new Foo(object))
@@ -288,8 +287,8 @@ describe('merge', () => {
     let array = [1]
     array[2] = 3
 
-    let actual = merge([4, 5, 6], array),
-      expected = [1, 5, 3]
+    let actual = merge([4, 5, 6], array)
+    const expected = [1, 5, 3]
 
     assert.deepStrictEqual(actual, expected)
 
@@ -301,8 +300,8 @@ describe('merge', () => {
   })
 
   it('should skip merging when `object` and `source` are the same value', () => {
-    let object = {},
-      pass = true
+    const object = {}
+    let  pass = true
 
     defineProperty(object, 'a', {
       'configurable': true,
@@ -316,8 +315,8 @@ describe('merge', () => {
   })
 
   it('should convert values to arrays when merging arrays of `source`', () => {
-    let object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } },
-      actual = merge(object, { 'a': ['x'] })
+    const object = { 'a': { '1': 'y', 'b': 'z', 'length': 2 } }
+    let  actual = merge(object, { 'a': ['x'] })
 
     assert.deepStrictEqual(actual, { 'a': ['x', 'y'] })
 
@@ -326,14 +325,14 @@ describe('merge', () => {
   })
 
   it('should convert strings to arrays when merging arrays of `source`', () => {
-    let object = { 'a': 'abcde' },
+    const object = { 'a': 'abcde' },
       actual = merge(object, { 'a': ['x', 'y', 'z'] })
 
     assert.deepStrictEqual(actual, { 'a': ['x', 'y', 'z'] })
   })
 
   it('should not error on DOM elements', () => {
-    let object1 = { 'el': document && document.createElement('div') },
+    const object1 = { 'el': document && document.createElement('div') },
       object2 = { 'el': document && document.createElement('div') },
       pairs = [[{}, object1], [object1, object2]],
       expected = lodashStable.map(pairs, stubTrue)

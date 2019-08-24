@@ -26,7 +26,7 @@ function trimStart(string, chars) {
     return string[methodName]()
   }
   if (!string || !chars) {
-    return string
+    return (string || '')
   }
   const strSymbols = stringToArray(string)
   const start = charsStartIndex(strSymbols, stringToArray(chars))

@@ -25,7 +25,7 @@ function trim(string, chars) {
     return string.trim()
   }
   if (!string || !chars) {
-    return string
+    return (string || '')
   }
   const strSymbols = stringToArray(string)
   const chrSymbols = stringToArray(chars)

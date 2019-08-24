@@ -26,7 +26,7 @@ function trimEnd(string, chars) {
     return string[methodName]()
   }
   if (!string || !chars) {
-    return string
+    return (string || '')
   }
   const strSymbols = stringToArray(string)
   const end = charsEndIndex(strSymbols, stringToArray(chars)) + 1

@@ -27,9 +27,9 @@ function maxBy(array, iteratee) {
     const current = iteratee(value)
 
     if (current != null && (computed === undefined
-          ? (current === current && !isSymbol(current))
-          : (current > computed)
-        )) {
+      ? (current === current && !isSymbol(current))
+      : (current > computed)
+    )) {
       computed = current
       result = value
     }

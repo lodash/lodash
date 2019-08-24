@@ -1,4 +1,5 @@
 import baseFindIndex from './.internal/baseFindIndex.js'
+import toInteger from './toInteger.js'
 
 /**
  * This method is like `findIndex` except that it iterates over elements
@@ -29,9 +30,10 @@ function findLastIndex(array, predicate, fromIndex) {
   }
   let index = length - 1
   if (fromIndex !== undefined) {
+    index = toInteger(fromIndex)
     index = fromIndex < 0
-      ? Math.max(length + fromIndex, 0)
-      : Math.min(fromIndex, length - 1)
+      ? Math.max(length + index, 0)
+      : Math.min(index, length - 1)
   }
   return baseFindIndex(array, predicate, index, true)
 }

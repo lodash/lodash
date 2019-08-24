@@ -14,7 +14,7 @@ const rePropName = RegExp(
   ')\\]'+ '|' +
   // Or match "" as the space between consecutive dots or empty brackets.
   '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
-, 'g')
+  , 'g')
 
 /**
  * Converts `string` to a property path array.

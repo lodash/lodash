@@ -11,7 +11,7 @@ const methods = {
 
 describe('findLastIndex and lastIndexOf', () => {
   lodashStable.each(['findLastIndex', 'lastIndexOf'], (methodName) => {
-    let array = [1, 2, 3, 1, 2, 3],
+    const array = [1, 2, 3, 1, 2, 3],
       func = methods[methodName],
       resolve = methodName == 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity
 
@@ -24,7 +24,7 @@ describe('findLastIndex and lastIndexOf', () => {
     })
 
     it(`\`_.${methodName}\` should work with a \`fromIndex\` >= \`length\``, () => {
-      let values = [6, 8, Math.pow(2, 32), Infinity],
+      const values = [6, 8, Math.pow(2, 32), Infinity],
         expected = lodashStable.map(values, lodashStable.constant([-1, 3, -1]))
 
       const actual = lodashStable.map(values, (fromIndex) => [
@@ -41,7 +41,7 @@ describe('findLastIndex and lastIndexOf', () => {
     })
 
     it(`\`_.${methodName}\` should work with a negative \`fromIndex\` <= \`-length\``, () => {
-      let values = [-6, -8, -Infinity],
+      const values = [-6, -8, -Infinity],
         expected = lodashStable.map(values, stubZero)
 
       const actual = lodashStable.map(values, (fromIndex) => func(array, resolve(1), fromIndex))

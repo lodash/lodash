@@ -41,7 +41,14 @@ function orderBy(collection, iteratees, orders) {
   }
   if (!Array.isArray(iteratees)) {
     iteratees = iteratees == null ? [] : [iteratees]
+    iteratees = iteratees.map((iteratee) => {
+      if (Array.isArray(iteratee)) {
+        return iteratee.join('.')
+      }
+      return iteratee
+    })
   }
+
   if (!Array.isArray(orders)) {
     orders = orders == null ? [] : [orders]
   }

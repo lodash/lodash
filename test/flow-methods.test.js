@@ -2,19 +2,23 @@ import assert from 'assert';
 import lodashStable from 'lodash';
 import { _, add, square, noop, identity, LARGE_ARRAY_SIZE, isEven, isNpm } from './utils.js';
 import times from '../times.js';
-import curry from '../curry.js';
 import head from '../head.js';
 import filter from '../filter.js';
-import rearg from '../rearg.js';
-import ary from '../ary.js';
 import map from '../map.js';
 import take from '../take.js';
 import compact from '../compact.js';
 import uniq from '../uniq.js';
+import flow from '../flow.js';
+import flowRight from '../flowRight.js';
+
+const methods = {
+  flow,
+  flowRight
+}
 
 describe('flow methods', function() {
   lodashStable.each(['flow', 'flowRight'], function(methodName) {
-    var func = _[methodName],
+    var func = methods[methodName],
         isFlow = methodName == 'flow';
 
     it('`_.' + methodName + '` should supply each function with the return value of the previous', function() {
@@ -42,7 +46,7 @@ describe('flow methods', function() {
     });
 
     it('`_.' + methodName + '` should work with a curried function and `_.head`', function() {
-      var curried = curry(identity);
+      var curried = lodashStable.curry(identity);
 
       var combined = isFlow
         ? func(head, curried)
@@ -60,16 +64,16 @@ describe('flow methods', function() {
 
       lodashStable.times(2, function(index) {
         var filter1 = filter,
-            filter2 = curry(rearg(ary(filter, 2), 1, 0), 2),
-            filter3 = (filter = index ? filter2 : filter1, filter2(predicate));
+            filter2 = lodashStable.curry(lodashStable.rearg(lodashStable.ary(filter, 2), 1, 0), 2),
+            filter3 = (index ? filter2 : filter1, filter2(predicate));
 
         var map1 = map,
-            map2 = curry(rearg(ary(map, 2), 1, 0), 2),
-            map3 = (map = index ? map2 : map1, map2(iteratee));
+            map2 = lodashStable.curry(lodashStable.rearg(lodashStable.ary(map, 2), 1, 0), 2),
+            map3 = (index ? map2 : map1, map2(iteratee));
 
         var take1 = take,
-            take2 = curry(rearg(ary(take, 2), 1, 0), 2),
-            take3 = (take = index ? take2 : take1, take2(2));
+            take2 = lodashStable.curry(lodashStable.rearg(lodashStable.ary(take, 2), 1, 0), 2),
+            take3 = (index ? take2 : take1, take2(2));
 
         var combined = isFlow
           ? func(map3, filter3, compact, take3)
@@ -81,16 +85,13 @@ describe('flow methods', function() {
         if (!isNpm && WeakMap && WeakMap.name) {
           assert.strictEqual(filterCount, 5, 'filterCount');
           assert.strictEqual(mapCount, 5, 'mapCount');
-        }
-        filter = filter1;
-        map = map1;
-        take = take1;
+        }        
       });
     });
 
     it('`_.' + methodName + '` should work with curried functions with placeholders', function() {
-      var curried = curry(ary(map, 2), 2),
-          getProp = curried(curried.placeholder, 'a'),
+      var curried = lodashStable.curry(lodashStable.ary(map, 2), 2),
+          getProp = curried(curried.placeholder, (value) => value.a),
           objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }];
 
       var combined = isFlow
@@ -98,11 +99,6 @@ describe('flow methods', function() {
         : func(uniq, getProp);
 
       assert.deepStrictEqual(combined(objects), [1, 2]);
-    });
-
-    it('`_.' + methodName + '` should return a wrapped value when chaining', function() {
-      var wrapped = _(noop)[methodName]();
-      assert.ok(wrapped instanceof _);
     });
   });
 });

@@ -19,8 +19,8 @@ import flow from './flow.js'
  * addSquare(1, 2)
  * // => 9
  */
-function flowRight(funcs) {
-  return flow(funcs.reverse())
+function flowRight(...funcs) {
+  return flow(...funcs.reverse())
 }
 
 export default flowRight

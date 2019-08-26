@@ -18,7 +18,7 @@
  * addSquare(1, 2)
  * // => 9
  */
-function flow(funcs) {
+function flow(...funcs) {
   const length = funcs ? funcs.length : 0
   let index = length
   while (index--) {

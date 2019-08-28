@@ -1,4 +1,6 @@
 import baseGet from './.internal/baseGet.js'
+import isNumber from './isNumber.js'
+import isUndefined from './isUndefined.js'
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -24,9 +26,12 @@ import baseGet from './.internal/baseGet.js'
  * get(object, 'a.b.c', 'default')
  * // => 'default'
  */
-function get(object, path, defaultValue) {
+function get(object, path, defaultValue, returnDefaultValueForFalsyResult) {
   const result = object == null ? undefined : baseGet(object, path)
-  return result === undefined ? defaultValue : result
+  if (returnDefaultValueForFalsyResult) {
+    return !result && !isNumber(result) ? defaultValue : result
+  }
+  return isUndefined(result) ? defaultValue : result
 }
 
 export default get

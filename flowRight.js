@@ -11,11 +11,13 @@ import flow from './flow.js'
  * @see flow
  * @example
  *
+ * import add from 'lodash/add'
+ * 
  * function square(n) {
  *   return n * n
  * }
  *
- * const addSquare = flowRight([square, add])
+ * const addSquare = flowRight(square, add)
  * addSquare(1, 2)
  * // => 9
  */

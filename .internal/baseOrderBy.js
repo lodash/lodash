@@ -4,6 +4,9 @@ import baseGet from './baseGet.js'
 import compareMultiple from './compareMultiple.js'
 import isArrayLike from '../isArrayLike.js'
 
+// As existing identity function is in ../test/utils.js, so defining it here, it can be moved to utils
+const identity = value => value;
+
 /**
  * The base implementation of `orderBy` without param guards.
  *
@@ -21,7 +24,7 @@ function baseOrderBy(collection, iteratees, orders) {
       return (value) => baseGet(value, iteratee)
     }
     return iteratee
-  }) : [(value) => value]
+  }) : [identity]
 
   const result = isArrayLike(collection) ? new Array(collection.length) : []
 

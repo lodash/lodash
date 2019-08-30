@@ -28,8 +28,8 @@ describe('orderBy', function() {
   it('should sort by nested key in array format', () => {
     var actual = orderBy(
       nestedObj,
-      ['address.zipCode', 'address.streetName'],
-      ['asc', 'desc']
+      [['address','zipCode'], ['address.streetName']],
+      ['asc', 'desc'],
     );
     assert.deepStrictEqual(actual, [nestedObj[2], nestedObj[3], nestedObj[0], nestedObj[1]], nestedObj[4]);
   });

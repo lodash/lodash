@@ -16041,7 +16041,7 @@
       assert.expect(1);
       var resultWithDots = _.orderBy(
         nestedObj,
-        ['address.zipCode', 'address.streetName'],
+        [['address', 'zipCode'], ['address', 'streetName']],
         ['asc', 'desc']
       );
       assert.deepEqual(resultWithDots, [nestedObj[2], nestedObj[3], nestedObj[1], nestedObj[0], nestedObj[4]]);

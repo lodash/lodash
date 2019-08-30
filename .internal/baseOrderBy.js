@@ -15,7 +15,12 @@ import isArrayLike from '../isArrayLike.js'
 function baseOrderBy(collection, iteratees, orders) {
   let criteriaIndex = -1
   let eachIndex = -1
-  iteratees = iteratees.length ? iteratees : [(value) => value]
+  iteratees = iteratees = iteratees.length ? iteratees.map((iteratee) => {
+    if(Array.isArray(iteratee)){
+      return value => baseGet(value, iteratee)
+    }
+    return iteratee;
+  }) : [(value) => value]
 
   const result = isArrayLike(collection) ? new Array(collection.length) : []
 

@@ -18,8 +18,15 @@ import toInteger from './toInteger.js'
  *
  * chunk(['a', 'b', 'c', 'd'], 3)
  * // => [['a', 'b', 'c'], ['d']]
+ *
+ * chunk(['a', 'b', 'c', 'd', 3, 'e')
+ * // => [['a', 'b', 'c'], ['d', 'e', 'e']]
+ *
+ * chunk(['a', 'b', 'c', 'd', 3, null)
+ * // => [['a', 'b', 'c'], ['d', null, null]]
+ *
  */
-function chunk(array, size = 1) {
+function chunk(array, size = 1,filler) {
   size = Math.max(toInteger(size), 0)
   const length = array == null ? 0 : array.length
   if (!length || size < 1) {
@@ -28,9 +35,15 @@ function chunk(array, size = 1) {
   let index = 0
   let resIndex = 0
   const result = new Array(Math.ceil(length / size))
-
   while (index < length) {
-    result[resIndex++] = slice(array, index, (index += size))
+    const arrayChunk = slice(array, index, (index += size))
+    const arrayChunkLength = arrayChunk.length
+    if (arrayChunkLength < size && filler !== undefined) {
+      for (let i = 0; i < (size-(arrayChunkLength)); i++) {
+        arrayChunk.push(filler)
+      }
+    }
+    result[resIndex++] = arrayChunk
   }
   return result
 }

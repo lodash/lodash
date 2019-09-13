@@ -19,10 +19,10 @@ import toInteger from './toInteger.js'
  * chunk(['a', 'b', 'c', 'd'], 3)
  * // => [['a', 'b', 'c'], ['d']]
  *
- * chunk(['a', 'b', 'c', 'd', 3, 'e')
+ * chunk(['a', 'b', 'c', 'd'], 3, 'e')
  * // => [['a', 'b', 'c'], ['d', 'e', 'e']]
  *
- * chunk(['a', 'b', 'c', 'd', 3, null)
+ * chunk(['a', 'b', 'c', 'd'], 3, null)
  * // => [['a', 'b', 'c'], ['d', null, null]]
  *
  */

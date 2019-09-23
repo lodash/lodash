@@ -1,7 +1,7 @@
 import unicodeWords from './.internal/unicodeWords.js'
 
 const hasUnicodeWord = RegExp.prototype.test.bind(
-  /[a-z][A-Z]|[A-Z]{2,}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/
+  /[a-z][A-Z]|[A-Z]{2}[a-z]|[0-9][a-zA-Z]|[a-zA-Z][0-9]|[^a-zA-Z0-9 ]/
 )
 
 /** Used to match words composed of alphanumeric characters. */

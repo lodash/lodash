@@ -1,11 +1,7 @@
-import map from './map.js'
 import isSymbol from './isSymbol.js'
 
 /** Used as references for various `Number` constants. */
 const INFINITY = 1 / 0
-
-/** Used to convert symbols to primitives and strings. */
-const symbolToString = Symbol.prototype.toString
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -36,10 +32,10 @@ function toString(value) {
   }
   if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return `${map(value, (other) => other == null ? other : toString(other))}`
+    return `${value.map((other) => other == null ? other : toString(other))}`
   }
   if (isSymbol(value)) {
-    return symbolToString ? symbolToString.call(value) : ''
+    return value.toString()
   }
   const result = `${value}`
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result

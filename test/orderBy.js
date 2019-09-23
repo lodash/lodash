@@ -11,9 +11,27 @@ describe('orderBy', function() {
     { 'a': 'y', 'b': 2 }
   ];
 
+  var nestedObj = [
+    { id: '4', address: { zipCode: 4, streetName: 'Beta' } },
+    { id: '3', address: { zipCode: 3, streetName: 'Alpha' } },
+    { id: '1', address: { zipCode: 1, streetName: 'Alpha' } },
+    { id: '2', address: { zipCode: 2, streetName: 'Alpha' } },
+    { id: '5', address: { zipCode: 4, streetName: 'Alpha' } },
+  ];
+
+
   it('should sort by a single property by a specified order', function() {
     var actual = orderBy(objects, 'a', 'desc');
     assert.deepStrictEqual(actual, [objects[1], objects[3], objects[0], objects[2]]);
+  });
+
+  it('should sort by nested key in array format', () => {
+    var actual = orderBy(
+      nestedObj,
+      [['address','zipCode'], ['address.streetName']],
+      ['asc', 'desc'],
+    );
+    assert.deepStrictEqual(actual, [nestedObj[2], nestedObj[3], nestedObj[0], nestedObj[1]], nestedObj[4]);
   });
 
   it('should sort by multiple properties by specified orders', function() {

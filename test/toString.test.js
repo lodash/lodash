@@ -26,25 +26,13 @@ describe('toString', () => {
     assert.deepStrictEqual(toString(values), '-0,-0,0,0')
   })
 
-  it('should not error on symbols', () => {
-    if (Symbol) {
-      try {
-        assert.strictEqual(toString(symbol), 'Symbol(a)')
-      } catch (e) {
-        assert.ok(false, e.message)
-      }
-    }
-  })
+  it('should handle symbols', function() {
+    assert.strictEqual(toString(symbol), 'Symbol(a)');
+  });
 
-  it('should not error on an array of symbols', () => {
-    if (Symbol) {
-      try {
-        assert.strictEqual(toString([symbol]), 'Symbol(a)')
-      } catch (e) {
-        assert.ok(false, e.message)
-      }
-    }
-  })
+  it('should handle an array of symbols', function() {
+    assert.strictEqual(toString([symbol]), 'Symbol(a)');
+  });
 
   it('should return the `toString` result of the wrapped value', () => {
     const wrapped = _([1, 2, 3])

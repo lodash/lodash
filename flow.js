@@ -10,15 +10,17 @@
  * @see flowRight
  * @example
  *
+ * import add from 'lodash/add'
+ * 
  * function square(n) {
  *   return n * n
  * }
  *
- * const addSquare = flow([add, square])
+ * const addSquare = flow(add, square)
  * addSquare(1, 2)
  * // => 9
  */
-function flow(funcs) {
+function flow(...funcs) {
   const length = funcs ? funcs.length : 0
   let index = length
   while (index--) {

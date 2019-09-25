@@ -42,7 +42,7 @@ describe(basename, function() {
 
       var attempt = function() {
         var actual = _VERSION;
-        if ((new Date - start) < limit && typeof actual != 'string') {
+        if ((new Date - start) < limit && typeof actual !== 'string') {
           setTimeout(attempt, 16);
           return;
         }

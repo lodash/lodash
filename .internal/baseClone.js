@@ -131,7 +131,7 @@ function initCloneArray(array) {
   const result = new array.constructor(length)
 
   // Add properties assigned by `RegExp#exec`.
-  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+  if (length && typeof array[0] === 'string' && hasOwnProperty.call(array, 'index')) {
     result.index = array.index
     result.input = array.input
   }
@@ -177,7 +177,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       return copyArray(value, result)
     }
   } else {
-    const isFunc = typeof value == 'function'
+    const isFunc = typeof value === 'function'
 
     if (isBuffer(value)) {
       return cloneBuffer(value, isDeep)

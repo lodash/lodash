@@ -12,7 +12,7 @@ import flow from './flow.js'
  * @example
  *
  * import add from 'lodash/add'
- * 
+ *
  * function square(n) {
  *   return n * n
  * }

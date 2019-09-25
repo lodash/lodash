@@ -195,7 +195,7 @@ describe('bind', function() {
   it('should not error when calling bound class constructors with the `new` operator', function() {
     var createCtor = lodashStable.attempt(Function, '"use strict";return class A{}');
 
-    if (typeof createCtor == 'function') {
+    if (typeof createCtor === 'function') {
       var bound = bind(createCtor()),
           count = 8,
           expected = lodashStable.times(count, stubTrue);

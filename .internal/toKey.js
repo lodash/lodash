@@ -11,7 +11,7 @@ const INFINITY = 1 / 0
  * @returns {string|symbol} Returns the key.
  */
 function toKey(value) {
-  if (typeof value == 'string' || isSymbol(value)) {
+  if (typeof value === 'string' || isSymbol(value)) {
     return value
   }
   const result = `${value}`

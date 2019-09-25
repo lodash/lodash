@@ -24,7 +24,7 @@ import last from './last.js'
  */
 function xorWith(...arrays) {
   let comparator = last(arrays)
-  comparator = typeof comparator == 'function' ? comparator : undefined
+  comparator = typeof comparator === 'function' ? comparator : undefined
   return baseXor(arrays.filter(isArrayLikeObject), undefined, comparator)
 }
 

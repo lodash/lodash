@@ -24,7 +24,7 @@ var funcTag = '[object Function]',
     objectTag = '[object Object]';
 
 /** Used as a reference to the global object. */
-var root = (typeof global == 'object' && global) || this;
+var root = (typeof global === 'object' && global) || this;
 
 /** Used to store lodash to test for bad extensions/shims. */
 var lodashBizarro = root.lodashBizarro;
@@ -246,7 +246,7 @@ var isModularize = ui.isModularize;
 var isNpm = isModularize && /\bnpm\b/.test([ui.buildPath, ui.urlParams.build]);
 
 /** Detect if running in PhantomJS. */
-var isPhantom = phantom || (typeof callPhantom == 'function');
+var isPhantom = phantom || (typeof callPhantom === 'function');
 
 /** Detect if lodash is in strict mode. */
 var isStrict = ui.isStrict;
@@ -459,7 +459,7 @@ function toArgs(array) {
 // Add bizarro values.
 (function() {
   return; // fixme
-  if (document || (typeof require != 'function')) {
+  if (document || (typeof require !== 'function')) {
     return;
   }
   var nativeString = fnToString.call(toString),

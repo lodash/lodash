@@ -17,7 +17,7 @@
  * // => [1, 3, 5]
  */
 function negate(predicate) {
-  if (typeof predicate != 'function') {
+  if (typeof predicate !== 'function') {
     throw new TypeError('Expected a function')
   }
   return function(...args) {

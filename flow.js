@@ -11,7 +11,7 @@
  * @example
  *
  * import add from 'lodash/add'
- * 
+ *
  * function square(n) {
  *   return n * n
  * }
@@ -24,7 +24,7 @@ function flow(...funcs) {
   const length = funcs ? funcs.length : 0
   let index = length
   while (index--) {
-    if (typeof funcs[index] != 'function') {
+    if (typeof funcs[index] !== 'function') {
       throw new TypeError('Expected a function')
     }
   }

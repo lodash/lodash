@@ -139,7 +139,7 @@ describe('keys methods', function() {
 
     it('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function() {
       var expected = lodashStable.map(primitives, function(value) {
-        return typeof value == 'string' ? ['0'] : [];
+        return typeof value === 'string' ? ['0'] : [];
       });
 
       var actual = lodashStable.map(primitives, func);

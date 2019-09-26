@@ -30,7 +30,7 @@ function arrayLikeKeys(value, inherited) {
     if ((inherited || hasOwnProperty.call(value, key)) &&
         !(skipIndexes && (
         // Safari 9 has enumerable `arguments.length` in strict mode.
-          (key == 'length' ||
+          (key === 'length' ||
            // Skip index properties.
            isIndex(key, length))
         ))) {

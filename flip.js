@@ -14,7 +14,7 @@
  * // => ['d', 'c', 'b', 'a']
  */
 function flip(func) {
-  if (typeof func != 'function') {
+  if (typeof func !== 'function') {
     throw new TypeError('Expected a function')
   }
   return function(...args) {

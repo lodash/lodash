@@ -12,7 +12,7 @@ import Hash from './Hash.js'
 function getMapData({ __data__ }, key) {
   const data = __data__
   return isKeyable(key)
-    ? data[typeof key == 'string' ? 'string' : 'hash']
+    ? data[typeof key === 'string' ? 'string' : 'hash']
     : data.map
 }
 
@@ -25,7 +25,7 @@ function getMapData({ __data__ }, key) {
  */
 function isKeyable(value) {
   const type = typeof value
-  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+  return (type === 'string' || type === 'number' || type === 'symbol' || type === 'boolean')
     ? (value !== '__proto__')
     : (value === null)
 }

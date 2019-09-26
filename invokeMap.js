@@ -25,7 +25,7 @@ import isArrayLike from './isArrayLike.js'
  */
 function invokeMap(collection, path, args) {
   let index = -1
-  const isFunc = typeof path == 'function'
+  const isFunc = typeof path === 'function'
   const result = isArrayLike(collection) ? new Array(collection.length) : []
 
   baseEach(collection, (value) => {

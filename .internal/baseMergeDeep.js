@@ -71,7 +71,7 @@ function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, sta
       if (isArguments(objValue)) {
         newValue = toPlainObject(objValue)
       }
-      else if (typeof objValue == 'function' || !isObject(objValue)) {
+      else if (typeof objValue === 'function' || !isObject(objValue)) {
         newValue = initCloneObject(srcValue)
       }
     }

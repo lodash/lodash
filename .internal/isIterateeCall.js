@@ -19,9 +19,9 @@ function isIterateeCall(value, index, object) {
     return false
   }
   const type = typeof index
-  if (type == 'number'
+  if (type === 'number'
     ? (isArrayLike(object) && isIndex(index, object.length))
-    : (type == 'string' && index in object)
+    : (type === 'string' && index in object)
   ) {
     return eq(object[index], value)
   }

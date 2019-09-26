@@ -12,7 +12,7 @@ describe('isNumber', function() {
 
   it('should return `false` for non-numbers', function() {
     var expected = lodashStable.map(falsey, function(value) {
-      return typeof value == 'number';
+      return typeof value === 'number';
     });
 
     var actual = lodashStable.map(falsey, function(value, index) {

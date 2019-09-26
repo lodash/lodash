@@ -42,17 +42,17 @@ const freeParseInt = parseInt
  * // => 3.2
  */
 function toNumber(value) {
-  if (typeof value == 'number') {
+  if (typeof value === 'number') {
     return value
   }
   if (isSymbol(value)) {
     return NAN
   }
   if (isObject(value)) {
-    const other = typeof value.valueOf == 'function' ? value.valueOf() : value
+    const other = typeof value.valueOf === 'function' ? value.valueOf() : value
     value = isObject(other) ? `${other}` : other
   }
-  if (typeof value != 'string') {
+  if (typeof value !== 'string') {
     return value === 0 ? value : +value
   }
   value = value.replace(reTrim, '')

@@ -27,7 +27,7 @@ function toString(value) {
     return ''
   }
   // Exit early for strings to avoid a performance hit in some environments.
-  if (typeof value == 'string') {
+  if (typeof value === 'string') {
     return value
   }
   if (Array.isArray(value)) {

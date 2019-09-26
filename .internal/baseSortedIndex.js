@@ -21,7 +21,7 @@ function baseSortedIndex(array, value, retHighest) {
   let low = 0
   let high = array == null ? low : array.length
 
-  if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+  if (typeof value === 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
     while (low < high) {
       const mid = (low + high) >>> 1
       const computed = array[mid]

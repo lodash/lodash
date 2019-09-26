@@ -26,7 +26,7 @@ function intersectionWith(...arrays) {
   let comparator = last(arrays)
   const mapped = map(arrays, castArrayLikeObject)
 
-  comparator = typeof comparator == 'function' ? comparator : undefined
+  comparator = typeof comparator === 'function' ? comparator : undefined
   if (comparator) {
     mapped.pop()
   }

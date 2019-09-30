@@ -32,6 +32,10 @@ describe('toString', function() {
     assert.strictEqual(toString(symbol), 'Symbol(a)');
   });
 
+  it('should handle objects', () => {
+    assert.strictEqual(toString({ a: 'b' }), '{"a":"b"}')
+  })
+
   it('should handle an array of symbols', function() {
     assert.strictEqual(toString([symbol]), 'Symbol(a)');
   });

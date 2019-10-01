@@ -13129,6 +13129,34 @@
     }
 
     /**
+     * This method is similat to '_.get' except that it accepts `customizer`
+     * which is invoked on the value returned from '_.get' to transform it
+     * before it is returned.
+     * @static
+     * @memberOf _
+     * @category Object
+     * @param {Function} [customizer] The function to customize values.
+     * @param {Array|string} path The path of the property to get.
+     * @param {Object} object The object to query.
+     * @returns {*} Returns the customized value.
+     * @example
+     *
+     * var object = {
+     *    a : 1,
+     *    b : 5
+     * }
+     *
+     * _.getWith(x => x * 2, 'a', object)
+     * // => 2
+     *
+     * _.getWith(x => x * 2, 'b', object)
+     * // => 10
+     */
+    function getWith(customizer, path, object) {
+      return customizer( get(object, path) );
+    }
+
+    /**
      * Checks if `path` is a direct property of `object`.
      *
      * @static

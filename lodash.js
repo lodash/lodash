@@ -13129,7 +13129,7 @@
     }
 
     /**
-     * This method is similat to '_.get' except that it accepts `customizer`
+     * This method is similar to '_.get' except that it accepts `customizer`
      * which is invoked on the value returned from '_.get' to transform it
      * before it is returned.
      * @static

@@ -24,6 +24,13 @@ describe('sortedIndexBy methods', function() {
       assert.strictEqual(actual, 1);
     });
 
+    it('`_.' + methodName + '` should avoid calling iteratee when length is 0', function() {
+      var objects = [],
+          actual = func(objects, { 'x': 50 }, assert.fail);
+
+      assert.strictEqual(actual, 0);
+    });
+
     it('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', function() {
       lodashStable.each([Math.ceil(MAX_ARRAY_LENGTH / 2), MAX_ARRAY_LENGTH], function(length) {
         var array = [],

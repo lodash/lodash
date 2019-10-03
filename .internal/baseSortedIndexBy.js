@@ -18,10 +18,14 @@ const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1
  *  into `array`.
  */
 function baseSortedIndexBy(array, value, iteratee, retHighest) {
-  value = iteratee(value)
-
   let low = 0
   let high = array == null ? 0 : array.length
+  if (high == 0) {
+    return 0
+  }
+
+  value = iteratee(value)
+
   const valIsNaN = value !== value
   const valIsNull = value === null
   const valIsSymbol = isSymbol(value)

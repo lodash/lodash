@@ -20998,6 +20998,16 @@
       assert.strictEqual(actual, 1);
     });
 
+    QUnit.test('`_.' + methodName + '` should avoid calling iteratee when length is 0', function(assert) {
+      var objects = [],
+          iteratee = function() {
+            throw new Error;
+          },
+          actual = func(objects, { 'x': 50 }, iteratee);
+
+      assert.strictEqual(actual, 0);
+    });
+
     QUnit.test('`_.' + methodName + '` should support arrays larger than `MAX_ARRAY_LENGTH / 2`', function(assert) {
       assert.expect(12);
 

@@ -21,13 +21,9 @@ function uniqueId(prefix='$lodash$') {
   if (!idCounter[prefix]) {
     idCounter[prefix] = 0
   }
-
-  const id =++idCounter[prefix]
-  if (prefix === '$lodash$') {
-    return `${id}`
-  }
-
-  return `${prefix + id}`
+  
+  idCounter[prefix] += 1
+  return `${prefix === '$lodash$' ? '' : prefix}${idCounter[prefix]}`
 }
 
 export default uniqueId

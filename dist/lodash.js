@@ -6119,20 +6119,32 @@
     function hasPath(object, path, hasFunc) {
       path = castPath(path, object);
 
-      var index = -1,
+      var index = 0,
           length = path.length,
-          result = false;
+          key = undefined;
 
-      while (++index < length) {
-        var key = toKey(path[index]);
-        if (!(result = object != null && hasFunc(object, key))) {
+      if (length == 0) {
+        return false;
+      }
+
+      while (true) {
+        key = toKey(path[index]);
+        if (object == null || !hasFunc(object, key)) {
           break;
+        }
+        if (++index >= length) {
+          // We traversed the entire path and hasFunc() succeeded at each step
+          return true;
         }
         object = object[key];
       }
-      if (result || ++index != length) {
-        return result;
+
+      if (index != length - 1) {
+        // The loop exited before we reached the last step of the path
+        return false;
       }
+
+      // We traversed the entire path, but the last object did not match.  Check for an array index.
       length = object == null ? 0 : object.length;
       return !!length && isLength(length) && isIndex(key, length) &&
         (isArray(object) || isArguments(object));

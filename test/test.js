@@ -9741,7 +9741,7 @@
     });
 
     QUnit.test('should compare arrays with circular references', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       var array1 = [],
           array2 = [];
@@ -9766,6 +9766,14 @@
       array2 = ['a', ['a', 'b', 'c'], 'c'];
 
       assert.strictEqual(_.isEqual(array1, array2), false);
+
+      array1 = [[[]]];
+      array1[0][0][0] = array1;
+      array2 = [];
+      array2[0] = array2;
+
+      assert.strictEqual(_.isEqual(array1, array2), false);
+      assert.strictEqual(_.isEqual(array2, array1), false);
     });
 
     QUnit.test('should have transitive equivalence for circular references of arrays', function(assert) {
@@ -9783,7 +9791,7 @@
     });
 
     QUnit.test('should compare objects with circular references', function(assert) {
-      assert.expect(4);
+      assert.expect(6);
 
       var object1 = {},
           object2 = {};
@@ -9808,6 +9816,14 @@
       object2 = { 'a': 1, 'b': { 'a': 1, 'b': 2, 'c': 3 }, 'c': 3 };
 
       assert.strictEqual(_.isEqual(object1, object2), false);
+
+      object1 = {self: {self: {self: {}}}};
+      object1.self.self.self = object1;
+      object2 = {self: {}};
+      object2.self = object2; 
+
+      assert.strictEqual(_.isEqual(object1, object2), false);
+      assert.strictEqual(_.isEqual(object2, object1), false);
     });
 
     QUnit.test('should have transitive equivalence for circular references of objects', function(assert) {

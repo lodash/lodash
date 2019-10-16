@@ -1139,7 +1139,9 @@
    * @returns {*} Returns the property value if it's the object's own property.
    */
   function getOwnValue(object, key) {
-    return object == null ? undefined : (hasOwnProperty.call(object, key) && object[key] || undefined)
+    return object == null
+      ? undefined
+      : (hasOwnProperty.call(object, key) ? object[key] : undefined)
   }
 
   /**
@@ -14810,10 +14812,16 @@
         options = undefined;
       }
       string = toString(string);
+      /* These variables are particularly sensitive to prototype pollution.
+         Look them up prior to assignInWith, which will merge in anything
+         already in the prototype. */
+      var sourceURL = getOwnValue(options, 'sourceURL') || getOwnValue(settings, 'sourceURL'),
+          variable = getOwnValue(options, 'variable') || getOwnValue(settings, 'variable'),
+          imports = getOwnValue(options, 'imports') || getOwnValue(settings, 'imports');
+
       options = assignInWith({}, options, settings, customDefaultsAssignIn);
 
-      var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
-          importsKeys = keys(imports),
+      var importsKeys = keys(imports),
           importsValues = baseValues(imports, importsKeys);
 
       var isEscaping,
@@ -14832,11 +14840,13 @@
 
       // Use a sourceURL for easier debugging.
       // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-      // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
-      var sourceURL = '//# sourceURL=' +
-        (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/[\r\n]/g, ' ')
+      // with lookup (in case of e.g. prototype pollution), and normalize all kinds of
+      // whitespace, so e.g. newlines (and unicode versions of it) can't sneak in.
+      // While variable is also injected below, it is less likely to be sourced from
+      // somewhere not trustworthy.
+      sourceURL = '//# sourceURL=' + (
+        sourceURL
+          ? (sourceURL + '').replace(/[\s]/g, ' ')
           : ('lodash.templateSources[' + (++templateCounter) + ']')
         ) + '\n';
 
@@ -14869,9 +14879,6 @@
 
       // If `variable` is not specified wrap a with-statement around the generated
       // code to add the data object to the top of the scope chain.
-      // Like with sourceURL, we take care to not check the option's prototype,
-      // as this configuration is a code injection vector.
-      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }

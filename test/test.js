@@ -22652,6 +22652,27 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should not let a polluted prototype affect generated code', function(assert) {
+      assert.expect(1);
+
+      // Intentionally pollute the prototype. These will cause a compilation error if part of the code
+      Object.prototype['sourceURL'] = '\u2028\n!err, please!';
+      Object.prototype['variable'] = '}{!?';
+      Object.prototype['imports'] = {',),': ''};
+
+      var actual,
+          expected = 'no error';
+      try {
+        actual = _.template(expected)();
+      } catch (e) {}
+
+      delete Object.prototype['sourceURL'];
+      delete Object.prototype['variable'];
+      delete Object.prototype['imports'];
+
+      assert.equal(actual, expected);
+    });
+
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 

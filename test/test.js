@@ -22641,6 +22641,18 @@
       assert.deepEqual(actual, expected);
     });
 
+    QUnit.test('should not let a sourceURL inject code', function(assert) {
+      assert.expect(1);
+
+      var actual,
+          expected = 'no error';
+      try {
+          actual = _.template(expected, {'sourceURL': '\u2028\u2029\n!this would err if it was executed!'})();
+      } catch (e) {}
+
+      assert.equal(actual, expected);
+    });
+
     QUnit.test('should work as an iteratee for methods like `_.map`', function(assert) {
       assert.expect(1);
 

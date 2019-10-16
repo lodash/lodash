@@ -87,6 +87,7 @@ exports.aryMethod = {
     'every', 'filter', 'find', 'findIndex', 'findKey', 'findLast', 'findLastIndex',
     'findLastKey', 'flatMap', 'flatMapDeep', 'flattenDepth', 'forEach',
     'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'get',
+    'getOwnValue',
     'groupBy', 'gt', 'gte', 'has', 'hasIn', 'includes', 'indexOf', 'intersection',
     'invertBy', 'invoke', 'invokeMap', 'isEqual', 'isMatch', 'join', 'keyBy',
     'lastIndexOf', 'lt', 'lte', 'map', 'mapKeys', 'mapValues', 'matchesProperty',

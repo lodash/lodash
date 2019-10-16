@@ -1130,6 +1130,19 @@
   }
 
   /**
+   * Gets the value at `key` of `object`, if it's an "own property" and
+   * not coming from the object's prototype.
+   *
+   * @private
+   * @param {Object} [object] The object to query.
+   * @param {string} key The key of the property to get.
+   * @returns {*} Returns the property value if it's the object's own property.
+   */
+  function getOwnValue(object, key) {
+    return object == null ? undefined : (hasOwnProperty.call(object, key) && object[key] || undefined)
+  }
+
+  /**
    * Checks if `string` contains Unicode symbols.
    *
    * @private
@@ -16762,6 +16775,7 @@
     lodash.forOwn = forOwn;
     lodash.forOwnRight = forOwnRight;
     lodash.get = get;
+    lodash.getOwnValue = getOwnValue;
     lodash.gt = gt;
     lodash.gte = gte;
     lodash.has = has;

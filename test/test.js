@@ -1489,6 +1489,33 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.getOwnValue');
+
+  (function() {
+
+    var obj = {'foo': 'bar', 'falsy-0': 0, 'falsy-false': false};
+    obj.__proto__ = {'sourceURL': 'does not belong to a'};
+
+    QUnit.test('should return `undefined` for keys that only exist in the prototype', function (assert) {
+      assert.expect(1);
+      assert.equal(_.getOwnValue(obj, 'sourceURL'), undefined);
+    });
+
+    QUnit.test('should return values that exist', function (assert) {
+      assert.expect(1);
+      assert.equal(_.getOwnValue(obj, 'foo'), 'bar');
+    });
+
+    QUnit.test('should return falsy values properly', function (assert) {
+      assert.expect(2);
+      assert.equal(_.getOwnValue(obj, 'falsy-0'), 0);
+      assert.equal(_.getOwnValue(obj, 'falsy-false'), false);
+    });
+
+  });
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.at');
 
   (function() {
@@ -26851,7 +26878,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

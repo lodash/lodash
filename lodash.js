@@ -7515,8 +7515,7 @@
      * _.insert(-2, 'Hello', ['Hey', 'Hi', 'Howdy'])
      * // => '["Hey", "Hello", "Hi", "Howdy"]'
      */
-    function insert(index = 0, item, array) {
-      var array = array ? array : [];
+    function insert(index = 0, item, array = []) {
       return [...array.slice(0, index), item, ...array.slice(index)];
     }
 

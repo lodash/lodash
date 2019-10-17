@@ -19,7 +19,7 @@ function baseOrderBy(collection, iteratees, orders) {
   if (iteratees.length) {
     iteratees = iteratees.map((iteratee) => {
       if (Array.isArray(iteratee)) {
-        return (value) => baseGet(value, iteratee)
+        return (value) => baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee)
       }
 
       return iteratee

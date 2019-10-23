@@ -1,5 +1,5 @@
 import baseGet from './.internal/baseGet.js'
-
+const toString = Object.prototype.toString
 /**
  * Gets the value at `path` of `object`. If the resolved value is
  * `undefined`, the `defaultValue` is returned in its place.
@@ -23,10 +23,20 @@ import baseGet from './.internal/baseGet.js'
  *
  * get(object, 'a.b.c', 'default')
  * // => 'default'
+ *
+ * get(object, 'a[0].b.c', 'default')
+ * // => 'default'
+ *
+ * get(object, 'a[0].b.c', 0)
+ * // => 3
  */
 function get(object, path, defaultValue) {
   const result = object == null ? undefined : baseGet(object, path)
-  return result === undefined ? defaultValue : result
+  const type = toString.call(result)
+  if (defaultValue && type !== toString.call(defaultValue)) {
+    return defaultValue
+  }
+  return result
 }
 
 export default get

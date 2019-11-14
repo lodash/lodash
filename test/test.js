@@ -9820,7 +9820,7 @@
       object1 = {self: {self: {self: {}}}};
       object1.self.self.self = object1;
       object2 = {self: {}};
-      object2.self = object2; 
+      object2.self = object2;
 
       assert.strictEqual(_.isEqual(object1, object2), false);
       assert.strictEqual(_.isEqual(object2, object1), false);
@@ -24400,7 +24400,10 @@
         noMic = mic + '\u20e0',
         raisedHand = '\u270B' + emojiVar,
         rocket = '\ud83d\ude80',
-        thumbsUp = '\ud83d\udc4d';
+        thumbsUp = '\ud83d\udc4d',
+        wavingFlag = '\ud83c\udff4',
+        scottishFlag = wavingFlag + '\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f';
+
 
     QUnit.test('should account for astral symbols', function(assert) {
       assert.expect(34);
@@ -24520,6 +24523,14 @@
       assert.deepEqual(_.toArray(heart), [heart]);
       assert.deepEqual(_.words(heart), [heart]);
     });
+
+    QUnit.test('should account for emoji tag sequence', function(assert){
+      assert.expect(3);
+
+      assert.strictEqual(_.size(scottishFlag), 1);
+      assert.deepEqual(_.toArray(scottishFlag), [scottishFlag]);
+      assert.deepEqual(_.words(scottishFlag), [scottishFlag]);
+    })
 
     QUnit.test('should account for variation selectors with fitzpatrick modifiers', function(assert) {
       assert.expect(1);

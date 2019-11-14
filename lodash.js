@@ -247,8 +247,7 @@
       rsOptTag = '(?:' + rsTagSpec + rsTagCancel + ')?',
       rsOrdLower = '\\d*(?:1st|2nd|3rd|(?![123])\\dth)(?=\\b|[A-Z_])',
       rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])',
-      rsCoreZwjSeq = '(?:' + rsOptVar + reOptMod + rsOptJoin + ')',
-      rsSeq = '(?:' + rsOptTag + '|' + rsCoreZwjSeq + ')?'
+      rsSeq = rsOptVar + reOptMod + rsOptJoin + rsOptTag,
       rsEmoji = '(?:' + [rsDingbat, rsRegional, rsSurrPair].join('|') + ')' + rsSeq,
       rsSymbol = '(?:' + [rsNonAstral + rsCombo + '?', rsCombo, rsRegional, rsSurrPair, rsAstral].join('|') + ')';
 

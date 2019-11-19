@@ -51,9 +51,7 @@ function isEmpty(value) {
   const type = typeof value;
     if ((value !== null && type === 'object') || type === 'function') {
        const properties = Object.keys(value);
-        if (properties.length === 0 || properties.size === 0) { 
-          return true;
-        } 
+        return properties.length === 0 || properties.size === 0
       } 
       return !value;
 }

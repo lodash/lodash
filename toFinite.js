@@ -26,9 +26,7 @@ const MAX_INTEGER = 1.7976931348623157e+308
  * // => 3.2
  */
 function toFinite(value) {
-  if (!value) {
-    return value === 0 ? value : 0
-  }
+  if (!value) return 0
   value = toNumber(value)
   if (value === INFINITY || value === -INFINITY) {
     const sign = (value < 0 ? -1 : 1)

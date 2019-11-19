@@ -17,7 +17,10 @@
  * isEmpty(null)
  * // => true
  *
- * isEmpty(true)
+ *  * isEmpty(undefined)
+ * // => true
+ *
+ * isEmpty(false)
  * // => true
  *
  * isEmpty(1)
@@ -45,7 +48,7 @@
 
 
 function isEmpty(value) {
-  const type = typeof val;
+  const type = typeof value;
     if ((value !== null && type === 'object') || type === 'function') {
        const properties = Object.keys(value);
         if (properties.length === 0 || properties.size === 0) { 

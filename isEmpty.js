@@ -26,10 +26,10 @@
  * isEmpty(1)
  * // => true
  * 
- * isEmpty(() => {})
+ * isEmpty({})
  * // => true
  * 
- * isEmpty(() => [])
+ * isEmpty([])
  * // => true
  * 
  * isEmpty(new Set())

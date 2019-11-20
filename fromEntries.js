@@ -10,14 +10,23 @@
  *
  * fromEntries([['a', 1], ['b', 2]])
  * // => { 'a': 1, 'b': 2 }
+ * 
+ * fromEntries(new Array(null))
+ * // => {}
+ * 
+ * fromEntries(null)
+ * // => {}
+ * 
+ * fromEntries(undefined)
+ * // => {}
  */
 function fromEntries(pairs) {
   const result = {}
-  if (pairs == null) {
+  if (!pairs) {
     return result
   }
   for (const pair of pairs) {
-    result[pair[0]] = pair[1]
+    if(pair) result[pair[0]] = pair[1]
   }
   return result
 }

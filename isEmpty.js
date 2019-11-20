@@ -36,6 +36,21 @@ import isObjectLike from './isObjectLike.js'
  * 
  * isEmpty(new Set())
  * // => true
+ * 
+ * 
+ * * isEmpty(Object.create(null))
+ * // => true
+ * 
+ * * 
+ * isEmpty( () => ({}))
+ * // => true
+ * 
+ * * isEmpty(Object.create({key: 1}))
+ * // => false
+ * 
+ *  * * 
+ * isEmpty( () => ({key: 1}))
+ * // => false
  *
  * isEmpty([1, 2, 3])
  * // => false
@@ -50,10 +65,13 @@ import isObjectLike from './isObjectLike.js'
 
 
 function isEmpty(value) {
-  if (isObjectLike(value) || typeof value === 'function') {
-      const properties = Object.keys(value);
+  if (isObjectLike(value)) {
+      const prototype = Object.getPrototypeOf(value) || {}
+      const properties = Object.keys(value) + Object.keys(prototype);
       return properties.length === 0 || properties.size === 0
-    } 
+    } else if(typeof value === 'function') {
+      return isEmpty( value() )
+    }
     return !value;
 }
 

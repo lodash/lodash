@@ -25,7 +25,7 @@ import isObjectLike from './isObjectLike.js'
  * isEmpty(false)
  * // => true
  *
- * isEmpty(1)
+ * isEmpty(0)
  * // => true
  * 
  * isEmpty({})

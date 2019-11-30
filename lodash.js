@@ -7497,6 +7497,34 @@
     }
 
     /**
+     * Inserts `item` to an `array`
+     *
+     * @static
+     * @memberof _
+     * @since 4.17.16
+     * @category Array
+     * @param {Array} array The array to insert the item into
+     * @param {*} item The item to be inserted
+     * @param {number} [index=0] The index in which the item will be inserted
+     * @returns {Array} Return the new array with the inserted item
+     * @example
+     *
+     * _.insert([2,3], 1);
+     * // => [1,2,3]
+     *
+     * _.insert(['Sunday', 'Monday', 'Wednesday', 'Thursday'], 'Tuesday', 2);
+     * // => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+     */
+
+    function insert(array, item, index) {
+      var length = array == null ? 0 : array.length;
+      var insertopnIndex = index == null ? length : parseInt(index);
+      return !isUndefined(item)
+        ? concat(slice(array, 0, insertopnIndex), item, slice(array, insertopnIndex))
+        : array;
+    }
+
+    /**
      * Creates an array of unique values that are included in all given arrays
      * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
      * for equality comparisons. The order and references of result values are
@@ -16620,6 +16648,7 @@
     lodash.functionsIn = functionsIn;
     lodash.groupBy = groupBy;
     lodash.initial = initial;
+    lodash.insert = insert;
     lodash.intersection = intersection;
     lodash.intersectionBy = intersectionBy;
     lodash.intersectionWith = intersectionWith;

@@ -8369,6 +8369,59 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.insert');
+
+  (function() {  
+    QUnit.test('should insert an `item` at the given `index`', function(assert) {
+      var array = [ 1, 2, 3, 4 ];
+      var item = 2.5;
+      var index = 2;
+      var result = [ 1, 2, 2.5, 3, 4 ];
+      assert.deepEqual(_.insert(array, item, index), result);
+    });
+    
+    QUnit.test('should work with a negative `index`', function(assert) {
+      var array = [ 1, 2, 3, 4 ];
+      var item = 2.5;
+      var index = -1;
+      var result = [1, 2, 3, 2.5, 4];
+      assert.deepEqual(_.insert(array, item, index), result);
+    });
+
+    QUnit.test('should fallback to _.concat() when no `index` given', function(assert) {
+      var array = [ 1, 2, 3, 4 ];
+      var item = 2.5;
+      var result = [1, 2, 3, 4, 2.5];
+      assert.deepEqual(_.insert(array, item), result);
+    });
+
+    QUnit.test('should place `item` at beginning or ending if `index` is out of bounds', function(assert) {
+      var array = [ 1, 2, 3, 4 ];
+      var item = 2.5;
+      var index = -10;
+      var result = [2.5, 1, 2, 3, 4];
+      assert.deepEqual(_.insert(array, item, index), result);
+
+      var array = [ 1, 2, 3, 4 ];
+      var item = 2.5;
+      var index = 60; 
+      var result = [1, 2, 3, 4, 2.5];
+      assert.deepEqual(_.insert(array, item, index), result);
+    });
+    
+    QUnit.test('should return original `array` if no `item` given', function(assert) {
+      var array = [ 1, 2, 3, 4 ];
+      var result = [ 1, 2, 3, 4 ];
+      assert.deepEqual(_.insert(array), result);
+    });
+
+    QUnit.test('should return undefined when no arguments passed', function(assert) {
+      assert.notOk(_.insert());
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.inRange');
 
   (function() {
@@ -26867,7 +26920,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

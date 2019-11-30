@@ -7518,9 +7518,9 @@
 
     function insert(array, item, index) {
       var length = array == null ? 0 : array.length;
-      var insertopnIndex = index == null ? length : parseInt(index);
+      var itemIndex = index == null ? length : parseInt(index);
       return !isUndefined(item)
-        ? concat(slice(array, 0, insertopnIndex), item, slice(array, insertopnIndex))
+        ? concat(slice(array, 0, itemIndex), item, slice(array, itemIndex))
         : array;
     }
 

@@ -7509,8 +7509,8 @@
      * @returns {Array} Return the new array with the inserted item
      * @example
      *
-     * _.insert([2,3], 1);
-     * // => [1,2,3]
+     * _.insert([1, 2], 3);
+     * // => [1, 2, 3]
      *
      * _.insert(['Sunday', 'Monday', 'Wednesday', 'Thursday'], 'Tuesday', 2);
      * // => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']

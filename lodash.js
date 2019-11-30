@@ -7497,7 +7497,7 @@
     }
 
     /**
-     * Inserts `item` to an `array`
+     * Inserts an `item` to an `array`
      *
      * @static
      * @memberof _
@@ -7505,7 +7505,7 @@
      * @category Array
      * @param {Array} array The array to insert the item into
      * @param {*} item The item to be inserted
-     * @param {number} [index=0] The index in which the item will be inserted
+     * @param {number} [index=array.length] The index in which the item will be inserted
      * @returns {Array} Return the new array with the inserted item
      * @example
      *

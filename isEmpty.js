@@ -46,6 +46,9 @@ function isEmpty(value) {
   if (value == null) {
     return true
   }
+  if (value.length === void 0 && value.size === void 0 && getTag(value) !== '[object Object]') {
+    return !value
+  }
   if (isArrayLike(value) &&
       (Array.isArray(value) || typeof value === 'string' || typeof value.splice === 'function' ||
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {

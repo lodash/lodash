@@ -1,5 +1,5 @@
-import assert from 'assert';
-import lodashStable from 'lodash';
+import assert from 'assert'
+import lodashStable from 'lodash'
 
 import {
   empties,
@@ -10,31 +10,35 @@ import {
   push,
   arrayProto,
   realm,
-  MAX_SAFE_INTEGER,
-} from './utils.js';
+  MAX_SAFE_INTEGER
+} from './utils.js'
 
-import isEmpty from '../isEmpty.js';
+import isEmpty from '../isEmpty.js'
 
-describe('isEmpty', function() {
-  it('should return `true` for empty values', function() {
+describe('isEmpty', () => {
+  it('should return `true` for non-collection empty values', function() {
     var expected = lodashStable.map(empties, stubTrue),
         actual = lodashStable.map(empties, isEmpty);
 
     assert.deepStrictEqual(actual, expected);
 
-    assert.strictEqual(isEmpty(true), true);
-    assert.strictEqual(isEmpty(slice), true);
-    assert.strictEqual(isEmpty(1), true);
-    assert.strictEqual(isEmpty(NaN), true);
-    assert.strictEqual(isEmpty(/x/), true);
-    assert.strictEqual(isEmpty(symbol), true);
     assert.strictEqual(isEmpty(), true);
+    assert.strictEqual(isEmpty(NaN), true);
+    assert.strictEqual(isEmpty(null), true);
 
     if (Buffer) {
       assert.strictEqual(isEmpty(new Buffer(0)), true);
       assert.strictEqual(isEmpty(new Buffer(1)), false);
     }
   });
+    
+  it('should return `false` for non-collection non-empty values', function() {
+    assert.strictEqual(isEmpty(true), false);
+    assert.strictEqual(isEmpty(slice), false);
+    assert.strictEqual(isEmpty(1), false);
+    assert.strictEqual(isEmpty(/x/), false);
+    assert.strictEqual(isEmpty(symbol), false);
+  })
 
   it('should return `false` for non-empty values', function() {
     assert.strictEqual(isEmpty([0]), false);
@@ -116,4 +120,4 @@ describe('isEmpty', function() {
   it('should return a wrapped value when explicitly chaining', function() {
     assert.ok(_({}).chain().isEmpty() instanceof _);
   });
-});
+})

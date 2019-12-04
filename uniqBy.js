@@ -16,7 +16,7 @@ import baseUniq from './.internal/baseUniq.js'
  * @example
  *
  * uniqBy([2.1, 1.2, 2.3], Math.floor)
- * // => [2.1, 1.2]
+ * // => [2, 1]
  */
 function uniqBy(array, iteratee) {
   return (array != null && array.length)

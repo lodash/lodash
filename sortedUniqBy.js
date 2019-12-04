@@ -12,7 +12,7 @@ import baseSortedUniq from './.internal/baseSortedUniq.js'
  * @example
  *
  * sortedUniqBy([1.1, 1.2, 2.3, 2.4], Math.floor)
- * // => [1.1, 2.3]
+ * // => [1, 2]
  */
 function sortedUniqBy(array, iteratee) {
   return (array != null && array.length)

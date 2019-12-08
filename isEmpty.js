@@ -43,7 +43,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * // => false
  */
 function isEmpty(value) {
-  if (value == null) {
+  if (value === null) {
     return true
   }
   if (isArrayLike(value) &&

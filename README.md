@@ -69,6 +69,30 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
  * Iterating arrays, objects, & strings
  * Manipulating & testing values
  * Creating composite functions
+ 
+## Memory Exhaustion Warning
+
+Lodash collection methods accept array like object as parameter and consider parameter as an array type if it is not a function and has a `length` value. This can lead to memory exhaustion attack as demonstrated below using lodash.
+
+```
+const _ = require('lodash')
+
+user_supplied_array = [1, 2, 3]
+values_to_compare_to = {'length': 99999999999} // This could be any huge value
+
+_.difference(values_to_compare_to, user_supplied_array) // The Node.js process will crash, saying that the JavaScript heap ran out of memory
+```
+
+We can demonstrate the same in plain Javascript.
+
+```
+Array.prototype.forEach.call({'length': 99999999999}, () =>{}) // hang
+```
+
+This could be fixed in Lodash by limiting the max size of the array input, however this puts a hard limit on the size of the data which will impact teams working with large datasets. 
+
+If you are aware that the input should be of array like object type, then it is good enough to avoid memory exhaustion situation. Read more [here](https://hackerone.com/reports/670779).
+
 
 ## Module Formats
 

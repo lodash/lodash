@@ -76,7 +76,7 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       return object == `${other}`
 
     case mapTag:
-      let convert = mapToArray
+      var convert = mapToArray
 
     case setTag:
       const isPartial = bitmask & COMPARE_PARTIAL_FLAG

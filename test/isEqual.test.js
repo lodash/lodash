@@ -398,7 +398,7 @@ describe('isEqual', function() {
 
   it('should compare array views', function() {
     lodashStable.times(2, function(index) {
-      var ns = index ? realm : root;
+      var ns = index ? realm : global;
 
       var pairs = lodashStable.map(arrayViews, function(type, viewIndex) {
         var otherType = arrayViews[(viewIndex + 1) % arrayViews.length],
@@ -451,8 +451,8 @@ describe('isEqual', function() {
       'URIError'
     ], function(type, index, errorTypes) {
       var otherType = errorTypes[++index % errorTypes.length],
-          CtorA = root[type],
-          CtorB = root[otherType];
+          CtorA = global[type],
+          CtorB = global[otherType];
 
       return [new CtorA('a'), new CtorA('a'), new CtorB('a'), new CtorB('b')];
     });

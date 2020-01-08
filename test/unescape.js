@@ -3,31 +3,31 @@ import lodashStable from 'lodash';
 import unescape from '../unescape.js';
 import escape from '../escape.js';
 
-describe('unescape', function() {
-  var escaped = '&amp;&lt;&gt;&quot;&#39;/',
-      unescaped = '&<>"\'/';
+describe('unescape', function () {
+  var escaped = '&amp;&nbsp;&lt;&gt;&quot;&#39;/',
+    unescaped = '& <>"\'/';
 
   escaped += escaped;
   unescaped += unescaped;
 
-  it('should unescape entities in order', function() {
+  it('should unescape entities in order', function () {
     assert.strictEqual(unescape('&amp;lt;'), '&lt;');
   });
 
-  it('should unescape the proper entities', function() {
+  it('should unescape the proper entities', function () {
     assert.strictEqual(unescape(escaped), unescaped);
   });
 
-  it('should handle strings with nothing to unescape', function() {
+  it('should handle strings with nothing to unescape', function () {
     assert.strictEqual(unescape('abc'), 'abc');
   });
 
-  it('should unescape the same characters escaped by `_.escape`', function() {
+  it('should unescape the same characters escaped by `_.escape`', function () {
     assert.strictEqual(unescape(escape(unescaped)), unescaped);
   });
 
-  lodashStable.each(['&#96;', '&#x2F;'], function(entity) {
-    it('should not unescape the "' + entity + '" entity', function() {
+  lodashStable.each(['&#96;', '&#x2F;'], function (entity) {
+    it('should not unescape the "' + entity + '" entity', function () {
       assert.strictEqual(unescape(entity), entity);
     });
   });

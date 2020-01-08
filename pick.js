@@ -1,3 +1,4 @@
+import baseFlatten from './.internal/baseFlatten.js'
 import basePick from './.internal/basePick.js'
 
 /**
@@ -16,7 +17,7 @@ import basePick from './.internal/basePick.js'
  * // => { 'a': 1, 'c': 3 }
  */
 function pick(object, ...paths) {
-  return object == null ? {} : basePick(object, paths)
+  return object == null ? {} : basePick(object, baseFlatten(paths, 1))
 }
 
 export default pick

@@ -26,6 +26,12 @@ describe('unescape', function() {
     assert.strictEqual(unescape(escape(unescaped)), unescaped);
   });
 
+  it('should handle leading zeros in html entities', function() {
+    assert.strictEqual(unescape('&#39;'), "'");
+    assert.strictEqual(unescape('&#039;'), "'");
+    assert.strictEqual(unescape('&#000039;'), "'");
+  });
+
   lodashStable.each(['&#96;', '&#x2F;'], function(entity) {
     it('should not unescape the "' + entity + '" entity', function() {
       assert.strictEqual(unescape(entity), entity);

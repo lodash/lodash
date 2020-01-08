@@ -1,8 +1,7 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { identity, isModularize, argv, isPhantom } from './utils.js';
+import { identity, argv, isPhantom } from './utils.js';
 import throttle from '../throttle.js';
-import runInContext from '../runInContext.js';
 
 describe('throttle', function() {
   it('should throttle a function', function(done) {
@@ -39,20 +38,25 @@ describe('throttle', function() {
     }, 64);
   });
 
-  it('should clear timeout when `func` is called', function(done) {
-    if (!isModularize) {
+  describe('', function() {
+    var originalNow
+    beforeEach(function() {
+      originalNow = Date.now;
+    })
+
+    afterEach(function() {
+      Date.now = originalNow
+    })
+
+    it('should clear timeout when `func` is called', function(done) {
       var callCount = 0,
           dateCount = 0;
 
-      var lodash = runInContext({
-        'Date': {
-          'now': function() {
-            return ++dateCount == 5 ? Infinity : +new Date;
-          }
-        }
-      });
-
-      var throttled = lodash.throttle(function() { callCount++; }, 32);
+      Date.now = function() {
+        return ++dateCount == 5 ? Infinity : +new Date;
+      }
+      
+      var throttled = throttle(function() { callCount++; }, 32);
 
       throttled();
       throttled();
@@ -61,11 +65,9 @@ describe('throttle', function() {
         assert.strictEqual(callCount, 2);
         done();
       }, 64);
-    }
-    else {
-      done();
-    }
-  });
+    });
+  })
+
 
   it('should not trigger a trailing call when invoked once', function(done) {
     var callCount = 0,
@@ -193,20 +195,25 @@ describe('throttle', function() {
     }, 192);
   });
 
-  it('should work with a system time of `0`', function(done) {
-    if (!isModularize) {
+  describe('', function() {
+    var originalNow
+    beforeEach(function() {
+      originalNow = Date.now;
+    })
+
+    afterEach(function() {
+      Date.now = originalNow
+    })
+
+    it('should work with a system time of `0`', function(done) {
       var callCount = 0,
           dateCount = 0;
 
-      var lodash = runInContext({
-        'Date': {
-          'now': function() {
-            return ++dateCount < 4 ? 0 : +new Date;
-          }
-        }
-      });
+      Date.now = function() {
+        return ++dateCount < 4 ? 0 : +new Date;
+      } 
 
-      var throttled = lodash.throttle(function(value) {
+      var throttled = throttle(function(value) {
         callCount++;
         return value;
       }, 32);
@@ -219,9 +226,7 @@ describe('throttle', function() {
         assert.strictEqual(callCount, 2);
         done();
       }, 64);
-    }
-    else {
-      done();
-    }
-  });
+    });
+  });  
+
 });

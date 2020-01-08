@@ -1,11 +1,17 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { _, noop, push, isModularize } from './utils.js';
-import runInContext from '../runInContext.js';
+import { _, noop, push } from './utils.js';
+import throttle from '../throttle.js';
+import debounce from '../debounce.js';
+
+const methods = {
+  debounce,
+  throttle
+}
 
 describe('debounce and throttle', function() {
   lodashStable.each(['debounce', 'throttle'], function(methodName) {
-    var func = _[methodName],
+    var func = methods[methodName],
         isDebounce = methodName == 'debounce';
 
     it('`_.' + methodName + '` should not error for non-object `options` values', function() {
@@ -68,36 +74,38 @@ describe('debounce and throttle', function() {
       }, 256);
     });
 
-    it('`_.' + methodName + '` should work if the system time is set backwards', function(done) {
-      if (!isModularize) {
+    describe('', function () {
+      var originalNow
+      beforeEach(function() {
+        originalNow = Date.now;
+      })
+
+      afterEach(function() {
+        Date.now = originalNow
+      })
+
+      it('`_.' + methodName + '` should work if the system time is set backwards', function(done) {
         var callCount = 0,
             dateCount = 0;
-
-        var lodash = runInContext({
-          'Date': {
-            'now': function() {
-              return ++dateCount == 4
-                ? +new Date(2012, 3, 23, 23, 27, 18)
-                : +new Date;
-            }
-          }
-        });
-
-        var funced = lodash[methodName](function() {
+  
+        Date.now = function() {
+          return ++dateCount == 4
+            ? +new Date(2012, 3, 23, 23, 27, 18)
+            : +new Date;
+        }
+  
+        var funced = methods[methodName](function() {
           callCount++;
         }, 32);
-
+  
         funced();
-
+  
         setTimeout(function() {
           funced();
           assert.strictEqual(callCount, isDebounce ? 1 : 2);
           done();
         }, 64);
-      }
-      else {
-        done();
-      }
+      });
     });
 
     it('`_.' + methodName + '` should support cancelling delayed calls', function(done) {

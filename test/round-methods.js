@@ -78,15 +78,5 @@ describe('round methods', function() {
 
       assert.deepStrictEqual(actual, expected);
     });
-
-    it('`_.' + methodName + '` should retun 0 when number is `Infinity`. If precision equals `Infinity`, should return only the number', function(){
-      var infinityCases = [
-        round(Infinity, 2),
-        round(2, Infinity)
-      ];
-      
-      assert.deepStrictEqual(infinityCases[0], Infinity);
-      assert.deepStrictEqual(infinityCases[1], 2);
-    });
   });
 });

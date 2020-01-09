@@ -12,7 +12,7 @@ const NAN = 0 / 0
  * @returns {number} Returns the number.
  */
 function baseToNumber(value) {
-  if (typeof value == 'number') {
+  if (typeof value === 'number') {
     return value
   }
   if (isSymbol(value)) {

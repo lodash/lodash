@@ -29,9 +29,9 @@ function split(string, separator, limit) {
     return []
   }
   if (string && (
-        typeof separator == 'string' ||
+    typeof separator === 'string' ||
         (separator != null && !isRegExp(separator))
-      )) {
+  )) {
     if (!separator && hasUnicode(string)) {
       return castSlice(stringToArray(string), 0, limit)
     }

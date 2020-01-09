@@ -45,7 +45,7 @@ function result(object, path, defaultValue) {
       index = length
       value = defaultValue
     }
-    object = typeof value == 'function' ? value.call(object) : value
+    object = typeof value === 'function' ? value.call(object) : value
   }
   return object
 }

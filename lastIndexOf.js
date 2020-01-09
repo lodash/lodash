@@ -1,6 +1,7 @@
 import baseFindIndex from './.internal/baseFindIndex.js'
 import baseIsNaN from './.internal/baseIsNaN.js'
 import strictLastIndexOf from './.internal/strictLastIndexOf.js'
+import toInteger from './toInteger.js'
 
 /**
  * This method is like `indexOf` except that it iterates over elements of
@@ -28,6 +29,7 @@ function lastIndexOf(array, value, fromIndex) {
   }
   let index = length
   if (fromIndex !== undefined) {
+    index = toInteger(fromIndex)
     index = index < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1)
   }
   return value === value

@@ -1,24 +1,31 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { _, identity, stubZero, falsey } from './utils.js';
+import { identity, stubZero, falsey } from './utils.js';
+import findLastIndex from '../findLastIndex.js';
+import lastIndexOf from '../lastIndexOf.js';
 
-describe('findIndex and indexOf', function() {
-  lodashStable.each(['findIndex', 'indexOf'], function(methodName) {
+const methods = {
+  findLastIndex,
+  lastIndexOf
+};
+
+describe('findLastIndex and lastIndexOf', function() {
+  lodashStable.each(['findLastIndex', 'lastIndexOf'], function(methodName) {
     var array = [1, 2, 3, 1, 2, 3],
-        func = _[methodName],
-        resolve = methodName == 'findIndex' ? lodashStable.curry(lodashStable.eq) : identity;
+        func = methods[methodName],
+        resolve = methodName == 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
 
-    it('`_.' + methodName + '` should return the index of the first matched value', function() {
-      assert.strictEqual(func(array, resolve(3)), 2);
+    it('`_.' + methodName + '` should return the index of the last matched value', function() {
+      assert.strictEqual(func(array, resolve(3)), 5);
     });
 
     it('`_.' + methodName + '` should work with a positive `fromIndex`', function() {
-      assert.strictEqual(func(array, resolve(1), 2), 3);
+      assert.strictEqual(func(array, resolve(1), 2), 0);
     });
 
     it('`_.' + methodName + '` should work with a `fromIndex` >= `length`', function() {
       var values = [6, 8, Math.pow(2, 32), Infinity],
-          expected = lodashStable.map(values, lodashStable.constant([-1, -1, -1]));
+          expected = lodashStable.map(values, lodashStable.constant([-1, 3, -1]));
 
       var actual = lodashStable.map(values, function(fromIndex) {
         return [
@@ -32,7 +39,7 @@ describe('findIndex and indexOf', function() {
     });
 
     it('`_.' + methodName + '` should work with a negative `fromIndex`', function() {
-      assert.strictEqual(func(array, resolve(2), -3), 4);
+      assert.strictEqual(func(array, resolve(2), -3), 1);
     });
 
     it('`_.' + methodName + '` should work with a negative `fromIndex` <= `-length`', function() {
@@ -46,18 +53,20 @@ describe('findIndex and indexOf', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should treat falsey `fromIndex` values as `0`', function() {
-      var expected = lodashStable.map(falsey, stubZero);
+    it('`_.' + methodName + '` should treat falsey `fromIndex` values correctly', function() {
+      var expected = lodashStable.map(falsey, function(value) {
+        return value === undefined ? 5 : -1;
+      });
 
       var actual = lodashStable.map(falsey, function(fromIndex) {
-        return func(array, resolve(1), fromIndex);
+        return func(array, resolve(3), fromIndex);
       });
 
       assert.deepStrictEqual(actual, expected);
     });
 
     it('`_.' + methodName + '` should coerce `fromIndex` to an integer', function() {
-      assert.strictEqual(func(array, resolve(2), 1.2), 1);
+      assert.strictEqual(func(array, resolve(2), 4.2), 4);
     });
   });
 });

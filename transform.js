@@ -43,7 +43,7 @@ function transform(object, iteratee, accumulator) {
       accumulator = isArr ? new Ctor : []
     }
     else if (isObject(object)) {
-      accumulator = typeof Ctor == 'function'
+      accumulator = typeof Ctor === 'function'
         ? Object.create(Object.getPrototypeOf(object))
         : {}
     }

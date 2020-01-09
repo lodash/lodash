@@ -32,7 +32,7 @@ import getMatchData from './.internal/getMatchData.js'
  * // => true
  */
 function isMatchWith(object, source, customizer) {
-  customizer = typeof customizer == 'function' ? customizer : undefined
+  customizer = typeof customizer === 'function' ? customizer : undefined
   return baseIsMatch(object, source, getMatchData(source), customizer)
 }
 

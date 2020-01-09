@@ -20,7 +20,7 @@ import unzipWith from './unzipWith.js'
 function zipWith(...arrays) {
   const length = arrays.length
   let iteratee = length > 1 ? arrays[length - 1] : undefined
-  iteratee = typeof iteratee == 'function' ? (arrays.pop(), iteratee) : undefined
+  iteratee = typeof iteratee === 'function' ? (arrays.pop(), iteratee) : undefined
   return unzipWith(arrays, iteratee)
 }
 

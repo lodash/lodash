@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { args, typedArrays, stubTrue, defineProperty, document } from './utils.js';
+import { args, typedArrays, stubTrue, defineProperty, document, root } from './utils.js';
 import merge from '../merge.js';
 import isArguments from '../isArguments.js';
 
@@ -325,7 +325,7 @@ describe('merge', function() {
     assert.deepStrictEqual(actual, { 'a': [] });
   });
 
-  it('should not convert strings to arrays when merging arrays of `source`', function() {
+  it('should convert strings to arrays when merging arrays of `source`', function() {
     var object = { 'a': 'abcde' },
         actual = merge(object, { 'a': ['x', 'y', 'z'] });
 

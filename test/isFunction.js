@@ -25,11 +25,11 @@ describe('isFunction', function() {
   });
 
   it('should return `true` for async functions', function() {
-    assert.strictEqual(isFunction(asyncFunc), typeof asyncFunc == 'function');
+    assert.strictEqual(isFunction(asyncFunc), typeof asyncFunc === 'function');
   });
 
   it('should return `true` for generator functions', function() {
-    assert.strictEqual(isFunction(genFunc), typeof genFunc == 'function');
+    assert.strictEqual(isFunction(genFunc), typeof genFunc === 'function');
   });
 
   it('should return `true` for the `Proxy` constructor', function() {

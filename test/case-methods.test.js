@@ -1,16 +1,26 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { _, stubTrue, burredLetters, deburredLetters } from './utils.js';
+import { stubTrue, burredLetters, deburredLetters } from './utils.js';
 import camelCase from '../camelCase.js';
 import kebabCase from '../kebabCase.js';
 import lowerCase from '../lowerCase.js';
 import snakeCase from '../snakeCase.js';
 import startCase from '../startCase.js';
+import upperCase from '../upperCase.js';
+
+const caseMethods = {
+  camelCase,
+  kebabCase,
+  lowerCase,
+  snakeCase,
+  startCase,
+  upperCase
+};
 
 describe('case methods', function() {
   lodashStable.each(['camel', 'kebab', 'lower', 'snake', 'start', 'upper'], function(caseName) {
     var methodName = caseName + 'Case',
-        func = _[methodName];
+        func = caseMethods[methodName];
 
     var strings = [
       'foo bar', 'Foo bar', 'foo Bar', 'Foo Bar',
@@ -46,22 +56,6 @@ describe('case methods', function() {
       assert.deepStrictEqual(actual, lodashStable.map(strings, stubTrue));
     });
 
-    it('`_.' + methodName + '` should deburr letters', function() {
-      var actual = lodashStable.map(burredLetters, function(burred, index) {
-        var letter = deburredLetters[index].replace(/['\u2019]/g, '');
-        if (caseName == 'start') {
-          letter = letter == 'IJ' ? letter : lodashStable.capitalize(letter);
-        } else if (caseName == 'upper') {
-          letter = letter.toUpperCase();
-        } else {
-          letter = letter.toLowerCase();
-        }
-        return func(burred) === letter;
-      });
-
-      assert.deepStrictEqual(actual, lodashStable.map(burredLetters, stubTrue));
-    });
-
     it('`_.' + methodName + '` should remove contraction apostrophes', function() {
       var postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
 
@@ -94,14 +88,6 @@ describe('case methods', function() {
       var string = 'foo bar';
       assert.strictEqual(func(Object(string)), converted);
       assert.strictEqual(func({ 'toString': lodashStable.constant(string) }), converted);
-    });
-
-    it('`_.' + methodName + '` should return an unwrapped value implicitly when chaining', function() {
-      assert.strictEqual(_('foo bar')[methodName](), converted);
-    });
-
-    it('`_.' + methodName + '` should return a wrapped value when explicitly chaining', function() {
-      assert.ok(_('foo bar').chain()[methodName]() instanceof _);
     });
   });
 

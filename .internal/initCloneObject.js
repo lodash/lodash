@@ -8,7 +8,7 @@ import isPrototype from './isPrototype.js'
  * @returns {Object} Returns the initialized clone.
  */
 function initCloneObject(object) {
-  return (typeof object.constructor == 'function' && !isPrototype(object))
+  return (typeof object.constructor === 'function' && !isPrototype(object))
     ? Object.create(Object.getPrototypeOf(object))
     : {}
 }

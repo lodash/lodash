@@ -32,7 +32,7 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source)
 function unescape(string) {
   return (string && reHasEscapedHtml.test(string))
     ? string.replace(reEscapedHtml, (entity) => htmlUnescapes[entity])
-    : string
+    : (string || '')
 }
 
 export default unescape

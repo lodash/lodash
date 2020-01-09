@@ -61,7 +61,7 @@ function isEmpty(value) {
   if (tag === mapTag || tag === setTag) {
     return !value.size
   }
-  if(tag === arrayBufferTag || tag === sharedArrayBufferTag) {
+  if (tag === arrayBufferTag || tag === sharedArrayBufferTag) {
     return !value.byteLength
   }
   if (isPrototype(value)) {

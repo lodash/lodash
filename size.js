@@ -6,6 +6,8 @@ import stringSize from './.internal/stringSize.js'
 /** `Object#toString` result references. */
 const mapTag = '[object Map]'
 const setTag = '[object Set]'
+const arrayBufferTag = '[object ArrayBuffer]'
+const sharedArrayBufferTag = '[object SharedArrayBuffer]'
 
 /**
  * Gets the size of `collection` by returning its length for array-like
@@ -34,8 +36,11 @@ function size(collection) {
     return isString(collection) ? stringSize(collection) : collection.length
   }
   const tag = getTag(collection)
-  if (tag == mapTag || tag == setTag) {
+  if (tag === mapTag || tag === setTag) {
     return collection.size
+  }
+  if (tag === arrayBufferTag || tag == sharedArrayBufferTag) {
+    return collection.byteLength
   }
   return Object.keys(collection).length
 }

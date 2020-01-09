@@ -116,4 +116,18 @@ describe('isEmpty', function() {
   it('should return a wrapped value when explicitly chaining', function() {
     assert.ok(_({}).chain().isEmpty() instanceof _);
   });
+
+  it('should work with instance of ArrayBuffer or SharedArrayBuffer', function() {
+    const arrayBuffer = new ArrayBuffer(16);
+    const sharedArrayBuffer = new SharedArrayBuffer(16);
+
+    const emptyArrayBuffer = new ArrayBuffer();
+    const emptySharedArrayBuffer = new SharedArrayBuffer();
+
+    assert.strictEqual(isEmpty(arrayBuffer), false);
+    assert.strictEqual(isEmpty(sharedArrayBuffer), false);
+
+    assert.strictEqual(isEmpty(emptyArrayBuffer), true);
+    assert.strictEqual(isEmpty(emptySharedArrayBuffer), true);
+  });
 });

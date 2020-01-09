@@ -8,6 +8,12 @@ import isTypedArray from './isTypedArray.js'
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
+/** `Object#toString` result references. */
+const mapTag = '[object Map]'
+const setTag = '[object Set]'
+const arrayBufferTag = '[object ArrayBuffer]'
+const sharedArrayBufferTag = '[object SharedArrayBuffer]'
+
 /**
  * Checks if `value` is an empty object, collection, map, or set.
  *
@@ -52,8 +58,11 @@ function isEmpty(value) {
     return !value.length
   }
   const tag = getTag(value)
-  if (tag == '[object Map]' || tag == '[object Set]') {
+  if (tag === mapTag || tag === setTag) {
     return !value.size
+  }
+  if(tag === arrayBufferTag || tag === sharedArrayBufferTag) {
+    return !value.byteLength
   }
   if (isPrototype(value)) {
     return !Object.keys(value).length

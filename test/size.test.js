@@ -72,4 +72,18 @@ describe('size', function() {
   it('should not treat objects with non-number lengths as array-like', function() {
     assert.strictEqual(size({ 'length': '0' }), 1);
   });
+
+  it('should work with instance of ArrayBuffer or SharedArrayBuffer', function() {
+    const arrayBuffer = new ArrayBuffer(16);
+    const sharedArrayBuffer = new SharedArrayBuffer(16);
+
+    const emptyArrayBuffer = new ArrayBuffer();
+    const emptySharedArrayBuffer = new SharedArrayBuffer();
+
+    assert.strictEqual(size(arrayBuffer), 16);
+    assert.strictEqual(size(sharedArrayBuffer), 16);
+
+    assert.strictEqual(size(emptyArrayBuffer), 0);
+    assert.strictEqual(size(emptySharedArrayBuffer), 0);
+  });
 });

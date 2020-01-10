@@ -2492,6 +2492,10 @@
           props = isSrcArr ? undefined : keys(source);
 
       arrayEach(props || source, function(srcValue, key) {
+        if (srcValue === '__proto__' || srcValue === 'constructor') {
+          return;
+        }
+
         if (props) {
           key = srcValue;
           srcValue = source[key];
@@ -10166,6 +10170,10 @@
 
       while (nested != null && ++index < length) {
         var key = path[index];
+        if (key === '__proto__' || key === 'constructor') {
+          continue;
+        }
+
         if (isObject(nested)) {
           if (index == lastIndex) {
             nested[key] = value;

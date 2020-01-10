@@ -1068,6 +1068,18 @@
     test('should be aliased', 1, function() {
       strictEqual(_.extend, _.assign);
     });
+
+    test('should not pollute the prototype with a `__proto__` property', 1, function() {
+      var evil = JSON.parse('{"__proto__": { "admin": true }}');
+      _.assign({}, evil);
+      equal(({}).admin, undefined);
+    });
+
+    test('should not pollute the prototype with a `constructor.prototype` property', 1, function() {
+      var evil = JSON.parse('{"constructor": { "prototype": { "admin": true }}}');
+      _.assign({}, evil);
+      equal(({}).admin, undefined);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -3750,6 +3762,19 @@
           actual = _.defaultsDeep(object, source);
 
       strictEqual(actual.a.b, 2);
+    });
+
+    test('should not pollute the prototype with a `__proto__` property', 2, function() {
+      var evil = JSON.parse('{"__proto__": { "admin": true }, "user": true }');
+      _.defaultsDeep({}, evil);
+      deepEqual(_.defaultsDeep({}, evil), { user: true });
+      equal(({}).admin, undefined);
+    });
+
+    test('should not pollute the prototype with a `constructor.prototype` property', 1, function() {
+      var evil = JSON.parse('{"constructor": { "prototype": { "admin": true } } }');
+      _.defaultsDeep({}, evil);
+      equal(({}).admin, undefined);
     });
   }());
 
@@ -10385,7 +10410,7 @@
     });
 
     test('should throw a TypeError if `resolve` is truthy and not a function', function() {
-      raises(function() { _.memoize(_.noop, {}); }, TypeError);
+      throws(function() { _.memoize(_.noop, {}); }, TypeError);
     });
 
     test('should not error if `resolve` is falsey', function() {
@@ -10820,6 +10845,19 @@
       });
 
       deepEqual(actual, { 'a': { 'b': [0, 1, 2] } });
+    });
+
+    test('should not pollute the prototype with a `__proto__` property', 2, function() {
+      var evil = JSON.parse('{"__proto__": { "admin": true }, "user": true }');
+      _.merge({}, evil);
+      deepEqual(_.merge({}, evil), { user: true });
+      equal(({}).admin, undefined);
+    });
+
+    test('should not pollute the prototype with a `constructor.prototype` property', 1, function() {
+      var evil = JSON.parse('{"constructor": { "prototype": { "admin": true } } }');
+      _.merge({}, evil);
+      equal(({}).admin, undefined);
     });
   }(1, 2, 3));
 
@@ -11734,7 +11772,7 @@
         throw new Error;
       });
 
-      raises(function() { once(); }, Error);
+      throws(function() { once(); }, Error);
 
       try {
         once();
@@ -14210,16 +14248,8 @@
       deepEqual(actual, expected);
     });
 
-    test('should follow `path` over non-plain objects', 4, function() {
-      var object = { 'a': '' },
-          paths = ['constructor.prototype.a', ['constructor', 'prototype', 'a']];
-
-      _.each(paths, function(path) {
-        _.set(0, path, 1);
-        strictEqual(0..a, 1);
-        delete numberProto.a;
-      });
-
+    test('should follow `path` over non-plain objects', 2, function() {
+      var object = { 'a': '' };
       _.each(['a.replace.b', ['a', 'replace', 'b']], function(path) {
         _.set(object, path, 1);
         strictEqual(stringProto.replace.b, 1);
@@ -14248,6 +14278,16 @@
 
       _.set(object, ['1a', '2b', '3c'], 1);
       deepEqual(object, { '1a': { '2b': { '3c': 1 } } });
+    });
+
+    test('should not pollute the prototype with a `__proto__` property', 1, function() {
+      _.set({}, '__proto__.admin', true);
+      equal(({}).admin, undefined);
+    });
+
+    test('should not pollute the prototype with a `constructor.prototype` property', 1, function() {
+      _.set({}, 'constructor.prototype.admin', true);
+      equal(({}).admin, undefined);
     });
   }());
 
@@ -14923,7 +14963,7 @@
     });
 
     test('should throw a TypeError when receiving a non-array `array` argument', 1, function() {
-      raises(function() { _.spread(4, 2); }, TypeError);
+      throws(function() { _.spread(4, 2); }, TypeError);
     });
 
     test('should provide the correct `func` arguments', 1, function() {

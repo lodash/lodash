@@ -7497,16 +7497,16 @@
     }
 
     /**
-     * Inserts `item` at the given `index` into the `array`.
+     * Inserts `value` at the given `index` into the `array`.
      *
      * @static
      * @memberOf _
      * @since 4.7.15
      * @category Array
-     * @param {number} [index=0] The desired index of the inserted the item.
-     * @param {*} item The item to be inserted.
-     * @param {Array} array The array which will have an item inserted.
-     * @returns {Array} Returns a new array with the item inserted at the given index.
+     * @param {Array} array The array which will have an value inserted.
+     * @param {number} [index=0] The desired index of the inserted the value.
+     * @param {*} value The value to be inserted.
+     * @returns {Array} Returns a new array with the value inserted at the given index.
      * @example
      *
      * _.insert(2, 'Hello', ['Hey', 'Hi', 'Howdy'])
@@ -7515,8 +7515,8 @@
      * _.insert(-2, 'Hello', ['Hey', 'Hi', 'Howdy'])
      * // => '["Hey", "Hello", "Hi", "Howdy"]'
      */
-    function insert(index = 0, item, array = []) {
-      return [...array.slice(0, index), item, ...array.slice(index)];
+    function insert(array = [], index = 0, value) {
+      return [...array.slice(0, index), value, ...array.slice(index)];
     }
 
     /**

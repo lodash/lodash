@@ -8372,34 +8372,34 @@
   QUnit.module('lodash.insert');
 
   (function() {    
-    QUnit.test('should insert an `item` at the given `index`', function(assert) {
+    QUnit.test('should insert a `value` at the given `index`', function(assert) {
       var array = [ 1, 2, 3, 4 ];
-      var item = 2.5;
+      var value = 2.5;
       var index = 2;
       var result = [ 1, 2, 2.5, 3, 4 ];
-      assert.deepEqual(_.insert(index, item, array), result);
+      assert.deepEqual(_.insert(array, index, value), result);
     });
 
     QUnit.test('should work with a negative `index`', function(assert) {
       var array = [ 1, 2, 3, 4 ];
-      var item = 2.5;
+      var value = 2.5;
       var index = -1;
       var result = [1, 2, 3, 2.5, 4];
-      assert.deepEqual(_.insert(index, item, array), result);
+      assert.deepEqual(_.insert(array, index, value), result);
     });
 
-    QUnit.test('should place item at beginning or ending if index is out of bounds', function(assert) {
+    QUnit.test('should place value at beginning or ending if index is out of bounds', function(assert) {
       var array = [ 1, 2, 3, 4 ];
-      var item = 2.5;
+      var value = 2.5;
       var index = -10;
       var result = [2.5, 1, 2, 3, 4];
-      assert.deepEqual(_.insert(index, item, array), result);
+      assert.deepEqual(_.insert(array, index, value), result);
 
       var array = [ 1, 2, 3, 4 ];
-      var item = 2.5;
+      var value = 2.5;
       var index = 60; 
       var result = [1, 2, 3, 4, 2.5];
-      assert.deepEqual(_.insert(index, item, array), result);
+      assert.deepEqual(_.insert(array, index, value), result);
     });
   }());
 

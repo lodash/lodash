@@ -7509,10 +7509,10 @@
      * @returns {Array} Returns a new array with the value inserted at the given index.
      * @example
      *
-     * _.insert(2, 'Hello', ['Hey', 'Hi', 'Howdy'])
+     * _.insert(['Hey', 'Hi', 'Howdy'], 2, 'Hello')
      * // => '['Hey', 'Hi', 'Hello', 'Howdy']'
      * 
-     * _.insert(-2, 'Hello', ['Hey', 'Hi', 'Howdy'])
+     * _.insert(['Hey', 'Hi', 'Howdy'], -2, 'Hello')
      * // => '["Hey", "Hello", "Hi", "Howdy"]'
      */
     function insert(array = [], index = 0, value) {

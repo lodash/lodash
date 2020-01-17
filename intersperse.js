@@ -4,10 +4,10 @@
  *
  * @param {Array} arr The array to iterate over.
  * @param {any} separator an element to insert between the collection elements.
- * @returns {Array} the array with the separator between each elements.
+ * @returns {Array}   the array with the separator between each elements.
  *
  * intersperse(['a','b','c','d'], 'X')
- * // => ['a','X','b','X','c','X''D']
+ * // => ['a','X','b','X','c','X''d']
  */
 function intersperse(arr, separator) {
   const result = []

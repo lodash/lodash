@@ -71,10 +71,10 @@ exports.aliasToReal = {
 /** Used to map ary to method names. */
 exports.aryMethod = {
   '1': [
-    'assignAll', 'assignInAll', 'attempt', 'castArray', 'ceil', 'create',
+    'argMax', 'argMin', 'assignAll', 'assignInAll', 'attempt', 'castArray', 'ceil', 'create',
     'curry', 'curryRight', 'defaultsAll', 'defaultsDeepAll', 'floor', 'flow',
     'flowRight', 'fromPairs', 'invert', 'iteratee', 'memoize', 'method', 'mergeAll',
-    'methodOf', 'mixin', 'nthArg', 'over', 'overEvery', 'overSome','rest', 'reverse',
+    'methodOf', 'mixin', 'nthArg', 'over', 'overEvery', 'overSome', 'rest', 'reverse',
     'round', 'runInContext', 'spread', 'template', 'trim', 'trimEnd', 'trimStart',
     'uniqueId', 'words', 'zipAll'
   ],
@@ -262,10 +262,10 @@ exports.mutate = {
 };
 
 /** Used to map real names to their aliases. */
-exports.realToAlias = (function() {
+exports.realToAlias = (function () {
   var hasOwnProperty = Object.prototype.hasOwnProperty,
-      object = exports.aliasToReal,
-      result = {};
+    object = exports.aliasToReal,
+    result = {};
 
   for (var key in object) {
     var value = object[key];

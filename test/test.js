@@ -8435,6 +8435,52 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.argMin');
+
+  (function() {
+    QUnit.test('should find the min index', function(assert) {
+      assert.expect(1);
+      assert.strictEqual(_.argMin([6, 1, 2, 3]), 1);
+    });
+
+    QUnit.test('should return 0 if all are equal', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.argMin([1, 1, 1, 1]), 0);
+    });
+
+    QUnit.test('should not crash if array is empty', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.argMin([]), -1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
+  QUnit.module('lodash.argMax');
+
+  (function() {
+    QUnit.test('should find the max index', function(assert) {
+      assert.expect(1);
+      assert.strictEqual(_.argMax([6, 1, 2, 3]), 0);
+    });
+
+    QUnit.test('should return 0 if all are equal', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.argMax([1, 1, 1, 1]), 0);
+    });
+
+    QUnit.test('should not crash if array is empty', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.argMax([]), -1);
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('intersection methods');
 
   lodashStable.each(['intersection', 'intersectionBy', 'intersectionWith'], function(methodName) {
@@ -26867,7 +26913,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(318);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

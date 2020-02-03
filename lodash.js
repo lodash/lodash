@@ -16359,6 +16359,52 @@
     }
 
     /**
+     * This method finds the index of the smallest element in the array
+     *
+     * @since 5.0.0
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @returns {*} Returns index of the minimum value
+     * @example
+     *
+     * const array = [6, 2, 3, 4]
+     *
+     * argMin(array)
+     * // => 1
+     */
+    function argMin(array) {
+      if(!array || !array.length) return -1
+      
+      // Borrowed from
+      // https://gist.github.com/engelen/fbce4476c9e68c52ff7e5c2da5c24a28
+      return array.map(function(x, i){return [x, i]})
+        .reduce(function(r, a){ return (a[0] < r[0] ? a : r) })[1]
+    }
+
+    /**
+     * This method finds the index of the largest element in the array
+     *
+     * @since 5.0.0
+     * @category Math
+     * @param {Array} array The array to iterate over.
+     * @returns {*} Returns index of the minimum value
+     * @example
+     *
+     * const array = [6, 2, 3, 4]
+     *
+     * argMax(array)
+     * // => 0
+     */
+    function argMax(array) {
+      if(!array || !array.length) return -1
+
+      // Borrowed from
+      // https://gist.github.com/engelen/fbce4476c9e68c52ff7e5c2da5c24a28
+      return array.map(function(x, i){return [x, i]})
+        .reduce(function(r, a){ return (a[0] > r[0] ? a : r) })[1]
+    }
+
+    /**
      * Computes the mean of the values in `array`.
      *
      * @static
@@ -16821,6 +16867,8 @@
     lodash.lte = lte;
     lodash.max = max;
     lodash.maxBy = maxBy;
+    lodash.argMin = argMin;
+    lodash.argMax = argMax;
     lodash.mean = mean;
     lodash.meanBy = meanBy;
     lodash.min = min;

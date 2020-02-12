@@ -3,7 +3,9 @@ const rsAstralRange = '\\ud800-\\udfff'
 const rsComboMarksRange = '\\u0300-\\u036f'
 const reComboHalfMarksRange = '\\ufe20-\\ufe2f'
 const rsComboSymbolsRange = '\\u20d0-\\u20ff'
-const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange
+const rsComboMarksExtendedRange = '\\u1ab0-\\u1aff'
+const rsComboMarksSupplementRange = '\\u1dc0-\\u1dff'
+const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange + rsComboMarksExtendedRange + rsComboMarksSupplementRange
 const rsDingbatRange = '\\u2700-\\u27bf'
 const rsLowerRange = 'a-z\\xdf-\\xf6\\xf8-\\xff'
 const rsMathOpRange = '\\xac\\xb1\\xd7\\xf7'
@@ -18,10 +20,10 @@ const rsBreakRange = rsMathOpRange + rsNonCharRange + rsPunctuationRange + rsSpa
 const rsApos = "['\u2019]"
 const rsBreak = `[${rsBreakRange}]`
 const rsCombo = `[${rsComboRange}]`
-const rsDigits = '\\d+'
+const rsDigit = '\\d'
 const rsDingbat = `[${rsDingbatRange}]`
 const rsLower = `[${rsLowerRange}]`
-const rsMisc = `[^${rsAstralRange}${rsBreakRange + rsDigits + rsDingbatRange + rsLowerRange + rsUpperRange}]`
+const rsMisc = `[^${rsAstralRange}${rsBreakRange + rsDigit + rsDingbatRange + rsLowerRange + rsUpperRange}]`
 const rsFitz = '\\ud83c[\\udffb-\\udfff]'
 const rsModifier = `(?:${rsCombo}|${rsFitz})`
 const rsNonAstral = `[^${rsAstralRange}]`
@@ -43,6 +45,17 @@ const rsOrdUpper = '\\d*(?:1ST|2ND|3RD|(?![123])\\dTH)(?=\\b|[a-z_])'
 const rsSeq = rsOptVar + reOptMod + rsOptJoin
 const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
 
+const reUnicodeWords = RegExp([
+  `${rsUpper}?${rsLower}+${rsOptContrLower}(?=${[rsBreak, rsUpper, '$'].join('|')})`,
+  `${rsMiscUpper}+${rsOptContrUpper}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
+  `${rsUpper}?${rsMiscLower}+${rsOptContrLower}`,
+  `${rsUpper}+${rsOptContrUpper}`,
+  rsOrdUpper,
+  rsOrdLower,
+  `${rsDigit}+`,
+  rsEmoji
+].join('|'), 'g')
+
 /**
  * Splits a Unicode `string` into an array of its words.
  *
@@ -50,15 +63,8 @@ const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
  * @param {string} The string to inspect.
  * @returns {Array} Returns the words of `string`.
  */
-const unicodeWords = RegExp.prototype.exec.bind(RegExp([
-  `${rsUpper}?${rsLower}+${rsOptContrLower}(?=${[rsBreak, rsUpper, '$'].join('|')})`,
-  `${rsMiscUpper}+${rsOptContrUpper}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
-  `${rsUpper}?${rsMiscLower}+${rsOptContrLower}`,
-  `${rsUpper}+${rsOptContrUpper}`,
-  rsOrdUpper,
-  rsOrdLower,
-  rsDigits,
-  rsEmoji
-].join('|'), 'g'))
+function unicodeWords(string) {
+  return string.match(reUnicodeWords)
+}
 
 export default unicodeWords

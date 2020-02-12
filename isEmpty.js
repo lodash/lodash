@@ -47,7 +47,7 @@ function isEmpty(value) {
     return true
   }
   if (isArrayLike(value) &&
-      (Array.isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
+      (Array.isArray(value) || typeof value === 'string' || typeof value.splice === 'function' ||
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {
     return !value.length
   }

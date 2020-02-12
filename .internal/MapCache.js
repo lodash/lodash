@@ -1,6 +1,5 @@
 
 import Hash from './Hash.js'
-import ListCache from './ListCache.js'
 
 /**
  * Gets the data for `map`.
@@ -13,7 +12,7 @@ import ListCache from './ListCache.js'
 function getMapData({ __data__ }, key) {
   const data = __data__
   return isKeyable(key)
-    ? data[typeof key == 'string' ? 'string' : 'hash']
+    ? data[typeof key === 'string' ? 'string' : 'hash']
     : data.map
 }
 
@@ -26,7 +25,7 @@ function getMapData({ __data__ }, key) {
  */
 function isKeyable(value) {
   const type = typeof value
-  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+  return (type === 'string' || type === 'number' || type === 'symbol' || type === 'boolean')
     ? (value !== '__proto__')
     : (value === null)
 }
@@ -60,7 +59,7 @@ class MapCache {
     this.size = 0
     this.__data__ = {
       'hash': new Hash,
-      'map': new (Map || ListCache),
+      'map': new Map,
       'string': new Hash
     }
   }

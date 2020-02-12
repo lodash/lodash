@@ -3,12 +3,14 @@
  * `predicate` returns truthy for. The predicate is invoked with three
  * arguments: (value, key, object).
  *
+ * If you want an object in return, consider `pickBy`.
+ *
  * @since 5.0.0
  * @category Object
  * @param {Object} object The object to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {Array} Returns the new filtered array.
- * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
+ * @see pickBy, pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
  * @example
  *
  * const object = { 'a': 5, 'b': 8, 'c': 10 }

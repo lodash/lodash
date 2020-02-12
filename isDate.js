@@ -1,9 +1,9 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
-import nodeUtil from './.internal/nodeUtil.js'
+import nodeTypes from './.internal/nodeTypes.js'
 
 /* Node.js helper references. */
-const nodeIsDate = nodeUtil && nodeUtil.isDate
+const nodeIsDate = nodeTypes && nodeTypes.isDate
 
 /**
  * Checks if `value` is classified as a `Date` object.
@@ -22,6 +22,6 @@ const nodeIsDate = nodeUtil && nodeUtil.isDate
  */
 const isDate = nodeIsDate
   ? (value) => nodeIsDate(value)
-  : (value) => isObjectLike(value) && baseGetTag(value) == '[object Date]'
+  : (value) => isObjectLike(value) && getTag(value) == '[object Date]'
 
 export default isDate

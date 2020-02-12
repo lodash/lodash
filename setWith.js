@@ -23,7 +23,7 @@ import baseSet from './.internal/baseSet.js'
  * // => { '0': { '1': 'a' } }
  */
 function setWith(object, path, value, customizer) {
-  customizer = typeof customizer == 'function' ? customizer : undefined
+  customizer = typeof customizer === 'function' ? customizer : undefined
   return object == null ? object : baseSet(object, path, value, customizer)
 }
 

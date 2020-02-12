@@ -11,7 +11,7 @@ import compareAscending from './compareAscending.js'
  * @private
  * @param {Object} object The object to compare.
  * @param {Object} other The other object to compare.
- * @param {boolean[]|string[]} orders The order to sort by for each property.
+ * @param {(string|function)[]} orders The order to sort by for each property.
  * @returns {number} Returns the sort order indicator for `object`.
  */
 function compareMultiple(object, other, orders) {
@@ -22,13 +22,14 @@ function compareMultiple(object, other, orders) {
   const ordersLength = orders.length
 
   while (++index < length) {
-    const result = compareAscending(objCriteria[index], othCriteria[index])
+    const order = index < ordersLength ? orders[index] : null
+    const cmpFn = (order && typeof order === 'function') ? order: compareAscending
+    const result = cmpFn(objCriteria[index], othCriteria[index])
     if (result) {
-      if (index >= ordersLength) {
-        return result
+      if (order && typeof order !== 'function') {
+        return result * (order == 'desc' ? -1 : 1)
       }
-      const order = orders[index]
-      return result * (order == 'desc' ? -1 : 1)
+      return result
     }
   }
   // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications

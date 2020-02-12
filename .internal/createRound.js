@@ -8,7 +8,7 @@
 function createRound(methodName) {
   const func = Math[methodName]
   return (number, precision) => {
-    precision = precision == null ? 0 : Math.min(precision, 292)
+    precision = precision == null ? 0 : (precision >= 0 ? Math.min(precision, 292) : Math.max(precision, -292))
     if (precision) {
       // Shift with exponential notation to avoid floating-point issues.
       // See [MDN](https://mdn.io/round#Examples) for more details.

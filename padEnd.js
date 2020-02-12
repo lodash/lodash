@@ -26,7 +26,7 @@ function padEnd(string, length, chars) {
   const strLength = length ? stringSize(string) : 0
   return (length && strLength < length)
     ? (string + createPadding(length - strLength, chars))
-    : string
+    : (string || '')
 }
 
 export default padEnd

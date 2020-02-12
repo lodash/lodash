@@ -1,5 +1,3 @@
-import MapCache from './.internal/MapCache.js'
-
 /**
  * Creates a function that memoizes the result of `func`. If `resolver` is
  * provided, it determines the cache key for storing the result based on the
@@ -43,7 +41,7 @@ import MapCache from './.internal/MapCache.js'
  * memoize.Cache = WeakMap
  */
 function memoize(func, resolver) {
-  if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {
+  if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {
     throw new TypeError('Expected a function')
   }
   const memoized = function(...args) {
@@ -57,10 +55,10 @@ function memoize(func, resolver) {
     memoized.cache = cache.set(key, result) || cache
     return result
   }
-  memoized.cache = new (memoize.Cache || MapCache)
+  memoized.cache = new (memoize.Cache || Map)
   return memoized
 }
 
-memoize.Cache = MapCache
+memoize.Cache = Map
 
 export default memoize

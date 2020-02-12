@@ -17,7 +17,7 @@ function isKey(value, object) {
     return false
   }
   const type = typeof value
-  if (type == 'number' || type == 'boolean' || value == null || isSymbol(value)) {
+  if (type === 'number' || type === 'boolean' || value == null || isSymbol(value)) {
     return true
   }
   return reIsPlainProp.test(value) || !reIsDeepProp.test(value) ||

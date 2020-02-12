@@ -20,7 +20,7 @@ function createMathOperation(operator, defaultValue) {
     if (other !== undefined && value === undefined) {
       return other
     }
-    if (typeof value == 'string' || typeof other == 'string') {
+    if (typeof value === 'string' || typeof other === 'string') {
       value = baseToString(value)
       other = baseToString(other)
     }

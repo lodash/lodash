@@ -22,14 +22,14 @@ function minBy(array, iteratee) {
   if (array == null) {
     return result
   }
+  let computed
   for (const value of array) {
-    let computed
     const current = iteratee(value)
 
     if (current != null && (computed === undefined
-          ? (current === current && !isSymbol(current))
-          : (current < computed)
-        )) {
+      ? (current === current && !isSymbol(current))
+      : (current < computed)
+    )) {
       computed = current
       result = value
     }

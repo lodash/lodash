@@ -11,6 +11,10 @@ import stringToArray from './stringToArray.js'
  */
 function createCaseFirst(methodName) {
   return (string) => {
+    if (!string) {
+      return ''
+    }
+
     const strSymbols = hasUnicode(string)
       ? stringToArray(string)
       : undefined

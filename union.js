@@ -14,8 +14,8 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  * @see difference, unionBy, unionWith, without, xor, xorBy
  * @example
  *
- * union([2], [1, 2])
- * // => [2, 1]
+ * union([2, 3], [1, 2])
+ * // => [2, 3, 1]
  */
 function union(...arrays) {
   return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true))

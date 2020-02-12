@@ -1,4 +1,3 @@
-import filter from './filter.js'
 import baseXor from './.internal/baseXor.js'
 import isArrayLikeObject from './isArrayLikeObject.js'
 import last from './last.js'
@@ -25,8 +24,8 @@ import last from './last.js'
  */
 function xorWith(...arrays) {
   let comparator = last(arrays)
-  comparator = typeof comparator == 'function' ? comparator : undefined
-  return baseXor(filter(arrays, isArrayLikeObject), undefined, comparator)
+  comparator = typeof comparator === 'function' ? comparator : undefined
+  return baseXor(arrays.filter(isArrayLikeObject), undefined, comparator)
 }
 
 export default xorWith

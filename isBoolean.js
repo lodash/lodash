@@ -1,4 +1,4 @@
-import baseGetTag from './.internal/baseGetTag.js'
+import getTag from './.internal/getTag.js'
 import isObjectLike from './isObjectLike.js'
 
 /**
@@ -18,7 +18,7 @@ import isObjectLike from './isObjectLike.js'
  */
 function isBoolean(value) {
   return value === true || value === false ||
-    (isObjectLike(value) && baseGetTag(value) == '[object Boolean]')
+    (isObjectLike(value) && getTag(value) == '[object Boolean]')
 }
 
 export default isBoolean

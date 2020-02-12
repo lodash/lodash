@@ -69,9 +69,9 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
         break
       }
     } else if (!(
-          arrValue === othValue ||
+      arrValue === othValue ||
             equalFunc(arrValue, othValue, bitmask, customizer, stack)
-        )) {
+    )) {
       result = false
       break
     }

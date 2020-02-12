@@ -1,10 +1,9 @@
 import Stack from './Stack.js'
 import arrayEach from './arrayEach.js'
 import assignValue from './assignValue.js'
-import baseAssign from './baseAssign.js'
-import baseAssignIn from './baseAssignIn.js'
 import cloneBuffer from './cloneBuffer.js'
 import copyArray from './copyArray.js'
+import copyObject from './copyObject.js'
 import cloneArrayBuffer from './cloneArrayBuffer.js'
 import cloneDataView from './cloneDataView.js'
 import cloneRegExp from './cloneRegExp.js'
@@ -18,6 +17,7 @@ import getTag from './getTag.js'
 import initCloneObject from './initCloneObject.js'
 import isBuffer from '../isBuffer.js'
 import isObject from '../isObject.js'
+import isTypedArray from '../isTypedArray.js'
 import keys from '../keys.js'
 import keysIn from '../keysIn.js'
 
@@ -131,7 +131,7 @@ function initCloneArray(array) {
   const result = new array.constructor(length)
 
   // Add properties assigned by `RegExp#exec`.
-  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+  if (length && typeof array[0] === 'string' && hasOwnProperty.call(array, 'index')) {
     result.index = array.index
     result.input = array.input
   }
@@ -177,7 +177,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       return copyArray(value, result)
     }
   } else {
-    const isFunc = typeof value == 'function'
+    const isFunc = typeof value === 'function'
 
     if (isBuffer(value)) {
       return cloneBuffer(value, isDeep)
@@ -186,8 +186,8 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       result = (isFlat || isFunc) ? {} : initCloneObject(value)
       if (!isDeep) {
         return isFlat
-          ? copySymbolsIn(value, baseAssignIn(result, value))
-          : copySymbols(value, baseAssign(result, value))
+          ? copySymbolsIn(value, copyObject(value, keysIn(value), result))
+          : copySymbols(value, Object.assign(result, value))
       }
     } else {
       if (isFunc || !cloneableTags[tag]) {
@@ -215,6 +215,10 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     value.forEach((subValue) => {
       result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
     })
+    return result
+  }
+
+  if (isTypedArray(value)) {
     return result
   }
 

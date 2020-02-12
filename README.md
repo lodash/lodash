@@ -1,4 +1,4 @@
-# lodash v4.17.4
+# lodash
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
@@ -20,11 +20,11 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.4/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.4/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.4/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.4/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash) [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/lodash/badge)](https://www.jsdelivr.com/package/npm/lodash)
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.4/LICENSE) & supports modern environments.<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.10-npm/LICENSE) & supports modern environments.<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
 ## Installation
@@ -37,8 +37,9 @@ In a browser:
 Using npm:
 ```shell
 $ npm i -g npm
-$ npm i --save lodash
+$ npm i lodash
 ```
+Note: add --save if you are using npm < 5.0.0
 
 In Node.js:
 ```js
@@ -58,8 +59,7 @@ var at = require('lodash/at');
 var curryN = require('lodash/fp/curryN');
 ```
 
-**Note:**<br>
-Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
+Looking for Lodash modules written in ES6 or smaller bundle sizes? Check out [lodash-es](https://www.npmjs.com/package/lodash-es).
 
 ## Why Lodash?
 
@@ -74,7 +74,7 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
 
 Lodash is available in a [variety of builds](https://lodash.com/custom-builds) & module formats.
 
- * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/browse/keyword/lodash-modularized)
+ * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/search?q=keywords:lodash-modularized)
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)

@@ -9,7 +9,7 @@ const symbolValueOf = Symbol.prototype.valueOf
  * @returns {Object} Returns the cloned symbol object.
  */
 function cloneSymbol(symbol) {
-  return symbolValueOf ? Object(symbolValueOf.call(symbol)) : {}
+  return Object(symbolValueOf.call(symbol))
 }
 
 export default cloneSymbol

@@ -17,6 +17,7 @@ const freeParseFloat = parseFloat
  * @param {number} [lower=0] The lower bound.
  * @param {number} [upper=1] The upper bound.
  * @param {boolean} [floating] Specify returning a floating-point number.
+ * @param {Array} [values] Numbers to be ignored.
  * @returns {number} Returns the random number.
  * @see uniqueId
  * @example
@@ -32,8 +33,11 @@ const freeParseFloat = parseFloat
  *
  * random(1.2, 5.2)
  * // => a floating-point number between 1.2 and 5.2
+ *
+ * random(0, 5, false, [2, 3])
+ * // => also an integer: 0, 1, 4 or 5.
  */
-function random(lower, upper, floating) {
+function random(lower, upper, floating, exclude) {
   if (floating === undefined) {
     if (typeof upper === 'boolean') {
       floating = upper
@@ -62,12 +66,15 @@ function random(lower, upper, floating) {
     lower = upper
     upper = temp
   }
+  let randFinal
   if (floating || lower % 1 || upper % 1) {
     const rand = Math.random()
     const randLength = `${rand}`.length - 1
-    return Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${randLength}`))), upper)
+    randFinal = Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${randLength}`))), upper)
+  } else {
+    randFinal = lower + Math.floor(Math.random() * (upper - lower + 1))
   }
-  return lower + Math.floor(Math.random() * (upper - lower + 1))
+  return exclude !== undefined && exclude.includes(randFinal) ? random(lower, upper, floating, exclude) : randFinal
 }
 
 export default random

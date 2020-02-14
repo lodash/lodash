@@ -5614,7 +5614,7 @@
      * @returns {*} Returns the uncloned value or `undefined` to defer cloning to `_.cloneDeep`.
      */
     function customOmitClone(value) {
-      return isPlainObject(value) ? undefined : value;
+      return isPlainObject(value) || isArray(value) ? undefined : value;
     }
 
     /**

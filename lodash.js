@@ -10420,7 +10420,11 @@
       }
 
       function flush() {
-        return timerId === undefined ? result : trailingEdge(now());
+        if (timerId !== undefined) {
+          clearTimeout(timerId);
+          return trailingEdge(now());
+        }
+        return result;
       }
 
       function debounced() {

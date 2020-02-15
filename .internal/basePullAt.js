@@ -13,9 +13,9 @@ import isIndex from './isIndex.js'
 function basePullAt(array, indexes) {
   let length = array ? indexes.length : 0
   const lastIndex = length - 1
+  let previous
 
   while (length--) {
-    let previous
     const index = indexes[length]
     if (length === lastIndex || index !== previous) {
       previous = index

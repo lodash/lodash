@@ -20,7 +20,7 @@ import toInteger from './toInteger.js'
  * // => [['a', 'b', 'c'], ['d']]
  */
 function chunk(array, size = 1) {
-  size = Math.max(toInteger(size), 0)
+  size = Math.abs(toInteger(size))
   const length = array == null ? 0 : array.length
   if (!length || size < 1) {
     return []

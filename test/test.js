@@ -23709,6 +23709,17 @@
       }
     });
 
+    QUnit.test('`_.' + methodName + '` should convert non coercible objects to`' + (isToNumber ? 'NaN' : '0') + '`', function(assert) {
+      assert.expect(1);
+
+      var values = [create(null)],
+          expected = lodashStable.map(values, lodashStable.constant(isToNumber ? NaN : 0));
+
+      var actual = lodashStable.map(values, func);
+
+      assert.deepEqual(actual, expected);
+    });
+
     QUnit.test('`_.' + methodName + '` should convert empty values to `0` or `NaN`', function(assert) {
       assert.expect(1);
 

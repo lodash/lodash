@@ -12488,6 +12488,10 @@
         return NAN;
       }
       if (isObject(value)) {
+        var proto = getPrototype(value);
+        if (proto === null) {
+          return NAN;
+        }
         var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
         value = isObject(other) ? (other + '') : other;
       }

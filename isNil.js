@@ -9,6 +9,9 @@
  *
  * isNil(null)
  * // => true
+  *
+ * isNil(undefined)
+ * // => true
  *
  * isNil(void 0)
  * // => true

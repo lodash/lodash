@@ -7,7 +7,7 @@ import isTypedArray from './isTypedArray.js'
 /**
  * An alternative to `reduce` this method transforms `object` to a new
  * `accumulator` object which is the result of running each of its own
- * enumerable string keyed properties thru `iteratee`, with each invocation
+ * enumerable string keyed properties through `iteratee`, with each invocation
  * potentially mutating the `accumulator` object. If `accumulator` is not
  * provided, a new object with the same `[[Prototype]]` will be used. The
  * iteratee is invoked with four arguments: (accumulator, value, key, object).

@@ -3,5 +3,6 @@
 doc/*.html
 node_modules
 *.code-workspace
+*.idea
 *.sublime-project
 *.sublime-workspace

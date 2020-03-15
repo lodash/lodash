@@ -120,9 +120,7 @@ describe('merge', function() {
     var actual = merge([], array),
         expected = array.slice();
 
-    expected[1] = undefined;
-
-    assert.ok('1' in actual);
+    assert.strictEqual(actual.length, 3);
     assert.deepStrictEqual(actual, expected);
   });
 

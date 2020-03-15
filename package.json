@@ -9,7 +9,6 @@
   },
   "sideEffects": false,
   "scripts": {
-    "pretest": "npm run build",
     "style": "eslint *.js .internal/**/*.js",
     "test": "npm run test:main && npm run test:fp",
     "test:doc": "markdown-doctest doc/*.md",

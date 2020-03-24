@@ -52,6 +52,16 @@ describe('memoize', function() {
     assert.strictEqual(memoized(1, 3, 5), 6);
   });
 
+  it('should warn in console for 2+ arguments function without resolver', function() {
+    var memoized = memoize(function(a, b) {
+      return a + b;
+    });
+
+    // TODO: Implement console.log stub
+    assert.strictEqual(memoized(1, 2), 3);
+    // console.log stub have been called with ('Warning: for memoized function with 2+ arguments use resolver function as second argument. See https://lodash.com/docs#memoize')
+  })
+
   it('should support a `resolver`', function() {
     var fn = function(a, b, c) { return a + b + c; },
         memoized = memoize(fn, fn);

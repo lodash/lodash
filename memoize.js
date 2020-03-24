@@ -44,6 +44,9 @@ function memoize(func, resolver) {
   if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {
     throw new TypeError('Expected a function')
   }
+  if (func.length > 1 && !resolver) {
+    console.log('Warning: for memoized function with 2+ arguments use resolver function as second argument. See https://lodash.com/docs#memoize')
+  }
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0]
     const cache = memoized.cache

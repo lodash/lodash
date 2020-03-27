@@ -19,10 +19,9 @@ function shuffle(array) {
     return []
   }
   let index = -1
-  const lastIndex = length - 1
   const result = copyArray(array)
   while (++index < length) {
-    const rand = index + Math.floor(Math.random() * (lastIndex - index + 1))
+    const rand = index + Math.floor(Math.random() * (length - index))
     const value = result[rand]
     result[rand] = result[index]
     result[index] = value

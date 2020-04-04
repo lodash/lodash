@@ -21,7 +21,8 @@ import toInteger from './toInteger.js'
  */
 function chunk(array, size = 1) {
   size = Math.max(toInteger(size), 0)
-  const length = array == null ? 0 : array.length
+  const isArray = Object.prototype.toString.call(array) === '[object Array]'
+  const length = isArray ? array.length : 0
   if (!length || size < 1) {
     return []
   }

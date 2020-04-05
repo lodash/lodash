@@ -60,7 +60,7 @@ const reUnicodeWords = RegExp([
  * Splits a Unicode `string` into an array of its words.
  *
  * @private
- * @param {string} The string to inspect.
+ * @param {string} string The string to inspect.
  * @returns {Array} Returns the words of `string`.
  */
 function unicodeWords(string) {

@@ -120,6 +120,14 @@ function wrapImmutable(func, cloner) {
   };
 }
 
+var defaultOptions = {
+  cap: true,
+  curry: true,
+  fixed: true,
+  immutable: true,
+  rearg: true,
+};
+
 /**
  * The base implementation of `convert` which accepts a `util` object of methods
  * required to perform conversions.
@@ -149,13 +157,7 @@ function baseConvert(util, name, func, options) {
   }
   options || (options = {});
 
-  var config = {
-    'cap': 'cap' in options ? options.cap : true,
-    'curry': 'curry' in options ? options.curry : true,
-    'fixed': 'fixed' in options ? options.fixed : true,
-    'immutable': 'immutable' in options ? options.immutable : true,
-    'rearg': 'rearg' in options ? options.rearg : true
-  };
+  var config = util.assign({}, options, defaultOptions);
 
   var defaultHolder = isLib ? func : fallbackHolder,
       forceCurry = ('curry' in options) && options.curry,
@@ -565,5 +567,13 @@ function baseConvert(util, name, func, options) {
 
   return _;
 }
+
+baseConvert.setDefaultOptions = function setDefaultOptions(options) {
+  for (opt in options) {
+    if (options.hasOwnProperty(opt) && defaultOptions.hasOwnProperty(opt)) {
+      defaultOptions[opt] = options[opt];
+    }
+  }
+};
 
 module.exports = baseConvert;

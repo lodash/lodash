@@ -1,0 +1,3 @@
+function shane() {
+  return "shane";
+}

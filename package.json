@@ -1,6 +1,10 @@
 {
   "name": "lodash",
+<<<<<<< HEAD
   "version": "5.0.0",
+=======
+  "version": "4.17.15",
+>>>>>>> 4.17.15-post
   "license": "MIT",
   "private": true,
   "main": "lodash.js",
@@ -28,7 +32,7 @@
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {
-    "async": "^2.1.4",
+    "async": "^2.6.3",
     "benchmark": "^2.1.3",
     "chalk": "^1.1.3",
     "cheerio": "^0.22.0",
@@ -36,16 +40,26 @@
     "coveralls": "^2.11.15",
     "curl-amd": "~0.8.12",
     "docdown": "~0.7.2",
+<<<<<<< HEAD
     "dojo": "^1.12.1",
     "ecstatic": "^2.2.2",
     "eslint": "^6.2.0",
     "eslint-plugin-import": "^2.18.2",
     "esm": "^3.1.3",
+=======
+    "dojo": "^1.15.0",
+    "ecstatic": "^2.2.2",
+>>>>>>> 4.17.15-post
     "fs-extra": "~1.0.0",
-    "glob": "^7.1.1",
+    "glob": "^7.1.4",
     "istanbul": "0.4.5",
     "jquery": "^3.4.1",
+<<<<<<< HEAD
     "lodash": "4.17.11",
+=======
+    "jscs": "^3.0.7",
+    "lodash": "4.17.14",
+>>>>>>> 4.17.15-post
     "lodash-doc-globals": "^0.1.1",
     "markdown-doctest": "^0.9.1",
     "mocha": "^5.2.0",
@@ -53,8 +67,8 @@
     "platform": "^1.3.3",
     "qunit-extras": "^3.0.0",
     "qunitjs": "^2.1.0",
-    "request": "^2.79.0",
-    "requirejs": "^2.3.2",
+    "request": "^2.88.0",
+    "requirejs": "^2.3.6",
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.5",
     "webpack": "^1.14.0"

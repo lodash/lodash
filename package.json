@@ -41,7 +41,11 @@
     "curl-amd": "~0.8.12",
     "docdown": "~0.7.2",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "dojo": "^1.12.1",
+=======
+    "dojo": "^1.13.7",
+>>>>>>> origin/dependabot/npm_and_yarn/dojo-1.13.7
     "ecstatic": "^2.2.2",
     "eslint": "^6.2.0",
     "eslint-plugin-import": "^2.18.2",

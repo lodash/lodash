@@ -65,3 +65,39 @@
     ]
   }
 }
+{
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "code-splitting",
+  "version": "0.0.1",
+  "description": "An example of code-splitting with webpack",
+  "main": "server.jsr",
+  "scripts": {
+    "start": "TMP=/app/.tmp webpack && http-server -c-1"
+  },
+  "dependencies": {
+    "lodash": "^4.7.0"
+  },
+  "devDependencies": {
+    "http-server": "^0.11.1",
+    "style-loader": "^0.16.1",
+    "css-loader": "^0.27.3",
+    "webpack": "^4.16.4",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.5",
+    "html-webpack-plugin": "^3.2.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0"
+  },
+  "engines": {
+    "node": "6.9.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/#!/project/welcome-project"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch"
+  ]
+}

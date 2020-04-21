@@ -1,4 +1,4 @@
-# lodash
+# lodash documentation
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |

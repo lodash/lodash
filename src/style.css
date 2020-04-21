@@ -1,0 +1,71 @@
+/* Copyright 2018 Google LLC.
+SPDX-License-Identifier: Apache-2.0 */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+  text-align: center;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: bold;
+  color: black;
+}
+
+.inputs {
+  display: flex;
+  justify-content: space-between;
+  max-width: 700px;
+  width: 100%;
+}
+
+input {
+  display: block;
+  margin-bottom: 30px;
+  padding: 10px;
+  border: 2px solid lightgrey;
+  border-radius: 5px;
+  width: 60px;
+  font-size: 16px;
+}
+
+button {
+  font-size: 18px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  background-color: #F4751E;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  transition: -webkit-transform .25s ease-out;
+  transition: transform .25s ease-out;
+  transition: transform .25s ease-out,-webkit-transform .25s ease-out;
+}
+
+button:hover {
+  -webkit-transform: scale( 1.05 ); 
+  transform: scale( 1.05 );
+}
+
+button:active {
+  -webkit-transform: scale( .90 ); 
+  transform: scale( .90 );
+}

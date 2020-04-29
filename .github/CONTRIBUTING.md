@@ -37,9 +37,9 @@ Run unit tests from the command-line via `npm test`, or open `test/index.html` &
 
 ## Contributor License Agreement
 
-Lodash is a member of the [JS Foundation](https://js.foundation/).
+Lodash is a member of the [JS Foundation](https://openjsf.org/).
 As such, we request that all contributors sign the JS Foundation
-[contributor license agreement (CLA)](https://js.foundation/CLA/).
+[contributor license agreement (CLA)](https://cla.js.foundation/lodash/lodash).
 
 For more information about CLAs, please check out Alex Russell’s excellent post,
 [“Why Do I Need to Sign This?”](https://infrequently.org/2008/06/why-do-i-need-to-sign-this/).

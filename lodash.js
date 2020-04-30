@@ -3991,7 +3991,7 @@
             newValue = value;
 
         if (index != lastIndex) {
-          var objValue = nested[key];
+          var objValue = safeGet(nested, key);
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
           if (newValue === undefined) {
             newValue = isObject(objValue)

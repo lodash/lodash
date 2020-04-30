@@ -25787,6 +25787,14 @@
     });
   });
 
+  QUnit.test('`_.zipObjectDeep` should not pollute prototype when __proto__ passed', function(assert) {
+    assert.expect(1);
+
+    _.zipObjectDeep(['__proto__.x'], [123]);
+
+    assert.equal(typeof x, 'undefined');
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.zipWith');

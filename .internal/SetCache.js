@@ -40,7 +40,7 @@ class SetCache {
    *
    * @memberOf SetCache
    * @param {*} value The value to search for.
-   * @returns {number} Returns `true` if `value` is found, else `false`.
+   * @returns {boolean} Returns `true` if `value` is found, else `false`.
    */
   has(value) {
     return this.__data__.has(value)

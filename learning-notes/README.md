@@ -13,8 +13,6 @@ https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isBool
 
 https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isNull.js
 
-> ?
-
 https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isUndefined.js
 
 > Symbol

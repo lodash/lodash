@@ -19,7 +19,7 @@ https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isUnde
 
 https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isSymbol.js
 
-> bigInt ?
+> bigInt ? new add
 
 https://github.com/learning-js-by-reading-source-codes/lodash/blob/master/isBigInt.js
 

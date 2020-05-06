@@ -35,7 +35,6 @@ class Hash {
    * Removes `key` and its value from the hash.
    *
    * @memberOf Hash
-   * @param {Object} hash The hash to modify.
    * @param {string} key The key of the value to remove.
    * @returns {boolean} Returns `true` if the entry was removed, else `false`.
    */

@@ -15,11 +15,11 @@ import toInteger from './toInteger.js'
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * indexOf([1, 2, 1, 2], 2)
+ * indexOf(['a', 'b', 'a', 'b'], 'b')
  * // => 1
  *
  * // Search from the `fromIndex`.
- * indexOf([1, 2, 1, 2], 2, 2)
+ * indexOf(['a', 'b', 'a', 'b'], 'b', 2)
  * // => 3
  */
 function indexOf(array, value, fromIndex) {

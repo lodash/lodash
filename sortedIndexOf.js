@@ -12,7 +12,7 @@ import eq from './eq.js'
  * @returns {number} Returns the index of the matched value, else `-1`.
  * @example
  *
- * sortedIndexOf(['red', 'blue', 'blue', 'blue', 'green'], 'blue')
+ * sortedIndexOf(['apple', 'kiwi', 'kiwi', 'kiwi', 'orange'], 'kiwi')
  * // => 1
  */
 function sortedIndexOf(array, value) {

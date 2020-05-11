@@ -1,3 +1,5 @@
+import getTag from './.internal/getTag.js'
+
 /**
  * Checks if `value` is classified as a `BigInt` primitive.
  *
@@ -16,9 +18,10 @@
  * isBigInt(123)
  * // => false
  */
+
 function isBigInt(value) {
-  const type = typeof value
-  return type === 'bigint' 
+  const tag = getTag(value)
+  return tag == '[object BigInt]'
 }
 
 export default isBigInt

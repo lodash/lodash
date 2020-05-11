@@ -20,8 +20,7 @@ import getTag from './.internal/getTag.js'
  */
 
 function isBigInt(value) {
-  const tag = getTag(value)
-  return tag == '[object BigInt]'
+  return getTag(value) === '[object BigInt]'
 }
 
 export default isBigInt

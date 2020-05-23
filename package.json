@@ -1,5 +1,5 @@
 {
-  "name": "lodash",
+  "name": "@care-for/lodash",
   "version": "5.0.0",
   "license": "MIT",
   "private": true,

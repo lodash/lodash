@@ -31,7 +31,7 @@ function isPlainObject(value) {
   if (!isObjectLike(value) || getTag(value) != '[object Object]') {
     return false
   }
-  const proto = Object.getPrototypeOf(proto)
+  const proto = Object.getPrototypeOf(value)
   return proto === null || Object.getPrototypeOf(proto) === null
 }
 

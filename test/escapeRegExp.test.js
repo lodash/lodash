@@ -4,8 +4,8 @@ import { stubString } from './utils.js';
 import escapeRegExp from '../escapeRegExp.js';
 
 describe('escapeRegExp', function() {
-  var escaped = '\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
-      unescaped = '^$.*+?()[]{}|\\';
+  var escaped = '\\^\\$\\.\\*\\+\\-\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
+      unescaped = '^$.*+-?()[]{}|\\';
 
   it('should escape values', function() {
     assert.strictEqual(escapeRegExp(unescaped + unescaped), escaped + escaped);

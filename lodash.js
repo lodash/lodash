@@ -6263,6 +6263,9 @@
      * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
      */
     function isFlattenable(value) {
+      if(value&&value[spreadableSymbol]===false){
+        return false;
+      }
       return isArray(value) || isArguments(value) ||
         !!(spreadableSymbol && value && value[spreadableSymbol]);
     }

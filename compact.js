@@ -14,14 +14,15 @@
 function compact(array) {
   let resIndex = 0
   const result = []
+  const arrayLength = array.length
 
-  if (array == null) {
+  if (array === null) {
     return result
   }
 
-  for (const value of array) {
-    if (value) {
-      result[resIndex++] = value
+  for (let i = 0; i < arrayLength; i++) {
+    if (array[i]) {
+      result[resIndex++] = array[i]
     }
   }
   return result

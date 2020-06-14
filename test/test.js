@@ -9413,6 +9413,20 @@
       assert.strictEqual(_.isEmpty('a'), false);
     });
 
+    QUnit.test('should work with instance of ArrayBuffer or SharedArrayBuffer', function(assert) {
+      var arrayBuffer = new ArrayBuffer(16);
+      var sharedArrayBuffer = new SharedArrayBuffer(16);
+
+      var emptyArrayBuffer = new ArrayBuffer();
+      var emptySharedArrayBuffer = new SharedArrayBuffer();
+
+      assert.strictEqual(_.isEmpty(arrayBuffer), false);
+      assert.strictEqual(_.isEmpty(sharedArrayBuffer), false);
+
+      assert.strictEqual(_.isEmpty(emptyArrayBuffer), true);
+      assert.strictEqual(_.isEmpty(emptySharedArrayBuffer), true);
+    })
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
@@ -9820,7 +9834,7 @@
       object1 = {self: {self: {self: {}}}};
       object1.self.self.self = object1;
       object2 = {self: {}};
-      object2.self = object2; 
+      object2.self = object2;
 
       assert.strictEqual(_.isEqual(object1, object2), false);
       assert.strictEqual(_.isEqual(object2, object1), false);
@@ -20400,6 +20414,20 @@
       assert.strictEqual(_.size(args), 3);
     });
 
+    QUnit.test('should work with instance of ArrayBuffer or SharedArrayBuffer', function(assert) {
+      var arrayBuffer = new ArrayBuffer(16);
+      var sharedArrayBuffer = new SharedArrayBuffer(16);
+
+      var emptyArrayBuffer = new ArrayBuffer();
+      var emptySharedArrayBuffer = new SharedArrayBuffer();
+
+      assert.strictEqual(_.size(arrayBuffer), 16);
+      assert.strictEqual(_.size(sharedArrayBuffer), 16);
+
+      assert.strictEqual(_.size(emptyArrayBuffer), 0);
+      assert.strictEqual(_.size(emptySharedArrayBuffer), 0);
+    });
+
     QUnit.test('should work with jQuery/MooTools DOM query collections', function(assert) {
       assert.expect(1);
 
@@ -20460,6 +20488,7 @@
 
       assert.strictEqual(_.size({ 'length': '0' }), 1);
     });
+
   }());
 
   /*--------------------------------------------------------------------------*/

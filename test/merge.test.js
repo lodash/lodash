@@ -346,4 +346,15 @@ describe('merge', function() {
 
     assert.deepStrictEqual(actual, expected);
   });
+
+  it('should throw an error if object is frozen', () => {
+    const object = {a: 1};
+    Object.freeze(object);
+    const source = {b: 2};
+
+    assert.throws(
+      () => merge(object, source),
+      'merge should have thrown an error, since the object is frozen.'
+    );
+  });
 });

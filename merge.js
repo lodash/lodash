@@ -10,7 +10,7 @@ import createAssigner from './.internal/createAssigner.js'
  * assignment. Source objects are applied from left to right. Subsequent
  * sources overwrite property assignments of previous sources.
  *
- * **Note:** This method mutates `object`.
+ * **Note:** This method mutates `object`. If `object` is frozen an error is thrown.
  *
  * @since 0.5.0
  * @category Object
@@ -31,6 +31,9 @@ import createAssigner from './.internal/createAssigner.js'
  * // => { 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] }
  */
 const merge = createAssigner((object, source, srcIndex) => {
+  if (Object.isFrozen(object)) {
+    throw new TypeError('`object` is frozen. Please provide a non-frozen input instead.')
+  };
   baseMerge(object, source, srcIndex)
 })
 

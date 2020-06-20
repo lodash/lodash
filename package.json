@@ -7,6 +7,7 @@
   "bugs": "https://github.com/lodash/lodash-cli/issues",
   "repository": "lodash/lodash",
   "license": "MIT",
+  "type": "module",
   "jsnext:main": "lodash.js",
   "main": "lodash.js",
   "module": "lodash.js",

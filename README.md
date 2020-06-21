@@ -78,3 +78,6 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
+
+
+commit 1

@@ -5,7 +5,7 @@
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
 [Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
-[Code of Conduct](https://js.foundation/community/code-of-conduct) |
+[Code of Conduct](https://code-of-conduct.openjsf.org) |
 [Twitter](https://twitter.com/bestiejs) |
 [Chat](https://gitter.im/lodash/lodash)
 

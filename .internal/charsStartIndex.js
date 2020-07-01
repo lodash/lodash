@@ -1,5 +1,3 @@
-import baseIndexOf from './baseIndexOf.js'
-
 /**
  * Used by `trim` and `trimStart` to get the index of the first string symbol
  * that is not found in the character symbols.
@@ -10,10 +8,16 @@ import baseIndexOf from './baseIndexOf.js'
  * @returns {number} Returns the index of the first unmatched string symbol.
  */
 function charsStartIndex(strSymbols, chrSymbols) {
-  let index = -1
+  const chrSymbolsDict = {}
+  let index = chrSymbols.length
+  while (index--) {
+    chrSymbolsDict[chrSymbols[index]] = true
+  }
+
+  index = -1
   const length = strSymbols.length
 
-  while (++index < length && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
+  while (++index < length && chrSymbolsDict[strSymbols[index]] === true) {}
   return index
 }
 

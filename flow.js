@@ -20,17 +20,28 @@
  * addSquare(1, 2)
  * // => 9
  */
+
+function identity(x) {
+  return x
+}
+
 function flow(...funcs) {
   const length = funcs.length
+
+  if (!length) {
+    return identity
+  }
+
   let index = length
   while (index--) {
     if (typeof funcs[index] !== 'function') {
       throw new TypeError('Expected a function')
     }
   }
+
   return function(...args) {
     let index = 0
-    let result = length ? funcs[index].apply(this, args) : args[0]
+    let result = funcs[0].apply(this, args)
     while (++index < length) {
       result = funcs[index].call(this, result)
     }

@@ -1,5 +1,3 @@
-import baseIndexOf from './baseIndexOf.js'
-
 /**
  * Used by `trim` and `trimEnd` to get the index of the last string symbol
  * that is not found in the character symbols.
@@ -10,9 +8,14 @@ import baseIndexOf from './baseIndexOf.js'
  * @returns {number} Returns the index of the last unmatched string symbol.
  */
 function charsEndIndex(strSymbols, chrSymbols) {
-  let index = strSymbols.length
+  const chrSymbolsDict = {}
+  let index = chrSymbols.length
+  while (index--) {
+    chrSymbolsDict[chrSymbols[index]] = true
+  }
+  index = strSymbols.length
 
-  while (index-- && baseIndexOf(chrSymbols, strSymbols[index], 0) > -1) {}
+  while (index-- && chrSymbolsDict[strSymbols[index]] === true) {}
   return index
 }
 

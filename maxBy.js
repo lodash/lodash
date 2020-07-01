@@ -9,7 +9,7 @@ import isSymbol from './isSymbol.js'
  * @category Math
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The iteratee invoked per element.
- * @returns {*} Returns the maximum value.
+ * @returns {*} Returns the element that scores the maximum value by invoking iteratee.
  * @example
  *
  * const objects = [{ 'n': 1 }, { 'n': 2 }]

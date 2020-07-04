@@ -8,7 +8,7 @@ import getAllKeysIn from './.internal/getAllKeysIn.js'
  *
  * @since 4.0.0
  * @category Object
- * @param {Object} object The source object.
+ * @param {Object|null|undefined} object The source object.
  * @param {Function} predicate The function invoked per property.
  * @returns {Object} Returns the new object.
  * @example

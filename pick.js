@@ -5,7 +5,7 @@ import basePick from './.internal/basePick.js'
  *
  * @since 0.1.0
  * @category Object
- * @param {Object} object The source object.
+ * @param {Object|null|undefined} object The source object.
  * @param {...(string|string[])} [paths] The property paths to pick.
  * @returns {Object} Returns the new object.
  * @example

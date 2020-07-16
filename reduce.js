@@ -4,7 +4,7 @@ import baseReduce from './.internal/baseReduce.js'
 
 /**
  * Reduces `collection` to a value which is the accumulated result of running
- * each element in `collection` thru `iteratee`, where each successive
+ * each element in `collection` through `iteratee`, where each successive
  * invocation is supplied the return value of the previous. If `accumulator`
  * is not given, the first element of `collection` is used as the initial
  * value. The iteratee is invoked with four arguments:

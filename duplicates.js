@@ -21,3 +21,5 @@ function duplicates(array) {
       ? difference(array, uniq(array)) 
       : []
   }
+
+export default duplicates

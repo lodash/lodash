@@ -87,10 +87,10 @@ install:
   # Install packages.
   - yarn
 
-  # Use lodash-cli from GitHub.
-  - git clone --depth=10 --branch=master git://github.com/lodash/lodash-cli ./node_modules/lodash-cli
-  - mkdir -p ./node_modules/lodash-cli/node_modules/lodash; cd $_; cp ../../../../lodash.js ./lodash.js; cp ../../../../package.json ./package.json
-  - cd ../../; npm i --production; cd ../../
+  # Use lodash-cli from GitHub. Temporarily use a fork.
+  - git clone --depth=10 --branch=master git://github.com/bnjmnt4n/lodash-cli ./node_modules/lodash-cli
+  - cd ./node_modules/lodash-cli/; npm i --production; cd ../../
+  - mkdir -p ./node_modules/lodash-cli/node_modules/lodash; cd $_; cp ../../../../lodash.js ./lodash.js; cp ../../../../package.json ./package.json; cd ../../../../
 
 script:
   # Detect code coverage.

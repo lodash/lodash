@@ -9820,7 +9820,7 @@
       object1 = {self: {self: {self: {}}}};
       object1.self.self.self = object1;
       object2 = {self: {}};
-      object2.self = object2; 
+      object2.self = object2;
 
       assert.strictEqual(_.isEqual(object1, object2), false);
       assert.strictEqual(_.isEqual(object2, object1), false);
@@ -16057,7 +16057,7 @@
       var actual = _.orderBy(
         nestedObj,
         [['address', 'zipCode'], ['address.streetName']],
-        ['asc', 'desc'],
+        ['asc', 'desc']
       );
       assert.deepEqual(actual, [nestedObj[2], nestedObj[3], nestedObj[1], nestedObj[0], nestedObj[4]]);
     });

@@ -35,7 +35,7 @@ git:
 branches:
   only:
     - master
-    - 4.17.5
+    - 4.17
 
 notifications:
   webhooks:

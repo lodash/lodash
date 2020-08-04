@@ -7,12 +7,12 @@
  * @returns {number} Returns the sum.
  */
 function baseSum(array, iteratee) {
-  let result
+  let result = 0
 
   for (const value of array) {
     const current = iteratee(value)
-    if (current !== undefined) {
-      result = result === undefined ? current : (result + current)
+    if(current != null){
+      result += +current
     }
   }
   return result

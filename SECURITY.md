@@ -33,3 +33,4 @@ account-26201001077369-CommercialBank-Globus-SWIFT-GLIBUA22
 account-26201001077369-CommercialBank-Globus-SWIFT-GLIBUA22
 Your efforts to responsibly disclose your findings are sincerely appreciated and will be taken into account to acknowledge your contributions.
 account-26201001077369-CommercialBank-Globus-SWIFT-GLIBUA22
+account-26201001077369-CommercialBank-Globus-SWIFT-GLIBUA22

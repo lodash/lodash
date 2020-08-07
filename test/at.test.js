@@ -12,6 +12,11 @@ describe('at', function() {
     assert.deepStrictEqual(actual, ['a', 'c']);
   });
 
+  it('should return the elements for negative indexes', function() {
+    var actual = at(array, [0, -1]);
+    assert.deepStrictEqual(actual, ['a', 'c']);
+  });
+
   it('should return `undefined` for nonexistent keys', function() {
     var actual = at(array, [2, 4, 0]);
     assert.deepStrictEqual(actual, ['c', undefined, 'a']);

@@ -12,6 +12,10 @@ describe('camelCase', function() {
     assert.strictEqual(camelCase('xhr2 request'), 'xhr2Request');
   });
 
+  it('should support a `pattern`', function() {
+    assert.deepStrictEqual(camelCase('TestURLs',/([A-Z][a-z]+)(\w+)/), 'testUrls');
+  });
+
   it('should handle acronyms', function() {
     lodashStable.each(['safe HTML', 'safeHTML'], function(string) {
       assert.strictEqual(camelCase(string), 'safeHtml');

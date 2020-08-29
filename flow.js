@@ -28,11 +28,11 @@ function flow(...funcs) {
       throw new TypeError('Expected a function')
     }
   }
-  return function(...args) {
+  return function(first, ...args) {
     let index = 0
-    let result = length ? funcs[index].apply(this, args) : args[0]
+    let result = length ? funcs[index].apply(this, [first, ...args]) : first
     while (++index < length) {
-      result = funcs[index].call(this, result)
+      result = funcs[index].apply(this, [result, ...args])
     }
     return result
   }

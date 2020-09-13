@@ -24,7 +24,7 @@ import isLength from './isLength.js'
  * // => false
  */
 function isArrayLike(value) {
-  return value != null && typeof value !== 'function' && isLength(value.length)
+  return value != null && typeof value !== 'function' && isLength(value.length) && typeof value[Symbol.iterator] === 'function';
 }
 
 export default isArrayLike

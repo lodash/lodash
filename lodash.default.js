@@ -1,7 +1,7 @@
 /**
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="es" -o ./`
+ * Build: `lodash modularize exports="es" -o ../lodash`
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -45,7 +45,7 @@ import toInteger from './toInteger.js';
 import lodash from './wrapperLodash.js';
 
 /** Used as the semantic version number. */
-var VERSION = '4.17.15';
+var VERSION = '4.17.20';
 
 /** Used to compose bitmasks for function metadata. */
 var WRAP_BIND_KEY_FLAG = 2;

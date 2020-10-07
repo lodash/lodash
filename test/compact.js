@@ -5,15 +5,15 @@ import compact from '../compact.js';
 import slice from '../slice.js';
 
 describe('compact', function() {
-  var largeArray = lodashStable.range(LARGE_ARRAY_SIZE).concat(null);
+  let largeArray = lodashStable.range(LARGE_ARRAY_SIZE).concat(null);
 
   it('should filter falsey values', function() {
-    var array = ['0', '1', '2'];
+    let array = ['0', '1', '2'];
     assert.deepStrictEqual(compact(falsey.concat(array)), array);
   });
 
   it('should work when in-between lazy operators', function() {
-    var actual = _(falsey).thru(slice).compact().thru(slice).value();
+    let actual = _(falsey).thru(slice).compact().thru(slice).value();
     assert.deepEqual(actual, []);
 
     actual = _(falsey).thru(slice).push(true, 1).compact().push('a').value();
@@ -21,18 +21,18 @@ describe('compact', function() {
   });
 
   it('should work in a lazy sequence', function() {
-    var actual = _(largeArray).slice(1).compact().reverse().take().value();
+    let actual = _(largeArray).slice(1).compact().reverse().take().value();
     assert.deepEqual(actual, _.take(compact(slice(largeArray, 1)).reverse()));
   });
 
   it('should work in a lazy sequence with a custom `_.iteratee`', function() {
-    var iteratee = _.iteratee,
+    let iteratee = _.iteratee,
         pass = false;
 
     _.iteratee = identity;
 
     try {
-      var actual = _(largeArray).slice(1).compact().value();
+      let actual = _(largeArray).slice(1).compact().value();
       pass = lodashStable.isEqual(actual, compact(slice(largeArray, 1)));
     } catch (e) {console.log(e);}
 

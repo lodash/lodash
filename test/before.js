@@ -4,7 +4,7 @@ import { _ } from './utils.js';
 
 describe('before', function() {
   function before(n, times) {
-    var count = 0;
+    let count = 0;
     lodashStable.times(times, _.before(n, function() { count++; }));
     return count;
   }
@@ -21,7 +21,7 @@ describe('before', function() {
   });
 
   it('should use `this` binding of function', function() {
-    var before = _.before(2, function() { return ++this.count; }),
+    let before = _.before(2, function() { return ++this.count; }),
         object = { 'before': before, 'count': 0 };
 
     object.before();

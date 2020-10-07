@@ -4,11 +4,11 @@ import { _ } from './utils.js';
 
 describe('exit early', function() {
   lodashStable.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'transform'], function(methodName) {
-    var func = _[methodName];
+    let func = _[methodName];
 
     it(`\`_.${  methodName  }\` can exit early when iterating arrays`, function() {
       if (func) {
-        var array = [1, 2, 3],
+        let array = [1, 2, 3],
             values = [];
 
         func(array, function(value, other) {
@@ -22,7 +22,7 @@ describe('exit early', function() {
 
     it(`\`_.${  methodName  }\` can exit early when iterating objects`, function() {
       if (func) {
-        var object = { 'a': 1, 'b': 2, 'c': 3 },
+        let object = { 'a': 1, 'b': 2, 'c': 3 },
             values = [];
 
         func(object, function(value, other) {

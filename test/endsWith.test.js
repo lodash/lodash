@@ -4,7 +4,7 @@ import { MAX_SAFE_INTEGER, falsey, stubTrue } from './utils.js';
 import endsWith from '../endsWith.js';
 
 describe('endsWith', function() {
-  var string = 'abc';
+  let string = 'abc';
 
   it('should return `true` if a string ends with `target`', function() {
     assert.strictEqual(endsWith(string, 'c'), true);
@@ -25,9 +25,9 @@ describe('endsWith', function() {
   });
 
   it('should treat falsey `position` values, except `undefined`, as `0`', function() {
-    var expected = lodashStable.map(falsey, stubTrue);
+    let expected = lodashStable.map(falsey, stubTrue);
 
-    var actual = lodashStable.map(falsey, function(position) {
+    let actual = lodashStable.map(falsey, function(position) {
       return endsWith(string, position === undefined ? 'c' : '', position);
     });
 

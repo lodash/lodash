@@ -4,14 +4,14 @@ import bindKey from '../bindKey.js';
 
 describe('bindKey', function() {
   it('should work when the target function is overwritten', function() {
-    var object = {
+    let object = {
       'user': 'fred',
       'greet': function(greeting) {
         return `${this.user  } says: ${  greeting}`;
       }
     };
 
-    var bound = bindKey(object, 'greet', 'hi');
+    let bound = bindKey(object, 'greet', 'hi');
     assert.strictEqual(bound(), 'fred says: hi');
 
     object.greet = function(greeting) {
@@ -22,13 +22,13 @@ describe('bindKey', function() {
   });
 
   it('should support placeholders', function() {
-    var object = {
+    let object = {
       'fn': function() {
         return slice.call(arguments);
       }
     };
 
-    var ph = bindKey.placeholder,
+    let ph = bindKey.placeholder,
         bound = bindKey(object, 'fn', ph, 'b', ph);
 
     assert.deepStrictEqual(bound('a', 'c'), ['a', 'b', 'c']);
@@ -38,13 +38,13 @@ describe('bindKey', function() {
   });
 
   it('should use `_.placeholder` when set', function() {
-    var object = {
+    let object = {
       'fn': function() {
         return slice.call(arguments);
       }
     };
 
-    var _ph = _.placeholder = {},
+    let _ph = _.placeholder = {},
         ph = bindKey.placeholder,
         bound = bindKey(object, 'fn', _ph, 'b', ph);
 

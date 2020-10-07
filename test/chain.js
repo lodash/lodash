@@ -5,18 +5,18 @@ import chain from '../chain.js';
 
 describe('chain', function() {
   it('should return a wrapped value', function() {
-    var actual = chain({ 'a': 0 });
+    let actual = chain({ 'a': 0 });
     assert.ok(actual instanceof _);
   });
 
   it('should return existing wrapped values', function() {
-    var wrapped = _({ 'a': 0 });
+    let wrapped = _({ 'a': 0 });
     assert.strictEqual(chain(wrapped), wrapped);
     assert.strictEqual(wrapped.chain(), wrapped);
   });
 
   it('should enable chaining for methods that return unwrapped values', function() {
-    var array = ['c', 'b', 'a'];
+    let array = ['c', 'b', 'a'];
 
     assert.ok(chain(array).head() instanceof _);
     assert.ok(_(array).chain().head() instanceof _);
@@ -30,11 +30,11 @@ describe('chain', function() {
 
   it('should chain multiple methods', function() {
     lodashStable.times(2, function(index) {
-      var array = ['one two three four', 'five six seven eight', 'nine ten eleven twelve'],
+      let array = ['one two three four', 'five six seven eight', 'nine ten eleven twelve'],
           expected = { ' ': 9, 'e': 14, 'f': 2, 'g': 1, 'h': 2, 'i': 4, 'l': 2, 'n': 6, 'o': 3, 'r': 2, 's': 2, 't': 5, 'u': 1, 'v': 4, 'w': 2, 'x': 1 },
           wrapped = index ? _(array).chain() : chain(array);
 
-      var actual = wrapped
+      let actual = wrapped
         .chain()
         .map(function(value) { return value.split(''); })
         .flatten()

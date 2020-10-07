@@ -14,7 +14,7 @@ describe('eq', function() {
     assert.strictEqual(eq(1, '1'), false);
     assert.strictEqual(eq(1, '1'), false);
 
-    var object = { 'a': 1 };
+    let object = { 'a': 1 };
     assert.strictEqual(eq(object, object), true);
     assert.strictEqual(eq(object, { 'a': 1 }), false);
   });

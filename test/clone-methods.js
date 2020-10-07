@@ -46,7 +46,7 @@ describe('clone methods', function() {
     set.add(1);
     set.add(2);
   }
-  var objects = {
+  let objects = {
     '`arguments` objects': arguments,
     'arrays': ['a', ''],
     'array-like objects': { '0': 'a', 'length': 1 },
@@ -70,7 +70,7 @@ describe('clone methods', function() {
 
   objects.arrays.length = 3;
 
-  var uncloneable = {
+  let uncloneable = {
     'DOM elements': body,
     'functions': Foo,
     'async functions': asyncFunc,
@@ -83,7 +83,7 @@ describe('clone methods', function() {
   });
 
   it('`_.clone` should perform a shallow clone', function() {
-    var array = [{ 'a': 0 }, { 'b': 1 }],
+    let array = [{ 'a': 0 }, { 'b': 1 }],
         actual = _.clone(array);
 
     assert.deepStrictEqual(actual, array);
@@ -91,7 +91,7 @@ describe('clone methods', function() {
   });
 
   it('`_.cloneDeep` should deep clone objects with circular references', function() {
-    var object = {
+    let object = {
       'foo': { 'b': { 'c': { 'd': {} } } },
       'bar': {}
     };
@@ -99,17 +99,17 @@ describe('clone methods', function() {
     object.foo.b.c.d = object;
     object.bar.b = object.foo.b;
 
-    var actual = cloneDeep(object);
+    let actual = cloneDeep(object);
     assert.ok(actual.bar.b === actual.foo.b && actual === actual.foo.b.c.d && actual !== object);
   });
 
   it('`_.cloneDeep` should deep clone objects with lots of circular references', function() {
-    var cyclical = {};
+    let cyclical = {};
     lodashStable.times(LARGE_ARRAY_SIZE + 1, function(index) {
       cyclical[`v${  index}`] = [index ? cyclical[`v${  index - 1}`] : cyclical];
     });
 
-    var clone = cloneDeep(cyclical),
+    let clone = cloneDeep(cyclical),
         actual = clone[`v${  LARGE_ARRAY_SIZE}`][0];
 
     assert.strictEqual(actual, clone[`v${  LARGE_ARRAY_SIZE - 1}`]);
@@ -117,7 +117,7 @@ describe('clone methods', function() {
   });
 
   it('`_.cloneDeepWith` should provide `stack` to `customizer`', function() {
-    var actual;
+    let actual;
 
     cloneDeepWith({ 'a': 1 }, function() {
       actual = last(arguments);
@@ -130,12 +130,12 @@ describe('clone methods', function() {
   });
 
   lodashStable.each(['clone', 'cloneDeep'], function(methodName) {
-    var func = _[methodName],
+    let func = _[methodName],
         isDeep = methodName == 'cloneDeep';
 
     lodashStable.forOwn(objects, function(object, kind) {
       it(`\`_.${  methodName  }\` should clone ${  kind}`, function() {
-        var actual = func(object);
+        let actual = func(object);
         assert.ok(lodashStable.isEqual(actual, object));
 
         if (lodashStable.isObject(object)) {
@@ -148,7 +148,7 @@ describe('clone methods', function() {
 
     it(`\`_.${  methodName  }\` should clone array buffers`, function() {
       if (ArrayBuffer) {
-        var actual = func(arrayBuffer);
+        let actual = func(arrayBuffer);
         assert.strictEqual(actual.byteLength, arrayBuffer.byteLength);
         assert.notStrictEqual(actual, arrayBuffer);
       }
@@ -156,7 +156,7 @@ describe('clone methods', function() {
 
     it(`\`_.${  methodName  }\` should clone buffers`, function() {
       if (Buffer) {
-        var buffer = new Buffer([1, 2]),
+        let buffer = new Buffer([1, 2]),
             actual = func(buffer);
 
         assert.strictEqual(actual.byteLength, buffer.byteLength);
@@ -169,7 +169,7 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should clone \`index\` and \`input\` array properties`, function() {
-      var array = /c/.exec('abcde'),
+      let array = /c/.exec('abcde'),
           actual = func(array);
 
       assert.strictEqual(actual.index, 2);
@@ -177,22 +177,22 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should clone \`lastIndex\` regexp property`, function() {
-      var regexp = /c/g;
+      let regexp = /c/g;
       regexp.exec('abcde');
 
       assert.strictEqual(func(regexp).lastIndex, 3);
     });
 
     it(`\`_.${  methodName  }\` should clone expando properties`, function() {
-      var values = lodashStable.map([false, true, 1, 'a'], function(value) {
-        var object = Object(value);
+      let values = lodashStable.map([false, true, 1, 'a'], function(value) {
+        let object = Object(value);
         object.a = 1;
         return object;
       });
 
-      var expected = lodashStable.map(values, stubTrue);
+      let expected = lodashStable.map(values, stubTrue);
 
-      var actual = lodashStable.map(values, function(value) {
+      let actual = lodashStable.map(values, function(value) {
         return func(value).a === 1;
       });
 
@@ -200,7 +200,7 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should clone prototype objects`, function() {
-      var actual = func(Foo.prototype);
+      let actual = func(Foo.prototype);
 
       assert.ok(!(actual instanceof Foo));
       assert.deepStrictEqual(actual, { 'b': 1 });
@@ -223,7 +223,7 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should clone properties that shadow those on \`Object.prototype\``, function() {
-      var object = {
+      let object = {
         'constructor': objectProto.constructor,
         'hasOwnProperty': objectProto.hasOwnProperty,
         'isPrototypeOf': objectProto.isPrototypeOf,
@@ -233,7 +233,7 @@ describe('clone methods', function() {
         'valueOf': objectProto.valueOf
       };
 
-      var actual = func(object);
+      let actual = func(object);
 
       assert.deepStrictEqual(actual, object);
       assert.notStrictEqual(actual, object);
@@ -245,10 +245,10 @@ describe('clone methods', function() {
       }
 
       if (Symbol) {
-        var symbol2 = Symbol('b');
+        let symbol2 = Symbol('b');
         Foo.prototype[symbol2] = 2;
 
-        var symbol3 = Symbol('c');
+        let symbol3 = Symbol('c');
         defineProperty(Foo.prototype, symbol3, {
           'configurable': true,
           'enumerable': false,
@@ -256,10 +256,10 @@ describe('clone methods', function() {
           'value': 3
         });
 
-        var object = { 'a': { 'b': new Foo } };
+        let object = { 'a': { 'b': new Foo } };
         object[symbol] = { 'b': 1 };
 
-        var actual = func(object);
+        let actual = func(object);
         if (isDeep) {
           assert.notStrictEqual(actual[symbol], object[symbol]);
           assert.notStrictEqual(actual.a, object.a);
@@ -279,7 +279,7 @@ describe('clone methods', function() {
       if (Symbol) {
         assert.strictEqual(func(symbol), symbol);
 
-        var object = Object(symbol),
+        let object = Object(symbol),
             actual = func(object);
 
         assert.strictEqual(typeof actual, 'object');
@@ -296,7 +296,7 @@ describe('clone methods', function() {
 
     it(`\`_.${  methodName  }\` should not error on DOM elements`, function() {
       if (document) {
-        var element = document.createElement('div');
+        let element = document.createElement('div');
 
         try {
           assert.deepStrictEqual(func(element), {});
@@ -307,9 +307,9 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should create an object from the same realm as \`value\``, function() {
-      var props = [];
+      let props = [];
 
-      var objects = lodashStable.transform(_, function(result, value, key) {
+      let objects = lodashStable.transform(_, function(result, value, key) {
         if (lodashStable.startsWith(key, '_') && lodashStable.isObject(value) &&
             !lodashStable.isArguments(value) && !lodashStable.isElement(value) &&
             !lodashStable.isFunction(value)) {
@@ -318,10 +318,10 @@ describe('clone methods', function() {
         }
       }, []);
 
-      var expected = lodashStable.map(objects, stubTrue);
+      let expected = lodashStable.map(objects, stubTrue);
 
-      var actual = lodashStable.map(objects, function(object) {
-        var Ctor = object.constructor,
+      let actual = lodashStable.map(objects, function(object) {
+        let Ctor = object.constructor,
             result = func(object);
 
         return result !== object && ((result instanceof Ctor) || !(new Ctor instanceof Ctor));
@@ -331,7 +331,7 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should perform a ${  isDeep ? 'deep' : 'shallow'  } clone when used as an iteratee for methods like \`_.map\``, function() {
-      var expected = [{ 'a': [0] }, { 'b': [1] }],
+      let expected = [{ 'a': [0] }, { 'b': [1] }],
           actual = lodashStable.map(expected, func);
 
       assert.deepStrictEqual(actual, expected);
@@ -344,7 +344,7 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should return a unwrapped value when chaining`, function() {
-      var object = objects.objects,
+      let object = objects.objects,
           actual = _(object)[methodName]();
 
       assert.deepEqual(actual, object);
@@ -353,11 +353,11 @@ describe('clone methods', function() {
 
     lodashStable.each(arrayViews, function(type) {
       it(`\`_.${  methodName  }\` should clone ${  type  } values`, function() {
-        var Ctor = root[type];
+        let Ctor = root[type];
 
         lodashStable.times(2, function(index) {
           if (Ctor) {
-            var buffer = new ArrayBuffer(24),
+            let buffer = new ArrayBuffer(24),
                 view = index ? new Ctor(buffer, 8, 1) : new Ctor(buffer),
                 actual = func(view);
 
@@ -374,7 +374,7 @@ describe('clone methods', function() {
     lodashStable.forOwn(uncloneable, function(value, key) {
       it(`\`_.${  methodName  }\` should not clone ${  key}`, function() {
         if (value) {
-          var object = { 'a': value, 'b': { 'c': value } },
+          let object = { 'a': value, 'b': { 'c': value } },
               actual = func(object),
               expected = value === Foo ? { 'c': Foo.c } : {};
 
@@ -387,15 +387,15 @@ describe('clone methods', function() {
   });
 
   lodashStable.each(['cloneWith', 'cloneDeepWith'], function(methodName) {
-    var func = _[methodName],
+    let func = _[methodName],
         isDeep = methodName == 'cloneDeepWith';
 
     it(`\`_.${  methodName  }\` should provide correct \`customizer\` arguments`, function() {
-      var argsList = [],
+      let argsList = [],
           object = new Foo;
 
       func(object, function() {
-        var length = arguments.length,
+        let length = arguments.length,
             args = slice.call(arguments, 0, length - (length > 1 ? 1 : 0));
 
         argsList.push(args);
@@ -405,20 +405,20 @@ describe('clone methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should handle cloning when \`customizer\` returns \`undefined\``, function() {
-      var actual = func({ 'a': { 'b': 'c' } }, noop);
+      let actual = func({ 'a': { 'b': 'c' } }, noop);
       assert.deepStrictEqual(actual, { 'a': { 'b': 'c' } });
     });
 
     lodashStable.forOwn(uncloneable, function(value, key) {
       it(`\`_.${  methodName  }\` should work with a \`customizer\` callback and ${  key}`, function() {
-        var customizer = function(value) {
+        let customizer = function(value) {
           return lodashStable.isPlainObject(value) ? undefined : value;
         };
 
-        var actual = func(value, customizer);
+        let actual = func(value, customizer);
         assert.strictEqual(actual, value);
 
-        var object = { 'a': value, 'b': { 'c': value } };
+        let object = { 'a': value, 'b': { 'c': value } };
         actual = func(object, customizer);
 
         assert.deepStrictEqual(actual, object);

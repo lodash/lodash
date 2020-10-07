@@ -4,7 +4,7 @@ import after from '../after.js';
 
 describe('after', function() {
   function testAfter(n, times) {
-    var count = 0;
+    let count = 0;
     lodashStable.times(times, after(n, function() { count++; }));
     return count;
   }
@@ -21,7 +21,7 @@ describe('after', function() {
   });
 
   it('should use `this` binding of function', function() {
-    var afterFn = after(1, function() { return ++this.count; }),
+    let afterFn = after(1, function() { return ++this.count; }),
         object = { 'after': afterFn, 'count': 0 };
 
     object.after();

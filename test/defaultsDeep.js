@@ -5,7 +5,7 @@ import defaultsDeep from '../defaultsDeep.js';
 
 describe('defaultsDeep', function() {
   it('should deep assign source properties if missing on `object`', function() {
-    var object = { 'a': { 'b': 2 }, 'd': 4 },
+    let object = { 'a': { 'b': 2 }, 'd': 4 },
         source = { 'a': { 'b': 3, 'c': 3 }, 'e': 5 },
         expected = { 'a': { 'b': 2, 'c': 3 }, 'd': 4, 'e': 5 };
 
@@ -13,7 +13,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should accept multiple sources', function() {
-    var source1 = { 'a': { 'b': 3 } },
+    let source1 = { 'a': { 'b': 3 } },
         source2 = { 'a': { 'c': 3 } },
         source3 = { 'a': { 'b': 3, 'c': 3 } },
         source4 = { 'a': { 'c': 4 } },
@@ -24,7 +24,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should not overwrite `null` values', function() {
-    var object = { 'a': { 'b': null } },
+    let object = { 'a': { 'b': null } },
         source = { 'a': { 'b': 2 } },
         actual = defaultsDeep(object, source);
 
@@ -32,7 +32,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should not overwrite regexp values', function() {
-    var object = { 'a': { 'b': /x/ } },
+    let object = { 'a': { 'b': /x/ } },
         source = { 'a': { 'b': /y/ } },
         actual = defaultsDeep(object, source);
 
@@ -40,7 +40,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should not convert function properties to objects', function() {
-    var actual = defaultsDeep({}, { 'a': noop });
+    let actual = defaultsDeep({}, { 'a': noop });
     assert.strictEqual(actual.a, noop);
 
     actual = defaultsDeep({}, { 'a': { 'b': noop } });
@@ -48,7 +48,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should overwrite `undefined` values', function() {
-    var object = { 'a': { 'b': undefined } },
+    let object = { 'a': { 'b': undefined } },
         source = { 'a': { 'b': 2 } },
         actual = defaultsDeep(object, source);
 
@@ -56,7 +56,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should assign `undefined` values', function() {
-    var source = { 'a': undefined, 'b': { 'c': undefined, 'd': 1 } },
+    let source = { 'a': undefined, 'b': { 'c': undefined, 'd': 1 } },
         expected = lodashStable.cloneDeep(source),
         actual = defaultsDeep({}, source);
 
@@ -64,12 +64,12 @@ describe('defaultsDeep', function() {
   });
 
   it('should merge sources containing circular references', function() {
-    var object = {
+    let object = {
       'foo': { 'b': { 'c': { 'd': {} } } },
       'bar': { 'a': 2 }
     };
 
-    var source = {
+    let source = {
       'foo': { 'b': { 'c': { 'd': {} } } },
       'bar': {}
     };
@@ -78,14 +78,14 @@ describe('defaultsDeep', function() {
     source.foo.b.c.d = source;
     source.bar.b = source.foo.b;
 
-    var actual = defaultsDeep(object, source);
+    let actual = defaultsDeep(object, source);
 
     assert.strictEqual(actual.bar.b, actual.foo.b);
     assert.strictEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d);
   });
 
   it('should not modify sources', function() {
-    var source1 = { 'a': 1, 'b': { 'c': 2 } },
+    let source1 = { 'a': 1, 'b': { 'c': 2 } },
         source2 = { 'b': { 'c': 3, 'd': 3 } },
         actual = defaultsDeep({}, source1, source2);
 
@@ -95,7 +95,7 @@ describe('defaultsDeep', function() {
   });
 
   it('should not attempt a merge of a string into an array', function() {
-    var actual = defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
+    let actual = defaultsDeep({ 'a': ['abc'] }, { 'a': 'abc' });
     assert.deepStrictEqual(actual.a, ['abc']);
   });
 });

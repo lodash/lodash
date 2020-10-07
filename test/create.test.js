@@ -18,7 +18,7 @@ describe('create', function() {
     Circle.prototype = create(Shape.prototype);
     Circle.prototype.constructor = Circle;
 
-    var actual = new Circle;
+    let actual = new Circle;
 
     assert.ok(actual instanceof Circle);
     assert.ok(actual instanceof Shape);
@@ -26,11 +26,11 @@ describe('create', function() {
   });
 
   it('should assign `properties` to the created object', function() {
-    var expected = { 'constructor': Circle, 'radius': 0 };
-    var properties = Object.keys(expected);
+    let expected = { 'constructor': Circle, 'radius': 0 };
+    let properties = Object.keys(expected);
     Circle.prototype = create(Shape.prototype, expected);
 
-    var actual = new Circle;
+    let actual = new Circle;
 
     assert.ok(actual instanceof Circle);
     assert.ok(actual instanceof Shape);
@@ -47,9 +47,9 @@ describe('create', function() {
     }
     Foo.prototype.b = 2;
 
-    var actual = create({}, new Foo);
-    var expected = { 'a': 1, 'c': 3 };
-    var properties = Object.keys(expected);
+    let actual = create({}, new Foo);
+    let expected = { 'a': 1, 'c': 3 };
+    let properties = Object.keys(expected);
 
     assert.deepStrictEqual(Object.keys(actual), properties);
     properties.forEach((property) => {
@@ -61,12 +61,12 @@ describe('create', function() {
     function Foo() {
       this.a = 1;
     }
-    var object = create(new Foo, { 'a': 1 });
+    let object = create(new Foo, { 'a': 1 });
     assert.deepStrictEqual(lodashStable.keys(object), ['a']);
   });
 
   it('should accept a falsey `prototype`', function() {
-    var actual = lodashStable.map(falsey, function(prototype, index) {
+    let actual = lodashStable.map(falsey, function(prototype, index) {
       return index ? create(prototype) : create();
     });
 
@@ -76,7 +76,7 @@ describe('create', function() {
   });
 
   it('should accept a primitive `prototype`', function() {
-    var actual = lodashStable.map(primitives, function(value, index) {
+    let actual = lodashStable.map(primitives, function(value, index) {
       return index ? create(value) : create();
     });
 
@@ -86,11 +86,11 @@ describe('create', function() {
   });
 
   it('should work as an iteratee for methods like `_.map`', function() {
-    var array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
+    let array = [{ 'a': 1 }, { 'a': 1 }, { 'a': 1 }],
         expected = lodashStable.map(array, stubTrue),
         objects = lodashStable.map(array, create);
 
-    var actual = lodashStable.map(objects, function(object) {
+    let actual = lodashStable.map(objects, function(object) {
       return object.a === 1 && !keys(object).length;
     });
 

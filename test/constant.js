@@ -4,11 +4,11 @@ import { empties, _, falsey, stubTrue } from './utils.js';
 
 describe('constant', function() {
   it('should create a function that returns `value`', function() {
-    var object = { 'a': 1 },
+    let object = { 'a': 1 },
         values = Array(2).concat(empties, true, 1, 'a'),
         constant = _.constant(object);
 
-    var results = lodashStable.map(values, function(value, index) {
+    let results = lodashStable.map(values, function(value, index) {
       if (index < 2) {
         return index ? constant.call({}) : constant();
       }
@@ -21,10 +21,10 @@ describe('constant', function() {
   });
 
   it('should work with falsey values', function() {
-    var expected = lodashStable.map(falsey, stubTrue);
+    let expected = lodashStable.map(falsey, stubTrue);
 
-    var actual = lodashStable.map(falsey, function(value, index) {
-      var constant = index ? _.constant(value) : _.constant(),
+    let actual = lodashStable.map(falsey, function(value, index) {
+      let constant = index ? _.constant(value) : _.constant(),
           result = constant();
 
       return (result === value) || (result !== result && value !== value);
@@ -34,7 +34,7 @@ describe('constant', function() {
   });
 
   it('should return a wrapped value when chaining', function() {
-    var wrapped = _(true).constant();
+    let wrapped = _(true).constant();
     assert.ok(wrapped instanceof _);
   });
 });

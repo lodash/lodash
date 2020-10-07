@@ -4,21 +4,21 @@ import debounce from '../debounce.js';
 
 describe('debounce', function() {
   it('should debounce a function', function(done) {
-    var callCount = 0;
+    let callCount = 0;
 
-    var debounced = debounce(function(value) {
+    let debounced = debounce(function(value) {
       ++callCount;
       return value;
     }, 32);
 
-    var results = [debounced('a'), debounced('b'), debounced('c')];
+    let results = [debounced('a'), debounced('b'), debounced('c')];
     assert.deepStrictEqual(results, [undefined, undefined, undefined]);
     assert.strictEqual(callCount, 0);
 
     setTimeout(function() {
       assert.strictEqual(callCount, 1);
 
-      var results = [debounced('d'), debounced('e'), debounced('f')];
+      let results = [debounced('d'), debounced('e'), debounced('f')];
       assert.deepStrictEqual(results, ['c', 'c', 'c']);
       assert.strictEqual(callCount, 1);
     }, 128);
@@ -30,7 +30,7 @@ describe('debounce', function() {
   });
 
   it('subsequent debounced calls return the last `func` result', function(done) {
-    var debounced = debounce(identity, 32);
+    let debounced = debounce(identity, 32);
     debounced('a');
 
     setTimeout(function() {
@@ -44,7 +44,7 @@ describe('debounce', function() {
   });
 
   it('should not immediately call `func` when `wait` is `0`', function(done) {
-    var callCount = 0,
+    let callCount = 0,
         debounced = debounce(function() { ++callCount; }, 0);
 
     debounced();
@@ -58,7 +58,7 @@ describe('debounce', function() {
   });
 
   it('should apply default options', function(done) {
-    var callCount = 0,
+    let callCount = 0,
         debounced = debounce(function() { callCount++; }, 32, {});
 
     debounced();
@@ -71,13 +71,13 @@ describe('debounce', function() {
   });
 
   it('should support a `leading` option', function(done) {
-    var callCounts = [0, 0];
+    let callCounts = [0, 0];
 
-    var withLeading = debounce(function() {
+    let withLeading = debounce(function() {
       callCounts[0]++;
     }, 32, { 'leading': true });
 
-    var withLeadingAndTrailing = debounce(function() {
+    let withLeadingAndTrailing = debounce(function() {
       callCounts[1]++;
     }, 32, { 'leading': true });
 
@@ -99,27 +99,27 @@ describe('debounce', function() {
   });
 
   it('subsequent leading debounced calls return the last `func` result', function(done) {
-    var debounced = debounce(identity, 32, { 'leading': true, 'trailing': false }),
+    let debounced = debounce(identity, 32, { 'leading': true, 'trailing': false }),
         results = [debounced('a'), debounced('b')];
 
     assert.deepStrictEqual(results, ['a', 'a']);
 
     setTimeout(function() {
-      var results = [debounced('c'), debounced('d')];
+      let results = [debounced('c'), debounced('d')];
       assert.deepStrictEqual(results, ['c', 'c']);
       done();
     }, 64);
   });
 
   it('should support a `trailing` option', function(done) {
-    var withCount = 0,
+    let withCount = 0,
         withoutCount = 0;
 
-    var withTrailing = debounce(function() {
+    let withTrailing = debounce(function() {
       withCount++;
     }, 32, { 'trailing': true });
 
-    var withoutTrailing = debounce(function() {
+    let withoutTrailing = debounce(function() {
       withoutCount++;
     }, 32, { 'trailing': false });
 
@@ -137,9 +137,9 @@ describe('debounce', function() {
   });
 
   it('should support a `maxWait` option', function(done) {
-    var callCount = 0;
+    let callCount = 0;
 
-    var debounced = debounce(function(value) {
+    let debounced = debounce(function(value) {
       ++callCount;
       return value;
     }, 32, { 'maxWait': 64 });
@@ -162,24 +162,24 @@ describe('debounce', function() {
   });
 
   it('should support `maxWait` in a tight loop', function(done) {
-    var limit = (argv || isPhantom) ? 1000 : 320,
+    let limit = (argv || isPhantom) ? 1000 : 320,
         withCount = 0,
         withoutCount = 0;
 
-    var withMaxWait = debounce(function() {
+    let withMaxWait = debounce(function() {
       withCount++;
     }, 64, { 'maxWait': 128 });
 
-    var withoutMaxWait = debounce(function() {
+    let withoutMaxWait = debounce(function() {
       withoutCount++;
     }, 96);
 
-    var start = +new Date;
+    let start = +new Date;
     while ((new Date - start) < limit) {
       withMaxWait();
       withoutMaxWait();
     }
-    var actual = [Boolean(withoutCount), Boolean(withCount)];
+    let actual = [Boolean(withoutCount), Boolean(withCount)];
     setTimeout(function() {
       assert.deepStrictEqual(actual, [false, true]);
       done();
@@ -187,9 +187,9 @@ describe('debounce', function() {
   });
 
   it('should queue a trailing call for subsequent debounced calls after `maxWait`', function(done) {
-    var callCount = 0;
+    let callCount = 0;
 
-    var debounced = debounce(function() {
+    let debounced = debounce(function() {
       ++callCount;
     }, 200, { 'maxWait': 200 });
 
@@ -206,9 +206,9 @@ describe('debounce', function() {
   });
 
   it('should cancel `maxDelayed` when `delayed` is invoked', function(done) {
-    var callCount = 0;
+    let callCount = 0;
 
-    var debounced = debounce(function() {
+    let debounced = debounce(function() {
       callCount++;
     }, 32, { 'maxWait': 64 });
 
@@ -226,11 +226,11 @@ describe('debounce', function() {
   });
 
   it('should invoke the trailing call with the correct arguments and `this` binding', function(done) {
-    var actual,
+    let actual,
         callCount = 0,
         object = {};
 
-    var debounced = debounce(function(value) {
+    let debounced = debounce(function(value) {
       actual = [this];
       push.apply(actual, arguments);
       return ++callCount != 2;

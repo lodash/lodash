@@ -4,9 +4,9 @@ import { args, toArgs, arrayProto } from './utils.js';
 import bindAll from '../bindAll.js';
 
 describe('bindAll', function() {
-  var args = toArgs(['a']);
+  let args = toArgs(['a']);
 
-  var source = {
+  let source = {
     '_n0': -2,
     '_p0': -1,
     '_a': 1,
@@ -22,10 +22,10 @@ describe('bindAll', function() {
   };
 
   it('should accept individual method names', function() {
-    var object = lodashStable.cloneDeep(source);
+    let object = lodashStable.cloneDeep(source);
     bindAll(object, 'a', 'b');
 
-    var actual = lodashStable.map(['a', 'b', 'c'], function(key) {
+    let actual = lodashStable.map(['a', 'b', 'c'], function(key) {
       return object[key].call({});
     });
 
@@ -33,10 +33,10 @@ describe('bindAll', function() {
   });
 
   it('should accept arrays of method names', function() {
-    var object = lodashStable.cloneDeep(source);
+    let object = lodashStable.cloneDeep(source);
     bindAll(object, ['a', 'b'], ['c']);
 
-    var actual = lodashStable.map(['a', 'b', 'c', 'd'], function(key) {
+    let actual = lodashStable.map(['a', 'b', 'c', 'd'], function(key) {
       return object[key].call({});
     });
 
@@ -44,10 +44,10 @@ describe('bindAll', function() {
   });
 
   it('should preserve the sign of `0`', function() {
-    var props = [-0, Object(-0), 0, Object(0)];
+    let props = [-0, Object(-0), 0, Object(0)];
 
-    var actual = lodashStable.map(props, function(key) {
-      var object = lodashStable.cloneDeep(source);
+    let actual = lodashStable.map(props, function(key) {
+      let object = lodashStable.cloneDeep(source);
       bindAll(object, key);
       return object[lodashStable.toString(key)].call({});
     });
@@ -56,16 +56,16 @@ describe('bindAll', function() {
   });
 
   it('should work with an array `object`', function() {
-    var array = ['push', 'pop'];
+    let array = ['push', 'pop'];
     bindAll(array);
     assert.strictEqual(array.pop, arrayProto.pop);
   });
 
   it('should work with `arguments` objects as secondary arguments', function() {
-    var object = lodashStable.cloneDeep(source);
+    let object = lodashStable.cloneDeep(source);
     bindAll(object, args);
 
-    var actual = lodashStable.map(args, function(key) {
+    let actual = lodashStable.map(args, function(key) {
       return object[key].call({});
     });
 

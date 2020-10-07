@@ -9,9 +9,9 @@ describe('every', function() {
   });
 
   it('should return `true` for empty collections', function() {
-    var expected = lodashStable.map(empties, stubTrue);
+    let expected = lodashStable.map(empties, stubTrue);
 
-    var actual = lodashStable.map(empties, function(value) {
+    let actual = lodashStable.map(empties, function(value) {
       try {
         return every(value, identity);
       } catch (e) {}
@@ -21,7 +21,7 @@ describe('every', function() {
   });
 
   it('should return `false` as soon as `predicate` returns falsey', function() {
-    var count = 0;
+    let count = 0;
 
     assert.strictEqual(every([true, null, true], function(value) {
       count++;
@@ -36,11 +36,11 @@ describe('every', function() {
   });
 
   it('should use `_.identity` when `predicate` is nullish', function() {
-    var values = [, null, undefined],
+    let values = [, null, undefined],
         expected = lodashStable.map(values, stubFalse);
 
-    var actual = lodashStable.map(values, function(value, index) {
-      var array = [0];
+    let actual = lodashStable.map(values, function(value, index) {
+      let array = [0];
       return index ? every(array, value) : every(array);
     });
 
@@ -48,7 +48,7 @@ describe('every', function() {
 
     expected = lodashStable.map(values, stubTrue);
     actual = lodashStable.map(values, function(value, index) {
-      var array = [1];
+      let array = [1];
       return index ? every(array, value) : every(array);
     });
 
@@ -56,19 +56,19 @@ describe('every', function() {
   });
 
   it('should work with `_.property` shorthands', function() {
-    var objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
+    let objects = [{ 'a': 0, 'b': 1 }, { 'a': 1, 'b': 2 }];
     assert.strictEqual(every(objects, 'a'), false);
     assert.strictEqual(every(objects, 'b'), true);
   });
 
   it('should work with `_.matches` shorthands', function() {
-    var objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
+    let objects = [{ 'a': 0, 'b': 0 }, { 'a': 0, 'b': 1 }];
     assert.strictEqual(every(objects, { 'a': 0 }), true);
     assert.strictEqual(every(objects, { 'b': 1 }), false);
   });
 
   it('should work as an iteratee for methods like `_.map`', function() {
-    var actual = lodashStable.map([[1]], every);
+    let actual = lodashStable.map([[1]], every);
     assert.deepStrictEqual(actual, [true]);
   });
 });

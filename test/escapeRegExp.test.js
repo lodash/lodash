@@ -4,7 +4,7 @@ import { stubString } from './utils.js';
 import escapeRegExp from '../escapeRegExp.js';
 
 describe('escapeRegExp', function() {
-  var escaped = '\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
+  let escaped = '\\^\\$\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\',
       unescaped = '^$.*+?()[]{}|\\';
 
   it('should escape values', function() {
@@ -16,10 +16,10 @@ describe('escapeRegExp', function() {
   });
 
   it('should return an empty string for empty values', function() {
-    var values = [, null, undefined, ''],
+    let values = [, null, undefined, ''],
         expected = lodashStable.map(values, stubString);
 
-    var actual = lodashStable.map(values, function(value, index) {
+    let actual = lodashStable.map(values, function(value, index) {
       return index ? escapeRegExp(value) : escapeRegExp();
     });
 

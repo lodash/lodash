@@ -4,38 +4,38 @@ import { _, defineProperty, stubOne, noop, stubNaN } from './utils.js';
 
 describe('assign and assignIn', function() {
   lodashStable.each(['assign', 'assignIn'], function(methodName) {
-    var func = _[methodName];
+    let func = _[methodName];
 
     it(`\`_.${  methodName  }\` should assign source properties to \`object\``, function() {
       assert.deepStrictEqual(func({ 'a': 1 }, { 'b': 2 }), { 'a': 1, 'b': 2 });
     });
 
     it(`\`_.${  methodName  }\` should accept multiple sources`, function() {
-      var expected = { 'a': 1, 'b': 2, 'c': 3 };
+      let expected = { 'a': 1, 'b': 2, 'c': 3 };
       assert.deepStrictEqual(func({ 'a': 1 }, { 'b': 2 }, { 'c': 3 }), expected);
       assert.deepStrictEqual(func({ 'a': 1 }, { 'b': 2, 'c': 2 }, { 'c': 3 }), expected);
     });
 
     it(`\`_.${  methodName  }\` should overwrite destination properties`, function() {
-      var expected = { 'a': 3, 'b': 2, 'c': 1 };
+      let expected = { 'a': 3, 'b': 2, 'c': 1 };
       assert.deepStrictEqual(func({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
     it(`\`_.${  methodName  }\` should assign source properties with nullish values`, function() {
-      var expected = { 'a': null, 'b': undefined, 'c': null };
+      let expected = { 'a': null, 'b': undefined, 'c': null };
       assert.deepStrictEqual(func({ 'a': 1, 'b': 2 }, expected), expected);
     });
 
     it(`\`_.${  methodName  }\` should skip assignments if values are the same`, function() {
-      var object = {};
+      let object = {};
 
-      var descriptor = {
+      let descriptor = {
         'configurable': true,
         'enumerable': true,
         'set': function() { throw new Error; }
       };
 
-      var source = {
+      let source = {
         'a': 1,
         'b': undefined,
         'c': NaN,
@@ -68,7 +68,7 @@ describe('assign and assignIn', function() {
     });
 
     it(`\`_.${  methodName  }\` should treat sparse array sources as dense`, function() {
-      var array = [1];
+      let array = [1];
       array[2] = 3;
 
       assert.deepStrictEqual(func({}, array), { '0': 1, '1': undefined, '2': 3 });

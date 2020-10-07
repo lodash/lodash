@@ -3,16 +3,16 @@ import { slice } from './utils.js';
 import dropRightWhile from '../dropRightWhile.js';
 
 describe('dropRightWhile', function() {
-  var array = [1, 2, 3, 4];
+  let array = [1, 2, 3, 4];
 
-  var objects = [
+  let objects = [
     { 'a': 0, 'b': 0 },
     { 'a': 1, 'b': 1 },
     { 'a': 2, 'b': 2 }
   ];
 
   it('should drop elements while `predicate` returns truthy', function() {
-    var actual = dropRightWhile(array, function(n) {
+    let actual = dropRightWhile(array, function(n) {
       return n > 2;
     });
 
@@ -20,7 +20,7 @@ describe('dropRightWhile', function() {
   });
 
   it('should provide correct `predicate` arguments', function() {
-    var args;
+    let args;
 
     dropRightWhile(array, function() {
       args = slice.call(arguments);
@@ -42,7 +42,7 @@ describe('dropRightWhile', function() {
   });
 
   it('should return a wrapped value when chaining', function() {
-    var wrapped = _(array).dropRightWhile(function(n) {
+    let wrapped = _(array).dropRightWhile(function(n) {
       return n > 2;
     });
 

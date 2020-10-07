@@ -4,7 +4,7 @@ import defer from '../defer.js';
 
 describe('defer', function() {
   it('should defer `func` execution', function(done) {
-    var pass = false;
+    let pass = false;
     defer(function() { pass = true; });
 
     setTimeout(function() {
@@ -14,7 +14,7 @@ describe('defer', function() {
   });
 
   it('should provide additional arguments to `func`', function(done) {
-    var args;
+    let args;
 
     defer(function() {
       args = slice.call(arguments);
@@ -27,7 +27,7 @@ describe('defer', function() {
   });
 
   it('should be cancelable', function(done) {
-    var pass = true,
+    let pass = true,
         timerId = defer(function() { pass = false; });
 
     clearTimeout(timerId);

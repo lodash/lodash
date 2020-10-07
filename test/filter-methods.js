@@ -4,13 +4,13 @@ import { _, LARGE_ARRAY_SIZE, isEven, square } from './utils.js';
 
 describe('filter methods', function() {
   lodashStable.each(['filter', 'reject'], function(methodName) {
-    var array = [1, 2, 3, 4],
+    let array = [1, 2, 3, 4],
         func = _[methodName],
         isFilter = methodName == 'filter',
         objects = [{ 'a': 0 }, { 'a': 1 }];
 
     it(`\`_.${  methodName  }\` should not modify the resulting value from within \`predicate\``, function() {
-      var actual = func([0], function(value, index, array) {
+      let actual = func([0], function(value, index, array) {
         array[index] = 1;
         return isFilter;
       });
@@ -27,9 +27,9 @@ describe('filter methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should not modify wrapped values`, function() {
-      var wrapped = _(array);
+      let wrapped = _(array);
 
-      var actual = wrapped[methodName](function(n) {
+      let actual = wrapped[methodName](function(n) {
         return n < 3;
       });
 
@@ -43,14 +43,14 @@ describe('filter methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should work in a lazy sequence`, function() {
-      var array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
+      let array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
           predicate = function(value) { return isFilter ? isEven(value) : !isEven(value); };
 
-      var object = lodashStable.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
+      let object = lodashStable.zipObject(lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
         return [`key${  index}`, index];
       }));
 
-      var actual = _(array).slice(1).map(square)[methodName](predicate).value();
+      let actual = _(array).slice(1).map(square)[methodName](predicate).value();
       assert.deepEqual(actual, _[methodName](lodashStable.map(array.slice(1), square), predicate));
 
       actual = _(object).mapValues(square)[methodName](predicate).value();
@@ -58,7 +58,7 @@ describe('filter methods', function() {
     });
 
     it(`\`_.${  methodName  }\` should provide correct \`predicate\` arguments in a lazy sequence`, function() {
-      var args,
+      let args,
           array = lodashStable.range(LARGE_ARRAY_SIZE + 1),
           expected = [1, 0, lodashStable.map(array.slice(1), square)];
 

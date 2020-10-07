@@ -4,7 +4,7 @@ import escape from '../escape.js';
 import unescape from '../unescape.js';
 
 describe('escape', function() {
-  var escaped = '&amp;&lt;&gt;&quot;&#39;/',
+  let escaped = '&amp;&lt;&gt;&quot;&#39;/',
       unescaped = '&<>"\'/';
 
   escaped += escaped;

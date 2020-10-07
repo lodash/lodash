@@ -24,7 +24,7 @@ describe('noConflict', function() {
           context = vm.createContext({ '_': expected, 'console': console }),
           source = fs.readFileSync(filePath, 'utf8');
 
-      vm.runInContext(source + '\nthis.lodash = this._.noConflict()', context);
+      vm.runInContext(`${source  }\nthis.lodash = this._.noConflict()`, context);
 
       assert.strictEqual(context._, expected);
       assert.ok(context.lodash);

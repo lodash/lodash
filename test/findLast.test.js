@@ -13,7 +13,7 @@ describe('findLast', function() {
   function(collection, key) {
     var values = lodashStable.toArray(collection);
 
-    it('should work with ' + key + ' and a positive `fromIndex`', function() {
+    it(`should work with ${  key  } and a positive \`fromIndex\``, function() {
       var expected = [
         values[1],
         undefined
@@ -27,7 +27,7 @@ describe('findLast', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('should work with ' + key + ' and a `fromIndex` >= `length`', function() {
+    it(`should work with ${  key  } and a \`fromIndex\` >= \`length\``, function() {
       var indexes = [4, 6, Math.pow(2, 32), Infinity];
 
       var expected = lodashStable.map(indexes, lodashStable.constant([values[0], undefined, undefined]));
@@ -43,7 +43,7 @@ describe('findLast', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('should work with ' + key + ' and treat falsey `fromIndex` values correctly', function() {
+    it(`should work with ${  key  } and treat falsey \`fromIndex\` values correctly`, function() {
       var expected = lodashStable.map(falsey, function(value) {
         return value === undefined ? values[3] : undefined;
       });
@@ -55,7 +55,7 @@ describe('findLast', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('should work with ' + key + ' and coerce `fromIndex` to an integer', function() {
+    it(`should work with ${  key  } and coerce \`fromIndex\` to an integer`, function() {
       var expected = [
         values[0],
         values[0],
@@ -71,7 +71,7 @@ describe('findLast', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('should work with ' + key + ' and a negative `fromIndex`', function() {
+    it(`should work with ${  key  } and a negative \`fromIndex\``, function() {
       var expected = [
         values[1],
         undefined
@@ -85,7 +85,7 @@ describe('findLast', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('should work with ' + key + ' and a negative `fromIndex` <= `-length`', function() {
+    it(`should work with ${  key  } and a negative \`fromIndex\` <= \`-length\``, function() {
       var indexes = [-4, -6, -Infinity],
           expected = lodashStable.map(indexes, lodashStable.constant(values[0]));
 

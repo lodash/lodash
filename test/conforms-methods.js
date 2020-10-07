@@ -13,7 +13,7 @@ describe('conforms methods', function() {
       };
     }
 
-    it('`_.' + methodName + '` should check if `object` conforms to `source`', function() {
+    it(`\`_.${  methodName  }\` should check if \`object\` conforms to \`source\``, function() {
       var objects = [
         { 'a': 1, 'b': 8 },
         { 'a': 2, 'b': 4 },
@@ -36,7 +36,7 @@ describe('conforms methods', function() {
       assert.deepStrictEqual(actual, [objects[2]]);
     });
 
-    it('`_.' + methodName + '` should not match by inherited `source` properties', function() {
+    it(`\`_.${  methodName  }\` should not match by inherited \`source\` properties`, function() {
       function Foo() {
         this.a = function(value) {
           return value > 1;
@@ -58,7 +58,7 @@ describe('conforms methods', function() {
       assert.deepStrictEqual(actual, [objects[1], objects[2]]);
     });
 
-    it('`_.' + methodName + '` should not invoke `source` predicates for missing `object` properties', function() {
+    it(`\`_.${  methodName  }\` should not invoke \`source\` predicates for missing \`object\` properties`, function() {
       var count = 0;
 
       var par = conforms({
@@ -69,7 +69,7 @@ describe('conforms methods', function() {
       assert.strictEqual(count, 0);
     });
 
-    it('`_.' + methodName + '` should work with a function for `object`', function() {
+    it(`\`_.${  methodName  }\` should work with a function for \`object\``, function() {
       function Foo() {}
       Foo.a = 1;
 
@@ -84,7 +84,7 @@ describe('conforms methods', function() {
       assert.strictEqual(par(Bar), true);
     });
 
-    it('`_.' + methodName + '` should work with a function for `source`', function() {
+    it(`\`_.${  methodName  }\` should work with a function for \`source\``, function() {
       function Foo() {}
       Foo.a = function(value) { return value > 1; };
 
@@ -94,7 +94,7 @@ describe('conforms methods', function() {
       assert.deepStrictEqual(actual, [objects[1]]);
     });
 
-    it('`_.' + methodName + '` should work with a non-plain `object`', function() {
+    it(`\`_.${  methodName  }\` should work with a non-plain \`object\``, function() {
       function Foo() {
         this.a = 1;
       }
@@ -107,7 +107,7 @@ describe('conforms methods', function() {
       assert.strictEqual(par(new Foo), true);
     });
 
-    it('`_.' + methodName + '` should return `false` when `object` is nullish', function() {
+    it(`\`_.${  methodName  }\` should return \`false\` when \`object\` is nullish`, function() {
       var values = [, null, undefined],
           expected = lodashStable.map(values, stubFalse);
 
@@ -124,7 +124,7 @@ describe('conforms methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should return `true` when comparing an empty `source` to a nullish `object`', function() {
+    it(`\`_.${  methodName  }\` should return \`true\` when comparing an empty \`source\` to a nullish \`object\``, function() {
       var values = [, null, undefined],
           expected = lodashStable.map(values, stubTrue),
           par = conforms({});
@@ -138,7 +138,7 @@ describe('conforms methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should return `true` when comparing an empty `source`', function() {
+    it(`\`_.${  methodName  }\` should return \`true\` when comparing an empty \`source\``, function() {
       var object = { 'a': 1 },
           expected = lodashStable.map(empties, stubTrue);
 

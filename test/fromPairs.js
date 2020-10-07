@@ -37,7 +37,7 @@ describe('fromPairs', function() {
 
   it('should work in a lazy sequence', function() {
     var array = lodashStable.times(LARGE_ARRAY_SIZE, function(index) {
-      return ['key' + index, index];
+      return [`key${  index}`, index];
     });
 
     var actual = _(array).fromPairs().map(square).filter(isEven).take().value();

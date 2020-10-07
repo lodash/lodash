@@ -17,18 +17,18 @@ describe('flow methods', function() {
     var func = methods[methodName],
         isFlow = methodName == 'flow';
 
-    it('`_.' + methodName + '` should supply each function with the return value of the previous', function() {
+    it(`\`_.${  methodName  }\` should supply each function with the return value of the previous`, function() {
       var fixed = function(n) { return n.toFixed(1); },
           combined = isFlow ? func(add, square, fixed) : func(fixed, square, add);
 
       assert.strictEqual(combined(1, 2), '9.0');
     });
 
-    it('`_.' + methodName + '` should return a new function', function() {
+    it(`\`_.${  methodName  }\` should return a new function`, function() {
       assert.notStrictEqual(func(noop), noop);
     });
 
-    it('`_.' + methodName + '` should work with a curried function and `_.head`', function() {
+    it(`\`_.${  methodName  }\` should work with a curried function and \`_.head\``, function() {
       var curried = lodashStable.curry(identity);
 
       var combined = isFlow
@@ -38,7 +38,7 @@ describe('flow methods', function() {
       assert.strictEqual(combined([1]), 1);
     });
 
-    it('`_.' + methodName + '` should work with curried functions with placeholders', function() {
+    it(`\`_.${  methodName  }\` should work with curried functions with placeholders`, function() {
       var curried = lodashStable.curry(lodashStable.ary(map, 2), 2),
           getProp = curried(curried.placeholder, (value) => value.a),
           objects = [{ 'a': 1 }, { 'a': 2 }, { 'a': 1 }];

@@ -6,17 +6,17 @@ describe('difference methods', function() {
   lodashStable.each(['difference', 'differenceBy', 'differenceWith'], function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` should return the difference of two arrays', function() {
+    it(`\`_.${  methodName  }\` should return the difference of two arrays`, function() {
       var actual = func([2, 1], [2, 3]);
       assert.deepStrictEqual(actual, [1]);
     });
 
-    it('`_.' + methodName + '` should return the difference of multiple arrays', function() {
+    it(`\`_.${  methodName  }\` should return the difference of multiple arrays`, function() {
       var actual = func([2, 1, 2, 3], [3, 4], [3, 2]);
       assert.deepStrictEqual(actual, [1]);
     });
 
-    it('`_.' + methodName + '` should treat `-0` as `0`', function() {
+    it(`\`_.${  methodName  }\` should treat \`-0\` as \`0\``, function() {
       var array = [-0, 0];
 
       var actual = lodashStable.map(array, function(value) {
@@ -29,11 +29,11 @@ describe('difference methods', function() {
       assert.deepStrictEqual(actual, ['0']);
     });
 
-    it('`_.' + methodName + '` should match `NaN`', function() {
+    it(`\`_.${  methodName  }\` should match \`NaN\``, function() {
       assert.deepStrictEqual(func([1, NaN, 3], [NaN, 5, NaN]), [1, 3]);
     });
 
-    it('`_.' + methodName + '` should work with large arrays', function() {
+    it(`\`_.${  methodName  }\` should work with large arrays`, function() {
       var array1 = lodashStable.range(LARGE_ARRAY_SIZE + 1),
           array2 = lodashStable.range(LARGE_ARRAY_SIZE),
           a = {},
@@ -46,7 +46,7 @@ describe('difference methods', function() {
       assert.deepStrictEqual(func(array1, array2), [LARGE_ARRAY_SIZE]);
     });
 
-    it('`_.' + methodName + '` should work with large arrays of `-0` as `0`', function() {
+    it(`\`_.${  methodName  }\` should work with large arrays of \`-0\` as \`0\``, function() {
       var array = [-0, 0];
 
       var actual = lodashStable.map(array, function(value) {
@@ -61,12 +61,12 @@ describe('difference methods', function() {
       assert.deepStrictEqual(actual, ['0']);
     });
 
-    it('`_.' + methodName + '` should work with large arrays of `NaN`', function() {
+    it(`\`_.${  methodName  }\` should work with large arrays of \`NaN\``, function() {
       var largeArray = lodashStable.times(LARGE_ARRAY_SIZE, stubNaN);
       assert.deepStrictEqual(func([1, NaN, 3], largeArray), [1, 3]);
     });
 
-    it('`_.' + methodName + '` should work with large arrays of objects', function() {
+    it(`\`_.${  methodName  }\` should work with large arrays of objects`, function() {
       var object1 = {},
           object2 = {},
           largeArray = lodashStable.times(LARGE_ARRAY_SIZE, lodashStable.constant(object1));
@@ -74,7 +74,7 @@ describe('difference methods', function() {
       assert.deepStrictEqual(func([object1, object2], largeArray), [object2]);
     });
 
-    it('`_.' + methodName + '` should ignore values that are not array-like', function() {
+    it(`\`_.${  methodName  }\` should ignore values that are not array-like`, function() {
       var array = [1, null, 3];
 
       assert.deepStrictEqual(func(args, 3, { '0': 1 }), [1, 2, 3]);

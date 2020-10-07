@@ -19,7 +19,7 @@ const caseMethods = {
 
 describe('case methods', function() {
   lodashStable.each(['camel', 'kebab', 'lower', 'snake', 'start', 'upper'], function(caseName) {
-    var methodName = caseName + 'Case',
+    var methodName = `${caseName  }Case`,
         func = caseMethods[methodName];
 
     var strings = [
@@ -38,7 +38,7 @@ describe('case methods', function() {
       }
     }());
 
-    it('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', function() {
+    it(`\`_.${  methodName  }\` should convert \`string\` to ${  caseName  } case`, function() {
       var actual = lodashStable.map(strings, function(string) {
         var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
         return func(string) === expected;
@@ -47,7 +47,7 @@ describe('case methods', function() {
       assert.deepStrictEqual(actual, lodashStable.map(strings, stubTrue));
     });
 
-    it('`_.' + methodName + '` should handle double-converting strings', function() {
+    it(`\`_.${  methodName  }\` should handle double-converting strings`, function() {
       var actual = lodashStable.map(strings, function(string) {
         var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
         return func(func(string)) === expected;
@@ -56,22 +56,22 @@ describe('case methods', function() {
       assert.deepStrictEqual(actual, lodashStable.map(strings, stubTrue));
     });
 
-    it('`_.' + methodName + '` should remove contraction apostrophes', function() {
+    it(`\`_.${  methodName  }\` should remove contraction apostrophes`, function() {
       var postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
 
       lodashStable.each(["'", '\u2019'], function(apos) {
         var actual = lodashStable.map(postfixes, function(postfix) {
-          return func('a b' + apos + postfix +  ' c');
+          return func(`a b${  apos  }${postfix   } c`);
         });
 
         var expected = lodashStable.map(postfixes, function(postfix) {
           switch (caseName) {
-            case 'camel': return 'aB'  + postfix + 'C';
-            case 'kebab': return 'a-b' + postfix + '-c';
-            case 'lower': return 'a b' + postfix + ' c';
-            case 'snake': return 'a_b' + postfix + '_c';
-            case 'start': return 'A B' + postfix + ' C';
-            case 'upper': return 'A B' + postfix.toUpperCase() + ' C';
+            case 'camel': return `aB${   postfix  }C`;
+            case 'kebab': return `a-b${  postfix  }-c`;
+            case 'lower': return `a b${  postfix  } c`;
+            case 'snake': return `a_b${  postfix  }_c`;
+            case 'start': return `A B${  postfix  } C`;
+            case 'upper': return `A B${  postfix.toUpperCase()  } C`;
           }
         });
 
@@ -79,12 +79,12 @@ describe('case methods', function() {
       });
     });
 
-    it('`_.' + methodName + '` should remove Latin mathematical operators', function() {
+    it(`\`_.${  methodName  }\` should remove Latin mathematical operators`, function() {
       var actual = lodashStable.map(['\xd7', '\xf7'], func);
       assert.deepStrictEqual(actual, ['', '']);
     });
 
-    it('`_.' + methodName + '` should coerce `string` to a string', function() {
+    it(`\`_.${  methodName  }\` should coerce \`string\` to a string`, function() {
       var string = 'foo bar';
       assert.strictEqual(func(Object(string)), converted);
       assert.strictEqual(func({ 'toString': lodashStable.constant(string) }), converted);

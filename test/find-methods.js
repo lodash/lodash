@@ -23,27 +23,27 @@ describe('find methods', function() {
       'findLastKey': ['2', undefined, '2']
     })[methodName];
 
-    it('`_.' + methodName + '` should return the found value', function() {
+    it(`\`_.${  methodName  }\` should return the found value`, function() {
       assert.strictEqual(func(objects, function(object) { return object.a; }), expected[0]);
     });
 
-    it('`_.' + methodName + '` should return `' + expected[1] + '` if value is not found', function() {
+    it(`\`_.${  methodName  }\` should return \`${  expected[1]  }\` if value is not found`, function() {
       assert.strictEqual(func(objects, function(object) { return object.a === 3; }), expected[1]);
     });
 
-    it('`_.' + methodName + '` should work with `_.matches` shorthands', function() {
+    it(`\`_.${  methodName  }\` should work with \`_.matches\` shorthands`, function() {
       assert.strictEqual(func(objects, { 'b': 2 }), expected[2]);
     });
 
-    it('`_.' + methodName + '` should work with `_.matchesProperty` shorthands', function() {
+    it(`\`_.${  methodName  }\` should work with \`_.matchesProperty\` shorthands`, function() {
       assert.strictEqual(func(objects, ['b', 2]), expected[2]);
     });
 
-    it('`_.' + methodName + '` should work with `_.property` shorthands', function() {
+    it(`\`_.${  methodName  }\` should work with \`_.property\` shorthands`, function() {
       assert.strictEqual(func(objects, 'b'), expected[0]);
     });
 
-    it('`_.' + methodName + '` should return `' + expected[1] + '` for empty collections', function() {
+    it(`\`_.${  methodName  }\` should return \`${  expected[1]  }\` for empty collections`, function() {
       var emptyValues = lodashStable.endsWith(methodName, 'Index') ? lodashStable.reject(empties, lodashStable.isPlainObject) : empties,
           expecting = lodashStable.map(emptyValues, lodashStable.constant(expected[1]));
 
@@ -56,7 +56,7 @@ describe('find methods', function() {
       assert.deepStrictEqual(actual, expecting);
     });
 
-    it('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should return an unwrapped value when implicitly chaining`, function() {
       var expected = ({
         'find': 1,
         'findIndex': 0,
@@ -69,16 +69,16 @@ describe('find methods', function() {
       assert.strictEqual(_(array)[methodName](), expected);
     });
 
-    it('`_.' + methodName + '` should return a wrapped value when explicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should return a wrapped value when explicitly chaining`, function() {
       assert.ok(_(array).chain()[methodName]() instanceof _);
     });
 
-    it('`_.' + methodName + '` should not execute immediately when explicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should not execute immediately when explicitly chaining`, function() {
       var wrapped = _(array).chain()[methodName]();
       assert.strictEqual(wrapped.__wrapped__, array);
     });
 
-    it('`_.' + methodName + '` should work in a lazy sequence', function() {
+    it(`\`_.${  methodName  }\` should work in a lazy sequence`, function() {
       var largeArray = lodashStable.range(1, LARGE_ARRAY_SIZE + 1),
           smallArray = array;
 
@@ -94,7 +94,7 @@ describe('find methods', function() {
     each(['find', 'findIndex', 'findLast', 'findLastIndex'], function(methodName) {
       var func = _[methodName];
 
-      it('`_.' + methodName + '` should provide correct `predicate` arguments for arrays', function() {
+      it(`\`_.${  methodName  }\` should provide correct \`predicate\` arguments for arrays`, function() {
         var args,
             array = ['a'];
 
@@ -109,7 +109,7 @@ describe('find methods', function() {
     each(['find', 'findKey', 'findLast', 'findLastKey'], function(methodName) {
       var func = _[methodName];
 
-      it('`_.' + methodName + '` should work with an object for `collection`', function() {
+      it(`\`_.${  methodName  }\` should work with an object for \`collection\``, function() {
         var actual = func({ 'a': 1, 'b': 2, 'c': 3 }, function(n) {
           return n < 3;
         });
@@ -124,7 +124,7 @@ describe('find methods', function() {
         assert.strictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should provide correct `predicate` arguments for objects', function() {
+      it(`\`_.${  methodName  }\` should provide correct \`predicate\` arguments for objects`, function() {
         var args,
             object = { 'a': 1 };
 

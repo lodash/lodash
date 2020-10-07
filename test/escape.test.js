@@ -23,7 +23,7 @@ describe('escape', function() {
   });
 
   lodashStable.each(['`', '/'], function(chr) {
-    it('should not escape the "' + chr + '" character', function() {
+    it(`should not escape the "${  chr  }" character`, function() {
       assert.strictEqual(escape(chr), chr);
     });
   });

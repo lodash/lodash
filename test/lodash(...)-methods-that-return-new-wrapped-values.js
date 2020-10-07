@@ -33,7 +33,7 @@ describe('lodash(...) methods that return new wrapped values', function() {
   ];
 
   lodashStable.each(funcs, function(methodName) {
-    it('`_(...).' + methodName + '` should return a new wrapped value', function() {
+    it(`\`_(...).${  methodName  }\` should return a new wrapped value`, function() {
       var value = methodName == 'split' ? 'abc' : [1, 2, 3],
           wrapped = _(value),
           actual = wrapped[methodName]();

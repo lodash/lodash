@@ -6,7 +6,7 @@ describe('exit early', function() {
   lodashStable.each(['_baseEach', 'forEach', 'forEachRight', 'forIn', 'forInRight', 'forOwn', 'forOwnRight', 'transform'], function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` can exit early when iterating arrays', function() {
+    it(`\`_.${  methodName  }\` can exit early when iterating arrays`, function() {
       if (func) {
         var array = [1, 2, 3],
             values = [];
@@ -20,7 +20,7 @@ describe('exit early', function() {
       }
     });
 
-    it('`_.' + methodName + '` can exit early when iterating objects', function() {
+    it(`\`_.${  methodName  }\` can exit early when iterating objects`, function() {
       if (func) {
         var object = { 'a': 1, 'b': 2, 'c': 3 },
             values = [];

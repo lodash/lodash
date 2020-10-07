@@ -6,7 +6,7 @@ describe('find and findLast', function() {
   lodashStable.each(['find', 'findLast'], function(methodName) {
     var isFind = methodName == 'find';
 
-    it('`_.' + methodName + '` should support shortcut fusion', function() {
+    it(`\`_.${  methodName  }\` should support shortcut fusion`, function() {
       var findCount = 0,
           mapCount = 0,
           array = lodashStable.range(1, LARGE_ARRAY_SIZE + 1),

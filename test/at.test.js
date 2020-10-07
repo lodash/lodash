@@ -99,7 +99,7 @@ describe('at', function() {
         iteratee = function(value) { count++; return square(value); },
         lastIndex = LARGE_ARRAY_SIZE - 1;
 
-    lodashStable.each([lastIndex, lastIndex + '', LARGE_ARRAY_SIZE, []], function(n, index) {
+    lodashStable.each([lastIndex, `${lastIndex  }`, LARGE_ARRAY_SIZE, []], function(n, index) {
       count = 0;
       var actual = _(array).map(iteratee).at(n).value(),
           expected = index < 2 ? 1 : 0;

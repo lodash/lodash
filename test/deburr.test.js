@@ -20,7 +20,7 @@ describe('deburr', function() {
     var expected = lodashStable.map(comboMarks, lodashStable.constant('ei'));
 
     var actual = lodashStable.map(comboMarks, function(chr) {
-      return deburr('e' + chr + 'i');
+      return deburr(`e${  chr  }i`);
     });
 
     assert.deepStrictEqual(actual, expected);

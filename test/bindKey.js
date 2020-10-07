@@ -7,7 +7,7 @@ describe('bindKey', function() {
     var object = {
       'user': 'fred',
       'greet': function(greeting) {
-        return this.user + ' says: ' + greeting;
+        return `${this.user  } says: ${  greeting}`;
       }
     };
 
@@ -15,7 +15,7 @@ describe('bindKey', function() {
     assert.strictEqual(bound(), 'fred says: hi');
 
     object.greet = function(greeting) {
-      return this.user + ' says: ' + greeting + '!';
+      return `${this.user  } says: ${  greeting  }!`;
     };
 
     assert.strictEqual(bound(), 'fred says: hi!');

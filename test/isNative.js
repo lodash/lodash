@@ -74,15 +74,15 @@ describe('isNative', function() {
           basePath = path.dirname(filePath),
           uid = 'e0gvgyrad1jor',
           coreKey = '__core-js_shared__',
-          fakeSrcKey = 'Symbol(src)_1.' + uid;
+          fakeSrcKey = `Symbol(src)_1.${  uid}`;
 
-      root[coreKey] = { 'keys': { 'IE_PROTO': 'Symbol(IE_PROTO)_3.' + uid } };
+      root[coreKey] = { 'keys': { 'IE_PROTO': `Symbol(IE_PROTO)_3.${  uid}` } };
       emptyObject(require.cache);
 
       var baseIsNative = interopRequire(path.join(basePath, '_baseIsNative'));
       assert.strictEqual(baseIsNative(slice), true);
 
-      slice[fakeSrcKey] = slice + '';
+      slice[fakeSrcKey] = `${slice  }`;
       assert.strictEqual(baseIsNative(slice), false);
 
       delete slice[fakeSrcKey];

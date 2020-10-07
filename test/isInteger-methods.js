@@ -7,7 +7,7 @@ describe('isInteger methods', function() {
     var func = _[methodName],
         isSafe = methodName == 'isSafeInteger';
 
-    it('`_.' + methodName + '` should return `true` for integer values', function() {
+    it(`\`_.${  methodName  }\` should return \`true\` for integer values`, function() {
       var values = [-1, 0, 1],
           expected = lodashStable.map(values, stubTrue);
 

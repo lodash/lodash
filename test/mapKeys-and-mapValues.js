@@ -7,7 +7,7 @@ describe('mapKeys and mapValues', function() {
     var func = _[methodName],
         object = { 'a': 1, 'b': 2 };
 
-    it('`_.' + methodName + '` should iterate over own string keyed properties of objects', function() {
+    it(`\`_.${  methodName  }\` should iterate over own string keyed properties of objects`, function() {
       function Foo() {
         this.a = 'a';
       }
@@ -17,7 +17,7 @@ describe('mapKeys and mapValues', function() {
       assert.deepStrictEqual(actual, { 'a': 'a' });
     });
 
-    it('`_.' + methodName + '` should accept a falsey `object`', function() {
+    it(`\`_.${  methodName  }\` should accept a falsey \`object\``, function() {
       var expected = lodashStable.map(falsey, stubObject);
 
       var actual = lodashStable.map(falsey, function(object, index) {
@@ -29,7 +29,7 @@ describe('mapKeys and mapValues', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should return a wrapped value when chaining', function() {
+    it(`\`_.${  methodName  }\` should return a wrapped value when chaining`, function() {
       assert.ok(_(object)[methodName](noop) instanceof _);
     });
   });

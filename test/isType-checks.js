@@ -15,7 +15,7 @@ describe('isType checks', function() {
 
       var object = new Foo;
       if (objToString.call(object) == objectTag) {
-        assert.strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
+        assert.strictEqual(_[methodName](object), false, `\`_.${  methodName  }\` returns \`false\``);
       }
     });
   });
@@ -32,7 +32,7 @@ describe('isType checks', function() {
     lodashStable.each(funcs, function(methodName) {
       if (xml) {
         _[methodName](xml);
-        assert.ok(true, '`_.' + methodName + '` should not error');
+        assert.ok(true, `\`_.${  methodName  }\` should not error`);
       }
     });
   });

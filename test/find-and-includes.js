@@ -15,7 +15,7 @@ describe('find and includes', function() {
     function(collection, key) {
       var values = lodashStable.toArray(collection);
 
-      it('`_.' + methodName + '` should work with ' + key + ' and a positive `fromIndex`', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and a positive \`fromIndex\``, function() {
         var expected = [
           isIncludes || values[2],
           isIncludes ? false : undefined
@@ -29,7 +29,7 @@ describe('find and includes', function() {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should work with ' + key + ' and a `fromIndex` >= `length`', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and a \`fromIndex\` >= \`length\``, function() {
         var indexes = [4, 6, Math.pow(2, 32), Infinity];
 
         var expected = lodashStable.map(indexes, function() {
@@ -48,7 +48,7 @@ describe('find and includes', function() {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should work with ' + key + ' and treat falsey `fromIndex` values as `0`', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and treat falsey \`fromIndex\` values as \`0\``, function() {
         var expected = lodashStable.map(falsey, lodashStable.constant(isIncludes || values[0]));
 
         var actual = lodashStable.map(falsey, function(fromIndex) {
@@ -58,7 +58,7 @@ describe('find and includes', function() {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should work with ' + key + ' and coerce `fromIndex` to an integer', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and coerce \`fromIndex\` to an integer`, function() {
         var expected = [
           isIncludes || values[0],
           isIncludes || values[0],
@@ -74,7 +74,7 @@ describe('find and includes', function() {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex`', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and a negative \`fromIndex\``, function() {
         var expected = [
           isIncludes || values[2],
           isIncludes ? false : undefined
@@ -88,7 +88,7 @@ describe('find and includes', function() {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('`_.' + methodName + '` should work with ' + key + ' and a negative `fromIndex` <= `-length`', function() {
+      it(`\`_.${  methodName  }\` should work with ${  key  } and a negative \`fromIndex\` <= \`-length\``, function() {
         var indexes = [-4, -6, -Infinity],
             expected = lodashStable.map(indexes, lodashStable.constant(isIncludes || values[0]));
 

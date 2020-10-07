@@ -37,11 +37,11 @@ describe(basename, function() {
 
   it(`should support loading ${  basename  } in a web worker`, function(done) {
     if (Worker) {
-      var limit = 30000 / QUnit.config.asyncRetries,
+      let limit = 30000 / QUnit.config.asyncRetries,
           start = +new Date;
 
       var attempt = function() {
-        var actual = _VERSION;
+        let actual = _VERSION;
         if ((new Date - start) < limit && typeof actual !== 'string') {
           setTimeout(attempt, 16);
           return;
@@ -73,7 +73,7 @@ describe(basename, function() {
     }
     Foo.prototype.b = 2;
 
-    var object = { 'a': 1 },
+    let object = { 'a': 1 },
         otherObject = { 'b': 2 },
         largeArray = lodashStable.times(LARGE_ARRAY_SIZE, lodashStable.constant(object));
 
@@ -83,7 +83,7 @@ describe(basename, function() {
       } catch (e) {
         actual = null;
       }
-      var label = message('_.create', 'Object.create');
+      let label = message('_.create', 'Object.create');
       assert.ok(actual instanceof Foo, label);
 
       try {
@@ -114,7 +114,7 @@ describe(basename, function() {
 
       try {
         // Avoid buggy symbol detection in Babel's `_typeof` helper.
-        var symObject = setProperty(Object(symbol), 'constructor', Object);
+        let symObject = setProperty(Object(symbol), 'constructor', Object);
         actual = [
           Symbol ? lodashBizarro.clone(symObject) : {},
           Symbol ? lodashBizarro.isEqual(symObject, Object(symbol)) : false,

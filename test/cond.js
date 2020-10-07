@@ -4,7 +4,7 @@ import { _, stubA, stubB, stubC, slice, stubFalse, stubTrue } from './utils.js';
 
 describe('cond', function() {
   it('should create a conditional function', function() {
-    var cond = _.cond([
+    let cond = _.cond([
       [lodashStable.matches({ 'a': 1 }),     stubA],
       [lodashStable.matchesProperty('b', 1), stubB],
       [lodashStable.property('c'),           stubC]
@@ -16,11 +16,11 @@ describe('cond', function() {
   });
 
   it('should provide arguments to functions', function() {
-    var args1,
+    let args1,
         args2,
         expected = ['a', 'b', 'c'];
 
-    var cond = _.cond([[
+    let cond = _.cond([[
       function() { args1 || (args1 = slice.call(arguments)); return true; },
       function() { args2 || (args2 = slice.call(arguments)); }
     ]]);
@@ -32,7 +32,7 @@ describe('cond', function() {
   });
 
   it('should work with predicate shorthands', function() {
-    var cond = _.cond([
+    let cond = _.cond([
       [{ 'a': 1 }, stubA],
       [['b', 1],   stubB],
       ['c',        stubC]
@@ -44,7 +44,7 @@ describe('cond', function() {
   });
 
   it('should return `undefined` when no condition is met', function() {
-    var cond = _.cond([[stubFalse, stubA]]);
+    let cond = _.cond([[stubFalse, stubA]]);
     assert.strictEqual(cond({ 'a': 1 }), undefined);
   });
 
@@ -55,11 +55,11 @@ describe('cond', function() {
   });
 
   it('should use `this` binding of function for `pairs`', function() {
-    var cond = _.cond([
+    let cond = _.cond([
       [function(a) { return this[a]; }, function(a, b) { return this[b]; }]
     ]);
 
-    var object = { 'cond': cond, 'a': 1, 'b': 2 };
+    let object = { 'cond': cond, 'a': 1, 'b': 2 };
     assert.strictEqual(object.cond('a', 'b'), 2);
   });
 });

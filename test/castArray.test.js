@@ -5,7 +5,7 @@ import castArray from '../castArray.js';
 
 describe('castArray', function() {
   it('should wrap non-array items in an array', function() {
-    var values = falsey.concat(true, 1, 'a', { 'a': 1 }),
+    let values = falsey.concat(true, 1, 'a', { 'a': 1 }),
         expected = lodashStable.map(values, function(value) { return [value]; }),
         actual = lodashStable.map(values, castArray);
 
@@ -13,7 +13,7 @@ describe('castArray', function() {
   });
 
   it('should return array values by reference', function() {
-    var array = [1];
+    let array = [1];
     assert.strictEqual(castArray(array), array);
   });
 

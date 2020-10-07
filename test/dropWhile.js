@@ -4,16 +4,16 @@ import { slice, LARGE_ARRAY_SIZE } from './utils.js';
 import dropWhile from '../dropWhile.js';
 
 describe('dropWhile', function() {
-  var array = [1, 2, 3, 4];
+  let array = [1, 2, 3, 4];
 
-  var objects = [
+  let objects = [
     { 'a': 2, 'b': 2 },
     { 'a': 1, 'b': 1 },
     { 'a': 0, 'b': 0 }
   ];
 
   it('should drop elements while `predicate` returns truthy', function() {
-    var actual = dropWhile(array, function(n) {
+    let actual = dropWhile(array, function(n) {
       return n < 3;
     });
 
@@ -21,7 +21,7 @@ describe('dropWhile', function() {
   });
 
   it('should provide correct `predicate` arguments', function() {
-    var args;
+    let args;
 
     dropWhile(array, function() {
       args = slice.call(arguments);
@@ -43,7 +43,7 @@ describe('dropWhile', function() {
   });
 
   it('should work in a lazy sequence', function() {
-    var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3),
+    let array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3),
         predicate = function(n) { return n < 3; },
         expected = dropWhile(array, predicate),
         wrapped = _(array).dropWhile(predicate);
@@ -54,9 +54,9 @@ describe('dropWhile', function() {
   });
 
   it('should work in a lazy sequence with `drop`', function() {
-    var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3);
+    let array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3);
 
-    var actual = _(array)
+    let actual = _(array)
       .dropWhile(function(n) { return n == 1; })
       .drop()
       .dropWhile(function(n) { return n == 3; })

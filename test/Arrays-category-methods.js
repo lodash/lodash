@@ -31,7 +31,7 @@ import zip from '../zip.js';
 import xor from '../xor.js';
 
 describe('"Arrays" category methods', function() {
-  var args = toArgs([1, null, [3], null, 5]),
+  let args = toArgs([1, null, [3], null, 5]),
       sortedArgs = toArgs([1, [3], 5, null, null]),
       array = [1, 2, 3, 4, 5, 6];
 

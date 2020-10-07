@@ -5,7 +5,7 @@ import runInContext from '../runInContext.js';
 
 describe('debounce and throttle', function() {
   lodashStable.each(['debounce', 'throttle'], function(methodName) {
-    var func = _[methodName],
+    let func = _[methodName],
         isDebounce = methodName == 'debounce';
 
     it(`\`_.${  methodName  }\` should not error for non-object \`options\` values`, function() {
@@ -14,7 +14,7 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should use a default \`wait\` of \`0\``, function(done) {
-      var callCount = 0,
+      let callCount = 0,
           funced = func(function() { callCount++; });
 
       funced();
@@ -27,7 +27,7 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should invoke \`func\` with the correct \`this\` binding`, function(done) {
-      var actual = [],
+      let actual = [],
           object = { 'funced': func(function() { actual.push(this); }, 32) },
           expected = lodashStable.times(isDebounce ? 1 : 2, lodashStable.constant(object));
 
@@ -42,23 +42,23 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` supports recursive calls`, function(done) {
-      var actual = [],
+      let actual = [],
           args = lodashStable.map(['a', 'b', 'c'], function(chr) { return [{}, chr]; }),
           expected = args.slice(),
           queue = args.slice();
 
       var funced = func(function() {
-        var current = [this];
+        let current = [this];
         push.apply(current, arguments);
         actual.push(current);
 
-        var next = queue.shift();
+        let next = queue.shift();
         if (next) {
           funced.call(next[0], next[1]);
         }
       }, 32);
 
-      var next = queue.shift();
+      let next = queue.shift();
       funced.call(next[0], next[1]);
       assert.deepStrictEqual(actual, expected.slice(0, isDebounce ? 0 : 1));
 
@@ -70,10 +70,10 @@ describe('debounce and throttle', function() {
 
     it(`\`_.${  methodName  }\` should work if the system time is set backwards`, function(done) {
       if (!isModularize) {
-        var callCount = 0,
+        let callCount = 0,
             dateCount = 0;
 
-        var lodash = runInContext({
+        let lodash = runInContext({
           'Date': {
             'now': function() {
               return ++dateCount == 4
@@ -83,7 +83,7 @@ describe('debounce and throttle', function() {
           }
         });
 
-        var funced = lodash[methodName](function() {
+        let funced = lodash[methodName](function() {
           callCount++;
         }, 32);
 
@@ -101,9 +101,9 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should support cancelling delayed calls`, function(done) {
-      var callCount = 0;
+      let callCount = 0;
 
-      var funced = func(function() {
+      let funced = func(function() {
         callCount++;
       }, 32, { 'leading': false });
 
@@ -117,9 +117,9 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should reset \`lastCalled\` after cancelling`, function(done) {
-      var callCount = 0;
+      let callCount = 0;
 
-      var funced = func(function() {
+      let funced = func(function() {
         return ++callCount;
       }, 32, { 'leading': true });
 
@@ -136,9 +136,9 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should support flushing delayed calls`, function(done) {
-      var callCount = 0;
+      let callCount = 0;
 
-      var funced = func(function() {
+      let funced = func(function() {
         return ++callCount;
       }, 32, { 'leading': false });
 
@@ -152,7 +152,7 @@ describe('debounce and throttle', function() {
     });
 
     it(`\`_.${  methodName  }\` should noop \`cancel\` and \`flush\` when nothing is queued`, function(done) {
-      var callCount = 0,
+      let callCount = 0,
           funced = func(function() { callCount++; }, 32);
 
       funced.cancel();

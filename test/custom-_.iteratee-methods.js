@@ -10,13 +10,13 @@ describe('custom `_.iteratee` methods', function() {
       getLength = partial(property, 'length'),
       iteratee = iteratee;
 
-  var getSum = function() {
+  let getSum = function() {
     return function(result, object) {
       return result + object.a;
     };
   };
 
-  var objects = [
+  let objects = [
     { 'a': 0, 'b': 0 },
     { 'a': 1, 'b': 0 },
     { 'a': 1, 'b': 1 }
@@ -53,7 +53,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.filter` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 0 }, { 'a': 1 }];
+    let objects = [{ 'a': 0 }, { 'a': 1 }];
 
     iteratee = getPropA;
     assert.deepEqual(_.filter(objects), [objects[1]]);
@@ -151,7 +151,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.partition` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }];
+    let objects = [{ 'a': 1 }, { 'a': 1 }, { 'b': 2 }];
 
     iteratee = getPropA;
     assert.deepEqual(_.partition(objects), [objects.slice(0, 2), objects.slice(2)]);
@@ -177,7 +177,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.reject` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 0 }, { 'a': 1 }];
+    let objects = [{ 'a': 0 }, { 'a': 1 }];
 
     iteratee = getPropA;
     assert.deepEqual(_.reject(objects), [objects[0]]);
@@ -185,7 +185,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.remove` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 0 }, { 'a': 1 }];
+    let objects = [{ 'a': 0 }, { 'a': 1 }];
 
     iteratee = getPropA;
     _.remove(objects);
@@ -206,7 +206,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.sortedIndexBy` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 30 }, { 'a': 50 }];
+    let objects = [{ 'a': 30 }, { 'a': 50 }];
 
     iteratee = getPropA;
     assert.strictEqual(_.sortedIndexBy(objects, { 'a': 40 }), 1);
@@ -214,7 +214,7 @@ describe('custom `_.iteratee` methods', function() {
   });
 
   it('`_.sortedLastIndexBy` should use `_.iteratee` internally', function() {
-    var objects = [{ 'a': 30 }, { 'a': 50 }];
+    let objects = [{ 'a': 30 }, { 'a': 50 }];
 
     iteratee = getPropA;
     assert.strictEqual(_.sortedLastIndexBy(objects, { 'a': 40 }), 1);

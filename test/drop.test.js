@@ -4,18 +4,18 @@ import { falsey, LARGE_ARRAY_SIZE, isEven } from './utils.js';
 import drop from '../drop.js';
 
 describe('drop', function() {
-  var array = [1, 2, 3];
+  let array = [1, 2, 3];
 
   it('should drop the first two elements', function() {
     assert.deepStrictEqual(drop(array, 2), [3]);
   });
 
   it('should treat falsey `n` values, except `undefined`, as `0`', function() {
-    var expected = lodashStable.map(falsey, function(value) {
+    let expected = lodashStable.map(falsey, function(value) {
       return value === undefined ? [2, 3] : array;
     });
 
-    var actual = lodashStable.map(falsey, function(n) {
+    let actual = lodashStable.map(falsey, function(n) {
       return drop(array, n);
     });
 

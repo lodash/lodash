@@ -3,7 +3,7 @@ import conforms from '../conforms.js';
 
 describe('conforms', function() {
   it('should not change behavior if `source` is modified', function() {
-    var object = { 'a': 2 },
+    let object = { 'a': 2 },
         source = { 'a': function(value) { return value > 1; } },
         par = conforms(source);
 

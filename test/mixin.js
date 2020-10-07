@@ -106,7 +106,7 @@ describe('mixin', function() {
 
   it('should accept an `options`', function() {
     function message(func, chain) {
-      return (func === _ ? 'lodash' : 'given') + ' function should ' + (chain ? '' : 'not ') + 'chain';
+      return `${func === _ ? 'lodash' : 'given'  } function should ${  chain ? '' : 'not '  }chain`;
     }
 
     lodashStable.each([_, Wrapper], function(func) {

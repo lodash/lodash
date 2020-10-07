@@ -99,12 +99,12 @@ describe('lodash(...) methods that return unwrapped values', function() {
   ];
 
   lodashStable.each(funcs, function(methodName) {
-    it('`_(...).' + methodName + '` should return an unwrapped value when implicitly chaining', function() {
+    it(`\`_(...).${  methodName  }\` should return an unwrapped value when implicitly chaining`, function() {
       var actual = _()[methodName]();
       assert.notOk(actual instanceof _);
     });
 
-    it('`_(...).' + methodName + '` should return a wrapped value when explicitly chaining', function() {
+    it(`\`_(...).${  methodName  }\` should return a wrapped value when explicitly chaining`, function() {
       var actual = _().chain()[methodName]();
       assert.ok(actual instanceof _);
     });

@@ -130,7 +130,7 @@ describe('iteration methods', function() {
         isOmitPick = /^(?:omit|pick)By$/.test(methodName),
         isSome = methodName == 'some';
 
-    it('`_.' + methodName + '` should provide correct iteratee arguments', function() {
+    it(`\`_.${  methodName  }\` should provide correct iteratee arguments`, function() {
       if (func) {
         var args,
             expected = [1, 0, array];
@@ -153,7 +153,7 @@ describe('iteration methods', function() {
       }
     });
 
-    it('`_.' + methodName + '` should treat sparse arrays as dense', function() {
+    it(`\`_.${  methodName  }\` should treat sparse arrays as dense`, function() {
       if (func) {
         var array = [1];
         array[2] = 3;
@@ -194,7 +194,7 @@ describe('iteration methods', function() {
 
     array.a = 1;
 
-    it('`_.' + methodName + '` should not iterate custom properties on arrays', function() {
+    it(`\`_.${  methodName  }\` should not iterate custom properties on arrays`, function() {
       if (func) {
         var keys = [];
         func(array, function(value, key) {
@@ -211,7 +211,7 @@ describe('iteration methods', function() {
     var array = [1, 2, 3],
         isBaseEach = methodName == '_baseEach';
 
-    it('`_.' + methodName + '` should return a wrapped value when implicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should return a wrapped value when implicitly chaining`, function() {
       if (!(isBaseEach || isNpm)) {
         var wrapped = _(array)[methodName](noop);
         assert.ok(wrapped instanceof _);
@@ -222,12 +222,12 @@ describe('iteration methods', function() {
   lodashStable.each(unwrappedMethods, function(methodName) {
     var array = [1, 2, 3];
 
-    it('`_.' + methodName + '` should return an unwrapped value when implicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should return an unwrapped value when implicitly chaining`, function() {
       var actual = _(array)[methodName](noop);
       assert.notOk(actual instanceof _);
     });
 
-    it('`_.' + methodName + '` should return a wrapped value when explicitly chaining', function() {
+    it(`\`_.${  methodName  }\` should return a wrapped value when explicitly chaining`, function() {
       var wrapped = _(array).chain(),
           actual = wrapped[methodName](noop);
 
@@ -239,7 +239,7 @@ describe('iteration methods', function() {
   lodashStable.each(lodashStable.difference(methods, arrayMethods, forInMethods), function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` iterates over own string keyed properties of objects', function() {
+    it(`\`_.${  methodName  }\` iterates over own string keyed properties of objects`, function() {
       function Foo() {
         this.a = 1;
       }
@@ -257,7 +257,7 @@ describe('iteration methods', function() {
     var array = [1, 2, 3],
         func = _[methodName];
 
-    it('`_.' + methodName + '` should return the collection', function() {
+    it(`\`_.${  methodName  }\` should return the collection`, function() {
       if (func) {
         assert.strictEqual(func(array, Boolean), array);
       }
@@ -267,7 +267,7 @@ describe('iteration methods', function() {
   lodashStable.each(collectionMethods, function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` should use `isArrayLike` to determine whether a value is array-like', function() {
+    it(`\`_.${  methodName  }\` should use \`isArrayLike\` to determine whether a value is array-like`, function() {
       if (func) {
         var isIteratedAsObject = function(object) {
           var result = false;
@@ -298,7 +298,7 @@ describe('iteration methods', function() {
         isSome = methodName == 'some',
         isReduce = /^reduce/.test(methodName);
 
-    it('`_.' + methodName + '` should ignore changes to `length`', function() {
+    it(`\`_.${  methodName  }\` should ignore changes to \`length\``, function() {
       if (func) {
         var count = 0,
             array = [1];
@@ -321,7 +321,7 @@ describe('iteration methods', function() {
         isSome = methodName == 'some',
         isReduce = /^reduce/.test(methodName);
 
-    it('`_.' + methodName + '` should ignore added `object` properties', function() {
+    it(`\`_.${  methodName  }\` should ignore added \`object\` properties`, function() {
       if (func) {
         var count = 0,
             object = { 'a': 1 };

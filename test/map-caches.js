@@ -30,7 +30,7 @@ describe('map caches', function() {
   lodashStable.forOwn(createCaches(pairs), function(cache, kind) {
     var isLarge = /^large/.test(kind);
 
-    it('should implement a `Map` interface for ' + kind, function() {
+    it(`should implement a \`Map\` interface for ${  kind}`, function() {
       lodashStable.each(keys, function(key, index) {
         var value = pairs[index][1];
 
@@ -53,7 +53,7 @@ describe('map caches', function() {
   });
 
   lodashStable.forOwn(createCaches(), function(cache, kind) {
-    it('should support changing values of ' + kind, function() {
+    it(`should support changing values of ${  kind}`, function() {
       lodashStable.each(keys, function(key) {
         cache.set(key, 1).set(key, 2);
         assert.strictEqual(cache.get(key), 2);

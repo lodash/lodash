@@ -18,13 +18,13 @@ describe('keys methods', function() {
     var func = _[methodName],
         isKeys = methodName == 'keys';
 
-    it('`_.' + methodName + '` should return the string keyed property names of `object`', function() {
+    it(`\`_.${  methodName  }\` should return the string keyed property names of \`object\``, function() {
       var actual = func({ 'a': 1, 'b': 1 }).sort();
 
       assert.deepStrictEqual(actual, ['a', 'b']);
     });
 
-    it('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties', function() {
+    it(`\`_.${  methodName  }\` should ${  isKeys ? 'not ' : ''  }include inherited string keyed properties`, function() {
       function Foo() {
         this.a = 1;
       }
@@ -36,7 +36,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should treat sparse arrays as dense', function() {
+    it(`\`_.${  methodName  }\` should treat sparse arrays as dense`, function() {
       var array = [1];
       array[2] = 3;
 
@@ -45,7 +45,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, ['0', '1', '2']);
     });
 
-    it('`_.' + methodName + '` should return keys for custom properties on arrays', function() {
+    it(`\`_.${  methodName  }\` should return keys for custom properties on arrays`, function() {
       var array = [1];
       array.a = 1;
 
@@ -54,7 +54,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, ['0', 'a']);
     });
 
-    it('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of arrays', function() {
+    it(`\`_.${  methodName  }\` should ${  isKeys ? 'not ' : ''  }include inherited string keyed properties of arrays`, function() {
       arrayProto.a = 1;
 
       var expected = isKeys ? ['0'] : ['0', 'a'],
@@ -65,7 +65,7 @@ describe('keys methods', function() {
       delete arrayProto.a;
     });
 
-    it('`_.' + methodName + '` should work with `arguments` objects', function() {
+    it(`\`_.${  methodName  }\` should work with \`arguments\` objects`, function() {
       var values = [args, strictArgs],
           expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2']));
 
@@ -76,7 +76,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should return keys for custom properties on `arguments` objects', function() {
+    it(`\`_.${  methodName  }\` should return keys for custom properties on \`arguments\` objects`, function() {
       var values = [args, strictArgs],
           expected = lodashStable.map(values, lodashStable.constant(['0', '1', '2', 'a']));
 
@@ -90,7 +90,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of `arguments` objects', function() {
+    it(`\`_.${  methodName  }\` should ${  isKeys ? 'not ' : ''  }include inherited string keyed properties of \`arguments\` objects`, function() {
       var values = [args, strictArgs],
           expected = lodashStable.map(values, lodashStable.constant(isKeys ? ['0', '1', '2'] : ['0', '1', '2', 'a']));
 
@@ -104,13 +104,13 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should work with string objects', function() {
+    it(`\`_.${  methodName  }\` should work with string objects`, function() {
       var actual = func(Object('abc')).sort();
 
       assert.deepStrictEqual(actual, ['0', '1', '2']);
     });
 
-    it('`_.' + methodName + '` should return keys for custom properties on string objects', function() {
+    it(`\`_.${  methodName  }\` should return keys for custom properties on string objects`, function() {
       var object = Object('a');
       object.a = 1;
 
@@ -119,7 +119,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(actual, ['0', 'a']);
     });
 
-    it('`_.' + methodName + '` should ' + (isKeys ? 'not ' : '') + 'include inherited string keyed properties of string objects', function() {
+    it(`\`_.${  methodName  }\` should ${  isKeys ? 'not ' : ''  }include inherited string keyed properties of string objects`, function() {
       stringProto.a = 1;
 
       var expected = isKeys ? ['0'] : ['0', 'a'],
@@ -130,14 +130,14 @@ describe('keys methods', function() {
       delete stringProto.a;
     });
 
-    it('`_.' + methodName + '` should work with array-like objects', function() {
+    it(`\`_.${  methodName  }\` should work with array-like objects`, function() {
       var object = { '0': 'a', 'length': 1 },
           actual = func(object).sort();
 
       assert.deepStrictEqual(actual, ['0', 'length']);
     });
 
-    it('`_.' + methodName + '` should coerce primitives to objects (test in IE 9)', function() {
+    it(`\`_.${  methodName  }\` should coerce primitives to objects (test in IE 9)`, function() {
       var expected = lodashStable.map(primitives, function(value) {
         return typeof value === 'string' ? ['0'] : [];
       });
@@ -151,7 +151,7 @@ describe('keys methods', function() {
       delete numberProto.a;
     });
 
-    it('`_.' + methodName + '` skips the `constructor` property on prototype objects', function() {
+    it(`\`_.${  methodName  }\` skips the \`constructor\` property on prototype objects`, function() {
       function Foo() {}
       Foo.prototype.a = 1;
 
@@ -166,7 +166,7 @@ describe('keys methods', function() {
       assert.deepStrictEqual(func(Fake.prototype), ['constructor']);
     });
 
-    it('`_.' + methodName + '` should return an empty array when `object` is nullish', function() {
+    it(`\`_.${  methodName  }\` should return an empty array when \`object\` is nullish`, function() {
       var values = [, null, undefined],
           expected = lodashStable.map(values, stubArray);
 

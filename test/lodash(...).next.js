@@ -10,9 +10,9 @@ describe('lodash(...).next', function() {
       return implicit ? _(value) : _.chain(value);
     }
 
-    var chainType = 'in an ' + (implicit ? 'implicit' : 'explict') + ' chain';
+    var chainType = `in an ${  implicit ? 'implicit' : 'explict'  } chain`;
 
-    it('should follow the iterator protocol ' + chainType, function() {
+    it(`should follow the iterator protocol ${  chainType}`, function() {
       var wrapped = chain([1, 2]);
 
       assert.deepEqual(wrapped.next(), { 'done': false, 'value': 1 });
@@ -20,7 +20,7 @@ describe('lodash(...).next', function() {
       assert.deepEqual(wrapped.next(), { 'done': true,  'value': undefined });
     });
 
-    it('should act as an iterable ' + chainType, function() {
+    it(`should act as an iterable ${  chainType}`, function() {
       if (!isNpm && Symbol && Symbol.iterator) {
         var array = [1, 2],
             wrapped = chain(array);
@@ -30,7 +30,7 @@ describe('lodash(...).next', function() {
       }
     });
 
-    it('should use `_.toArray` to generate the iterable result ' + chainType, function() {
+    it(`should use \`_.toArray\` to generate the iterable result ${  chainType}`, function() {
       if (!isNpm && Array.from) {
         var hearts = '\ud83d\udc95',
             values = [[1], { 'a': 1 }, hearts];
@@ -42,7 +42,7 @@ describe('lodash(...).next', function() {
       }
     });
 
-    it('should reset the iterator correctly ' + chainType, function() {
+    it(`should reset the iterator correctly ${  chainType}`, function() {
       if (!isNpm && Symbol && Symbol.iterator) {
         var array = [1, 2],
             wrapped = chain(array);
@@ -56,7 +56,7 @@ describe('lodash(...).next', function() {
       }
     });
 
-    it('should work in a lazy sequence ' + chainType, function() {
+    it(`should work in a lazy sequence ${  chainType}`, function() {
       if (!isNpm && Symbol && Symbol.iterator) {
         var array = lodashStable.range(LARGE_ARRAY_SIZE),
             predicate = function(value) { values.push(value); return isEven(value); },

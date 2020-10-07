@@ -6,7 +6,7 @@ describe('forIn methods', function() {
   lodashStable.each(['forIn', 'forInRight'], function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` iterates over inherited string keyed properties', function() {
+    it(`\`_.${  methodName  }\` iterates over inherited string keyed properties`, function() {
       function Foo() {
         this.a = 1;
       }

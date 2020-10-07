@@ -10,7 +10,7 @@ describe('lodash(...) methods that return the wrapped modified array', function(
   ];
 
   lodashStable.each(funcs, function(methodName) {
-    it('`_(...).' + methodName + '` should return a new wrapper', function() {
+    it(`\`_(...).${  methodName  }\` should return a new wrapper`, function() {
       var array = [1, 2, 3],
           wrapped = _(array),
           actual = wrapped[methodName]();

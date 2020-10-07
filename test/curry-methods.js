@@ -9,7 +9,7 @@ describe('curry methods', function() {
         fn = function(a, b) { return slice.call(arguments); },
         isCurry = methodName == 'curry';
 
-    it('`_.' + methodName + '` should not error on functions with the same name as lodash methods', function() {
+    it(`\`_.${  methodName  }\` should not error on functions with the same name as lodash methods`, function() {
       function run(a, b) {
         return a + b;
       }
@@ -23,7 +23,7 @@ describe('curry methods', function() {
       assert.strictEqual(actual, 3);
     });
 
-    it('`_.' + methodName + '` should work for function names that shadow those on `Object.prototype`', function() {
+    it(`\`_.${  methodName  }\` should work for function names that shadow those on \`Object.prototype\``, function() {
       var curried = curry(function hasOwnProperty(a, b, c) {
         return [a, b, c];
       });
@@ -33,7 +33,7 @@ describe('curry methods', function() {
       assert.deepStrictEqual(curried(1)(2)(3), expected);
     });
 
-    it('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', function() {
+    it(`\`_.${  methodName  }\` should work as an iteratee for methods like \`_.map\``, function() {
       var array = [fn, fn, fn],
           object = { 'a': fn, 'b': fn, 'c': fn };
 

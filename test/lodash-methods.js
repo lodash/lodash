@@ -110,9 +110,9 @@ describe('lodash methods', function() {
         expected = falsey;
       }
       if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
-        assert.deepStrictEqual(actual, expected, '_.' + methodName + ' returns an array');
+        assert.deepStrictEqual(actual, expected, `_.${  methodName  } returns an array`);
       }
-      assert.ok(true, '`_.' + methodName + '` accepts falsey arguments');
+      assert.ok(true, `\`_.${  methodName  }\` accepts falsey arguments`);
     });
 
     // Skip tests for missing methods of modularized builds.
@@ -138,10 +138,10 @@ describe('lodash methods', function() {
         default:
           actual = func(array);
       }
-      assert.ok(lodashStable.isArray(actual), '_.' + methodName + ' returns an array');
+      assert.ok(lodashStable.isArray(actual), `_.${  methodName  } returns an array`);
 
       var isPull = methodName == 'pull' || methodName == 'pullAll';
-      assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the given array');
+      assert.strictEqual(actual === array, isPull, `_.${  methodName  } should ${  isPull ? '' : 'not '  }return the given array`);
     });
   });
 
@@ -162,7 +162,7 @@ describe('lodash methods', function() {
         return pass;
       });
 
-      assert.deepStrictEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
+      assert.deepStrictEqual(actual, expected, `\`_.${  methodName  }\` rejects falsey arguments`);
     });
   });
 
@@ -175,13 +175,13 @@ describe('lodash methods', function() {
           expected = isNegate ? false : 1;
 
       var wrapper = func(bind(fn, object));
-      assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can consume a bound function');
+      assert.strictEqual(wrapper(), expected, `\`_.${  methodName  }\` can consume a bound function`);
 
       wrapper = bind(func(fn), object);
-      assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can be bound');
+      assert.strictEqual(wrapper(), expected, `\`_.${  methodName  }\` can be bound`);
 
       object.wrapper = func(fn);
-      assert.strictEqual(object.wrapper(), expected, '`_.' + methodName + '` uses the `this` of its parent object');
+      assert.strictEqual(object.wrapper(), expected, `\`_.${  methodName  }\` uses the \`this\` of its parent object`);
     });
   });
 

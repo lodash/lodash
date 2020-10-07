@@ -6,7 +6,7 @@ describe('forOwn methods', function() {
   lodashStable.each(['forOwn', 'forOwnRight'], function(methodName) {
     var func = _[methodName];
 
-    it('`_.' + methodName + '` should iterate over `length` properties', function() {
+    it(`\`_.${  methodName  }\` should iterate over \`length\` properties`, function() {
       var object = { '0': 'zero', '1': 'one', 'length': 2 },
           props = [];
 

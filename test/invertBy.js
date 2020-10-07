@@ -9,7 +9,7 @@ describe('invertBy', function() {
     var expected = { 'group1': ['a', 'c'], 'group2': ['b'] };
 
     var actual = invertBy(object, function(value) {
-      return 'group' + value;
+      return `group${  value}`;
     });
 
     assert.deepStrictEqual(actual, expected);

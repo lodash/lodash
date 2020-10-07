@@ -37,7 +37,7 @@ describe('"Arrays" category methods', function() {
 
   it('should work with `arguments` objects', function() {
     function message(methodName) {
-      return '`_.' + methodName + '` should work with `arguments` objects';
+      return `\`_.${  methodName  }\` should work with \`arguments\` objects`;
     }
 
     assert.deepStrictEqual(difference(args, [null]), [1, [3], 5], message('difference'));
@@ -76,7 +76,7 @@ describe('"Arrays" category methods', function() {
 
   it('should accept falsey primary arguments', function() {
     function message(methodName) {
-      return '`_.' + methodName + '` should accept falsey primary arguments';
+      return `\`_.${  methodName  }\` should accept falsey primary arguments`;
     }
 
     assert.deepStrictEqual(difference(null, array), [], message('difference'));
@@ -87,7 +87,7 @@ describe('"Arrays" category methods', function() {
 
   it('should accept falsey secondary arguments', function() {
     function message(methodName) {
-      return '`_.' + methodName + '` should accept falsey secondary arguments';
+      return `\`_.${  methodName  }\` should accept falsey secondary arguments`;
     }
 
     assert.deepStrictEqual(difference(array, null), array, message('difference'));

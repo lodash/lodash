@@ -12,23 +12,23 @@ describe('includes', function() {
       'a string': '1234'
     },
     function(collection, key) {
-      it('should work with ' + key + ' and  return `true` for  matched values', function() {
+      it(`should work with ${  key  } and  return \`true\` for  matched values`, function() {
         assert.strictEqual(includes(collection, 3), true);
       });
 
-      it('should work with ' + key + ' and  return `false` for unmatched values', function() {
+      it(`should work with ${  key  } and  return \`false\` for unmatched values`, function() {
         assert.strictEqual(includes(collection, 5), false);
       });
 
-      it('should work with ' + key + ' and floor `position` values', function() {
+      it(`should work with ${  key  } and floor \`position\` values`, function() {
         assert.strictEqual(includes(collection, 2, 1.2), true);
       });
 
-      it('should work with ' + key + ' and return an unwrapped value implicitly when chaining', function() {
+      it(`should work with ${  key  } and return an unwrapped value implicitly when chaining`, function() {
         assert.strictEqual(_(collection).includes(3), true);
       });
 
-      it('should work with ' + key + ' and return a wrapped value when explicitly chaining', function() {
+      it(`should work with ${  key  } and return a wrapped value when explicitly chaining`, function() {
         assert.ok(_(collection).chain().includes(3) instanceof _);
       });
     });
@@ -38,7 +38,7 @@ describe('includes', function() {
       'object': Object('abc')
     },
     function(collection, key) {
-      it('should work with a string ' + key + ' for `collection`', function() {
+      it(`should work with a string ${  key  } for \`collection\``, function() {
         assert.strictEqual(includes(collection, 'bc'), true);
         assert.strictEqual(includes(collection, 'd'), false);
       });

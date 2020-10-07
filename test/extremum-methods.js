@@ -7,19 +7,19 @@ describe('extremum methods', function() {
     var func = _[methodName],
         isMax = /^max/.test(methodName);
 
-    it('`_.' + methodName + '` should work with Date objects', function() {
+    it(`\`_.${  methodName  }\` should work with Date objects`, function() {
       var curr = new Date,
           past = new Date(0);
 
       assert.strictEqual(func([curr, past]), isMax ? curr : past);
     });
 
-    it('`_.' + methodName + '` should work with extremely large arrays', function() {
+    it(`\`_.${  methodName  }\` should work with extremely large arrays`, function() {
       var array = lodashStable.range(0, 5e5);
       assert.strictEqual(func(array), isMax ? 499999 : 0);
     });
 
-    it('`_.' + methodName + '` should work when chaining on an array with only one value', function() {
+    it(`\`_.${  methodName  }\` should work when chaining on an array with only one value`, function() {
       var actual = _([40])[methodName]();
       assert.strictEqual(actual, 40);
     });
@@ -30,7 +30,7 @@ describe('extremum methods', function() {
         func = _[methodName],
         isMax = methodName == 'maxBy';
 
-    it('`_.' + methodName + '` should work with an `iteratee`', function() {
+    it(`\`_.${  methodName  }\` should work with an \`iteratee\``, function() {
       var actual = func(array, function(n) {
         return -n;
       });
@@ -50,7 +50,7 @@ describe('extremum methods', function() {
       assert.deepStrictEqual(actual, arrays[isMax ? 1 : 2]);
     });
 
-    it('`_.' + methodName + '` should work when `iteratee` returns +/-Infinity', function() {
+    it(`\`_.${  methodName  }\` should work when \`iteratee\` returns +/-Infinity`, function() {
       var value = isMax ? -Infinity : Infinity,
           object = { 'a': value };
 

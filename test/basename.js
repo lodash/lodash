@@ -17,25 +17,25 @@ import _VERSION from '../.internal/VERSION.js';
 import VERSION from '../VERSION.js';
 
 describe(basename, function() {
-  it('should support loading ' + basename + ' as the "lodash" module', function() {
+  it(`should support loading ${  basename  } as the "lodash" module`, function() {
     if (amd) {
       assert.strictEqual((lodashModule || {}).moduleName, 'lodash');
     }
   });
 
-  it('should support loading ' + basename + ' with the Require.js "shim" configuration option', function() {
+  it(`should support loading ${  basename  } with the Require.js "shim" configuration option`, function() {
     if (amd && lodashStable.includes(ui.loaderPath, 'requirejs')) {
       assert.strictEqual((shimmedModule || {}).moduleName, 'shimmed');
     }
   });
 
-  it('should support loading ' + basename + ' as the "underscore" module', function() {
+  it(`should support loading ${  basename  } as the "underscore" module`, function() {
     if (amd) {
       assert.strictEqual((underscoreModule || {}).moduleName, 'underscore');
     }
   });
 
-  it('should support loading ' + basename + ' in a web worker', function(done) {
+  it(`should support loading ${  basename  } in a web worker`, function(done) {
     if (Worker) {
       var limit = 30000 / QUnit.config.asyncRetries,
           start = +new Date;
@@ -65,7 +65,7 @@ describe(basename, function() {
 
   it('should avoid non-native built-ins', function() {
     function message(lodashMethod, nativeMethod) {
-      return '`' + lodashMethod + '` should avoid overwritten native `' + nativeMethod + '`';
+      return `\`${  lodashMethod  }\` should avoid overwritten native \`${  nativeMethod  }\``;
     }
 
     function Foo() {

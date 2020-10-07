@@ -8,7 +8,7 @@ describe('indexOf methods', function() {
         isIndexOf = !/last/i.test(methodName),
         isSorted = /^sorted/.test(methodName);
 
-    it('`_.' + methodName + '` should accept a falsey `array`', function() {
+    it(`\`_.${  methodName  }\` should accept a falsey \`array\``, function() {
       var expected = lodashStable.map(falsey, lodashStable.constant(-1));
 
       var actual = lodashStable.map(falsey, function(array, index) {
@@ -20,7 +20,7 @@ describe('indexOf methods', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should return `-1` for an unmatched value', function() {
+    it(`\`_.${  methodName  }\` should return \`-1\` for an unmatched value`, function() {
       var array = [1, 2, 3],
           empty = [];
 
@@ -32,7 +32,7 @@ describe('indexOf methods', function() {
       assert.strictEqual(func(empty, undefined, true), -1);
     });
 
-    it('`_.' + methodName + '` should not match values on empty arrays', function() {
+    it(`\`_.${  methodName  }\` should not match values on empty arrays`, function() {
       var array = [];
       array[-1] = 0;
 
@@ -40,7 +40,7 @@ describe('indexOf methods', function() {
       assert.strictEqual(func(array, 0, true), -1);
     });
 
-    it('`_.' + methodName + '` should match `NaN`', function() {
+    it(`\`_.${  methodName  }\` should match \`NaN\``, function() {
       var array = isSorted
         ? [1, 2, NaN, NaN]
         : [1, NaN, 3, NaN, 5, NaN];
@@ -55,7 +55,7 @@ describe('indexOf methods', function() {
       }
     });
 
-    it('`_.' + methodName + '` should match `-0` as `0`', function() {
+    it(`\`_.${  methodName  }\` should match \`-0\` as \`0\``, function() {
       assert.strictEqual(func([-0], 0), 0);
       assert.strictEqual(func([0], -0), 0);
     });

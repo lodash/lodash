@@ -15,15 +15,15 @@ describe('findLastIndex and lastIndexOf', function() {
         func = methods[methodName],
         resolve = methodName == 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
 
-    it('`_.' + methodName + '` should return the index of the last matched value', function() {
+    it(`\`_.${  methodName  }\` should return the index of the last matched value`, function() {
       assert.strictEqual(func(array, resolve(3)), 5);
     });
 
-    it('`_.' + methodName + '` should work with a positive `fromIndex`', function() {
+    it(`\`_.${  methodName  }\` should work with a positive \`fromIndex\``, function() {
       assert.strictEqual(func(array, resolve(1), 2), 0);
     });
 
-    it('`_.' + methodName + '` should work with a `fromIndex` >= `length`', function() {
+    it(`\`_.${  methodName  }\` should work with a \`fromIndex\` >= \`length\``, function() {
       var values = [6, 8, Math.pow(2, 32), Infinity],
           expected = lodashStable.map(values, lodashStable.constant([-1, 3, -1]));
 
@@ -38,11 +38,11 @@ describe('findLastIndex and lastIndexOf', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should work with a negative `fromIndex`', function() {
+    it(`\`_.${  methodName  }\` should work with a negative \`fromIndex\``, function() {
       assert.strictEqual(func(array, resolve(2), -3), 1);
     });
 
-    it('`_.' + methodName + '` should work with a negative `fromIndex` <= `-length`', function() {
+    it(`\`_.${  methodName  }\` should work with a negative \`fromIndex\` <= \`-length\``, function() {
       var values = [-6, -8, -Infinity],
           expected = lodashStable.map(values, stubZero);
 
@@ -53,7 +53,7 @@ describe('findLastIndex and lastIndexOf', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should treat falsey `fromIndex` values correctly', function() {
+    it(`\`_.${  methodName  }\` should treat falsey \`fromIndex\` values correctly`, function() {
       var expected = lodashStable.map(falsey, function(value) {
         return value === undefined ? 5 : -1;
       });
@@ -65,7 +65,7 @@ describe('findLastIndex and lastIndexOf', function() {
       assert.deepStrictEqual(actual, expected);
     });
 
-    it('`_.' + methodName + '` should coerce `fromIndex` to an integer', function() {
+    it(`\`_.${  methodName  }\` should coerce \`fromIndex\` to an integer`, function() {
       assert.strictEqual(func(array, resolve(2), 4.2), 4);
     });
   });

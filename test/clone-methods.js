@@ -164,7 +164,7 @@ describe('clone methods', function() {
         assert.notStrictEqual(actual, buffer);
 
         buffer[0] = 2;
-        assert.strictEqual(actual[0], isDeep ? 2 : 1);
+        assert.strictEqual(actual[0], isDeep ? 1 : 2);
       }
     });
 

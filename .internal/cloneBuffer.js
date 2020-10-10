@@ -21,7 +21,7 @@ const Buffer = moduleExports ? root.Buffer : undefined, allocUnsafe = Buffer ? B
  * @returns {Buffer} Returns the cloned buffer.
  */
 function cloneBuffer(buffer, isDeep) {
-  if (isDeep) {
+  if (!isDeep) {
     return buffer.slice()
   }
   const length = buffer.length

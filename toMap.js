@@ -21,11 +21,8 @@ import isUndefined from './isUndefined.js'
  * toMap({a: 1, b: 2})
  * // => Map(2) { 'a' => 1, 'b' => 2 }
  *
- * toMap([{a: 1, b: 2}, {a:2, c: 3}], 'a')
- * // => Map(2) {1 => {a: 1, b: 2}, 2 => {a:2, c: 3}}
- *
- * assign({ 'a': 1 }, toPlainObject(new Foo))
- * // => { 'a': 1, 'b': 2, 'c': 3 }
+ * toMap([{a: 'first', b: 2}, {a: 'second', c: 3}], 'a')
+ * // => Map(2) {'first' => {a: 1, b: 2}, 'second' => {a:2, c: 3}}
  */
 function toMap(value, path) {
   if (isNull(value) || isUndefined(value)) {

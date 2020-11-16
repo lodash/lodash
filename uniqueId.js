@@ -15,7 +15,7 @@ const idCounter = {}
  * // => 'contact_104'
  *
  * uniqueId()
- * // => '105'
+ * // => '63'
  */
 function uniqueId(prefix='$lodash$') {
   if (!idCounter[prefix]) {

@@ -1,6 +1,8 @@
 /** Used to generate unique IDs. */
 const idCounter = {}
 
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 /**
  * Generates a unique ID. If `prefix` is given, the ID is appended to it.
  *
@@ -18,7 +20,7 @@ const idCounter = {}
  * // => '105'
  */
 function uniqueId(prefix='$lodash$') {
-  if (!idCounter[prefix]) {
+  if (!hasOwnProperty.call(idCounter, prefix)) {
     idCounter[prefix] = 0
   }
 

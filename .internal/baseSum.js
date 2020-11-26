@@ -15,7 +15,7 @@ function baseSum(array, iteratee) {
       result = result === undefined ? current : (result + current)
     }
   }
-  return result
+  return result || 0
 }
 
 export default baseSum

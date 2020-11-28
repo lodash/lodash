@@ -42,7 +42,7 @@ describe('isEmpty', function() {
   it("should return true for SharedBufferArray if byteOffset of Dateview of SharedBufferArray is 0",function(){
     assert.strictEqual(isEmpty(new SharedArrayBuffer(8)),true)
   })
-
+  
 
   it('should return `false` for non-empty values', function() {
     assert.strictEqual(isEmpty([0]), false);

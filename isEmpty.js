@@ -54,23 +54,22 @@ function isEmpty(value) {
     return !value.length
   }
 
- if (value instanceof ArrayBuffer) {
-    let view = new DataView(value)
+  if (value instanceof ArrayBuffer) {
+    const view = new DataView(value)
     if (view.byteOffset == 0) {
-        return true
+      return true
     }
     return false
- }
-
-if(value instanceof SharedArrayBuffer) {
-    let view = new DataView(value)
-    if(view.byteOffset ==0) {
-        return true
+  }
+  
+  if (value instanceof SharedArrayBuffer) {
+    const view = new DataView(value)
+    if (view.byteOffset ==0) {
+      return true
     }
     return false
 
- }
-
+  }
 
 
   const tag = getTag(value)

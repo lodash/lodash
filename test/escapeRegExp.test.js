@@ -11,6 +11,10 @@ describe('escapeRegExp', function() {
     assert.strictEqual(escapeRegExp(unescaped + unescaped), escaped + escaped);
   });
 
+  it('should handle strings including a minus', function() {
+    assert.strictEqual(escapeRegExp('_-+$'), '_\\-\\+\\$');
+  });
+
   it('should handle strings with nothing to escape', function() {
     assert.strictEqual(escapeRegExp('abc'), 'abc');
   });

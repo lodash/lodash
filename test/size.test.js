@@ -16,9 +16,9 @@ describe('size', function() {
 
   it('should return the byteLength of the ArrayBuffer',function() {
     let arrTest = new ArrayBuffer(9)
-    assert.strictEqual(size(arrTeset),arrTest.byteLength)
+    assert.strictEqual(size(arrTest),arrTest.byteLength)
   })
-  it('should return the byteLength of the SharedArrayBuffer',function() { 
+  it('should return the byteLength of the SharedArrayBuffer',function() {
     let arrTest = new ArrayBuffer(9)
     assert.strictEqual(size(arrTest),arrTest.byteLength)
   });

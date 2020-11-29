@@ -14,4 +14,9 @@ describe('lte', function() {
     assert.strictEqual(lt(3, 1), false);
     assert.strictEqual(lt('def', 'abc'), false);
   });
+
+  it('should work with the BigInts', function() {
+    assert.strictEqual(lte(1000000000000n, 3000000000000n), true);
+    assert.strictEqual(lte(1000000000000n, 1000000000000n), true);
+  });
 });

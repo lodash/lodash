@@ -21,8 +21,8 @@
  */
 function lte(value, other) {
   if (!(typeof value === 'string' && typeof other === 'string')) {
-    value = +value
-    other = +other
+    value = Number(value)
+    other = Number(other)
   }
   return value <= other
 }

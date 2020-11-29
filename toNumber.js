@@ -45,6 +45,9 @@ function toNumber(value) {
   if (typeof value === 'number') {
     return value
   }
+  if (typeof value === 'bigint'){
+    return Number(value)
+  }
   if (isSymbol(value)) {
     return NAN
   }

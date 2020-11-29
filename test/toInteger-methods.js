@@ -21,5 +21,9 @@ describe('toInteger methods', function() {
     it('`_.' + methodName + '` should support `value` of `-0`', function() {
       assert.strictEqual(1 / func(-0), -Infinity);
     });
+
+    it('`_.' + methodName + '` should support BigInts', function() {
+      assert.strictEqual(func(100000000000n), 100000000000);
+    });
   });
 });

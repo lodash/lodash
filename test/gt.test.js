@@ -13,4 +13,10 @@ describe('gt', function() {
     assert.strictEqual(gt('abc', 'def'), false);
     assert.strictEqual(gt('def', 'def'), false);
   });
+
+  it('should work with the BigInts', function() {
+    assert.strictEqual(gt(3n, 1), true);
+    assert.strictEqual(gt(1n, 3n), false);
+  });
+
 });

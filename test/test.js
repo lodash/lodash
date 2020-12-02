@@ -64,6 +64,7 @@
       strictArgs = (function() { 'use strict'; return arguments; }(1, 2, 3));
 
   var ArrayBuffer = root.ArrayBuffer,
+      BigInt = root.BigInt,
       Buffer = root.Buffer,
       Map = root.Map,
       Promise = root.Promise,
@@ -194,6 +195,8 @@
 
   /** Used to check whether methods support typed arrays. */
   var typedArrays = [
+    'BigInt64Array',
+    'BigUint64Array',
     'Float32Array',
     'Float64Array',
     'Int8Array',
@@ -15048,9 +15051,10 @@
       var array1 = [0],
           array2 = [0, 0],
           array3 = [0, 0, 0, 0],
-          array4 = [0, 0, 0, 0, 0, 0, 0, 0];
+          array4 = [0, 0, 0, 0, 0, 0, 0, 0],
+          array5 = [BigInt ? BigInt(0) : 0];
 
-      var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
+      var arrays = [array5, array5, array2, array1, array4, array3, array2, array4, array4, array3, array2],
           buffer = ArrayBuffer && new ArrayBuffer(8);
 
       var expected = lodashStable.map(typedArrays, function(type, index) {
@@ -24277,7 +24281,7 @@
         if (result === object) {
           return false;
         }
-        if (lodashStable.isTypedArray(object)) {
+        if (_.isTypedArray(object)) {
           return result instanceof Array;
         }
         return result instanceof Ctor || !(new Ctor instanceof Ctor);

@@ -194,7 +194,7 @@ describe('transform', function() {
       if (result === object) {
         return false;
       }
-      if (lodashStable.isTypedArray(object)) {
+      if (_.isTypedArray(object)) {
         return result instanceof Array;
       }
       return result instanceof Ctor || !(new Ctor instanceof Ctor);

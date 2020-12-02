@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { args, typedArrays, stubTrue, defineProperty, document, root } from './utils.js';
+import { args, typedArrays, BigInt, stubTrue, defineProperty, document, root } from './utils.js';
 import merge from '../merge.js';
 import isArguments from '../isArguments.js';
 
@@ -152,9 +152,10 @@ describe('merge', function() {
     var array1 = [0],
         array2 = [0, 0],
         array3 = [0, 0, 0, 0],
-        array4 = [0, 0, 0, 0, 0, 0, 0, 0];
+        array4 = [0, 0, 0, 0, 0, 0, 0, 0],
+        array5 = [BigInt ? BigInt(0) : 0];
 
-    var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
+    var arrays = [array5, array5, array2, array1, array4, array3, array2, array4, array4, array3, array2],
         buffer = ArrayBuffer && new ArrayBuffer(8);
 
     var expected = lodashStable.map(typedArrays, function(type, index) {

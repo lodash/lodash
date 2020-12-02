@@ -43,6 +43,8 @@ const weakMapTag = '[object WeakMap]'
 
 const arrayBufferTag = '[object ArrayBuffer]'
 const dataViewTag = '[object DataView]'
+const bigInt64Tag = '[object BigInt64Array]'
+const bigUint64Tag = '[object BigUint64Array]'
 const float32Tag = '[object Float32Array]'
 const float64Tag = '[object Float64Array]'
 const int8Tag = '[object Int8Array]'
@@ -57,6 +59,7 @@ const uint32Tag = '[object Uint32Array]'
 const cloneableTags = {}
 cloneableTags[argsTag] = cloneableTags[arrayTag] =
 cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+cloneableTags[bigInt64Tag] = cloneableTags[bigUint64Tag] =
 cloneableTags[boolTag] = cloneableTags[dateTag] =
 cloneableTags[float32Tag] = cloneableTags[float64Tag] =
 cloneableTags[int8Tag] = cloneableTags[int16Tag] =
@@ -96,6 +99,7 @@ function initCloneByTag(object, tag, isDeep) {
     case dataViewTag:
       return cloneDataView(object, isDeep)
 
+    case bigInt64Tag: case bigUint64Tag:
     case float32Tag: case float64Tag:
     case int8Tag: case int16Tag: case int32Tag:
     case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:

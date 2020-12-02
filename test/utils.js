@@ -59,6 +59,7 @@ var phantom = root.phantom,
     strictArgs = (function() { 'use strict'; return arguments; }(1, 2, 3));
 
 var ArrayBuffer = root.ArrayBuffer,
+    BigInt = root.BigInt,
     Buffer = root.Buffer,
     Map = root.Map,
     Promise = root.Promise,
@@ -189,6 +190,8 @@ var primitives = [null, undefined, false, true, 1, NaN, 'a'];
 
 /** Used to check whether methods support typed arrays. */
 var typedArrays = [
+  'BigInt64Array',
+  'BigUint64Array',
   'Float32Array',
   'Float64Array',
   'Int8Array',
@@ -743,6 +746,7 @@ export {
   symbol,
   weakMap,
   weakSet,
+  BigInt,
   add,
   doubled,
   isEven,

@@ -4,6 +4,7 @@ import lodashStable from 'lodash';
 import {
   slice,
   asyncFunc,
+  asyncGenFunc,
   genFunc,
   arrayViews,
   objToString,
@@ -25,11 +26,15 @@ describe('isFunction', function() {
   });
 
   it('should return `true` for async functions', function() {
-    assert.strictEqual(isFunction(asyncFunc), typeof asyncFunc === 'function');
+    assert.strictEqual(isFunction(asyncFunc), ! lodashStable.isEqualWith(asyncFunc));
   });
 
   it('should return `true` for generator functions', function() {
-    assert.strictEqual(isFunction(genFunc), typeof genFunc === 'function');
+    assert.strictEqual(isFunction(genFunc), ! lodashStable.isEqualWith(genFunc));
+  });
+
+  it('should return `true` for async generator functions', function() {
+    assert.strictEqual(isFunction(asyncGenFunc), ! lodashStable.isEqualWith(asyncGenFunc));
   });
 
   it('should return `true` for the `Proxy` constructor', function() {

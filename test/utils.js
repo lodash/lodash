@@ -310,12 +310,17 @@ var coverage = root.__coverage__ || root[lodashStable.find(lodashStable.keys(roo
 
 /** Used to test async functions. */
 var asyncFunc = lodashStable.attempt(function() {
-  return Function('return async () => {}');
+  return Function('return async () => {}')();
 });
 
 /** Used to test generator functions. */
 var genFunc = lodashStable.attempt(function() {
-  return Function('return function*(){}');
+  return Function('return function*(){}')();
+});
+
+/** Used to test generator functions. */
+var asyncGenFunc = lodashStable.attempt(function() {
+  return Function('return async function* fn(){}')();
 });
 
 /** Used to restore the `_` reference. */
@@ -786,6 +791,7 @@ export {
   mapCaches,
   coverage,
   asyncFunc,
+  asyncGenFunc,
   genFunc,
   oldDash,
   whitespace,

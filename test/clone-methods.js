@@ -7,6 +7,7 @@ import {
   realm,
   body,
   asyncFunc,
+  asyncGenFunc,
   genFunc,
   errors,
   _,
@@ -74,6 +75,7 @@ describe('clone methods', function() {
     'DOM elements': body,
     'functions': Foo,
     'async functions': asyncFunc,
+    'async generator functions': asyncGenFunc,
     'generator functions': genFunc,
     'the `Proxy` constructor': Proxy
   };

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { args, stubTrue, falsey, asyncFunc, genFunc, slice, symbol, realm } from './utils.js';
+import { args, stubTrue, falsey, asyncFunc, asyncGenFunc, genFunc, slice, symbol, realm } from './utils.js';
 import isArrayLike from '../isArrayLike.js';
 
 describe('isArrayLike', function() {
@@ -28,6 +28,7 @@ describe('isArrayLike', function() {
     assert.strictEqual(isArrayLike(new Error), false);
     assert.strictEqual(isArrayLike(_), false);
     assert.strictEqual(isArrayLike(asyncFunc), false);
+    assert.strictEqual(isArrayLike(asyncGenFunc), false);
     assert.strictEqual(isArrayLike(genFunc), false);
     assert.strictEqual(isArrayLike(slice), false);
     assert.strictEqual(isArrayLike({ 'a': 1 }), false);

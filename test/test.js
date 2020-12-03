@@ -366,12 +366,17 @@
 
   /** Used to test async functions. */
   var asyncFunc = lodashStable.attempt(function() {
-    return Function('return async () => {}');
+    return Function('return async () => {}')();
   });
 
   /** Used to test generator functions. */
   var genFunc = lodashStable.attempt(function() {
-    return Function('return function*(){}');
+    return Function('return function*(){}')();
+  });
+
+  /** Used to test async generator functions. */
+  var asyncGenFunc = lodashStable.attempt(function() {
+    return Function('return async function* fn(){}')();
   });
 
   /** Used to restore the `_` reference. */
@@ -2724,6 +2729,7 @@
       'functions': Foo,
       'async functions': asyncFunc,
       'generator functions': genFunc,
+      'async generator functions': asyncGenFunc,
       'the `Proxy` constructor': Proxy
     };
 
@@ -9108,7 +9114,7 @@
     });
 
     QUnit.test('should return `false` for non-arrays', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, function(value) {
         return value === '';
@@ -9125,6 +9131,7 @@
       assert.strictEqual(_.isArrayLike(new Error), false);
       assert.strictEqual(_.isArrayLike(_), false);
       assert.strictEqual(_.isArrayLike(asyncFunc), false);
+      assert.strictEqual(_.isArrayLike(asyncGenFunc), false);
       assert.strictEqual(_.isArrayLike(genFunc), false);
       assert.strictEqual(_.isArrayLike(slice), false);
       assert.strictEqual(_.isArrayLike({ 'a': 1 }), false);
@@ -10645,13 +10652,19 @@
     QUnit.test('should return `true` for async functions', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.isFunction(asyncFunc), typeof asyncFunc == 'function');
+      assert.strictEqual(_.isFunction(asyncFunc), ! lodashStable.isError(asyncFunc));
     });
 
     QUnit.test('should return `true` for generator functions', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(_.isFunction(genFunc), typeof genFunc == 'function');
+      assert.strictEqual(_.isFunction(genFunc), ! lodashStable.isError(genFunc));
+    });
+
+    QUnit.test('should return `true` for async generator functions', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.isFunction(asyncGenFunc), ! lodashStable.isError(asyncGenFunc));
     });
 
     QUnit.test('should return `true` for the `Proxy` constructor', function(assert) {

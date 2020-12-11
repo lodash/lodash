@@ -71,14 +71,3 @@ Guidelines are enforced using [ESLint](https://www.npmjs.com/package/eslint):
 ```bash
 $ npm run style
 ```
-
-## Tips
-
-You can opt-in to a pre-push git hook by adding an `.opt-in` file to the root of
-the project containing:
-```txt
-pre-push
-```
-
-With that, when you `git push`, the pre-push git hook will trigger and execute
-`npm run validate`.

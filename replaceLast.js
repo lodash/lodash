@@ -12,7 +12,7 @@
  * @returns {string} Returns the modified string.
  * @example
  *
- * replace('Hello world, Hello', 'Hello', 'Hi')
+ * replaceLast('Hello world, Hello', 'Hello', 'Hi')
  * // => 'Hello world, Hi'
  */
 function replaceLast(string, pattern, replacement) {

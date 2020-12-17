@@ -68,7 +68,8 @@ function debounce(func, wait, options) {
     maxWait,
     result,
     timerId,
-    lastCallTime
+    lastCallTime,
+    eventIndex
 
   let lastInvokeTime = 0
   let leading = false
@@ -93,6 +94,12 @@ function debounce(func, wait, options) {
     const args = lastArgs
     const thisArg = lastThis
 
+    args.forEach((item, t) => {
+      if (item.__proto__.constructor.name === "SyntheticEvent") {
+        eventIndex = t
+      }
+    })
+    args[eventIndex].__proto__.persist()
     lastArgs = lastThis = undefined
     lastInvokeTime = time
     result = func.apply(thisArg, args)

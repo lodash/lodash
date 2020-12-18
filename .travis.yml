@@ -1,0 +1,10 @@
+language: node_js
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - npm run build:main && npm run build:fp
+
+    - stage: analyze
+      script: echo analyze

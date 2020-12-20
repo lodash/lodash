@@ -19,7 +19,7 @@ import baseSum from './.internal/baseSum.js'
  */
 function sumBy(array, iteratee) {
   return (array != null && array.length)
-    ? baseSum(array, iteratee)
+    ? +baseSum(array, iteratee)
     : 0
 }
 

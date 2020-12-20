@@ -14,6 +14,15 @@ describe('sumBy', function() {
     assert.deepStrictEqual(actual, 6);
   });
 
+  it('should always return number', function() {
+    iteratee= (i) => (i===true);
+    var arrays = [[true],[false],[true,true],[false,false],[true,false]];
+    var answers = [1,0,2,0,1];
+    var i;
+    for (i = 0; i < arrays.length; i++)
+      assert.strictEqual(sumBy(arrays[i], iteratee), answers[i]);
+  });
+
   it('should provide correct `iteratee` arguments', function() {
     var args;
 

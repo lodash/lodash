@@ -20,23 +20,10 @@ import toString from './toString.js'
  * upperCase('__foo_bar__')
  * // => 'FOO BAR'
  */
-const upperCase = (string) => {
-  var result = '';
-  let charCodeA = 'A'.charCodeAt(0);
-  let charCodea = 'a'.charCodeAt(0);
-  let charCodez = 'z'.charCodeAt(0);
-  let charCodeExtended = 'Ç'.charCodeAt(0);
-  for (var i = 0; i < string.length; i++) {
-      var c = string.charCodeAt(i);
-      if (c >= charCodea && c <= charCodez) {
-          result += String.fromCharCode(c + charCodeA - charCodea);
-      } else if (c >= charCodeExtended) {
-          result += string.substr(i, 1).toUpperCase();
-      } else {
-          result += string.substr(i, 1);
-      }
-  }
-  return result;
-}
+const upperCase = (string) => (
+  words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    result + (index ? ' ' : '') + word.toUpperCase()
+  ), '')
+)
 
 export default upperCase

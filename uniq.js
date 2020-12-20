@@ -18,6 +18,14 @@ import baseUniq from './.internal/baseUniq.js'
  * // => [2, 1]
  */
 function uniq(array) {
+  if (!Array.isArray) {
+    Array.isArray = function (arg) {
+      return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+  }
+  if (!(Array.isArray(array)) || !(array instanceof Array) || array.constructor != Array) {
+    throw new TypeError('type of the input must be Array');
+  }
   return (array != null && array.length)
     ? baseUniq(array)
     : []

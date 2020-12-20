@@ -14,7 +14,7 @@ describe('sumBy', function() {
     assert.deepStrictEqual(actual, 6);
   });
 
-  it('should always return number', function() {
+  it('should always return a number', function() {
     iteratee= (i) => (i===true);
     var arrays = [[true],[false],[true,true],[false,false],[true,false]];
     var answers = [1,0,2,0,1];

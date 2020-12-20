@@ -19,6 +19,7 @@ import isMap from './isMap.js';
 import isObject from './isObject.js';
 import isSet from './isSet.js';
 import keys from './keys.js';
+import keysIn from './keysIn.js';
 
 /** Used to compose bitmasks for cloning. */
 var CLONE_DEEP_FLAG = 1,

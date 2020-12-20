@@ -1,10 +1,12 @@
 import arrayMap from './_arrayMap.js';
+import baseGet from './_baseGet.js';
 import baseIteratee from './_baseIteratee.js';
 import baseMap from './_baseMap.js';
 import baseSortBy from './_baseSortBy.js';
 import baseUnary from './_baseUnary.js';
 import compareMultiple from './_compareMultiple.js';
 import identity from './identity.js';
+import isArray from './isArray.js';
 
 /**
  * The base implementation of `_.orderBy` without param guards.
@@ -16,8 +18,21 @@ import identity from './identity.js';
  * @returns {Array} Returns the new sorted array.
  */
 function baseOrderBy(collection, iteratees, orders) {
+  if (iteratees.length) {
+    iteratees = arrayMap(iteratees, function(iteratee) {
+      if (isArray(iteratee)) {
+        return function(value) {
+          return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+        }
+      }
+      return iteratee;
+    });
+  } else {
+    iteratees = [identity];
+  }
+
   var index = -1;
-  iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(baseIteratee));
+  iteratees = arrayMap(iteratees, baseUnary(baseIteratee));
 
   var result = baseMap(collection, function(value, key, collection) {
     var criteria = arrayMap(iteratees, function(iteratee) {

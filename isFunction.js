@@ -1,4 +1,3 @@
-
 /**
  * Checks if `value` is classified as a `Function` object.
  *
@@ -13,16 +12,16 @@
  *
  * isFunction(() => {})
  * // => true
- * 
+ *
  * isFunction(async () => {})
  * // => true
- * 
+ *
  * isFunction(function * Any() {})
  * // => true
- * 
+ *
  * isFunction(Math.round)
  * // => true
- * 
+ *
  * isFunction(/abc/)
  * // => false
  */

@@ -25,15 +25,13 @@ Before submitting a request, please search for similar ones in the
 
 ## Pull Requests
 
-For additions or bug fixes you should only need to modify `lodash.js`. Include
-updated unit tests in the `test` directory as part of your pull request. Don’t
-worry about regenerating the `dist/` or `doc/` files.
+For additions or bug fixes, please modify the relevant files. Include
+updated unit tests in the `test` directory as part of your pull request.
+Unit test files should be named `[filename].test.js`.
 
 Before running the unit tests you’ll need to install, `npm i`,
 [development dependencies](https://docs.npmjs.com/files/package.json#devdependencies).
-Run unit tests from the command-line via `npm test`, or open `test/index.html` &
-`test/fp.html` in a web browser. The [Backbone](http://backbonejs.org/) &
-[Underscore](http://underscorejs.org/) test suites are included as well.
+Run unit tests from the command-line via `npm test`.
 
 ## Contributor License Agreement
 

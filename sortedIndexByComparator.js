@@ -4,9 +4,9 @@ import baseSortedIndexBy from './.internal/baseSortedIndexBy.js'
  * This method returns index of a range that includes given value.
  * 
  * @category Array
- * @param {Array} array The sorted array to inspect.
+ * @param {Array} ranges The sorted array of ranges.
  * @param {*} value The value to find its position.
- * @param {Function} iteratee The iteratee invoked per element.
+ * @param {Function} compare
  * @returns {number} Returns the index of range
  * @example
  *
@@ -32,4 +32,4 @@ function sortedIndexByComparator(ranges, value, compare) {
     return -1;
   }
 
-export default sortedIndexBy
+export default sortedIndexByComparator

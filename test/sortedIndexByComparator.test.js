@@ -12,14 +12,5 @@ describe('sortedIndexByComparator', () => {
      }
      return 0;
     } ), 1);
-    assert.strictEqual(sortedIndexByComparator([[0,5],[5,7],[7,20],[20,100]], 10, (range,v)=>{
-      if(v<range[0]){
-        return -1;
-      }
-      if(v>range[1]){
-       return 1;
-     }
-     return 0;
-    } ), 2);
   });
 });

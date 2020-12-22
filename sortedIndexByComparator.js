@@ -5,10 +5,9 @@ import baseSortedIndexBy from './.internal/baseSortedIndexBy.js'
  * 
  * @category Array
  * @param {Array} array The sorted array to inspect.
- * @param {*} value The value to evaluate.
+ * @param {*} value The value to find its position.
  * @param {Function} iteratee The iteratee invoked per element.
- * @returns {number} Returns the index at which `value` should be inserted
- *  into `array`.
+ * @returns {number} Returns the index of range
  * @example
  *
  * sortedIndexByComparator([[0,10],[10,16],[16,20]], 15, compare )

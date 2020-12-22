@@ -18,7 +18,7 @@ const methodName =  ''.trimLeft ? 'trimLeft' : 'trimStart'
  * trimStart('  abc  ')
  * // => 'abc  '
  *
- * trimStart('-_-abc-_-', '_-')
+ * trimStart('-_-abc-_-', '-_-')
  * // => 'abc-_-'
  */
 function trimStart(string, chars) {

@@ -1,9 +1,25 @@
 import assert from 'assert';
-import group from '../sortedIndexByComparator.js';
+import sortedIndexByComparator from '../sortedIndexByComparator.js';
 
 describe('sortedIndexByComparator', () => {
-  it('Should group items evenly with the given amount of groups', () => {
-    assert.strictEqual(sortedIndexByComparator([[0,10],[10,16],[16,20]], 15, compare ), 1);
-    assert.strictEqual(sortedIndexByComparator([[0,5],[5,7],[7,20],[20,100]], 10, compare ), 2);
+  it('Should return index of a range that includes givan value', () => {
+    assert.strictEqual(sortedIndexByComparator([[0,10],[10,16],[16,20]], 15, (range,v)=>{
+      if(v<range[0]){
+        return -1;
+      }
+      if(v>range[1]){
+       return 1;
+     }
+     return 0;
+    } ), 1);
+    assert.strictEqual(sortedIndexByComparator([[0,5],[5,7],[7,20],[20,100]], 10, (range,v)=>{
+      if(v<range[0]){
+        return -1;
+      }
+      if(v>range[1]){
+       return 1;
+     }
+     return 0;
+    } ), 2);
   });
 });

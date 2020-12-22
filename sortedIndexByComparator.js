@@ -19,12 +19,12 @@ function sortedIndexByComparator(ranges, value, compare) {
     let high = ranges.length;
     while (low < high) {
       const mid = low + ((high - low) / 2 | 0);
-      const pos = compare(ranges[mid],value, mid);
+      const pos = compare(ranges[mid],value);
       if (pos > 0) {
         low = mid + 1;
       }
       else if(pos == 0){
-        return pos;
+        return mid;
       }
       else{
           high = mid - 1;

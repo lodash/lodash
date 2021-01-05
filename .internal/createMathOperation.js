@@ -14,6 +14,9 @@ function createMathOperation(operator, defaultValue) {
     if (value === undefined && other === undefined) {
       return defaultValue
     }
+    if (value === null || other === null) {
+      return new TypeError('Is value have type null')
+    }
     if (value !== undefined && other === undefined) {
       return value
     }
@@ -23,8 +26,7 @@ function createMathOperation(operator, defaultValue) {
     if (typeof value === 'string' || typeof other === 'string') {
       value = baseToString(value)
       other = baseToString(other)
-    }
-    else {
+    } else {
       value = baseToNumber(value)
       other = baseToNumber(other)
     }

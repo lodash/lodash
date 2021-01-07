@@ -11,18 +11,18 @@ const nativeParseInt = root.parseInt
  * `undefined` or `0`, a `radix` of `10` is used unless `string` is a
  * hexadecimal, in which case a `radix` of `16` is used.
  *
- * **Note:** This method aligns with the
- * [ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.
+ * **Note:** This method aligns with the [ES5
+ * implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.
  *
  * @since 1.1.0
  * @category String
- * @param {string} string The string to convert.
- * @param {number} [radix=10] The radix to interpret `string` by.
- * @returns {number} Returns the converted integer.
  * @example
+ *   parseInt('08')
+ *   // => 8
  *
- * parseInt('08')
- * // => 8
+ * @param {string} string The string to convert.
+ * @param {number} [radix] The radix to interpret `string` by. Default is `10`
+ * @returns {number} Returns the converted integer.
  */
 function parseInt(string, radix) {
   if (radix == null) {

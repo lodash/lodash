@@ -10,16 +10,16 @@ const CLONE_SYMBOLS_FLAG = 4
  *
  * @since 1.0.0
  * @category Lang
- * @param {*} value The value to recursively clone.
- * @returns {*} Returns the deep cloned value.
- * @see clone
  * @example
+ *   const objects = [{ a: 1 }, { b: 2 }]
  *
- * const objects = [{ 'a': 1 }, { 'b': 2 }]
+ *   const deep = cloneDeep(objects)
+ *   console.log(deep[0] === objects[0])
+ *   // => false
  *
- * const deep = cloneDeep(objects)
- * console.log(deep[0] === objects[0])
- * // => false
+ * @param {any} value The value to recursively clone.
+ * @see clone
+ * @returns {any} Returns the deep cloned value.
  */
 function cloneDeep(value) {
   return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG)

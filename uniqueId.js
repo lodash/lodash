@@ -6,16 +6,16 @@ const idCounter = {}
  *
  * @since 0.1.0
  * @category Util
- * @param {string} [prefix=''] The value to prefix the ID with.
- * @returns {string} Returns the unique ID.
- * @see random
  * @example
+ *   uniqueId('contact_')
+ *   // => 'contact_104'
  *
- * uniqueId('contact_')
- * // => 'contact_104'
+ *   uniqueId()
+ *   // => '105'
  *
- * uniqueId()
- * // => '105'
+ * @param {string} [prefix] The value to prefix the ID with. Default is `''`
+ * @see random
+ * @returns {string} Returns the unique ID.
  */
 function uniqueId(prefix = '$lodash$') {
   if (!idCounter[prefix]) {

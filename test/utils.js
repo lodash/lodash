@@ -845,7 +845,8 @@ var oldDash = root._
 
 /**
  * Used to check for problems removing whitespace. For a whitespace reference,
- * see [V8's unit test](https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js).
+ * see [V8's unit
+ * test](https://code.google.com/p/v8/source/browse/branches/bleeding_edge/test/mjsunit/whitespaces.js).
  */
 var whitespace = lodashStable
   .filter(
@@ -892,7 +893,7 @@ var whitespace = lodashStable
  * Creates a custom error object.
  *
  * @private
- * @constructor
+ * @class
  * @param {string} message The error message.
  */
 function CustomError(message) {
@@ -921,7 +922,7 @@ function emptyObject(object) {
  *
  * @private
  * @param {Object} wrapper The wrapper to unwrap.
- * @returns {*} Returns the unwrapped value.
+ * @returns {any} Returns the unwrapped value.
  */
 function getUnwrappedValue(wrapper) {
   var index = -1,
@@ -945,7 +946,7 @@ function getUnwrappedValue(wrapper) {
  *
  * @private
  * @param {string} id The identifier of the module to resolve.
- * @returns {*} Returns the resolved module.
+ * @returns {any} Returns the resolved module.
  */
 function interopRequire(id) {
   var result = require(id)
@@ -956,13 +957,13 @@ function interopRequire(id) {
  * Sets a non-enumerable property value on `object`.
  *
  * Note: This function is used to avoid a bug in older versions of V8 where
- * overwriting non-enumerable built-ins makes them enumerable.
- * See https://code.google.com/p/v8/issues/detail?id=1623
+ * overwriting non-enumerable built-ins makes them enumerable. See
+ * https://code.google.com/p/v8/issues/detail?id=1623
  *
  * @private
  * @param {Object} object The object modify.
  * @param {string} key The name of the property to set.
- * @param {*} value The property value.
+ * @param {any} value The property value.
  */
 function setProperty(object, key, value) {
   try {
@@ -983,7 +984,7 @@ function setProperty(object, key, value) {
  *
  * @private
  * @param {Object} assert The QUnit assert object.
- * @param {number} [count=1] The number of tests to skip.
+ * @param {number} [count] The number of tests to skip. Default is `1`
  */
 function skipAssert(assert, count) {
   count || (count = 1)

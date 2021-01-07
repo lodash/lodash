@@ -4,21 +4,21 @@
  *
  * @since 4.0.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  * @example
+ *   isObjectLike({})
+ *   // => true
  *
- * isObjectLike({})
- * // => true
+ *   isObjectLike([1, 2, 3])
+ *   // => true
  *
- * isObjectLike([1, 2, 3])
- * // => true
+ *   isObjectLike(Function)
+ *   // => false
  *
- * isObjectLike(Function)
- * // => false
+ *   isObjectLike(null)
+ *   // => false
  *
- * isObjectLike(null)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
  */
 function isObjectLike(value) {
   return typeof value === 'object' && value !== null

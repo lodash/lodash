@@ -15,23 +15,31 @@ import isTypedArray from './isTypedArray.js'
  *
  * @since 1.3.0
  * @category Object
+ * @example
+ *   transform(
+ *     [2, 3, 4],
+ *     (result, n) => {
+ *       result.push((n *= n))
+ *       return n % 2 == 0
+ *     },
+ *     []
+ *   )
+ *   // => [4, 9]
+ *
+ *   transform(
+ *     { a: 1, b: 2, c: 1 },
+ *     (result, value, key) => {
+ *       ;(result[value] || (result[value] = [])).push(key)
+ *     },
+ *     {}
+ *   )
+ *   // => { '1': ['a', 'c'], '2': ['b'] }
+ *
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @param {*} [accumulator] The custom accumulator value.
- * @returns {*} Returns the accumulated value.
+ * @param {any} [accumulator] The custom accumulator value.
  * @see reduce, reduceRight
- * @example
- *
- * transform([2, 3, 4], (result, n) => {
- *   result.push(n *= n)
- *   return n % 2 == 0
- * }, [])
- * // => [4, 9]
- *
- * transform({ 'a': 1, 'b': 2, 'c': 1 }, (result, value, key) => {
- *   (result[value] || (result[value] = [])).push(key)
- * }, {})
- * // => { '1': ['a', 'c'], '2': ['b'] }
+ * @returns {any} Returns the accumulated value.
  */
 function transform(object, iteratee, accumulator) {
   const isArr = Array.isArray(object)

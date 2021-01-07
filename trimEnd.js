@@ -9,17 +9,17 @@ const methodName = ''.trimRight ? 'trimRight' : 'trimEnd'
  *
  * @since 4.0.0
  * @category String
- * @param {string} [string=''] The string to trim.
- * @param {string} [chars=whitespace] The characters to trim.
- * @returns {string} Returns the trimmed string.
- * @see trim, trimStart
  * @example
+ *   trimEnd('  abc  ')
+ *   // => '  abc'
  *
- * trimEnd('  abc  ')
- * // => '  abc'
+ *   trimEnd('-_-abc-_-', '_-')
+ *   // => '-_-abc'
  *
- * trimEnd('-_-abc-_-', '_-')
- * // => '-_-abc'
+ * @param {string} [string] The string to trim. Default is `''`
+ * @param {string} [chars] The characters to trim. Default is `whitespace`
+ * @see trim, trimStart
+ * @returns {string} Returns the trimmed string.
  */
 function trimEnd(string, chars) {
   if (string && chars === undefined) {

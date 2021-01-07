@@ -6,15 +6,15 @@ import isObjectLike from './isObjectLike.js'
  *
  * @since 4.3.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a weak set, else `false`.
  * @example
+ *   isWeakSet(new WeakSet())
+ *   // => true
  *
- * isWeakSet(new WeakSet)
- * // => true
+ *   isWeakSet(new Set())
+ *   // => false
  *
- * isWeakSet(new Set)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a weak set, else `false`.
  */
 function isWeakSet(value) {
   return isObjectLike(value) && getTag(value) == '[object WeakSet]'

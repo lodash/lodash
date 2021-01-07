@@ -8,18 +8,18 @@ import map from './map.js'
  *
  * @since 4.0.0
  * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns the new flattened array.
- * @see flatMapDeep, flatMapDepth, flatten, flattenDeep, flattenDepth, map, mapKeys, mapValues
  * @example
+ *   function duplicate(n) {
+ *     return [n, n]
+ *   }
  *
- * function duplicate(n) {
- *   return [n, n]
- * }
+ *   flatMap([1, 2], duplicate)
+ *   // => [1, 1, 2, 2]
  *
- * flatMap([1, 2], duplicate)
- * // => [1, 1, 2, 2]
+ * @param {Array | Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @see flatMapDeep, flatMapDepth, flatten, flattenDeep, flattenDepth, map, mapKeys, mapValues
+ * @returns {Array} Returns the new flattened array.
  */
 function flatMap(collection, iteratee) {
   return baseFlatten(map(collection, iteratee), 1)

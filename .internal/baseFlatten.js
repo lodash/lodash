@@ -6,9 +6,10 @@ import isFlattenable from './isFlattenable.js'
  * @private
  * @param {Array} array The array to flatten.
  * @param {number} depth The maximum recursion depth.
- * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+ * @param {boolean} [predicate] The function invoked per iteration. Default is
+ *   `isFlattenable`
  * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
- * @param {Array} [result=[]] The initial result value.
+ * @param {Array} [result] The initial result value. Default is `[]`
  * @returns {Array} Returns the new flattened array.
  */
 function baseFlatten(array, depth, predicate, isStrict, result) {

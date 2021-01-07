@@ -5,14 +5,14 @@
  *
  * @since 5.0.0
  * @category Array
+ * @example
+ *   some([null, 0, 'yes', false], Boolean)
+ *   // => true
+ *
  * @param {Array} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
  * @returns {boolean} Returns `true` if any element passes the predicate check,
- *  else `false`.
- * @example
- *
- * some([null, 0, 'yes', false], Boolean)
- * // => true
+ *   else `false`.
  */
 function some(array, predicate) {
   let index = -1

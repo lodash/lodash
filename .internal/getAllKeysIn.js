@@ -1,7 +1,8 @@
 import getSymbolsIn from './getSymbolsIn.js'
 
 /**
- * Creates an array of own and inherited enumerable property names and symbols of `object`.
+ * Creates an array of own and inherited enumerable property names and symbols
+ * of `object`.
  *
  * @private
  * @param {Object} object The object to query.

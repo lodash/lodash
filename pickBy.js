@@ -8,15 +8,15 @@ import getAllKeysIn from './.internal/getAllKeysIn.js'
  *
  * @since 4.0.0
  * @category Object
+ * @example
+ *   const object = { a: 1, b: '2', c: 3 }
+ *
+ *   pickBy(object, isNumber)
+ *   // => { 'a': 1, 'c': 3 }
+ *
  * @param {Object} object The source object.
  * @param {Function} predicate The function invoked per property.
  * @returns {Object} Returns the new object.
- * @example
- *
- * const object = { 'a': 1, 'b': '2', 'c': 3 }
- *
- * pickBy(object, isNumber)
- * // => { 'a': 1, 'c': 3 }
  */
 function pickBy(object, predicate) {
   if (object == null) {

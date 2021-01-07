@@ -7,17 +7,17 @@ import basePullAll from './.internal/basePullAll.js'
  *
  * @since 4.0.0
  * @category Array
+ * @example
+ *   const array = ['a', 'b', 'c', 'a', 'b', 'c']
+ *
+ *   pullAll(array, ['a', 'c'])
+ *   console.log(array)
+ *   // => ['b', 'b']
+ *
  * @param {Array} array The array to modify.
  * @param {Array} values The values to remove.
- * @returns {Array} Returns `array`.
  * @see pull, pullAllBy, pullAllWith, pullAt, remove, reject
- * @example
- *
- * const array = ['a', 'b', 'c', 'a', 'b', 'c']
- *
- * pullAll(array, ['a', 'c'])
- * console.log(array)
- * // => ['b', 'b']
+ * @returns {Array} Returns `array`.
  */
 function pullAll(array, values) {
   return array != null && array.length && values != null && values.length

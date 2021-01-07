@@ -5,7 +5,7 @@ import eq from '../eq.js'
  *
  * @private
  * @param {Array} array The array to inspect.
- * @param {*} key The key to search for.
+ * @param {any} key The key to search for.
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function assocIndexOf(array, key) {

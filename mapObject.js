@@ -4,17 +4,17 @@
  *
  * @since 5.0.0
  * @category Object
+ * @example
+ *   function square(n) {
+ *     return n * n
+ *   }
+ *
+ *   map({ a: 4, b: 8 }, square)
+ *   // => [16, 64] (iteration order is not guaranteed)
+ *
  * @param {Object} object The object to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new mapped array.
- * @example
- *
- * function square(n) {
- *   return n * n
- * }
- *
- * map({ 'a': 4, 'b': 8 }, square)
- * // => [16, 64] (iteration order is not guaranteed)
  */
 function mapObject(object, iteratee) {
   const props = Object.keys(object)

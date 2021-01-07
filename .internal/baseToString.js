@@ -7,11 +7,11 @@ const INFINITY = 1 / 0
 const symbolToString = Symbol.prototype.toString
 
 /**
- * The base implementation of `toString` which doesn't convert nullish
- * values to empty strings.
+ * The base implementation of `toString` which doesn't convert nullish values
+ * to empty strings.
  *
  * @private
- * @param {*} value The value to process.
+ * @param {any} value The value to process.
  * @returns {string} Returns the string.
  */
 function baseToString(value) {

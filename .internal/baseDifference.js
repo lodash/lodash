@@ -8,8 +8,8 @@ import cacheHas from './cacheHas.js'
 const LARGE_ARRAY_SIZE = 200
 
 /**
- * The base implementation of methods like `difference` without support
- * for excluding multiple arrays.
+ * The base implementation of methods like `difference` without support for
+ * excluding multiple arrays.
  *
  * @private
  * @param {Array} array The array to inspect.

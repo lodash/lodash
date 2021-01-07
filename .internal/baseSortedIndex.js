@@ -12,10 +12,9 @@ const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1
  *
  * @private
  * @param {Array} array The sorted array to inspect.
- * @param {*} value The value to evaluate.
+ * @param {any} value The value to evaluate.
  * @param {boolean} [retHighest] Specify returning the highest qualified index.
- * @returns {number} Returns the index at which `value` should be inserted
- *  into `array`.
+ * @returns {number} Returns the index at which `value` should be inserted into `array`.
  */
 function baseSortedIndex(array, value, retHighest) {
   let low = 0

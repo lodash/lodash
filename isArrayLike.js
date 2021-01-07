@@ -7,21 +7,21 @@ import isLength from './isLength.js'
  *
  * @since 4.0.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
  * @example
+ *   isArrayLike([1, 2, 3])
+ *   // => true
  *
- * isArrayLike([1, 2, 3])
- * // => true
+ *   isArrayLike(document.body.children)
+ *   // => true
  *
- * isArrayLike(document.body.children)
- * // => true
+ *   isArrayLike('abc')
+ *   // => true
  *
- * isArrayLike('abc')
- * // => true
+ *   isArrayLike(Function)
+ *   // => false
  *
- * isArrayLike(Function)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
  */
 function isArrayLike(value) {
   return value != null && typeof value !== 'function' && isLength(value.length)

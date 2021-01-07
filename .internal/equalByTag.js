@@ -25,8 +25,8 @@ const dataViewTag = '[object DataView]'
 const symbolValueOf = Symbol.prototype.valueOf
 
 /**
- * A specialized version of `baseIsEqualDeep` for comparing objects of
- * the same `toStringTag`.
+ * A specialized version of `baseIsEqualDeep` for comparing objects of the same
+ * `toStringTag`.
  *
  * **Note:** This function only supports comparing values with tags of
  * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.

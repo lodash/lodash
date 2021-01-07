@@ -4,7 +4,7 @@
  *
  * @private
  * @param {Array} array The array to inspect.
- * @param {*} value The value to search for.
+ * @param {any} value The value to search for.
  * @param {number} fromIndex The index to search from.
  * @returns {number} Returns the index of the matched value, else `-1`.
  */

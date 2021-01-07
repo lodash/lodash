@@ -9,15 +9,15 @@ import toKey from './.internal/toKey.js'
  *
  * @since 4.0.0
  * @category Util
- * @param {*} value The value to convert.
- * @returns {Array} Returns the new property path array.
  * @example
+ *   toPath('a.b.c')
+ *   // => ['a', 'b', 'c']
  *
- * toPath('a.b.c')
- * // => ['a', 'b', 'c']
+ *   toPath('a[0].b.c')
+ *   // => ['a', '0', 'b', 'c']
  *
- * toPath('a[0].b.c')
- * // => ['a', '0', 'b', 'c']
+ * @param {any} value The value to convert.
+ * @returns {Array} Returns the new property path array.
  */
 function toPath(value) {
   if (Array.isArray(value)) {

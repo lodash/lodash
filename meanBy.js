@@ -10,15 +10,15 @@ const NAN = 0 / 0
  *
  * @since 4.7.0
  * @category Math
+ * @example
+ *   const objects = [{ n: 4 }, { n: 2 }, { n: 8 }, { n: 6 }]
+ *
+ *   meanBy(objects, ({ n }) => n)
+ *   // => 5
+ *
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The iteratee invoked per element.
  * @returns {number} Returns the mean.
- * @example
- *
- * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }]
- *
- * meanBy(objects, ({ n }) => n)
- * // => 5
  */
 function meanBy(array, iteratee) {
   const length = array == null ? 0 : array.length

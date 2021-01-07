@@ -1,8 +1,8 @@
 import baseIndexOf from './baseIndexOf.js'
 
 /**
- * Used by `trim` and `trimEnd` to get the index of the last string symbol
- * that is not found in the character symbols.
+ * Used by `trim` and `trimEnd` to get the index of the last string symbol that
+ * is not found in the character symbols.
  *
  * @private
  * @param {Array} strSymbols The string symbols to inspect.

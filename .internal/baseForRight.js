@@ -1,6 +1,6 @@
 /**
- * This function is like `baseFor` except that it iterates over properties
- * in the opposite order.
+ * This function is like `baseFor` except that it iterates over properties in
+ * the opposite order.
  *
  * @private
  * @param {Object} object The object to iterate over.

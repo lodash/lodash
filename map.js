@@ -1,20 +1,20 @@
 /**
- * Creates an array of values by running each element of `array` thru `iteratee`.
- * The iteratee is invoked with three arguments: (value, index, array).
+ * Creates an array of values by running each element of `array` thru
+ * `iteratee`. The iteratee is invoked with three arguments: (value, index, array).
  *
  * @since 5.0.0
  * @category Array
+ * @example
+ *   function square(n) {
+ *     return n * n
+ *   }
+ *
+ *   map([4, 8], square)
+ *   // => [16, 64]
+ *
  * @param {Array} array The array to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
  * @returns {Array} Returns the new mapped array.
- * @example
- *
- * function square(n) {
- *   return n * n
- * }
- *
- * map([4, 8], square)
- * // => [16, 64]
  */
 function map(array, iteratee) {
   let index = -1

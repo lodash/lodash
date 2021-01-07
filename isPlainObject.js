@@ -7,25 +7,25 @@ import isObjectLike from './isObjectLike.js'
  *
  * @since 0.8.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
  * @example
+ *   function Foo() {
+ *     this.a = 1
+ *   }
  *
- * function Foo() {
- *   this.a = 1
- * }
+ *   isPlainObject(new Foo())
+ *   // => false
  *
- * isPlainObject(new Foo)
- * // => false
+ *   isPlainObject([1, 2, 3])
+ *   // => false
  *
- * isPlainObject([1, 2, 3])
- * // => false
+ *   isPlainObject({ x: 0, y: 0 })
+ *   // => true
  *
- * isPlainObject({ 'x': 0, 'y': 0 })
- * // => true
+ *   isPlainObject(Object.create(null))
+ *   // => true
  *
- * isPlainObject(Object.create(null))
- * // => true
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
  */
 function isPlainObject(value) {
   if (!isObjectLike(value) || getTag(value) != '[object Object]') {

@@ -78,8 +78,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 /**
  * Initializes an object clone based on its `toStringTag`.
  *
- * **Note:** This function only supports cloning values with tags of
- * `Boolean`, `Date`, `Error`, `Map`, `Number`, `RegExp`, `Set`, or `String`.
+ * **Note:** This function only supports cloning values with tags of `Boolean`,
+ * `Date`, `Error`, `Map`, `Number`, `RegExp`, `Set`, or `String`.
  *
  * @private
  * @param {Object} object The object to clone.
@@ -153,20 +153,17 @@ function initCloneArray(array) {
 }
 
 /**
- * The base implementation of `clone` and `cloneDeep` which tracks
- * traversed objects.
+ * The base implementation of `clone` and `cloneDeep` which tracks traversed objects.
  *
  * @private
- * @param {*} value The value to clone.
- * @param {number} bitmask The bitmask flags.
- *  1 - Deep clone
- *  2 - Flatten inherited properties
- *  4 - Clone symbols
+ * @param {any} value The value to clone.
+ * @param {number} bitmask The bitmask flags. 1 - Deep clone 2 - Flatten
+ *   inherited properties 4 - Clone symbols
  * @param {Function} [customizer] The function to customize cloning.
  * @param {string} [key] The key of `value`.
  * @param {Object} [object] The parent object of `value`.
  * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
- * @returns {*} Returns the cloned value.
+ * @returns {any} Returns the cloned value.
  */
 function baseClone(value, bitmask, customizer, key, object, stack) {
   let result

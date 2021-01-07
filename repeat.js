@@ -3,19 +3,19 @@
  *
  * @since 3.0.0
  * @category String
- * @param {string} [string=''] The string to repeat.
- * @param {number} [n=1] The number of times to repeat the string.
- * @returns {string} Returns the repeated string.
  * @example
+ *   repeat('*', 3)
+ *   // => '***'
  *
- * repeat('*', 3)
- * // => '***'
+ *   repeat('abc', 2)
+ *   // => 'abcabc'
  *
- * repeat('abc', 2)
- * // => 'abcabc'
+ *   repeat('abc', 0)
+ *   // => ''
  *
- * repeat('abc', 0)
- * // => ''
+ * @param {string} [string] The string to repeat. Default is `''`
+ * @param {number} [n] The number of times to repeat the string. Default is `1`
+ * @returns {string} Returns the repeated string.
  */
 function repeat(string, n) {
   let result = ''

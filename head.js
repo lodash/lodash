@@ -2,18 +2,18 @@
  * Gets the first element of `array`.
  *
  * @since 0.1.0
- * @alias first
  * @category Array
- * @param {Array} array The array to query.
- * @returns {*} Returns the first element of `array`.
- * @see last
  * @example
+ *   head([1, 2, 3])
+ *   // => 1
  *
- * head([1, 2, 3])
- * // => 1
+ *   head([])
+ *   // => undefined
  *
- * head([])
- * // => undefined
+ * @param {Array} array The array to query.
+ * @see last
+ * @alias first
+ * @returns {any} Returns the first element of `array`.
  */
 function head(array) {
   return array != null && array.length ? array[0] : undefined

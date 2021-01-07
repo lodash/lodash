@@ -6,8 +6,8 @@ import toKey from './toKey.js'
  *
  * @private
  * @param {Object} object The object to query.
- * @param {Array|string} path The path of the property to get.
- * @returns {*} Returns the resolved value.
+ * @param {Array | string} path The path of the property to get.
+ * @returns {any} Returns the resolved value.
  */
 function baseGet(object, path) {
   path = castPath(path, object)

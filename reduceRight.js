@@ -8,17 +8,21 @@ import baseReduce from './.internal/baseReduce.js'
  *
  * @since 0.1.0
  * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} iteratee The function invoked per iteration.
- * @param {*} [accumulator] The initial value.
- * @returns {*} Returns the accumulated value.
- * @see reduce
  * @example
+ *   const array = [
+ *     [0, 1],
+ *     [2, 3],
+ *     [4, 5]
+ *   ]
  *
- * const array = [[0, 1], [2, 3], [4, 5]]
+ *   reduceRight(array, (flattened, other) => flattened.concat(other), [])
+ *   // => [4, 5, 2, 3, 0, 1]
  *
- * reduceRight(array, (flattened, other) => flattened.concat(other), [])
- * // => [4, 5, 2, 3, 0, 1]
+ * @param {Array | Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {any} [accumulator] The initial value.
+ * @see reduce
+ * @returns {any} Returns the accumulated value.
  */
 function reduceRight(collection, iteratee, accumulator) {
   const func = Array.isArray(collection) ? arrayReduceRight : baseReduce

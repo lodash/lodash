@@ -6,15 +6,19 @@ import isObjectLike from './isObjectLike.js'
  *
  * @since 0.1.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
  * @example
+ *   isArguments(
+ *     (function () {
+ *       return arguments
+ *     })()
+ *   )
+ *   // => true
  *
- * isArguments(function() { return arguments }())
- * // => true
+ *   isArguments([1, 2, 3])
+ *   // => false
  *
- * isArguments([1, 2, 3])
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object, else `false`.
  */
 function isArguments(value) {
   return isObjectLike(value) && getTag(value) == '[object Arguments]'

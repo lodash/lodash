@@ -5,8 +5,8 @@ import map from '../map.js'
 import cacheHas from './cacheHas.js'
 
 /**
- * The base implementation of methods like `intersection` that accepts an
- * array of arrays to inspect.
+ * The base implementation of methods like `intersection` that accepts an array
+ * of arrays to inspect.
  *
  * @private
  * @param {Array} arrays The arrays to inspect.

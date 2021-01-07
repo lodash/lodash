@@ -10,17 +10,23 @@ import last from './last.js'
  *
  * @since 4.0.0
  * @category Array
+ * @example
+ *   const objects = [
+ *     { x: 1, y: 2 },
+ *     { x: 2, y: 1 }
+ *   ]
+ *   const others = [
+ *     { x: 1, y: 1 },
+ *     { x: 1, y: 2 }
+ *   ]
+ *
+ *   xorWith(objects, others, isEqual)
+ *   // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
+ *
  * @param {...Array} [arrays] The arrays to inspect.
  * @param {Function} [comparator] The comparator invoked per element.
- * @returns {Array} Returns the new array of filtered values.
  * @see difference, union, unionBy, unionWith, without, xor, xorBy
- * @example
- *
- * const objects = [{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }]
- * const others = [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }]
- *
- * xorWith(objects, others, isEqual)
- * // => [{ 'x': 2, 'y': 1 }, { 'x': 1, 'y': 1 }]
+ * @returns {Array} Returns the new array of filtered values.
  */
 function xorWith(...arrays) {
   let comparator = last(arrays)

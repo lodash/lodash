@@ -4,8 +4,8 @@ import isSymbol from '../isSymbol.js'
  * Compares values to sort them in ascending order.
  *
  * @private
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
+ * @param {any} value The value to compare.
+ * @param {any} other The other value to compare.
  * @returns {number} Returns the sort order indicator for `value`.
  */
 function compareAscending(value, other) {

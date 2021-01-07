@@ -12,19 +12,19 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *
  * @since 0.5.0
  * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
+ * @example
+ *   const users = [
+ *     { user: 'barney', active: true },
+ *     { user: 'betty', active: true },
+ *     { user: 'fred', active: false }
+ *   ]
+ *
+ *   countBy(users, (value) => value.active)
+ *   // => { 'true': 2, 'false': 1 }
+ *
+ * @param {Array | Object} collection The collection to iterate over.
  * @param {Function} iteratee The iteratee to transform keys.
  * @returns {Object} Returns the composed aggregate object.
- * @example
- *
- * const users = [
- *   { 'user': 'barney', 'active': true },
- *   { 'user': 'betty', 'active': true },
- *   { 'user': 'fred', 'active': false }
- * ]
- *
- * countBy(users, value => value.active);
- * // => { 'true': 2, 'false': 1 }
  */
 function countBy(collection, iteratee) {
   return reduce(

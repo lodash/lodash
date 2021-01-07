@@ -8,16 +8,16 @@ import toKey from './.internal/toKey.js'
  *
  * @since 4.0.0
  * @category Object
- * @param {Object} object The object to query.
- * @param {Array|string} path The path of the method to invoke.
- * @param {Array} [args] The arguments to invoke the method with.
- * @returns {*} Returns the result of the invoked method.
  * @example
+ *   const object = { a: [{ b: { c: [1, 2, 3, 4] } }] }
  *
- * const object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] }
+ *   invoke(object, 'a[0].b.c.slice', [1, 3])
+ *   // => [2, 3]
  *
- * invoke(object, 'a[0].b.c.slice', [1, 3])
- * // => [2, 3]
+ * @param {Object} object The object to query.
+ * @param {Array | string} path The path of the method to invoke.
+ * @param {Array} [args] The arguments to invoke the method with.
+ * @returns {any} Returns the result of the invoked method.
  */
 function invoke(object, path, args) {
   path = castPath(path, object)

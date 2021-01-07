@@ -8,17 +8,17 @@ import stringToArray from './.internal/stringToArray.js'
  *
  * @since 3.0.0
  * @category String
- * @param {string} [string=''] The string to trim.
- * @param {string} [chars=whitespace] The characters to trim.
- * @returns {string} Returns the trimmed string.
- * @see trimEnd, trimStart
  * @example
+ *   trim('  abc  ')
+ *   // => 'abc'
  *
- * trim('  abc  ')
- * // => 'abc'
+ *   trim('-_-abc-_-', '_-')
+ *   // => 'abc'
  *
- * trim('-_-abc-_-', '_-')
- * // => 'abc'
+ * @param {string} [string] The string to trim. Default is `''`
+ * @param {string} [chars] The characters to trim. Default is `whitespace`
+ * @see trimEnd, trimStart
+ * @returns {string} Returns the trimmed string.
  */
 function trim(string, chars) {
   if (string && chars === undefined) {

@@ -5,16 +5,16 @@
  *
  * @since 3.0.0
  * @category Function
+ * @example
+ *   function isEven(n) {
+ *     return n % 2 == 0
+ *   }
+ *
+ *   filter([1, 2, 3, 4, 5, 6], negate(isEven))
+ *   // => [1, 3, 5]
+ *
  * @param {Function} predicate The predicate to negate.
  * @returns {Function} Returns the new negated function.
- * @example
- *
- * function isEven(n) {
- *   return n % 2 == 0
- * }
- *
- * filter([1, 2, 3, 4, 5, 6], negate(isEven))
- * // => [1, 3, 5]
  */
 function negate(predicate) {
   if (typeof predicate !== 'function') {

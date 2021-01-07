@@ -6,18 +6,20 @@ import isError from './isError.js'
  *
  * @since 3.0.0
  * @category Util
- * @param {Function} func The function to attempt.
- * @param {...*} [args] The arguments to invoke `func` with.
- * @returns {*} Returns the `func` result or error object.
  * @example
+ *   // Avoid throwing errors for invalid selectors.
+ *   const elements = attempt(
+ *     (selector) => document.querySelectorAll(selector),
+ *     '>_>'
+ *   )
  *
- * // Avoid throwing errors for invalid selectors.
- * const elements = attempt(selector =>
- *   document.querySelectorAll(selector), '>_>')
+ *   if (isError(elements)) {
+ *     elements = []
+ *   }
  *
- * if (isError(elements)) {
- *   elements = []
- * }
+ * @param {Function} func The function to attempt.
+ * @param {any[]} [args] The arguments to invoke `func` with.
+ * @returns {any} Returns the `func` result or error object.
  */
 function attempt(func, ...args) {
   try {

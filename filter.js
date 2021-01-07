@@ -7,19 +7,19 @@
  *
  * @since 5.0.0
  * @category Array
+ * @example
+ *   const users = [
+ *     { user: 'barney', active: true },
+ *     { user: 'fred', active: false }
+ *   ]
+ *
+ *   filter(users, ({ active }) => active)
+ *   // => objects for ['barney']
+ *
  * @param {Array} array The array to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @returns {Array} Returns the new filtered array.
  * @see pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
- * @example
- *
- * const users = [
- *   { 'user': 'barney', 'active': true },
- *   { 'user': 'fred',   'active': false }
- * ]
- *
- * filter(users, ({ active }) => active)
- * // => objects for ['barney']
+ * @returns {Array} Returns the new filtered array.
  */
 function filter(array, predicate) {
   let index = -1

@@ -7,7 +7,7 @@ import slice from '../slice.js'
  * @private
  * @param {Object} object The object to query.
  * @param {Array} path The path to get the parent value of.
- * @returns {*} Returns the parent value.
+ * @returns {any} Returns the parent value.
  */
 function parent(object, path) {
   return path.length < 2 ? object : baseGet(object, slice(path, 0, -1))

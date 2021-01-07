@@ -6,7 +6,7 @@ import baseIndexOf from './baseIndexOf.js'
  *
  * @private
  * @param {Array} [array] The array to inspect.
- * @param {*} target The value to search for.
+ * @param {any} target The value to search for.
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
 function arrayIncludes(array, value) {

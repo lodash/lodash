@@ -1,8 +1,8 @@
 import isObject from './isObject.js'
 
 /**
- * Used to match `RegExp`
- * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ * Used to match `RegExp` [syntax
+ * characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
 const reRegExpChar = /[\\^$.*+?()[\]{}|]/g
 
@@ -22,16 +22,15 @@ const reIsNative = RegExp(
  *
  * @since 3.0.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a native function,
- *  else `false`.
  * @example
+ *   isNative(Array.prototype.push)
+ *   // => true
  *
- * isNative(Array.prototype.push)
- * // => true
+ *   isNative(isDate)
+ *   // => false
  *
- * isNative(isDate)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
  */
 function isNative(value) {
   return isObject(value) && reIsNative.test(value)

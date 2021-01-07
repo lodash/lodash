@@ -7,16 +7,16 @@
  *
  * @since 5.0.0
  * @category Object
+ * @example
+ *   const object = { a: 5, b: 8, c: 10 }
+ *
+ *   filterObject(object, (n) => !(n % 5))
+ *   // => [5, 10]
+ *
  * @param {Object} object The object to iterate over.
  * @param {Function} predicate The function invoked per iteration.
- * @returns {Array} Returns the new filtered array.
  * @see pickBy, pull, pullAll, pullAllBy, pullAllWith, pullAt, remove, reject
- * @example
- *
- * const object = { 'a': 5, 'b': 8, 'c': 10 }
- *
- * filterObject(object, (n) => !(n % 5))
- * // => [5, 10]
+ * @returns {Array} Returns the new filtered array.
  */
 function filterObject(object, predicate) {
   object = Object(object)

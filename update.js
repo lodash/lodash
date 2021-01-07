@@ -9,21 +9,21 @@ import baseUpdate from './.internal/baseUpdate.js'
  *
  * @since 4.6.0
  * @category Object
+ * @example
+ *   const object = { a: [{ b: { c: 3 } }] }
+ *
+ *   update(object, 'a[0].b.c', (n) => n * n)
+ *   console.log(object.a[0].b.c)
+ *   // => 9
+ *
+ *   update(object, 'x[0].y.z', (n) => (n ? n + 1 : 0))
+ *   console.log(object.x[0].y.z)
+ *   // => 0
+ *
  * @param {Object} object The object to modify.
- * @param {Array|string} path The path of the property to set.
+ * @param {Array | string} path The path of the property to set.
  * @param {Function} updater The function to produce the updated value.
  * @returns {Object} Returns `object`.
- * @example
- *
- * const object = { 'a': [{ 'b': { 'c': 3 } }] }
- *
- * update(object, 'a[0].b.c', n => n * n)
- * console.log(object.a[0].b.c)
- * // => 9
- *
- * update(object, 'x[0].y.z', n => n ? n + 1 : 0)
- * console.log(object.x[0].y.z)
- * // => 0
  */
 function update(object, path, updater) {
   return object == null ? object : baseUpdate(object, path, updater)

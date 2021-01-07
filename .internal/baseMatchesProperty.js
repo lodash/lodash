@@ -15,7 +15,7 @@ const COMPARE_UNORDERED_FLAG = 2
  *
  * @private
  * @param {string} path The path of the property to get.
- * @param {*} srcValue The value to match.
+ * @param {any} srcValue The value to match.
  * @returns {Function} Returns the new spec function.
  */
 function baseMatchesProperty(path, srcValue) {

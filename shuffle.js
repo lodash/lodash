@@ -1,17 +1,17 @@
 import copyArray from './.internal/copyArray.js'
 
 /**
- * Creates an array of shuffled values, using a version of the
- * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
+ * Creates an array of shuffled values, using a version of the [Fisher-Yates
+ * shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
  *
  * @since 0.1.0
  * @category Array
+ * @example
+ *   shuffle([1, 2, 3, 4])
+ *   // => [4, 1, 3, 2]
+ *
  * @param {Array} array The array to shuffle.
  * @returns {Array} Returns the new shuffled array.
- * @example
- *
- * shuffle([1, 2, 3, 4])
- * // => [4, 1, 3, 2]
  */
 function shuffle(array) {
   const length = array == null ? 0 : array.length

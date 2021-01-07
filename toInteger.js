@@ -8,22 +8,22 @@ import toFinite from './toFinite.js'
  *
  * @since 4.0.0
  * @category Lang
- * @param {*} value The value to convert.
- * @returns {number} Returns the converted integer.
- * @see isInteger, isNumber, toNumber
  * @example
+ *   toInteger(3.2)
+ *   // => 3
  *
- * toInteger(3.2)
- * // => 3
+ *   toInteger(Number.MIN_VALUE)
+ *   // => 0
  *
- * toInteger(Number.MIN_VALUE)
- * // => 0
+ *   toInteger(Infinity)
+ *   // => 1.7976931348623157e+308
  *
- * toInteger(Infinity)
- * // => 1.7976931348623157e+308
+ *   toInteger('3.2')
+ *   // => 3
  *
- * toInteger('3.2')
- * // => 3
+ * @param {any} value The value to convert.
+ * @see isInteger, isNumber, toNumber
+ * @returns {number} Returns the converted integer.
  */
 function toInteger(value) {
   const result = toFinite(value)

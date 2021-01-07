@@ -3,15 +3,15 @@
  *
  * @since 4.0.0
  * @category Function
- * @param {Function} func The function to flip arguments for.
- * @returns {Function} Returns the new flipped function.
- * @see reverse
  * @example
+ *   const flipped = flip((...args) => args)
  *
- * const flipped = flip((...args) => args)
+ *   flipped('a', 'b', 'c', 'd')
+ *   // => ['d', 'c', 'b', 'a']
  *
- * flipped('a', 'b', 'c', 'd')
- * // => ['d', 'c', 'b', 'a']
+ * @param {Function} func The function to flip arguments for.
+ * @see reverse
+ * @returns {Function} Returns the new flipped function.
  */
 function flip(func) {
   if (typeof func !== 'function') {

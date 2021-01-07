@@ -13,32 +13,32 @@
  *
  * @since 0.1.0
  * @category Function
+ * @example
+ *   const object = { a: 1, b: 2 }
+ *   const other = { c: 3, d: 4 }
+ *
+ *   const values = memoize(values)
+ *   values(object)
+ *   // => [1, 2]
+ *
+ *   values(other)
+ *   // => [3, 4]
+ *
+ *   object.a = 2
+ *   values(object)
+ *   // => [1, 2]
+ *
+ *   // Modify the result cache.
+ *   values.cache.set(object, ['a', 'b'])
+ *   values(object)
+ *   // => ['a', 'b']
+ *
+ *   // Replace `memoize.Cache`.
+ *   memoize.Cache = WeakMap
+ *
  * @param {Function} func The function to have its output memoized.
  * @param {Function} [resolver] The function to resolve the cache key.
  * @returns {Function} Returns the new memoized function.
- * @example
- *
- * const object = { 'a': 1, 'b': 2 }
- * const other = { 'c': 3, 'd': 4 }
- *
- * const values = memoize(values)
- * values(object)
- * // => [1, 2]
- *
- * values(other)
- * // => [3, 4]
- *
- * object.a = 2
- * values(object)
- * // => [1, 2]
- *
- * // Modify the result cache.
- * values.cache.set(object, ['a', 'b'])
- * values(object)
- * // => ['a', 'b']
- *
- * // Replace `memoize.Cache`.
- * memoize.Cache = WeakMap
  */
 function memoize(func, resolver) {
   if (

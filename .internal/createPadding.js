@@ -6,12 +6,12 @@ import stringSize from './stringSize.js'
 import stringToArray from './stringToArray.js'
 
 /**
- * Creates the padding for `string` based on `length`. The `chars` string
- * is truncated if the number of characters exceeds `length`.
+ * Creates the padding for `string` based on `length`. The `chars` string is
+ * truncated if the number of characters exceeds `length`.
  *
  * @private
  * @param {number} length The padding length.
- * @param {string} [chars=' '] The string used as padding.
+ * @param {string} [chars] The string used as padding. Default is `' '`
  * @returns {string} Returns the padding for `string`.
  */
 function createPadding(length, chars) {

@@ -11,8 +11,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 /**
  * Checks if `value` is an empty object, collection, map, or set.
  *
- * Objects are considered empty if they have no own enumerable string keyed
- * properties.
+ * Objects are considered empty if they have no own enumerable string keyed properties.
  *
  * Array-like values such as `arguments` objects, arrays, buffers, strings, or
  * jQuery-like collections are considered empty if they have a `length` of `0`.
@@ -20,27 +19,27 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *
  * @since 0.1.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is empty, else `false`.
  * @example
+ *   isEmpty(null)
+ *   // => true
  *
- * isEmpty(null)
- * // => true
+ *   isEmpty(true)
+ *   // => true
  *
- * isEmpty(true)
- * // => true
+ *   isEmpty(1)
+ *   // => true
  *
- * isEmpty(1)
- * // => true
+ *   isEmpty([1, 2, 3])
+ *   // => false
  *
- * isEmpty([1, 2, 3])
- * // => false
+ *   isEmpty('abc')
+ *   // => false
  *
- * isEmpty('abc')
- * // => false
+ *   isEmpty({ a: 1 })
+ *   // => false
  *
- * isEmpty({ 'a': 1 })
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is empty, else `false`.
  */
 function isEmpty(value) {
   if (value == null) {

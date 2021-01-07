@@ -1,6 +1,5 @@
 /**
- * The base implementation of `range` and `rangeRight` which doesn't
- * coerce arguments.
+ * The base implementation of `range` and `rangeRight` which doesn't coerce arguments.
  *
  * @private
  * @param {number} start The start of the range.

@@ -6,18 +6,18 @@ import isIndex from './.internal/isIndex.js'
  *
  * @since 4.11.0
  * @category Array
- * @param {Array} array The array to query.
- * @param {number} [n=0] The index of the element to return.
- * @returns {*} Returns the nth element of `array`.
  * @example
+ *   const array = ['a', 'b', 'c', 'd']
  *
- * const array = ['a', 'b', 'c', 'd']
+ *   nth(array, 1)
+ *   // => 'b'
  *
- * nth(array, 1)
- * // => 'b'
+ *   nth(array, -2)
+ *   // => 'c'
  *
- * nth(array, -2)
- * // => 'c'
+ * @param {Array} array The array to query.
+ * @param {number} [n] The index of the element to return. Default is `0`
+ * @returns {any} Returns the nth element of `array`.
  */
 function nth(array, n) {
   const length = array == null ? 0 : array.length

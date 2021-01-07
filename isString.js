@@ -5,15 +5,15 @@ import getTag from './.internal/getTag.js'
  *
  * @since 0.1.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a string, else `false`.
  * @example
+ *   isString('abc')
+ *   // => true
  *
- * isString('abc')
- * // => true
+ *   isString(1)
+ *   // => false
  *
- * isString(1)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
  */
 function isString(value) {
   const type = typeof value

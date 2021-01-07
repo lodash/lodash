@@ -12,20 +12,20 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *
  * @since 5.0.0
  * @category Object
- * @param {Object} object The object to query.
- * @param {Array|string} path The path to check.
- * @returns {boolean} Returns `true` if `path` exists, else `false`.
- * @see has, hasIn, hasPathIn
  * @example
+ *   const object = { a: { b: 2 } }
+ *   const other = create({ a: create({ b: 2 }) })
  *
- * const object = { 'a': { 'b': 2 } }
- * const other = create({ 'a': create({ 'b': 2 }) })
+ *   hasPath(object, 'a.b')
+ *   // => true
  *
- * hasPath(object, 'a.b')
- * // => true
+ *   hasPath(object, ['a', 'b'])
+ *   // => true
  *
- * hasPath(object, ['a', 'b'])
- * // => true
+ * @param {Object} object The object to query.
+ * @param {Array | string} path The path to check.
+ * @see has, hasIn, hasPathIn
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
  */
 function hasPath(object, path) {
   path = castPath(path, object)

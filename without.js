@@ -10,14 +10,14 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  *
  * @since 0.1.0
  * @category Array
+ * @example
+ *   without([2, 1, 2, 3], 1, 2)
+ *   // => [3]
+ *
  * @param {Array} array The array to inspect.
  * @param {...*} [values] The values to exclude.
- * @returns {Array} Returns the new array of filtered values.
  * @see difference, union, unionBy, unionWith, xor, xorBy, xorWith
- * @example
- *
- * without([2, 1, 2, 3], 1, 2)
- * // => [3]
+ * @returns {Array} Returns the new array of filtered values.
  */
 function without(array, ...values) {
   return isArrayLikeObject(array) ? baseDifference(array, values) : []

@@ -2,8 +2,8 @@ import baseUnset from './baseUnset.js'
 import isIndex from './isIndex.js'
 
 /**
- * The base implementation of `pullAt` without support for individual
- * indexes or capturing the removed elements.
+ * The base implementation of `pullAt` without support for individual indexes
+ * or capturing the removed elements.
  *
  * @private
  * @param {Array} array The array to modify.

@@ -11,14 +11,15 @@
   "scripts": {
     "style": "eslint *.js .internal/**/*.js",
     "test": "mocha -r esm test/*.test.js",
-    "prettierAll":"prettier --write \"**/*.js\"",
+    "prettierAll": "prettier --write \"**/*.js\"",
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {
     "mocha": "^5.2.0",
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.22.1",
-    "prettier":"^2.2.1",
+    "prettier": "^2.2.1",
+    "prettier-plugin-jsdoc": "^0.3.2",
     "lodash": "4.17.20",
     "esm": "^3.2.25"
   }

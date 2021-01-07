@@ -10,15 +10,15 @@ const nodeIsArrayBuffer = nodeTypes && nodeTypes.isArrayBuffer
  *
  * @since 4.3.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
  * @example
+ *   isArrayBuffer(new ArrayBuffer(2))
+ *   // => true
  *
- * isArrayBuffer(new ArrayBuffer(2))
- * // => true
+ *   isArrayBuffer(new Array(2))
+ *   // => false
  *
- * isArrayBuffer(new Array(2))
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
  */
 const isArrayBuffer = nodeIsArrayBuffer
   ? (value) => nodeIsArrayBuffer(value)

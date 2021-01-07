@@ -12,23 +12,23 @@ const CLONE_DEEP_FLAG = 1
  * **Note:** The created function is equivalent to `isMatch` with `source`
  * partially applied.
  *
- * Partial comparisons will match empty array and empty object `source`
- * values against any array or object value, respectively. See `isEqual`
- * for a list of supported value comparisons.
+ * Partial comparisons will match empty array and empty object `source` values
+ * against any array or object value, respectively. See `isEqual` for a list of
+ * supported value comparisons.
  *
  * @since 3.0.0
  * @category Util
+ * @example
+ *   const objects = [
+ *     { a: 1, b: 2, c: 3 },
+ *     { a: 4, b: 5, c: 6 }
+ *   ]
+ *
+ *   filter(objects, matches({ a: 4, c: 6 }))
+ *   // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+ *
  * @param {Object} source The object of property values to match.
  * @returns {Function} Returns the new spec function.
- * @example
- *
- * const objects = [
- *   { 'a': 1, 'b': 2, 'c': 3 },
- *   { 'a': 4, 'b': 5, 'c': 6 }
- * ]
- *
- * filter(objects, matches({ 'a': 4, 'c': 6 }))
- * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
  */
 function matches(source) {
   return baseMatches(baseClone(source, CLONE_DEEP_FLAG))

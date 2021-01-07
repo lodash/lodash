@@ -5,7 +5,7 @@ class ListCache {
    * Creates an list cache object.
    *
    * @private
-   * @constructor
+   * @class
    * @param {Array} [entries] The key-value pairs to cache.
    */
   constructor(entries) {
@@ -22,7 +22,7 @@ class ListCache {
   /**
    * Removes all key-value entries from the list cache.
    *
-   * @memberOf ListCache
+   * @memberof ListCache
    */
   clear() {
     this.__data__ = []
@@ -32,7 +32,7 @@ class ListCache {
   /**
    * Removes `key` and its value from the list cache.
    *
-   * @memberOf ListCache
+   * @memberof ListCache
    * @param {string} key The key of the value to remove.
    * @returns {boolean} Returns `true` if the entry was removed, else `false`.
    */
@@ -56,9 +56,9 @@ class ListCache {
   /**
    * Gets the list cache value for `key`.
    *
-   * @memberOf ListCache
+   * @memberof ListCache
    * @param {string} key The key of the value to get.
-   * @returns {*} Returns the entry value.
+   * @returns {any} Returns the entry value.
    */
   get(key) {
     const data = this.__data__
@@ -69,7 +69,7 @@ class ListCache {
   /**
    * Checks if a list cache value for `key` exists.
    *
-   * @memberOf ListCache
+   * @memberof ListCache
    * @param {string} key The key of the entry to check.
    * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
    */
@@ -80,9 +80,9 @@ class ListCache {
   /**
    * Sets the list cache `key` to `value`.
    *
-   * @memberOf ListCache
+   * @memberof ListCache
    * @param {string} key The key of the value to set.
-   * @param {*} value The value to set.
+   * @param {any} value The value to set.
    * @returns {Object} Returns the list cache instance.
    */
   set(key, value) {

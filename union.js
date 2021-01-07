@@ -9,13 +9,13 @@ import isArrayLikeObject from './isArrayLikeObject.js'
  *
  * @since 0.1.0
  * @category Array
- * @param {...Array} [arrays] The arrays to inspect.
- * @returns {Array} Returns the new array of combined values.
- * @see difference, unionBy, unionWith, without, xor, xorBy
  * @example
+ *   union([2, 3], [1, 2])
+ *   // => [2, 3, 1]
  *
- * union([2, 3], [1, 2])
- * // => [2, 3, 1]
+ * @param {...Array} [arrays] The arrays to inspect.
+ * @see difference, unionBy, unionWith, without, xor, xorBy
+ * @returns {Array} Returns the new array of combined values.
  */
 function union(...arrays) {
   return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true))

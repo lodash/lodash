@@ -10,7 +10,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * @private
  * @param {Object} object The object to modify.
  * @param {string} key The key of the property to assign.
- * @param {*} value The value to assign.
+ * @param {any} value The value to assign.
  */
 function assignValue(object, key, value) {
   const objValue = object[key]

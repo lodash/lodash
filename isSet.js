@@ -10,15 +10,15 @@ const nodeIsSet = nodeTypes && nodeTypes.isSet
  *
  * @since 4.3.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a set, else `false`.
  * @example
+ *   isSet(new Set())
+ *   // => true
  *
- * isSet(new Set)
- * // => true
+ *   isSet(new WeakSet())
+ *   // => false
  *
- * isSet(new WeakSet)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a set, else `false`.
  */
 const isSet = nodeIsSet
   ? (value) => nodeIsSet(value)

@@ -6,7 +6,7 @@ import getSymbolsIn from './getSymbolsIn.js'
  *
  * @private
  * @param {Object} source The object to copy symbols from.
- * @param {Object} [object={}] The object to copy symbols to.
+ * @param {Object} [object] The object to copy symbols to. Default is `{}`
  * @returns {Object} Returns `object`.
  */
 function copySymbolsIn(source, object) {

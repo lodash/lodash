@@ -10,15 +10,15 @@ const nodeIsMap = nodeTypes && nodeTypes.isMap
  *
  * @since 4.3.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a map, else `false`.
  * @example
+ *   isMap(new Map())
+ *   // => true
  *
- * isMap(new Map)
- * // => true
+ *   isMap(new WeakMap())
+ *   // => false
  *
- * isMap(new WeakMap)
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a map, else `false`.
  */
 const isMap = nodeIsMap
   ? (value) => nodeIsMap(value)

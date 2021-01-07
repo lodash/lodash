@@ -6,7 +6,7 @@ class Hash {
    * Creates a hash object.
    *
    * @private
-   * @constructor
+   * @class
    * @param {Array} [entries] The key-value pairs to cache.
    */
   constructor(entries) {
@@ -23,7 +23,7 @@ class Hash {
   /**
    * Removes all key-value entries from the hash.
    *
-   * @memberOf Hash
+   * @memberof Hash
    */
   clear() {
     this.__data__ = Object.create(null)
@@ -33,7 +33,7 @@ class Hash {
   /**
    * Removes `key` and its value from the hash.
    *
-   * @memberOf Hash
+   * @memberof Hash
    * @param {string} key The key of the value to remove.
    * @returns {boolean} Returns `true` if the entry was removed, else `false`.
    */
@@ -46,9 +46,9 @@ class Hash {
   /**
    * Gets the hash value for `key`.
    *
-   * @memberOf Hash
+   * @memberof Hash
    * @param {string} key The key of the value to get.
-   * @returns {*} Returns the entry value.
+   * @returns {any} Returns the entry value.
    */
   get(key) {
     const data = this.__data__
@@ -59,7 +59,7 @@ class Hash {
   /**
    * Checks if a hash value for `key` exists.
    *
-   * @memberOf Hash
+   * @memberof Hash
    * @param {string} key The key of the entry to check.
    * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
    */
@@ -71,9 +71,9 @@ class Hash {
   /**
    * Sets the hash `key` to `value`.
    *
-   * @memberOf Hash
+   * @memberof Hash
    * @param {string} key The key of the value to set.
-   * @param {*} value The value to set.
+   * @param {any} value The value to set.
    * @returns {Object} Returns the hash instance.
    */
   set(key, value) {

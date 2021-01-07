@@ -3,7 +3,7 @@
  *
  * @private
  * @param {Function} func The function to inspect.
- * @returns {*} Returns the placeholder value.
+ * @returns {any} Returns the placeholder value.
  */
 function getHolder(func) {
   const object = func

@@ -14,24 +14,24 @@ const freeParseFloat = parseFloat
  *
  * @since 0.7.0
  * @category Number
- * @param {number} [lower=0] The lower bound.
- * @param {number} [upper=1] The upper bound.
- * @param {boolean} [floating] Specify returning a floating-point number.
- * @returns {number} Returns the random number.
- * @see uniqueId
  * @example
+ *   random(0, 5)
+ *   // => an integer between 0 and 5
  *
- * random(0, 5)
- * // => an integer between 0 and 5
+ *   random(5)
+ *   // => also an integer between 0 and 5
  *
- * random(5)
- * // => also an integer between 0 and 5
+ *   random(5, true)
+ *   // => a floating-point number between 0 and 5
  *
- * random(5, true)
- * // => a floating-point number between 0 and 5
+ *   random(1.2, 5.2)
+ *   // => a floating-point number between 1.2 and 5.2
  *
- * random(1.2, 5.2)
- * // => a floating-point number between 1.2 and 5.2
+ * @param {number} [lower] The lower bound. Default is `0`
+ * @param {number} [upper] The upper bound. Default is `1`
+ * @param {boolean} [floating] Specify returning a floating-point number.
+ * @see uniqueId
+ * @returns {number} Returns the random number.
  */
 function random(lower, upper, floating) {
   if (floating === undefined) {

@@ -7,14 +7,14 @@ import before from './before.js'
  *
  * @since 0.1.0
  * @category Function
+ * @example
+ *   const initialize = once(createApplication)
+ *   initialize()
+ *   initialize()
+ *   // => `createApplication` is invoked once
+ *
  * @param {Function} func The function to restrict.
  * @returns {Function} Returns the new restricted function.
- * @example
- *
- * const initialize = once(createApplication)
- * initialize()
- * initialize()
- * // => `createApplication` is invoked once
  */
 function once(func) {
   return before(2, func)

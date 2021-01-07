@@ -5,9 +5,9 @@ import isArrayLike from '../isArrayLike.js'
  * The base implementation of `forEachRight`.
  *
  * @private
- * @param {Array|Object} collection The collection to iterate over.
+ * @param {Array | Object} collection The collection to iterate over.
  * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array|Object} Returns `collection`.
+ * @returns {Array | Object} Returns `collection`.
  */
 function baseEachRight(collection, iteratee) {
   if (collection == null) {

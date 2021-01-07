@@ -9,19 +9,19 @@ import reduce from './reduce.js'
  *
  * @since 4.0.0
  * @category Collection
- * @param {Array|Object} collection The collection to iterate over.
- * @param {Function} iteratee The iteratee to transform keys.
- * @returns {Object} Returns the composed aggregate object.
- * @see groupBy, partition
  * @example
+ *   const array = [
+ *     { dir: 'left', code: 97 },
+ *     { dir: 'right', code: 100 }
+ *   ]
  *
- * const array = [
- *   { 'dir': 'left', 'code': 97 },
- *   { 'dir': 'right', 'code': 100 }
- * ]
+ *   keyBy(array, ({ code }) => String.fromCharCode(code))
+ *   // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  *
- * keyBy(array, ({ code }) => String.fromCharCode(code))
- * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
+ * @param {Array | Object} collection The collection to iterate over.
+ * @param {Function} iteratee The iteratee to transform keys.
+ * @see groupBy, partition
+ * @returns {Object} Returns the composed aggregate object.
  */
 function keyBy(collection, iteratee) {
   return reduce(

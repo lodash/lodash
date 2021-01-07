@@ -12,20 +12,20 @@ import isIndex from './.internal/isIndex.js'
  *
  * @since 3.0.0
  * @category Array
+ * @example
+ *   const array = ['a', 'b', 'c', 'd']
+ *   const pulled = pullAt(array, [1, 3])
+ *
+ *   console.log(array)
+ *   // => ['a', 'c']
+ *
+ *   console.log(pulled)
+ *   // => ['b', 'd']
+ *
  * @param {Array} array The array to modify.
  * @param {...(number|number[])} [indexes] The indexes of elements to remove.
- * @returns {Array} Returns the new array of removed elements.
  * @see pull, pullAll, pullAllBy, pullAllWith, remove, reject
- * @example
- *
- * const array = ['a', 'b', 'c', 'd']
- * const pulled = pullAt(array, [1, 3])
- *
- * console.log(array)
- * // => ['a', 'c']
- *
- * console.log(pulled)
- * // => ['b', 'd']
+ * @returns {Array} Returns the new array of removed elements.
  */
 function pullAt(array, ...indexes) {
   const length = array == null ? 0 : array.length

@@ -10,8 +10,8 @@ const identity = (value) => value
  * The base implementation of `orderBy` without param guards.
  *
  * @private
- * @param {Array|Object} collection The collection to iterate over.
- * @param {Function[]|Object[]|string[]} iteratees The iteratees to sort by.
+ * @param {Array | Object} collection The collection to iterate over.
+ * @param {Function[] | Object[] | string[]} iteratees The iteratees to sort by.
  * @param {string[]} orders The sort orders of `iteratees`.
  * @returns {Array} Returns the new sorted array.
  */

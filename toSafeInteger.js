@@ -9,21 +9,21 @@ const MAX_SAFE_INTEGER = 9007199254740991
  *
  * @since 4.0.0
  * @category Lang
- * @param {*} value The value to convert.
- * @returns {number} Returns the converted integer.
  * @example
+ *   toSafeInteger(3.2)
+ *   // => 3
  *
- * toSafeInteger(3.2)
- * // => 3
+ *   toSafeInteger(Number.MIN_VALUE)
+ *   // => 0
  *
- * toSafeInteger(Number.MIN_VALUE)
- * // => 0
+ *   toSafeInteger(Infinity)
+ *   // => 9007199254740991
  *
- * toSafeInteger(Infinity)
- * // => 9007199254740991
+ *   toSafeInteger('3.2')
+ *   // => 3
  *
- * toSafeInteger('3.2')
- * // => 3
+ * @param {any} value The value to convert.
+ * @returns {number} Returns the converted integer.
  */
 function toSafeInteger(value) {
   if (!value) {

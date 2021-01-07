@@ -10,15 +10,15 @@ const nodeIsDate = nodeTypes && nodeTypes.isDate
  *
  * @since 0.1.0
  * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
  * @example
+ *   isDate(new Date())
+ *   // => true
  *
- * isDate(new Date)
- * // => true
+ *   isDate('Mon April 23 2012')
+ *   // => false
  *
- * isDate('Mon April 23 2012')
- * // => false
+ * @param {any} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
  */
 const isDate = nodeIsDate
   ? (value) => nodeIsDate(value)

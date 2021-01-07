@@ -8,23 +8,23 @@ import keys from './keys.js'
  *
  * @since 0.1.0
  * @category Object
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property values.
- * @see keys, valuesIn
  * @example
+ *   function Foo() {
+ *     this.a = 1
+ *     this.b = 2
+ *   }
  *
- * function Foo() {
- *   this.a = 1
- *   this.b = 2
- * }
+ *   Foo.prototype.c = 3
  *
- * Foo.prototype.c = 3
+ *   values(new Foo())
+ *   // => [1, 2] (iteration order is not guaranteed)
  *
- * values(new Foo)
- * // => [1, 2] (iteration order is not guaranteed)
+ *   values('hi')
+ *   // => ['h', 'i']
  *
- * values('hi')
- * // => ['h', 'i']
+ * @param {Object} object The object to query.
+ * @see keys, valuesIn
+ * @returns {Array} Returns the array of property values.
  */
 function values(object) {
   return object == null ? [] : baseValues(object, keys(object))

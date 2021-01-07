@@ -3,7 +3,7 @@
  *
  * @private
  * @param {Array} source The array to copy values from.
- * @param {Array} [array=[]] The array to copy values to.
+ * @param {Array} [array] The array to copy values to. Default is `[]`
  * @returns {Array} Returns `array`.
  */
 function copyArray(source, array) {

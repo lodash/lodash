@@ -26,7 +26,12 @@ function baseXor(arrays, iteratee, comparator) {
 
     while (++othIndex < length) {
       if (othIndex != index) {
-        result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator)
+        result[index] = baseDifference(
+          result[index] || array,
+          arrays[othIndex],
+          iteratee,
+          comparator
+        )
       }
     }
   }

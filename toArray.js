@@ -47,7 +47,7 @@ function toArray(value) {
     return iteratorToArray(value[symIterator]())
   }
   const tag = getTag(value)
-  const func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values)
+  const func = tag == mapTag ? mapToArray : tag == setTag ? setToArray : values
 
   return func(value)
 }

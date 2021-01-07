@@ -1,4 +1,3 @@
-
 /**
  * Creates a function that invokes `func` with its arguments transformed.
  *
@@ -28,7 +27,7 @@
  */
 function overArgs(func, transforms) {
   const funcsLength = transforms.length
-  return function(...args) {
+  return function (...args) {
     let index = -1
     const length = Math.min(args.length, funcsLength)
     while (++index < length) {

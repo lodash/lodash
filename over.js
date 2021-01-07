@@ -17,7 +17,7 @@ import map from './map.js'
  * // => [4, 1]
  */
 function over(iteratees) {
-  return function(...args) {
+  return function (...args) {
     return map(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }

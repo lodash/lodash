@@ -29,7 +29,9 @@ function invokeMap(collection, path, args) {
   const result = isArrayLike(collection) ? new Array(collection.length) : []
 
   baseEach(collection, (value) => {
-    result[++index] = isFunc ? path.apply(value, args) : invoke(value, path, args)
+    result[++index] = isFunc
+      ? path.apply(value, args)
+      : invoke(value, path, args)
   })
   return result
 }

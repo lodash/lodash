@@ -29,25 +29,22 @@ function baseUniq(array, iteratee, comparator) {
   if (comparator) {
     isCommon = false
     includes = arrayIncludesWith
-  }
-  else if (length >= LARGE_ARRAY_SIZE) {
+  } else if (length >= LARGE_ARRAY_SIZE) {
     const set = iteratee ? null : createSet(array)
     if (set) {
       return setToArray(set)
     }
     isCommon = false
     includes = cacheHas
-    seen = new SetCache
-  }
-  else {
+    seen = new SetCache()
+  } else {
     seen = iteratee ? [] : result
   }
-  outer:
-  while (++index < length) {
+  outer: while (++index < length) {
     let value = array[index]
     const computed = iteratee ? iteratee(value) : value
 
-    value = (comparator || value !== 0) ? value : 0
+    value = comparator || value !== 0 ? value : 0
     if (isCommon && computed === computed) {
       let seenIndex = seen.length
       while (seenIndex--) {
@@ -59,8 +56,7 @@ function baseUniq(array, iteratee, comparator) {
         seen.push(computed)
       }
       result.push(value)
-    }
-    else if (!includes(seen, computed, comparator)) {
+    } else if (!includes(seen, computed, comparator)) {
       if (seen !== result) {
         seen.push(computed)
       }

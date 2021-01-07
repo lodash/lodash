@@ -29,7 +29,9 @@ function asciiWords(string) {
  */
 function words(string, pattern) {
   if (pattern === undefined) {
-    const result = hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string)
+    const result = hasUnicodeWord(string)
+      ? unicodeWords(string)
+      : asciiWords(string)
     return result || []
   }
   return string.match(pattern) || []

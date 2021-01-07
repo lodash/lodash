@@ -24,9 +24,13 @@ import reduce from './reduce.js'
  * // => objects for [['fred'], ['barney', 'pebbles']]
  */
 function partition(collection, predicate) {
-  return reduce(collection, (result, value, key) => (
-    result[predicate(value) ? 0 : 1].push(value), result
-  ), [[], []])
+  return reduce(
+    collection,
+    (result, value, key) => (
+      result[predicate(value) ? 0 : 1].push(value), result
+    ),
+    [[], []]
+  )
 }
 
 export default partition

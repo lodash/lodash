@@ -28,9 +28,10 @@ function baseIsMatch(object, source, matchData, customizer) {
   object = Object(object)
   while (index--) {
     data = matchData[index]
-    if ((noCustomizer && data[2])
-      ? data[1] !== object[data[0]]
-      : !(data[0] in object)
+    if (
+      noCustomizer && data[2]
+        ? data[1] !== object[data[0]]
+        : !(data[0] in object)
     ) {
       return false
     }
@@ -46,14 +47,21 @@ function baseIsMatch(object, source, matchData, customizer) {
         return false
       }
     } else {
-      const stack = new Stack
+      const stack = new Stack()
       if (customizer) {
         result = customizer(objValue, srcValue, key, object, source, stack)
       }
-      if (!(result === undefined
-        ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack)
-        : result
-      )) {
+      if (
+        !(result === undefined
+          ? baseIsEqual(
+              srcValue,
+              objValue,
+              COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG,
+              customizer,
+              stack
+            )
+          : result)
+      ) {
         return false
       }
     }

@@ -1,4 +1,3 @@
-
 /**
  * Casts `value` as an array if it's not one.
  *

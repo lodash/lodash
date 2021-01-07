@@ -9,7 +9,12 @@ const reComboHalfMarksRange = '\\ufe20-\\ufe2f'
 const rsComboSymbolsRange = '\\u20d0-\\u20ff'
 const rsComboMarksExtendedRange = '\\u1ab0-\\u1aff'
 const rsComboMarksSupplementRange = '\\u1dc0-\\u1dff'
-const rsComboRange = rsComboMarksRange + reComboHalfMarksRange + rsComboSymbolsRange + rsComboMarksExtendedRange + rsComboMarksSupplementRange
+const rsComboRange =
+  rsComboMarksRange +
+  reComboHalfMarksRange +
+  rsComboSymbolsRange +
+  rsComboMarksExtendedRange +
+  rsComboMarksSupplementRange
 
 /** Used to compose unicode capture groups. */
 const rsCombo = `[${rsComboRange}]`
@@ -37,7 +42,9 @@ const reComboMark = RegExp(rsCombo, 'g')
  * // => 'deja vu'
  */
 function deburr(string) {
-  return string && string.replace(reLatin, deburrLetter).replace(reComboMark, '')
+  return (
+    string && string.replace(reLatin, deburrLetter).replace(reComboMark, '')
+  )
 }
 
 export default deburr

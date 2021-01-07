@@ -19,7 +19,8 @@ function baseOrderBy(collection, iteratees, orders) {
   if (iteratees.length) {
     iteratees = iteratees.map((iteratee) => {
       if (Array.isArray(iteratee)) {
-        return (value) => baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee)
+        return (value) =>
+          baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee)
       }
 
       return iteratee
@@ -43,7 +44,9 @@ function baseOrderBy(collection, iteratees, orders) {
     }
   })
 
-  return baseSortBy(result, (object, other) => compareMultiple(object, other, orders))
+  return baseSortBy(result, (object, other) =>
+    compareMultiple(object, other, orders)
+  )
 }
 
 export default baseOrderBy

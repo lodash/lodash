@@ -22,10 +22,10 @@ const reQuotes = /['\u2019]/g
  * lowerCase('__FOO_BAR__')
  * // => 'foo bar'
  */
-const lowerCase = (string) => (
-  words(toString(string).replace(reQuotes, '')).reduce((result, word, index) => (
-    result + (index ? ' ' : '') + word.toLowerCase()
-  ), '')
-)
+const lowerCase = (string) =>
+  words(toString(string).replace(reQuotes, '')).reduce(
+    (result, word, index) => result + (index ? ' ' : '') + word.toLowerCase(),
+    ''
+  )
 
 export default lowerCase

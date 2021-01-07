@@ -4,7 +4,6 @@ import MapCache from './MapCache.js'
 const HASH_UNDEFINED = '__lodash_hash_undefined__'
 
 class SetCache {
-
   /**
    * Creates an array cache object to store unique values.
    *
@@ -16,7 +15,7 @@ class SetCache {
     let index = -1
     const length = values == null ? 0 : values.length
 
-    this.__data__ = new MapCache
+    this.__data__ = new MapCache()
     while (++index < length) {
       this.add(values[index])
     }

@@ -23,7 +23,7 @@ import some from './some.js'
  * // => false
  */
 function overSome(iteratees) {
-  return function(...args) {
+  return function (...args) {
     return some(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }

@@ -1,13 +1,23 @@
-import assert from 'assert';
-import lodashStable from 'lodash';
-import { _, falsey, stubArray, oldDash, stubTrue, FUNC_ERROR_TEXT } from './utils.js';
-import functions from '../functions.js';
-import bind from '../bind.js';
+import assert from 'assert'
+import lodashStable from 'lodash'
+import {
+  _,
+  falsey,
+  stubArray,
+  oldDash,
+  stubTrue,
+  FUNC_ERROR_TEXT
+} from './utils.js'
+import functions from '../functions.js'
+import bind from '../bind.js'
 
-describe('lodash methods', function() {
-  var allMethods = lodashStable.reject(functions(_).sort(), function(methodName) {
-    return lodashStable.startsWith(methodName, '_');
-  });
+describe('lodash methods', function () {
+  var allMethods = lodashStable.reject(
+    functions(_).sort(),
+    function (methodName) {
+      return lodashStable.startsWith(methodName, '_')
+    }
+  )
 
   var checkFuncs = [
     'after',
@@ -32,7 +42,7 @@ describe('lodash methods', function() {
     'spread',
     'throttle',
     'unary'
-  ];
+  ]
 
   var noBinding = [
     'flip',
@@ -45,12 +55,9 @@ describe('lodash methods', function() {
     'rearg',
     'rest',
     'spread'
-  ];
+  ]
 
-  var rejectFalsey = [
-    'tap',
-    'thru'
-  ].concat(checkFuncs);
+  var rejectFalsey = ['tap', 'thru'].concat(checkFuncs)
 
   var returnArrays = [
     'at',
@@ -88,107 +95,157 @@ describe('lodash methods', function() {
     'without',
     'xor',
     'zip'
-  ];
+  ]
 
-  var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
+  var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey)
 
-  it('should accept falsey arguments', function() {
-    var arrays = lodashStable.map(falsey, stubArray);
+  it('should accept falsey arguments', function () {
+    var arrays = lodashStable.map(falsey, stubArray)
 
-    lodashStable.each(acceptFalsey, function(methodName) {
+    lodashStable.each(acceptFalsey, function (methodName) {
       var expected = arrays,
-          func = _[methodName];
+        func = _[methodName]
 
-      var actual = lodashStable.map(falsey, function(value, index) {
-        return index ? func(value) : func();
-      });
+      var actual = lodashStable.map(falsey, function (value, index) {
+        return index ? func(value) : func()
+      })
 
       if (methodName == 'noConflict') {
-        root._ = oldDash;
+        root._ = oldDash
+      } else if (methodName == 'pull' || methodName == 'pullAll') {
+        expected = falsey
       }
-      else if (methodName == 'pull' || methodName == 'pullAll') {
-        expected = falsey;
+      if (
+        lodashStable.includes(returnArrays, methodName) &&
+        methodName != 'sample'
+      ) {
+        assert.deepStrictEqual(
+          actual,
+          expected,
+          '_.' + methodName + ' returns an array'
+        )
       }
-      if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
-        assert.deepStrictEqual(actual, expected, '_.' + methodName + ' returns an array');
-      }
-      assert.ok(true, '`_.' + methodName + '` accepts falsey arguments');
-    });
+      assert.ok(true, '`_.' + methodName + '` accepts falsey arguments')
+    })
 
     // Skip tests for missing methods of modularized builds.
-    lodashStable.each(['chain', 'noConflict', 'runInContext'], function(methodName) {
-      if (!_[methodName]) {}
-    });
-  });
+    lodashStable.each(
+      ['chain', 'noConflict', 'runInContext'],
+      function (methodName) {
+        if (!_[methodName]) {
+        }
+      }
+    )
+  })
 
-  it('should return an array', function() {
-    var array = [1, 2, 3];
+  it('should return an array', function () {
+    var array = [1, 2, 3]
 
-    lodashStable.each(returnArrays, function(methodName) {
+    lodashStable.each(returnArrays, function (methodName) {
       var actual,
-          func = _[methodName];
+        func = _[methodName]
 
       switch (methodName) {
         case 'invokeMap':
-          actual = func(array, 'toFixed');
-          break;
+          actual = func(array, 'toFixed')
+          break
         case 'sample':
-          actual = func(array, 1);
-          break;
+          actual = func(array, 1)
+          break
         default:
-          actual = func(array);
+          actual = func(array)
       }
-      assert.ok(lodashStable.isArray(actual), '_.' + methodName + ' returns an array');
+      assert.ok(
+        lodashStable.isArray(actual),
+        '_.' + methodName + ' returns an array'
+      )
 
-      var isPull = methodName == 'pull' || methodName == 'pullAll';
-      assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the given array');
-    });
-  });
+      var isPull = methodName == 'pull' || methodName == 'pullAll'
+      assert.strictEqual(
+        actual === array,
+        isPull,
+        '_.' +
+          methodName +
+          ' should ' +
+          (isPull ? '' : 'not ') +
+          'return the given array'
+      )
+    })
+  })
 
-  it('should throw an error for falsey arguments', function() {
-    lodashStable.each(rejectFalsey, function(methodName) {
+  it('should throw an error for falsey arguments', function () {
+    lodashStable.each(rejectFalsey, function (methodName) {
       var expected = lodashStable.map(falsey, stubTrue),
-          func = _[methodName];
+        func = _[methodName]
 
-      var actual = lodashStable.map(falsey, function(value, index) {
-        var pass = !index && /^(?:backflow|compose|cond|flow(Right)?|over(?:Every|Some)?)$/.test(methodName);
+      var actual = lodashStable.map(falsey, function (value, index) {
+        var pass =
+          !index &&
+          /^(?:backflow|compose|cond|flow(Right)?|over(?:Every|Some)?)$/.test(
+            methodName
+          )
 
         try {
-          index ? func(value) : func();
+          index ? func(value) : func()
         } catch (e) {
-          pass = !pass && (e instanceof TypeError) &&
-            (!lodashStable.includes(checkFuncs, methodName) || (e.message == FUNC_ERROR_TEXT));
+          pass =
+            !pass &&
+            e instanceof TypeError &&
+            (!lodashStable.includes(checkFuncs, methodName) ||
+              e.message == FUNC_ERROR_TEXT)
         }
-        return pass;
-      });
+        return pass
+      })
 
-      assert.deepStrictEqual(actual, expected, '`_.' + methodName + '` rejects falsey arguments');
-    });
-  });
+      assert.deepStrictEqual(
+        actual,
+        expected,
+        '`_.' + methodName + '` rejects falsey arguments'
+      )
+    })
+  })
 
-  it('should use `this` binding of function', function() {
-    lodashStable.each(noBinding, function(methodName) {
-      var fn = function() { return this.a; },
-          func = _[methodName],
-          isNegate = methodName == 'negate',
-          object = { 'a': 1 },
-          expected = isNegate ? false : 1;
+  it('should use `this` binding of function', function () {
+    lodashStable.each(noBinding, function (methodName) {
+      var fn = function () {
+          return this.a
+        },
+        func = _[methodName],
+        isNegate = methodName == 'negate',
+        object = { a: 1 },
+        expected = isNegate ? false : 1
 
-      var wrapper = func(bind(fn, object));
-      assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can consume a bound function');
+      var wrapper = func(bind(fn, object))
+      assert.strictEqual(
+        wrapper(),
+        expected,
+        '`_.' + methodName + '` can consume a bound function'
+      )
 
-      wrapper = bind(func(fn), object);
-      assert.strictEqual(wrapper(), expected, '`_.' + methodName + '` can be bound');
+      wrapper = bind(func(fn), object)
+      assert.strictEqual(
+        wrapper(),
+        expected,
+        '`_.' + methodName + '` can be bound'
+      )
 
-      object.wrapper = func(fn);
-      assert.strictEqual(object.wrapper(), expected, '`_.' + methodName + '` uses the `this` of its parent object');
-    });
-  });
+      object.wrapper = func(fn)
+      assert.strictEqual(
+        object.wrapper(),
+        expected,
+        '`_.' + methodName + '` uses the `this` of its parent object'
+      )
+    })
+  })
 
-  it('should not contain minified method names (test production builds)', function() {
-    var shortNames = ['_', 'at', 'eq', 'gt', 'lt'];
-    assert.ok(lodashStable.every(functions(_), function(methodName) {
-      return methodName.length > 2 || lodashStable.includes(shortNames, methodName);
-    }));
-  });
-});
+  it('should not contain minified method names (test production builds)', function () {
+    var shortNames = ['_', 'at', 'eq', 'gt', 'lt']
+    assert.ok(
+      lodashStable.every(functions(_), function (methodName) {
+        return (
+          methodName.length > 2 || lodashStable.includes(shortNames, methodName)
+        )
+      })
+    )
+  })
+})

@@ -22,7 +22,7 @@ import slice from './slice.js'
  * take([1, 2, 3], 0)
  * // => []
  */
-function take(array, n=1) {
+function take(array, n = 1) {
   if (!(array != null && array.length)) {
     return []
   }

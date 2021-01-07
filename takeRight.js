@@ -22,7 +22,7 @@ import slice from './slice.js'
  * takeRight([1, 2, 3], 0)
  * // => []
  */
-function takeRight(array, n=1) {
+function takeRight(array, n = 1) {
   const length = array == null ? 0 : array.length
   if (!length) {
     return []

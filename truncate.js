@@ -84,7 +84,7 @@ function truncate(string, options) {
     return result + omission
   }
   if (strSymbols) {
-    end += (result.length - end)
+    end += result.length - end
   }
   if (isRegExp(separator)) {
     if (string.slice(end).search(separator)) {
@@ -93,7 +93,10 @@ function truncate(string, options) {
       const substring = result
 
       if (!separator.global) {
-        separator = RegExp(separator.source, `${reFlags.exec(separator) || ''}g`)
+        separator = RegExp(
+          separator.source,
+          `${reFlags.exec(separator) || ''}g`
+        )
       }
       separator.lastIndex = 0
       while ((match = separator.exec(substring))) {

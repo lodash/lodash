@@ -23,7 +23,7 @@ import every from './every.js'
  * // => false
  */
 function overEvery(iteratees) {
-  return function(...args) {
+  return function (...args) {
     return every(iteratees, (iteratee) => iteratee.apply(this, args))
   }
 }

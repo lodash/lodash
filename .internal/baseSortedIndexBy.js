@@ -47,11 +47,15 @@ function baseSortedIndexBy(array, value, iteratee, retHighest) {
     } else if (valIsNull) {
       setLow = othIsReflexive && othIsDefined && (retHighest || !othIsNull)
     } else if (valIsSymbol) {
-      setLow = othIsReflexive && othIsDefined && !othIsNull && (retHighest || !othIsSymbol)
+      setLow =
+        othIsReflexive &&
+        othIsDefined &&
+        !othIsNull &&
+        (retHighest || !othIsSymbol)
     } else if (othIsNull || othIsSymbol) {
       setLow = false
     } else {
-      setLow = retHighest ? (computed <= value) : (computed < value)
+      setLow = retHighest ? computed <= value : computed < value
     }
     if (setLow) {
       low = mid + 1

@@ -23,7 +23,8 @@ function compareMultiple(object, other, orders) {
 
   while (++index < length) {
     const order = index < ordersLength ? orders[index] : null
-    const cmpFn = (order && typeof order === 'function') ? order: compareAscending
+    const cmpFn =
+      order && typeof order === 'function' ? order : compareAscending
     const result = cmpFn(objCriteria[index], othCriteria[index])
     if (result) {
       if (order && typeof order !== 'function') {

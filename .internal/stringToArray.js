@@ -10,9 +10,7 @@ import unicodeToArray from './unicodeToArray.js'
  * @returns {Array} Returns the converted array.
  */
 function stringToArray(string) {
-  return hasUnicode(string)
-    ? unicodeToArray(string)
-    : asciiToArray(string)
+  return hasUnicode(string) ? unicodeToArray(string) : asciiToArray(string)
 }
 
 export default stringToArray

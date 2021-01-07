@@ -27,13 +27,16 @@ function arrayLikeKeys(value, inherited) {
     result[index] = `${index}`
   }
   for (const key in value) {
-    if ((inherited || hasOwnProperty.call(value, key)) &&
-        !(skipIndexes && (
+    if (
+      (inherited || hasOwnProperty.call(value, key)) &&
+      !(
+        skipIndexes &&
         // Safari 9 has enumerable `arguments.length` in strict mode.
-          (key === 'length' ||
-           // Skip index properties.
-           isIndex(key, length))
-        ))) {
+        (key === 'length' ||
+          // Skip index properties.
+          isIndex(key, length))
+      )
+    ) {
       result.push(key)
     }
   }

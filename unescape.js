@@ -30,9 +30,9 @@ const reHasEscapedHtml = RegExp(reEscapedHtml.source)
  * // => 'fred, barney, & pebbles'
  */
 function unescape(string) {
-  return (string && reHasEscapedHtml.test(string))
-    ? string.replace(reEscapedHtml, (entity) => (htmlUnescapes[entity] || "'"))
-    : (string || '')
+  return string && reHasEscapedHtml.test(string)
+    ? string.replace(reEscapedHtml, (entity) => htmlUnescapes[entity] || "'")
+    : string || ''
 }
 
 export default unescape

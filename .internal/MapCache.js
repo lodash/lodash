@@ -1,4 +1,3 @@
-
 import Hash from './Hash.js'
 
 /**
@@ -25,13 +24,15 @@ function getMapData({ __data__ }, key) {
  */
 function isKeyable(value) {
   const type = typeof value
-  return (type === 'string' || type === 'number' || type === 'symbol' || type === 'boolean')
-    ? (value !== '__proto__')
-    : (value === null)
+  return type === 'string' ||
+    type === 'number' ||
+    type === 'symbol' ||
+    type === 'boolean'
+    ? value !== '__proto__'
+    : value === null
 }
 
 class MapCache {
-
   /**
    * Creates a map cache object to store key-value pairs.
    *
@@ -58,9 +59,9 @@ class MapCache {
   clear() {
     this.size = 0
     this.__data__ = {
-      'hash': new Hash,
-      'map': new Map,
-      'string': new Hash
+      hash: new Hash(),
+      map: new Map(),
+      string: new Hash()
     }
   }
 

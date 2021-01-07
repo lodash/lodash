@@ -34,7 +34,7 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
   }
   let index = -1
   let result = true
-  const seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined
+  const seen = bitmask & COMPARE_UNORDERED_FLAG ? new SetCache() : undefined
 
   stack.set(array, other)
   stack.set(other, array)
@@ -59,19 +59,26 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
     }
     // Recursively compare arrays (susceptible to call stack limits).
     if (seen) {
-      if (!some(other, (othValue, othIndex) => {
-        if (!cacheHas(seen, othIndex) &&
-          (arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-          return seen.push(othIndex)
-        }
-      })) {
+      if (
+        !some(other, (othValue, othIndex) => {
+          if (
+            !cacheHas(seen, othIndex) &&
+            (arrValue === othValue ||
+              equalFunc(arrValue, othValue, bitmask, customizer, stack))
+          ) {
+            return seen.push(othIndex)
+          }
+        })
+      ) {
         result = false
         break
       }
-    } else if (!(
-      arrValue === othValue ||
-            equalFunc(arrValue, othValue, bitmask, customizer, stack)
-    )) {
+    } else if (
+      !(
+        arrValue === othValue ||
+        equalFunc(arrValue, othValue, bitmask, customizer, stack)
+      )
+    ) {
       result = false
       break
     }

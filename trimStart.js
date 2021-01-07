@@ -2,7 +2,7 @@ import castSlice from './.internal/castSlice.js'
 import charsStartIndex from './.internal/charsStartIndex.js'
 import stringToArray from './.internal/stringToArray.js'
 
-const methodName =  ''.trimLeft ? 'trimLeft' : 'trimStart'
+const methodName = ''.trimLeft ? 'trimLeft' : 'trimStart'
 
 /**
  * Removes leading whitespace or specified characters from `string`.
@@ -26,7 +26,7 @@ function trimStart(string, chars) {
     return string[methodName]()
   }
   if (!string || !chars) {
-    return (string || '')
+    return string || ''
   }
   const strSymbols = stringToArray(string)
   const start = charsStartIndex(strSymbols, stringToArray(chars))

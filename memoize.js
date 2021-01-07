@@ -41,10 +41,13 @@
  * memoize.Cache = WeakMap
  */
 function memoize(func, resolver) {
-  if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {
+  if (
+    typeof func !== 'function' ||
+    (resolver != null && typeof resolver !== 'function')
+  ) {
     throw new TypeError('Expected a function')
   }
-  const memoized = function(...args) {
+  const memoized = function (...args) {
     const key = resolver ? resolver.apply(this, args) : args[0]
     const cache = memoized.cache
 
@@ -55,7 +58,7 @@ function memoize(func, resolver) {
     memoized.cache = cache.set(key, result) || cache
     return result
   }
-  memoized.cache = new (memoize.Cache || Map)
+  memoized.cache = new (memoize.Cache || Map)()
   return memoized
 }
 

@@ -27,13 +27,13 @@ function slice(array, start, end) {
   end = end === undefined ? length : end
 
   if (start < 0) {
-    start = -start > length ? 0 : (length + start)
+    start = -start > length ? 0 : length + start
   }
   end = end > length ? length : end
   if (end < 0) {
     end += length
   }
-  length = start > end ? 0 : ((end - start) >>> 0)
+  length = start > end ? 0 : (end - start) >>> 0
   start >>>= 0
 
   let index = -1

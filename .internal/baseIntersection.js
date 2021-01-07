@@ -31,31 +31,33 @@ function baseIntersection(arrays, iteratee, comparator) {
       array = map(array, (value) => iteratee(value))
     }
     maxLength = Math.min(array.length, maxLength)
-    caches[othIndex] = !comparator && (iteratee || (length >= 120 && array.length >= 120))
-      ? new SetCache(othIndex && array)
-      : undefined
+    caches[othIndex] =
+      !comparator && (iteratee || (length >= 120 && array.length >= 120))
+        ? new SetCache(othIndex && array)
+        : undefined
   }
   array = arrays[0]
 
   let index = -1
   const seen = caches[0]
 
-  outer:
-  while (++index < length && result.length < maxLength) {
+  outer: while (++index < length && result.length < maxLength) {
     let value = array[index]
     const computed = iteratee ? iteratee(value) : value
 
-    value = (comparator || value !== 0) ? value : 0
-    if (!(seen
-      ? cacheHas(seen, computed)
-      : includes(result, computed, comparator)
-    )) {
+    value = comparator || value !== 0 ? value : 0
+    if (
+      !(seen
+        ? cacheHas(seen, computed)
+        : includes(result, computed, comparator))
+    ) {
       othIndex = othLength
       while (--othIndex) {
         const cache = caches[othIndex]
-        if (!(cache
-          ? cacheHas(cache, computed)
-          : includes(arrays[othIndex], computed, comparator))
+        if (
+          !(cache
+            ? cacheHas(cache, computed)
+            : includes(arrays[othIndex], computed, comparator))
         ) {
           continue outer
         }

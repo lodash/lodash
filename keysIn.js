@@ -29,4 +29,3 @@ function keysIn(object) {
 }
 
 export default keysIn
-

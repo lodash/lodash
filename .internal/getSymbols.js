@@ -16,7 +16,9 @@ function getSymbols(object) {
     return []
   }
   object = Object(object)
-  return nativeGetSymbols(object).filter((symbol) => propertyIsEnumerable.call(object, symbol))
+  return nativeGetSymbols(object).filter((symbol) =>
+    propertyIsEnumerable.call(object, symbol)
+  )
 }
 
 export default getSymbols

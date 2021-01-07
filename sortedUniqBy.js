@@ -15,9 +15,7 @@ import baseSortedUniq from './.internal/baseSortedUniq.js'
  * // => [1.1, 2.3]
  */
 function sortedUniqBy(array, iteratee) {
-  return (array != null && array.length)
-    ? baseSortedUniq(array, iteratee)
-    : []
+  return array != null && array.length ? baseSortedUniq(array, iteratee) : []
 }
 
 export default sortedUniqBy

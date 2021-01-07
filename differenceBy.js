@@ -29,7 +29,11 @@ function differenceBy(array, ...values) {
     iteratee = undefined
   }
   return isArrayLikeObject(array)
-    ? baseDifference(array, baseFlatten(values, 1, isArrayLikeObject, true), iteratee)
+    ? baseDifference(
+        array,
+        baseFlatten(values, 1, isArrayLikeObject, true),
+        iteratee
+      )
     : []
 }
 

@@ -38,8 +38,7 @@ function random(lower, upper, floating) {
     if (typeof upper === 'boolean') {
       floating = upper
       upper = undefined
-    }
-    else if (typeof lower === 'boolean') {
+    } else if (typeof lower === 'boolean') {
       floating = lower
       lower = undefined
     }
@@ -47,8 +46,7 @@ function random(lower, upper, floating) {
   if (lower === undefined && upper === undefined) {
     lower = 0
     upper = 1
-  }
-  else {
+  } else {
     lower = toFinite(lower)
     if (upper === undefined) {
       upper = lower
@@ -65,7 +63,10 @@ function random(lower, upper, floating) {
   if (floating || lower % 1 || upper % 1) {
     const rand = Math.random()
     const randLength = `${rand}`.length - 1
-    return Math.min(lower + (rand * (upper - lower + freeParseFloat(`1e-${randLength}`))), upper)
+    return Math.min(
+      lower + rand * (upper - lower + freeParseFloat(`1e-${randLength}`)),
+      upper
+    )
   }
   return lower + Math.floor(Math.random() * (upper - lower + 1))
 }

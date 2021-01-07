@@ -24,9 +24,9 @@ import stringSize from './.internal/stringSize.js'
  */
 function padEnd(string, length, chars) {
   const strLength = length ? stringSize(string) : 0
-  return (length && strLength < length)
-    ? (string + createPadding(length - strLength, chars))
-    : (string || '')
+  return length && strLength < length
+    ? string + createPadding(length - strLength, chars)
+    : string || ''
 }
 
 export default padEnd

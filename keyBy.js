@@ -24,9 +24,13 @@ import reduce from './reduce.js'
  * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
  */
 function keyBy(collection, iteratee) {
-  return reduce(collection, (result, value, key) => (
-    baseAssignValue(result, iteratee(value), value), result
-  ), {})
+  return reduce(
+    collection,
+    (result, value, key) => (
+      baseAssignValue(result, iteratee(value), value), result
+    ),
+    {}
+  )
 }
 
 export default keyBy

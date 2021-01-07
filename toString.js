@@ -32,13 +32,13 @@ function toString(value) {
   }
   if (Array.isArray(value)) {
     // Recursively convert values (susceptible to call stack limits).
-    return `${value.map((other) => other == null ? other : toString(other))}`
+    return `${value.map((other) => (other == null ? other : toString(other)))}`
   }
   if (isSymbol(value)) {
     return value.toString()
   }
   const result = `${value}`
-  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result
+  return result == '0' && 1 / value == -INFINITY ? '-0' : result
 }
 
 export default toString

@@ -23,8 +23,13 @@ function isError(value) {
     return false
   }
   const tag = getTag(value)
-  return tag == '[object Error]' || tag == '[object DOMException]' ||
-    (typeof value.message === 'string' && typeof value.name === 'string' && !isPlainObject(value))
+  return (
+    tag == '[object Error]' ||
+    tag == '[object DOMException]' ||
+    (typeof value.message === 'string' &&
+      typeof value.name === 'string' &&
+      !isPlainObject(value))
+  )
 }
 
 export default isError

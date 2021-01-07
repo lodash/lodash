@@ -26,10 +26,12 @@ function minBy(array, iteratee) {
   for (const value of array) {
     const current = iteratee(value)
 
-    if (current != null && (computed === undefined
-      ? (current === current && !isSymbol(current))
-      : (current < computed)
-    )) {
+    if (
+      current != null &&
+      (computed === undefined
+        ? current === current && !isSymbol(current)
+        : current < computed)
+    ) {
       computed = current
       result = value
     }

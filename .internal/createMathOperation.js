@@ -23,8 +23,7 @@ function createMathOperation(operator, defaultValue) {
     if (typeof value === 'string' || typeof other === 'string') {
       value = baseToString(value)
       other = baseToString(other)
-    }
-    else {
+    } else {
       value = baseToNumber(value)
       other = baseToNumber(other)
     }

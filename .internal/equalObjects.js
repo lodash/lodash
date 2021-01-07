@@ -59,10 +59,12 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
         : customizer(objValue, othValue, key, object, other, stack)
     }
     // Recursively compare objects (susceptible to call stack limits).
-    if (!(compared === undefined
-      ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
-      : compared
-    )) {
+    if (
+      !(compared === undefined
+        ? objValue === othValue ||
+          equalFunc(objValue, othValue, bitmask, customizer, stack)
+        : compared)
+    ) {
       result = false
       break
     }
@@ -73,10 +75,17 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
     const othCtor = other.constructor
 
     // Non `Object` object instances with different constructors are not equal.
-    if (objCtor != othCtor &&
-        ('constructor' in object && 'constructor' in other) &&
-        !(typeof objCtor === 'function' && objCtor instanceof objCtor &&
-          typeof othCtor === 'function' && othCtor instanceof othCtor)) {
+    if (
+      objCtor != othCtor &&
+      'constructor' in object &&
+      'constructor' in other &&
+      !(
+        typeof objCtor === 'function' &&
+        objCtor instanceof objCtor &&
+        typeof othCtor === 'function' &&
+        othCtor instanceof othCtor
+      )
+    ) {
       result = false
     }
   }

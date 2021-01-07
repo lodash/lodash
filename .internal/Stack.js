@@ -5,7 +5,6 @@ import MapCache from './MapCache.js'
 const LARGE_ARRAY_SIZE = 200
 
 class Stack {
-
   /**
    * Creates a stack cache object to store key-value pairs.
    *
@@ -14,7 +13,7 @@ class Stack {
    * @param {Array} [entries] The key-value pairs to cache.
    */
   constructor(entries) {
-    const data = this.__data__ = new ListCache(entries)
+    const data = (this.__data__ = new ListCache(entries))
     this.size = data.size
   }
 
@@ -24,7 +23,7 @@ class Stack {
    * @memberOf Stack
    */
   clear() {
-    this.__data__ = new ListCache
+    this.__data__ = new ListCache()
     this.size = 0
   }
 

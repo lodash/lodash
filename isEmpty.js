@@ -46,9 +46,15 @@ function isEmpty(value) {
   if (value == null) {
     return true
   }
-  if (isArrayLike(value) &&
-      (Array.isArray(value) || typeof value === 'string' || typeof value.splice === 'function' ||
-        isBuffer(value) || isTypedArray(value) || isArguments(value))) {
+  if (
+    isArrayLike(value) &&
+    (Array.isArray(value) ||
+      typeof value === 'string' ||
+      typeof value.splice === 'function' ||
+      isBuffer(value) ||
+      isTypedArray(value) ||
+      isArguments(value))
+  ) {
     return !value.length
   }
   const tag = getTag(value)

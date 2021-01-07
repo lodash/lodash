@@ -31,9 +31,8 @@ function findLastIndex(array, predicate, fromIndex) {
   let index = length - 1
   if (fromIndex !== undefined) {
     index = toInteger(fromIndex)
-    index = fromIndex < 0
-      ? Math.max(length + index, 0)
-      : Math.min(index, length - 1)
+    index =
+      fromIndex < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1)
   }
   return baseFindIndex(array, predicate, index, true)
 }

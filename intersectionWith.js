@@ -30,7 +30,7 @@ function intersectionWith(...arrays) {
   if (comparator) {
     mapped.pop()
   }
-  return (mapped.length && mapped[0] === arrays[0])
+  return mapped.length && mapped[0] === arrays[0]
     ? baseIntersection(mapped, undefined, comparator)
     : []
 }

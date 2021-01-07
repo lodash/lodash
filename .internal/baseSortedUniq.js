@@ -17,7 +17,8 @@ function baseSortedUniq(array, iteratee) {
   const result = []
 
   while (++index < length) {
-    const value = array[index], computed = iteratee ? iteratee(value) : value
+    const value = array[index],
+      computed = iteratee ? iteratee(value) : value
     if (!index || !eq(computed, seen)) {
       seen = computed
       result[resIndex++] = value === 0 ? 0 : value

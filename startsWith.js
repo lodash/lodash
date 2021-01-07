@@ -25,8 +25,7 @@ function startsWith(string, target, position) {
   position = position == null ? 0 : position
   if (position < 0) {
     position = 0
-  }
-  else if (position > length) {
+  } else if (position > length) {
     position = length
   }
   target = `${target}`

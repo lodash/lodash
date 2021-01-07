@@ -11,8 +11,11 @@ const spreadableSymbol = Symbol.isConcatSpreadable
  * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
  */
 function isFlattenable(value) {
-  return Array.isArray(value) || isArguments(value) ||
+  return (
+    Array.isArray(value) ||
+    isArguments(value) ||
     !!(value && value[spreadableSymbol])
+  )
 }
 
 export default isFlattenable

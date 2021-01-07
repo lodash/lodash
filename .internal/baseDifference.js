@@ -33,17 +33,15 @@ function baseDifference(array, values, iteratee, comparator) {
   if (comparator) {
     includes = arrayIncludesWith
     isCommon = false
-  }
-  else if (values.length >= LARGE_ARRAY_SIZE) {
+  } else if (values.length >= LARGE_ARRAY_SIZE) {
     includes = cacheHas
     isCommon = false
     values = new SetCache(values)
   }
-  outer:
-  for (let value of array) {
+  outer: for (let value of array) {
     const computed = iteratee == null ? value : iteratee(value)
 
-    value = (comparator || value !== 0) ? value : 0
+    value = comparator || value !== 0 ? value : 0
     if (isCommon && computed === computed) {
       let valuesIndex = valuesLength
       while (valuesIndex--) {
@@ -52,8 +50,7 @@ function baseDifference(array, values, iteratee, comparator) {
         }
       }
       result.push(value)
-    }
-    else if (!includes(values, computed, comparator)) {
+    } else if (!includes(values, computed, comparator)) {
       result.push(value)
     }
   }

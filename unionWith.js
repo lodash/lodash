@@ -26,7 +26,11 @@ import last from './last.js'
 function unionWith(...arrays) {
   let comparator = last(arrays)
   comparator = typeof comparator === 'function' ? comparator : undefined
-  return baseUniq(baseFlatten(arrays, 1, isArrayLikeObject, true), undefined, comparator)
+  return baseUniq(
+    baseFlatten(arrays, 1, isArrayLikeObject, true),
+    undefined,
+    comparator
+  )
 }
 
 export default unionWith

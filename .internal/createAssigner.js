@@ -14,9 +14,10 @@ function createAssigner(assigner) {
     let customizer = length > 1 ? sources[length - 1] : undefined
     const guard = length > 2 ? sources[2] : undefined
 
-    customizer = (assigner.length > 3 && typeof customizer === 'function')
-      ? (length--, customizer)
-      : undefined
+    customizer =
+      assigner.length > 3 && typeof customizer === 'function'
+        ? (length--, customizer)
+        : undefined
 
     if (guard && isIterateeCall(sources[0], sources[1], guard)) {
       customizer = length < 3 ? undefined : customizer

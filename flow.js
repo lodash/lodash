@@ -28,7 +28,7 @@ function flow(...funcs) {
       throw new TypeError('Expected a function')
     }
   }
-  return function(...args) {
+  return function (...args) {
     let index = 0
     let result = length ? funcs[index].apply(this, args) : args[0]
     while (++index < length) {

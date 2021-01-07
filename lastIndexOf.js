@@ -30,7 +30,8 @@ function lastIndexOf(array, value, fromIndex) {
   let index = length
   if (fromIndex !== undefined) {
     index = toInteger(fromIndex)
-    index = index < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1)
+    index =
+      index < 0 ? Math.max(length + index, 0) : Math.min(index, length - 1)
   }
   return value === value
     ? strictLastIndexOf(array, value, index)

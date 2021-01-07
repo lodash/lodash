@@ -21,7 +21,7 @@ import baseUniq from './.internal/baseUniq.js'
  */
 function uniqWith(array, comparator) {
   comparator = typeof comparator === 'function' ? comparator : undefined
-  return (array != null && array.length)
+  return array != null && array.length
     ? baseUniq(array, undefined, comparator)
     : []
 }

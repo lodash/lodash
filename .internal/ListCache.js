@@ -1,7 +1,6 @@
 import assocIndexOf from './assocIndexOf.js'
 
 class ListCache {
-
   /**
    * Creates an list cache object.
    *

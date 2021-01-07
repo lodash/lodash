@@ -29,7 +29,7 @@ function intersectionBy(...arrays) {
   } else {
     mapped.pop()
   }
-  return (mapped.length && mapped[0] === arrays[0])
+  return mapped.length && mapped[0] === arrays[0]
     ? baseIntersection(mapped, iteratee)
     : []
 }

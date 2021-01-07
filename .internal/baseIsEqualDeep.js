@@ -52,8 +52,8 @@ function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
     objIsObj = false
   }
   if (isSameTag && !objIsObj) {
-    stack || (stack = new Stack)
-    return (objIsArr || isTypedArray(object))
+    stack || (stack = new Stack())
+    return objIsArr || isTypedArray(object)
       ? equalArrays(object, other, bitmask, customizer, equalFunc, stack)
       : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack)
   }
@@ -65,14 +65,14 @@ function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
       const objUnwrapped = objIsWrapped ? object.value() : object
       const othUnwrapped = othIsWrapped ? other.value() : other
 
-      stack || (stack = new Stack)
+      stack || (stack = new Stack())
       return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack)
     }
   }
   if (!isSameTag) {
     return false
   }
-  stack || (stack = new Stack)
+  stack || (stack = new Stack())
   return equalObjects(object, other, bitmask, customizer, equalFunc, stack)
 }
 

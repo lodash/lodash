@@ -1,5 +1,3 @@
-import { type } from "jquery";
-
 function gcd(a, b) {
   if(typeof a !== 'number')
     return undefined;

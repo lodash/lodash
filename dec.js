@@ -19,11 +19,11 @@ import isNumber from './isNumber.js'
  * dec(7.3)
  * // => 6.3
  *
- * inc("foo")
+ * dec("foo")
  * // => false
  */
 function dec(number, decrease=1) {
-  return isNumber(number) ? number + decrease : false
+  return isNumber(number) ? number - decrease : false
 }
 
 export default dec

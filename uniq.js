@@ -1,5 +1,3 @@
-import baseUniq from './.internal/baseUniq.js'
-
 /**
  * Creates a duplicate-free version of an array, using
  * Set object.

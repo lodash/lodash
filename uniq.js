@@ -2,12 +2,9 @@ import baseUniq from './.internal/baseUniq.js'
 
 /**
  * Creates a duplicate-free version of an array, using
- * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * for equality comparisons, in which only the first occurrence of each element
- * is kept. The order of result values is determined by the order they occur
- * in the array.
+ * Set object.
  *
- * @since 0.1.0
+ * @since 0.2.0
  * @category Array
  * @param {Array} array The array to inspect.
  * @returns {Array} Returns the new duplicate free array.
@@ -19,7 +16,7 @@ import baseUniq from './.internal/baseUniq.js'
  */
 function uniq(array) {
   return (array != null && array.length)
-    ? baseUniq(array)
+    ? Array.from(new Set(array))
     : []
 }
 

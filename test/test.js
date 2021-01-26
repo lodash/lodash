@@ -23783,6 +23783,22 @@
 
       assert.deepEqual(actual, expected);
     });
+
+    QUnit.test('`_.`' + methodName + '` should prevent ReDoS', function(assert) {
+      assert.expect(2);
+
+      var largeStrLen = 50000,
+          largeStr = '1' + lodashStable.repeat(' ', largeStrLen) + '1',
+          maxMs = 1000,
+          startTime = lodashStable.now();
+
+      assert.deepEqual(_[methodName](largeStr), methodName == 'toNumber' ? NaN : 0);
+
+      var endTime = lodashStable.now(),
+          timeSpent = endTime - startTime;
+
+      assert.ok(timeSpent < maxMs, 'operation took ' + timeSpent + 'ms');
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -24366,6 +24382,22 @@
 
       assert.strictEqual(func(string, undefined), expected);
       assert.strictEqual(func(string, ''), string);
+    });
+
+    QUnit.test('`_.`' + methodName + '` should prevent ReDoS', function(assert) {
+      assert.expect(2);
+
+      var largeStrLen = 50000,
+          largeStr = 'A' + lodashStable.repeat(' ', largeStrLen) + 'A',
+          maxMs = 1000,
+          startTime = lodashStable.now();
+
+      assert.strictEqual(_[methodName](largeStr), largeStr);
+
+      var endTime = lodashStable.now(),
+          timeSpent = endTime - startTime;
+
+      assert.ok(timeSpent < maxMs, 'operation took ' + timeSpent + 'ms');
     });
 
     QUnit.test('`_.' + methodName + '` should work as an iteratee for methods like `_.map`', function(assert) {

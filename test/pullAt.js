@@ -28,6 +28,14 @@ describe('pullAt', function() {
     assert.deepStrictEqual(actual, [1, 3, 1, 2, 1, 3]);
   });
 
+  it('should work with negative indexes', function() {
+    var array = [1, 2, 3, 4, 5, 6, 7, 8],
+        actual = pullAt(array, [0, 2, -1]);
+
+    assert.deepStrictEqual(array, [2, 4, 5, 6, 7]);
+    assert.deepStrictEqual(actual, [1, 3, 8]);
+  });
+
   it('should use `undefined` for nonexistent indexes', function() {
     var array = ['a', 'b', 'c'],
         actual = pullAt(array, [2, 4, 0]);

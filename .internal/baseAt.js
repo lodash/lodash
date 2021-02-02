@@ -13,9 +13,10 @@ function baseAt(object, paths) {
   const length = paths.length
   const result = new Array(length)
   const skip = object == null
+  const objLength = object ? object.length : 0
 
   while (++index < length) {
-    result[index] = skip ? undefined : get(object, paths[index])
+    result[index] = skip ? undefined : get(object, paths[index] >= 0 ? paths[index] : paths[index] + objLength)
   }
   return result
 }

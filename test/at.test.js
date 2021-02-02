@@ -17,6 +17,16 @@ describe('at', function() {
     assert.deepStrictEqual(actual, ['c', undefined, 'a']);
   });
 
+  it('should work with negative indexes', function() {
+    var actual = at(array, [0, 4, -1]);
+    assert.deepStrictEqual(actual, ['a', undefined, 'c']);
+  });
+
+  it('should return `undefined` for nonexistent keys', function() {
+    var actual = at(array, [2, 4, 0]);
+    assert.deepStrictEqual(actual, ['c', undefined, 'a']);
+  });
+
   it('should work with non-index keys on array values', function() {
     var values = lodashStable.reject(empties, function(value) {
       return (value === 0) || lodashStable.isArray(value);

@@ -165,6 +165,16 @@
   /** Used to match words composed of alphanumeric characters. */
   var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
 
+  /**
+   * used to validate the template variable. Forbids chars changing the argument definition to inject things:
+   * - parenthesis and comma (as that controls the argument list)
+   * - = sign (default value)
+   * - curly braces and square braces, to forbid destructuring in the argument name
+   * - / (start of a comment hiding some parts)
+   * - whitespaces
+   */
+  var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/
+
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
 
@@ -14865,6 +14875,8 @@
       var variable = hasOwnProperty.call(options, 'variable') && options.variable;
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
+      } else if (reForbiddenIdentifierChars.test(variable)) {
+        throw new Error('Invalid variable name. It must be a valid EcmaScript identifier.')
       }
       // Cleanup code by stripping empty strings.
       source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)

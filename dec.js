@@ -11,7 +11,7 @@ import isNumber from './isNumber.js'
  * @example
  *
  * dec(4)
- * // => 5
+ * // => 3
  *
  * dec(5, 3)
  * // => 2

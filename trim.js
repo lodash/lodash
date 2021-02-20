@@ -1,12 +1,10 @@
 import baseToString from './_baseToString.js';
+import baseTrim from './_baseTrim.js';
 import castSlice from './_castSlice.js';
 import charsEndIndex from './_charsEndIndex.js';
 import charsStartIndex from './_charsStartIndex.js';
 import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
-
-/** Used to match leading and trailing whitespace. */
-var reTrim = /^\s+|\s+$/g;
 
 /**
  * Removes leading and trailing whitespace or specified characters from `string`.
@@ -33,7 +31,7 @@ var reTrim = /^\s+|\s+$/g;
 function trim(string, chars, guard) {
   string = toString(string);
   if (string && (guard || chars === undefined)) {
-    return string.replace(reTrim, '');
+    return baseTrim(string);
   }
   if (!string || !(chars = baseToString(chars))) {
     return string;

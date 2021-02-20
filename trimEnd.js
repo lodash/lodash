@@ -3,9 +3,7 @@ import castSlice from './_castSlice.js';
 import charsEndIndex from './_charsEndIndex.js';
 import stringToArray from './_stringToArray.js';
 import toString from './toString.js';
-
-/** Used to match leading and trailing whitespace. */
-var reTrimEnd = /\s+$/;
+import trimmedEndIndex from './_trimmedEndIndex.js';
 
 /**
  * Removes trailing whitespace or specified characters from `string`.
@@ -29,7 +27,7 @@ var reTrimEnd = /\s+$/;
 function trimEnd(string, chars, guard) {
   string = toString(string);
   if (string && (guard || chars === undefined)) {
-    return string.replace(reTrimEnd, '');
+    return string.slice(0, trimmedEndIndex(string) + 1);
   }
   if (!string || !(chars = baseToString(chars))) {
     return string;

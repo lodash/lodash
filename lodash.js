@@ -7958,6 +7958,8 @@
 
     /**
      * Creates a slice of `array` from `start` up to, but not including, `end`.
+     * A negative value for `start` or `end` will be treated as an offset from
+     * the end.
      *
      * **Note:** This method is used instead of
      * [`Array#slice`](https://mdn.io/Array/slice) to ensure dense arrays are
@@ -7971,6 +7973,18 @@
      * @param {number} [start=0] The start position.
      * @param {number} [end=array.length] The end position.
      * @returns {Array} Returns the slice of `array`.
+     * @example
+     *
+     * var array = [1, 2, 3, 4]
+     *
+     * _.slice(array, 2)
+     * // => [3, 4]
+     * 
+     * _.slice(array, 2, 3)
+     * // => [3]
+     * 
+     * _.slice(array, -2)
+     * // => [3, 4]
      */
     function slice(array, start, end) {
       var length = array == null ? 0 : array.length;

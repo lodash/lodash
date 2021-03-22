@@ -14,10 +14,10 @@ function createMathOperation(operator, defaultValue) {
     if (value === undefined && other === undefined) {
       return defaultValue
     }
-    if (value !== undefined && other === undefined) {
+    if (other === undefined) {
       return value
     }
-    if (other !== undefined && value === undefined) {
+    if (value === undefined) {
       return other
     }
     if (typeof value === 'string' || typeof other === 'string') {

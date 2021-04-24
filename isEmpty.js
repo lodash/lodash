@@ -46,11 +46,32 @@ function isEmpty(value) {
   if (value == null) {
     return true
   }
+
+
   if (isArrayLike(value) &&
       (Array.isArray(value) || typeof value === 'string' || typeof value.splice === 'function' ||
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {
     return !value.length
   }
+
+  if (value instanceof ArrayBuffer) {
+    const view = new DataView(value)
+    if (view.byteOffset == 0) {
+      return true
+    }
+    return false
+  }
+  
+  if (value instanceof SharedArrayBuffer) {
+    const view = new DataView(value)
+    if (view.byteOffset ==0) {
+      return true
+    }
+    return false
+
+  }
+
+
   const tag = getTag(value)
   if (tag == '[object Map]' || tag == '[object Set]') {
     return !value.size

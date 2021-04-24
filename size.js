@@ -30,9 +30,20 @@ function size(collection) {
   if (collection == null) {
     return 0
   }
+  
+  if (collection instanceof (ArrayBuffer)) {
+    return collection.byteLength
+  }
+
+  if (collection instanceof (SharedArrayBuffer)) {
+    return collection.byteLength
+  }
+
   if (isArrayLike(collection)) {
     return isString(collection) ? stringSize(collection) : collection.length
   }
+
+
   const tag = getTag(collection)
   if (tag == mapTag || tag == setTag) {
     return collection.size

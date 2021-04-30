@@ -102,6 +102,7 @@ function initCloneByTag(object, tag, isDeep) {
       return cloneTypedArray(object, isDeep)
 
     case mapTag:
+    case setTag:
       return new Ctor
 
     case numberTag:
@@ -110,9 +111,6 @@ function initCloneByTag(object, tag, isDeep) {
 
     case regexpTag:
       return cloneRegExp(object)
-
-    case setTag:
-      return new Ctor
 
     case symbolTag:
       return cloneSymbol(object)

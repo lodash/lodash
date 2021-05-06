@@ -4,7 +4,7 @@ import baseInRange from './.internal/baseInRange.js'
  * Checks if `number` is between `start` and up to, but not including, `end`. If
  * `end` is not specified, it's set to `start` with `start` then set to `0`.
  * If `start` is greater than `end` the params are swapped to support
- * negative ranges.
+ * backward ranges.
  *
  * @since 3.3.0
  * @category Number

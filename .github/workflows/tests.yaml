@@ -4,11 +4,11 @@ on: [push, pull_request]
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-version
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [15.x]
 
     steps:
     - uses: actions/checkout@v2

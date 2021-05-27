@@ -7,7 +7,7 @@ import toString from './toString.js'
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
- * @returns {string} Returns the kebab cased string.
+ * @returns {string} Returns the pascal cased string.
  * @see camelCase, lowerCase, snakeCase, startCase, upperCase, upperFirst
  * @example
  *

@@ -21,10 +21,10 @@ import toString from './toString.js'
  * // => 'Foo-bar'
  */
 const pascalCase = (string) => {
-  const text= words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => (
+    const text = words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => (
         result + (index ? '-' : '') + word.toLowerCase()
-      ), '')
-      return text[0].toUpperCase()+text.substr(1);
-    }
-  
-  export default pascalCase
+    ), '')
+    return text[0].toUpperCase() + text.substr(1);
+}
+
+export default pascalCase

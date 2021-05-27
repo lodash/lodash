@@ -4,7 +4,6 @@ import toString from './toString.js'
 /**
  * Converts `string` to [pascal case](https://wiki.c2.com/?PascalCase).
  *
- * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
  * @returns {string} Returns the pascal cased string.

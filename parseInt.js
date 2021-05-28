@@ -30,7 +30,7 @@ function parseInt(string, radix) {
   } else if (radix) {
     radix = +radix
   }
-  return nativeParseInt(`${string}`.replace(reTrimStart, ''), radix || 0)
+  return nativeParseInt(`${string}`.replace(reTrimStart, ''), radix)
 }
 
 export default parseInt

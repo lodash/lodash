@@ -28,8 +28,10 @@ function baseSortedIndex(array, value, retHighest) {
       if (computed !== null && !isSymbol(computed) &&
           (retHighest ? (computed <= value) : (computed < value))) {
         low = mid + 1
-      } else {
+      } else if (computed > value) {
         high = mid
+      } else {
+        return high
       }
     }
     return high

@@ -58,6 +58,9 @@ function isEmpty(value) {
   if (isPrototype(value)) {
     return !Object.keys(value).length
   }
+  if (typeof value.getMonth === 'function') {
+    return false
+  }
   for (const key in value) {
     if (hasOwnProperty.call(value, key)) {
       return false

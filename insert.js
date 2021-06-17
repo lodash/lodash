@@ -12,31 +12,30 @@
  * insert('abcabc', 'de', 3)
  * // => 'abcdeabc'
  *
- * insert('sin()', 'cos()', 4)
- * // => 'sin(cos())'
- *
  * insert('abc', 'de', 0)
  * // => 'deabc'
- * 
- * insert("abc", "de", -1)
+ *
+ * insert('abc', 'de', -1)
  * // => 'abdec'
- * 
+ *
  * insert('abc', '', 0)
  * // => 'abc'
- * 
+ *
+ * insert('abc', '', -1)
+ * // => 'abc'
+ *
  * insert('abc', '')
  * // => 'abc'
- * 
- */  
+ */
 
-function insert(main_string, ins_string, pos) {
-   if(typeof(pos) === "undefined") {
-     pos = 0;
-   }
-    if(typeof(ins_string) === "undefined") {
-     ins_string = '';
-   }
-    return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
+function insert(mainString, subString, pos) {
+  if (typeof pos === 'undefined') {
+    pos = 0
+  }
+  if (typeof subString === 'undefined') {
+    subString = ''
+  }
+  return mainString ? mainString.slice(0, pos) + subString + mainString.slice(pos) : ''
 }
 
 export default insert

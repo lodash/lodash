@@ -20,7 +20,7 @@ import truncate from '../truncate.js';
 import unescape from '../unescape.js';
 import upperCase from '../upperCase.js';
 import upperFirst from '../upperFirst';
-
+import insert from '../insert';
 
 const methods = {
   camelCase,
@@ -40,7 +40,8 @@ const methods = {
   truncate,
   unescape,
   upperCase,
-  upperFirst
+  upperFirst,
+  insert
 }
 
 
@@ -63,7 +64,8 @@ describe('"Strings" category methods', function() {
     'truncate',
     'unescape',
     'upperCase',
-    'upperFirst'
+    'upperFirst',
+    'insert'
   ];
 
   lodashStable.each(stringMethods, function(methodName) {

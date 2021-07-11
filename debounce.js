@@ -23,6 +23,16 @@ import root from './.internal/root.js'
  * invocation will be deferred until the next frame is drawn (typically about
  * 16ms).
  *
+ * If the debounced function is called with different parameters and the calls
+ * are reduced to a single invocation, then `func` is invoked with the last/latest
+ * parameters used. The `resolveArgs` option can be used to resolve arguments that
+ * `func` is invoked with either so that the first/former arguments are used
+ * instead, or so that an any entirely different / derived arguments are used.
+ * The `resolveArgs` function will be called with `formerCallArgs` and
+ * `latterCallArgs` arguments and should return the arguments to be used, so
+ * `function resolveArgs (former, latter) { return latter }` would be the
+ * default behaviour.
+ *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `debounce` and `throttle`.
  *
@@ -64,6 +74,8 @@ import root from './.internal/root.js'
  */
 function debounce(func, wait, options) {
   let lastArgs,
+    formerArgs,
+    latterArgs,
     lastThis,
     maxWait,
     result,
@@ -74,6 +86,7 @@ function debounce(func, wait, options) {
   let leading = false
   let maxing = false
   let trailing = true
+  let resolveArgs = resolveArgsLast
 
   // Bypass `requestAnimationFrame` by explicitly setting `wait=0`.
   const useRAF = (!wait && wait !== 0 && typeof root.requestAnimationFrame === 'function')
@@ -87,13 +100,18 @@ function debounce(func, wait, options) {
     maxing = 'maxWait' in options
     maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait
     trailing = 'trailing' in options ? !!options.trailing : trailing
+    resolveArgs = 'resolveArgs' in options ? options.resolveArgs : resolveArgs
+  }
+
+  function resolveArgsLast(_formerCallArgs, latterCallArgs) {
+    return latterCallArgs
   }
 
   function invokeFunc(time) {
-    const args = lastArgs
+    const args = latterArgs === undefined ? lastArgs : resolveArgs(formerArgs, latterArgs)
     const thisArg = lastThis
 
-    lastArgs = lastThis = undefined
+    formerArgs = latterArgs = lastArgs = lastThis = undefined
     lastInvokeTime = time
     result = func.apply(thisArg, args)
     return result
@@ -161,7 +179,7 @@ function debounce(func, wait, options) {
     if (trailing && lastArgs) {
       return invokeFunc(time)
     }
-    lastArgs = lastThis = undefined
+    formerArgs = latterArgs = lastArgs = lastThis = undefined
     return result
   }
 
@@ -170,7 +188,7 @@ function debounce(func, wait, options) {
       cancelTimer(timerId)
     }
     lastInvokeTime = 0
-    lastArgs = lastCallTime = lastThis = timerId = undefined
+    formerArgs = latterArgs = lastArgs = lastCallTime = lastThis = timerId = undefined
   }
 
   function flush() {
@@ -188,6 +206,8 @@ function debounce(func, wait, options) {
     lastArgs = args
     lastThis = this
     lastCallTime = time
+    latterArgs = formerArgs === undefined ? undefined : args
+    formerArgs = formerArgs === undefined ? args : formerArgs
 
     if (isInvoking) {
       if (timerId === undefined) {

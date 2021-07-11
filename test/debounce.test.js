@@ -247,4 +247,74 @@ describe('debounce', function() {
       done();
     }, 64);
   });
+
+  it('should invoke the trailing call with the latest arguments and `this` binding', function(done) {
+    var actual,
+        callCount = 0,
+        object1 = {'x': 'y'},
+        object2 = {'x': 'z'};
+
+    var debounced = debounce(function(value) {
+      actual = [this];
+      push.apply(actual, arguments);
+      return ++callCount != 2;
+    }, 32, { 'leading': true, 'maxWait': 64 });
+
+    if (!debounced.call(object1, 'a')) {
+      throw Error('should not happen; test error');
+    }
+    assert.deepStrictEqual(actual, [object1, 'a']);
+
+    while (true) {
+      if (!debounced.call(object2, 'b')) {
+        break;
+      }
+    }
+    setTimeout(function() {
+      assert.strictEqual(callCount, 2);
+      assert.deepStrictEqual(actual, [object2, 'b']);
+      done();
+    }, 64);
+  });
+
+  it('should invoke the trailing call with "resolved" arguments if `resolveArgs` used', function(done) {
+    var actual,
+        callCount = 0,
+        object1 = {'x': 'y'},
+        object2 = {'x': 'z'};
+
+    function resolveArgs (formerCallArgs, latterCallArgs) {
+      assert.deepStrictEqual(formerCallArgs, ['a']);
+      assert.deepStrictEqual(latterCallArgs, ['b']);
+      return latterCallArgs === undefined ? formerCallArgs : ['ab'];
+    }
+
+    var debounced = debounce(function(value) {
+      actual = [this];
+      push.apply(actual, arguments);
+      return ++callCount != 2;
+    }, 32, { 'leading': true, 'maxWait': 64, 'resolveArgs': resolveArgs });
+
+    if (!debounced.call(object1, 'a')) {
+      throw Error('should not happen; test error');
+    }
+    assert.deepStrictEqual(actual, [object1, 'a']);
+    // call again with ['a'] parameters, because it is a 'leading' debounce to ensure
+    // there is actually a former/latter parameter conflict the second time around
+    if (!debounced.call(object1, 'a')) {
+      throw Error('should not happen; test error');
+    }
+    assert.deepStrictEqual(actual, [object1, 'a']);
+
+    while (true) {
+      if (!debounced.call(object2, 'b')) {
+        break;
+      }
+    }
+    setTimeout(function() {
+      assert.strictEqual(callCount, 2);
+      assert.deepStrictEqual(actual, [object2, 'ab']);
+      done();
+    }, 64);
+  });
 });

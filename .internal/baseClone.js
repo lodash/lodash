@@ -2,7 +2,7 @@ import Stack from './Stack.js'
 import arrayEach from './arrayEach.js'
 import assignValue from './assignValue.js'
 import cloneBuffer from './cloneBuffer.js'
-import copyArray from './copyArray.js'
+import copyArrayWithOwnProperty from './copyArrayWithOwnProperty'
 import copyObject from './copyObject.js'
 import cloneArrayBuffer from './cloneArrayBuffer.js'
 import cloneDataView from './cloneDataView.js'
@@ -174,7 +174,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   if (isArr) {
     result = initCloneArray(value)
     if (!isDeep) {
-      return copyArray(value, result)
+      return copyArrayWithOwnProperty(value, result)
     }
   } else {
     const isFunc = typeof value === 'function'

@@ -90,6 +90,15 @@ describe('clone methods', function() {
     assert.ok(actual !== array && actual[0] === array[0]);
   });
 
+  it('`_.cloneDeep` should clone properties', function() {
+    var array = [1];
+    array['name'] = 'source'
+    var actual = _.clone(array);
+
+    assert.deepStrictEqual(actual, array);
+    assert.ok(actual !== array && actual[0] === array[0] && array['name'] === actual['name']);
+  });
+
   it('`_.cloneDeep` should deep clone objects with circular references', function() {
     var object = {
       'foo': { 'b': { 'c': { 'd': {} } } },

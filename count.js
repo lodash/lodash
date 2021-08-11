@@ -16,7 +16,7 @@ import countBy from './countBy.js'
  * countBy(users, value => value.active);
  * // => { 'blue': 2, 'red': 3, 'green': 1 }
  */
-function count(collection, iteratee) {
+function count(collection) {
   return countBy(collection, value => value)
 }
 

@@ -2,8 +2,8 @@
  * This method is to find the longest element in a Array
  *
  * @since 5.0.0
- * @category Collection
- * @param {Array} collection The collection to inspect.
+ * @category Array
+ * @param {Array} collection The array to inspect.
  * @returns {string} Returns  longest element in a Array
  * @example
  *

@@ -3,19 +3,20 @@
  *
  * @private
  * @param {Array} source The array to copy values from.
- * @param {Array} [array=[]] The array to copy values to.
+ * @param {Array} [target=[]] The array to copy values to.
  * @returns {Array} Returns `array`.
  */
-function copyArrayWithOwnProperty(source, array) {
-  const length = source?.length ?? 0
-  array || (array = new Array(length))
+function copyArrayWithOwnProperty(source, target) {
+  if (!Array.isArray(source)) throw new Error('source is not an array!')
+  const length = source.length
+  target || (target = new Array(length))
 
   for (let key in source) {
-    if (array.hasOwnProperty(key)) {
-      array[key] = source[key]
+    if (target.hasOwnProperty(key)) {
+      target[key] = source[key]
     }
   }
-  return array
+  return target
 }
 
 export default copyArrayWithOwnProperty

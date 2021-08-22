@@ -7,7 +7,7 @@
  * @returns {Array} Returns `array`.
  */
 function copyArrayWithOwnProperty(source, array) {
-  const length = source.length
+  const length = source?.length ?? 0
   array || (array = new Array(length))
 
   for (let key in source) {

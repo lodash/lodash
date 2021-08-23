@@ -8,19 +8,21 @@ describe('last', function () {
     assert.strictEqual(last(array), 'abcde')
   })
 
-  it('should return the longest element', function () {
+  it('should return `undefined` if given an empty Array', function () {
     var array = [];
     assert.strictEqual(last(array), undefined)
   })
 
-  it('should return the longest element', function () {
+  it('should return `undefined` when the input is null', function () {
     var array = null;
     assert.strictEqual(last(array), undefined)
   })
 
-  it('should return the longest element', function () {
+  it('should return `undefined` when the input is undefined', function () {
     var array = undefined
     assert.strictEqual(last(array), undefined)
   })
+
+
 
 })

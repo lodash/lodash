@@ -11,11 +11,17 @@
  * // => "abcde"
  */
 function findLongest(array) {
-  if (!array.length) return "";
-  const len = array.map(item => item.length);
-  const max = Math.max(...len);
-  const index = array.findIndex(item => item.length === max);
-  return array[index];
+  if (!Array.isArray(array)) {
+    if (array === '' || array === undefined || array === null) {
+      return undefined
+    }
+    throw new TypeError('Expected an Array')
+  }
+  if (!array.length) { return undefined }
+  const len = array.map(item => item.length)
+  const max = Math.max(...len)
+  const index = array.findIndex(item => item.length === max)
+  return array[index]
 }
 
-export default findLongest;
+export default findLongest

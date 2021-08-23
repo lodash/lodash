@@ -1,7 +1,7 @@
 import assert from 'assert'
 import last from '../findLongest'
 
-describe('last', function () {
+describe('findLongest', function () {
 
   it('should return the longest element', function () {
     var array = ['abc', 'abcd', 'abcde']

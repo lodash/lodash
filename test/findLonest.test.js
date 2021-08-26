@@ -13,16 +13,20 @@ describe('findLongest', function () {
     assert.strictEqual(last(array), undefined)
   })
 
-  it('should return `undefined` when the input is null', function () {
+
+  it('should throw a TypeError  when the input is null', function () {
     var array = null;
-    assert.strictEqual(last(array), undefined)
+    assert.throws(function () { last(array); }, TypeError);
+  });
+
+  it('should throw a TypeError  when the input is empty string', function () {
+    var array = ""
+    assert.throws(function () { last(array); }, TypeError);
   })
 
-  it('should return `undefined` when the input is undefined', function () {
+  it('should throw a TypeError  when the input is undefined', function () {
     var array = undefined
-    assert.strictEqual(last(array), undefined)
+    assert.throws(function () { last(array); }, TypeError);
   })
-
-
 
 })

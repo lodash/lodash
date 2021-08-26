@@ -3,7 +3,7 @@
  *
  * @since 5.0.0
  * @category Array
- * @param {Array} collection The array to inspect.
+ * @param {Array} array The array to inspect.
  * @returns {string} Returns  longest element in a Array
  * @example
  *
@@ -12,9 +12,6 @@
  */
 function findLongest(array) {
   if (!Array.isArray(array)) {
-    if (array === '' || array === undefined || array === null) {
-      return undefined
-    }
     throw new TypeError('Expected an Array')
   }
   if (!array.length) { return undefined }

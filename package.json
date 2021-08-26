@@ -14,10 +14,10 @@
     "validate": "npm run style && npm run test"
   },
   "devDependencies": {
+    "mocha": "^5.2.0",
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.22.1",
-    "esm": "^3.2.25",
     "lodash": "4.17.20",
-    "mocha": "^5.2.0"
+    "esm": "^3.2.25"
   }
 }

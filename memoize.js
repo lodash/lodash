@@ -15,6 +15,7 @@
  * @category Function
  * @param {Function} func The function to have its output memoized.
  * @param {Function} [resolver] The function to resolve the cache key.
+ * @param {(Map|WeakMap)} [cacheConstructor] The cache constructor to override the default
  * @returns {Function} Returns the new memoized function.
  * @example
  *
@@ -39,11 +40,19 @@
  *
  * // Replace `memoize.Cache`.
  * memoize.Cache = WeakMap
+ * 
+ * // Override Cache Constructor for an invocation
+ * const memoized = memoize(() => {}, () => {}, WeakMap)
  */
-function memoize(func, resolver) {
+function memoize(func, resolver, cacheConstructor) {
   if (typeof func !== 'function' || (resolver != null && typeof resolver !== 'function')) {
     throw new TypeError('Expected a function')
   }
+
+  if(cacheConstructor && !(cacheConstructor instanceof Map || cacheConstructor instanceof WeakMap)) {
+    throw new TypeError('Expected a Map or WeakMap as cacheConstructor')
+  }
+
   const memoized = function(...args) {
     const key = resolver ? resolver.apply(this, args) : args[0]
     const cache = memoized.cache
@@ -55,7 +64,7 @@ function memoize(func, resolver) {
     memoized.cache = cache.set(key, result) || cache
     return result
   }
-  memoized.cache = new (memoize.Cache || Map)
+  memoized.cache = new (cacheConstructor || memoize.Cache)
   return memoized
 }
 

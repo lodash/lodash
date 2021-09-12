@@ -175,4 +175,20 @@ describe('memoize', function() {
 
     memoize.Cache = oldCache;
   });
+
+  it('should be able to override the Cache Constructor', function() {
+    var memoized = memoize(function(object) {
+      return object.id;
+    }, null, Map);
+
+    var key1 = { 'id': 'a' },
+        key2 = { 'id': 'b' };
+
+    memoized(key1);
+    memoized(key2);
+
+    var cache = memoized.cache;
+    assert.strictEqual(cache.get(key1), key1.id);
+    assert.strictEqual(cache.get(key2), key2.id);
+  });
 });

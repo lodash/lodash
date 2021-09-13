@@ -5,9 +5,20 @@
  * @param {Array} array The array to repeat
  * @param {Number} times An integer specifying how many times elements of the existing array should be repeated
  * @returns {Array} an array containing the elements of the existing array repeated
- * @example fillArray([1, 2, 3], 3) // returns [1, 2, 3, 1, 2, 3, 1, 2, 3]
+ * @example
+ *
+ * arrayRepeat([1, 2, 3], 3)
+ * // => [1, 2, 3, 1, 2, 3, 1, 2, 3]
  */
-function fillArray(array, times) {
+function arrayRepeat(array, times) {
+  if (!Array.isArray(array)) {
+    throw new TypeError('Expected array argument to be an array')
+  }
+
+  if (!Number.isInteger(times)) {
+    throw new TypeError('Expected times argument to be an integer')
+  }
+
   let filledArray = []
   for (let index = 0; index < times; index++) {
     filledArray = [...filledArray, ...array]
@@ -15,4 +26,4 @@ function fillArray(array, times) {
   return filledArray
 }
 
-export default fillArray
+export default arrayRepeat

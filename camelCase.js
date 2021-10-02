@@ -3,7 +3,7 @@ import words from './words.js'
 import toString from './toString.js'
 
 /**
- * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
+ * Converts `string` to [camel case](https://en.wikipedia.org/wiki/Camel_case).
  *
  * @since 3.0.0
  * @category String

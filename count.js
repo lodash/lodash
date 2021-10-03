@@ -13,7 +13,7 @@ import countBy from './countBy.js'
  *
  * const colors = ['blue', 'red', 'green', 'red', 'red', 'blue']
  *
- * countBy(users, value => value.active);
+ * countBy(colors, value => value.active);
  * // => { 'blue': 2, 'red': 3, 'green': 1 }
  */
 function count(collection) {

@@ -11,7 +11,7 @@
  * compact([0, 1, false, 2, '', 3])
  * // => [1, 2, 3]
  */
-function compact(array) {
+function compact(array,falseyValues=[0,'',false,undefined,NaN,null]) {
   let resIndex = 0
   const result = []
 
@@ -20,7 +20,7 @@ function compact(array) {
   }
 
   for (const value of array) {
-    if (value) {
+    if (!falseyValues.includes(value)) {
       result[resIndex++] = value
     }
   }

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import lodashStable from 'lodash';
-import { stubTrue, burredLetters, deburredLetters } from './utils.js';
+import { stubTrue } from './utils.js';
 import camelCase from '../camelCase.js';
 import kebabCase from '../kebabCase.js';
 import lowerCase from '../lowerCase.js';

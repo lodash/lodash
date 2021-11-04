@@ -20,19 +20,20 @@ import toInteger from './toInteger.js'
  * // => [['a', 'b', 'c'], ['d']]
  */
 function chunk(array, size = 1) {
-  size = Math.max(toInteger(size), 0)
-  const length = array == null ? 0 : array.length
-  if (!length || size < 1) {
-    return []
-  }
-  let index = 0
-  let resIndex = 0
-  const result = new Array(Math.ceil(length / size))
+  let start = 0
+  let count = 0
+  let end = 0
 
-  while (index < length) {
-    result[resIndex++] = slice(array, index, (index += size))
+  let chunkedArray = []
+
+  for(let i = 0; i < array.length; i++, count += size){
+      if(count < array.length){
+          start = count
+          end = count + size
+          chunkedArray = [...chunkedArray, array.slice(start, end)]
+      }
   }
-  return result
+  return chunkedArray;
 }
 
 export default chunk

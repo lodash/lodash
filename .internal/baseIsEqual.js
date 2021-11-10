@@ -8,7 +8,7 @@ import isObjectLike from '../isObjectLike.js'
  * @private
  * @param {*} value The value to compare.
  * @param {*} other The other value to compare.
- * @param {boolean} bitmask The bitmask flags.
+ * @param {number} bitmask The bitmask flags.
  *  1 - Unordered comparison
  *  2 - Partial comparison
  * @param {Function} [customizer] The function to customize comparisons.

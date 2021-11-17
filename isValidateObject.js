@@ -4,6 +4,7 @@ import isEmpty from './isEmpty';
 import isNumber from './isNumber';
 import isObjectLike from './isObjectLike.js';
 import keys from './keys';
+
 /**
  * Checks if `object` is `whole non empty value`.
  *
@@ -54,11 +55,11 @@ function isValidateObject(object) {
   
   if (isObjectLike(object)) {
     const _keys = keys(object);
-    if (_keys.length < 1) return false;
+    if (_keys.length < 1) return false
     return every(_keys, (key) => validate(object[key]))
   }
   
-  return false;
+  return false
 }
 
 export default isValidateObject

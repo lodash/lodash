@@ -24,7 +24,7 @@ describe('isValidateObject', function() {
     assert.strictEqual(isValidateObject(['', '', '']), false);
     assert.strictEqual(isValidateObject([null, null, null]), false);
     assert.strictEqual(isValidateObject([undefined, undefined, undefined]), false);
-    assert.strictEqual(isValidateObject([null, undefined, null]), false);
+    assert.strictEqual(isValidateObject([null, undefined, NaN]), false);
     assert.strictEqual(isValidateObject([1, 'foo', null]), false);
     assert.strictEqual(isValidateObject([1, 'foo', undefined]), false);
     assert.strictEqual(isValidateObject([1, undefined, 3]), false);

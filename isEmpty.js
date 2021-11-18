@@ -4,6 +4,7 @@ import isArrayLike from './isArrayLike.js'
 import isBuffer from './isBuffer.js'
 import isPrototype from './.internal/isPrototype.js'
 import isTypedArray from './isTypedArray.js'
+import isNumber from './isNumber.js'
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -30,8 +31,11 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * isEmpty(true)
  * // => true
  *
- * isEmpty(1)
+ * isEmpty(0)
  * // => true
+ *
+ * isEmpty(4)
+ * // => false
  *
  * isEmpty([1, 2, 3])
  * // => false
@@ -46,6 +50,11 @@ function isEmpty(value) {
   if (value == null) {
     return true
   }
+  
+  if(isNumber(value) && value) {
+    return false
+  }
+  
   if (isArrayLike(value) &&
       (Array.isArray(value) || typeof value === 'string' || typeof value.splice === 'function' ||
         isBuffer(value) || isTypedArray(value) || isArguments(value))) {

@@ -830,7 +830,7 @@
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
-    return value === value
+    return !baseIsNaN(value)
       ? strictIndexOf(array, value, fromIndex)
       : baseFindIndex(array, baseIsNaN, fromIndex);
   }
@@ -966,8 +966,8 @@
 
     while (++index < length) {
       var current = iteratee(array[index]);
-      if (current !== undefined) {
-        result = result === undefined ? current : (result + current);
+      if (!isUndefined(current)) {
+        result = isUndefined(result) ? current : (result + current);
       }
     }
     return result;
@@ -1047,6 +1047,27 @@
     return arrayMap(props, function(key) {
       return object[key];
     });
+  }
+
+  /**
+   * Checks if `value` is `undefined`.
+   *
+   * @static
+   * @since 0.1.0
+   * @memberOf _
+   * @category Lang
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
+   * @example
+   *
+   * _.isUndefined(void 0);
+   * // => true
+   *
+   * _.isUndefined(null);
+   * // => false
+   */
+  function isUndefined(value) {
+    return value === undefined;
   }
 
   /**
@@ -2011,7 +2032,7 @@
      */
     function hashHas(key) {
       var data = this.__data__;
-      return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
+      return nativeCreate ? !isUndefined(data[key]) : hasOwnProperty.call(data, key);
     }
 
     /**
@@ -2027,7 +2048,7 @@
     function hashSet(key, value) {
       var data = this.__data__;
       this.size += this.has(key) ? 0 : 1;
-      data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+      data[key] = (nativeCreate && isUndefined(value)) ? HASH_UNDEFINED : value;
       return this;
     }
 
@@ -2494,8 +2515,8 @@
      * @param {*} value The value to assign.
      */
     function assignMergeValue(object, key, value) {
-      if ((value !== undefined && !eq(object[key], value)) ||
-          (value === undefined && !(key in object))) {
+      if ((!isUndefined(value) && !eq(object[key], value)) ||
+          (isUndefined(value) && !(key in object))) {
         baseAssignValue(object, key, value);
       }
     }
@@ -2513,7 +2534,7 @@
     function assignValue(object, key, value) {
       var objValue = object[key];
       if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
-          (value === undefined && !(key in object))) {
+          (isUndefined(value) && !(key in object))) {
         baseAssignValue(object, key, value);
       }
     }
@@ -2632,11 +2653,11 @@
      * @returns {number} Returns the clamped number.
      */
     function baseClamp(number, lower, upper) {
-      if (number === number) {
-        if (upper !== undefined) {
+      if (!baseIsNaN(number)) {
+        if (!isUndefined(upper)) {
           number = number <= upper ? number : upper;
         }
-        if (lower !== undefined) {
+        if (!isUndefined(lower)) {
           number = number >= lower ? number : lower;
         }
       }
@@ -2668,7 +2689,7 @@
       if (customizer) {
         result = object ? customizer(value, key, object, stack) : customizer(value);
       }
-      if (result !== undefined) {
+      if (!isUndefined(result)) {
         return result;
       }
       if (!isObject(value)) {
@@ -2768,7 +2789,7 @@
             predicate = source[key],
             value = object[key];
 
-        if ((value === undefined && !(key in object)) || !predicate(value)) {
+        if ((isUndefined(value) && !(key in object)) || !predicate(value)) {
           return false;
         }
       }
@@ -2832,7 +2853,7 @@
             computed = iteratee == null ? value : iteratee(value);
 
         value = (comparator || value !== 0) ? value : 0;
-        if (isCommon && computed === computed) {
+        if (isCommon && !baseIsNaN(computed)) {
           var valuesIndex = valuesLength;
           while (valuesIndex--) {
             if (values[valuesIndex] === computed) {
@@ -2904,8 +2925,8 @@
         var value = array[index],
             current = iteratee(value);
 
-        if (current != null && (computed === undefined
-              ? (current === current && !isSymbol(current))
+        if (current != null && (isUndefined(computed)
+              ? (!baseIsNaN(current) && !isSymbol(current))
               : comparator(current, computed)
             )) {
           var computed = current,
@@ -2932,7 +2953,7 @@
       if (start < 0) {
         start = -start > length ? 0 : (length + start);
       }
-      end = (end === undefined || end > length) ? length : toInteger(end);
+      end = (isUndefined(end) || end > length) ? length : toInteger(end);
       if (end < 0) {
         end += length;
       }
@@ -3104,7 +3125,7 @@
      */
     function baseGetTag(value) {
       if (value == null) {
-        return value === undefined ? undefinedTag : nullTag;
+        return isUndefined(value) ? undefinedTag : nullTag;
       }
       return (symToStringTag && symToStringTag in Object(value))
         ? getRawTag(value)
@@ -3311,7 +3332,7 @@
         return true;
       }
       if (value == null || other == null || (!isObjectLike(value) && !isObjectLike(other))) {
-        return value !== value && other !== other;
+        return baseIsNaN(value) && baseIsNaN(other);
       }
       return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
     }
@@ -3421,7 +3442,7 @@
             srcValue = data[1];
 
         if (noCustomizer && data[2]) {
-          if (objValue === undefined && !(key in object)) {
+          if (isUndefined(objValue) && !(key in object)) {
             return false;
           }
         } else {
@@ -3429,7 +3450,7 @@
           if (customizer) {
             var result = customizer(objValue, srcValue, key, object, source, stack);
           }
-          if (!(result === undefined
+          if (!(isUndefined(result)
                 ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack)
                 : result
               )) {
@@ -3618,7 +3639,7 @@
       }
       return function(object) {
         var objValue = get(object, path);
-        return (objValue === undefined && objValue === srcValue)
+        return (isUndefined(objValue) && objValue === srcValue)
           ? hasIn(object, path)
           : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
       };
@@ -3649,7 +3670,7 @@
             ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
             : undefined;
 
-          if (newValue === undefined) {
+          if (isUndefined(newValue)) {
             newValue = srcValue;
           }
           assignMergeValue(object, key, newValue);
@@ -3685,7 +3706,7 @@
         ? customizer(objValue, srcValue, (key + ''), object, source, stack)
         : undefined;
 
-      var isCommon = newValue === undefined;
+      var isCommon = isUndefined(newValue);
 
       if (isCommon) {
         var isArr = isArray(srcValue),
@@ -3766,7 +3787,7 @@
           if (isArray(iteratee)) {
             return function(value) {
               return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
-            }
+            };
           }
           return iteratee;
         });
@@ -4039,7 +4060,7 @@
         if (index != lastIndex) {
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
-          if (newValue === undefined) {
+          if (isUndefined(newValue)) {
             newValue = isObject(objValue)
               ? objValue
               : (isIndex(path[index + 1]) ? [] : {});
@@ -4157,7 +4178,7 @@
       var low = 0,
           high = array == null ? low : array.length;
 
-      if (typeof value == 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
+      if (typeof value == 'number' && !baseIsNaN(value) && high <= HALF_MAX_ARRAY_LENGTH) {
         while (low < high) {
           var mid = (low + high) >>> 1,
               computed = array[mid];
@@ -4195,17 +4216,17 @@
       }
 
       value = iteratee(value);
-      var valIsNaN = value !== value,
-          valIsNull = value === null,
+      var valIsNaN = baseIsNaN(value),
+          valIsNull = isNull(value),
           valIsSymbol = isSymbol(value),
-          valIsUndefined = value === undefined;
+          valIsUndefined = isUndefined(value);
 
       while (low < high) {
         var mid = nativeFloor((low + high) / 2),
             computed = iteratee(array[mid]),
-            othIsDefined = computed !== undefined,
-            othIsNull = computed === null,
-            othIsReflexive = computed === computed,
+            othIsDefined = !isUndefined(computed),
+            othIsNull = isNull(computed),
+            othIsReflexive = !baseIsNaN(computed),
             othIsSymbol = isSymbol(computed);
 
         if (valIsNaN) {
@@ -4338,7 +4359,7 @@
             computed = iteratee ? iteratee(value) : value;
 
         value = (comparator || value !== 0) ? value : 0;
-        if (isCommon && computed === computed) {
+        if (isCommon && !baseIsNaN(computed)) {
           var seenIndex = seen.length;
           while (seenIndex--) {
             if (seen[seenIndex] === computed) {
@@ -4543,7 +4564,7 @@
      */
     function castSlice(array, start, end) {
       var length = array.length;
-      end = end === undefined ? length : end;
+      end = isUndefined(end) ? length : end;
       return (!start && end >= length) ? array : baseSlice(array, start, end);
     }
 
@@ -4649,14 +4670,14 @@
      */
     function compareAscending(value, other) {
       if (value !== other) {
-        var valIsDefined = value !== undefined,
-            valIsNull = value === null,
-            valIsReflexive = value === value,
+        var valIsDefined = !isUndefined(value),
+            valIsNull = isNull(value),
+            valIsReflexive = !baseIsNaN(value),
             valIsSymbol = isSymbol(value);
 
-        var othIsDefined = other !== undefined,
-            othIsNull = other === null,
-            othIsReflexive = other === other,
+        var othIsDefined = !isUndefined(other),
+            othIsNull = isNull(other),
+            othIsReflexive = !baseIsNaN(other),
             othIsSymbol = isSymbol(other);
 
         if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
@@ -4833,7 +4854,7 @@
           ? customizer(object[key], source[key], key, object, source)
           : undefined;
 
-        if (newValue === undefined) {
+        if (isUndefined(newValue)) {
           newValue = source[key];
         }
         if (isNew) {
@@ -5282,14 +5303,14 @@
     function createMathOperation(operator, defaultValue) {
       return function(value, other) {
         var result;
-        if (value === undefined && other === undefined) {
+        if (isUndefined(value) && isUndefined(other)) {
           return defaultValue;
         }
-        if (value !== undefined) {
+        if (!isUndefined(value)) {
           result = value;
         }
-        if (other !== undefined) {
-          if (result === undefined) {
+        if (!isUndefined(other)) {
+          if (isUndefined(result)) {
             return other;
           }
           if (typeof value == 'string' || typeof other == 'string') {
@@ -5334,7 +5355,7 @@
      * @returns {string} Returns the padding for `string`.
      */
     function createPadding(length, chars) {
-      chars = chars === undefined ? ' ' : baseToString(chars);
+      chars = isUndefined(chars) ? ' ' : baseToString(chars);
 
       var charsLength = chars.length;
       if (charsLength < 2) {
@@ -5395,13 +5416,13 @@
         }
         // Ensure the sign of `-0` is preserved.
         start = toFinite(start);
-        if (end === undefined) {
+        if (isUndefined(end)) {
           end = start;
           start = 0;
         } else {
           end = toFinite(end);
         }
-        step = step === undefined ? (start < end ? 1 : -1) : toFinite(step);
+        step = isUndefined(step) ? (start < end ? 1 : -1) : toFinite(step);
         return baseRange(start, end, step, fromRight);
       };
     }
@@ -5557,8 +5578,8 @@
         bitmask &= ~(WRAP_PARTIAL_FLAG | WRAP_PARTIAL_RIGHT_FLAG);
         partials = holders = undefined;
       }
-      ary = ary === undefined ? ary : nativeMax(toInteger(ary), 0);
-      arity = arity === undefined ? arity : toInteger(arity);
+      ary = isUndefined(ary) ? ary : nativeMax(toInteger(ary), 0);
+      arity = isUndefined(arity) ? arity : toInteger(arity);
       length -= holders ? holders.length : 0;
 
       if (bitmask & WRAP_PARTIAL_RIGHT_FLAG) {
@@ -5582,7 +5603,7 @@
       thisArg = newData[2];
       partials = newData[3];
       holders = newData[4];
-      arity = newData[9] = newData[9] === undefined
+      arity = newData[9] = isUndefined(newData[9])
         ? (isBindKey ? 0 : func.length)
         : nativeMax(newData[9] - length, 0);
 
@@ -5615,7 +5636,7 @@
      * @returns {*} Returns the value to assign.
      */
     function customDefaultsAssignIn(objValue, srcValue, key, object) {
-      if (objValue === undefined ||
+      if (isUndefined(objValue) ||
           (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
         return srcValue;
       }
@@ -5703,7 +5724,7 @@
             ? customizer(othValue, arrValue, index, other, array, stack)
             : customizer(arrValue, othValue, index, array, other, stack);
         }
-        if (compared !== undefined) {
+        if (!isUndefined(compared)) {
           if (compared) {
             continue;
           }
@@ -5868,7 +5889,7 @@
             : customizer(objValue, othValue, key, object, other, stack);
         }
         // Recursively compare objects (susceptible to call stack limits).
-        if (!(compared === undefined
+        if (!(isUndefined(compared)
               ? (objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack))
               : compared
             )) {
@@ -6387,7 +6408,7 @@
       var type = typeof value;
       return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
         ? (value !== '__proto__')
-        : (value === null);
+        : (isNull(value));
     }
 
     /**
@@ -6455,7 +6476,7 @@
      *  equality comparisons, else `false`.
      */
     function isStrictComparable(value) {
-      return value === value && !isObject(value);
+      return !baseIsNaN(value) && !isObject(value);
     }
 
     /**
@@ -6473,7 +6494,7 @@
           return false;
         }
         return object[key] === srcValue &&
-          (srcValue !== undefined || (key in Object(object)));
+          (!isUndefined(srcValue) || (key in Object(object)));
       };
     }
 
@@ -6608,7 +6629,7 @@
      * @returns {Function} Returns the new function.
      */
     function overRest(func, start, transform) {
-      start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+      start = nativeMax(isUndefined(start) ? (func.length - 1) : start, 0);
       return function() {
         var args = arguments,
             index = -1,
@@ -6777,7 +6798,7 @@
           length = array.length,
           lastIndex = length - 1;
 
-      size = size === undefined ? length : size;
+      size = isUndefined(size) ? length : size;
       while (++index < size) {
         var rand = baseRandom(index, lastIndex),
             value = array[rand];
@@ -6901,7 +6922,7 @@
      * // => [['a', 'b', 'c'], ['d']]
      */
     function chunk(array, size, guard) {
-      if ((guard ? isIterateeCall(array, size, guard) : size === undefined)) {
+      if ((guard ? isIterateeCall(array, size, guard) : isUndefined(size))) {
         size = 1;
       } else {
         size = nativeMax(toInteger(size), 0);
@@ -7113,7 +7134,7 @@
       if (!length) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : toInteger(n);
+      n = (guard || isUndefined(n)) ? 1 : toInteger(n);
       return baseSlice(array, n < 0 ? 0 : n, length);
     }
 
@@ -7147,7 +7168,7 @@
       if (!length) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : toInteger(n);
+      n = (guard || isUndefined(n)) ? 1 : toInteger(n);
       n = length - n;
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
@@ -7363,7 +7384,7 @@
         return -1;
       }
       var index = length - 1;
-      if (fromIndex !== undefined) {
+      if (!isUndefined(fromIndex)) {
         index = toInteger(fromIndex);
         index = fromIndex < 0
           ? nativeMax(length + index, 0)
@@ -7435,7 +7456,7 @@
       if (!length) {
         return [];
       }
-      depth = depth === undefined ? 1 : toInteger(depth);
+      depth = isUndefined(depth) ? 1 : toInteger(depth);
       return baseFlatten(array, depth);
     }
 
@@ -7702,11 +7723,11 @@
         return -1;
       }
       var index = length;
-      if (fromIndex !== undefined) {
+      if (!isUndefined(fromIndex)) {
         index = toInteger(fromIndex);
         index = index < 0 ? nativeMax(length + index, 0) : nativeMin(index, length - 1);
       }
-      return value === value
+      return !baseIsNaN(value)
         ? strictLastIndexOf(array, value, index)
         : baseFindIndex(array, baseIsNaN, index, true);
     }
@@ -7983,7 +8004,7 @@
       }
       else {
         start = start == null ? 0 : toInteger(start);
-        end = end === undefined ? length : toInteger(end);
+        end = isUndefined(end) ? length : toInteger(end);
       }
       return baseSlice(array, start, end);
     }
@@ -8234,7 +8255,7 @@
       if (!(array && array.length)) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : toInteger(n);
+      n = (guard || isUndefined(n)) ? 1 : toInteger(n);
       return baseSlice(array, 0, n < 0 ? 0 : n);
     }
 
@@ -8268,7 +8289,7 @@
       if (!length) {
         return [];
       }
-      n = (guard || n === undefined) ? 1 : toInteger(n);
+      n = (guard || isUndefined(n)) ? 1 : toInteger(n);
       n = length - n;
       return baseSlice(array, n < 0 ? 0 : n, length);
     }
@@ -8983,7 +9004,7 @@
      * // => { 'done': true, 'value': undefined }
      */
     function wrapperNext() {
-      if (this.__values__ === undefined) {
+      if (isUndefined(this.__values__)) {
         this.__values__ = toArray(this.value());
       }
       var done = this.__index__ >= this.__values__.length,
@@ -9371,7 +9392,7 @@
      * // => [[1, 1], [2, 2]]
      */
     function flatMapDepth(collection, iteratee, depth) {
-      depth = depth === undefined ? 1 : toInteger(depth);
+      depth = isUndefined(depth) ? 1 : toInteger(depth);
       return baseFlatten(map(collection, iteratee), depth);
     }
 
@@ -9857,7 +9878,7 @@
      * // => [2, 3, 1]
      */
     function sampleSize(collection, n, guard) {
-      if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
+      if ((guard ? isIterateeCall(collection, n, guard) : isUndefined(n))) {
         n = 1;
       } else {
         n = toInteger(n);
@@ -10428,7 +10449,7 @@
         // Either this is the first call, activity has stopped and we're at the
         // trailing edge, the system time has gone backwards and we're treating
         // it as the trailing edge, or we've hit the `maxWait` limit.
-        return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+        return (isUndefined(lastCallTime) || (timeSinceLastCall >= wait) ||
           (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
       }
 
@@ -10454,7 +10475,7 @@
       }
 
       function cancel() {
-        if (timerId !== undefined) {
+        if (!isUndefined(timerId)) {
           clearTimeout(timerId);
         }
         lastInvokeTime = 0;
@@ -10462,7 +10483,7 @@
       }
 
       function flush() {
-        return timerId === undefined ? result : trailingEdge(now());
+        return isUndefined(timerId) ? result : trailingEdge(now());
       }
 
       function debounced() {
@@ -10474,7 +10495,7 @@
         lastCallTime = time;
 
         if (isInvoking) {
-          if (timerId === undefined) {
+          if (isUndefined(timerId)) {
             return leadingEdge(lastCallTime);
           }
           if (maxing) {
@@ -10484,7 +10505,7 @@
             return invokeFunc(lastCallTime);
           }
         }
-        if (timerId === undefined) {
+        if (isUndefined(timerId)) {
           timerId = setTimeout(timerExpired, wait);
         }
         return result;
@@ -10864,7 +10885,7 @@
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      start = start === undefined ? start : toInteger(start);
+      start = isUndefined(start) ? start : toInteger(start);
       return baseRest(func, start);
     }
 
@@ -11250,7 +11271,7 @@
      * // => true
      */
     function eq(value, other) {
-      return value === other || (value !== value && other !== other);
+      return value === other || (baseIsNaN(value) && baseIsNaN(other));
     }
 
     /**
@@ -11635,7 +11656,7 @@
     function isEqualWith(value, other, customizer) {
       customizer = typeof customizer == 'function' ? customizer : undefined;
       var result = customizer ? customizer(value, other) : undefined;
-      return result === undefined ? baseIsEqual(value, other, undefined, customizer) : !!result;
+      return isUndefined(result) ? baseIsEqual(value, other, undefined, customizer) : !!result;
     }
 
     /**
@@ -12106,7 +12127,7 @@
         return false;
       }
       var proto = getPrototype(value);
-      if (proto === null) {
+      if (isNull(proto)) {
         return true;
       }
       var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
@@ -12245,27 +12266,6 @@
      * // => false
      */
     var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-
-    /**
-     * Checks if `value` is `undefined`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
-     * @example
-     *
-     * _.isUndefined(void 0);
-     * // => true
-     *
-     * _.isUndefined(null);
-     * // => false
-     */
-    function isUndefined(value) {
-      return value === undefined;
-    }
 
     /**
      * Checks if `value` is classified as a `WeakMap` object.
@@ -12432,7 +12432,7 @@
         var sign = (value < 0 ? -1 : 1);
         return sign * MAX_INTEGER;
       }
-      return value === value ? value : 0;
+      return !baseIsNaN(value) ? value : 0;
     }
 
     /**
@@ -12465,7 +12465,7 @@
       var result = toFinite(value),
           remainder = result % 1;
 
-      return result === result ? (remainder ? result - remainder : result) : 0;
+      return !baseIsNaN(result) ? (remainder ? result - remainder : result) : 0;
     }
 
     /**
@@ -12872,7 +12872,7 @@
           var key = props[propsIndex];
           var value = object[key];
 
-          if (value === undefined ||
+          if (isUndefined(value) ||
               (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
             object[key] = source[key];
           }
@@ -13193,7 +13193,7 @@
      */
     function get(object, path, defaultValue) {
       var result = object == null ? undefined : baseGet(object, path);
-      return result === undefined ? defaultValue : result;
+      return isUndefined(result) ? defaultValue : result;
     }
 
     /**
@@ -13701,7 +13701,7 @@
       }
       while (++index < length) {
         var value = object == null ? undefined : object[toKey(path[index])];
-        if (value === undefined) {
+        if (isUndefined(value)) {
           index = length;
           value = defaultValue;
         }
@@ -14047,17 +14047,17 @@
      * // => 5
      */
     function clamp(number, lower, upper) {
-      if (upper === undefined) {
+      if (isUndefined(upper)) {
         upper = lower;
         lower = undefined;
       }
-      if (upper !== undefined) {
+      if (!isUndefined(upper)) {
         upper = toNumber(upper);
-        upper = upper === upper ? upper : 0;
+        upper = !baseIsNaN(upper) ? upper : 0;
       }
-      if (lower !== undefined) {
+      if (!isUndefined(lower)) {
         lower = toNumber(lower);
-        lower = lower === lower ? lower : 0;
+        lower = !baseIsNaN(lower) ? lower : 0;
       }
       return baseClamp(toNumber(number), lower, upper);
     }
@@ -14102,7 +14102,7 @@
      */
     function inRange(number, start, end) {
       start = toFinite(start);
-      if (end === undefined) {
+      if (isUndefined(end)) {
         end = start;
         start = 0;
       } else {
@@ -14147,7 +14147,7 @@
       if (floating && typeof floating != 'boolean' && isIterateeCall(lower, upper, floating)) {
         upper = floating = undefined;
       }
-      if (floating === undefined) {
+      if (isUndefined(floating)) {
         if (typeof upper == 'boolean') {
           floating = upper;
           upper = undefined;
@@ -14157,13 +14157,13 @@
           lower = undefined;
         }
       }
-      if (lower === undefined && upper === undefined) {
+      if (isUndefined(lower) && isUndefined(upper)) {
         lower = 0;
         upper = 1;
       }
       else {
         lower = toFinite(lower);
-        if (upper === undefined) {
+        if (isUndefined(upper)) {
           upper = lower;
           lower = 0;
         } else {
@@ -14279,7 +14279,7 @@
       target = baseToString(target);
 
       var length = string.length;
-      position = position === undefined
+      position = isUndefined(position)
         ? length
         : baseClamp(toInteger(position), 0, length);
 
@@ -14574,7 +14574,7 @@
      * // => ''
      */
     function repeat(string, n, guard) {
-      if ((guard ? isIterateeCall(string, n, guard) : n === undefined)) {
+      if ((guard ? isIterateeCall(string, n, guard) : isUndefined(n))) {
         n = 1;
       } else {
         n = toInteger(n);
@@ -14656,7 +14656,7 @@
       if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
         separator = limit = undefined;
       }
-      limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0;
+      limit = isUndefined(limit) ? MAX_ARRAY_LENGTH : limit >>> 0;
       if (!limit) {
         return [];
       }
@@ -15026,7 +15026,7 @@
      */
     function trim(string, chars, guard) {
       string = toString(string);
-      if (string && (guard || chars === undefined)) {
+      if (string && (guard || isUndefined(chars))) {
         return baseTrim(string);
       }
       if (!string || !(chars = baseToString(chars))) {
@@ -15061,7 +15061,7 @@
      */
     function trimEnd(string, chars, guard) {
       string = toString(string);
-      if (string && (guard || chars === undefined)) {
+      if (string && (guard || isUndefined(chars))) {
         return string.slice(0, trimmedEndIndex(string) + 1);
       }
       if (!string || !(chars = baseToString(chars))) {
@@ -15094,7 +15094,7 @@
      */
     function trimStart(string, chars, guard) {
       string = toString(string);
-      if (string && (guard || chars === undefined)) {
+      if (string && (guard || isUndefined(chars))) {
         return string.replace(reTrimStart, '');
       }
       if (!string || !(chars = baseToString(chars))) {
@@ -15170,7 +15170,7 @@
         ? castSlice(strSymbols, 0, end).join('')
         : string.slice(0, end);
 
-      if (separator === undefined) {
+      if (isUndefined(separator)) {
         return result + omission;
       }
       if (strSymbols) {
@@ -15188,7 +15188,7 @@
           while ((match = separator.exec(substring))) {
             var newEnd = match.index;
           }
-          result = result.slice(0, newEnd === undefined ? end : newEnd);
+          result = result.slice(0, isUndefined(newEnd) ? end : newEnd);
         }
       } else if (string.indexOf(baseToString(separator), end) != end) {
         var index = result.lastIndexOf(separator);
@@ -15291,7 +15291,7 @@
       string = toString(string);
       pattern = guard ? undefined : pattern;
 
-      if (pattern === undefined) {
+      if (isUndefined(pattern)) {
         return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string);
       }
       return string.match(pattern) || [];
@@ -15488,7 +15488,7 @@
      * // => 10
      */
     function defaultTo(value, defaultValue) {
-      return (value == null || value !== value) ? defaultValue : value;
+      return (value == null || baseIsNaN(value)) ? defaultValue : value;
     }
 
     /**
@@ -16965,7 +16965,7 @@
     // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
     arrayEach(['drop', 'take'], function(methodName, index) {
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
+        n = isUndefined(n) ? 1 : nativeMax(toInteger(n), 0);
 
         var result = (this.__filtered__ && !index)
           ? new LazyWrapper(this)
@@ -17058,7 +17058,7 @@
       } else if (start) {
         result = result.drop(start);
       }
-      if (end !== undefined) {
+      if (!isUndefined(end)) {
         end = toInteger(end);
         result = end < 0 ? result.dropRight(-end) : result.take(end - start);
       }

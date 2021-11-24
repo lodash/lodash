@@ -18,7 +18,7 @@ const toString = Object.prototype.toString
  */
 function invert(object) {
 
-  return object.reduce((result, [key, value]) => {
+  return Object.entries(object).reduce((result, [key, value]) => {
     if (value != null && typeof value.toString !== 'function') {
       value = toString.call(value)
     }

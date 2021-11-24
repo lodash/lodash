@@ -17,15 +17,14 @@ const toString = Object.prototype.toString
  * // => { '1': 'c', '2': 'b' }
  */
 function invert(object) {
-  const result = {}
-  Object.keys(object).forEach((key) => {
-    let value = object[key]
+
+  return object.reduce((result, [key, value]) => {
     if (value != null && typeof value.toString !== 'function') {
       value = toString.call(value)
     }
     result[value] = key
-  })
-  return result
+    return result
+  }, {})
 }
 
 export default invert

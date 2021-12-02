@@ -26,7 +26,7 @@ function filterMap(array, f) {
     const mapped = f(element)
     if (mapped !== null) {
       // If our mapped value is nonnull, append it to result
-      result.append(mapped)
+      result.push(mapped)
     } // If not, our mapped value is considered 'filtered out'
   })
   return result

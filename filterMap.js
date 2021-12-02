@@ -21,7 +21,7 @@
  */
 function filterMap(array, f) {
   const result = []
-  array.forEach(element => {
+  array.forEach((element) => {
     // Apply the mapper function to the element, returning a mapped value
     const mapped = f(element)
     if (mapped !== null) {

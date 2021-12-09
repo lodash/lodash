@@ -14,7 +14,7 @@ const MAX_ARRAY_LENGTH = 4294967295
  *
  * @since 4.0.0
  * @category String
- * @param {string} [string=''] The string to split.
+ * @param {string} [string] The string to split.
  * @param {RegExp|string} separator The separator pattern to split by.
  * @param {number} [limit] The length to truncate results to.
  * @returns {Array} Returns the string segments.
@@ -25,7 +25,7 @@ const MAX_ARRAY_LENGTH = 4294967295
  */
 function split(string, separator, limit) {
   limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0
-  if (!limit) {
+  if (!limit || string === undefined) {
     return []
   }
   if (string && (

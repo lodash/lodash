@@ -1,5 +1,3 @@
-/** Used to check objects for own properties. */
-const hasOwnProperty = Object.prototype.hasOwnProperty
 
 /**
  * Checks if `key` is a direct property of `object`.
@@ -21,8 +19,11 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * has(other, 'a')
  * // => false
  */
+
+/** hasOwnProperty Used to check objects for own properties. */
+
 function has(object, key) {
-  return object != null && hasOwnProperty.call(object, key)
+  return object != null && object.hasOwnProperty.call(object, key)
 }
 
 export default has

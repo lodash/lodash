@@ -12,23 +12,22 @@
  */
 function findLongest(array) {
   if (!Array.isArray(array)) {
-    throw new TypeError('Expected an Array')
+    throw new TypeError("Expected an Array");
   }
-  const otherTypeExit = array.every((item) => typeof item === 'string')
+  const otherTypeExit = array.every((item) => typeof item === "string");
   if (!otherTypeExit) {
-    throw new TypeError('input contains items that are not strings')
+    throw new TypeError("input contains items that are not strings");
   }
   if (!array.length) {
-    return null
+    return null;
   }
-  const arrayEveryItemLen = array.map((item) => item.length)
-  const maxLen = Math.max(...arrayEveryItemLen)
-  const longestStrArr = array.filter((item) => item.length === maxLen)
-  // if longest string has more than one return null
-  if (longestStrArr.length > 1) {
-    return null
-  }
-  return longestStrArr.shift()
+
+  const longestStrArr = array.reduce(
+    (longest, cur) => (cur.length > longest.length ? cur : longest),
+    ""
+  );
+
+  return longestStrArr;
 }
 
-export default findLongest
+export default findLongest;

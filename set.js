@@ -6,6 +6,10 @@ import baseSet from './.internal/baseSet.js'
  * are created for all other missing properties. Use `setWith` to customize
  * `path` creation.
  *
+ * Note that arrays are created for missing string index properties, for
+ * example _.set(object, ['a', '0'], 1) sets `object.a` to an array, not
+ * an object (unless it is already set).
+ *
  * **Note:** This method mutates `object`.
  *
  * @since 3.7.0

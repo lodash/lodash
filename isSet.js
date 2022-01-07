@@ -21,7 +21,7 @@ const nodeIsSet = nodeTypes && nodeTypes.isSet
  * // => false
  */
 const isSet = nodeIsSet
-  ? (value) => nodeIsSet(value)
-  : (value) => isObjectLike(value) && getTag(value) == '[object Set]'
+  ? value => nodeIsSet(value)
+  : value => isObjectLike(value) && getTag(value) == '[object Set]'
 
 export default isSet

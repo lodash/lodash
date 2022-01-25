@@ -11398,7 +11398,7 @@
      * // => false
      */
     function isArrayLike(value) {
-      return value != null && isLength(value.length) && !isFunction(value);
+      return value != null && !isFunction(value) && isLength(value.length) && '[object Object]' !== String(value);
     }
 
     /**

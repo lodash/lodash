@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var baseConvert = __webpack_require__(1);
 
@@ -74,9 +74,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = browserConvert;
 
 
-/***/ }),
+/***/ },
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var mapping = __webpack_require__(2),
 	    fallbackHolder = __webpack_require__(3);
@@ -649,9 +649,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = baseConvert;
 
 
-/***/ }),
+/***/ },
 /* 2 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	/** Used to map aliases to their real names. */
 	exports.aliasToReal = {
@@ -1013,9 +1013,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 
-/***/ }),
+/***/ },
 /* 3 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	/**
 	 * The default argument placeholder value for methods.
@@ -1025,7 +1025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = {};
 
 
-/***/ })
+/***/ }
 /******/ ])
 });
 ;

@@ -24,7 +24,7 @@ function trimIndent(string) {
   const lines = string.split("\n")
   const temp = lines.filter(it => it.trim() != "").map(it => it.length - it.trim().length).sort((a, b) => a - b)
   const indentation = temp.length == 0 ? 4 : temp[0]
-  return lines.map(it => it.replace(" ".repeat(indentation), "")).join("\n")
+  return lines.map(it => it.startsWith(" ".repeat(indentation)) ? it.replace(" ".repeat(indentation), "") : it).join("\n")
 }
 
 export default trimIndent

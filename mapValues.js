@@ -20,7 +20,7 @@
  * mapValue(users, ({ age }) => age)
  * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
  */
-function mapValue(object, iteratee) {
+function mapValues(object, iteratee) {
   object = Object(object)
   const result = {}
 
@@ -30,4 +30,4 @@ function mapValue(object, iteratee) {
   return result
 }
 
-export default mapValue
+export default mapValues

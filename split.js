@@ -25,7 +25,7 @@ const MAX_ARRAY_LENGTH = 4294967295
  */
 function split(string, separator, limit) {
   limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0
-  if (!limit || string === undefined || string === null) {
+  if (!limit || string == null) {
     return []
   }
   if (string && (

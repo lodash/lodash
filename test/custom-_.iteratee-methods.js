@@ -34,6 +34,12 @@ describe('custom `_.iteratee` methods', function() {
     iteratee = iteratee;
   });
 
+  it('`_.dropEndsWhile` should use `_.iteratee` internally', function() {
+    iteratee = getPropB;
+    assert.deepEqual(_.dropEndsWhile(objects), objects.slice(0, 2));
+    iteratee = iteratee;
+  });
+
   it('`_.dropRightWhile` should use `_.iteratee` internally', function() {
     iteratee = getPropB;
     assert.deepEqual(_.dropRightWhile(objects), objects.slice(0, 2));

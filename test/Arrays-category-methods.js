@@ -4,6 +4,7 @@ import difference from '../difference.js';
 import union from '../union.js';
 import compact from '../compact.js';
 import drop from '../drop.js';
+import dropEndsWhile from '../dropEndsWhile.js';
 import dropRight from '../dropRight.js';
 import dropRightWhile from '../dropRightWhile.js';
 import dropWhile from '../dropWhile.js';
@@ -48,6 +49,7 @@ describe('"Arrays" category methods', function() {
 
     assert.deepStrictEqual(compact(args), [1, [3], 5], message('compact'));
     assert.deepStrictEqual(drop(args, 3), [null, 5], message('drop'));
+    assert.deepStrictEqual(dropEndsWhile(args,identity), [1, null, [3], null], message('dropEndsWhile'));
     assert.deepStrictEqual(dropRight(args, 3), [1, null], message('dropRight'));
     assert.deepStrictEqual(dropRightWhile(args,identity), [1, null, [3], null], message('dropRightWhile'));
     assert.deepStrictEqual(dropWhile(args,identity), [null, [3], null, 5], message('dropWhile'));

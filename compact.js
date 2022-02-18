@@ -15,7 +15,7 @@ function compact(array) {
   let resIndex = 0
   const result = []
 
-  if (array == null) {
+  if (array === null) {
     return result
   }
 

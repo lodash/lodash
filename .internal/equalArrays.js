@@ -36,6 +36,9 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
   let result = true
   const seen = (bitmask & COMPARE_UNORDERED_FLAG) ? new SetCache : undefined
 
+  // Unordered comparison should not apply recursively
+  bitmask &= ~COMPARE_UNORDERED_FLAG
+
   stack.set(array, other)
   stack.set(other, array)
 

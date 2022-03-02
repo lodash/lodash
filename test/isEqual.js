@@ -516,6 +516,28 @@ describe('isEqual', function() {
     }
   });
 
+  it('should distinguish between map keys and values', function() {
+    if (Map) {
+      var map1 = new Map,
+          map2 = new Map;
+
+      map1.set('a', 'b');
+      map2.set('b', 'a');
+      assert.strictEqual(isEqual(map1, map2), false);
+    }
+  });
+
+  it('should not apply unordered comparison to map values', function() {
+    if (Map) {
+      var map1 = new Map,
+          map2 = new Map;
+
+      map1.set('a', [1, 2]);
+      map2.set('a', [2, 1]);
+      assert.strictEqual(isEqual(map1, map2), false);
+    }
+  });
+
   it('should compare promises by reference', function() {
     if (promise) {
       lodashStable.each([[promise, Promise.resolve(1)], [promise, realm.promise]], function(promises) {

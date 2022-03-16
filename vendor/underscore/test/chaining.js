@@ -19,8 +19,8 @@
         return hash;
       }, {})
       .value();
-    assert.equal(counts.a, 16, 'counted all the letters in the song');
-    assert.equal(counts.e, 10, 'counted all the letters in the song');
+    assert.strictEqual(counts.a, 16, 'counted all the letters in the song');
+    assert.strictEqual(counts.e, 10, 'counted all the letters in the song');
   });
 
   QUnit.test('select/reject/sortBy', function(assert) {
@@ -94,6 +94,16 @@
     assert.strictEqual(+wrapped, 512);
     assert.strictEqual(wrapped.toString(), '512');
     assert.strictEqual('' + wrapped, '512');
+  });
+
+  QUnit.test('wrapper methods handle undefined and null', function(assert) {
+    var w1 = _(), w2 = _(null);
+    _.each([w1, w2], function(wrapped) {
+      assert.equal(wrapped.extend({a: 1}), void 0);
+      assert.equal(wrapped.first(), void 0);
+      assert.equal(wrapped.push(1), void 0);
+      assert.equal(wrapped.concat([1]), void 0);
+    });
   });
 
 }());

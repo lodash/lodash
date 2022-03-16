@@ -8,10 +8,10 @@
     var context = {name: 'moe'};
     var func = function(arg) { return 'name: ' + (this.name || arg); };
     var bound = _.bind(func, context);
-    assert.equal(bound(), 'name: moe', 'can bind a function to a context');
+    assert.strictEqual(bound(), 'name: moe', 'can bind a function to a context');
 
     bound = _(func).bind(context);
-    assert.equal(bound(), 'name: moe', 'can do OO-style binding');
+    assert.strictEqual(bound(), 'name: moe', 'can do OO-style binding');
 
     bound = _.bind(func, null, 'curly');
     var result = bound();
@@ -20,19 +20,21 @@
 
     func = function(salutation, name) { return salutation + ': ' + name; };
     func = _.bind(func, this, 'hello');
-    assert.equal(func('moe'), 'hello: moe', 'the function was partially applied in advance');
+    assert.strictEqual(func('moe'), 'hello: moe', 'the function was partially applied in advance');
 
     func = _.bind(func, this, 'curly');
-    assert.equal(func(), 'hello: curly', 'the function was completely applied in advance');
+    assert.strictEqual(func(), 'hello: curly', 'the function was completely applied in advance');
 
     func = function(salutation, firstname, lastname) { return salutation + ': ' + firstname + ' ' + lastname; };
     func = _.bind(func, this, 'hello', 'moe', 'curly');
-    assert.equal(func(), 'hello: moe curly', 'the function was partially applied in advance and can accept multiple arguments');
+    assert.strictEqual(func(), 'hello: moe curly', 'the function was partially applied in advance and can accept multiple arguments');
 
-    func = function(ctx, message) { assert.equal(this, ctx, message); };
-    _.bind(func, 0, 0, 'can bind a function to `0`')();
-    _.bind(func, '', '', 'can bind a function to an empty string')();
-    _.bind(func, false, false, 'can bind a function to `false`')();
+    func = function() { return this; };
+    assert.strictEqual(typeof _.bind(func, 0)(), 'object', 'binding a primitive to `this` returns a wrapped primitive');
+
+    assert.strictEqual(_.bind(func, 0)().valueOf(), 0, 'can bind a function to `0`');
+    assert.strictEqual(_.bind(func, '')().valueOf(), '', 'can bind a function to an empty string');
+    assert.strictEqual(_.bind(func, false)().valueOf(), false, 'can bind a function to `false`');
 
     // These tests are only meaningful when using a browser without a native bind function
     // To test this with a modern browser, set underscore's nativeBind to undefined
@@ -40,8 +42,8 @@
     var boundf = _.bind(F, {hello: 'moe curly'});
     var Boundf = boundf; // make eslint happy.
     var newBoundf = new Boundf();
-    assert.equal(newBoundf.hello, void 0, 'function should not be bound to the context, to comply with ECMAScript 5');
-    assert.equal(boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
+    assert.strictEqual(newBoundf.hello, void 0, 'function should not be bound to the context, to comply with ECMAScript 5');
+    assert.strictEqual(boundf().hello, 'moe curly', "When called without the new operator, it's OK to be bound to the context");
     assert.ok(newBoundf instanceof F, 'a bound instance is an instance of the original function');
 
     assert.raises(function() { _.bind('notafunction'); }, TypeError, 'throws an error when binding to a non-function');
@@ -52,17 +54,17 @@
     var func = function() { return this.name + ' ' + _.toArray(arguments).join(' '); };
 
     obj.func = _.partial(func, 'a', 'b');
-    assert.equal(obj.func('c', 'd'), 'moe a b c d', 'can partially apply');
+    assert.strictEqual(obj.func('c', 'd'), 'moe a b c d', 'can partially apply');
 
     obj.func = _.partial(func, _, 'b', _, 'd');
-    assert.equal(obj.func('a', 'c'), 'moe a b c d', 'can partially apply with placeholders');
+    assert.strictEqual(obj.func('a', 'c'), 'moe a b c d', 'can partially apply with placeholders');
 
     func = _.partial(function() { return arguments.length; }, _, 'b', _, 'd');
-    assert.equal(func('a', 'c', 'e'), 5, 'accepts more arguments than the number of placeholders');
-    assert.equal(func('a'), 4, 'accepts fewer arguments than the number of placeholders');
+    assert.strictEqual(func('a', 'c', 'e'), 5, 'accepts more arguments than the number of placeholders');
+    assert.strictEqual(func('a'), 4, 'accepts fewer arguments than the number of placeholders');
 
     func = _.partial(function() { return typeof arguments[2]; }, _, 'b', _, 'd');
-    assert.equal(func('a'), 'undefined', 'unfilled placeholders are undefined');
+    assert.strictEqual(func('a'), 'undefined', 'unfilled placeholders are undefined');
 
     // passes context
     function MyWidget(name, options) {
@@ -75,16 +77,16 @@
     var MyWidgetWithCoolOpts = _.partial(MyWidget, _, {a: 1});
     var widget = new MyWidgetWithCoolOpts('foo');
     assert.ok(widget instanceof MyWidget, 'Can partially bind a constructor');
-    assert.equal(widget.get(), 'foo', 'keeps prototype');
+    assert.strictEqual(widget.get(), 'foo', 'keeps prototype');
     assert.deepEqual(widget.options, {a: 1});
 
     _.partial.placeholder = obj;
     func = _.partial(function() { return arguments.length; }, obj, 'b', obj, 'd');
-    assert.equal(func('a'), 4, 'allows the placeholder to be swapped out');
+    assert.strictEqual(func('a'), 4, 'allows the placeholder to be swapped out');
 
     _.partial.placeholder = {};
     func = _.partial(function() { return arguments.length; }, obj, 'b', obj, 'd');
-    assert.equal(func('a'), 5, 'swapping the placeholder preserves previously bound arguments');
+    assert.strictEqual(func('a'), 5, 'swapping the placeholder preserves previously bound arguments');
 
     _.partial.placeholder = _;
   });
@@ -97,10 +99,11 @@
       sayHi: function() { return 'hi: ' + this.name; }
     };
     curly.getName = moe.getName;
-    _.bindAll(moe, 'getName', 'sayHi');
+    var bound = _.bindAll(moe, 'getName', 'sayHi');
+    assert.strictEqual(bound, moe, 'returns the bound object');
     curly.sayHi = moe.sayHi;
-    assert.equal(curly.getName(), 'name: curly', 'unbound function is bound to current object');
-    assert.equal(curly.sayHi(), 'hi: moe', 'bound function is still bound to original object');
+    assert.strictEqual(curly.getName(), 'name: curly', 'unbound function is bound to current object');
+    assert.strictEqual(curly.sayHi(), 'hi: moe', 'bound function is still bound to original object');
 
     curly = {name: 'curly'};
     moe = {
@@ -116,41 +119,43 @@
 
     _.bindAll(moe, 'sayHi', 'sayLast');
     curly.sayHi = moe.sayHi;
-    assert.equal(curly.sayHi(), 'hi: moe');
+    assert.strictEqual(curly.sayHi(), 'hi: moe');
 
     var sayLast = moe.sayLast;
-    assert.equal(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe', 'createCallback works with any number of arguments');
+    assert.strictEqual(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe', 'createCallback works with any number of arguments');
 
-    _.bindAll(moe, ['getName']);
+    _.bindAll(moe, ['getName'], [['sayHi']]);
     var getName = moe.getName;
-    assert.equal(getName(), 'name: moe', 'flattens arguments into a single list');
+    var sayHi = moe.sayHi;
+    assert.strictEqual(getName(), 'name: moe', 'flattens arguments into a single list');
+    assert.strictEqual(sayHi(), 'hi: moe', 'deeply flattens arguments into a single list');
   });
 
   QUnit.test('memoize', function(assert) {
     var fib = function(n) {
       return n < 2 ? n : fib(n - 1) + fib(n - 2);
     };
-    assert.equal(fib(10), 55, 'a memoized version of fibonacci produces identical results');
+    assert.strictEqual(fib(10), 55, 'a memoized version of fibonacci produces identical results');
     fib = _.memoize(fib); // Redefine `fib` for memoization
-    assert.equal(fib(10), 55, 'a memoized version of fibonacci produces identical results');
+    assert.strictEqual(fib(10), 55, 'a memoized version of fibonacci produces identical results');
 
     var o = function(str) {
       return str;
     };
     var fastO = _.memoize(o);
-    assert.equal(o('toString'), 'toString', 'checks hasOwnProperty');
-    assert.equal(fastO('toString'), 'toString', 'checks hasOwnProperty');
+    assert.strictEqual(o('toString'), 'toString', 'checks hasOwnProperty');
+    assert.strictEqual(fastO('toString'), 'toString', 'checks hasOwnProperty');
 
     // Expose the cache.
     var upper = _.memoize(function(s) {
       return s.toUpperCase();
     });
-    assert.equal(upper('foo'), 'FOO');
-    assert.equal(upper('bar'), 'BAR');
+    assert.strictEqual(upper('foo'), 'FOO');
+    assert.strictEqual(upper('bar'), 'BAR');
     assert.deepEqual(upper.cache, {foo: 'FOO', bar: 'BAR'});
     upper.cache = {foo: 'BAR', bar: 'FOO'};
-    assert.equal(upper('foo'), 'BAR');
-    assert.equal(upper('bar'), 'FOO');
+    assert.strictEqual(upper('foo'), 'BAR');
+    assert.strictEqual(upper('bar'), 'FOO');
 
     var hashed = _.memoize(function(key) {
       //https://github.com/jashkenas/underscore/pull/1679#discussion_r13736209
@@ -180,7 +185,7 @@
     var done = assert.async();
     var delayed = false;
     _.delay(function(){ delayed = true; }, 100);
-    setTimeout(function(){ assert.notOk(delayed, "didn't delay the function quite yet"); }, 50);
+    setTimeout(function(){ assert.ok(!delayed, "didn't delay the function quite yet"); }, 50);
     setTimeout(function(){ assert.ok(delayed, 'delayed the function'); done(); }, 150);
   });
 
@@ -200,8 +205,8 @@
     var throttledIncr = _.throttle(incr, 32);
     throttledIncr(); throttledIncr();
 
-    assert.equal(counter, 1, 'incr was called immediately');
-    _.delay(function(){ assert.equal(counter, 2, 'incr was throttled'); done(); }, 64);
+    assert.strictEqual(counter, 1, 'incr was called immediately');
+    _.delay(function(){ assert.strictEqual(counter, 2, 'incr was throttled'); done(); }, 64);
   });
 
   QUnit.test('throttle arguments', function(assert) {
@@ -212,8 +217,8 @@
     var throttledUpdate = _.throttle(update, 32);
     throttledUpdate(1); throttledUpdate(2);
     _.delay(function(){ throttledUpdate(3); }, 64);
-    assert.equal(value, 1, 'updated to latest value');
-    _.delay(function(){ assert.equal(value, 3, 'updated to latest value'); done(); }, 96);
+    assert.strictEqual(value, 1, 'updated to latest value');
+    _.delay(function(){ assert.strictEqual(value, 3, 'updated to latest value'); done(); }, 104);
   });
 
   QUnit.test('throttle once', function(assert) {
@@ -224,8 +229,8 @@
     var throttledIncr = _.throttle(incr, 32);
     var result = throttledIncr();
     _.delay(function(){
-      assert.equal(result, 1, 'throttled functions return their value');
-      assert.equal(counter, 1, 'incr was called once'); done();
+      assert.strictEqual(result, 1, 'throttled functions return their value');
+      assert.strictEqual(counter, 1, 'incr was called once'); done();
     }, 64);
   });
 
@@ -236,7 +241,17 @@
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 32);
     throttledIncr(); throttledIncr();
-    _.delay(function(){ assert.equal(counter, 2, 'incr was called twice'); done(); }, 64);
+    _.delay(function(){ assert.strictEqual(counter, 2, 'incr was called twice'); done(); }, 64);
+  });
+
+  QUnit.test('throttle three times', function(assert) {
+    assert.expect(1);
+    var done = assert.async();
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 32);
+    throttledIncr(); throttledIncr(); throttledIncr();
+    _.delay(function(){ assert.strictEqual(counter, 2, 'incr was called twice'); done(); }, 64);
   });
 
   QUnit.test('more throttling', function(assert) {
@@ -246,11 +261,11 @@
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 30);
     throttledIncr(); throttledIncr();
-    assert.equal(counter, 1);
+    assert.strictEqual(counter, 1);
     _.delay(function(){
-      assert.equal(counter, 2);
+      assert.strictEqual(counter, 2);
       throttledIncr();
-      assert.equal(counter, 3);
+      assert.strictEqual(counter, 3);
       done();
     }, 85);
   });
@@ -269,14 +284,14 @@
     _.delay(saveResult, 160);
     _.delay(saveResult, 230);
     _.delay(function() {
-      assert.equal(results[0], 1, 'incr was called once');
-      assert.equal(results[1], 1, 'incr was throttled');
-      assert.equal(results[2], 1, 'incr was throttled');
-      assert.equal(results[3], 2, 'incr was called twice');
-      assert.equal(results[4], 2, 'incr was throttled');
-      assert.equal(results[5], 3, 'incr was called trailing');
+      assert.strictEqual(results[0], 1, 'incr was called once');
+      assert.strictEqual(results[1], 1, 'incr was throttled');
+      assert.strictEqual(results[2], 1, 'incr was throttled');
+      assert.strictEqual(results[3], 2, 'incr was called twice');
+      assert.strictEqual(results[4], 2, 'incr was throttled');
+      assert.strictEqual(results[5], 3, 'incr was called trailing');
       done();
-    }, 300);
+    }, 304);
   });
 
   QUnit.test('throttle triggers trailing call when invoked repeatedly', function(assert) {
@@ -308,10 +323,10 @@
     var throttledIncr = _.throttle(incr, 60, {leading: false});
 
     throttledIncr(); throttledIncr();
-    assert.equal(counter, 0);
+    assert.strictEqual(counter, 0);
 
     _.delay(function() {
-      assert.equal(counter, 1);
+      assert.strictEqual(counter, 1);
       done();
     }, 96);
   });
@@ -327,14 +342,14 @@
     _.delay(throttledIncr, 50);
     _.delay(throttledIncr, 60);
     _.delay(throttledIncr, 200);
-    assert.equal(counter, 0);
+    assert.strictEqual(counter, 0);
 
     _.delay(function() {
-      assert.equal(counter, 1);
+      assert.strictEqual(counter, 1);
     }, 250);
 
     _.delay(function() {
-      assert.equal(counter, 2);
+      assert.strictEqual(counter, 2);
       done();
     }, 350);
   });
@@ -364,16 +379,16 @@
     var throttledIncr = _.throttle(incr, 60, {trailing: false});
 
     throttledIncr(); throttledIncr(); throttledIncr();
-    assert.equal(counter, 1);
+    assert.strictEqual(counter, 1);
 
     _.delay(function() {
-      assert.equal(counter, 1);
+      assert.strictEqual(counter, 1);
 
       throttledIncr(); throttledIncr();
-      assert.equal(counter, 2);
+      assert.strictEqual(counter, 2);
 
       _.delay(function() {
-        assert.equal(counter, 2);
+        assert.strictEqual(counter, 2);
         done();
       }, 96);
     }, 96);
@@ -385,20 +400,64 @@
     var counter = 0;
     var incr = function(){ counter++; };
     var throttledIncr = _.throttle(incr, 100);
-    var origNowFunc = _.now;
+    var originalNowFunc = Date.now;
+    var originalGetTimeFunc = Date.prototype.getTime;
 
     throttledIncr();
-    assert.equal(counter, 1);
-    _.now = function() {
-      return new Date(2013, 0, 1, 1, 1, 1);
-    };
+    assert.strictEqual(counter, 1, 'incr was called immediately');
+
+    Date.prototype.getTime = function() {
+      return +(new Date(2013, 0, 1, 1, 1, 1));
+    }
+    Date.now = function() {
+      return +(new Date(2013, 0, 1, 1, 1, 1));
+    }
 
     _.delay(function() {
       throttledIncr();
-      assert.equal(counter, 2);
+      assert.strictEqual(counter, 2, 'incr was throttled successfully, with tampered system time');
       done();
-      _.now = origNowFunc;
+      Date.now = originalNowFunc;
+      Date.prototype.getTime = originalGetTimeFunc;
     }, 200);
+  });
+
+  QUnit.test('throttle continues to function after system time is not accessible (or in invalid format)', function(assert) {
+    assert.expect(3);
+    var done = assert.async();
+    var counter = 0;
+    var incr = function(){ counter++; };
+    var throttledIncr = _.throttle(incr, 100);
+    var originalNowFunc = Date.now;
+    var originalGetTimeFunc = Date.prototype.getTime;
+    var originalValueOfFunc = Date.prototype.valueOf;
+
+    throttledIncr();
+    assert.strictEqual(counter, 1, 'incr was called immediately');
+
+    Date.prototype.valueOf = function() {
+      return null;
+    }
+    Date.prototype.getTime = function() {
+      return null;
+    }
+    Date.now = function() {
+      return null;
+    }
+
+    _.delay(function() {
+      throttledIncr();
+      assert.strictEqual(counter, 2, 'incr was throttled successfully, with tampered system time');
+      Date.now = originalNowFunc;
+      Date.prototype.getTime = originalGetTimeFunc;
+      Date.prototype.valueOf = originalValueOfFunc;
+    }, 200);
+
+    _.delay(function() {
+      throttledIncr();
+      assert.strictEqual(counter, 3, 'incr was throttled successfully, after system time method restoration');
+      done();
+    }, 400);
   });
 
   QUnit.test('throttle re-entrant', function(assert) {
@@ -419,11 +478,11 @@
     };
     throttledAppend = _.throttle(append, 32);
     throttledAppend.call('a1', 'a2');
-    assert.equal(value, 'a1a2');
+    assert.strictEqual(value, 'a1a2');
     _.delay(function(){
-      assert.equal(value, 'a1a2c1c2b1b2', 'append was throttled successfully');
+      assert.strictEqual(value, 'a1a2c1c2b1b2', 'append was throttled successfully');
       done();
-    }, 100);
+    }, 104);
   });
 
   QUnit.test('throttle cancel', function(assert) {
@@ -436,8 +495,8 @@
     throttledIncr();
     throttledIncr();
 
-    assert.equal(counter, 2, 'incr was called immediately');
-    _.delay(function(){ assert.equal(counter, 3, 'incr was throttled'); done(); }, 64);
+    assert.strictEqual(counter, 2, 'incr was called immediately');
+    _.delay(function(){ assert.strictEqual(counter, 3, 'incr was throttled'); done(); }, 64);
   });
 
   QUnit.test('throttle cancel with leading: false', function(assert) {
@@ -448,8 +507,8 @@
     throttledIncr();
     throttledIncr.cancel();
 
-    assert.equal(counter, 0, 'incr was throttled');
-    _.delay(function(){ assert.equal(counter, 0, 'incr was throttled'); done(); }, 64);
+    assert.strictEqual(counter, 0, 'incr was throttled');
+    _.delay(function(){ assert.strictEqual(counter, 0, 'incr was throttled'); done(); }, 64);
   });
 
   QUnit.test('debounce', function(assert) {
@@ -460,7 +519,7 @@
     var debouncedIncr = _.debounce(incr, 32);
     debouncedIncr(); debouncedIncr();
     _.delay(debouncedIncr, 16);
-    _.delay(function(){ assert.equal(counter, 1, 'incr was debounced'); done(); }, 96);
+    _.delay(function(){ assert.strictEqual(counter, 1, 'incr was debounced'); done(); }, 96);
   });
 
   QUnit.test('debounce cancel', function(assert) {
@@ -471,7 +530,7 @@
     var debouncedIncr = _.debounce(incr, 32);
     debouncedIncr();
     debouncedIncr.cancel();
-    _.delay(function(){ assert.equal(counter, 0, 'incr was not called'); done(); }, 96);
+    _.delay(function(){ assert.strictEqual(counter, 0, 'incr was not called'); done(); }, 96);
   });
 
   QUnit.test('debounce asap', function(assert) {
@@ -483,19 +542,22 @@
     var debouncedIncr = _.debounce(incr, 64, true);
     a = debouncedIncr();
     b = debouncedIncr();
-    assert.equal(a, 1);
-    assert.equal(b, 1);
-    assert.equal(counter, 1, 'incr was called immediately');
+    assert.strictEqual(a, 1);
+    assert.strictEqual(b, 1);
+    assert.strictEqual(counter, 1, 'incr was called immediately');
     _.delay(debouncedIncr, 16);
     _.delay(debouncedIncr, 32);
-    _.delay(debouncedIncr, 48);
-    _.delay(function(){
-      assert.equal(counter, 1, 'incr was debounced');
+    _.delay(function() {
+      debouncedIncr();
+      _.delay(finish, 80);
+    }, 48);
+    var finish = function(){
+      assert.strictEqual(counter, 1, 'incr was debounced');
       c = debouncedIncr();
-      assert.equal(c, 2);
-      assert.equal(counter, 2, 'incr was called again');
+      assert.strictEqual(c, 2);
+      assert.strictEqual(counter, 2, 'incr was called again');
       done();
-    }, 128);
+    };
   });
 
   QUnit.test('debounce asap cancel', function(assert) {
@@ -508,13 +570,13 @@
     a = debouncedIncr();
     debouncedIncr.cancel();
     b = debouncedIncr();
-    assert.equal(a, 1);
-    assert.equal(b, 2);
-    assert.equal(counter, 2, 'incr was called immediately');
+    assert.strictEqual(a, 1);
+    assert.strictEqual(b, 2);
+    assert.strictEqual(counter, 2, 'incr was called immediately');
     _.delay(debouncedIncr, 16);
     _.delay(debouncedIncr, 32);
     _.delay(debouncedIncr, 48);
-    _.delay(function(){ assert.equal(counter, 2, 'incr was debounced'); done(); }, 128);
+    _.delay(function(){ assert.strictEqual(counter, 2, 'incr was debounced'); done(); }, 128);
   });
 
   QUnit.test('debounce asap recursively', function(assert) {
@@ -526,32 +588,76 @@
       if (counter < 10) debouncedIncr();
     }, 32, true);
     debouncedIncr();
-    assert.equal(counter, 1, 'incr was called immediately');
-    _.delay(function(){ assert.equal(counter, 1, 'incr was debounced'); done(); }, 96);
+    assert.strictEqual(counter, 1, 'incr was called immediately');
+    _.delay(function(){ assert.strictEqual(counter, 1, 'incr was debounced'); done(); }, 96);
   });
 
   QUnit.test('debounce after system time is set backwards', function(assert) {
     assert.expect(2);
     var done = assert.async();
     var counter = 0;
-    var origNowFunc = _.now;
     var debouncedIncr = _.debounce(function(){
       counter++;
     }, 100, true);
+    var originalNowFunc = Date.now;
+    var originalGetTimeFunc = Date.prototype.getTime;
 
     debouncedIncr();
-    assert.equal(counter, 1, 'incr was called immediately');
+    assert.strictEqual(counter, 1, 'incr was called immediately');
 
-    _.now = function() {
-      return new Date(2013, 0, 1, 1, 1, 1);
+    Date.prototype.getTime = function() {
+      return +(new Date(2013, 0, 1, 1, 1, 1));
+    }
+    Date.now = function() {
+      return +(new Date(2013, 0, 1, 1, 1, 1));
+    }
+
+    _.delay(function() {
+      debouncedIncr();
+      assert.strictEqual(counter, 2, 'incr was debounced successfully, with tampered system time');
+      done();
+      Date.now = originalNowFunc;
+      Date.prototype.getTime = originalGetTimeFunc;
+    }, 200);
+  });
+
+  QUnit.test('debounce after system time is is not accessible (or in invalid format)', function(assert) {
+    assert.expect(3);
+    var done = assert.async();
+    var counter = 0;
+    var debouncedIncr = _.debounce(function(){
+      counter++;
+    }, 100, true);
+    var originalNowFunc = Date.now;
+    var originalGetTimeFunc = Date.prototype.getTime;
+    var originalValueOfFunc = Date.prototype.valueOf;
+
+    debouncedIncr();
+    assert.strictEqual(counter, 1, 'incr was called immediately');
+
+    Date.prototype.valueOf = function() {
+      return null;
+    };
+    Date.prototype.getTime = function() {
+      return null;
+    };
+    Date.now = function() {
+      return null;
     };
 
     _.delay(function() {
       debouncedIncr();
-      assert.equal(counter, 2, 'incr was debounced successfully');
-      done();
-      _.now = origNowFunc;
+      assert.strictEqual(counter, 2, 'incr was debounced successfully, with tampered system time');
+      Date.now = originalNowFunc;
+      Date.prototype.getTime = originalGetTimeFunc;
+      Date.prototype.valueOf = originalValueOfFunc;
     }, 200);
+
+    _.delay(function() {
+      debouncedIncr();
+      assert.strictEqual(counter, 3, 'incr was debounced successfully, after system time method restoration');
+      done();
+    }, 400);
   });
 
   QUnit.test('debounce re-entrant', function(assert) {
@@ -571,9 +677,9 @@
     };
     debouncedAppend = _.debounce(append, 32);
     debouncedAppend.call('a1', 'a2');
-    assert.equal(value, '');
+    assert.strictEqual(value, '');
     _.delay(function(){
-      assert.equal(value, 'a1a2b1b2', 'append was debounced successfully');
+      assert.strictEqual(value, 'a1a2b1b2', 'append was debounced successfully');
       done();
     }, 100);
   });
@@ -583,9 +689,9 @@
     var increment = _.once(function(){ return ++num; });
     increment();
     increment();
-    assert.equal(num, 1);
+    assert.strictEqual(num, 1);
 
-    assert.equal(increment(), 1, 'stores a memo to the last value');
+    assert.strictEqual(increment(), 1, 'stores a memo to the last value');
   });
 
   QUnit.test('Recursive onced function.', function(assert) {
@@ -600,12 +706,12 @@
   QUnit.test('wrap', function(assert) {
     var greet = function(name){ return 'hi: ' + name; };
     var backwards = _.wrap(greet, function(func, name){ return func(name) + ' ' + name.split('').reverse().join(''); });
-    assert.equal(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function');
+    assert.strictEqual(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function');
 
     var inner = function(){ return 'Hello '; };
     var obj = {name: 'Moe'};
     obj.hi = _.wrap(inner, function(fn){ return fn() + this.name; });
-    assert.equal(obj.hi(), 'Hello Moe');
+    assert.strictEqual(obj.hi(), 'Hello Moe');
 
     var noop = function(){};
     var wrapped = _.wrap(noop, function(){ return Array.prototype.slice.call(arguments, 0); });
@@ -615,34 +721,34 @@
 
   QUnit.test('negate', function(assert) {
     var isOdd = function(n){ return n & 1; };
-    assert.equal(_.negate(isOdd)(2), true, 'should return the complement of the given function');
-    assert.equal(_.negate(isOdd)(3), false, 'should return the complement of the given function');
+    assert.strictEqual(_.negate(isOdd)(2), true, 'should return the complement of the given function');
+    assert.strictEqual(_.negate(isOdd)(3), false, 'should return the complement of the given function');
   });
 
   QUnit.test('compose', function(assert) {
     var greet = function(name){ return 'hi: ' + name; };
     var exclaim = function(sentence){ return sentence + '!'; };
     var composed = _.compose(exclaim, greet);
-    assert.equal(composed('moe'), 'hi: moe!', 'can compose a function that takes another');
+    assert.strictEqual(composed('moe'), 'hi: moe!', 'can compose a function that takes another');
 
     composed = _.compose(greet, exclaim);
-    assert.equal(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
+    assert.strictEqual(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative');
 
     // f(g(h(x, y, z)))
     function h(x, y, z) {
-      assert.equal(arguments.length, 3, 'First function called with multiple args');
+      assert.strictEqual(arguments.length, 3, 'First function called with multiple args');
       return z * y;
     }
     function g(x) {
-      assert.equal(arguments.length, 1, 'Composed function is called with 1 argument');
+      assert.strictEqual(arguments.length, 1, 'Composed function is called with 1 argument');
       return x;
     }
     function f(x) {
-      assert.equal(arguments.length, 1, 'Composed function is called with 1 argument');
+      assert.strictEqual(arguments.length, 1, 'Composed function is called with 1 argument');
       return x * 2;
     }
     composed = _.compose(f, g, h);
-    assert.equal(composed(1, 2, 3), 12);
+    assert.strictEqual(composed(1, 2, 3), 12);
   });
 
   QUnit.test('after', function(assert) {
@@ -655,10 +761,10 @@
       return afterCalled;
     };
 
-    assert.equal(testAfter(5, 5), 1, 'after(N) should fire after being called N times');
-    assert.equal(testAfter(5, 4), 0, 'after(N) should not fire unless called N times');
-    assert.equal(testAfter(0, 0), 0, 'after(0) should not fire immediately');
-    assert.equal(testAfter(0, 1), 1, 'after(0) should fire when first invoked');
+    assert.strictEqual(testAfter(5, 5), 1, 'after(N) should fire after being called N times');
+    assert.strictEqual(testAfter(5, 4), 0, 'after(N) should not fire unless called N times');
+    assert.strictEqual(testAfter(0, 0), 0, 'after(0) should not fire immediately');
+    assert.strictEqual(testAfter(0, 1), 1, 'after(0) should fire when first invoked');
   });
 
   QUnit.test('before', function(assert) {
@@ -669,93 +775,107 @@
       return beforeCalled;
     };
 
-    assert.equal(testBefore(5, 5), 4, 'before(N) should not fire after being called N times');
-    assert.equal(testBefore(5, 4), 4, 'before(N) should fire before being called N times');
-    assert.equal(testBefore(0, 0), 0, 'before(0) should not fire immediately');
-    assert.equal(testBefore(0, 1), 0, 'before(0) should not fire when first invoked');
+    assert.strictEqual(testBefore(5, 5), 4, 'before(N) should not fire after being called N times');
+    assert.strictEqual(testBefore(5, 4), 4, 'before(N) should fire before being called N times');
+    assert.strictEqual(testBefore(0, 0), 0, 'before(0) should not fire immediately');
+    assert.strictEqual(testBefore(0, 1), 0, 'before(0) should not fire when first invoked');
 
     var context = {num: 0};
     var increment = _.before(3, function(){ return ++this.num; });
     _.times(10, increment, context);
-    assert.equal(increment(), 2, 'stores a memo to the last value');
-    assert.equal(context.num, 2, 'provides context');
+    assert.strictEqual(increment(), 2, 'stores a memo to the last value');
+    assert.strictEqual(context.num, 2, 'provides context');
   });
 
   QUnit.test('iteratee', function(assert) {
     var identity = _.iteratee();
-    assert.equal(identity, _.identity, '_.iteratee is exposed as an external function.');
+    assert.strictEqual(identity, _.identity, '_.iteratee is exposed as an external function.');
 
     function fn() {
       return arguments;
     }
     _.each([_.iteratee(fn), _.iteratee(fn, {})], function(cb) {
-      assert.equal(cb().length, 0);
+      assert.strictEqual(cb().length, 0);
       assert.deepEqual(_.toArray(cb(1, 2, 3)), _.range(1, 4));
       assert.deepEqual(_.toArray(cb(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)), _.range(1, 11));
     });
 
+    var deepProperty = _.iteratee(['a', 'b']);
+    assert.strictEqual(deepProperty({a: {b: 2}}), 2, 'treats an array as a deep property accessor');
+
     // Test custom iteratee
     var builtinIteratee = _.iteratee;
-    _.iteratee = function(value) {
+    _.iteratee = function(value, context) {
       // RegEx values return a function that returns the number of matches
       if (_.isRegExp(value)) return function(obj) {
         return (obj.match(value) || []).length;
       };
-      return value;
+      return builtinIteratee(value, context);
     };
 
     var collection = ['foo', 'bar', 'bbiz'];
 
     // Test all methods that claim to be transformed through `_.iteratee`
     assert.deepEqual(_.countBy(collection, /b/g), {0: 1, 1: 1, 2: 1});
-    assert.equal(_.every(collection, /b/g), false);
+    assert.strictEqual(_.every(collection, /b/g), false);
     assert.deepEqual(_.filter(collection, /b/g), ['bar', 'bbiz']);
-    assert.equal(_.find(collection, /b/g), 'bar');
-    assert.equal(_.findIndex(collection, /b/g), 1);
-    assert.equal(_.findKey(collection, /b/g), 1);
-    assert.equal(_.findLastIndex(collection, /b/g), 2);
+    assert.strictEqual(_.find(collection, /b/g), 'bar');
+    assert.strictEqual(_.findIndex(collection, /b/g), 1);
+    assert.strictEqual(_.findKey(collection, /b/g), '1');
+    assert.strictEqual(_.findLastIndex(collection, /b/g), 2);
     assert.deepEqual(_.groupBy(collection, /b/g), {0: ['foo'], 1: ['bar'], 2: ['bbiz']});
     assert.deepEqual(_.indexBy(collection, /b/g), {0: 'foo', 1: 'bar', 2: 'bbiz'});
     assert.deepEqual(_.map(collection, /b/g), [0, 1, 2]);
-    assert.equal(_.max(collection, /b/g), 'bbiz');
-    assert.equal(_.min(collection, /b/g), 'foo');
+    assert.strictEqual(_.max(collection, /b/g), 'bbiz');
+    assert.strictEqual(_.min(collection, /b/g), 'foo');
     assert.deepEqual(_.partition(collection, /b/g), [['bar', 'bbiz'], ['foo']]);
     assert.deepEqual(_.reject(collection, /b/g), ['foo']);
-    assert.equal(_.some(collection, /b/g), true);
+    assert.strictEqual(_.some(collection, /b/g), true);
     assert.deepEqual(_.sortBy(collection, /b/g), ['foo', 'bar', 'bbiz']);
-    assert.equal(_.sortedIndex(collection, 'blah', /b/g), 1);
+    assert.strictEqual(_.sortedIndex(collection, 'blah', /b/g), 1);
     assert.deepEqual(_.uniq(collection, /b/g), ['foo', 'bar', 'bbiz']);
 
     var objCollection = {a: 'foo', b: 'bar', c: 'bbiz'};
     assert.deepEqual(_.mapObject(objCollection, /b/g), {a: 0, b: 1, c: 2});
 
+    // Ensure that the overridden iteratee can still fall back on the builtin
+    // iteratee.
+    assert.strictEqual(_.iteratee(), _.identity);
+    assert.deepEqual(_.toArray(_.iteratee(fn)(1, 2, 3)), _.range(1, 4));
+    var matcher = _.iteratee({b: 'bar'});
+    assert.equal(matcher(objCollection), true);
+    assert.equal(matcher({}), false);
+    var property = _.iteratee('b');
+    assert.equal(property(objCollection), 'bar');
+    assert.equal(property({}), undefined);
+
     // Restore the builtin iteratee
     _.iteratee = builtinIteratee;
   });
 
-  QUnit.test('restArgs', function(assert) {
+  QUnit.test('restArguments', function(assert) {
     assert.expect(10);
-    _.restArgs(function(a, args) {
+    _.restArguments(function(a, args) {
       assert.strictEqual(a, 1);
       assert.deepEqual(args, [2, 3], 'collects rest arguments into an array');
     })(1, 2, 3);
 
-    _.restArgs(function(a, args) {
+    _.restArguments(function(a, args) {
       assert.strictEqual(a, void 0);
       assert.deepEqual(args, [], 'passes empty array if there are not enough arguments');
     })();
 
-    _.restArgs(function(a, b, c, args) {
+    _.restArguments(function(a, b, c, args) {
       assert.strictEqual(arguments.length, 4);
       assert.deepEqual(args, [4, 5], 'works on functions with many named parameters');
     })(1, 2, 3, 4, 5);
 
     var obj = {};
-    _.restArgs(function() {
+    _.restArguments(function() {
       assert.strictEqual(this, obj, 'invokes function with this context');
     }).call(obj);
 
-    _.restArgs(function(array, iteratee, context) {
+    _.restArguments(function(array, iteratee, context) {
       assert.deepEqual(array, [1, 2, 3, 4], 'startIndex can be used manually specify index of rest parameter');
       assert.strictEqual(iteratee, void 0);
       assert.strictEqual(context, void 0);

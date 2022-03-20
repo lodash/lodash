@@ -25,7 +25,7 @@ We consider the security of our systems a top priority. But no matter how much e
 
 If you discover a security vulnerability, please use one of the following means of communications to report it to us:
 
-- Report the security issue to the Node.js Security Working Group through the [HackerOne program](https://hackerone.com/nodejs-ecosystem) for ecosystem modules on npm, or to [Snyk Security Team](https://snyk.io/vulnerability-disclosure). They will help triage the security issue and work with all involved parties to remediate and release a fix.
+- Report the security issue to [Snyk Security Team](https://snyk.io/vulnerability-disclosure). They will help triage the security issue and work with all involved parties to remediate and release a fix.
 
 Note that time-frame and processes are subject to each program’s own policy.
 

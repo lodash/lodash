@@ -77,4 +77,11 @@ describe('remove', function() {
 
     assert.deepStrictEqual(array, [2]);
   });
+
+  it('should return an empty array when provided an array-like parameter, leaving the input unchanged XXXX', () => {
+    var arrayLike = { length: 9 };
+    var result = remove(arrayLike, () => true); 
+    assert.deepEqual(result, []);
+    assert.deepEqual(arrayLike, { length: 9 });
+  });
 });

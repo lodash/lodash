@@ -21,7 +21,7 @@ import baseUpdate from './.internal/baseUpdate.js'
  * console.log(object.a[0].b.c)
  * // => 9
  *
- * update(object, 'x[0].y.z', n => n ? n + 1 : 0)
+ * update(object, 'x[0].y.z', n !== undefined => n ? n + 1 : 0)
  * console.log(object.x[0].y.z)
  * // => 0
  */

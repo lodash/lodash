@@ -66,7 +66,7 @@ describe('curry', function() {
         ph = curried.placeholder;
 
     assert.deepEqual(curried(1)(_ph, 3)(ph, 4), [1, ph, 3, 4]);
-    delete placeholder;
+    placeholder = null;
   });
 
   it('should provide additional arguments after reaching the target arity', function() {

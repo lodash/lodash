@@ -15,7 +15,7 @@ const methods = {
 describe('flow methods', function() {
   lodashStable.each(['flow', 'flowRight'], function(methodName) {
     var func = methods[methodName],
-        isFlow = methodName == 'flow';
+        isFlow = methodName === 'flow';
 
     it('`_.' + methodName + '` should supply each function with the return value of the previous', function() {
       var fixed = function(n) { return n.toFixed(1); },

@@ -6,7 +6,7 @@ import sortBy from '../sortBy.js';
 describe('sortedIndex methods', function() {
   lodashStable.each(['sortedIndex', 'sortedLastIndex'], function(methodName) {
     var func = _[methodName],
-        isSortedIndex = methodName == 'sortedIndex';
+        isSortedIndex = methodName === 'sortedIndex';
 
     it('`_.' + methodName + '` should return the insert index', function() {
       var array = [30, 50],

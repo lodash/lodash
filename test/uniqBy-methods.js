@@ -6,7 +6,7 @@ import sortBy from '../sortBy.js';
 describe('uniqBy methods', function() {
   lodashStable.each(['uniqBy', 'sortedUniqBy'], function(methodName) {
     var func = _[methodName],
-        isSorted = methodName == 'sortedUniqBy',
+        isSorted = methodName === 'sortedUniqBy',
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }, { 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
 
     if (isSorted) {

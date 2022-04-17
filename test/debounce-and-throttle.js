@@ -6,7 +6,7 @@ import runInContext from '../runInContext.js';
 describe('debounce and throttle', function() {
   lodashStable.each(['debounce', 'throttle'], function(methodName) {
     var func = _[methodName],
-        isDebounce = methodName == 'debounce';
+        isDebounce = methodName === 'debounce';
 
     it('`_.' + methodName + '` should not error for non-object `options` values', function() {
       func(noop, 32, 1);
@@ -76,7 +76,7 @@ describe('debounce and throttle', function() {
         var lodash = runInContext({
           'Date': {
             'now': function() {
-              return ++dateCount == 4
+              return ++dateCount === 4
                 ? +new Date(2012, 3, 23, 23, 27, 18)
                 : +new Date;
             }

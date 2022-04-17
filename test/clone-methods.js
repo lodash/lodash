@@ -124,14 +124,14 @@ describe('clone methods', function() {
     });
 
     assert.ok(isNpm
-      ? actual.constructor.name == 'Stack'
+      ? actual.constructor.name === 'Stack'
       : actual instanceof mapCaches.Stack
     );
   });
 
   lodashStable.each(['clone', 'cloneDeep'], function(methodName) {
     var func = _[methodName],
-        isDeep = methodName == 'cloneDeep';
+        isDeep = methodName === 'cloneDeep';
 
     lodashStable.forOwn(objects, function(object, kind) {
       it('`_.' + methodName + '` should clone ' + kind, function() {
@@ -388,7 +388,7 @@ describe('clone methods', function() {
 
   lodashStable.each(['cloneWith', 'cloneDeepWith'], function(methodName) {
     var func = _[methodName],
-        isDeep = methodName == 'cloneDeepWith';
+        isDeep = methodName === 'cloneDeepWith';
 
     it('`_.' + methodName + '` should provide correct `customizer` arguments', function() {
       var argsList = [],

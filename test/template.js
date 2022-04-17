@@ -284,7 +284,7 @@ describe('template', function() {
 
   it('should work with statements containing quotes', function() {
     var compiled = template("<%\
-      if (a == 'A' || a == \"a\") {\
+      if (a === 'A' || a === \"a\") {\
         %>'a',\"A\"<%\
       } %>"
     );

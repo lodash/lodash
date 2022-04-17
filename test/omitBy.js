@@ -6,7 +6,7 @@ describe('omitBy', function() {
     var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
     var actual = omitBy(object, function(n) {
-      return n != 2 && n != 4;
+      return n !== 2 && n !== 4;
     });
 
     assert.deepStrictEqual(actual, { 'b': 2, 'd': 4 });

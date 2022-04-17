@@ -57,9 +57,9 @@ describe('dropWhile', function() {
     var array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3);
 
     var actual = _(array)
-      .dropWhile(function(n) { return n == 1; })
+      .dropWhile(function(n) { return n === 1; })
       .drop()
-      .dropWhile(function(n) { return n == 3; })
+      .dropWhile(function(n) { return n === 3; })
       .value();
 
     assert.deepEqual(actual, array.slice(3));

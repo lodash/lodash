@@ -33,7 +33,7 @@ describe('reduce', function() {
         object = { 'a': 1, 'b': 2 },
         firstKey = head(keys(object));
 
-    var expected = firstKey == 'a'
+    var expected = firstKey === 'a'
       ? [0, 1, 'a', object]
       : [0, 2, 'b', object];
 
@@ -44,7 +44,7 @@ describe('reduce', function() {
     assert.deepStrictEqual(args, expected);
 
     args = undefined;
-    expected = firstKey == 'a'
+    expected = firstKey === 'a'
       ? [1, 2, 'b', object]
       : [2, 1, 'a', object];
 

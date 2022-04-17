@@ -128,7 +128,7 @@ describe('iteration methods', function() {
         isBy = /(^partition|By)$/.test(methodName),
         isFind = /^find/.test(methodName),
         isOmitPick = /^(?:omit|pick)By$/.test(methodName),
-        isSome = methodName == 'some';
+        isSome = methodName === 'some';
 
     it('`_.' + methodName + '` should provide correct iteratee arguments', function() {
       if (func) {
@@ -190,7 +190,7 @@ describe('iteration methods', function() {
   lodashStable.each(lodashStable.difference(methods, objectMethods), function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName],
-        isEvery = methodName == 'every';
+        isEvery = methodName === 'every';
 
     array.a = 1;
 
@@ -209,7 +209,7 @@ describe('iteration methods', function() {
 
   lodashStable.each(lodashStable.difference(methods, unwrappedMethods), function(methodName) {
     var array = [1, 2, 3],
-        isBaseEach = methodName == '_baseEach';
+        isBaseEach = methodName === '_baseEach';
 
     it('`_.' + methodName + '` should return a wrapped value when implicitly chaining', function() {
       if (!(isBaseEach || isNpm)) {
@@ -295,7 +295,7 @@ describe('iteration methods', function() {
   lodashStable.each(methods, function(methodName) {
     var func = _[methodName],
         isFind = /^find/.test(methodName),
-        isSome = methodName == 'some',
+        isSome = methodName === 'some',
         isReduce = /^reduce/.test(methodName);
 
     it('`_.' + methodName + '` should ignore changes to `length`', function() {
@@ -304,7 +304,7 @@ describe('iteration methods', function() {
             array = [1];
 
         func(array, function() {
-          if (++count == 1) {
+          if (++count === 1) {
             array.push(2);
           }
           return !(isFind || isSome);
@@ -318,7 +318,7 @@ describe('iteration methods', function() {
   lodashStable.each(lodashStable.difference(lodashStable.union(methods, collectionMethods), arrayMethods), function(methodName) {
     var func = _[methodName],
         isFind = /^find/.test(methodName),
-        isSome = methodName == 'some',
+        isSome = methodName === 'some',
         isReduce = /^reduce/.test(methodName);
 
     it('`_.' + methodName + '` should ignore added `object` properties', function() {
@@ -327,7 +327,7 @@ describe('iteration methods', function() {
             object = { 'a': 1 };
 
         func(object, function() {
-          if (++count == 1) {
+          if (++count === 1) {
             object.b = 2;
           }
           return !(isFind || isSome);

@@ -37,7 +37,7 @@ describe('mergeWith', function() {
     });
 
     assert.ok(isNpm
-      ? actual.constructor.name == 'Stack'
+      ? actual.constructor.name === 'Stack'
       : actual instanceof mapCaches.Stack
     );
   });

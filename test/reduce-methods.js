@@ -6,7 +6,7 @@ describe('reduce methods', function() {
   lodashStable.each(['reduce', 'reduceRight'], function(methodName) {
     var func = _[methodName],
         array = [1, 2, 3],
-        isReduce = methodName == 'reduce';
+        isReduce = methodName === 'reduce';
 
     it('`_.' + methodName + '` should reduce a collection to a single value', function() {
       var actual = func(['a', 'b', 'c'], function(accumulator, value) {

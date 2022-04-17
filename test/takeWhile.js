@@ -58,7 +58,7 @@ describe('takeWhile', function() {
     var actual = _(array)
       .takeWhile(function(n) { return n < 4; })
       .take(2)
-      .takeWhile(function(n) { return n == 0; })
+      .takeWhile(function(n) { return n === 0; })
       .value();
 
     assert.deepEqual(actual, [0]);

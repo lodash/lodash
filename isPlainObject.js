@@ -28,7 +28,7 @@ import isObjectLike from './isObjectLike.js'
  * // => true
  */
 function isPlainObject(value) {
-  if (!isObjectLike(value) || getTag(value) != '[object Object]') {
+  if (!isObjectLike(value) || getTag(value) !== '[object Object]') {
     return false
   }
   if (Object.getPrototypeOf(value) === null) {

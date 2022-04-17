@@ -5,7 +5,7 @@ import { _ } from './utils.js';
 describe('toPairs methods', function() {
   lodashStable.each(['toPairs', 'toPairsIn'], function(methodName) {
     var func = _[methodName],
-        isToPairs = methodName == 'toPairs';
+        isToPairs = methodName === 'toPairs';
 
     it('`_.' + methodName + '` should create an array of string keyed-value pairs', function() {
       var object = { 'a': 1, 'b': 2 },

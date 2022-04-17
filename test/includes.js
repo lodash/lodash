@@ -62,7 +62,7 @@ describe('includes', function() {
           indexes = [4, 6, Math.pow(2, 32), Infinity];
 
       var expected = lodashStable.map(indexes, function(index) {
-        return [false, false, index == length];
+        return [false, false, index === length];
       });
 
       var actual = lodashStable.map(indexes, function(fromIndex) {

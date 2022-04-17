@@ -5,7 +5,7 @@ import { _, symbol } from './utils.js';
 describe('math operator methods', function() {
   lodashStable.each(['add', 'divide', 'multiply', 'subtract'], function(methodName) {
     var func = _[methodName],
-        isAddSub = methodName == 'add' || methodName == 'subtract';
+        isAddSub = methodName === 'add' || methodName === 'subtract';
 
     it('`_.' + methodName + '` should return `' + (isAddSub ? 0 : 1) + '` when no arguments are given', function() {
       assert.strictEqual(func(), isAddSub ? 0 : 1);

@@ -13,7 +13,7 @@ describe('findLastIndex and lastIndexOf', function() {
   lodashStable.each(['findLastIndex', 'lastIndexOf'], function(methodName) {
     var array = [1, 2, 3, 1, 2, 3],
         func = methods[methodName],
-        resolve = methodName == 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
+        resolve = methodName === 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
 
     it('`_.' + methodName + '` should return the index of the last matched value', function() {
       assert.strictEqual(func(array, resolve(3)), 5);

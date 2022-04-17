@@ -5,7 +5,7 @@ import { _, MAX_SAFE_INTEGER, MAX_INTEGER } from './utils.js';
 describe('toInteger methods', function() {
   lodashStable.each(['toInteger', 'toSafeInteger'], function(methodName) {
     var func = _[methodName],
-        isSafe = methodName == 'toSafeInteger';
+        isSafe = methodName === 'toSafeInteger';
 
     it('`_.' + methodName + '` should convert values to integers', function() {
       assert.strictEqual(func(-5.6), -5);

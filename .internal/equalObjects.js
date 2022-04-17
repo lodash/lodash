@@ -26,7 +26,7 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
   const othProps = getAllKeys(other)
   const othLength = othProps.length
 
-  if (objLength != othLength && !isPartial) {
+  if (objLength !== othLength && !isPartial) {
     return false
   }
   let key
@@ -40,7 +40,7 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
   // Assume cyclic values are equal.
   const stacked = stack.get(object)
   if (stacked && stack.get(other)) {
-    return stacked == other
+    return stacked === other
   }
   let result = true
   stack.set(object, other)
@@ -66,14 +66,14 @@ function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
       result = false
       break
     }
-    skipCtor || (skipCtor = key == 'constructor')
+    skipCtor || (skipCtor = key === 'constructor')
   }
   if (result && !skipCtor) {
     const objCtor = object.constructor
     const othCtor = other.constructor
 
     // Non `Object` object instances with different constructors are not equal.
-    if (objCtor != othCtor &&
+    if (objCtor !== othCtor &&
         ('constructor' in object && 'constructor' in other) &&
         !(typeof objCtor === 'function' && objCtor instanceof objCtor &&
           typeof othCtor === 'function' && othCtor instanceof othCtor)) {

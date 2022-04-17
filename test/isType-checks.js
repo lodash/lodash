@@ -14,7 +14,7 @@ describe('isType checks', function() {
       Foo.prototype = root[methodName.slice(2)].prototype;
 
       var object = new Foo;
-      if (objToString.call(object) == objectTag) {
+      if (objToString.call(object) === objectTag) {
         assert.strictEqual(_[methodName](object), false, '`_.' + methodName + '` returns `false`');
       }
     });

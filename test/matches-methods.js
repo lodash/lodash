@@ -5,7 +5,7 @@ import isMatch from '../isMatch.js';
 
 describe('matches methods', function() {
   lodashStable.each(['matches', 'isMatch'], function(methodName) {
-    var isMatches = methodName == 'matches';
+    var isMatches = methodName === 'matches';
 
     function matches(source) {
       return isMatches ? _.matches(source) : function(object) {

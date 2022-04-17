@@ -6,11 +6,11 @@ describe('pick methods', function() {
   lodashStable.each(['pick', 'pickBy'], function(methodName) {
     var expected = { 'a': 1, 'c': 3 },
         func = _[methodName],
-        isPick = methodName == 'pick',
+        isPick = methodName === 'pick',
         object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 },
         resolve = lodashStable.nthArg(1);
 
-    if (methodName == 'pickBy') {
+    if (methodName === 'pickBy') {
       resolve = function(object, props) {
         props = lodashStable.castArray(props);
         return function(value) {

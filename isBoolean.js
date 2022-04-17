@@ -18,7 +18,7 @@ import isObjectLike from './isObjectLike.js'
  */
 function isBoolean(value) {
   return value === true || value === false ||
-    (isObjectLike(value) && getTag(value) == '[object Boolean]')
+    (isObjectLike(value) && getTag(value) === '[object Boolean]')
 }
 
 export default isBoolean

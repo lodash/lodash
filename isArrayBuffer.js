@@ -22,6 +22,6 @@ const nodeIsArrayBuffer = nodeTypes && nodeTypes.isArrayBuffer
  */
 const isArrayBuffer = nodeIsArrayBuffer
   ? (value) => nodeIsArrayBuffer(value)
-  : (value) => isObjectLike(value) && getTag(value) == '[object ArrayBuffer]'
+  : (value) => isObjectLike(value) && getTag(value) === '[object ArrayBuffer]'
 
 export default isArrayBuffer

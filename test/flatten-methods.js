@@ -51,9 +51,9 @@ describe('flatten methods', function() {
       var expected = Array(5e5);
       try {
         var func = flatten;
-        if (index == 1) {
+        if (index === 1) {
           func = flattenDeep;
-        } else if (index == 2) {
+        } else if (index === 2) {
           func = flattenDepth;
         }
         assert.deepStrictEqual(func([expected]), expected);

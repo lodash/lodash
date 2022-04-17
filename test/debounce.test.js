@@ -233,7 +233,7 @@ describe('debounce', function() {
     var debounced = debounce(function(value) {
       actual = [this];
       push.apply(actual, arguments);
-      return ++callCount != 2;
+      return ++callCount !== 2;
     }, 32, { 'leading': true, 'maxWait': 64 });
 
     while (true) {

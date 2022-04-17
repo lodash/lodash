@@ -5,7 +5,7 @@ import { _, args, strictArgs } from './utils.js';
 describe('values methods', function() {
   lodashStable.each(['values', 'valuesIn'], function(methodName) {
     var func = _[methodName],
-        isValues = methodName == 'values';
+        isValues = methodName === 'values';
 
     it('`_.' + methodName + '` should get string keyed values of `object`', function() {
       var object = { 'a': 1, 'b': 2 },

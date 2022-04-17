@@ -24,7 +24,7 @@ import isTypedArray from './isTypedArray.js'
  *
  * transform([2, 3, 4], (result, n) => {
  *   result.push(n *= n)
- *   return n % 2 == 0
+ *   return n % 2 === 0
  * }, [])
  * // => [4, 9]
  *

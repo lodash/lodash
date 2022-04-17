@@ -5,8 +5,8 @@ import { _, identity, args, falsey } from './utils.js';
 describe('find and includes', function() {
   lodashStable.each(['includes', 'find'], function(methodName) {
     var func = _[methodName],
-        isIncludes = methodName == 'includes',
-        resolve = methodName == 'find' ? lodashStable.curry(lodashStable.eq) : identity;
+        isIncludes = methodName === 'includes',
+        resolve = methodName === 'find' ? lodashStable.curry(lodashStable.eq) : identity;
 
     lodashStable.each({
       'an `arguments` object': args,

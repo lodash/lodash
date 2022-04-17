@@ -40,7 +40,7 @@ describe('case methods', function() {
 
     it('`_.' + methodName + '` should convert `string` to ' + caseName + ' case', function() {
       var actual = lodashStable.map(strings, function(string) {
-        var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
+        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
         return func(string) === expected;
       });
 
@@ -49,7 +49,7 @@ describe('case methods', function() {
 
     it('`_.' + methodName + '` should handle double-converting strings', function() {
       var actual = lodashStable.map(strings, function(string) {
-        var expected = (caseName == 'start' && string == 'FOO BAR') ? string : converted;
+        var expected = (caseName === 'start' && string === 'FOO BAR') ? string : converted;
         return func(func(string)) === expected;
       });
 

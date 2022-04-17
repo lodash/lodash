@@ -170,7 +170,7 @@ describe('transform', function() {
       });
 
       var first = args[0];
-      if (key == 'array') {
+      if (key === 'array') {
         assert.ok(first !== object && lodashStable.isArray(first));
         assert.deepStrictEqual(args, [first, 1, 0, object]);
       } else {

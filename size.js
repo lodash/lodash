@@ -34,7 +34,7 @@ function size(collection) {
     return isString(collection) ? stringSize(collection) : collection.length
   }
   const tag = getTag(collection)
-  if (tag == mapTag || tag == setTag) {
+  if (tag === mapTag || tag === setTag) {
     return collection.size
   }
   return Object.keys(collection).length

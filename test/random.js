@@ -96,7 +96,7 @@ describe('random', function() {
         randoms = lodashStable.map(array, random);
 
     var actual = lodashStable.map(randoms, function(result, index) {
-      return result >= 0 && result <= array[index] && (result % 1) == 0;
+      return result >= 0 && result <= array[index] && (result % 1) === 0;
     });
 
     assert.deepStrictEqual(actual, expected);

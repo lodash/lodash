@@ -45,7 +45,7 @@ class ListCache {
       return false
     }
     const lastIndex = data.length - 1
-    if (index == lastIndex) {
+    if (index === lastIndex) {
       data.pop()
     } else {
       data.splice(index, 1)

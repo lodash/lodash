@@ -51,8 +51,8 @@ describe('chain', function() {
       wrapped = index ? _(array).chain() : chain(array);
       actual = wrapped
         .chain()
-        .filter(function(n) { return n % 2 != 0; })
-        .reject(function(n) { return n % 3 == 0; })
+        .filter(function(n) { return n % 2 !== 0; })
+        .reject(function(n) { return n % 3 === 0; })
         .sortBy(function(n) { return -n; })
         .value();
 

@@ -7,7 +7,7 @@ import curry from '../curry.js';
 describe('partial methods', function() {
   lodashStable.each(['partial', 'partialRight'], function(methodName) {
     var func = _[methodName],
-        isPartial = methodName == 'partial',
+        isPartial = methodName === 'partial',
         ph = func.placeholder;
 
     it('`_.' + methodName + '` partially applies arguments', function() {

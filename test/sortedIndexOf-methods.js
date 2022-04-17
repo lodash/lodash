@@ -5,7 +5,7 @@ import { _ } from './utils.js';
 describe('sortedIndexOf methods', function() {
   lodashStable.each(['sortedIndexOf', 'sortedLastIndexOf'], function(methodName) {
     var func = _[methodName],
-        isSortedIndexOf = methodName == 'sortedIndexOf';
+        isSortedIndexOf = methodName === 'sortedIndexOf';
 
     it('`_.' + methodName + '` should perform a binary search', function() {
       var sorted = [4, 4, 5, 5, 6, 6];

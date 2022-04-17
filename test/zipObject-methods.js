@@ -6,7 +6,7 @@ describe('zipObject methods', function() {
   lodashStable.each(['zipObject', 'zipObjectDeep'], function(methodName) {
     var func = _[methodName],
         object = { 'barney': 36, 'fred': 40 },
-        isDeep = methodName == 'zipObjectDeep';
+        isDeep = methodName === 'zipObjectDeep';
 
     it('`_.' + methodName + '` should zip together key/value arrays into an object', function() {
       var actual = func(['barney', 'fred'], [36, 40]);

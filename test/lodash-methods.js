@@ -103,13 +103,13 @@ describe('lodash methods', function() {
         return index ? func(value) : func();
       });
 
-      if (methodName == 'noConflict') {
+      if (methodName === 'noConflict') {
         root._ = oldDash;
       }
-      else if (methodName == 'pull' || methodName == 'pullAll') {
+      else if (methodName === 'pull' || methodName === 'pullAll') {
         expected = falsey;
       }
-      if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
+      if (lodashStable.includes(returnArrays, methodName) && methodName !== 'sample') {
         assert.deepStrictEqual(actual, expected, '_.' + methodName + ' returns an array');
       }
       assert.ok(true, '`_.' + methodName + '` accepts falsey arguments');
@@ -140,7 +140,7 @@ describe('lodash methods', function() {
       }
       assert.ok(lodashStable.isArray(actual), '_.' + methodName + ' returns an array');
 
-      var isPull = methodName == 'pull' || methodName == 'pullAll';
+      var isPull = methodName === 'pull' || methodName === 'pullAll';
       assert.strictEqual(actual === array, isPull, '_.' + methodName + ' should ' + (isPull ? '' : 'not ') + 'return the given array');
     });
   });
@@ -157,7 +157,7 @@ describe('lodash methods', function() {
           index ? func(value) : func();
         } catch (e) {
           pass = !pass && (e instanceof TypeError) &&
-            (!lodashStable.includes(checkFuncs, methodName) || (e.message == FUNC_ERROR_TEXT));
+            (!lodashStable.includes(checkFuncs, methodName) || (e.message === FUNC_ERROR_TEXT));
         }
         return pass;
       });
@@ -170,7 +170,7 @@ describe('lodash methods', function() {
     lodashStable.each(noBinding, function(methodName) {
       var fn = function() { return this.a; },
           func = _[methodName],
-          isNegate = methodName == 'negate',
+          isNegate = methodName === 'negate',
           object = { 'a': 1 },
           expected = isNegate ? false : 1;
 

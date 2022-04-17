@@ -7,7 +7,7 @@ describe('curry methods', function() {
   lodashStable.each(['curry', 'curryRight'], function(methodName) {
     var func = _[methodName],
         fn = function(a, b) { return slice.call(arguments); },
-        isCurry = methodName == 'curry';
+        isCurry = methodName === 'curry';
 
     it('`_.' + methodName + '` should not error on functions with the same name as lodash methods', function() {
       function run(a, b) {

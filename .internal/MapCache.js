@@ -112,7 +112,7 @@ class MapCache {
     const size = data.size
 
     data.set(key, value)
-    this.size += data.size == size ? 0 : 1
+    this.size += data.size === size ? 0 : 1
     return this
   }
 }

@@ -7,7 +7,7 @@ describe('pickBy', function() {
     var object = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
 
     var actual = pickBy(object, function(n) {
-      return n == 1 || n == 3;
+      return n === 1 || n === 3;
     });
 
     assert.deepStrictEqual(actual, { 'a': 1, 'c': 3 });

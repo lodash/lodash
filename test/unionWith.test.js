@@ -16,7 +16,7 @@ describe('unionWith', function() {
         others = [{ 'x': 1, 'y': 2 }];
 
     var actual = unionWith(objects, others, function(a, b) {
-      return a.x == b.x;
+      return a.x === b.x;
     });
 
     assert.deepStrictEqual(actual, [{ 'x': 1, 'y': 1 }]);

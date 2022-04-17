@@ -35,10 +35,10 @@ describe('number coercion methods', function() {
 
   lodashStable.each(['toFinite', 'toInteger', 'toLength', 'toNumber', 'toSafeInteger'], function(methodName) {
     var func = _[methodName],
-        isToFinite = methodName == 'toFinite',
-        isToLength = methodName == 'toLength',
-        isToNumber = methodName == 'toNumber',
-        isToSafeInteger = methodName == 'toSafeInteger';
+        isToFinite = methodName === 'toFinite',
+        isToLength = methodName === 'toLength',
+        isToNumber = methodName === 'toNumber',
+        isToSafeInteger = methodName === 'toSafeInteger';
 
     function negative(string) {
       return '-' + string;
@@ -69,10 +69,10 @@ describe('number coercion methods', function() {
 
       var expected = lodashStable.map(values, function(value) {
         if (!isToNumber) {
-          if (!isToFinite && value == 1.2) {
+          if (!isToFinite && value === 1.2) {
             value = 1;
           }
-          else if (value == Infinity) {
+          else if (value === Infinity) {
             value = MAX_INTEGER;
           }
           else if (value !== value) {
@@ -106,13 +106,13 @@ describe('number coercion methods', function() {
       var expected = lodashStable.map(values, function(value) {
         var n = +value;
         if (!isToNumber) {
-          if (!isToFinite && n == 1.234567890) {
+          if (!isToFinite && n === 1.234567890) {
             n = 1;
           }
-          else if (n == Infinity) {
+          else if (n === Infinity) {
             n = MAX_INTEGER;
           }
-          else if ((!isToFinite && n == Number.MIN_VALUE) || n !== n) {
+          else if ((!isToFinite && n === Number.MIN_VALUE) || n !== n) {
             n = 0;
           }
           if (isToLength || isToSafeInteger) {

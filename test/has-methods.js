@@ -5,7 +5,7 @@ import { _, toArgs, stubTrue, args, symbol, defineProperty, stubFalse } from './
 describe('has methods', function() {
   lodashStable.each(['has', 'hasIn'], function(methodName) {
     var func = _[methodName],
-        isHas = methodName == 'has',
+        isHas = methodName === 'has',
         sparseArgs = toArgs([1]),
         sparseArray = Array(1),
         sparseString = Object('a');

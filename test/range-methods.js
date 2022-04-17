@@ -5,7 +5,7 @@ import { _, falsey } from './utils.js';
 describe('range methods', function() {
   lodashStable.each(['range', 'rangeRight'], function(methodName) {
     var func = _[methodName],
-        isRange = methodName == 'range';
+        isRange = methodName === 'range';
 
     function resolve(range) {
       return isRange ? range : range.reverse();

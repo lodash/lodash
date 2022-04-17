@@ -101,7 +101,7 @@ function truncate(string, options) {
       }
       result = result.slice(0, newEnd === undefined ? end : newEnd)
     }
-  } else if (string.indexOf(baseToString(separator), end) != end) {
+  } else if (string.indexOf(baseToString(separator), end) !== end) {
     const index = result.lastIndexOf(separator)
     if (index > -1) {
       result = result.slice(0, index)

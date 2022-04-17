@@ -80,7 +80,7 @@ var arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined,
 /** Math helpers. */
 var add = function(x, y) { return x + y; },
     doubled = function(n) { return n * 2; },
-    isEven = function(n) { return n % 2 == 0; },
+    isEven = function(n) { return n % 2 === 0; },
     square = function(n) { return n * n; };
 
 /** Stub functions. */
@@ -263,7 +263,7 @@ setProperty(root, 'setTimeout', setTimeout);
 
 /** Used to test Web Workers. */
 var Worker = !(ui.isForeign || ui.isSauceLabs || isModularize) &&
-  (document && document.origin != 'null') && root.Worker;
+  (document && document.origin !== 'null') && root.Worker;
 
 /** Poison the free variable `root` in Node.js */
 try {
@@ -486,7 +486,7 @@ function toArgs(array) {
 
   var _propertyIsEnumerable = objectProto.propertyIsEnumerable;
   setProperty(objectProto, 'propertyIsEnumerable', function(key) {
-    return !(key == 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
+    return !(key === 'valueOf' && this && this.valueOf === 1) && _propertyIsEnumerable.call(this, key);
   });
 
   if (Buffer) {
@@ -497,7 +497,7 @@ function toArgs(array) {
         var caller = get.caller,
             name = caller ? caller.name : '';
 
-        if (!(name == 'runInContext' || name.length == 1 || /\b_\.isBuffer\b/.test(caller))) {
+        if (!(name === 'runInContext' || name.length === 1 || /\b_\.isBuffer\b/.test(caller))) {
           return Buffer;
         }
       }

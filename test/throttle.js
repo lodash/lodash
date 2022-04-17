@@ -47,7 +47,7 @@ describe('throttle', function() {
       var lodash = runInContext({
         'Date': {
           'now': function() {
-            return ++dateCount == 5 ? Infinity : +new Date;
+            return ++dateCount === 5 ? Infinity : +new Date;
           }
         }
       });

@@ -44,15 +44,15 @@ const symbolValueOf = Symbol.prototype.valueOf
 function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
   switch (tag) {
     case dataViewTag:
-      if ((object.byteLength != other.byteLength) ||
-          (object.byteOffset != other.byteOffset)) {
+      if ((object.byteLength !== other.byteLength) ||
+          (object.byteOffset !== other.byteOffset)) {
         return false
       }
       object = object.buffer
       other = other.buffer
 
     case arrayBufferTag:
-      if ((object.byteLength != other.byteLength) ||
+      if ((object.byteLength !== other.byteLength) ||
           !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
         return false
       }
@@ -66,14 +66,14 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       return eq(+object, +other)
 
     case errorTag:
-      return object.name == other.name && object.message == other.message
+      return object.name === other.name && object.message === other.message
 
     case regexpTag:
     case stringTag:
       // Coerce regexes to strings and treat strings, primitives and objects,
       // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
       // for more details.
-      return object == `${other}`
+      return object === `${other}`
 
     case mapTag:
       let convert = mapToArray
@@ -82,13 +82,13 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       const isPartial = bitmask & COMPARE_PARTIAL_FLAG
       convert || (convert = setToArray)
 
-      if (object.size != other.size && !isPartial) {
+      if (object.size !== other.size && !isPartial) {
         return false
       }
       // Assume cyclic values are equal.
       const stacked = stack.get(object)
       if (stacked) {
-        return stacked == other
+        return stacked === other
       }
       bitmask |= COMPARE_UNORDERED_FLAG
 
@@ -100,7 +100,7 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
 
     case symbolTag:
       if (symbolValueOf) {
-        return symbolValueOf.call(object) == symbolValueOf.call(other)
+        return symbolValueOf.call(object) === symbolValueOf.call(other)
       }
   }
   return false

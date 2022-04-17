@@ -20,7 +20,7 @@ const MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1
 function baseSortedIndexBy(array, value, iteratee, retHighest) {
   let low = 0
   let high = array == null ? 0 : array.length
-  if (high == 0) {
+  if (high === 0) {
     return 0
   }
 

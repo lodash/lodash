@@ -8,7 +8,7 @@
  * @param {*} value The value to assign.
  */
 function baseAssignValue(object, key, value) {
-  if (key == '__proto__') {
+  if (key === '__proto__') {
     Object.defineProperty(object, key, {
       'configurable': true,
       'enumerable': true,

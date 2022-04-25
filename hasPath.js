@@ -45,9 +45,14 @@ function hasPath(object, path) {
   if (result || ++index != length) {
     return result
   }
+
+  // Handle Array index & arguments checking
+  if (!Array.isArray(object) || !isArguments(object)) {
+    return result
+  }
+
   length = object == null ? 0 : object.length
-  return !!length && isLength(length) && isIndex(key, length) &&
-    (Array.isArray(object) || isArguments(object))
+  return !!length && isLength(length) && isIndex(key, length)
 }
 
 export default hasPath

@@ -21,13 +21,15 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * groupBy([6.1, 4.2, 6.3], Math.floor)
  * // => { '4': [4.2], '6': [6.1, 6.3] }
  */
-function groupBy(collection, iteratee) {
+ function groupBy(collection, iteratee, iteration) {
+  !iteration && (iteration = collection.length)
   return reduce(collection, (result, value, key) => {
     key = iteratee(value)
     if (hasOwnProperty.call(result, key)) {
-      result[key].push(value)
+      Array.isArray(result[key]) && !(result[key].length > iteration) && result[key].push(value)
     } else {
       baseAssignValue(result, key, [value])
+      iteration == 1 && (result[key] = value)
     }
     return result
   }, {})

@@ -14324,7 +14324,7 @@
     }
 
     /**
-     * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
+     * Escapes the `RegExp` special characters "^", "$", "\\", ".", "*", "+",
      * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
      *
      * @static

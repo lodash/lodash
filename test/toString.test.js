@@ -36,6 +36,20 @@ describe('toString', function() {
     assert.strictEqual(toString([symbol]), 'Symbol(a)');
   });
 
+  it('should handle objects', function() {
+    var values = [
+        Object.create(null),
+        Object('foo'),
+        Object(46),
+        String('bar'),
+        new Set([1, 2, 3])
+      ],
+        expected = ['[object Object]', 'foo', '46', 'bar', '[object Set]'],
+        actual = lodashStable.map(values, toString);
+
+    assert.deepStrictEqual(actual, expected);
+  });
+
   it('should return the `toString` result of the wrapped value', function() {
     var wrapped = _([1, 2, 3]);
     assert.strictEqual(wrapped.toString(), '1,2,3');

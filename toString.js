@@ -1,4 +1,5 @@
 import isSymbol from './isSymbol.js'
+import getTag from './.internal/getTag'
 
 /** Used as references for various `Number` constants. */
 const INFINITY = 1 / 0
@@ -36,6 +37,9 @@ function toString(value) {
   }
   if (isSymbol(value)) {
     return value.toString()
+  }
+  if (typeof value.toString !== 'function') {
+    return getTag(value)
   }
   const result = `${value}`
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result

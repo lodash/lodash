@@ -17,17 +17,11 @@ const idCounter = {}
  * uniqueId()
  * // => '105'
  */
-function uniqueId(prefix='$lodash$') {
-  if (!idCounter[prefix]) {
-    idCounter[prefix] = 0
-  }
-
-  const id =++idCounter[prefix]
-  if (prefix === '$lodash$') {
-    return `${id}`
-  }
-
-  return `${prefix}${id}`
+function uniqueId(prefix='') {
+  prefix = String(prefix)
+  prefix += /\d$/.test(prefix) ? '_' : ''
+  idCounter[prefix] = (idCounter[prefix] || 0) + 1
+  return `${prefix}${idCounter[prefix]}`
 }
 
 export default uniqueId

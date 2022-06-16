@@ -17,6 +17,22 @@ describe('uniqueId', function() {
 
   it('should coerce the prefix argument to a string', function() {
     var actual = [uniqueId(3), uniqueId(2), uniqueId(1)];
-    assert.ok(/3\d+,2\d+,1\d+/.test(actual));
+    assert.ok(/3_\d+,2_\d+,1_\d+/.test(actual));
+  });
+
+  it('should handle numeric prefixes properly', function() {
+    var firstId = uniqueId('1')
+    var moreIds = lodashStable.times(15, function() {
+      return uniqueId()
+    });
+    assert.ok(!moreIds.includes(firstId))
+  });
+
+  it('should properly handle prefixes that end with digits', function() {
+    var firstFooId = uniqueId('foo1')
+    var moreFooIds = lodashStable.times(15, function() {
+      return uniqueId('foo')
+    });
+    assert.ok(!moreFooIds.includes(firstFooId))
   });
 });

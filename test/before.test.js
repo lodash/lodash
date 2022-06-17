@@ -27,6 +27,11 @@ describe.only("before", () => {
         it("should create a function that does not invoke `func` when called", () => {
           assert.strictEqual(callMethod(0, 10), 0);
         });
+
+
+        it("should create a function that invokes `func` before being called n times", () => {
+          assert.strictEqual(callMethod(5, 4), 4);
+        });
       })
 
     });

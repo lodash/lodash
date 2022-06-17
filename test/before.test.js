@@ -15,15 +15,24 @@ describe.only("before", () => {
     return count;
   };
 
-  describe("if func arg is a valid function", () => {
+  describe("if `func` arg is a valid function", () => {
     describe("if n isn't a numeric value", () => {
-      it("should throw TypeError", () => {
-        assert.throws(() => _.before(10, callMethod("string", 10)));
+      it("should coerce NaN values to 0", () => {
+        assert.strictEqual(callMethod(NaN, 10), 0);
       });
+    });
+
+    describe("if n is a numeric value", () => {
+      describe("when n = 0", () => {
+        it("should create a function that does not invoke `func` when called", () => {
+          assert.strictEqual(callMethod(0, 10), 0);
+        });
+      })
+
     });
   });
 
-  describe('if func arg ins\'t an object of type "function"', () => {
+  describe('if `func` ins\'t an object of type "function"', () => {
     it("should throw TypeError", () => {
       assert.throws(() => _.before(10, { test: "not a function" }));
     });
@@ -45,15 +54,6 @@ describe.only("before", () => {
   //     0,
   //     'before(0) should not invoke `func` immediately'
   //   )
-  //   assert.strictEqual(
-  //     before(0, 1),
-  //     0,
-  //     'before(0) should not invoke `func` when called'
-  //   )
-  // })
-
-  // it('should coerce `n` values of `NaN` to `0`', () => {
-  //   assert.strictEqual(before(NaN, 1), 0)
   // })
 
   // it('should use `this` binding of function', () => {

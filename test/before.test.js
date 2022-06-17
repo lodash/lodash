@@ -28,12 +28,20 @@ describe.only("before", () => {
           assert.strictEqual(callMethod(0, 10), 0);
         });
 
+        it("should create a function that does not invoke `func` immediately", () => {
+          assert.strictEqual(callMethod(0, 0), 0);
+        });
+      });
 
+      describe("when n > 0", () => {
         it("should create a function that invokes `func` before being called n times", () => {
           assert.strictEqual(callMethod(5, 4), 4);
         });
-      })
 
+        it("should create a function that not invokes `func` after being called n - 1 times", () => {
+          assert.strictEqual(callMethod(5, 6), 4);
+        });
+      });
     });
   });
 
@@ -49,16 +57,7 @@ describe.only("before", () => {
   //     4,
   //     'before(n) should invoke `func` before being called `n` times'
   //   )
-  //   assert.strictEqual(
-  //     before(5, 6),
-  //     4,
-  //     'before(n) should not invoke `func` after being called `n - 1` times'
-  //   )
-  //   assert.strictEqual(
-  //     before(0, 0),
-  //     0,
-  //     'before(0) should not invoke `func` immediately'
-  //   )
+
   // })
 
   // it('should use `this` binding of function', () => {

@@ -1,8 +1,8 @@
-import assert from 'assert';
-import lodashStable from 'lodash';
-import { _ } from './utils.js';
+import assert from "assert";
+import lodashStable from "lodash";
+import { _ } from "./utils.js";
 
-describe('before', () => {
+describe.only("before", () => {
   const callMethod = (n, times) => {
     let count = 0;
 
@@ -15,9 +15,17 @@ describe('before', () => {
     return count;
   };
 
+  describe("if func arg is a valid function", () => {
+    describe("if n isn't a numeric value", () => {
+      it("should throw TypeError", () => {
+        assert.throws(() => _.before(10, callMethod("string", 10)));
+      });
+    });
+  });
+
   describe('if func arg ins\'t an object of type "function"', () => {
-    it('should throw TypeError', () => {
-      assert.throws(() => _.before(10, { test: 'not a function' }));
+    it("should throw TypeError", () => {
+      assert.throws(() => _.before(10, { test: "not a function" }));
     });
   });
 

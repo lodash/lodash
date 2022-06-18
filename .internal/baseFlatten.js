@@ -27,7 +27,7 @@ function baseFlatten(array, depth, predicate, isStrict, result) {
       } else {
         result.push(...value)
       }
-    } else if (!isStrict) {
+    } else if (!isStrict && value !== undefined) {
       result[result.length] = value
     }
   }

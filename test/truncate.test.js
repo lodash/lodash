@@ -1,19 +1,24 @@
 /* eslint-disable */
-import assert from 'assert'
-import lodashStable from 'lodash'
-import truncate from '../truncate.js'
+import assert from "assert";
+import lodashStable from "lodash";
+import truncate from "../truncate.js";
 
-describe.only('truncate', () => {
-  const string = 'hi-diddly-ho there, neighborino'
+describe.only("truncate", () => {
+  const string = "hi-diddly-ho there, neighborino";
 
-  it('path2', () => {
-    const result = truncate('32-chars-string------------   -', {separator: ' '})
+  it("path2", () => {
+    const result = truncate("32-chars-string------------   -", {
+      separator: " ",
+    });
 
-    assert.strictEqual(result, '32-chars-string------------...')
-  })
+    assert.strictEqual(result, "32-chars-string------------...");
+  });
 
+  it("path3", () => {
+    const result = truncate("32-chars-string\u00E9-----------   -");
 
-
+    assert.strictEqual(result, "32-chars-string\u00E9-----------...");
+  });
 
   // it('should use a default `length` of `30`', () => {
   //   assert.strictEqual(truncate(string), 'hi-diddly-ho there, neighbo...')
@@ -100,4 +105,4 @@ describe.only('truncate', () => {
 
   //   assert.deepStrictEqual(actual, [truncated, truncated, truncated])
   // })
-})
+});

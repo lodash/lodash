@@ -20,6 +20,12 @@ describe.only("truncate", () => {
     assert.strictEqual(result, "32-chars-string\u00E9-----------...");
   });
 
+  it("path4", () => {
+    const result = truncate("small string");
+
+    assert.strictEqual(result, "small string");
+  });
+
   // it('should use a default `length` of `30`', () => {
   //   assert.strictEqual(truncate(string), 'hi-diddly-ho there, neighbo...')
   // })

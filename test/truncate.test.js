@@ -37,7 +37,7 @@ describe.only("truncate", () => {
       assert.strictEqual(result, "32-chars-string\u00E9-----------...");
     });
 
-    it("should not truncate if `string` is <= `length` default value (30)", () => {
+    it("path4::should not truncate if `string` is <= `length` default value (30)", () => {
       const result = truncate("small string");
 
       assert.strictEqual(result, "small string");

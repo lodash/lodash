@@ -3,7 +3,8 @@
   "version": "5.0.0",
   "license": "MIT",
   "private": true,
-  "main": "lodash.js",
+  "files": ["lodash.min.js"],
+  "main": "lodash.min.js",
   "engines": {
     "node": ">=4.0.0"
   },

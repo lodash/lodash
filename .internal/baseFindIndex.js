@@ -9,15 +9,20 @@
  * @returns {number} Returns the index of the matched value, else `-1`.
  */
 function baseFindIndex(array, predicate, fromIndex, fromRight) {
-  const { length } = array
-  let index = fromIndex + (fromRight ? 1 : -1)
+  const { length } = array;
+  let index = fromIndex + (fromRight ? 1 : -1);
 
-  while ((fromRight ? index-- : ++index < length)) {
+  // # https://github.com/lodash/lodash/issues/5434
+  if (typeof predicate !== "function") {
+    throw Error("second argument is expected to be a function");
+  }
+
+  while (fromRight ? index-- : ++index < length) {
     if (predicate(array[index], index, array)) {
-      return index
+      return index;
     }
   }
-  return -1
+  return -1;
 }
 
-export default baseFindIndex
+export default baseFindIndex;

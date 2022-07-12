@@ -8609,7 +8609,7 @@ The chainable wrapper methods are:<br>
 `toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`, `unary`,
 `union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`,
 `unshift`, `unzip`, `unzipWith`, `update`, `updateWith`, `values`,
-`valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
+`valuesIn`, `without`, `words`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,
 `zipObject`, `zipObjectDeep`, and `zipWith`
 <br>
 <br>
@@ -8638,7 +8638,7 @@ The wrapper methods that are **not** chainable by default are:<br>
 `template`, `times`, `toFinite`, `toInteger`, `toJSON`, `toLength`,
 `toLower`, `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`,
 `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
-`upperFirst`, `value`, and `words`
+`upperFirst`, and `value`
 
 #### Arguments
 1. `value` *(&#42;)*: The value to wrap in a `lodash` instance.

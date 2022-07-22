@@ -40,6 +40,7 @@ describe('lodash(...) methods that return unwrapped values', function() {
     'isNative',
     'isNil',
     'isNull',
+    'isNullish',
     'isNumber',
     'isObject',
     'isObjectLike',

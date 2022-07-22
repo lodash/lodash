@@ -24,9 +24,9 @@ describe('isType checks', function() {
     var funcs = [
       'isArguments', 'isArray', 'isArrayBuffer', 'isArrayLike', 'isBoolean',
       'isBuffer', 'isDate', 'isElement', 'isError', 'isFinite', 'isFunction',
-      'isInteger', 'isMap', 'isNaN', 'isNil', 'isNull', 'isNumber', 'isObject',
-      'isObjectLike', 'isRegExp', 'isSet', 'isSafeInteger', 'isString',
-      'isUndefined', 'isWeakMap', 'isWeakSet'
+      'isInteger', 'isMap', 'isNaN', 'isNil', 'isNull', 'isNullish', 'isNumber',
+      'isObject', 'isObjectLike', 'isRegExp', 'isSet', 'isSafeInteger', 
+      'isString', 'isUndefined', 'isWeakMap', 'isWeakSet'
     ];
 
     lodashStable.each(funcs, function(methodName) {

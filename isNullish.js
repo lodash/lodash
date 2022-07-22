@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from "lodash"
+import { isNull, isUndefined } from 'lodash'
 
 /**
  * Checks if `value` is `null` or `undefined`.
@@ -11,7 +11,7 @@ import { isNull, isUndefined } from "lodash"
  *
  * isNullish(null)
  * // => true
- * 
+ *
  * isNullish(undefined)
  * // => true
  *

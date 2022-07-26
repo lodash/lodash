@@ -1,7 +1,7 @@
 import deburrLetter from './.internal/deburrLetter.js'
 
 /** Used to match Latin Unicode letters (excluding mathematical operators). */
-const reLatin = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f]/g
+const reLatin = /[\xc0-\xd6\xd8-\xf6\xf8-\xff\u0100-\u017f\u0180-\u024F\u1E00-\u1EFF]/g
 
 /** Used to compose unicode character classes. */
 const rsComboMarksRange = '\\u0300-\\u036f'
@@ -22,10 +22,13 @@ const reComboMark = RegExp(rsCombo, 'g')
 
 /**
  * Deburrs `string` by converting
- * [Latin-1 Supplement](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
- * and [Latin Extended-A](https://en.wikipedia.org/wiki/Latin_Extended-A)
+ * [Latin-1 Supplement](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table),
+ * [Latin Extended-A](https://en.wikipedia.org/wiki/Latin_Extended-A),
+ * and most [Latin Extended-B](https://en.wikipedia.org/wiki/Latin_Extended-B)
+ * and [Latin Extended Additional](https://en.wikipedia.org/wiki/Latin_Extended_Additional)
  * letters to basic Latin letters and removing
  * [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
+ * Letters which have no Latin equivalent are left as-is.
  *
  * @since 3.0.0
  * @category String

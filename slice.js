@@ -25,6 +25,7 @@ function slice(array, start, end) {
   }
   start = start == null ? 0 : start
   end = end === undefined ? length : end
+  end = end === undefined ? length : end === null ? 0 : end
 
   if (start < 0) {
     start = -start > length ? 0 : (length + start)

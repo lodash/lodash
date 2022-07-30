@@ -1,3 +1,4 @@
+import isString from './isString.js'
 /**
  * Given an string x, return true if x is a palindrome string.
  *
@@ -13,12 +14,13 @@
  * // => true
  */
 function isPalindrome(x) {
+  if (!isString(x)) { throw new ('Expected a string') }
   for (let i = 0, j = x.length - 1; i < x.length, j >= 0; i++, j--) {
     if (x[i] !== x[j]) {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
 
-export default isPalindrome;
+export default isPalindrome

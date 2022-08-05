@@ -41,8 +41,10 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *
  * isEmpty({ 'a': 1 })
  * // => false
- *
- * isEmpty({ Symbol("a"): 1 })
+ * 
+ * var obj = {};
+ * obj[Symbol('a')] = 1;
+ * isEmpty(obj)
  * // => false
  */
 function isEmpty(value) {

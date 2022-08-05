@@ -40,6 +40,9 @@ describe('isEmpty', function() {
     assert.strictEqual(isEmpty([0]), false);
     assert.strictEqual(isEmpty({ 'a': 0 }), false);
     assert.strictEqual(isEmpty('a'), false);
+    var obj = {};
+    obj[Symbol('a')] = 1;
+    assert.strictEqual(isEmpty(obj), false);
   });
 
   it('should work with an object that has a `length` property', function() {

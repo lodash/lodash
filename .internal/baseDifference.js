@@ -34,7 +34,7 @@ function baseDifference(array, values, iteratee, comparator) {
     includes = arrayIncludesWith
     isCommon = false
   }
-  else if (values.length >= LARGE_ARRAY_SIZE) {
+  else if (valuesLength >= LARGE_ARRAY_SIZE) {
     includes = cacheHas
     isCommon = false
     values = new SetCache(values)

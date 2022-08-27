@@ -20,9 +20,9 @@ const nodeTypes = ((() => {
     const typesHelper = freeModule && freeModule.require && freeModule.require('util').types
     return typesHelper
       ? typesHelper
-      /* Legacy process.binding('util') for Node.js earlier than v10. */
+    /* Legacy process.binding('util') for Node.js earlier than v10. */
       : freeProcess && freeProcess.binding && freeProcess.binding('util')
-  } catch (e) {}
+  } catch (e) { }
 })())
 
 export default nodeTypes

@@ -1,8 +1,8 @@
-import { isArrayLikeObject, isEmpty, isNumber, isPlainObject, map, some } from 'lodash'
+import { isArrayLikeObject, isBoolean, isEmpty, isNumber, isPlainObject, map, some } from 'lodash'
 
 /**
  * Checks an `object` or `array` that has an empty value by the `isEmpty`function.
- * If there are numeric values in 1 levels deeper (or more) of an object (or array),
+ * If there are numeric or boolean values in 1 levels deeper (or more) of an object (or array),
  * it means that it's not empty.
  *
  * When a value known empty by `hasDeepEmpty` then `predicate` function invoked by
@@ -13,7 +13,7 @@ import { isArrayLikeObject, isEmpty, isNumber, isPlainObject, map, some } from '
  *
  * Array-Like-Object values such as `arguments` objects, arrays, buffers, or
  * jQuery-like collections are considered empty if they have a `length` of `0`
- * or contains at least one empty value that rejects with `isEmpty` (except Numerical values).
+ * or contains at least one empty value that rejects with `isEmpty` (except Numerical and Boolean values).
  *
  * @since 0.1.0
  * @category Lang
@@ -28,7 +28,7 @@ import { isArrayLikeObject, isEmpty, isNumber, isPlainObject, map, some } from '
  * hasDeepEmpty([undefined])
  * // => true
  *
- * hasDeepEmpty([1])
+ * hasDeepEmpty([1, false])
  * // => false
  *
  * hasDeepEmpty([1, [null], 3])
@@ -43,7 +43,7 @@ import { isArrayLikeObject, isEmpty, isNumber, isPlainObject, map, some } from '
  * hasDeepEmpty({ 'a': { 'b': 5, 'c': 6, 'd': {} } })
  * // => true
  *
- * hasDeepEmpty({ 'a': { 'b': 5, 'c': 6, 'd': [1, 2 ,3] } })
+ * hasDeepEmpty({ 'a': { 'b': 5, 'c': 6, 'd': [1, 2 ,true] } })
  * // => false
  *
  * hasDeepEmpty({ 'a': '' }, (v) => !isString(v))
@@ -57,8 +57,12 @@ function recursiveHasDeepEmpty(value, key, parent, predicate) {
   if (isEmpty(value)) {
     return predicate ? predicate(value, key, parent) : true
   } else if (isPlainObject(value) || isArrayLikeObject(value)) {
-    const emptyState = map(value, (v, k) => isNumber(v) ? false : recursiveHasDeepEmpty(v, k, value, predicate))
-    return some(emptyState)
+    const valuesEmptyState = map(value, (v, k) => {
+      if (isNumber(v) || isBoolean(v)) { return false }
+      return recursiveHasDeepEmpty(v, k, value, predicate)
+    })
+
+    return some(valuesEmptyState)
   }
 
   return false

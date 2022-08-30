@@ -24,8 +24,8 @@ describe('hasDeepEmpty', () => {
       assert.strictEqual(hasDeepEmpty(object), false)
     })
 
-    it('should return `false` for numeric values in nested object', () => {
-      const object = { a: { b: { c: 1 }, d: [2, 3] } }
+    it('should return `false` for numeric and boolean values in nested object', () => {
+      const object = { a: { b: { c: 1, d: true }, d: [2, false] } }
       assert.strictEqual(hasDeepEmpty(object), false)
     })
   })

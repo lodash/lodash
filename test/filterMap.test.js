@@ -17,13 +17,6 @@ describe('filterMap', () => {
     assert.deepStrictEqual(ages, [79, 43, 21, 0]);
   });
 
-  it('Should keep undefined', () => {
-    assert.deepStrictEqual(
-      filterMap([undefined, undefined, undefined], x => x),
-      [undefined, undefined, undefined]
-    );
-  });
-
   it('Should operate on empty arrays', () => {
     assert.deepStrictEqual(
       filterMap([], x => x - 1),
@@ -40,16 +33,17 @@ describe('filterMap', () => {
       'four': 'lorem',
       'five': 0,          // and another
       'six': NaN,         // And NaN for extra weirdness
-      'seven': null,      // this one should be the only value removed
+      'seven': null,      // this one and the following should be the only values removed
       'eight': undefined, // verify we keep undefined too
       'nine': 'ipsum'
     }[key]);
+
     assert.deepStrictEqual(
       filterMap(
         ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
         f
       ),
-      ['hello', 'world', '', 'lorem', 0, NaN, undefined, 'ipsum', undefined]
+      ['hello', 'world', '', 'lorem', 0, NaN, 'ipsum']
     );
   });
 });

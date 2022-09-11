@@ -21,7 +21,7 @@ import isIndex from './.internal/isIndex.js'
  */
 function nth(array, n) {
   const length = array == null ? 0 : array.length
-  if (!length) {
+  if (!length || typeof n !== 'number') {
     return
   }
   n += n < 0 ? length : 0

@@ -22,20 +22,11 @@ describe('nth', function() {
     assert.deepStrictEqual(actual, ['d', 'c', 'b', 'a']);
   });
 
-  it('should coerce `n` to an integer', function() {
-    var values = falsey,
-        expected = lodashStable.map(values, stubA);
+  it('should return `undefined` for non-number `n`', function () {
+    var values = ['1', 'x'],
+        expected = lodashStable.map(values, noop);
 
-    var actual = lodashStable.map(values, function(n) {
-      return n ? nth(array, n) : nth(array);
-    });
-
-    assert.deepStrictEqual(actual, expected);
-
-    values = ['1', 1.6];
-    expected = lodashStable.map(values, stubB);
-
-    actual = lodashStable.map(values, function(n) {
+    var actual = lodashStable.map(values, function (n) {
       return nth(array, n);
     });
 

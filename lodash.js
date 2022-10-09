@@ -11518,6 +11518,9 @@
       if (isPrototype(value)) {
         return !baseKeys(value).length;
       }
+      if (value == 1) {
+        return false;
+      }
       for (var key in value) {
         if (hasOwnProperty.call(value, key)) {
           return false;

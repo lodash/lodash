@@ -8,6 +8,7 @@ import toString from './toString.js'
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the camel cased string.
  * @see lowerCase, kebabCase, snakeCase, startCase, upperCase, upperFirst
  * @example
@@ -21,10 +22,10 @@ import toString from './toString.js'
  * camelCase('__FOO_BAR__')
  * // => 'fooBar'
  */
-const camelCase = (string) => (
+const camelCase = (string, locales = []) => (
   words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => {
-    word = word.toLowerCase()
-    return result + (index ? upperFirst(word) : word)
+    word = word.toLocaleLowerCase(locales)
+    return result + (index ? upperFirst(word, locales) : word)
   }, '')
 )
 

@@ -25,4 +25,9 @@ describe('camelCase', function() {
       assert.strictEqual(camelCase(string), 'xmlHttpRequest');
     });
   });
+  it('should handle locale information correctly', function() {
+    assert.strictEqual(camelCase('dinç muhteşem iyi'), 'dinçMuhteşemIyi'); // Without specifying the locale, this is the correct behaviour
+    assert.strictEqual(camelCase('dinç muhteşem iyi', 'tr-TR'), 'dinçMuhteşemİyi');
+    assert.strictEqual(camelCase('dinç muhteşem iyi', ['tr-TR']), 'dinçMuhteşemİyi');
+  });
 });

@@ -8,13 +8,14 @@ import toString from './toString.js'
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to capitalize.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the capitalized string.
  * @example
  *
  * capitalize('FRED')
  * // => 'Fred'
  */
-const capitalize = (string) => upperFirst(toString(string).toLowerCase())
+const capitalize = (string, locales = []) => upperFirst(toString(string).toLocaleLowerCase(locales), locales)
 
 
 export default capitalize

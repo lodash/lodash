@@ -10,7 +10,7 @@ import stringToArray from './stringToArray.js'
  * @returns {Function} Returns the new case function.
  */
 function createCaseFirst(methodName) {
-  return (string) => {
+  return (string, locales = []) => {
     if (!string) {
       return ''
     }
@@ -27,7 +27,7 @@ function createCaseFirst(methodName) {
       ? castSlice(strSymbols, 1).join('')
       : string.slice(1)
 
-    return chr[methodName]() + trailing
+    return chr[methodName](locales) + trailing
   }
 }
 

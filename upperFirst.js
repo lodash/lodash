@@ -6,6 +6,7 @@ import createCaseFirst from './.internal/createCaseFirst.js'
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the converted string.
  * @see camelCase, kebabCase, lowerCase, snakeCase, startCase, upperCase
  * @example
@@ -16,6 +17,6 @@ import createCaseFirst from './.internal/createCaseFirst.js'
  * upperFirst('FRED')
  * // => 'FRED'
  */
-const upperFirst = createCaseFirst('toUpperCase')
+const upperFirst = createCaseFirst('toLocaleUpperCase')
 
 export default upperFirst

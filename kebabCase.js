@@ -8,6 +8,7 @@ import toString from './toString.js'
  * @since 3.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the kebab cased string.
  * @see camelCase, lowerCase, snakeCase, startCase, upperCase, upperFirst
  * @example
@@ -21,9 +22,9 @@ import toString from './toString.js'
  * kebabCase('__FOO_BAR__')
  * // => 'foo-bar'
  */
-const kebabCase = (string) => (
+const kebabCase = (string, locales = []) => (
   words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => (
-    result + (index ? '-' : '') + word.toLowerCase()
+    result + (index ? '-' : '') + word.toLocaleLowerCase(locales)
   ), '')
 )
 

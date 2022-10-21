@@ -9,6 +9,7 @@ const reQuotes = /['\u2019]/g
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the lower cased string.
  * @see camelCase, kebabCase, snakeCase, startCase, upperCase, upperFirst
  * @example
@@ -22,9 +23,9 @@ const reQuotes = /['\u2019]/g
  * lowerCase('__FOO_BAR__')
  * // => 'foo bar'
  */
-const lowerCase = (string) => (
+const lowerCase = (string, locales = []) => (
   words(toString(string).replace(reQuotes, '')).reduce((result, word, index) => (
-    result + (index ? ' ' : '') + word.toLowerCase()
+    result + (index ? ' ' : '') + word.toLocaleLowerCase(locales)
   ), '')
 )
 

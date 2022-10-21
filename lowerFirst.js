@@ -6,6 +6,7 @@ import createCaseFirst from './.internal/createCaseFirst.js'
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the converted string.
  * @example
  *
@@ -15,6 +16,6 @@ import createCaseFirst from './.internal/createCaseFirst.js'
  * lowerFirst('FRED')
  * // => 'fRED'
  */
-const lowerFirst = createCaseFirst('toLowerCase')
+const lowerFirst = createCaseFirst('toLocaleLowerCase')
 
 export default lowerFirst

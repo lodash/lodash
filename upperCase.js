@@ -7,6 +7,7 @@ import toString from './toString.js'
  * @since 4.0.0
  * @category String
  * @param {string} [string=''] The string to convert.
+ * @param {string|string[]} [locales=[]] Optional locale information to use.
  * @returns {string} Returns the upper cased string.
  * @see camelCase, kebabCase, lowerCase, snakeCase, startCase, upperFirst
  * @example
@@ -20,9 +21,9 @@ import toString from './toString.js'
  * upperCase('__foo_bar__')
  * // => 'FOO BAR'
  */
-const upperCase = (string) => (
+const upperCase = (string, locales = []) => (
   words(toString(string).replace(/['\u2019]/g, '')).reduce((result, word, index) => (
-    result + (index ? ' ' : '') + word.toUpperCase()
+    result + (index ? ' ' : '') + word.toLocaleUpperCase(locales)
   ), '')
 )
 

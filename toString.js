@@ -37,6 +37,10 @@ function toString(value) {
   if (isSymbol(value)) {
     return value.toString()
   }
+  if (typeof value === 'bigint') {
+    const result = `${Number(value)}n`;
+    return result
+  }
   const result = `${value}`
   return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result
 }

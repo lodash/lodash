@@ -19,6 +19,11 @@ describe('round methods', function() {
       assert.strictEqual(actual, isCeil ? 5 : 4);
     });
 
+    it('`_.' + methodName + '` should work with a negative number', function() {
+      var actual = func(-4.016, 2);
+      assert.strictEqual(actual, isFloor ? -4.01 : -4.02);
+    });
+
     it('`_.' + methodName + '` should work with a positive precision', function() {
       var actual = func(4.016, 2);
       assert.strictEqual(actual, isFloor ? 4.01 : 4.02);

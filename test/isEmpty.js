@@ -60,6 +60,10 @@ describe('isEmpty', function() {
     assert.strictEqual(isEmpty(Foo.prototype), false);
   });
 
+  it('should work with date', function() {
+    assert.strictEqual(isEmpty(new Date()), false);
+  });
+
   it('should work with jQuery/MooTools DOM query collections', function() {
     function Foo(elements) {
       push.apply(this, elements);

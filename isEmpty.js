@@ -4,6 +4,7 @@ import isArrayLike from './isArrayLike.js'
 import isBuffer from './isBuffer.js'
 import isPrototype from './.internal/isPrototype.js'
 import isTypedArray from './isTypedArray.js'
+import isDate from './isDate.js'
 
 /** Used to check objects for own properties. */
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -62,6 +63,9 @@ function isEmpty(value) {
     if (hasOwnProperty.call(value, key)) {
       return false
     }
+  }
+  if (isDate(value)) {
+    return false;
   }
   return true
 }

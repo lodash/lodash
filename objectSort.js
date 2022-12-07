@@ -23,33 +23,29 @@
 function objectSort(obj, callback) {
     let keys = Object.keys(obj)
     let values = Object.values(obj)
-
+    
     let len = values.length
-    let checked;
-    do {
-        checked = false
-        for (let i = 0; i < len; i++) {
+
+    for(let j = len-1; j >= 0; j--){
+        for (let i = 0; i < j; i++) {
             if (callback(values[i], values[i + 1])) {
                 let tmp = values[i]
                 values[i] = values[i + 1]
                 values[i + 1] = tmp
-
+                
                 let tmpKeys = keys[i]
                 keys[i] = keys[i + 1]
                 keys[i + 1] = tmpKeys
-
-                checked = true
             }
         }
-    } while (checked)
-
+    }
+    
     let newObj = {}
-
+    
     for (let i = 0; i < keys.length; i++) {
         newObj[keys[i]]=values[i]   
     }
     return newObj
 };
-
 
 export default objectSort

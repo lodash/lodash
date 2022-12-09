@@ -10,14 +10,17 @@
  *
  * compact([0, 1, false, 2, '', 3])
  * // => [1, 2, 3]
+ *
+ * compact(undefined)
+ * // => "Please enter valid array as an argument."
+ *
+ * compact({})
+ * // =>"Please enter valid array as an argument."
  */
 function compact(array) {
+   if(Array.isArray){
   let resIndex = 0
   const result = []
-
-  if (array == null) {
-    return result
-  }
 
   for (const value of array) {
     if (value) {
@@ -25,6 +28,9 @@ function compact(array) {
     }
   }
   return result
+   }
+  //we can return custome error message or empty array as per requirement.
+  return "Please enter valid array as an argument."
 }
 
 export default compact

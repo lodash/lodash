@@ -158,6 +158,26 @@ var deburredLetters = [
 /** Used to provide falsey values to methods. */
 var falsey = [, null, undefined, false, 0, NaN, ''];
 
+/** Used to provide falsey key-value pairs to methods */
+var falseyObject = {
+  0: '',
+  '': 0,
+  null: '',
+  '': null,
+  undefined: '',
+  '': undefined,
+  false: '',
+  '': false,
+  NaN: '',
+  '': NaN,
+  '': '',
+  0: 0,
+  null: null,
+  undefined: undefined,
+  false: false,
+  NaN: NaN
+}
+
 /** Used to specify the emoji style glyph variant of characters. */
 var emojiVar = '\ufe0f';
 
@@ -766,6 +786,7 @@ export {
   comboMarks,
   deburredLetters,
   falsey,
+  falseyObject,
   emojiVar,
   empties,
   errors,

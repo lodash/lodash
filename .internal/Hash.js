@@ -1,88 +1,88 @@
 /** Used to stand-in for `undefined` hash values. */
+
 const HASH_UNDEFINED = '__lodash_hash_undefined__'
 
 class Hash {
-
-  /**
-   * Creates a hash object.
-   *
-   * @private
-   * @constructor
-   * @param {Array} [entries] The key-value pairs to cache.
-   */
-  constructor(entries) {
-    let index = -1
-    const length = entries == null ? 0 : entries.length
-
-    this.clear()
-    while (++index < length) {
-      const entry = entries[index]
-      this.set(entry[0], entry[1])
-    }
-  }
-
-  /**
-   * Removes all key-value entries from the hash.
-   *
-   * @memberOf Hash
-   */
-  clear() {
-    this.__data__ = Object.create(null)
+  constructor(size = 16) {
     this.size = 0
+    this.keys = new Array(size)
+    this.values = new Array(size)
   }
 
-  /**
-   * Removes `key` and its value from the hash.
-   *
-   * @memberOf Hash
-   * @param {string} key The key of the value to remove.
-   * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-   */
+  clear() {
+    this.size = 0
+    this.keys = new Array(this.keys.length)
+    this.values = new Array(this.values.length)
+  }
+
   delete(key) {
-    const result = this.has(key) && delete this.__data__[key]
-    this.size -= result ? 1 : 0
-    return result
+    const index = this._indexForKey(key)
+    if (index >= 0) {
+      this.keys[index] = null
+      this.values[index] = null
+      this.size--
+      return true
+    }
+    return false
   }
 
-  /**
-   * Gets the hash value for `key`.
-   *
-   * @memberOf Hash
-   * @param {string} key The key of the value to get.
-   * @returns {*} Returns the entry value.
-   */
   get(key) {
-    const data = this.__data__
-    const result = data[key]
-    return result === HASH_UNDEFINED ? undefined : result
+    const index = this._indexForKey(key)
+    if (index >= 0) {
+      return this.values[index]
+    }
+    return undefined
   }
 
-  /**
-   * Checks if a hash value for `key` exists.
-   *
-   * @memberOf Hash
-   * @param {string} key The key of the entry to check.
-   * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-   */
   has(key) {
-    const data = this.__data__
-    return data[key] !== undefined
+    return this._indexForKey(key) >= 0
   }
 
-  /**
-   * Sets the hash `key` to `value`.
-   *
-   * @memberOf Hash
-   * @param {string} key The key of the value to set.
-   * @param {*} value The value to set.
-   * @returns {Object} Returns the hash instance.
-   */
   set(key, value) {
-    const data = this.__data__
-    this.size += this.has(key) ? 0 : 1
-    data[key] = value === undefined ? HASH_UNDEFINED : value
+    let index = this._indexForKey(key)
+    if (index >= 0) {
+      this.values[index] = value
+    } else {
+      this.keys[this.size] = key
+      this.values[this.size] = value
+      this.size++
+    }
     return this
   }
+
+  _hashCode(key) {
+    // You could use a faster hashing function here, such as MurmurHash or FNV-1a.
+    let hash = 0
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash << 5) + hash + key.charCodeAt(i)
+      hash = hash & hash
+      hash = Math.abs(hash)
+    }
+    return hash
+  }
+
+  _indexForKey(key) {
+    const hash = this._hashCode(key)
+    const index = hash % this.keys.length
+    for (let i = index; i < this.keys.length; i++) {
+      if (this.keys[i] === key) {
+        return i
+      }
+      if (this.keys[i] == null) {
+        return -1
+      }
+    }
+    for (let i = 0; i < index; i++) {
+      if (this.keys[i] === key) {
+        return i
+      }
+      if (this.keys[i] == null) {
+        return -1
+      }
+    }
+    return -1
+  }
 }
+
 
 export default Hash

@@ -18,8 +18,7 @@
  */
 function map(array, iteratee) {
   let index = -1
-  const length = typeof array === 'object' ? array.keys().length :
-                 Array.isArray(array) ? array.length : 0
+  const length = typeof array === 'object' ? array.keys().length : Array.isArray(array) ? array.length : 0
   const result = new Array(length)
 
   while (++index < length) {

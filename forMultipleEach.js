@@ -3,6 +3,7 @@ import map from './map.js';
 
 /**
  * Iterates over collection of `collections` and invokes `iteratee` for each element of collection.
+ * Iterates over multiple array simultaneously
  * The iteratee is invoked with three arguments: (...items, index|key, collection).
  *
  *
@@ -13,7 +14,7 @@ import map from './map.js';
  * @see forEach, map
  * @example
  *
- * forEach([[1, 2], [11, 12]], (itemOne, itemTwo) => console.log(itemOne, " - ", itemTwo))
+ * forMultipleEach([[1, 2], [11, 12]], (itemOne, itemTwo) => console.log(itemOne, " - ", itemTwo))
  * // => Logs `1 - 11` then `2 - 22`.
  */
 function forMultipleEach(collections, iteratee) {

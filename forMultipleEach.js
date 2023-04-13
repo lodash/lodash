@@ -20,7 +20,7 @@ import map from './map.js';
 function forMultipleEach(collections, iteratee) {
     let maxLength = 0;
     forEach(collections, function (collection) {
-        if (collection?.length > maxLength) {
+        if (collection && collection.length > maxLength) {
             maxLength = collection.length;
         }
     });
@@ -32,7 +32,7 @@ function forMultipleEach(collections, iteratee) {
     };
 
     for (let index = 0; index < maxLength; index += 1) {
-        iteratee(...items(index), indexs, collections);
+        iteratee(...items(index), index, collections);
     }
 
 }

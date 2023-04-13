@@ -20,7 +20,7 @@ import map from './map.js';
 function forMultipleEach(collections, iteratee) {
     let maxLength = 0;
     forEach(collections, function (collection) {
-        if (collection.length > maxLength) {
+        if (collection?.length > maxLength) {
             maxLength = collection.length;
         }
     });

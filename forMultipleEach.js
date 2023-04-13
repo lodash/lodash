@@ -31,8 +31,8 @@ function forMultipleEach(collections, iteratee) {
         });
     };
 
-    for (let i = 0; i < maxLength; i += 1) {
-        iteratee(...items(i), i, collections);
+    for (let index = 0; index < maxLength; index += 1) {
+        iteratee(...items(index), indexs, collections);
     }
 
 }

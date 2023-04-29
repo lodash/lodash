@@ -28,7 +28,7 @@ import baseSet from './.internal/baseSet.js'
  * // => 5
  */
 function set(object, path, value) {
-  return object == null ? object : baseSet(object, path, value)
+  return object === null ? object : baseSet(object, path, value)
 }
 
 export default set

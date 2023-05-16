@@ -1,4 +1,3 @@
-
 import Hash from './Hash.js'
 
 /**
@@ -13,7 +12,7 @@ function getMapData({ __data__ }, key) {
   const data = __data__
   return isKeyable(key)
     ? data[typeof key === 'string' ? 'string' : 'hash']
-    : data.map
+    : data.map || new Map
 }
 
 /**
@@ -111,8 +110,11 @@ class MapCache {
     const data = getMapData(this, key)
     const size = data.size
 
-    data.set(key, value)
-    this.size += data.size == size ? 0 : 1
+    if (typeof data.set === 'function') {
+      data.set(key, value)
+    }
+
+    this.size += data.size === size ? 0 : 1
     return this
   }
 }

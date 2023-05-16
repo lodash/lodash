@@ -24,7 +24,7 @@ import toInteger from './toInteger.js'
  * // => 2
  */
 function findLastIndex(array, predicate, fromIndex) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   if (!length) {
     return -1
   }

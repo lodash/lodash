@@ -17,7 +17,7 @@
  * // => false
  */
 function isNil(value) {
-  return value == null
+  return value === null
 }
 
 export default isNil

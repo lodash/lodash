@@ -10,7 +10,7 @@ import baseIndexOf from './baseIndexOf.js'
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
 function arrayIncludes(array, value) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   return !!length && baseIndexOf(array, value, 0) > -1
 }
 

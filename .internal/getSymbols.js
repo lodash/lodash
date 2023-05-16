@@ -12,7 +12,7 @@ const nativeGetSymbols = Object.getOwnPropertySymbols
  * @returns {Array} Returns the array of symbols.
  */
 function getSymbols(object) {
-  if (object == null) {
+  if (object === null) {
     return []
   }
   object = Object(object)

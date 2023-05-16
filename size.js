@@ -27,14 +27,14 @@ const setTag = '[object Set]'
  * // => 7
  */
 function size(collection) {
-  if (collection == null) {
+  if (collection === null) {
     return 0
   }
   if (isArrayLike(collection)) {
     return isString(collection) ? stringSize(collection) : collection.length
   }
   const tag = getTag(collection)
-  if (tag == mapTag || tag == setTag) {
+  if (tag === mapTag || tag === setTag) {
     return collection.size
   }
   return Object.keys(collection).length

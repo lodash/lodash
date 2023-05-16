@@ -30,7 +30,7 @@ function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
   // Assume cyclic values are equal.
   const stacked = stack.get(array)
   if (stacked && stack.get(other)) {
-    return stacked == other
+    return stacked === other
   }
   let index = -1
   let result = true

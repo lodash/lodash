@@ -40,7 +40,7 @@ function result(object, path, defaultValue) {
     object = undefined
   }
   while (++index < length) {
-    let value = object == null ? undefined : object[toKey(path[index])]
+    let value = object === null ? undefined : object[toKey(path[index])]
     if (value === undefined) {
       index = length
       value = defaultValue

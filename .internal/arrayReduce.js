@@ -11,7 +11,7 @@
  */
 function arrayReduce(array, iteratee, accumulator, initAccum) {
   let index = -1
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
 
   if (initAccum && length) {
     accumulator = array[++index]

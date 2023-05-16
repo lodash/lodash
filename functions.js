@@ -20,7 +20,7 @@
  * // => ['a', 'b']
  */
 function functions(object) {
-  if (object == null) {
+  if (object === null) {
     return []
   }
   return Object.keys(object).filter((key) => typeof object[key] === 'function')

@@ -22,7 +22,7 @@
  */
 function findKey(object, predicate) {
   let result
-  if (object == null) {
+  if (object === null) {
     return result
   }
   Object.keys(object).some((key) => {

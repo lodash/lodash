@@ -26,7 +26,7 @@ import baseUpdate from './.internal/baseUpdate.js'
  * // => 0
  */
 function update(object, path, updater) {
-  return object == null ? object : baseUpdate(object, path, updater)
+  return object === null ? object : baseUpdate(object, path, updater)
 }
 
 export default update

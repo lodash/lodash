@@ -11,7 +11,7 @@ class ListCache {
    */
   constructor(entries) {
     let index = -1
-    const length = entries == null ? 0 : entries.length
+    const length = entries === null ? 0 : entries.length
 
     this.clear()
     while (++index < length) {
@@ -45,7 +45,7 @@ class ListCache {
       return false
     }
     const lastIndex = data.length - 1
-    if (index == lastIndex) {
+    if (index === lastIndex) {
       data.pop()
     } else {
       data.splice(index, 1)

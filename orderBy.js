@@ -36,14 +36,14 @@ import baseOrderBy from './.internal/baseOrderBy.js'
  *
  */
 function orderBy(collection, iteratees, orders) {
-  if (collection == null) {
+  if (collection === null) {
     return []
   }
   if (!Array.isArray(iteratees)) {
-    iteratees = iteratees == null ? [] : [iteratees]
+    iteratees = iteratees === null ? [] : [iteratees]
   }
   if (!Array.isArray(orders)) {
-    orders = orders == null ? [] : [orders]
+    orders = orders === null ? [] : [orders]
   }
   return baseOrderBy(collection, iteratees, orders)
 }

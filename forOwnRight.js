@@ -23,7 +23,7 @@
  * // => Logs 'b' then 'a' assuming `forOwn` logs 'a' then 'b'.
  */
 function forOwnRight(object, iteratee) {
-  if (object == null) {
+  if (object === null) {
     return
   }
   const props = Object.keys(object)

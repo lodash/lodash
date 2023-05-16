@@ -8,7 +8,7 @@
  * @returns {boolean} Returns `true` if `target` is found, else `false`.
  */
 function arrayIncludesWith(array, target, comparator) {
-  if (array == null) {
+  if (array === null) {
     return false
   }
 

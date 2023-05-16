@@ -13,7 +13,7 @@
  */
 function fromEntries(pairs) {
   const result = {}
-  if (pairs == null) {
+  if (pairs === null) {
     return result
   }
   for (const pair of pairs) {

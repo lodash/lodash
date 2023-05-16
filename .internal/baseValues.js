@@ -9,7 +9,7 @@
  * @returns {Object} Returns the array of property values.
  */
 function baseValues(object, props) {
-  return props == null ? [] : props.map((key) => object[key])
+  return props === null ? [] : props.map((key) => object[key])
 }
 
 export default baseValues

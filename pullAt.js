@@ -28,7 +28,7 @@ import isIndex from './.internal/isIndex.js'
  * // => ['b', 'd']
  */
 function pullAt(array, ...indexes) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   const result = baseAt(array, indexes)
 
   basePullAt(array, map(indexes, (index) => isIndex(index, length) ? +index : index).sort(compareAscending))

@@ -182,7 +182,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     if (isBuffer(value)) {
       return cloneBuffer(value, isDeep)
     }
-    if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
+    if (tag === objectTag || tag === argsTag || (isFunc && !object)) {
       result = (isFlat || isFunc) ? {} : initCloneObject(value)
       if (!isDeep) {
         return isFlat
@@ -204,14 +204,14 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
   stack.set(value, result)
 
-  if (tag == mapTag) {
+  if (tag === mapTag) {
     value.forEach((subValue, key) => {
       result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack))
     })
     return result
   }
 
-  if (tag == setTag) {
+  if (tag === setTag) {
     value.forEach((subValue) => {
       result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack))
     })

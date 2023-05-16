@@ -12,7 +12,7 @@ class Hash {
    */
   constructor(entries) {
     let index = -1
-    const length = entries == null ? 0 : entries.length
+    const length = entries === null ? 0 : entries.length
 
     this.clear()
     while (++index < length) {

@@ -41,7 +41,7 @@ function baseDifference(array, values, iteratee, comparator) {
   }
   outer:
   for (let value of array) {
-    const computed = iteratee == null ? value : iteratee(value)
+    const computed = iteratee === null ? value : iteratee(value)
 
     value = (comparator || value !== 0) ? value : 0
     if (isCommon && computed === computed) {

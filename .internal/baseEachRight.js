@@ -10,7 +10,7 @@ import isArrayLike from '../isArrayLike.js'
  * @returns {Array|Object} Returns `collection`.
  */
 function baseEachRight(collection, iteratee) {
-  if (collection == null) {
+  if (collection === null) {
     return collection
   }
   if (!isArrayLike(collection)) {

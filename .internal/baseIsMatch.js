@@ -20,7 +20,7 @@ function baseIsMatch(object, source, matchData, customizer) {
   const length = index
   const noCustomizer = !customizer
 
-  if (object == null) {
+  if (object === null) {
     return !length
   }
   let data

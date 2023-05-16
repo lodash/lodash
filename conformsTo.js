@@ -24,7 +24,7 @@ import keys from './keys.js'
  * // => false
  */
 function conformsTo(object, source) {
-  return source == null || baseConformsTo(object, source, keys(source))
+  return source === null || baseConformsTo(object, source, keys(source))
 }
 
 export default conformsTo

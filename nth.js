@@ -20,7 +20,7 @@ import isIndex from './.internal/isIndex.js'
  * // => 'c'
  */
 function nth(array, n) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   if (!length) {
     return
   }

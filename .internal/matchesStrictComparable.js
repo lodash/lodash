@@ -9,7 +9,7 @@
  */
 function matchesStrictComparable(key, srcValue) {
   return (object) => {
-    if (object == null) {
+    if (object === null) {
       return false
     }
     return object[key] === srcValue &&

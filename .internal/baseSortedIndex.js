@@ -19,7 +19,7 @@ const HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1
  */
 function baseSortedIndex(array, value, retHighest) {
   let low = 0
-  let high = array == null ? low : array.length
+  let high = array === null ? low : array.length
 
   if (typeof value === 'number' && value === value && high <= HALF_MAX_ARRAY_LENGTH) {
     while (low < high) {

@@ -21,7 +21,7 @@ const NAN = 0 / 0
  * // => 5
  */
 function meanBy(array, iteratee) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   return length ? (baseSum(array, iteratee) / length) : NAN
 }
 

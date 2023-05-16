@@ -10,7 +10,7 @@
  * @returns {*} Returns the accumulated value.
  */
 function arrayReduceRight(array, iteratee, accumulator, initAccum) {
-  let length = array == null ? 0 : array.length
+  let length = array === null ? 0 : array.length
   if (initAccum && length) {
     accumulator = array[--length]
   }

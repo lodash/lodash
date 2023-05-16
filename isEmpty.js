@@ -43,7 +43,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * // => false
  */
 function isEmpty(value) {
-  if (value == null) {
+  if (value === null) {
     return true
   }
   if (isArrayLike(value) &&
@@ -52,7 +52,7 @@ function isEmpty(value) {
     return !value.length
   }
   const tag = getTag(value)
-  if (tag == '[object Map]' || tag == '[object Set]') {
+  if (tag === '[object Map]' || tag === '[object Set]') {
     return !value.size
   }
   if (isPrototype(value)) {

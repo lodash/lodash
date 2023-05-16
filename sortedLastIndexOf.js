@@ -16,7 +16,7 @@ import eq from './eq.js'
  * // => 3
  */
 function sortedLastIndexOf(array, value) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   if (length) {
     const index = baseSortedIndex(array, value, true) - 1
     if (eq(array[index], value)) {

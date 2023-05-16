@@ -15,7 +15,7 @@ function baseFlatten(array, depth, predicate, isStrict, result) {
   predicate || (predicate = isFlattenable)
   result || (result = [])
 
-  if (array == null) {
+  if (array === null) {
     return result
   }
 

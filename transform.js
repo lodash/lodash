@@ -24,7 +24,7 @@ import isTypedArray from './isTypedArray.js'
  *
  * transform([2, 3, 4], (result, n) => {
  *   result.push(n *= n)
- *   return n % 2 == 0
+ *   return n % 2 === 0
  * }, [])
  * // => [4, 9]
  *
@@ -37,7 +37,7 @@ function transform(object, iteratee, accumulator) {
   const isArr = Array.isArray(object)
   const isArrLike = isArr || isBuffer(object) || isTypedArray(object)
 
-  if (accumulator == null) {
+  if (accumulator === null) {
     const Ctor = object && object.constructor
     if (isArrLike) {
       accumulator = isArr ? new Ctor : []

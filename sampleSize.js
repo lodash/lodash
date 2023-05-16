@@ -19,8 +19,8 @@ import slice from './slice.js'
  * // => [2, 3, 1]
  */
 function sampleSize(array, n) {
-  n = n == null ? 1 : n
-  const length = array == null ? 0 : array.length
+  n = n === null ? 1 : n
+  const length = array === null ? 0 : array.length
   if (!length || n < 1) {
     return []
   }

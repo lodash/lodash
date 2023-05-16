@@ -18,7 +18,7 @@ function baseGet(object, path) {
   while (object != null && index < length) {
     object = object[toKey(path[index++])]
   }
-  return (index && index == length) ? object : undefined
+  return (index && index === length) ? object : undefined
 }
 
 export default baseGet

@@ -31,7 +31,7 @@ function endsWith(string, target, position) {
   }
   const end = position
   position -= target.length
-  return position >= 0 && string.slice(position, end) == target
+  return position >= 0 && string.slice(position, end) === target
 }
 
 export default endsWith

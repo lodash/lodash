@@ -23,11 +23,11 @@ import toInteger from './toInteger.js'
  * // => 3
  */
 function indexOf(array, value, fromIndex) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   if (!length) {
     return -1
   }
-  let index = fromIndex == null ? 0 : toInteger(fromIndex)
+  let index = fromIndex === null ? 0 : toInteger(fromIndex)
   if (index < 0) {
     index = Math.max(length + index, 0)
   }

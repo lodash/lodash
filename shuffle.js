@@ -14,7 +14,7 @@ import copyArray from './.internal/copyArray.js'
  * // => [4, 1, 3, 2]
  */
 function shuffle(array) {
-  const length = array == null ? 0 : array.length
+  const length = array === null ? 0 : array.length
   if (!length) {
     return []
   }

@@ -19,11 +19,11 @@
  * // => [3, 4]
  */
 function slice(array, start, end) {
-  let length = array == null ? 0 : array.length
+  let length = array === null ? 0 : array.length
   if (!length) {
     return []
   }
-  start = start == null ? 0 : start
+  start = start === null ? 0 : start
   end = end === undefined ? length : end
 
   if (start < 0) {

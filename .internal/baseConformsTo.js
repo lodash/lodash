@@ -8,7 +8,7 @@
  */
 function baseConformsTo(object, source, props) {
   let length = props.length
-  if (object == null) {
+  if (object === null) {
     return !length
   }
   object = Object(object)

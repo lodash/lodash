@@ -19,7 +19,7 @@ import isSymbol from './isSymbol.js'
  */
 function minBy(array, iteratee) {
   let result
-  if (array == null) {
+  if (array === null) {
     return result
   }
   let computed

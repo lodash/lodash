@@ -27,7 +27,7 @@ function compareMultiple(object, other, orders) {
     const result = cmpFn(objCriteria[index], othCriteria[index])
     if (result) {
       if (order && typeof order !== 'function') {
-        return result * (order == 'desc' ? -1 : 1)
+        return result * (order === 'desc' ? -1 : 1)
       }
       return result
     }

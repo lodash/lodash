@@ -42,7 +42,7 @@ function hasPathIn(object, path) {
   if (result || ++index != length) {
     return result
   }
-  length = object == null ? 0 : object.length
+  length = object === null ? 0 : object.length
   return !!length && isLength(length) && isIndex(key, length) &&
     (Array.isArray(object) || isArguments(object))
 }

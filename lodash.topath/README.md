@@ -1,6 +1,6 @@
-# lodash.topath v4.5.2
+# lodash.topath v4.5.3
 
-The [lodash](https://lodash.com/) method `_.toPath` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.toPath` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var toPath = require('lodash.topath');
 ```
 
-See the [documentation](https://lodash.com/docs#toPath) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.topath) for more details.
+See the [documentation](https://lodash.com/docs#toPath) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.topath) for more details.

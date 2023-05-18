@@ -1,6 +1,6 @@
-# lodash.isarray v4.0.0
+# lodash.isarray v4.0.1
 
-The [lodash](https://lodash.com/) method `_.isArray` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isArray` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isArray = require('lodash.isarray');
 ```
 
-See the [documentation](https://lodash.com/docs#isArray) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.isarray) for more details.
+See the [documentation](https://lodash.com/docs#isArray) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.isarray) for more details.

@@ -1,6 +1,6 @@
-# lodash.sortedindexby v4.6.0
+# lodash.sortedindexby v4.6.1
 
-The [lodash](https://lodash.com/) method `_.sortedIndexBy` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.sortedIndexBy` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var sortedIndexBy = require('lodash.sortedindexby');
 ```
 
-See the [documentation](https://lodash.com/docs#sortedIndexBy) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.sortedindexby) for more details.
+See the [documentation](https://lodash.com/docs#sortedIndexBy) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.sortedindexby) for more details.

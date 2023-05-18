@@ -1,6 +1,6 @@
-# lodash.iteratee v4.7.0
+# lodash.iteratee v4.7.1
 
-The [lodash](https://lodash.com/) method `_.iteratee` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.iteratee` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var iteratee = require('lodash.iteratee');
 ```
 
-See the [documentation](https://lodash.com/docs#iteratee) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.iteratee) for more details.
+See the [documentation](https://lodash.com/docs#iteratee) or [package source](https://github.com/lodash/lodash/blob/4.7.1-npm-packages/lodash.iteratee) for more details.

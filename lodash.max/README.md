@@ -1,6 +1,6 @@
-# lodash.max v4.0.1
+# lodash.max v4.0.2
 
-The [lodash](https://lodash.com/) method `_.max` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.max` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var max = require('lodash.max');
 ```
 
-See the [documentation](https://lodash.com/docs#max) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.max) for more details.
+See the [documentation](https://lodash.com/docs#max) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.max) for more details.

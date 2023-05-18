@@ -1,6 +1,6 @@
-# lodash.tointeger v4.0.4
+# lodash.tointeger v4.0.5
 
-The [lodash](https://lodash.com/) method `_.toInteger` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.toInteger` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var toInteger = require('lodash.tointeger');
 ```
 
-See the [documentation](https://lodash.com/docs#toInteger) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.tointeger) for more details.
+See the [documentation](https://lodash.com/docs#toInteger) or [package source](https://github.com/lodash/lodash/blob/4.0.5-npm-packages/lodash.tointeger) for more details.

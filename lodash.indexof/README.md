@@ -1,6 +1,6 @@
-# lodash.indexof v4.0.5
+# lodash.indexof v4.0.6
 
-The [lodash](https://lodash.com/) method `_.indexOf` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.indexOf` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var indexOf = require('lodash.indexof');
 ```
 
-See the [documentation](https://lodash.com/docs#indexOf) or [package source](https://github.com/lodash/lodash/blob/4.0.5-npm-packages/lodash.indexof) for more details.
+See the [documentation](https://lodash.com/docs#indexOf) or [package source](https://github.com/lodash/lodash/blob/4.0.6-npm-packages/lodash.indexof) for more details.

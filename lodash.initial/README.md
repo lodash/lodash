@@ -1,6 +1,6 @@
-# lodash.initial v4.1.1
+# lodash.initial v4.1.2
 
-The [lodash](https://lodash.com/) method `_.initial` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.initial` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var initial = require('lodash.initial');
 ```
 
-See the [documentation](https://lodash.com/docs#initial) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.initial) for more details.
+See the [documentation](https://lodash.com/docs#initial) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.initial) for more details.

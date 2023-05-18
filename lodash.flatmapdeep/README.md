@@ -1,6 +1,6 @@
-# lodash.flatmapdeep v4.10.0
+# lodash.flatmapdeep v4.10.1
 
-The [lodash](https://lodash.com/) method `_.flatMapDeep` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.flatMapDeep` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var flatMapDeep = require('lodash.flatmapdeep');
 ```
 
-See the [documentation](https://lodash.com/docs#flatMapDeep) or [package source](https://github.com/lodash/lodash/blob/4.10.0-npm-packages/lodash.flatmapdeep) for more details.
+See the [documentation](https://lodash.com/docs#flatMapDeep) or [package source](https://github.com/lodash/lodash/blob/4.10.1-npm-packages/lodash.flatmapdeep) for more details.

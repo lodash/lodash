@@ -1,6 +1,6 @@
-# lodash.stubstring v4.13.0
+# lodash.stubstring v4.13.1
 
-The [lodash](https://lodash.com/) method `_.stubString` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.stubString` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var stubString = require('lodash.stubstring');
 ```
 
-See the [documentation](https://lodash.com/docs#stubString) or [package source](https://github.com/lodash/lodash/blob/4.13.0-npm-packages/lodash.stubstring) for more details.
+See the [documentation](https://lodash.com/docs#stubString) or [package source](https://github.com/lodash/lodash/blob/4.13.1-npm-packages/lodash.stubstring) for more details.

@@ -1,6 +1,6 @@
-# lodash.groupby v4.6.0
+# lodash.groupby v4.6.1
 
-The [lodash](https://lodash.com/) method `_.groupBy` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.groupBy` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var groupBy = require('lodash.groupby');
 ```
 
-See the [documentation](https://lodash.com/docs#groupBy) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.groupby) for more details.
+See the [documentation](https://lodash.com/docs#groupBy) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.groupby) for more details.

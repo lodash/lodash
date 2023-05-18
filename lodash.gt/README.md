@@ -1,6 +1,6 @@
-# lodash.gt v3.9.2
+# lodash.gt v3.9.3
 
-The [lodash](https://lodash.com/) method `_.gt` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.gt` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var gt = require('lodash.gt');
 ```
 
-See the [documentation](https://lodash.com/docs#gt) or [package source](https://github.com/lodash/lodash/blob/3.9.2-npm-packages/lodash.gt) for more details.
+See the [documentation](https://lodash.com/docs#gt) or [package source](https://github.com/lodash/lodash/blob/3.9.3-npm-packages/lodash.gt) for more details.

@@ -1,6 +1,6 @@
-# lodash.hasin v4.5.2
+# lodash.hasin v4.5.3
 
-The [lodash](https://lodash.com/) method `_.hasIn` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.hasIn` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var hasIn = require('lodash.hasin');
 ```
 
-See the [documentation](https://lodash.com/docs#hasIn) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.hasin) for more details.
+See the [documentation](https://lodash.com/docs#hasIn) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.hasin) for more details.

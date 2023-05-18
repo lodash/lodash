@@ -1,6 +1,6 @@
-# lodash.findkey v4.6.0
+# lodash.findkey v4.6.1
 
-The [lodash](https://lodash.com/) method `_.findKey` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.findKey` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var findKey = require('lodash.findkey');
 ```
 
-See the [documentation](https://lodash.com/docs#findKey) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.findkey) for more details.
+See the [documentation](https://lodash.com/docs#findKey) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.findkey) for more details.

@@ -1,6 +1,6 @@
-# lodash.method v4.5.2
+# lodash.method v4.5.3
 
-The [lodash](https://lodash.com/) method `_.method` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.method` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var method = require('lodash.method');
 ```
 
-See the [documentation](https://lodash.com/docs#method) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.method) for more details.
+See the [documentation](https://lodash.com/docs#method) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.method) for more details.

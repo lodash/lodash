@@ -1,6 +1,6 @@
-# lodash.pullall v4.2.0
+# lodash.pullall v4.2.1
 
-The [lodash](https://lodash.com/) method `_.pullAll` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.pullAll` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var pullAll = require('lodash.pullall');
 ```
 
-See the [documentation](https://lodash.com/docs#pullAll) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.pullall) for more details.
+See the [documentation](https://lodash.com/docs#pullAll) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.pullall) for more details.

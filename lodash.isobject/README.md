@@ -1,20 +1,18 @@
-# lodash.isobject v3.0.2
+# lodash.isobject v3.0.3
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.isObject` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isObject` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash.isobject
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var isObject = require('lodash.isobject');
 ```
 
-See the [documentation](https://lodash.com/docs#isObject) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.isobject) for more details.
+See the [documentation](https://lodash.com/docs#isObject) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.isobject) for more details.

@@ -1,6 +1,6 @@
-# lodash.deburr v4.1.0
+# lodash.deburr v4.1.1
 
-The [lodash](https://lodash.com/) method `_.deburr` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.deburr` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var deburr = require('lodash.deburr');
 ```
 
-See the [documentation](https://lodash.com/docs#deburr) or [package source](https://github.com/lodash/lodash/blob/4.1.0-npm-packages/lodash.deburr) for more details.
+See the [documentation](https://lodash.com/docs#deburr) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.deburr) for more details.

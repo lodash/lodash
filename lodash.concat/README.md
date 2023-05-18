@@ -1,6 +1,6 @@
-# lodash.concat v4.5.0
+# lodash.concat v4.5.1
 
-The [lodash](https://lodash.com/) method `_.concat` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.concat` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var concat = require('lodash.concat');
 ```
 
-See the [documentation](https://lodash.com/docs#concat) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.concat) for more details.
+See the [documentation](https://lodash.com/docs#concat) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.concat) for more details.

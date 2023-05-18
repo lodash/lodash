@@ -1,6 +1,6 @@
-# lodash.capitalize v4.2.1
+# lodash.capitalize v4.2.2
 
-The [lodash](https://lodash.com/) method `_.capitalize` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.capitalize` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var capitalize = require('lodash.capitalize');
 ```
 
-See the [documentation](https://lodash.com/docs#capitalize) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.capitalize) for more details.
+See the [documentation](https://lodash.com/docs#capitalize) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.capitalize) for more details.

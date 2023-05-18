@@ -1,6 +1,6 @@
-# lodash.trim v4.5.1
+# lodash.trim v4.5.2
 
-The [lodash](https://lodash.com/) method `_.trim` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.trim` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var trim = require('lodash.trim');
 ```
 
-See the [documentation](https://lodash.com/docs#trim) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.trim) for more details.
+See the [documentation](https://lodash.com/docs#trim) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.trim) for more details.

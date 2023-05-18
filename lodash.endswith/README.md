@@ -1,6 +1,6 @@
-# lodash.endswith v4.2.1
+# lodash.endswith v4.2.2
 
-The [lodash](https://lodash.com/) method `_.endsWith` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.endsWith` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var endsWith = require('lodash.endswith');
 ```
 
-See the [documentation](https://lodash.com/docs#endsWith) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.endswith) for more details.
+See the [documentation](https://lodash.com/docs#endsWith) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.endswith) for more details.

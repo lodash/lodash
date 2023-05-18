@@ -1,6 +1,6 @@
-# lodash.replace v4.1.4
+# lodash.replace v4.1.5
 
-The [lodash](https://lodash.com/) method `_.replace` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.replace` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var replace = require('lodash.replace');
 ```
 
-See the [documentation](https://lodash.com/docs#replace) or [package source](https://github.com/lodash/lodash/blob/4.1.4-npm-packages/lodash.replace) for more details.
+See the [documentation](https://lodash.com/docs#replace) or [package source](https://github.com/lodash/lodash/blob/4.1.5-npm-packages/lodash.replace) for more details.

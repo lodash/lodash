@@ -1,6 +1,6 @@
-# lodash.random v3.2.0
+# lodash.random v3.2.1
 
-The [lodash](https://lodash.com/) method `_.random` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.random` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var random = require('lodash.random');
 ```
 
-See the [documentation](https://lodash.com/docs#random) or [package source](https://github.com/lodash/lodash/blob/3.2.0-npm-packages/lodash.random) for more details.
+See the [documentation](https://lodash.com/docs#random) or [package source](https://github.com/lodash/lodash/blob/3.2.1-npm-packages/lodash.random) for more details.

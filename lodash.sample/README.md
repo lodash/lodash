@@ -1,6 +1,6 @@
-# lodash.sample v4.2.1
+# lodash.sample v4.2.2
 
-The [lodash](https://lodash.com/) method `_.sample` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.sample` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var sample = require('lodash.sample');
 ```
 
-See the [documentation](https://lodash.com/docs#sample) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.sample) for more details.
+See the [documentation](https://lodash.com/docs#sample) or [package source](https://github.com/lodash/lodash/blob/4.2.2-npm-packages/lodash.sample) for more details.

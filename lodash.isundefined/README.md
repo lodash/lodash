@@ -1,20 +1,18 @@
-# lodash.isundefined v3.0.1
+# lodash.isundefined v3.0.2
 
-The [modern build](https://github.com/lodash/lodash/wiki/Build-Differences) of [lodash’s](https://lodash.com/) `_.isUndefined` exported as a [Node.js](http://nodejs.org/)/[io.js](https://iojs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isUndefined` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
 Using npm:
-
 ```bash
 $ {sudo -H} npm i -g npm
 $ npm i --save lodash.isundefined
 ```
 
-In Node.js/io.js:
-
+In Node.js:
 ```js
 var isUndefined = require('lodash.isundefined');
 ```
 
-See the [documentation](https://lodash.com/docs#isUndefined) or [package source](https://github.com/lodash/lodash/blob/3.0.1-npm-packages/lodash.isundefined) for more details.
+See the [documentation](https://lodash.com/docs#isUndefined) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.isundefined) for more details.

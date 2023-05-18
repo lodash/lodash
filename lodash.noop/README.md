@@ -1,6 +1,6 @@
-# lodash.noop v3.0.1
+# lodash.noop v3.0.2
 
-The [lodash](https://lodash.com/) method `_.noop` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.noop` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var noop = require('lodash.noop');
 ```
 
-See the [documentation](https://lodash.com/docs#noop) or [package source](https://github.com/lodash/lodash/blob/3.0.1-npm-packages/lodash.noop) for more details.
+See the [documentation](https://lodash.com/docs#noop) or [package source](https://github.com/lodash/lodash/blob/3.0.2-npm-packages/lodash.noop) for more details.

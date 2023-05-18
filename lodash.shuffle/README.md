@@ -1,6 +1,6 @@
-# lodash.shuffle v4.2.0
+# lodash.shuffle v4.2.1
 
-The [lodash](https://lodash.com/) method `_.shuffle` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.shuffle` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var shuffle = require('lodash.shuffle');
 ```
 
-See the [documentation](https://lodash.com/docs#shuffle) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.shuffle) for more details.
+See the [documentation](https://lodash.com/docs#shuffle) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.shuffle) for more details.

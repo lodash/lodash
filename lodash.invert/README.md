@@ -1,6 +1,6 @@
-# lodash.invert v4.3.0
+# lodash.invert v4.3.1
 
-The [lodash](https://lodash.com/) method `_.invert` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.invert` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var invert = require('lodash.invert');
 ```
 
-See the [documentation](https://lodash.com/docs#invert) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.invert) for more details.
+See the [documentation](https://lodash.com/docs#invert) or [package source](https://github.com/lodash/lodash/blob/4.3.1-npm-packages/lodash.invert) for more details.

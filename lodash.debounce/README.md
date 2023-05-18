@@ -1,6 +1,6 @@
-# lodash.debounce v4.0.8
+# lodash.debounce v4.0.9
 
-The [lodash](https://lodash.com/) method `_.debounce` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.debounce` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var debounce = require('lodash.debounce');
 ```
 
-See the [documentation](https://lodash.com/docs#debounce) or [package source](https://github.com/lodash/lodash/blob/4.0.8-npm-packages/lodash.debounce) for more details.
+See the [documentation](https://lodash.com/docs#debounce) or [package source](https://github.com/lodash/lodash/blob/4.0.9-npm-packages/lodash.debounce) for more details.

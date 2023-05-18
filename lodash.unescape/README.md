@@ -1,6 +1,6 @@
-# lodash.unescape v4.0.1
+# lodash.unescape v4.0.2
 
-The [lodash](https://lodash.com/) method `_.unescape` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.unescape` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var unescape = require('lodash.unescape');
 ```
 
-See the [documentation](https://lodash.com/docs#unescape) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.unescape) for more details.
+See the [documentation](https://lodash.com/docs#unescape) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.unescape) for more details.

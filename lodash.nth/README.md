@@ -1,6 +1,6 @@
-# lodash.nth v4.11.2
+# lodash.nth v4.11.3
 
-The [lodash](https://lodash.com/) method `_.nth` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.nth` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var nth = require('lodash.nth');
 ```
 
-See the [documentation](https://lodash.com/docs#nth) or [package source](https://github.com/lodash/lodash/blob/4.11.2-npm-packages/lodash.nth) for more details.
+See the [documentation](https://lodash.com/docs#nth) or [package source](https://github.com/lodash/lodash/blob/4.11.3-npm-packages/lodash.nth) for more details.

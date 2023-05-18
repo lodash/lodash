@@ -1,6 +1,6 @@
-# lodash.isarraylike v4.2.0
+# lodash.isarraylike v4.2.1
 
-The [lodash](https://lodash.com/) method `_.isArrayLike` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isArrayLike` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isArrayLike = require('lodash.isarraylike');
 ```
 
-See the [documentation](https://lodash.com/docs#isArrayLike) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.isarraylike) for more details.
+See the [documentation](https://lodash.com/docs#isArrayLike) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.isarraylike) for more details.

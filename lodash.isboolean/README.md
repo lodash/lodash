@@ -1,6 +1,6 @@
-# lodash.isboolean v3.0.3
+# lodash.isboolean v3.0.4
 
-The [lodash](https://lodash.com/) method `_.isBoolean` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isBoolean` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isBoolean = require('lodash.isboolean');
 ```
 
-See the [documentation](https://lodash.com/docs#isBoolean) or [package source](https://github.com/lodash/lodash/blob/3.0.3-npm-packages/lodash.isboolean) for more details.
+See the [documentation](https://lodash.com/docs#isBoolean) or [package source](https://github.com/lodash/lodash/blob/3.0.4-npm-packages/lodash.isboolean) for more details.

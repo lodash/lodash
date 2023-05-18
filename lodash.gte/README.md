@@ -1,6 +1,6 @@
-# lodash.gte v3.9.2
+# lodash.gte v3.9.3
 
-The [lodash](https://lodash.com/) method `_.gte` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.gte` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var gte = require('lodash.gte');
 ```
 
-See the [documentation](https://lodash.com/docs#gte) or [package source](https://github.com/lodash/lodash/blob/3.9.2-npm-packages/lodash.gte) for more details.
+See the [documentation](https://lodash.com/docs#gte) or [package source](https://github.com/lodash/lodash/blob/3.9.3-npm-packages/lodash.gte) for more details.

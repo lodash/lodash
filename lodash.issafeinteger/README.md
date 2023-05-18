@@ -1,6 +1,6 @@
-# lodash.issafeinteger v4.0.4
+# lodash.issafeinteger v4.0.5
 
-The [lodash](https://lodash.com/) method `_.isSafeInteger` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isSafeInteger` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isSafeInteger = require('lodash.issafeinteger');
 ```
 
-See the [documentation](https://lodash.com/docs#isSafeInteger) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.issafeinteger) for more details.
+See the [documentation](https://lodash.com/docs#isSafeInteger) or [package source](https://github.com/lodash/lodash/blob/4.0.5-npm-packages/lodash.issafeinteger) for more details.

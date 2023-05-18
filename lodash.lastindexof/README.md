@@ -1,6 +1,6 @@
-# lodash.lastindexof v4.0.5
+# lodash.lastindexof v4.0.6
 
-The [lodash](https://lodash.com/) method `_.lastIndexOf` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.lastIndexOf` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var lastIndexOf = require('lodash.lastindexof');
 ```
 
-See the [documentation](https://lodash.com/docs#lastIndexOf) or [package source](https://github.com/lodash/lodash/blob/4.0.5-npm-packages/lodash.lastindexof) for more details.
+See the [documentation](https://lodash.com/docs#lastIndexOf) or [package source](https://github.com/lodash/lodash/blob/4.0.6-npm-packages/lodash.lastindexof) for more details.

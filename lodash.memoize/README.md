@@ -1,6 +1,6 @@
-# lodash.memoize v4.1.2
+# lodash.memoize v4.1.3
 
-The [lodash](https://lodash.com/) method `_.memoize` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.memoize` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var memoize = require('lodash.memoize');
 ```
 
-See the [documentation](https://lodash.com/docs#memoize) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.memoize) for more details.
+See the [documentation](https://lodash.com/docs#memoize) or [package source](https://github.com/lodash/lodash/blob/4.1.3-npm-packages/lodash.memoize) for more details.

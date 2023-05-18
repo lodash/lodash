@@ -1,6 +1,6 @@
-# lodash.has v4.5.2
+# lodash.has v4.5.3
 
-The [lodash](https://lodash.com/) method `_.has` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.has` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var has = require('lodash.has');
 ```
 
-See the [documentation](https://lodash.com/docs#has) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.has) for more details.
+See the [documentation](https://lodash.com/docs#has) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.has) for more details.

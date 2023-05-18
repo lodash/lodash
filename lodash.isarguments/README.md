@@ -1,6 +1,6 @@
-# lodash.isarguments v3.1.0
+# lodash.isarguments v3.1.1
 
-The [lodash](https://lodash.com/) method `_.isArguments` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isArguments` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isArguments = require('lodash.isarguments');
 ```
 
-See the [documentation](https://lodash.com/docs#isArguments) or [package source](https://github.com/lodash/lodash/blob/3.1.0-npm-packages/lodash.isarguments) for more details.
+See the [documentation](https://lodash.com/docs#isArguments) or [package source](https://github.com/lodash/lodash/blob/3.1.1-npm-packages/lodash.isarguments) for more details.

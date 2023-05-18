@@ -1,6 +1,6 @@
-# lodash.unionwith v4.6.0
+# lodash.unionwith v4.6.1
 
-The [lodash](https://lodash.com/) method `_.unionWith` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.unionWith` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var unionWith = require('lodash.unionwith');
 ```
 
-See the [documentation](https://lodash.com/docs#unionWith) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.unionwith) for more details.
+See the [documentation](https://lodash.com/docs#unionWith) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.unionwith) for more details.

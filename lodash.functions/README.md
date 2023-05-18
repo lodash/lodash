@@ -1,6 +1,6 @@
-# lodash.functions v4.3.0
+# lodash.functions v4.3.1
 
-The [lodash](https://lodash.com/) method `_.functions` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.functions` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var functions = require('lodash.functions');
 ```
 
-See the [documentation](https://lodash.com/docs#functions) or [package source](https://github.com/lodash/lodash/blob/4.3.0-npm-packages/lodash.functions) for more details.
+See the [documentation](https://lodash.com/docs#functions) or [package source](https://github.com/lodash/lodash/blob/4.3.1-npm-packages/lodash.functions) for more details.

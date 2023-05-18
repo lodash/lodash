@@ -1,6 +1,6 @@
-# lodash.pad v4.5.1
+# lodash.pad v4.5.2
 
-The [lodash](https://lodash.com/) method `_.pad` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.pad` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var pad = require('lodash.pad');
 ```
 
-See the [documentation](https://lodash.com/docs#pad) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.pad) for more details.
+See the [documentation](https://lodash.com/docs#pad) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.pad) for more details.

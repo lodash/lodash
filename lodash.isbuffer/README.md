@@ -1,6 +1,6 @@
-# lodash.isbuffer v4.3.4
+# lodash.isbuffer v4.3.5
 
-The [lodash](https://lodash.com/) method `_.isBuffer` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isBuffer` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isBuffer = require('lodash.isbuffer');
 ```
 
-See the [documentation](https://lodash.com/docs#isBuffer) or [package source](https://github.com/lodash/lodash/blob/4.3.4-npm-packages/lodash.isbuffer) for more details.
+See the [documentation](https://lodash.com/docs#isBuffer) or [package source](https://github.com/lodash/lodash/blob/4.3.5-npm-packages/lodash.isbuffer) for more details.

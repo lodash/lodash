@@ -1,6 +1,6 @@
-# lodash.slice v4.2.0
+# lodash.slice v4.2.1
 
-The [lodash](https://lodash.com/) method `_.slice` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.slice` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var slice = require('lodash.slice');
 ```
 
-See the [documentation](https://lodash.com/docs#slice) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.slice) for more details.
+See the [documentation](https://lodash.com/docs#slice) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.slice) for more details.

@@ -1,6 +1,6 @@
-# lodash.droprightwhile v4.6.0
+# lodash.droprightwhile v4.6.1
 
-The [lodash](https://lodash.com/) method `_.dropRightWhile` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.dropRightWhile` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var dropRightWhile = require('lodash.droprightwhile');
 ```
 
-See the [documentation](https://lodash.com/docs#dropRightWhile) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.droprightwhile) for more details.
+See the [documentation](https://lodash.com/docs#dropRightWhile) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.droprightwhile) for more details.

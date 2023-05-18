@@ -1,16 +1,15 @@
 {
   "name": "lodash.isplainobject",
-  "version": "4.0.6",
-  "description": "The lodash method `_.isPlainObject` exported as a module.",
+  "version": "4.0.7",
+  "description": "The Lodash method `_.isPlainObject` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
   "keywords": "lodash-modularized, isplainobject",
-  "author": "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
+  "author": "John-David Dalton <john.david.dalton@gmail.com>",
   "contributors": [
-    "John-David Dalton <john.david.dalton@gmail.com> (http://allyoucanleet.com/)",
-    "Blaine Bublitz <blaine.bublitz@gmail.com> (https://github.com/phated)",
-    "Mathias Bynens <mathias@qiwi.be> (https://mathiasbynens.be/)"
+    "John-David Dalton <john.david.dalton@gmail.com>",
+    "Mathias Bynens <mathias@qiwi.be>"
   ],
   "repository": "lodash/lodash",
   "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }

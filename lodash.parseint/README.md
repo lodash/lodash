@@ -1,6 +1,6 @@
-# lodash.parseint v4.0.2
+# lodash.parseint v4.0.3
 
-The [lodash](https://lodash.com/) method `_.parseInt` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.parseInt` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var parseInt = require('lodash.parseint');
 ```
 
-See the [documentation](https://lodash.com/docs#parseInt) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.parseint) for more details.
+See the [documentation](https://lodash.com/docs#parseInt) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.parseint) for more details.

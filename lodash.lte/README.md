@@ -1,6 +1,6 @@
-# lodash.lte v3.9.2
+# lodash.lte v3.9.3
 
-The [lodash](https://lodash.com/) method `_.lte` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.lte` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var lte = require('lodash.lte');
 ```
 
-See the [documentation](https://lodash.com/docs#lte) or [package source](https://github.com/lodash/lodash/blob/3.9.2-npm-packages/lodash.lte) for more details.
+See the [documentation](https://lodash.com/docs#lte) or [package source](https://github.com/lodash/lodash/blob/3.9.3-npm-packages/lodash.lte) for more details.

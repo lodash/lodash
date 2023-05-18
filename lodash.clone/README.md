@@ -1,6 +1,6 @@
-# lodash.clone v4.5.0
+# lodash.clone v4.5.1
 
-The [lodash](https://lodash.com/) method `_.clone` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.clone` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var clone = require('lodash.clone');
 ```
 
-See the [documentation](https://lodash.com/docs#clone) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.clone) for more details.
+See the [documentation](https://lodash.com/docs#clone) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.clone) for more details.

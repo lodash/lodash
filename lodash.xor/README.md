@@ -1,6 +1,6 @@
-# lodash.xor v4.5.0
+# lodash.xor v4.5.1
 
-The [lodash](https://lodash.com/) method `_.xor` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.xor` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var xor = require('lodash.xor');
 ```
 
-See the [documentation](https://lodash.com/docs#xor) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.xor) for more details.
+See the [documentation](https://lodash.com/docs#xor) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.xor) for more details.

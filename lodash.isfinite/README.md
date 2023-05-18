@@ -1,6 +1,6 @@
-# lodash.isfinite v3.3.2
+# lodash.isfinite v3.3.3
 
-The [lodash](https://lodash.com/) method `_.isFinite` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isFinite` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isFinite = require('lodash.isfinite');
 ```
 
-See the [documentation](https://lodash.com/docs#isFinite) or [package source](https://github.com/lodash/lodash/blob/3.3.2-npm-packages/lodash.isfinite) for more details.
+See the [documentation](https://lodash.com/docs#isFinite) or [package source](https://github.com/lodash/lodash/blob/3.3.3-npm-packages/lodash.isfinite) for more details.

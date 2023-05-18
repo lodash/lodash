@@ -1,6 +1,6 @@
-# lodash.isnil v4.0.0
+# lodash.isnil v4.0.1
 
-The [lodash](https://lodash.com/) method `_.isNil` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isNil` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isNil = require('lodash.isnil');
 ```
 
-See the [documentation](https://lodash.com/docs#isNil) or [package source](https://github.com/lodash/lodash/blob/4.0.0-npm-packages/lodash.isnil) for more details.
+See the [documentation](https://lodash.com/docs#isNil) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.isnil) for more details.

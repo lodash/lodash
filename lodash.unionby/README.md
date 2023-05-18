@@ -1,6 +1,6 @@
-# lodash.unionby v4.8.0
+# lodash.unionby v4.8.1
 
-The [lodash](https://lodash.com/) method `_.unionBy` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.unionBy` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var unionBy = require('lodash.unionby');
 ```
 
-See the [documentation](https://lodash.com/docs#unionBy) or [package source](https://github.com/lodash/lodash/blob/4.8.0-npm-packages/lodash.unionby) for more details.
+See the [documentation](https://lodash.com/docs#unionBy) or [package source](https://github.com/lodash/lodash/blob/4.8.1-npm-packages/lodash.unionby) for more details.

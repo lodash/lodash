@@ -1,6 +1,6 @@
-# lodash.trimstart v4.5.1
+# lodash.trimstart v4.5.2
 
-The [lodash](https://lodash.com/) method `_.trimStart` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.trimStart` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var trimStart = require('lodash.trimstart');
 ```
 
-See the [documentation](https://lodash.com/docs#trimStart) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.trimstart) for more details.
+See the [documentation](https://lodash.com/docs#trimStart) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.trimstart) for more details.

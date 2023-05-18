@@ -1,6 +1,6 @@
-# lodash.transform v4.6.0
+# lodash.transform v4.6.1
 
-The [lodash](https://lodash.com/) method `_.transform` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.transform` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var transform = require('lodash.transform');
 ```
 
-See the [documentation](https://lodash.com/docs#transform) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.transform) for more details.
+See the [documentation](https://lodash.com/docs#transform) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.transform) for more details.

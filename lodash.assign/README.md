@@ -1,6 +1,6 @@
-# lodash.assign v4.2.0
+# lodash.assign v4.2.1
 
-The [lodash](https://lodash.com/) method `_.assign` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.assign` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var assign = require('lodash.assign');
 ```
 
-See the [documentation](https://lodash.com/docs#assign) or [package source](https://github.com/lodash/lodash/blob/4.2.0-npm-packages/lodash.assign) for more details.
+See the [documentation](https://lodash.com/docs#assign) or [package source](https://github.com/lodash/lodash/blob/4.2.1-npm-packages/lodash.assign) for more details.

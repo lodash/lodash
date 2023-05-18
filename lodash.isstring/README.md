@@ -1,6 +1,6 @@
-# lodash.isstring v4.0.1
+# lodash.isstring v4.0.2
 
-The [lodash](https://lodash.com/) method `_.isString` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.isString` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var isString = require('lodash.isstring');
 ```
 
-See the [documentation](https://lodash.com/docs#isString) or [package source](https://github.com/lodash/lodash/blob/4.0.1-npm-packages/lodash.isstring) for more details.
+See the [documentation](https://lodash.com/docs#isString) or [package source](https://github.com/lodash/lodash/blob/4.0.2-npm-packages/lodash.isstring) for more details.

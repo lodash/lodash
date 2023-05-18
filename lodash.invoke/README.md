@@ -1,6 +1,6 @@
-# lodash.invoke v4.5.2
+# lodash.invoke v4.5.3
 
-The [lodash](https://lodash.com/) method `_.invoke` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.invoke` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var invoke = require('lodash.invoke');
 ```
 
-See the [documentation](https://lodash.com/docs#invoke) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.invoke) for more details.
+See the [documentation](https://lodash.com/docs#invoke) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.invoke) for more details.

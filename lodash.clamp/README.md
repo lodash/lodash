@@ -1,6 +1,6 @@
-# lodash.clamp v4.0.3
+# lodash.clamp v4.0.4
 
-The [lodash](https://lodash.com/) method `_.clamp` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.clamp` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var clamp = require('lodash.clamp');
 ```
 
-See the [documentation](https://lodash.com/docs#clamp) or [package source](https://github.com/lodash/lodash/blob/4.0.3-npm-packages/lodash.clamp) for more details.
+See the [documentation](https://lodash.com/docs#clamp) or [package source](https://github.com/lodash/lodash/blob/4.0.4-npm-packages/lodash.clamp) for more details.

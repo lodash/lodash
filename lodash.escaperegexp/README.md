@@ -1,6 +1,6 @@
-# lodash.escaperegexp v4.1.2
+# lodash.escaperegexp v4.1.3
 
-The [lodash](https://lodash.com/) method `_.escapeRegExp` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.escapeRegExp` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var escapeRegExp = require('lodash.escaperegexp');
 ```
 
-See the [documentation](https://lodash.com/docs#escapeRegExp) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.escaperegexp) for more details.
+See the [documentation](https://lodash.com/docs#escapeRegExp) or [package source](https://github.com/lodash/lodash/blob/4.1.3-npm-packages/lodash.escaperegexp) for more details.

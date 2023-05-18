@@ -1,6 +1,6 @@
-# lodash.overevery v4.7.0
+# lodash.overevery v4.7.1
 
-The [lodash](https://lodash.com/) method `_.overEvery` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.overEvery` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var overEvery = require('lodash.overevery');
 ```
 
-See the [documentation](https://lodash.com/docs#overEvery) or [package source](https://github.com/lodash/lodash/blob/4.7.0-npm-packages/lodash.overevery) for more details.
+See the [documentation](https://lodash.com/docs#overEvery) or [package source](https://github.com/lodash/lodash/blob/4.7.1-npm-packages/lodash.overevery) for more details.

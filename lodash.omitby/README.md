@@ -1,6 +1,6 @@
-# lodash.omitby v4.6.0
+# lodash.omitby v4.6.1
 
-The [lodash](https://lodash.com/) method `_.omitBy` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.omitBy` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var omitBy = require('lodash.omitby');
 ```
 
-See the [documentation](https://lodash.com/docs#omitBy) or [package source](https://github.com/lodash/lodash/blob/4.6.0-npm-packages/lodash.omitby) for more details.
+See the [documentation](https://lodash.com/docs#omitBy) or [package source](https://github.com/lodash/lodash/blob/4.6.1-npm-packages/lodash.omitby) for more details.

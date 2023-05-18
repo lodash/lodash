@@ -1,6 +1,6 @@
-# lodash.conforms v4.5.0
+# lodash.conforms v4.5.1
 
-The [lodash](https://lodash.com/) method `_.conforms` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.conforms` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var conforms = require('lodash.conforms');
 ```
 
-See the [documentation](https://lodash.com/docs#conforms) or [package source](https://github.com/lodash/lodash/blob/4.5.0-npm-packages/lodash.conforms) for more details.
+See the [documentation](https://lodash.com/docs#conforms) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.conforms) for more details.

@@ -1,6 +1,6 @@
-# lodash.delay v4.1.1
+# lodash.delay v4.1.2
 
-The [lodash](https://lodash.com/) method `_.delay` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.delay` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var delay = require('lodash.delay');
 ```
 
-See the [documentation](https://lodash.com/docs#delay) or [package source](https://github.com/lodash/lodash/blob/4.1.1-npm-packages/lodash.delay) for more details.
+See the [documentation](https://lodash.com/docs#delay) or [package source](https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.delay) for more details.

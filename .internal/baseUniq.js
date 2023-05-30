@@ -48,7 +48,7 @@ function baseUniq(array, iteratee, comparator) {
     const computed = iteratee ? iteratee(value) : value
 
     value = (comparator || value !== 0) ? value : 0
-    if (isCommon && computed === computed) {
+    if (isCommon) {
       let seenIndex = seen.length
       while (seenIndex--) {
         if (seen[seenIndex] === computed) {

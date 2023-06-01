@@ -14591,6 +14591,12 @@
 
       assert.strictEqual(_.max(['a', 'b']), 'b');
     });
+
+    QUnit.test('should work with a mix of numeric and non-numeric collection values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.max([, null, '9333', -2, 'a', 4, -34, 2, 'z',12121]), 'z');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

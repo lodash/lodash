@@ -2898,18 +2898,35 @@
      */
     function baseExtremum(array, iteratee, comparator) {
       var index = -1,
-          length = array.length;
+          length = array.length,
+          computed,
+          result;
 
       while (++index < length) {
         var value = array[index],
-            current = iteratee(value);
-
-        if (current != null && (computed === undefined
-              ? (current === current && !isSymbol(current))
-              : comparator(current, computed)
-            )) {
-          var computed = current,
+        current = iteratee(value);
+        
+        if (computed === undefined && !isSymbol(current)) {
+          computed = current;
+          result = value;
+        }
+        else if (!isNaN(+current) && !isNaN(+result)) {
+          if (comparator(+current, +result)) {
+            computed = current;
+            result = value;
+          }
+        }
+        else if ((typeof current === "string" || typeof current === "number") &&
+            (typeof result === "string" || typeof result === "number") && 
+            comparator(current.toString(), result.toString())) {
+            if (comparator(current.toString(), result.toString())) {//Compare them with their ASCII code
+              computed = current;
               result = value;
+            }
+        }
+        else if (comparator(current, computed)) {
+          computed = current;
+          result = value;
         }
       }
       return result;

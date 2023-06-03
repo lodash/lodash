@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GhActionsToolbarSettings">
+    <option name="customRepos">
+      <map>
+        <entry key="https://github.com/MFahad777/lodash.git">
+          <value>
+            <RepoSettings />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

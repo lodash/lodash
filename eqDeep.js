@@ -8,7 +8,8 @@ import baseIsEqual from './.internal/baseIsEqual.js'
  * date objects, error objects, maps, numbers, `Object` objects, regexes,
  * sets, strings, symbols, and typed arrays. `Object` objects are compared
  * by their own, not inherited, enumerable properties. Functions and DOM
- * nodes are compared by strict equality, i.e. `===`.
+ * nodes as well as primitive values are compared by strict equality, i.e.
+ * `===`.
  *
  * @since 0.1.0
  * @category Lang

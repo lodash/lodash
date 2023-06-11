@@ -1,0 +1,22 @@
+/**
+ * Checks if `value` is `null` or `undefined`.
+ *
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is `null` or `undefined`, else `false`.
+ * @example
+ *
+ * isNullOrUndefined(null)
+ * // => true
+ *
+ * isNullOrUndefined(void 0)
+ * // => true
+ * isNullOrUndefined("SomeValue")
+ * // => false
+ */
+function isNull(value) {
+  return value === null || value === undefined
+}
+
+export default isNullOrUndefined

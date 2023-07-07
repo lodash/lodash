@@ -232,6 +232,16 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
       key = subValue
       subValue = value[key]
     }
+
+    /**
+     * Check for empty elements
+     * For example:
+     * const arr = [];
+     * arr.length = 1;
+     * console.log(arr) => [empty];
+     */
+    if (!(key in value)) return;
+
     // Recursively populate clone (susceptible to call stack limits).
     assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack))
   })

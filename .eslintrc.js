@@ -122,4 +122,4 @@ module.exports = {
 
     'template-curly-spacing': ['error', 'never']
   }
-};
+}

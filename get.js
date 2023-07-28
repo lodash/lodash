@@ -13,7 +13,7 @@ import baseGet from './.internal/baseGet.js'
  * @see has, hasIn, set, unset
  * @example
  *
- * const object = { 'a': [{ 'b': { 'c': 3 } }] }
+ * const object = { 'a': [{ 'b': { 'c': 3 }, 'b.c': 4 }] }
  *
  * get(object, 'a[0].b.c')
  * // => 3
@@ -21,6 +21,9 @@ import baseGet from './.internal/baseGet.js'
  * get(object, ['a', '0', 'b', 'c'])
  * // => 3
  *
+ * get(object, ['a', '0', 'b.c'])
+ * // => 4
+ * 
  * get(object, 'a.b.c', 'default')
  * // => 'default'
  */

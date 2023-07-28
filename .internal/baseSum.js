@@ -1,4 +1,4 @@
-import baseToNumber from '.internal/baseToNumber.js'
+import baseToNumber from './baseToNumber.js'
 
 /**
  * The base implementation of `sum` and `sumBy`.

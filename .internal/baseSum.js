@@ -1,3 +1,5 @@
+import baseToNumber from '.internal/baseToNumber.js'
+
 /**
  * The base implementation of `sum` and `sumBy`.
  *
@@ -10,8 +12,11 @@ function baseSum(array, iteratee) {
   let result
 
   for (const value of array) {
-    const current = iteratee(value)
+    let current = iteratee(value)
     if (current !== undefined) {
+      if (typeof current === 'string') {
+        current = baseToNumber(current)
+      }
       result = result === undefined ? current : (result + current)
     }
   }

@@ -12,10 +12,10 @@ import baseSum from './.internal/baseSum.js'
  * @returns {number} Returns the sum.
  * @example
  *
- * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }]
+ * const objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }, { 'n': '5' }]
  *
  * sumBy(objects, ({ n }) => n)
- * // => 20
+ * // => 25
  */
 function sumBy(array, iteratee) {
   return (array != null && array.length)

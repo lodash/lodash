@@ -23,6 +23,16 @@ import root from './.internal/root.js'
  * invocation will be deferred until the next frame is drawn (typically about
  * 16ms).
  *
+ * A common issue with debounced API calls is that when the user closes the
+ * browser tab, the trailing debounce may not have run yet. This is a common
+ * cause of data loss. The debounce function prevents this issue by running the
+ * trailing debounce immediately if the tab is closed prior to the trailing
+ * timeout. (Not applicable to Node.js or other headless runtimes.)
+ *
+ * When making debounced API calls it is recommended to use`fetch()` with the
+ * `keepalive` parameter. This lets the HTTP request to finish in the
+ * background if the user closes the browser tab.
+ *
  * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
  * for details over the differences between `debounce` and `throttle`.
  *
@@ -99,12 +109,19 @@ function debounce(func, wait, options) {
     return result
   }
 
-  function startTimer(pendingFunc, wait) {
+  function startTimer(wait) {
+    if (global.document && global.document.addEventListener) {
+      // The visibilityChange event is more reliable than unload, beforeUnload
+      // or pageHide. For the rationale, see:
+      // https://www.igvita.com/2015/11/20/dont-lose-user-and-app-state-use-page-visibility/
+      global.document.addEventListener(
+        'visibilityChange', onVisibilityChange, { capture: true, passive: true })
+    }
     if (useRAF) {
       root.cancelAnimationFrame(timerId)
-      return root.requestAnimationFrame(pendingFunc)
+      return root.requestAnimationFrame(timerExpired)
     }
-    return setTimeout(pendingFunc, wait)
+    return setTimeout(timerExpired, wait)
   }
 
   function cancelTimer(id) {
@@ -118,7 +135,7 @@ function debounce(func, wait, options) {
     // Reset any `maxWait` timer.
     lastInvokeTime = time
     // Start the timer for the trailing edge.
-    timerId = startTimer(timerExpired, wait)
+    timerId = startTimer(wait)
     // Invoke the leading edge.
     return leading ? invokeFunc(time) : result
   }
@@ -150,11 +167,23 @@ function debounce(func, wait, options) {
       return trailingEdge(time)
     }
     // Restart the timer.
-    timerId = startTimer(timerExpired, remainingWait(time))
+    timerId = startTimer(remainingWait(time))
+  }
+
+  function onVisibilityChange() {
+    if (global.document && global.document.visibilityState === 'hidden') {
+      trailingEdge(Date.now())
+    }
   }
 
   function trailingEdge(time) {
+    cancelTimer(timerId)
     timerId = undefined
+    if (global.document && global.document.removeEventListener) {
+      global.document.removeEventListener(
+        'visibilityChange',
+        onVisibilityChange, { capture: true })
+    }
 
     // Only invoke if we have `lastArgs` which means `func` has been
     // debounced at least once.
@@ -195,12 +224,12 @@ function debounce(func, wait, options) {
       }
       if (maxing) {
         // Handle invocations in a tight loop.
-        timerId = startTimer(timerExpired, wait)
+        timerId = startTimer(wait)
         return invokeFunc(lastCallTime)
       }
     }
     if (timerId === undefined) {
-      timerId = startTimer(timerExpired, wait)
+      timerId = startTimer(wait)
     }
     return result
   }

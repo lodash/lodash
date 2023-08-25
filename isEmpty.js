@@ -41,6 +41,11 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  *
  * isEmpty({ 'a': 1 })
  * // => false
+ *
+ * isEmpty({
+ *   [Symbol('a')]: 1
+ * })
+ * // => false
  */
 function isEmpty(value) {
   if (value == null) {
@@ -56,7 +61,7 @@ function isEmpty(value) {
     return !value.size
   }
   if (isPrototype(value)) {
-    return !Object.keys(value).length
+    return !Reflect.ownKeys(value).length
   }
   for (const key in value) {
     if (hasOwnProperty.call(value, key)) {

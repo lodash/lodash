@@ -50,6 +50,12 @@ describe('isEmpty', function() {
     assert.strictEqual(isEmpty(args), false);
   });
 
+  it('should work with objects that has symbol as property', function() {
+    assert.strictEqual(isEmpty({
+      [Symbol('a')]: 1
+    }), false);
+  });
+
   it('should work with prototype objects', function() {
     function Foo() {}
     Foo.prototype = { 'constructor': Foo };

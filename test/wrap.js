@@ -5,7 +5,7 @@ import wrap from '../wrap.js';
 
 describe('wrap', function() {
   it('should create a wrapped function', function() {
-    var p = wrap(lodashStable.escape, function(func, text) {
+    let p = wrap(lodashStable.escape, function(func, text) {
       return '<p>' + func(text) + '</p>';
     });
 
@@ -13,9 +13,9 @@ describe('wrap', function() {
   });
 
   it('should provide correct `wrapper` arguments', function() {
-    var args;
+    let args;
 
-    var wrapped = wrap(noop, function() {
+    let wrapped = wrap(noop, function() {
       args || (args = slice.call(arguments));
     });
 
@@ -24,11 +24,11 @@ describe('wrap', function() {
   });
 
   it('should use `_.identity` when `wrapper` is nullish', function() {
-    var values = [, null, undefined],
+    let values = [, null, undefined],
         expected = lodashStable.map(values, stubA);
 
-    var actual = lodashStable.map(values, function(value, index) {
-      var wrapped = index ? wrap('a', value) : wrap('a');
+    let actual = lodashStable.map(values, function(value, index) {
+      let wrapped = index ? wrap('a', value) : wrap('a');
       return wrapped('b', 'c');
     });
 
@@ -36,11 +36,11 @@ describe('wrap', function() {
   });
 
   it('should use `this` binding of function', function() {
-    var p = wrap(lodashStable.escape, function(func) {
+    let p = wrap(lodashStable.escape, function(func) {
       return '<p>' + func(this.text) + '</p>';
     });
 
-    var object = { 'p': p, 'text': 'fred, barney, & pebbles' };
+    let object = { 'p': p, 'text': 'fred, barney, & pebbles' };
     assert.strictEqual(object.p(), '<p>fred, barney, &amp; pebbles</p>');
   });
 });

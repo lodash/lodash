@@ -55,6 +55,10 @@ function isEmpty(value) {
   if (tag == '[object Map]' || tag == '[object Set]') {
     return !value.size
   }
+  if (tag == '[object Object]') {
+    const key = Reflect.ownKeys(value);
+    return !key.length
+  }
   if (isPrototype(value)) {
     return !Object.keys(value).length
   }

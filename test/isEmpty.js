@@ -53,11 +53,16 @@ describe('isEmpty', function() {
   it('should work with prototype objects', function() {
     function Foo() {}
     Foo.prototype = { 'constructor': Foo };
-
     assert.strictEqual(isEmpty(Foo.prototype), true);
 
     Foo.prototype.a = 1;
     assert.strictEqual(isEmpty(Foo.prototype), false);
+  });
+
+  it('should work with objects having no prototype', function() {
+    const symbol = {[Symbol('a')]: 1}
+
+    assert.strictEqual(isEmpty(symbol), false);
   });
 
   it('should work with jQuery/MooTools DOM query collections', function() {

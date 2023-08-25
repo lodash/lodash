@@ -5,11 +5,11 @@ import words from '../words.js'
 
 describe('words', function() {
   it('should match words containing Latin Unicode letters', function() {
-    var expected = lodashStable.map(burredLetters, function(letter) {
+    let expected = lodashStable.map(burredLetters, function(letter) {
       return [letter];
     });
 
-    var actual = lodashStable.map(burredLetters, function(letter) {
+    let actual = lodashStable.map(burredLetters, function(letter) {
       return words(letter);
     });
 
@@ -43,17 +43,17 @@ describe('words', function() {
   });
 
   it('should not treat contractions as separate words', function() {
-    var postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
+    let postfixes = ['d', 'll', 'm', 're', 's', 't', 've'];
 
     lodashStable.each(["'", '\u2019'], function(apos) {
       lodashStable.times(2, function(index) {
-        var actual = lodashStable.map(postfixes, function(postfix) {
-          var string = 'a b' + apos + postfix +  ' c';
+        let actual = lodashStable.map(postfixes, function(postfix) {
+          let string = 'a b' + apos + postfix +  ' c';
           return words(string[index ? 'toUpperCase' : 'toLowerCase']());
         });
 
-        var expected = lodashStable.map(postfixes, function(postfix) {
-          var words = ['a', 'b' + apos + postfix, 'c'];
+        let expected = lodashStable.map(postfixes, function(postfix) {
+          let words = ['a', 'b' + apos + postfix, 'c'];
           return lodashStable.map(words, function(word) {
             return word[index ? 'toUpperCase' : 'toLowerCase']();
           });
@@ -65,14 +65,14 @@ describe('words', function() {
   });
 
   it('should not treat ordinal numbers as separate words', function() {
-    var ordinals = ['1st', '2nd', '3rd', '4th'];
+    let ordinals = ['1st', '2nd', '3rd', '4th'];
 
     lodashStable.times(2, function(index) {
-      var expected = lodashStable.map(ordinals, function(ordinal) {
+      let expected = lodashStable.map(ordinals, function(ordinal) {
         return [ordinal[index ? 'toUpperCase' : 'toLowerCase']()];
       });
 
-      var actual = lodashStable.map(expected, function(expectedWords) {
+      let actual = lodashStable.map(expected, function(expectedWords) {
         return words(expectedWords[0]);
       });
 
@@ -81,7 +81,7 @@ describe('words', function() {
   });
 
   it('should not treat mathematical operators as words', function() {
-    var operators = ['\xac', '\xb1', '\xd7', '\xf7'],
+    let operators = ['\xac', '\xb1', '\xd7', '\xf7'],
         expected = lodashStable.map(operators, stubArray),
         actual = lodashStable.map(operators, words);
 
@@ -89,27 +89,27 @@ describe('words', function() {
   });
 
   it('should not treat punctuation as words', function() {
-    var marks = [
+    let marks = [
       '\u2012', '\u2013', '\u2014', '\u2015',
       '\u2024', '\u2025', '\u2026',
       '\u205d', '\u205e'
     ];
 
-    var expected = lodashStable.map(marks, stubArray),
+    let expected = lodashStable.map(marks, stubArray),
         actual = lodashStable.map(marks, words);
 
     assert.deepStrictEqual(actual, expected);
   });
 
   it('should prevent ReDoS', function() {
-    var largeWordLen = 50000,
+    let largeWordLen = 50000,
         largeWord = 'A'.repeat(largeWordLen),
         maxMs = 1000,
         startTime = lodashStable.now();
 
     assert.deepStrictEqual(words(largeWord + 'ÆiouAreVowels'), [largeWord, 'Æiou', 'Are', 'Vowels']);
 
-    var endTime = lodashStable.now(),
+    let endTime = lodashStable.now(),
         timeSpent = endTime - startTime;
 
     assert.ok(timeSpent < maxMs, 'operation took ' + timeSpent + 'ms');

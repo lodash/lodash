@@ -109,6 +109,12 @@ describe('isEmpty', function() {
     assert.strictEqual(isEmpty({ 'length': '0' }), false);
   });
 
+  it('should work with objects that has symbol as property', function() {
+    assert.strictEqual(isEmpty({
+      [Symbol('symbolTest')]: 'notEmpty'
+    }), false);
+  });
+
   it('should return an unwrapped value when implicitly chaining', function() {
     assert.strictEqual(_({}).isEmpty(), true);
   });

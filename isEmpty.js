@@ -56,7 +56,7 @@ function isEmpty(value) {
     return !value.size
   }
   if (tag == '[object Object]') {
-    const key = Reflect.ownKeys(value);
+    const key = Reflect.ownKeys(value)
     return !key.length
   }
   if (isPrototype(value)) {

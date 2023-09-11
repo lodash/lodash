@@ -1,5 +1,5 @@
 /**
- * Creates an array of the own and inherited enumerable property names of `object`.
+ * Creates an array of the own and inherited enumerable string property names of `object`.
  *
  *
  * @static

@@ -1,3 +1,7 @@
+## Announcement
+
+We recently succeeded in completing and closing **ALL** Pull Request and Issues on our GitHub Repo!
+
 # lodash
 
 [Site](https://lodash.com/) |

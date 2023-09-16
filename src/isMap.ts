@@ -22,6 +22,6 @@ const nodeIsMap = nodeTypes && nodeTypes.isMap;
  */
 const isMap = nodeIsMap
     ? (value) => nodeIsMap(value)
-    : (value) => isObjectLike(value) && getTag(value) == '[object Map]';
+    : (value) => isObjectLike(value) && getTag(value) === '[object Map]';
 
 export default isMap;

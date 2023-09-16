@@ -113,7 +113,7 @@ describe('at', () => {
 
             assert.strictEqual(count, expected);
 
-            expected = index == 3 ? [] : [index == 2 ? undefined : square(lastIndex)];
+            expected = index === 3 ? [] : [index === 2 ? undefined : square(lastIndex)];
             assert.deepEqual(actual, expected);
         });
     });

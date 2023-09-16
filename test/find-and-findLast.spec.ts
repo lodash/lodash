@@ -4,7 +4,7 @@ import { LARGE_ARRAY_SIZE, square, isEven } from './utils';
 
 describe('find and findLast', () => {
     lodashStable.each(['find', 'findLast'], (methodName) => {
-        const isFind = methodName == 'find';
+        const isFind = methodName === 'find';
 
         it(`\`_.${methodName}\` should support shortcut fusion`, () => {
             let findCount = 0,

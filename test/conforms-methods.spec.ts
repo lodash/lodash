@@ -5,7 +5,7 @@ import conformsTo from '../src/conformsTo';
 
 describe('conforms methods', () => {
     lodashStable.each(['conforms', 'conformsTo'], (methodName) => {
-        const isConforms = methodName == 'conforms';
+        const isConforms = methodName === 'conforms';
 
         function conforms(source) {
             return isConforms

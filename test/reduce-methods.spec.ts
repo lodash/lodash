@@ -6,7 +6,7 @@ describe('reduce methods', () => {
     lodashStable.each(['reduce', 'reduceRight'], (methodName) => {
         const func = _[methodName],
             array = [1, 2, 3],
-            isReduce = methodName == 'reduce';
+            isReduce = methodName === 'reduce';
 
         it(`\`_.${methodName}\` should reduce a collection to a single value`, () => {
             const actual = func(['a', 'b', 'c'], (accumulator, value) => accumulator + value, '');

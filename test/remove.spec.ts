@@ -69,7 +69,7 @@ describe('remove', () => {
         const array = [1, 2, 3];
         delete array[1];
 
-        remove(array, (n) => n == null);
+        remove(array, (n) => n === null);
 
         assert.deepStrictEqual(array, [1, 3]);
     });

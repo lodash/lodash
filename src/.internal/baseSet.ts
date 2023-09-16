@@ -30,7 +30,7 @@ function baseSet(object, path, value, customizer) {
     const key = toKey(path[index])
     let newValue = value
 
-    if (index != lastIndex) {
+    if (index !== lastIndex) {
       const objValue = nested[key]
       newValue = customizer ? customizer(objValue, key, nested) : undefined
       if (newValue === undefined) {

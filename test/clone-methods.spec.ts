@@ -125,12 +125,12 @@ xdescribe('clone methods', function () {
             actual = last(arguments);
         });
 
-        assert.ok(isNpm ? actual.constructor.name == 'Stack' : actual instanceof mapCaches.Stack);
+        assert.ok(isNpm ? actual.constructor.name === 'Stack' : actual instanceof mapCaches.Stack);
     });
 
     lodashStable.each(['clone', 'cloneDeep'], (methodName) => {
         const func = _[methodName],
-            isDeep = methodName == 'cloneDeep';
+            isDeep = methodName === 'cloneDeep';
 
         lodashStable.forOwn(objects, (object, kind) => {
             it(`\`_.${methodName}\` should clone ${kind}`, () => {
@@ -405,7 +405,7 @@ xdescribe('clone methods', function () {
 
     lodashStable.each(['cloneWith', 'cloneDeepWith'], (methodName) => {
         const func = _[methodName],
-            isDeep = methodName == 'cloneDeepWith';
+            isDeep = methodName === 'cloneDeepWith';
 
         it(`\`_.${methodName}\` should provide correct \`customizer\` arguments`, () => {
             const argsList = [],

@@ -34,7 +34,7 @@ describe('lodash(...) methods that return new wrapped values', () => {
 
     lodashStable.each(funcs, (methodName) => {
         it(`\`_(...).${methodName}\` should return a new wrapped value`, () => {
-            const value = methodName == 'split' ? 'abc' : [1, 2, 3],
+            const value = methodName === 'split' ? 'abc' : [1, 2, 3],
                 wrapped = _(value),
                 actual = wrapped[methodName]();
 

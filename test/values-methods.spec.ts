@@ -5,7 +5,7 @@ import { _, args, strictArgs } from './utils';
 describe('values methods', () => {
     lodashStable.each(['values', 'valuesIn'], (methodName) => {
         const func = _[methodName],
-            isValues = methodName == 'values';
+            isValues = methodName === 'values';
 
         it(`\`_.${methodName}\` should get string keyed values of \`object\``, () => {
             const object = { a: 1, b: 2 },

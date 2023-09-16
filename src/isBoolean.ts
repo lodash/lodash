@@ -20,7 +20,7 @@ function isBoolean(value) {
     return (
         value === true ||
         value === false ||
-        (isObjectLike(value) && getTag(value) == '[object Boolean]')
+        (isObjectLike(value) && getTag(value) === '[object Boolean]')
     );
 }
 

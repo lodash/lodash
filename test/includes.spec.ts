@@ -65,7 +65,7 @@ describe('includes', () => {
                 length = string.length,
                 indexes = [4, 6, 2 ** 32, Infinity];
 
-            const expected = lodashStable.map(indexes, (index) => [false, false, index == length]);
+            const expected = lodashStable.map(indexes, (index) => [false, false, index === length]);
 
             const actual = lodashStable.map(indexes, (fromIndex) => [
                 includes(string, 1, fromIndex),

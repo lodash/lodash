@@ -6,8 +6,8 @@ import round from '../src/round';
 describe('round methods', () => {
     lodashStable.each(['ceil', 'floor', 'round'], (methodName) => {
         const func = _[methodName],
-            isCeil = methodName == 'ceil',
-            isFloor = methodName == 'floor';
+            isCeil = methodName === 'ceil',
+            isFloor = methodName === 'floor';
 
         it(`\`_.${methodName}\` should return a rounded number without a precision`, () => {
             const actual = func(4.006);

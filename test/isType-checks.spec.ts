@@ -19,7 +19,7 @@ describe('isType checks', () => {
             Foo.prototype = root[methodName.slice(2)].prototype;
 
             const object = new Foo();
-            if (objToString.call(object) == objectTag) {
+            if (objToString.call(object) === objectTag) {
                 assert.strictEqual(
                     _[methodName](object),
                     false,

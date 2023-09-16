@@ -40,7 +40,7 @@ describe('isFunction', () => {
     it('should return `true` for array view constructors', () => {
         const expected = lodashStable.map(
             arrayViews,
-            (type) => objToString.call(root[type]) == funcTag,
+            (type) => objToString.call(root[type]) === funcTag,
         );
 
         const actual = lodashStable.map(arrayViews, (type) => isFunction(root[type]));

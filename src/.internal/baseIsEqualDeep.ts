@@ -37,12 +37,12 @@ function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
   let objTag = objIsArr ? arrayTag : getTag(object)
   let othTag = othIsArr ? arrayTag : getTag(other)
 
-  objTag = objTag == argsTag ? objectTag : objTag
-  othTag = othTag == argsTag ? objectTag : othTag
+  objTag = objTag === argsTag ? objectTag : objTag
+  othTag = othTag === argsTag ? objectTag : othTag
 
-  let objIsObj = objTag == objectTag
-  const othIsObj = othTag == objectTag
-  const isSameTag = objTag == othTag
+  let objIsObj = objTag === objectTag
+  const othIsObj = othTag === objectTag
+  const isSameTag = objTag === othTag
 
   if (isSameTag && isBuffer(object)) {
     if (!isBuffer(other)) {

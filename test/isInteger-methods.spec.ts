@@ -5,7 +5,7 @@ import { _, stubTrue, MAX_INTEGER, stubFalse, falsey, args, symbol } from './uti
 describe('isInteger methods', () => {
     lodashStable.each(['isInteger', 'isSafeInteger'], (methodName) => {
         const func = _[methodName],
-            isSafe = methodName == 'isSafeInteger';
+            isSafe = methodName === 'isSafeInteger';
 
         it(`\`_.${methodName}\` should return \`true\` for integer values`, () => {
             const values = [-1, 0, 1],

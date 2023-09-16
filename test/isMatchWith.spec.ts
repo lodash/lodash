@@ -78,7 +78,7 @@ describe('isMatchWith', () => {
             actual = last(arguments);
         });
 
-        assert.ok(isNpm ? actual.constructor.name == 'Stack' : actual instanceof mapCaches.Stack);
+        assert.ok(isNpm ? actual.constructor.name === 'Stack' : actual instanceof mapCaches.Stack);
     });
 
     it('should ensure `customizer` is a function', () => {

@@ -5,8 +5,8 @@ import { _, identity, args, falsey } from './utils';
 describe('find and includes', () => {
     lodashStable.each(['includes', 'find'], (methodName) => {
         const func = _[methodName],
-            isIncludes = methodName == 'includes',
-            resolve = methodName == 'find' ? lodashStable.curry(lodashStable.eq) : identity;
+            isIncludes = methodName === 'includes',
+            resolve = methodName === 'find' ? lodashStable.curry(lodashStable.eq) : identity;
 
         lodashStable.each(
             {

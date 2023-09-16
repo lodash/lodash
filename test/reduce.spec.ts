@@ -37,7 +37,7 @@ describe('reduce', () => {
             object = { a: 1, b: 2 },
             firstKey = head(keys(object));
 
-        let expected = firstKey == 'a' ? [0, 1, 'a', object] : [0, 2, 'b', object];
+        let expected = firstKey === 'a' ? [0, 1, 'a', object] : [0, 2, 'b', object];
 
         reduce(
             object,
@@ -50,7 +50,7 @@ describe('reduce', () => {
         assert.deepStrictEqual(args, expected);
 
         args = undefined;
-        expected = firstKey == 'a' ? [1, 2, 'b', object] : [2, 1, 'a', object];
+        expected = firstKey === 'a' ? [1, 2, 'b', object] : [2, 1, 'a', object];
 
         reduce(object, function () {
             args || (args = slice.call(arguments));

@@ -93,7 +93,7 @@ describe('random', () => {
 
         const actual = lodashStable.map(
             randoms,
-            (result, index) => result >= 0 && result <= array[index] && result % 1 == 0,
+            (result, index) => result >= 0 && result <= array[index] && result % 1 === 0,
         );
 
         assert.deepStrictEqual(actual, expected);

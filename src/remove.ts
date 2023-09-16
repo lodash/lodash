@@ -17,7 +17,7 @@ import basePullAt from './.internal/basePullAt.js';
  * @example
  *
  * const array = [1, 2, 3, 4]
- * const evens = remove(array, n => n % 2 == 0)
+ * const evens = remove(array, n => n % 2 === 0)
  *
  * console.log(array)
  * // => [1, 3]

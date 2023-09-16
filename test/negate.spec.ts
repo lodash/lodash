@@ -42,7 +42,7 @@ describe('negate', () => {
                 case 4:
                     negate(1, 2, 3, 4);
             }
-            return argCount == index;
+            return argCount === index;
         });
 
         assert.deepStrictEqual(actual, expected);

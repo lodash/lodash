@@ -5,7 +5,7 @@ import isMatch from '../src/isMatch';
 
 describe('matches methods', () => {
     lodashStable.each(['matches', 'isMatch'], (methodName) => {
-        const isMatches = methodName == 'matches';
+        const isMatches = methodName === 'matches';
 
         function matches(source) {
             return isMatches

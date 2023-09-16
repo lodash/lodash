@@ -52,7 +52,7 @@ describe('case methods', () => {
 
         it(`\`_.${methodName}\` should convert \`string\` to ${caseName} case`, () => {
             const actual = lodashStable.map(strings, (string) => {
-                const expected = caseName == 'start' && string == 'FOO BAR' ? string : converted;
+                const expected = caseName === 'start' && string === 'FOO BAR' ? string : converted;
                 return func(string) === expected;
             });
 
@@ -61,7 +61,7 @@ describe('case methods', () => {
 
         it(`\`_.${methodName}\` should handle double-converting strings`, () => {
             const actual = lodashStable.map(strings, (string) => {
-                const expected = caseName == 'start' && string == 'FOO BAR' ? string : converted;
+                const expected = caseName === 'start' && string === 'FOO BAR' ? string : converted;
                 return func(func(string)) === expected;
             });
 

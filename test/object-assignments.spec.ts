@@ -6,7 +6,7 @@ import has from '../src/has';
 describe('object assignments', () => {
     lodashStable.each(['assign', 'assignIn', 'defaults', 'defaultsDeep', 'merge'], (methodName) => {
         const func = _[methodName],
-            isAssign = methodName == 'assign',
+            isAssign = methodName === 'assign',
             isDefaults = /^defaults/.test(methodName);
 
         it(`\`_.${methodName}\` should coerce primitives to objects`, () => {
@@ -135,7 +135,7 @@ describe('object assignments', () => {
 
     lodashStable.each(['assignWith', 'assignInWith', 'mergeWith'], (methodName) => {
         const func = _[methodName],
-            isMergeWith = methodName == 'mergeWith';
+            isMergeWith = methodName === 'mergeWith';
 
         it(`\`_.${methodName}\` should provide correct \`customizer\` arguments`, () => {
             let args,

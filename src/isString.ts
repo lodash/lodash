@@ -22,7 +22,7 @@ function isString(value) {
         (type === 'object' &&
             value != null &&
             !Array.isArray(value) &&
-            getTag(value) == '[object String]')
+            getTag(value) === '[object String]')
     );
 }
 

@@ -21,7 +21,7 @@ describe('unionWith', () => {
         const objects = [{ x: 1, y: 1 }],
             others = [{ x: 1, y: 2 }];
 
-        const actual = unionWith(objects, others, (a, b) => a.x == b.x);
+        const actual = unionWith(objects, others, (a, b) => a.x === b.x);
 
         assert.deepStrictEqual(actual, [{ x: 1, y: 1 }]);
     });

@@ -58,7 +58,7 @@ describe('takeWhile', () => {
         const actual = _(array)
             .takeWhile((n) => n < 4)
             .take(2)
-            .takeWhile((n) => n == 0)
+            .takeWhile((n) => n === 0)
             .value();
 
         assert.deepEqual(actual, [0]);

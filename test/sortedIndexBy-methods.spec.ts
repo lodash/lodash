@@ -5,7 +5,7 @@ import { _, slice, MAX_ARRAY_LENGTH, MAX_ARRAY_INDEX } from './utils';
 describe('sortedIndexBy methods', () => {
     lodashStable.each(['sortedIndexBy', 'sortedLastIndexBy'], (methodName) => {
         const func = _[methodName],
-            isSortedIndexBy = methodName == 'sortedIndexBy';
+            isSortedIndexBy = methodName === 'sortedIndexBy';
 
         it(`\`_.${methodName}\` should provide correct \`iteratee\` arguments`, () => {
             let args;
@@ -52,7 +52,7 @@ describe('sortedIndexBy methods', () => {
                         ? 0
                         : Math.min(length, MAX_ARRAY_INDEX);
 
-                    assert.ok(steps == 32 || steps == 33);
+                    assert.ok(steps === 32 || steps === 33);
                     assert.strictEqual(actual, expected);
                 });
             });

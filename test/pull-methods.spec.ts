@@ -5,7 +5,7 @@ import { _ } from './utils';
 describe('pull methods', () => {
     lodashStable.each(['pull', 'pullAll', 'pullAllWith'], (methodName) => {
         const func = _[methodName],
-            isPull = methodName == 'pull';
+            isPull = methodName === 'pull';
 
         function pull(array, values) {
             return isPull ? func.apply(undefined, [array].concat(values)) : func(array, values);

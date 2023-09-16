@@ -20,7 +20,7 @@ import toInteger from './toInteger.js';
  *   { 'user': 'pebbles', 'active': false }
  * ]
  *
- * findLastIndex(users, ({ user }) => user == 'pebbles')
+ * findLastIndex(users, ({ user }) => user === 'pebbles')
  * // => 2
  */
 function findLastIndex(array, predicate, fromIndex) {

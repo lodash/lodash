@@ -100,9 +100,9 @@ describe('lodash methods', () => {
                 index ? func(value) : func(),
             );
 
-            if (methodName == 'noConflict') {
+            if (methodName === 'noConflict') {
                 root._ = oldDash;
-            } else if (methodName == 'pull' || methodName == 'pullAll') {
+            } else if (methodName === 'pull' || methodName === 'pullAll') {
                 expected = falsey;
             }
             if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
@@ -137,7 +137,7 @@ describe('lodash methods', () => {
             }
             assert.ok(lodashStable.isArray(actual), `_.${methodName} returns an array`);
 
-            const isPull = methodName == 'pull' || methodName == 'pullAll';
+            const isPull = methodName === 'pull' || methodName === 'pullAll';
             assert.strictEqual(
                 actual === array,
                 isPull,
@@ -163,7 +163,7 @@ describe('lodash methods', () => {
                         !pass &&
                         e instanceof TypeError &&
                         (!lodashStable.includes(checkFuncs, methodName) ||
-                            e.message == FUNC_ERROR_TEXT);
+                            e.message === FUNC_ERROR_TEXT);
                 }
                 return pass;
             });
@@ -182,7 +182,7 @@ describe('lodash methods', () => {
                     return this.a;
                 },
                 func = _[methodName],
-                isNegate = methodName == 'negate',
+                isNegate = methodName === 'negate',
                 object = { a: 1 },
                 expected = isNegate ? false : 1;
 

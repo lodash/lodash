@@ -14,7 +14,7 @@ import isArrayLike from './isArrayLike.js';
  * @see find, findIndex, findKey, findLastIndex, findLastKey
  * @example
  *
- * findLast([1, 2, 3, 4], n => n % 2 == 1)
+ * findLast([1, 2, 3, 4], n => n % 2 === 1)
  * // => 3
  */
 function findLast(collection, predicate, fromIndex) {

@@ -5,7 +5,7 @@ import { _, MAX_SAFE_INTEGER } from './utils';
 describe('startsWith and endsWith', () => {
     lodashStable.each(['startsWith', 'endsWith'], (methodName) => {
         const func = _[methodName],
-            isStartsWith = methodName == 'startsWith';
+            isStartsWith = methodName === 'startsWith';
 
         const string = 'abc',
             chr = isStartsWith ? 'a' : 'c';

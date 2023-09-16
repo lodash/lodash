@@ -22,6 +22,6 @@ const nodeIsRegExp = nodeTypes && nodeTypes.isRegExp;
  */
 const isRegExp = nodeIsRegExp
     ? (value) => nodeIsRegExp(value)
-    : (value) => isObjectLike(value) && getTag(value) == '[object RegExp]';
+    : (value) => isObjectLike(value) && getTag(value) === '[object RegExp]';
 
 export default isRegExp;

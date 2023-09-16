@@ -14,7 +14,7 @@ describe('findLastIndex and lastIndexOf', () => {
         const array = [1, 2, 3, 1, 2, 3],
             func = methods[methodName],
             resolve =
-                methodName == 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
+                methodName === 'findLastIndex' ? lodashStable.curry(lodashStable.eq) : identity;
 
         it(`\`_.${methodName}\` should return the index of the last matched value`, () => {
             assert.strictEqual(func(array, resolve(3)), 5);

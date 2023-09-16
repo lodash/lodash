@@ -69,7 +69,7 @@ describe('chain', () => {
             actual = wrapped
                 .chain()
                 .filter((n) => n % 2 != 0)
-                .reject((n) => n % 3 == 0)
+                .reject((n) => n % 3 === 0)
                 .sortBy((n) => -n)
                 .value();
 

@@ -58,7 +58,7 @@ function isEmpty(value) {
         return !value.length;
     }
     const tag = getTag(value);
-    if (tag == '[object Map]' || tag == '[object Set]') {
+    if (tag === '[object Map]' || tag === '[object Set]') {
         return !value.size;
     }
     if (isPrototype(value)) {

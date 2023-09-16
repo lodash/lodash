@@ -16,7 +16,7 @@ import {
 describe('keys methods', () => {
     lodashStable.each(['keys', 'keysIn'], (methodName) => {
         const func = _[methodName],
-            isKeys = methodName == 'keys';
+            isKeys = methodName === 'keys';
 
         it(`\`_.${methodName}\` should return the string keyed property names of \`object\``, () => {
             const actual = func({ a: 1, b: 1 }).sort();

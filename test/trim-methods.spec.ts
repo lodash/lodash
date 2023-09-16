@@ -17,21 +17,21 @@ describe('trim methods', () => {
 
         it(`\`_.${methodName}\` should remove ${parts} whitespace`, () => {
             const string = `${whitespace}a b c${whitespace}`,
-                expected = `${index == 2 ? whitespace : ''}a b c${index == 1 ? whitespace : ''}`;
+                expected = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`;
 
             assert.strictEqual(func(string), expected);
         });
 
         it(`\`_.${methodName}\` should coerce \`string\` to a string`, () => {
             const object = { toString: lodashStable.constant(`${whitespace}a b c${whitespace}`) },
-                expected = `${index == 2 ? whitespace : ''}a b c${index == 1 ? whitespace : ''}`;
+                expected = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`;
 
             assert.strictEqual(func(object), expected);
         });
 
         it(`\`_.${methodName}\` should remove ${parts} \`chars\``, () => {
             const string = '-_-a-b-c-_-',
-                expected = `${index == 2 ? '-_-' : ''}a-b-c${index == 1 ? '-_-' : ''}`;
+                expected = `${index === 2 ? '-_-' : ''}a-b-c${index === 1 ? '-_-' : ''}`;
 
             assert.strictEqual(func(string, '_-'), expected);
         });
@@ -39,7 +39,7 @@ describe('trim methods', () => {
         it(`\`_.${methodName}\` should coerce \`chars\` to a string`, () => {
             const object = { toString: lodashStable.constant('_-') },
                 string = '-_-a-b-c-_-',
-                expected = `${index == 2 ? '-_-' : ''}a-b-c${index == 1 ? '-_-' : ''}`;
+                expected = `${index === 2 ? '-_-' : ''}a-b-c${index === 1 ? '-_-' : ''}`;
 
             assert.strictEqual(func(string, object), expected);
         });
@@ -54,7 +54,7 @@ describe('trim methods', () => {
 
         it(`\`_.${methodName}\` should work with \`undefined\` or empty string values for \`chars\``, () => {
             const string = `${whitespace}a b c${whitespace}`,
-                expected = `${index == 2 ? whitespace : ''}a b c${index == 1 ? whitespace : ''}`;
+                expected = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`;
 
             assert.strictEqual(func(string, undefined), expected);
             assert.strictEqual(func(string, ''), string);
@@ -62,7 +62,7 @@ describe('trim methods', () => {
 
         it(`\`_.${methodName}\` should work as an iteratee for methods like \`_.map\``, () => {
             const string = Object(`${whitespace}a b c${whitespace}`),
-                trimmed = `${index == 2 ? whitespace : ''}a b c${index == 1 ? whitespace : ''}`,
+                trimmed = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`,
                 actual = lodashStable.map([string, string, string], func);
 
             assert.deepStrictEqual(actual, [trimmed, trimmed, trimmed]);
@@ -70,7 +70,7 @@ describe('trim methods', () => {
 
         it(`\`_.${methodName}\` should return an unwrapped value when implicitly chaining`, () => {
             const string = `${whitespace}a b c${whitespace}`,
-                expected = `${index == 2 ? whitespace : ''}a b c${index == 1 ? whitespace : ''}`;
+                expected = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`;
 
             assert.strictEqual(_(string)[methodName](), expected);
         });

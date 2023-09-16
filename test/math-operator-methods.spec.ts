@@ -5,7 +5,7 @@ import { _, symbol } from './utils';
 describe('math operator methods', () => {
     lodashStable.each(['add', 'divide', 'multiply', 'subtract'], (methodName) => {
         const func = _[methodName],
-            isAddSub = methodName == 'add' || methodName == 'subtract';
+            isAddSub = methodName === 'add' || methodName === 'subtract';
 
         it(`\`_.${methodName}\` should return \`${
             isAddSub ? 0 : 1

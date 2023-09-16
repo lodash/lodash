@@ -29,7 +29,7 @@ function startsWith(string, target, position) {
         position = length;
     }
     target = `${target}`;
-    return string.slice(position, position + target.length) == target;
+    return string.slice(position, position + target.length) === target;
 }
 
 export default startsWith;

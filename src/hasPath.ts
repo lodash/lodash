@@ -42,7 +42,7 @@ function hasPath(object, path) {
         }
         object = object[key];
     }
-    if (result || ++index != length) {
+    if (result || ++index !== length) {
         return result;
     }
     length = object == null ? 0 : object.length;

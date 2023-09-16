@@ -9,7 +9,7 @@ describe('omit methods', () => {
             object = { a: 1, b: 2, c: 3, d: 4 },
             resolve = lodashStable.nthArg(1);
 
-        if (methodName == 'omitBy') {
+        if (methodName === 'omitBy') {
             resolve = function (object, props) {
                 props = lodashStable.castArray(props);
                 return function (value) {

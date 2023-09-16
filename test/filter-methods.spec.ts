@@ -6,7 +6,7 @@ describe('filter methods', () => {
     lodashStable.each(['filter', 'reject'], (methodName) => {
         const array = [1, 2, 3, 4],
             func = _[methodName],
-            isFilter = methodName == 'filter',
+            isFilter = methodName === 'filter',
             objects = [{ a: 0 }, { a: 1 }];
 
         it(`\`_.${methodName}\` should not modify the resulting value from within \`predicate\``, () => {

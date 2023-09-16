@@ -297,7 +297,7 @@ describe('template', () => {
     it('should work with statements containing quotes', () => {
         const compiled = template(
             '<%\
-      if (a == \'A\' || a == "a") {\
+      if (a === \'A\' || a === "a") {\
         %>\'a\',"A"<%\
       } %>',
         );

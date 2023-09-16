@@ -25,7 +25,7 @@ function baseXor(arrays, iteratee, comparator) {
     let othIndex = -1
 
     while (++othIndex < length) {
-      if (othIndex != index) {
+      if (othIndex !== index) {
         result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator)
       }
     }

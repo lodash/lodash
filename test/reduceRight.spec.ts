@@ -34,7 +34,7 @@ describe('reduceRight', () => {
     it('should provide correct `iteratee` arguments when iterating an object', () => {
         let args,
             object = { a: 1, b: 2 },
-            isFIFO = lodashStable.keys(object)[0] == 'a';
+            isFIFO = lodashStable.keys(object)[0] === 'a';
 
         let expected = isFIFO ? [0, 2, 'b', object] : [0, 1, 'a', object];
 

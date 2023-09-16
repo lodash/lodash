@@ -24,8 +24,8 @@ function isError(value) {
     }
     const tag = getTag(value);
     return (
-        tag == '[object Error]' ||
-        tag == '[object DOMException]' ||
+        tag === '[object Error]' ||
+        tag === '[object DOMException]' ||
         (typeof value.message === 'string' &&
             typeof value.name === 'string' &&
             !isPlainObject(value))

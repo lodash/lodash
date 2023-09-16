@@ -7,7 +7,7 @@ describe('strict mode checks', () => {
         ['assign', 'assignIn', 'bindAll', 'defaults', 'defaultsDeep', 'merge'],
         (methodName) => {
             const func = _[methodName],
-                isBindAll = methodName == 'bindAll';
+                isBindAll = methodName === 'bindAll';
 
             it(`\`_.${methodName}\` should ${
                 isStrict ? '' : 'not '

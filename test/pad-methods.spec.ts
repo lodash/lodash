@@ -6,8 +6,8 @@ import pad from '../src/pad';
 describe('pad methods', () => {
     lodashStable.each(['pad', 'padStart', 'padEnd'], (methodName) => {
         const func = _[methodName],
-            isPad = methodName == 'pad',
-            isStart = methodName == 'padStart',
+            isPad = methodName === 'pad',
+            isStart = methodName === 'padStart',
             string = 'abc';
 
         it(`\`_.${methodName}\` should not pad if string is >= \`length\``, () => {

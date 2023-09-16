@@ -57,9 +57,9 @@ describe('dropWhile', () => {
         const array = lodashStable.range(1, LARGE_ARRAY_SIZE + 3);
 
         const actual = _(array)
-            .dropWhile((n) => n == 1)
+            .dropWhile((n) => n === 1)
             .drop()
-            .dropWhile((n) => n == 3)
+            .dropWhile((n) => n === 3)
             .value();
 
         assert.deepEqual(actual, array.slice(3));

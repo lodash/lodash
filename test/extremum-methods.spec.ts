@@ -28,7 +28,7 @@ describe('extremum methods', () => {
     lodashStable.each(['maxBy', 'minBy'], (methodName) => {
         const array = [1, 2, 3],
             func = _[methodName],
-            isMax = methodName == 'maxBy';
+            isMax = methodName === 'maxBy';
 
         it(`\`_.${methodName}\` should work with an \`iteratee\``, () => {
             const actual = func(array, (n) => -n);

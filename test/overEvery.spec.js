@@ -80,7 +80,7 @@ describe('overEvery', () => {
         });
 
         over('a', 'b', 'c');
-        expect(args, ['a', 'b').toEqual('c']);
+        expect(args).toEqual(['a', 'b', 'c']);
     });
 
     it('should use `this` binding of function for `predicates`', () => {

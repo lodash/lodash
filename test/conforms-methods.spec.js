@@ -28,7 +28,7 @@ describe('conforms methods', () => {
             });
 
             let actual = lodashStable.filter(objects, par);
-            expect(actual, [objects[0]).toEqual(objects[2]]);
+            expect(actual).toEqual([objects[0], objects[2]]);
 
             par = conforms({
                 b: function (value) {
@@ -62,7 +62,7 @@ describe('conforms methods', () => {
             const par = conforms(new Foo());
             const actual = lodashStable.filter(objects, par);
 
-            expect(actual, [objects[1]).toEqual(objects[2]]);
+            expect(actual).toEqual([objects[1], objects[2]]);
         });
 
         it(`\`_.${methodName}\` should not invoke \`source\` predicates for missing \`object\` properties`, () => {

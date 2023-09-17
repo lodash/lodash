@@ -8,12 +8,12 @@ describe('omit', () => {
     const nested = { a: 1, b: { c: 2, d: 3 } };
 
     it('should flatten `paths`', () => {
-        expect(omit(object, 'a', 'c'), { b: 2).toEqual(d: 4 });
+        expect(omit(object, 'a', 'c')).toEqual({ b: 2, d: 4 });
         expect(omit(object, ['a', 'd'], 'c')).toEqual({ b: 2 });
     });
 
     it('should support deep paths', () => {
-        expect(omit(nested, 'b.c'), { a: 1).toEqual(b: { d: 3 } });
+        expect(omit(nested, 'b.c')).toEqual({ a: 1, b: { d: 3 } });
     });
 
     it('should support path arrays', () => {
@@ -55,7 +55,7 @@ describe('omit', () => {
     });
 
     it('should work with `arguments` object `paths`', () => {
-        expect(omit(object, args), { b: 2).toEqual(d: 4 });
+        expect(omit(object, args)).toEqual({ b: 2, d: 4 });
     });
 
     it('should not mutate `object`', () => {

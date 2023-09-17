@@ -98,17 +98,19 @@ function debounce(func, wait, options) {
         return result;
     }
 
-    function startTimer(pendingFunc, wait) {
+    function startTimer(pendingFunc, milliseconds) {
         if (useRAF) {
             root.cancelAnimationFrame(timerId);
             return root.requestAnimationFrame(pendingFunc);
         }
-        return setTimeout(pendingFunc, wait);
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        return setTimeout(pendingFunc, milliseconds);
     }
 
     function cancelTimer(id) {
         if (useRAF) {
-            return root.cancelAnimationFrame(id);
+            root.cancelAnimationFrame(id);
+            return;
         }
         clearTimeout(id);
     }
@@ -152,6 +154,7 @@ function debounce(func, wait, options) {
         }
         // Restart the timer.
         timerId = startTimer(timerExpired, remainingWait(time));
+        return undefined;
     }
 
     function trailingEdge(time) {

@@ -19,12 +19,13 @@ import isIndex from './.internal/isIndex.js';
  * nth(array, -2)
  * // => 'c'
  */
-function nth(array, n) {
+function nth(array: any[], n: number) {
     const length = array == null ? 0 : array.length;
     if (!length) {
         return;
     }
     n += n < 0 ? length : 0;
+    // eslint-disable-next-line consistent-return
     return isIndex(n, length) ? array[n] : undefined;
 }
 

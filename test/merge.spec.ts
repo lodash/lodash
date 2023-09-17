@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import lodashStable from 'lodash';
 import { args, typedArrays, stubTrue, defineProperty, document, root } from './utils';
 import merge from '../src/merge';
@@ -25,7 +24,7 @@ describe('merge', () => {
             ],
         };
 
-        assert.deepStrictEqual(merge(names, ages, heights), expected);
+        expect(merge(names, ages, heights)).toEqual(expected);
     });
 
     it('should merge sources containing circular references', () => {
@@ -45,14 +44,14 @@ describe('merge', () => {
         const actual = merge(object, source);
 
         assert.notStrictEqual(actual.bar.b, actual.foo.b);
-        assert.strictEqual(actual.foo.b.c.d, actual.foo.b.c.d.foo.b.c.d);
+        expect(actual.foo.b.c.d).toBe(actual.foo.b.c.d.foo.b.c.d);
     });
 
     it('should work with four arguments', () => {
         const expected = { a: 4 },
             actual = merge({ a: 1 }, { a: 2 }, { a: 3 }, expected);
 
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 
     it('should merge onto function `object` values', () => {
@@ -61,8 +60,8 @@ describe('merge', () => {
         const source = { a: 1 },
             actual = merge(Foo, source);
 
-        assert.strictEqual(actual, Foo);
-        assert.strictEqual(Foo.a, 1);
+        expect(actual).toBe(Foo);
+        expect(Foo.a).toBe(1);
     });
 
     it('should merge first source object properties to function', () => {
@@ -70,7 +69,7 @@ describe('merge', () => {
             object = { prop: {} },
             actual = merge({ prop: fn }, object);
 
-        assert.deepStrictEqual(actual, object);
+        expect(actual).toEqual(object);
     });
 
     it('should merge first and second source object properties to function', () => {
@@ -78,7 +77,7 @@ describe('merge', () => {
             object = { prop: {} },
             actual = merge({ prop: fn }, { prop: fn }, object);
 
-        assert.deepStrictEqual(actual, object);
+        expect(actual).toEqual(object);
     });
 
     it('should not merge onto function values of sources', () => {
@@ -87,11 +86,11 @@ describe('merge', () => {
             expected = { a: { b: 2 } },
             actual = merge({}, source1, source2);
 
-        assert.deepStrictEqual(actual, expected);
-        assert.ok(!('b' in source1.a));
+        expect(actual).toEqual(expected);
+        expect(('b' in source1.a)).toBe(false)
 
         actual = merge(source1, source2);
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 
     it('should merge onto non-plain `object` values', () => {
@@ -100,8 +99,8 @@ describe('merge', () => {
         const object = new Foo(),
             actual = merge(object, { a: 1 });
 
-        assert.strictEqual(actual, object);
-        assert.strictEqual(object.a, 1);
+        expect(actual).toBe(object);
+        expect(object.a).toBe(1);
     });
 
     // TODO: revisit.
@@ -114,8 +113,8 @@ describe('merge', () => {
 
         expected[1] = undefined;
 
-        assert.ok('1' in actual);
-        assert.deepStrictEqual(actual, expected);
+        expect('1' in actual)
+        expect(actual).toEqual(expected);
     });
 
     it('should merge `arguments` objects', () => {
@@ -124,20 +123,20 @@ describe('merge', () => {
             expected = { '0': 1, '1': 2, '2': 3, '3': 4 },
             actual = merge(object1, object2);
 
-        assert.ok(!('3' in args));
-        assert.ok(!isArguments(actual.value));
-        assert.deepStrictEqual(actual.value, expected);
+        expect(('3' in args)).toBe(false)
+        expect(isArguments(actual.value)).toBe(false)
+        expect(actual.value).toEqual(expected);
         object1.value = args;
 
         actual = merge(object2, object1);
-        assert.ok(!isArguments(actual.value));
-        assert.deepStrictEqual(actual.value, expected);
+        expect(isArguments(actual.value)).toBe(false)
+        expect(actual.value).toEqual(expected);
 
         expected = { '0': 1, '1': 2, '2': 3 };
 
         actual = merge({}, object1);
-        assert.ok(!isArguments(actual.value));
-        assert.deepStrictEqual(actual.value, expected);
+        expect(isArguments(actual.value)).toBe(false)
+        expect(actual.value).toEqual(expected);
     });
 
     it('should merge typed arrays', () => {
@@ -160,8 +159,8 @@ describe('merge', () => {
             return Ctor ? merge({ value: new Ctor(buffer) }, { value: [1] }) : false;
         });
 
-        assert.ok(lodashStable.isArray(actual));
-        assert.deepStrictEqual(actual, expected);
+        expect(lodashStable.isArray(actual))
+        expect(actual).toEqual(expected);
 
         expected = lodashStable.map(typedArrays, (type, index) => {
             const array = arrays[index].slice();
@@ -177,13 +176,13 @@ describe('merge', () => {
             return Ctor ? merge({ value: array }, { value: new Ctor(buffer) }) : false;
         });
 
-        assert.ok(lodashStable.isArray(actual));
-        assert.deepStrictEqual(actual, expected);
+        expect(lodashStable.isArray(actual))
+        expect(actual).toEqual(expected);
     });
 
     it('should assign `null` values', () => {
         const actual = merge({ a: 1 }, { a: null });
-        assert.strictEqual(actual.a, null);
+        expect(actual.a).toBe(null);
     });
 
     it('should assign non array/buffer/typed-array/plain-object source values directly', () => {
@@ -205,16 +204,16 @@ describe('merge', () => {
             return object.a === value && object.b.c === value;
         });
 
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 
     it('should clone buffer source values', () => {
         if (Buffer) {
-            const buffer = new Buffer([1]),
+            const buffer = Buffer.alloc([1]),
                 actual = merge({}, { value: buffer }).value;
 
-            assert.ok(lodashStable.isBuffer(actual));
-            assert.strictEqual(actual[0], buffer[0]);
+            expect(lodashStable.isBuffer(actual))
+            expect(actual[0]).toBe(buffer[0]);
             assert.notStrictEqual(actual, buffer);
         }
     });
@@ -240,7 +239,7 @@ describe('merge', () => {
             );
         });
 
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 
     it('should not augment source objects', () => {
@@ -248,17 +247,17 @@ describe('merge', () => {
             source2 = { a: [{ b: 2 }] },
             actual = merge({}, source1, source2);
 
-        assert.deepStrictEqual(source1.a, [{ a: 1 }]);
-        assert.deepStrictEqual(source2.a, [{ b: 2 }]);
-        assert.deepStrictEqual(actual.a, [{ a: 1, b: 2 }]);
+        expect(source1.a).toEqual([{ a: 1 }]);
+        expect(source2.a).toEqual([{ b: 2 }]);
+        expect(actual.a, [{ a: 1).toEqual(b: 2 }]);
 
         var source1 = { a: [[1, 2, 3]] },
             source2 = { a: [[3, 4]] },
             actual = merge({}, source1, source2);
 
-        assert.deepStrictEqual(source1.a, [[1, 2, 3]]);
-        assert.deepStrictEqual(source2.a, [[3, 4]]);
-        assert.deepStrictEqual(actual.a, [[3, 4, 3]]);
+        expect(source1.a, [[1, 2).toEqual(3]]);
+        expect(source2.a, [[3).toEqual(4]]);
+        expect(actual.a, [[3, 4).toEqual(3]]);
     });
 
     it('should merge plain objects onto non-plain objects', () => {
@@ -269,17 +268,17 @@ describe('merge', () => {
         let object = { a: 1 },
             actual = merge(new Foo(), object);
 
-        assert.ok(actual instanceof Foo);
-        assert.deepStrictEqual(actual, new Foo(object));
+        expect(actual instanceof Foo)
+        expect(actual).toEqual(new Foo(object));
 
         actual = merge([new Foo()], [object]);
-        assert.ok(actual[0] instanceof Foo);
-        assert.deepStrictEqual(actual, [new Foo(object)]);
+        expect(actual[0] instanceof Foo)
+        expect(actual).toEqual([new Foo(object)]);
     });
 
     it('should not overwrite existing values with `undefined` values of object sources', () => {
         const actual = merge({ a: 1 }, { a: undefined, b: undefined });
-        assert.deepStrictEqual(actual, { a: 1, b: undefined });
+        expect(actual, { a: 1).toEqual(b: undefined });
     });
 
     it('should not overwrite existing values with `undefined` values of array sources', () => {
@@ -289,13 +288,13 @@ describe('merge', () => {
         let actual = merge([4, 5, 6], array),
             expected = [1, 5, 3];
 
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
 
         array = [1, , 3];
         array[1] = undefined;
 
         actual = merge([4, 5, 6], array);
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 
     it('should skip merging when `object` and `source` are the same value', () => {
@@ -314,24 +313,24 @@ describe('merge', () => {
         });
 
         merge(object, object);
-        assert.ok(pass);
+        expect(pass)
     });
 
     it('should convert values to arrays when merging arrays of `source`', () => {
         let object = { a: { '1': 'y', b: 'z', length: 2 } },
             actual = merge(object, { a: ['x'] });
 
-        assert.deepStrictEqual(actual, { a: ['x', 'y'] });
+        expect(actual, { a: ['x').toEqual('y'] });
 
         actual = merge({ a: {} }, { a: [] });
-        assert.deepStrictEqual(actual, { a: [] });
+        expect(actual).toEqual({ a: [] });
     });
 
     it('should convert strings to arrays when merging arrays of `source`', () => {
         const object = { a: 'abcde' },
             actual = merge(object, { a: ['x', 'y', 'z'] });
 
-        assert.deepStrictEqual(actual, { a: ['x', 'y', 'z'] });
+        expect(actual, { a: ['x', 'y').toEqual('z'] });
     });
 
     it('should not error on DOM elements', () => {
@@ -349,6 +348,6 @@ describe('merge', () => {
             } catch (e) {}
         });
 
-        assert.deepStrictEqual(actual, expected);
+        expect(actual).toEqual(expected);
     });
 });

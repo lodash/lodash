@@ -12,10 +12,11 @@
  * defer(text => console.log(text), 'deferred')
  * // => Logs 'deferred' after one millisecond.
  */
-function defer(func, ...args) {
+function defer(func: Function, ...args: any[]) {
     if (typeof func !== 'function') {
         throw new TypeError('Expected a function');
     }
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     return setTimeout(func, 1, ...args);
 }
 

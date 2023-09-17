@@ -27,19 +27,19 @@ import map from './map.js';
  * func({ 'a': '1', 'b': '2' })
  * // => 'no match'
  */
-function cond(pairs) {
+function cond(pairs: any[]) {
     const length = pairs == null ? 0 : pairs.length;
 
     pairs = !length
         ? []
-        : map(pairs, (pair) => {
+        : map(pairs, (pair: any[]) => {
               if (typeof pair[1] !== 'function') {
                   throw new TypeError('Expected a function');
               }
               return [pair[0], pair[1]];
           });
-
-    return (...args) => {
+    // eslint-disable-next-line consistent-return
+    return function (this: any, ...args: any[]) {
         for (const pair of pairs) {
             if (pair[0].apply(this, args)) {
                 return pair[1].apply(this, args);

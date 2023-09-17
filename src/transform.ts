@@ -48,8 +48,8 @@ function transform(object, iteratee, accumulator) {
             accumulator = {};
         }
     }
-    (isArrLike ? arrayEach : baseForOwn)(object, (value, index, object) =>
-        iteratee(accumulator, value, index, object),
+    (isArrLike ? arrayEach : baseForOwn)(object, (value, index, _object) =>
+        iteratee(accumulator, value, index, _object),
     );
     return accumulator;
 }

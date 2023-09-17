@@ -15,12 +15,13 @@
  * forEach(saves, type => asyncSave({ 'type': type, 'complete': done }))
  * // => Logs 'done saving!' after the two async saves have completed.
  */
-function after(n, func) {
+function after(n, func: Function) {
     if (typeof func !== 'function') {
         throw new TypeError('Expected a function');
     }
     n = n || 0;
-    return function (...args) {
+    // eslint-disable-next-line consistent-return
+    return function (this: any, ...args: any[]) {
         if (--n < 1) {
             return func.apply(this, args);
         }

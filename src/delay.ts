@@ -13,10 +13,11 @@
  * delay(text => console.log(text), 1000, 'later')
  * // => Logs 'later' after one second.
  */
-function delay(func, wait, ...args) {
+function delay(func: Function, wait: number, ...args: any[]) {
     if (typeof func !== 'function') {
         throw new TypeError('Expected a function');
     }
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     return setTimeout(func, +wait || 0, ...args);
 }
 

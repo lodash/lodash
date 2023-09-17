@@ -21,18 +21,18 @@
  * // => 'barney' (iteration order is not guaranteed)
  */
 function findKey(object, predicate) {
-    let result;
     if (object == null) {
-        return result;
+        return undefined;
     }
-    Object.keys(object).some((key) => {
+    const keys = Object.keys(object);
+    for (let i = 0, { length } = keys; i < length; i += 1) {
+        const key = keys[i];
         const value = object[key];
         if (predicate(value, key, object)) {
-            result = key;
-            return true;
+            return key;
         }
-    });
-    return result;
+    }
+    return undefined;
 }
 
 export default findKey;

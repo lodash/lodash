@@ -63,8 +63,12 @@ import root from './.internal/root.js';
  * const status = debounced.pending() ? "Pending..." : "Ready"
  */
 function debounce(func, wait, options) {
-    let lastArgs, lastThis, maxWait, result, timerId, lastCallTime;
-
+    let lastArgs;
+    let lastThis;
+    let maxWait;
+    let result;
+    let timerId;
+    let lastCallTime;
     let lastInvokeTime = 0;
     let leading = false;
     let maxing = false;

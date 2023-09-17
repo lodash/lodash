@@ -20,7 +20,7 @@ import stringToArray from './.internal/stringToArray.js';
  * trim('-_-abc-_-', '_-')
  * // => 'abc'
  */
-function trim(string, chars) {
+function trim(string: string, chars: string) {
     if (string && chars === undefined) {
         return string.trim();
     }

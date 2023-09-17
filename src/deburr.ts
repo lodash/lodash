@@ -23,6 +23,7 @@ const rsCombo = `[${rsComboRange}]`;
  * Used to match [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks) and
  * [combining diacritical marks for symbols](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks_for_Symbols).
  */
+// eslint-disable-next-line no-misleading-character-class
 const reComboMark = RegExp(rsCombo, 'g');
 
 /**

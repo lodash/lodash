@@ -26,6 +26,7 @@ function unzip(array) {
         return [];
     }
     let length = 0;
+    // eslint-disable-next-line consistent-return
     array = filter(array, (group) => {
         if (isArrayLikeObject(group)) {
             length = Math.max(group.length, length);

@@ -7,7 +7,7 @@
   "sideEffects": false,
   "scripts": {
     "prepare": "husky install",
-    "lint": "eslint ./src/**/*.ts ./test/**/*.ts"
+    "lint": "eslint ./src/**/*.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",

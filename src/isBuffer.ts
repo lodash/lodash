@@ -12,7 +12,7 @@ const nativeIsBuffer = root?.Buffer?.isBuffer;
  * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
  * @example
  *
- * isBuffer(new Buffer(2))
+ * isBuffer(Buffer.alloc(2))
  * // => true
  *
  * isBuffer(new Uint8Array(2))

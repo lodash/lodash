@@ -10,7 +10,7 @@ describe('isNil', () => {
     });
 
     it('should return `false` for non-nullish values', () => {
-        const expected = lodashStable.map(falsey, (value) => value === null);
+        const expected = lodashStable.map(falsey, (value) => value == null);
 
         const actual = lodashStable.map(falsey, (value, index) => (index ? isNil(value) : isNil()));
 

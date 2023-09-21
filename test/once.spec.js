@@ -1,35 +1,33 @@
-import { _ } from './utils';
+import once from '../once';
 
 describe('once', () => {
     it('should invoke `func` once', () => {
         let count = 0;
-        const once = _.once(() => ++count);
+        const resultFunc = once(() => ++count);
 
         once();
-        expect(once()).toBe(1);
+        expect(resultFunc()).toBe(1);
         expect(count).toBe(1);
     });
 
     it('should ignore recursive calls', () => {
         let count = 0;
 
-        var once = _.once(() => {
-            once();
+        var resultFunc = once(() => {
+            resultFunc();
             return ++count;
         });
 
-        expect(once()).toBe(1);
+        expect(resultFunc()).toBe(1);
         expect(count).toBe(1);
     });
 
     it('should not throw more than once', () => {
-        const once = _.once(() => {
+        const resultFunc = once(() => {
             throw new Error();
         });
 
-        assert.throws(once);
-
-        once();
-        expect(true);
+        expect(resultFunc).toThrow();
+        expect(resultFunc).not.toThrow();
     });
 });

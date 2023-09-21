@@ -26,7 +26,7 @@ describe('slice and toArray', () => {
         it(`\`_.${methodName}\` should return a shallow clone of arrays`, () => {
             const actual = func(array);
             expect(actual).toEqual(array);
-            assert.notStrictEqual(actual, array);
+            expect(actual).not.toBe(array);
         });
 
         it(`\`_.${methodName}\` should work with a node list for \`collection\``, () => {

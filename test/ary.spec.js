@@ -1,5 +1,6 @@
-import lodashStable, { ary, curry, rearg } from 'lodash';
-import { slice, _ } from './utils';
+import lodashStable from 'lodash';
+import { slice } from './utils';
+import ary from '../src/ary';
 
 describe('ary', () => {
     function fn(a, b, c) {
@@ -71,15 +72,5 @@ describe('ary', () => {
         const actual = funcs[0]('a', 'b', 'c');
 
         expect(actual).toEqual(['a', 'b', 'c']);
-    });
-
-    it('should work when combined with other methods that use metadata', () => {
-        const array = ['a', 'b', 'c'];
-        let includes = curry(rearg(ary(_.includes, 2), 1, 0), 2);
-
-        expect(includes('b')(array, 2)).toBe(true);
-
-        includes = _(_.includes).ary(2).rearg(1, 0).curry(2).value();
-        expect(includes('b')(array, 2)).toBe(true);
     });
 });

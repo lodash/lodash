@@ -1,5 +1,5 @@
 import lodashStable from 'lodash';
-import { falsey, stubArray, LARGE_ARRAY_SIZE } from './utils';
+import { falsey, stubArray } from './utils';
 import tail from '../src/tail';
 
 describe('tail', () => {
@@ -18,7 +18,7 @@ describe('tail', () => {
     });
 
     it('should exclude the first element', () => {
-        expect(tail(array), [2).toEqual(3]);
+        expect(tail(array)).toEqual([2, 3]);
     });
 
     it('should return an empty when querying empty arrays', () => {
@@ -33,7 +33,7 @@ describe('tail', () => {
         ];
         const actual = lodashStable.map(array, tail);
 
-        assert.deepStrictEqual(actual, [
+        expect(actual).toEqual([
             [2, 3],
             [5, 6],
             [8, 9],

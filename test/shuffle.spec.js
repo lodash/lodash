@@ -6,7 +6,7 @@ describe('shuffle', () => {
     const object = { a: 1, b: 2, c: 3 };
 
     it('should return a new array', () => {
-        assert.notStrictEqual(shuffle(array), array);
+        expect(shuffle(array)).not.toBe(array);
     });
 
     it('should contain the same elements after a collection is shuffled', () => {
@@ -17,7 +17,7 @@ describe('shuffle', () => {
     it('should shuffle small collections', () => {
         const actual = lodashStable.times(1000, () => shuffle([1, 2]));
 
-        assert.deepStrictEqual(lodashStable.sortBy(lodashStable.uniqBy(actual, String), '0'), [
+        expect(lodashStable.sortBy(lodashStable.uniqBy(actual, String), '0')).toEqual([
             [1, 2],
             [2, 1],
         ]);

@@ -45,7 +45,7 @@ describe('sortBy methods', () => {
 
         it(`\`_.${methodName}\` should sort multiple properties in ascending order`, () => {
             const actual = func(objects, ['a', 'b']);
-            expect(actual, [objects[2], objects[0], objects[3]).toEqual(objects[1]]);
+            expect(actual).toEqual([objects[2], objects[0], objects[3], objects[1]]);
         });
 
         it(`\`_.${methodName}\` should support iteratees`, () => {
@@ -55,7 +55,7 @@ describe('sortBy methods', () => {
                     return object.b;
                 },
             ]);
-            expect(actual, [objects[2], objects[0], objects[3]).toEqual(objects[1]]);
+            expect(actual).toEqual([objects[2], objects[0], objects[3], objects[1]]);
         });
 
         it(`\`_.${methodName}\` should perform a stable sort (test in IE > 8 and V8)`, () => {
@@ -70,7 +70,7 @@ describe('sortBy methods', () => {
                 var actual = func(objects.concat(null, undefined), ['a', 'b']);
             } catch (e) {}
 
-            assert.deepStrictEqual(actual, [
+            expect(actual).toEqual([
                 objects[2],
                 objects[0],
                 objects[3],

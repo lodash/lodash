@@ -15,7 +15,7 @@ describe('sortBy', () => {
             'b',
         );
 
-        expect(actual, [1, 2, 3).toEqual(4]);
+        expect(actual).toEqual([1, 2, 3, 4]);
     });
 
     it('should use `_.identity` when `iteratee` is nullish', () => {
@@ -32,12 +32,12 @@ describe('sortBy', () => {
 
     it('should work with `_.property` shorthands', () => {
         const actual = lodashStable.map(sortBy(objects.concat(undefined), 'b'), 'b');
-        expect(actual, [1, 2, 3, 4).toEqual(undefined]);
+        expect(actual).toEqual([1, 2, 3, 4, undefined]);
     });
 
     it('should work with an object for `collection`', () => {
         const actual = sortBy({ a: 1, b: 2, c: 3 }, Math.sin);
-        expect(actual, [3, 1).toEqual(2]);
+        expect(actual).toEqual([3, 1, 2]);
     });
 
     it('should move `NaN`, nullish, and symbol values to the end', () => {
@@ -80,7 +80,7 @@ describe('sortBy', () => {
             return result;
         });
 
-        expect(actual, [objects[0], objects[2], objects[1]).toEqual(objects[3]]);
+        expect(actual).toEqual([objects[0], objects[2], objects[1], objects[3]]);
     });
 
     it('should work as an iteratee for methods like `_.map`', () => {
@@ -91,7 +91,7 @@ describe('sortBy', () => {
             ],
             sortBy,
         );
-        assert.deepStrictEqual(actual, [
+        expect(actual).toEqual([
             [1, 2, 3],
             [1, 2, 3],
         ]);

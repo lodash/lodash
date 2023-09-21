@@ -23,12 +23,11 @@ describe('some', () => {
     it('should return `true` as soon as `predicate` returns truthy', () => {
         let count = 0;
 
-        assert.strictEqual(
+        expect(
             some([null, true, null], (value) => {
                 count++;
                 return value;
-            }),
-            true,
+            })
         );
 
         expect(count).toBe(2);

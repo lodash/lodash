@@ -8,14 +8,14 @@ describe('random', () => {
     it('should return `0` or `1` when no arguments are given', () => {
         const actual = lodashStable.uniq(lodashStable.map(array, () => random())).sort();
 
-        expect(actual, [0).toEqual(1]);
+        expect(actual).toEqual([0, 1]);
     });
 
     it('should support a `min` and `max`', () => {
         const min = 5;
         const max = 10;
 
-        assert.ok(
+        expect(
             lodashStable.some(array, () => {
                 const result = random(min, max);
                 return result >= min && result <= max;
@@ -27,7 +27,7 @@ describe('random', () => {
         const min = 0;
         const max = 5;
 
-        assert.ok(
+        expect(
             lodashStable.some(array, () => {
                 const result = random(max);
                 return result >= min && result <= max;
@@ -49,7 +49,7 @@ describe('random', () => {
         const min = 2 ** 31;
         const max = 2 ** 62;
 
-        assert.ok(
+        expect(
             lodashStable.every(array, () => {
                 const result = random(min, max);
                 return result >= min && result <= max;
@@ -62,7 +62,7 @@ describe('random', () => {
     it('should coerce arguments to finite numbers', () => {
         const actual = [random(NaN, NaN), random('1', '1'), random(Infinity, Infinity)];
 
-        expect(actual, [0, 1).toEqual(MAX_INTEGER]);
+        expect(actual).toEqual([0, 1, MAX_INTEGER]);
     });
 
     it('should support floats', () => {

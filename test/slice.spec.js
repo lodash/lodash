@@ -1,5 +1,5 @@
 import lodashStable from 'lodash';
-import { falsey, LARGE_ARRAY_SIZE } from './utils';
+import { falsey } from './utils';
 import slice from '../src/slice';
 
 describe('slice', () => {
@@ -8,12 +8,12 @@ describe('slice', () => {
     it('should use a default `start` of `0` and a default `end` of `length`', () => {
         const actual = slice(array);
         expect(actual).toEqual(array);
-        assert.notStrictEqual(actual, array);
+        expect(actual).not.toBe(array);
     });
 
     it('should work with a positive `start`', () => {
-        expect(slice(array, 1), [2).toEqual(3]);
-        expect(slice(array, 1, 3), [2).toEqual(3]);
+        expect(slice(array, 1)).toEqual( [2, 3]);
+        expect(slice(array, 1, 3)).toEqual([2, 3]);
     });
 
     it('should work with a `start` >= `length`', () => {
@@ -67,7 +67,7 @@ describe('slice', () => {
     });
 
     it('should work with a negative `end`', () => {
-        expect(slice(array, 0, -1), [1).toEqual(2]);
+        expect(slice(array, 0, -1)).toEqual([1, 2]);
     });
 
     it('should work with a negative `end` <= negative `length`', () => {
@@ -81,7 +81,7 @@ describe('slice', () => {
 
         const actual = lodashStable.map(positions, (pos) => slice.apply(_, [array].concat(pos)));
 
-        expect(actual, [[1], [1], [1], [2, 3], [1]).toEqual([]]);
+        expect(actual).toEqual([[1], [1], [1], [2, 3], [1], []]);
     });
 
     it('should work as an iteratee for methods like `_.map`', () => {
@@ -89,6 +89,6 @@ describe('slice', () => {
         const actual = lodashStable.map(array, slice);
 
         expect(actual).toEqual(array);
-        assert.notStrictEqual(actual, array);
+        expect(actual).not.toBe(array);
     });
 });

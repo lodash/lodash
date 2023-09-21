@@ -74,9 +74,9 @@ describe('memoize', () => {
     });
 
     it('should throw a TypeError if `resolve` is truthy and not a function', () => {
-        assert.throws(() => {
+        expect(() => {
             memoize(noop, true);
-        }, TypeError);
+        }).toThrowError(TypeError);
     });
 
     it('should not error if `resolver` is nullish', () => {

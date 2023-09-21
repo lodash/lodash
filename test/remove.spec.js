@@ -22,7 +22,7 @@ describe('remove', () => {
             return isEven(index);
         });
 
-        assert.deepStrictEqual(argsList, [
+        expect(argsList).toEqual([
             [1, 0, clone],
             [2, 1, clone],
             [3, 2, clone],

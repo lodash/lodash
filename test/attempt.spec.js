@@ -62,7 +62,7 @@ describe('attempt', () => {
         }
     });
 
-    // TODO: Work out a solution.
+    // FIXME: Work out a solution for _.
     //
     // it('should return an unwrapped value when implicitly chaining', () => {
     //     expect(_(lodashStable.constant('x')).attempt()).toBe('x');

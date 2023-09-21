@@ -10,7 +10,7 @@ describe('toPairs methods', () => {
             const object = { a: 1, b: 2 };
             const actual = lodashStable.sortBy(func(object), 0);
 
-            assert.deepStrictEqual(actual, [
+            expect(actual).toEqual([
                 ['a', 1],
                 ['b', 2],
             ]);
@@ -39,7 +39,7 @@ describe('toPairs methods', () => {
             const object = { 0: 'a', 1: 'b', length: 2 };
             const actual = lodashStable.sortBy(func(object), 0);
 
-            assert.deepStrictEqual(actual, [
+            expect(actual).toEqual([
                 ['0', 'a'],
                 ['1', 'b'],
                 ['length', 2],
@@ -51,7 +51,7 @@ describe('toPairs methods', () => {
                 const map = new Map();
                 map.set('a', 1);
                 map.set('b', 2);
-                assert.deepStrictEqual(func(map), [
+                expect(func(map)).toEqual([
                     ['a', 1],
                     ['b', 2],
                 ]);
@@ -63,7 +63,7 @@ describe('toPairs methods', () => {
                 const set = new Set();
                 set.add(1);
                 set.add(2);
-                assert.deepStrictEqual(func(set), [
+                expect(func(set)).toEqual([
                     [1, 1],
                     [2, 2],
                 ]);
@@ -73,7 +73,7 @@ describe('toPairs methods', () => {
         it(`\`_.${methodName}\` should convert strings`, () => {
             lodashStable.each(['xo', Object('xo')], (string) => {
                 const actual = lodashStable.sortBy(func(string), 0);
-                assert.deepStrictEqual(actual, [
+                expect(actual).toEqual([
                     ['0', 'x'],
                     ['1', 'o'],
                 ]);

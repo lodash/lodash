@@ -20,7 +20,7 @@ describe('omit methods', () => {
             };
         }
         it(`\`_.${methodName}\` should create an object with omitted string keyed properties`, () => {
-            expect(func(object, resolve(object, 'a')), { b: 2, c: 3).toEqual(d: 4 });
+            expect(func(object, resolve(object, 'a'))).toEqual({ b: 2, c: 3, d: 4 });
             expect(func(object, resolve(object, ['a', 'c']))).toEqual(expected);
         });
 
@@ -64,7 +64,7 @@ describe('omit methods', () => {
 
                 expect(actual[symbol]).toBe(1);
                 expect(actual[symbol2]).toBe(2);
-                expect((symbol3 in actual)).toBe(false)
+                expect(symbol3 in actual).toBeFalsy();
             }
         });
 
@@ -90,16 +90,16 @@ describe('omit methods', () => {
                 let actual = func(foo, resolve(foo, symbol));
 
                 expect(actual.a).toBe(0);
-                expect((symbol in actual)).toBe(false)
+                expect(symbol in actual).toBeFalsy();
                 expect(actual[symbol2]).toBe(2);
-                expect((symbol3 in actual)).toBe(false)
+                expect(symbol3 in actual).toBeFalsy();
 
                 actual = func(foo, resolve(foo, symbol2));
 
                 expect(actual.a).toBe(0);
                 expect(actual[symbol]).toBe(1);
-                expect((symbol2 in actual)).toBe(false)
-                expect((symbol3 in actual)).toBe(false)
+                expect(symbol2 in actual).toBeFalsy();
+                expect(symbol3 in actual).toBeFalsy();
             }
         });
 

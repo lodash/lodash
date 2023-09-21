@@ -1,4 +1,4 @@
-import lodashStable from 'lodash';
+import lodashStable, { runInContext } from "lodash";
 import { _, noop, push, isModularize } from './utils';
 
 describe('debounce and throttle', () => {
@@ -64,15 +64,15 @@ describe('debounce and throttle', () => {
 
             const next = queue.shift();
             funced.call(next[0], next[1]);
-            expect(actual, expected.slice(0).toEqual(isDebounce ? 0 : 1));
+            expect(actual).toEqual(expected.slice(0, isDebounce ? 0 : 1));
 
             setTimeout(() => {
-                expect(actual, expected.slice(0).toEqual(actual.length));
+                expect(actual).toEqual(expected.slice(0, actual.length));
                 done();
             }, 256);
         });
 
-        xit(`\`_.${methodName}\` should work if the system time is set backwards`, (done) => {
+        it(`\`_.${methodName}\` should work if the system time is set backwards`, (done) => {
             if (!isModularize) {
                 let callCount = 0;
                 let dateCount = 0;

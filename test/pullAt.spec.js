@@ -8,15 +8,15 @@ describe('pullAt', () => {
         const actual = pullAt(array, [0, 1]);
 
         expect(array).toEqual([3]);
-        expect(actual, [1).toEqual(2]);
+        expect(actual).toEqual([1, 2]);
     });
 
     it('should work with unsorted indexes', () => {
         const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         const actual = pullAt(array, [1, 3, 11, 7, 5, 9]);
 
-        expect(array, [1, 3, 5, 7, 9).toEqual(11]);
-        expect(actual, [2, 4, 12, 8, 6).toEqual(10]);
+        expect(array).toEqual([1, 3, 5, 7, 9, 11]);
+        expect(actual).toEqual([2, 4, 12, 8, 6, 10]);
     });
 
     it('should work with repeated indexes', () => {
@@ -24,7 +24,7 @@ describe('pullAt', () => {
         const actual = pullAt(array, [0, 2, 0, 1, 0, 2]);
 
         expect(array).toEqual([4]);
-        expect(actual, [1, 3, 1, 2, 1).toEqual(3]);
+        expect(actual).toEqual([1, 3, 1, 2, 1, 3]);
     });
 
     it('should use `undefined` for nonexistent indexes', () => {
@@ -32,16 +32,16 @@ describe('pullAt', () => {
         const actual = pullAt(array, [2, 4, 0]);
 
         expect(array).toEqual(['b']);
-        expect(actual, ['c', undefined).toEqual('a']);
+        expect(actual).toEqual(['c', undefined, 'a']);
     });
 
     it('should flatten `indexes`', () => {
         let array = ['a', 'b', 'c'];
-        expect(pullAt(array, 2, 0), ['c').toEqual('a']);
+        expect(pullAt(array, 2, 0)).toEqual(['c', 'a']);
         expect(array).toEqual(['b']);
 
         array = ['a', 'b', 'c', 'd'];
-        expect(pullAt(array, [3, 0], 2), ['d', 'a').toEqual('c']);
+        expect(pullAt(array, [3, 0], 2)).toEqual(['d', 'a', 'c']);
         expect(array).toEqual(['b']);
     });
 
@@ -49,12 +49,12 @@ describe('pullAt', () => {
         const array = ['a', 'b', 'c'];
         let actual = pullAt(array);
 
-        expect(array, ['a', 'b').toEqual('c']);
+        expect(array).toEqual(['a', 'b', 'c']);
         expect(actual).toEqual([]);
 
         actual = pullAt(array, [], []);
 
-        expect(array, ['a', 'b').toEqual('c']);
+        expect(array).toEqual(['a', 'b', 'c']);
         expect(actual).toEqual([]);
     });
 
@@ -91,7 +91,7 @@ describe('pullAt', () => {
             return pullAt(array, key);
         });
 
-        expect(actual, [[-2], [-2], [-1]).toEqual([-1]]);
+        expect(actual).toEqual([[-2], [-2], [-1], [-1]]);
     });
 
     it('should support deep paths', () => {

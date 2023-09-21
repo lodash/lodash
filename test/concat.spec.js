@@ -40,8 +40,8 @@ describe('concat', () => {
 
         expected.push(undefined, undefined);
 
-        expect('0' in actual)
-        expect('1' in actual)
+        expect('0' in actual).toBeTruthy();
+        expect('1' in actual).toBeTruthy();
         expect(actual).toEqual(expected);
     });
 
@@ -51,6 +51,6 @@ describe('concat', () => {
         const actual = wrapped.value();
 
         expect(array).toEqual([1]);
-        expect(actual, [1, 2).toEqual(3]);
+        expect(actual).toEqual([1, 2, 3]);
     });
 });

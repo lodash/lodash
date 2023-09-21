@@ -1,5 +1,5 @@
 import lodashStable from 'lodash';
-import { args, toArgs, arrayProto } from './utils';
+import { toArgs, arrayProto } from './utils';
 import bindAll from '../src/bindAll';
 
 describe('bindAll', () => {
@@ -38,7 +38,7 @@ describe('bindAll', () => {
 
         const actual = lodashStable.map(['a', 'b', 'c'], (key) => object[key].call({}));
 
-        expect(actual, [1, 2).toEqual(undefined]);
+        expect(actual).toEqual([1, 2, undefined]);
     });
 
     it('should accept arrays of method names', () => {
@@ -47,7 +47,7 @@ describe('bindAll', () => {
 
         const actual = lodashStable.map(['a', 'b', 'c', 'd'], (key) => object[key].call({}));
 
-        expect(actual, [1, 2, 3).toEqual(undefined]);
+        expect(actual).toEqual([1, 2, 3, undefined]);
     });
 
     it('should preserve the sign of `0`', () => {
@@ -59,7 +59,7 @@ describe('bindAll', () => {
             return object[lodashStable.toString(key)].call({});
         });
 
-        expect(actual, [-2, -2, -1).toEqual(-1]);
+        expect(actual).toEqual([-2, -2, -1, -1]);
     });
 
     it('should work with an array `object`', () => {

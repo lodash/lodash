@@ -6,7 +6,7 @@ describe('wrap', () => {
     it('should create a wrapped function', () => {
         const p = wrap(lodashStable.escape, (func, text) => `<p>${func(text)}</p>`);
 
-        expect(p('fred, barney, & pebbles'), '<p>fred, barney).toBe(&amp; pebbles</p>');
+        expect(p('fred, barney, & pebbles')).toBe('<p>fred, barney &amp; pebbles</p>');
     });
 
     it('should provide correct `wrapper` arguments', () => {
@@ -17,7 +17,7 @@ describe('wrap', () => {
         });
 
         wrapped(1, 2, 3);
-        expect(args, [noop, 1, 2).toEqual(3]);
+        expect(args).toEqual([noop, 1, 2, 3]);
     });
 
     it('should use `_.identity` when `wrapper` is nullish', () => {
@@ -38,6 +38,6 @@ describe('wrap', () => {
         });
 
         const object = { p: p, text: 'fred, barney, & pebbles' };
-        expect(object.p(), '<p>fred, barney).toBe(&amp; pebbles</p>');
+        expect(object.p()).toBe('<p>fred, barney &amp; pebbles</p>');
     });
 });

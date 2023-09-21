@@ -1,5 +1,5 @@
 import lodashStable from 'lodash';
-import { burredLetters, _, stubArray } from './utils';
+import { burredLetters, stubArray } from './utils';
 import words from '../src/words';
 
 describe('words', () => {
@@ -12,34 +12,29 @@ describe('words', () => {
     });
 
     it('should support a `pattern`', () => {
-        expect(words('abcd', /ab|cd/g), ['ab').toEqual('cd']);
+        expect(words('abcd', /ab|cd/g)).toEqual(['ab', 'cd']);
         expect(Array.from(words('abcd', 'ab|cd'))).toEqual(['ab']);
     });
 
     it('should work with compound words', () => {
-        expect(words('12ft'), ['12').toEqual('ft']);
-        expect(words('aeiouAreVowels'), ['aeiou', 'Are').toEqual('Vowels']);
-        expect(words('enable 6h format'), ['enable', '6', 'h').toEqual('format']);
-        expect(words('enable 24H format'), ['enable', '24', 'H').toEqual('format']);
-        expect(words('isISO8601'), ['is', 'ISO').toEqual('8601']);
-        assert.deepStrictEqual(words('LETTERSAeiouAreVowels'), [
-            'LETTERS',
-            'Aeiou',
-            'Are',
-            'Vowels',
-        ]);
-        expect(words('tooLegit2Quit'), ['too', 'Legit', '2').toEqual('Quit']);
-        expect(words('walk500Miles'), ['walk', '500').toEqual('Miles']);
-        expect(words('xhr2Request'), ['xhr', '2').toEqual('Request']);
-        expect(words('XMLHttp'), ['XML').toEqual('Http']);
-        expect(words('XmlHTTP'), ['Xml').toEqual('HTTP']);
-        expect(words('XmlHttp'), ['Xml').toEqual('Http']);
+        expect(words('12ft')).toEqual(['12', 'ft']);
+        expect(words('aeiouAreVowels')).toEqual(['aeiou', 'Are', 'Vowels']);
+        expect(words('enable 6h format')).toEqual(['enable', '6', 'h', 'format']);
+        expect(words('enable 24H format')).toEqual(['enable', '24', 'H', 'format']);
+        expect(words('isISO8601')).toEqual(['is', 'ISO', '8601']);
+        expect(words('LETTERSAeiouAreVowels')).toEqual(['LETTERS', 'Aeiou', 'Are', 'Vowels']);
+        expect(words('tooLegit2Quit')).toEqual(['too', 'Legit', '2', 'Quit']);
+        expect(words('walk500Miles')).toEqual(['walk', '500', 'Miles']);
+        expect(words('xhr2Request')).toEqual(['xhr', '2', 'Request']);
+        expect(words('XMLHttp')).toEqual(['XML', 'Http']);
+        expect(words('XmlHTTP')).toEqual(['Xml', 'HTTP']);
+        expect(words('XmlHttp')).toEqual(['Xml', 'Http']);
     });
 
     it('should work with compound words containing diacritical marks', () => {
-        expect(words('LETTERSÆiouAreVowels'), ['LETTERS', 'Æiou', 'Are').toEqual('Vowels']);
-        expect(words('æiouAreVowels'), ['æiou', 'Are').toEqual('Vowels']);
-        expect(words('æiou2Consonants'), ['æiou', '2').toEqual('Consonants']);
+        expect(words('LETTERSÆiouAreVowels')).toEqual(['LETTERS', 'Æiou', 'Are', 'Vowels']);
+        expect(words('æiouAreVowels')).toEqual(['æiou', 'Are', 'Vowels']);
+        expect(words('æiou2Consonants')).toEqual(['æiou', '2', 'Consonants']);
     });
 
     it('should not treat contractions as separate words', () => {
@@ -111,16 +106,11 @@ describe('words', () => {
         const maxMs = 1000;
         const startTime = lodashStable.now();
 
-        assert.deepStrictEqual(words(`${largeWord}ÆiouAreVowels`), [
-            largeWord,
-            'Æiou',
-            'Are',
-            'Vowels',
-        ]);
+        expect(words(`${largeWord}ÆiouAreVowels`)).toEqual([largeWord, 'Æiou', 'Are', 'Vowels']);
 
         const endTime = lodashStable.now();
         const timeSpent = endTime - startTime;
 
-        expect(timeSpent < maxMs, `operation took ${timeSpent}ms`)
+        expect(timeSpent).toBeLessThan(maxMs);
     });
 });

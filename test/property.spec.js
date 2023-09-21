@@ -50,7 +50,7 @@ describe('property', () => {
             return prop(object);
         });
 
-        expect(actual, ['a', 'a', 'b').toEqual('b']);
+        expect(actual).toEqual(['a', 'a', 'b', 'b']);
     });
 
     it('should coerce `path` to a string', () => {
@@ -81,7 +81,7 @@ describe('property', () => {
     });
 
     it('should return `undefined` when `object` is nullish', () => {
-        const values = [, null, undefined];
+        const values = [null, undefined];
         const expected = lodashStable.map(values, noop);
 
         lodashStable.each(['constructor', ['constructor']], (path) => {
@@ -96,7 +96,7 @@ describe('property', () => {
     });
 
     it('should return `undefined` for deep paths when `object` is nullish', () => {
-        const values = [, null, undefined];
+        const values = [null, undefined];
         const expected = lodashStable.map(values, noop);
 
         lodashStable.each(

@@ -8,12 +8,12 @@ describe('rest', () => {
 
     it('should apply a rest parameter to `func`', () => {
         const rest = _.rest(fn);
-        expect(rest(1, 2, 3, 4), [1, 2, [3).toEqual(4]]);
+        expect(rest(1, 2, 3, 4)).toEqual([1, 2, [3, 4]]);
     });
 
     it('should work with `start`', () => {
         const rest = _.rest(fn, 1);
-        expect(rest(1, 2, 3, 4), [1, [2, 3).toEqual(4]]);
+        expect(rest(1, 2, 3, 4)).toEqual([1, [2, 3, 4]]);
     });
 
     it('should treat `start` as `0` for `NaN` or negative values', () => {
@@ -30,12 +30,12 @@ describe('rest', () => {
 
     it('should coerce `start` to an integer', () => {
         const rest = _.rest(fn, 1.6);
-        expect(rest(1, 2, 3), [1, [2).toEqual(3]]);
+        expect(rest(1, 2, 3)).toEqual([1, [2, 3]]);
     });
 
     it('should use an empty array when `start` is not reached', () => {
         const rest = _.rest(fn);
-        expect(rest(1), [1, undefined).toEqual([]]);
+        expect(rest(1)).toEqual([1, undefined, []]);
     });
 
     it('should work on functions with more than three parameters', () => {
@@ -43,6 +43,6 @@ describe('rest', () => {
             return slice.call(arguments);
         });
 
-        expect(rest(1, 2, 3, 4, 5), [1, 2, 3, [4).toEqual(5]]);
+        expect(rest(1, 2, 3, 4, 5)).toEqual([1, 2, 3, [4, 5]]);
     });
 });

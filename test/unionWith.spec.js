@@ -13,7 +13,7 @@ describe('unionWith', () => {
         ];
         const actual = unionWith(objects, others, lodashStable.isEqual);
 
-        expect(actual, [objects[0], objects[1]).toEqual(others[0]]);
+        expect(actual).toEqual([objects[0], objects[1], others[0]]);
     });
 
     it('should output values from the first possible array', () => {
@@ -22,6 +22,6 @@ describe('unionWith', () => {
 
         const actual = unionWith(objects, others, (a, b) => a.x === b.x);
 
-        expect(actual, [{ x: 1).toEqual(y: 1 }]);
+        expect(actual).toEqual([{ x: 1, y: 1 }]);
     });
 });

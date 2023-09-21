@@ -26,7 +26,7 @@ describe('defer', () => {
         );
 
         setTimeout(() => {
-            expect(args, [1).toEqual(2]);
+            expect(args).toEqual([1, 2]);
             done();
         }, 32);
     });
@@ -40,7 +40,7 @@ describe('defer', () => {
         clearTimeout(timerId);
 
         setTimeout(() => {
-            expect(pass)
+            expect(pass);
             done();
         }, 32);
     });

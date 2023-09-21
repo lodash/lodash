@@ -4,7 +4,7 @@ import xorBy from '../src/xorBy';
 describe('xorBy', () => {
     it('should accept an `iteratee`', () => {
         let actual = xorBy([2.1, 1.2], [2.3, 3.4], Math.floor);
-        expect(actual, [1.2).toEqual(3.4]);
+        expect(actual).toEqual([1.2, 3.4]);
 
         actual = xorBy([{ x: 1 }], [{ x: 2 }, { x: 1 }], 'x');
         expect(actual).toEqual([{ x: 2 }]);

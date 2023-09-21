@@ -123,7 +123,7 @@ describe('methodOf', () => {
         const methodOf = _.methodOf(object, 1, 2, 3);
 
         lodashStable.each(['fn', ['fn']], (path) => {
-            expect(methodOf(path), [1, 2).toEqual(3]);
+            expect(methodOf(path)).toEqual([1, 2, 3]);
         });
     });
 

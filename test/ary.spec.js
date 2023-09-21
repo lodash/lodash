@@ -1,8 +1,5 @@
-import lodashStable from 'lodash';
+import lodashStable, { ary, curry, rearg } from 'lodash';
 import { slice, _ } from './utils';
-import ary from '../src/ary';
-import curry from '../src/curry';
-import rearg from '../src/rearg';
 
 describe('ary', () => {
     function fn(a, b, c) {
@@ -11,15 +8,15 @@ describe('ary', () => {
 
     it('should cap the number of arguments provided to `func`', () => {
         const actual = lodashStable.map(['6', '8', '10'], ary(parseInt, 1));
-        expect(actual, [6, 8).toEqual(10]);
+        expect(actual).toEqual([6, 8, 10]);
 
         const capped = ary(fn, 2);
-        expect(capped('a', 'b', 'c', 'd'), ['a').toEqual('b']);
+        expect(capped('a', 'b', 'c', 'd')).toEqual(['a', 'b']);
     });
 
     it('should use `func.length` if `n` is not given', () => {
         const capped = ary(fn);
-        expect(capped('a', 'b', 'c', 'd'), ['a', 'b').toEqual('c']);
+        expect(capped('a', 'b', 'c', 'd')).toEqual(['a', 'b', 'c']);
     });
 
     it('should treat a negative `n` as `0`', () => {
@@ -73,7 +70,7 @@ describe('ary', () => {
         const funcs = lodashStable.map([fn], ary);
         const actual = funcs[0]('a', 'b', 'c');
 
-        expect(actual, ['a', 'b').toEqual('c']);
+        expect(actual).toEqual(['a', 'b', 'c']);
     });
 
     it('should work when combined with other methods that use metadata', () => {

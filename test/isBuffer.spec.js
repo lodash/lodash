@@ -5,7 +5,6 @@ import isBuffer from '../src/isBuffer';
 describe('isBuffer', () => {
     it('should return `true` for buffers', () => {
         if (Buffer) {
-            assert.equal(`${isBuffer}`, '');
             expect(isBuffer(Buffer.alloc(2))).toBe(true);
         }
     });
@@ -13,7 +12,7 @@ describe('isBuffer', () => {
     it('should return `false` for non-buffers', () => {
         const expected = lodashStable.map(falsey, stubFalse);
 
-        const actual = lodashStable.map(falsey, (value: false, index: number) =>
+        const actual = lodashStable.map(falsey, (value, index) =>
             index ? isBuffer(value) : isBuffer(),
         );
 

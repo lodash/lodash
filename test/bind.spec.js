@@ -14,7 +14,7 @@ describe('bind', () => {
         const object = {},
             bound = bind(fn, object);
 
-        expect(bound('a'), [object).toEqual('a']);
+        expect(bound('a')).toEqual([object, 'a']);
     });
 
     it('should accept a falsey `thisArg`', () => {
@@ -55,14 +55,14 @@ describe('bind', () => {
         let object = {},
             bound = bind(fn, object, 'a');
 
-        expect(bound(), [object).toEqual('a']);
+        expect(bound()).toEqual([object, 'a']);
 
         bound = bind(fn, object, 'a');
-        expect(bound('b'), [object, 'a').toEqual('b']);
+        expect(bound('b')).toEqual([object, 'a', 'b']);
 
         bound = bind(fn, object, 'a', 'b');
-        expect(bound(), [object, 'a').toEqual('b']);
-        expect(bound('c', 'd'), [object, 'a', 'b', 'c').toEqual('d']);
+        expect(bound()).toEqual([object, 'a', 'b']);
+        expect(bound('c', 'd')).toEqual([object, 'a', 'b', 'c', 'd']);
     });
 
     it('should support placeholders', () => {
@@ -70,10 +70,10 @@ describe('bind', () => {
             ph = bind.placeholder,
             bound = bind(fn, object, ph, 'b', ph);
 
-        expect(bound('a', 'c'), [object, 'a', 'b').toEqual('c']);
-        expect(bound('a'), [object, 'a', 'b').toEqual(undefined]);
-        expect(bound('a', 'c', 'd'), [object, 'a', 'b', 'c').toEqual('d']);
-        expect(bound(), [object, undefined, 'b').toEqual(undefined]);
+        expect(bound('a', 'c')).toEqual([object, 'a', 'b', 'c']);
+        expect(bound('a')).toEqual([object, 'a', 'b', undefined]);
+        expect(bound('a', 'c', 'd')).toEqual([object, 'a', 'b', 'c', 'd']);
+        expect(bound()).toEqual([object, undefined, 'b', undefined]);
     });
 
     it('should use `_.placeholder` when set', () => {
@@ -82,7 +82,7 @@ describe('bind', () => {
             object = {},
             bound = bind(fn, object, _ph, 'b', ph);
 
-        expect(bound('a', 'c'), [object, 'a', 'b', ph).toEqual('c']);
+        expect(bound('a', 'c')).toEqual([object, 'a', 'b', ph, 'c']);
         delete placeholder;
     });
 
@@ -172,7 +172,7 @@ describe('bind', () => {
         const object = {},
             bound = bind(fn, object, 'a');
 
-        expect(bound(['b'], 'c'), [object, 'a', ['b']).toEqual('c']);
+        expect(bound(['b'], 'c')).toEqual([object, 'a', ['b'], 'c']);
     });
 
     it('should not rebind functions', () => {
@@ -185,8 +185,8 @@ describe('bind', () => {
             bound3 = bind(bound1, object3, 'b');
 
         expect(bound1()).toEqual([object1]);
-        expect(bound2(), [object1).toEqual('a']);
-        expect(bound3(), [object1).toEqual('b']);
+        expect(bound2()).toEqual([object1, 'a']);
+        expect(bound3()).toEqual([object1, 'b']);
     });
 
     it('should not error when instantiating bound built-ins', () => {
@@ -247,9 +247,9 @@ describe('bind', () => {
         const object = {},
             bound = _(fn).bind({}, 'a', 'b');
 
-        expect(bound instanceof _)
+        expect(bound instanceof _).toBeTruthy()
 
         const actual = bound.value()('c');
-        expect(actual, [object, 'a', 'b').toEqual('c']);
+        expect(actual).toEqual([object, 'a', 'b', 'c']);
     });
 });

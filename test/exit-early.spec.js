@@ -26,9 +26,7 @@ describe('exit early', () => {
                         return false;
                     });
 
-                    assert.deepStrictEqual(values, [
-                        lodashStable.endsWith(methodName, 'Right') ? 3 : 1,
-                    ]);
+                    expect(values).toEqual([lodashStable.endsWith(methodName, 'Right') ? 3 : 1]);
                 }
             });
 

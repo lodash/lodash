@@ -7,12 +7,12 @@ describe('xor methods', () => {
 
         it(`\`_.${methodName}\` should return the symmetric difference of two arrays`, () => {
             const actual = func([2, 1], [2, 3]);
-            expect(actual, [1).toEqual(3]);
+            expect(actual).toEqual([1, 3]);
         });
 
         it(`\`_.${methodName}\` should return the symmetric difference of multiple arrays`, () => {
             let actual = func([2, 1], [2, 3], [3, 4]);
-            expect(actual, [1).toEqual(4]);
+            expect(actual).toEqual([1, 4]);
 
             actual = func([1, 2], [2, 1], [1, 2]);
             expect(actual).toEqual([]);
@@ -27,7 +27,7 @@ describe('xor methods', () => {
 
         it(`\`_.${methodName}\` should return an array of unique values`, () => {
             let actual = func([1, 1, 2, 5], [2, 2, 3, 5], [3, 4, 5, 5]);
-            expect(actual, [1).toEqual(4]);
+            expect(actual).toEqual([1, 4]);
 
             actual = func([1, 1]);
             expect(actual).toEqual([1]);
@@ -46,13 +46,13 @@ describe('xor methods', () => {
         it(`\`_.${methodName}\` should ignore values that are not arrays or \`arguments\` objects`, () => {
             const array = [1, 2];
             expect(func(array, 3, { 0: 1 }, null)).toEqual(array);
-            expect(func(null, array, null, [2, 3]), [1).toEqual(3]);
+            expect(func(null, array, null, [2, 3])).toEqual([1, 3]);
             expect(func(array, null, args, null)).toEqual([3]);
         });
 
         it(`\`_.${methodName}\` should return a wrapped value when chaining`, () => {
             const wrapped = _([1, 2, 3])[methodName]([5, 2, 1, 4]);
-            expect(wrapped instanceof _)
+            expect(wrapped instanceof _).toBeTruthy();
         });
 
         it(`\`_.${methodName}\` should work when in a lazy sequence before \`head\` or \`last\``, () => {
@@ -65,7 +65,7 @@ describe('xor methods', () => {
                 wrapped[methodName](),
             );
 
-            expect(actual, [1).toEqual(LARGE_ARRAY_SIZE + 1]);
+            expect(actual).toEqual([1, LARGE_ARRAY_SIZE + 1]);
         });
     });
 });

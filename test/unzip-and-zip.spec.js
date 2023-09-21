@@ -54,12 +54,12 @@ describe('unzip and zip', () => {
             ];
 
             let actual = func(pair[0]);
-            expect('0' in actual[2]);
+            expect('0' in actual[2]).toBeTruthy();
             expect(actual).toEqual(pair[1]);
 
             actual = func(actual);
-            expect('2' in actual[0]);
-            assert.deepStrictEqual(actual, [
+            expect('2' in actual[0]).toBeTruthy();
+            expect(actual).toEqual([
                 ['barney', 36, undefined],
                 ['fred', 40, false],
             ]);
@@ -75,7 +75,7 @@ describe('unzip and zip', () => {
 
         it(`\`_.${methodName}\` should ignore values that are not arrays or \`arguments\` objects`, () => {
             const array = [[1, 2], [3, 4], null, undefined, { 0: 1 }];
-            assert.deepStrictEqual(func(array), [
+            expect(func(array)).toEqual([
                 [1, 3],
                 [2, 4],
             ]);

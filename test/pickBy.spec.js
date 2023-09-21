@@ -7,7 +7,7 @@ describe('pickBy', () => {
 
         const actual = pickBy(object, (n) => n === 1 || n === 3);
 
-        expect(actual, { a: 1).toEqual(c: 3 });
+        expect(actual).toEqual({ a: 1, c: 3 });
     });
 
     it('should not treat keys with dots as deep paths', () => {

@@ -15,7 +15,7 @@ describe('forIn methods', () => {
             func(new Foo(), (value, key) => {
                 keys.push(key);
             });
-            expect(keys.sort(), ['a').toEqual('b']);
+            expect(keys.sort()).toEqual(['a', 'b']);
         });
     });
 });

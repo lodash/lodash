@@ -55,7 +55,7 @@ describe('case methods', () => {
                 return func(string) === expected;
             });
 
-            expect(actual, lodashStable.map(strings).toEqual(stubTrue));
+            expect(actual).toEqual(lodashStable.map(strings, stubTrue));
         });
 
         it(`\`_.${methodName}\` should handle double-converting strings`, () => {
@@ -64,7 +64,7 @@ describe('case methods', () => {
                 return func(func(string)) === expected;
             });
 
-            expect(actual, lodashStable.map(strings).toEqual(stubTrue));
+            expect(actual).toEqual(lodashStable.map(strings, stubTrue));
         });
 
         it(`\`_.${methodName}\` should remove contraction apostrophes`, () => {
@@ -98,7 +98,7 @@ describe('case methods', () => {
 
         it(`\`_.${methodName}\` should remove Latin mathematical operators`, () => {
             const actual = lodashStable.map(['\xd7', '\xf7'], func);
-            expect(actual, ['').toEqual('']);
+            expect(actual).toEqual(['', '']);
         });
 
         it(`\`_.${methodName}\` should coerce \`string\` to a string`, () => {

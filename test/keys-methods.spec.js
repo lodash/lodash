@@ -20,7 +20,7 @@ describe('keys methods', () => {
         it(`\`_.${methodName}\` should return the string keyed property names of \`object\``, () => {
             const actual = func({ a: 1, b: 1 }).sort();
 
-            expect(actual, ['a').toEqual('b']);
+            expect(actual).toEqual(['a', 'b']);
         });
 
         it(`\`_.${methodName}\` should ${
@@ -43,7 +43,7 @@ describe('keys methods', () => {
 
             const actual = func(array).sort();
 
-            expect(actual, ['0', '1').toEqual('2']);
+            expect(actual).toEqual(['0', '1', '2']);
         });
 
         it(`\`_.${methodName}\` should return keys for custom properties on arrays`, () => {
@@ -52,7 +52,7 @@ describe('keys methods', () => {
 
             const actual = func(array).sort();
 
-            expect(actual, ['0').toEqual('a']);
+            expect(actual).toEqual(['0', 'a']);
         });
 
         it(`\`_.${methodName}\` should ${
@@ -113,7 +113,7 @@ describe('keys methods', () => {
         it(`\`_.${methodName}\` should work with string objects`, () => {
             const actual = func(Object('abc')).sort();
 
-            expect(actual, ['0', '1').toEqual('2']);
+            expect(actual).toEqual(['0', '1', '2']);
         });
 
         it(`\`_.${methodName}\` should return keys for custom properties on string objects`, () => {
@@ -122,7 +122,7 @@ describe('keys methods', () => {
 
             const actual = func(object).sort();
 
-            expect(actual, ['0').toEqual('a']);
+            expect(actual).toEqual(['0', 'a']);
         });
 
         it(`\`_.${methodName}\` should ${
@@ -142,7 +142,7 @@ describe('keys methods', () => {
             const object = { 0: 'a', length: 1 };
             const actual = func(object).sort();
 
-            expect(actual, ['0').toEqual('length']);
+            expect(actual).toEqual(['0', 'length']);
         });
 
         it(`\`_.${methodName}\` should coerce primitives to objects (test in IE 9)`, () => {

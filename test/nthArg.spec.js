@@ -20,7 +20,7 @@ describe('nthArg', () => {
             return func.apply(undefined, args);
         });
 
-        expect(actual, ['d', 'c', 'b').toEqual('a']);
+        expect(actual).toEqual(['d', 'c', 'b', 'a']);
     });
 
     it('should coerce `n` to an integer', () => {

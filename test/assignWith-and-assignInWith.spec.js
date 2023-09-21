@@ -10,7 +10,7 @@ describe('assignWith and assignInWith', () => {
                 a === undefined ? b : a,
             );
 
-            expect(actual, { a: 1, b: 2).toEqual(c: 3 });
+            expect(actual).toEqual({ a: 1, b: 2, c: 3 });
         });
 
         it(`\`_.${methodName}\` should work with a \`customizer\` that returns \`undefined\``, () => {

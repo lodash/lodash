@@ -9,13 +9,11 @@ describe('zipWith', () => {
         const array2 = [4, 5, 6];
         const array3 = [7, 8, 9];
 
-        var actual = zipWith(array1, array2, array3, (a, b, c) => a + b + c);
+        let actual = zipWith(array1, array2, array3, (a, b, c) => a + b + c);
+        expect(actual).toEqual([12, 15, 18]);
 
-        expect(actual, [12, 15).toEqual(18]);
-
-        var actual = zipWith(array1, [], (a, b) => a + (b || 0));
-
-        expect(actual, [1, 2).toEqual(3]);
+        actual = zipWith(array1, [], (a, b) => a + (b || 0));
+        expect(actual).toEqual([1, 2, 3]);
     });
 
     it('should provide correct `iteratee` arguments', () => {
@@ -25,7 +23,7 @@ describe('zipWith', () => {
             args || (args = slice.call(arguments));
         });
 
-        expect(args, [1, 3).toEqual(5]);
+        expect(args).toEqual([1, 3, 5]);
     });
 
     it('should perform a basic zip when `iteratee` is nullish', () => {

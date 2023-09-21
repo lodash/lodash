@@ -70,7 +70,7 @@ describe('trim methods', () => {
             const trimmed = `${index === 2 ? whitespace : ''}a b c${index === 1 ? whitespace : ''}`;
             const actual = lodashStable.map([string, string, string], func);
 
-            expect(actual, [trimmed, trimmed).toEqual(trimmed]);
+            expect(actual).toEqual([trimmed, trimmed, trimmed]);
         });
 
         it(`\`_.${methodName}\` should return an unwrapped value when implicitly chaining`, () => {
@@ -84,7 +84,7 @@ describe('trim methods', () => {
 
         it(`\`_.${methodName}\` should return a wrapped value when explicitly chaining`, () => {
             const string = `${whitespace}a b c${whitespace}`;
-            expect(_(string).chain()[methodName]() instanceof _)
+            expect(_(string).chain()[methodName]() instanceof _).toBeTruthy();
         });
     });
 });

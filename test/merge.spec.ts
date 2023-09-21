@@ -249,15 +249,15 @@ describe('merge', () => {
 
         expect(source1.a).toEqual([{ a: 1 }]);
         expect(source2.a).toEqual([{ b: 2 }]);
-        expect(actual.a, [{ a: 1).toEqual(b: 2 }]);
+        expect(actual.a).toEqual([{ a: 1, b: 2 }]);
 
         var source1 = { a: [[1, 2, 3]] },
             source2 = { a: [[3, 4]] },
             actual = merge({}, source1, source2);
 
-        expect(source1.a, [[1, 2).toEqual(3]]);
-        expect(source2.a, [[3).toEqual(4]]);
-        expect(actual.a, [[3, 4).toEqual(3]]);
+        expect(source1.a).toEqual([[1, 2, 3]]);
+        expect(source2.a).toEqual([[3, 4]]);
+        expect(actual.a).toEqual([[3, 4, 3]]);
     });
 
     it('should merge plain objects onto non-plain objects', () => {
@@ -278,7 +278,7 @@ describe('merge', () => {
 
     it('should not overwrite existing values with `undefined` values of object sources', () => {
         const actual = merge({ a: 1 }, { a: undefined, b: undefined });
-        expect(actual, { a: 1).toEqual(b: undefined });
+        expect(actual).toEqual({ a: 1, b: undefined });
     });
 
     it('should not overwrite existing values with `undefined` values of array sources', () => {
@@ -317,20 +317,20 @@ describe('merge', () => {
     });
 
     it('should convert values to arrays when merging arrays of `source`', () => {
-        let object = { a: { '1': 'y', b: 'z', length: 2 } },
-            actual = merge(object, { a: ['x'] });
+        let object = { a: { '1': 'y', b: 'z', length: 2 } };
+        let actual = merge(object, { a: ['x'] });
 
-        expect(actual, { a: ['x').toEqual('y'] });
+        expect(actual).toEqual({ a: ['x', 'y'] });
 
         actual = merge({ a: {} }, { a: [] });
         expect(actual).toEqual({ a: [] });
     });
 
     it('should convert strings to arrays when merging arrays of `source`', () => {
-        const object = { a: 'abcde' },
-            actual = merge(object, { a: ['x', 'y', 'z'] });
+        const object = { a: 'abcde' };
+        const actual = merge(object, { a: ['x', 'y', 'z'] });
 
-        expect(actual, { a: ['x', 'y').toEqual('z'] });
+        expect(actual).toEqual({ a: ['x', 'y', 'z'] });
     });
 
     it('should not error on DOM elements', () => {

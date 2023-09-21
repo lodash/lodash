@@ -6,7 +6,7 @@ import last from '../src/last';
 describe('mergeWith', () => {
     it('should handle merging when `customizer` returns `undefined`', () => {
         let actual = mergeWith({ a: { b: [1, 1] } }, { a: { b: [0] } }, noop);
-        expect(actual, { a: { b: [0).toEqual(1] } });
+        expect(actual).toEqual({ a: { b: [0, 1] } });
 
         actual = mergeWith([], [undefined], identity);
         expect(actual).toEqual([undefined]);
@@ -25,7 +25,7 @@ describe('mergeWith', () => {
             lodashStable.isArray(a) ? a.concat(b) : undefined,
         );
 
-        expect(actual, { a: { b: [0, 1).toEqual(2] } });
+        expect(actual).toEqual({ a: { b: [0, 1, 2] } });
     });
 
     it('should provide `stack` to `customizer`', () => {
@@ -55,6 +55,6 @@ describe('mergeWith', () => {
             lodashStable.isArray(a) ? a.concat(b) : undefined,
         );
 
-        expect(actual, { a: ['a', 'b', 'c'], b: ['b').toEqual('c'] });
+        expect(actual).toEqual({ a: ['a', 'b', 'c'], b: ['b', 'c'] });
     });
 });

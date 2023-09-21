@@ -11,7 +11,7 @@ describe('uniqWith', () => {
         ];
         const actual = uniqWith(objects, lodashStable.isEqual);
 
-        expect(actual, [objects[0]).toEqual(objects[1]]);
+        expect(actual).toEqual([objects[0], objects[1]]);
     });
 
     it('should preserve the sign of `0`', () => {

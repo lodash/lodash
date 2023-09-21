@@ -6,7 +6,7 @@ describe('functions', () => {
         const object = { a: 'a', b: identity, c: /x/, d: noop };
         const actual = functions(object).sort();
 
-        expect(actual, ['b').toEqual('d']);
+        expect(actual).toEqual(['b', 'd']);
     });
 
     it('should not include inherited functions', () => {

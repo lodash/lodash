@@ -36,7 +36,7 @@ describe('attempt', () => {
         const actual = attempt(() => {
             throw 'x';
         });
-        expect(lodashStable.isEqual(actual, Error('x')));
+        expect(lodashStable.isEqual(actual, Error('x'))).toBeTruthy();
     });
 
     it('should preserve custom errors', () => {

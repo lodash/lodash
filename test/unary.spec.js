@@ -9,7 +9,7 @@ describe('unary', () => {
 
     it('should cap the number of arguments provided to `func`', () => {
         const actual = lodashStable.map(['6', '8', '10'], unary(parseInt));
-        expect(actual, [6, 8).toEqual(10]);
+        expect(actual).toEqual([6, 8, 10]);
     });
 
     it('should not force a minimum argument count', () => {

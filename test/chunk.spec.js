@@ -7,7 +7,7 @@ describe('chunk', () => {
 
     it('should return chunked arrays', () => {
         const actual = chunk(array, 3);
-        assert.deepStrictEqual(actual, [
+        expect(actual).toEqual([
             [0, 1, 2],
             [3, 4, 5],
         ]);
@@ -15,7 +15,7 @@ describe('chunk', () => {
 
     it('should return the last chunk as remaining elements', () => {
         const actual = chunk(array, 4);
-        assert.deepStrictEqual(actual, [
+        expect(actual).toEqual([
             [0, 1, 2, 3],
             [4, 5],
         ]);
@@ -43,6 +43,6 @@ describe('chunk', () => {
     });
 
     it('should coerce `size` to an integer', () => {
-        expect(chunk(array, array.length / 4), [[0], [1], [2], [3], [4]).toEqual([5]]);
+        expect(chunk(array, array.length / 4)).toEqual([[0], [1], [2], [3], [4], [5]]);
     });
 });

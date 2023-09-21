@@ -13,7 +13,7 @@ describe('unzipWith', () => {
 
         const actual = unzipWith(array, (a, b, c) => a + b + c);
 
-        expect(actual, [6).toEqual(15]);
+        expect(actual).toEqual([6, 15]);
     });
 
     it('should provide correct `iteratee` arguments', () => {
@@ -29,7 +29,7 @@ describe('unzipWith', () => {
             },
         );
 
-        expect(args, [1).toEqual(2]);
+        expect(args).toEqual([1, 2]);
     });
 
     it('should perform a basic unzip when `iteratee` is nullish', () => {

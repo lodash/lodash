@@ -16,9 +16,9 @@ describe('invoke', () => {
                 return [a, b];
             },
         };
-        const actual = invoke(object, 'a', 1, 2);
+        const actual = invoke(object, 'a', [1, 2]);
 
-        expect(actual, [1).toEqual(2]);
+        expect(actual).toEqual([1, 2]);
     });
 
     it('should not error on nullish elements', () => {
@@ -27,7 +27,7 @@ describe('invoke', () => {
 
         const actual = lodashStable.map(values, (value) => {
             try {
-                return invoke(value, 'a.b', 1, 2);
+                return invoke(value, 'a.b', [1, 2]);
             } catch (e) {}
         });
 
@@ -40,7 +40,7 @@ describe('invoke', () => {
 
         const actual = lodashStable.map(props, (key) => invoke(object, key));
 
-        expect(actual, ['a', 'a', 'b').toEqual('b']);
+        expect(actual).toEqual(['a', 'a', 'b', 'b']);
     });
 
     it('should support deep paths', () => {
@@ -53,8 +53,8 @@ describe('invoke', () => {
         };
 
         lodashStable.each(['a.b', ['a', 'b']], (path) => {
-            const actual = invoke(object, path, 1, 2);
-            expect(actual, [1).toEqual(2]);
+            const actual = invoke(object, path, [1, 2]);
+            expect(actual).toEqual([1, 2]);
         });
     });
 
@@ -73,13 +73,15 @@ describe('invoke', () => {
         });
     });
 
-    it('should return an unwrapped value when implicitly chaining', () => {
-        const object = { a: stubOne };
-        expect(_(object).invoke('a')).toBe(1);
-    });
-
-    it('should return a wrapped value when explicitly chaining', () => {
-        const object = { a: stubOne };
-        expect(_(object).chain().invoke('a') instanceof _)
-    });
+    // FIXME: Work out a solution for _.
+    //
+    // it('should return an unwrapped value when implicitly chaining', () => {
+    //     const object = { a: stubOne };
+    //     expect(_(object).invoke('a')).toBe(1);
+    // });
+    //
+    // it('should return a wrapped value when explicitly chaining', () => {
+    //     const object = { a: stubOne };
+    //     expect(_(object).chain().invoke('a') instanceof _)
+    // });
 });

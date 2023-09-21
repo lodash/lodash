@@ -1,6 +1,5 @@
-import lodashStable from 'lodash';
+import lodashStable, { isArray } from 'lodash';
 import { falsey, stubFalse, args, slice, symbol, realm } from './utils';
-import isArray from '../src/isArray';
 
 describe('isArray', () => {
     it('should return `true` for arrays', () => {

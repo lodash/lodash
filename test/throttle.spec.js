@@ -1,4 +1,5 @@
-import lodashStable from 'lodash';
+import lodashStable, { runInContext } from 'lodash';
+import * as assert from 'assert';
 import { identity, isModularize, argv, isPhantom } from './utils';
 import throttle from '../src/throttle';
 
@@ -14,10 +15,10 @@ describe('throttle', () => {
         throttled();
 
         const lastCount = callCount;
-        expect(callCount)
+        expect(callCount);
 
         setTimeout(() => {
-            expect(callCount > lastCount)
+            expect(callCount > lastCount);
             done();
         }, 64);
     });
@@ -26,7 +27,7 @@ describe('throttle', () => {
         const throttled = throttle(identity, 32);
         const results = [throttled('a'), throttled('b')];
 
-        expect(results, ['a').toEqual('a']);
+        expect(results).toEqual(['a', 'a']);
 
         setTimeout(() => {
             const results = [throttled('c'), throttled('d')];
@@ -39,7 +40,7 @@ describe('throttle', () => {
         }, 64);
     });
 
-    xit('should clear timeout when `func` is called', (done) => {
+    it('should clear timeout when `func` is called', (done) => {
         if (!isModularize) {
             let callCount = 0;
             let dateCount = 0;
@@ -104,7 +105,7 @@ describe('throttle', () => {
             }
             const actual = callCount > 1;
             setTimeout(() => {
-                expect(actual)
+                expect(actual);
                 done();
             }, 1);
         });
@@ -221,12 +222,12 @@ describe('throttle', () => {
         }, 96);
 
         setTimeout(() => {
-            expect(callCount > 1)
+            expect(callCount > 1);
             done();
         }, 192);
     });
 
-    xit('should work with a system time of `0`', (done) => {
+    it('should work with a system time of `0`', (done) => {
         if (!isModularize) {
             let callCount = 0;
             let dateCount = 0;
@@ -245,7 +246,7 @@ describe('throttle', () => {
             }, 32);
 
             const results = [throttled('a'), throttled('b'), throttled('c')];
-            expect(results, ['a', 'a').toEqual('a']);
+            expect(results).toEqual(['a', 'a', 'a']);
             expect(callCount).toBe(1);
 
             setTimeout(() => {

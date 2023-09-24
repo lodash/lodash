@@ -27,7 +27,7 @@ const MAX_INTEGER = 1.7976931348623157e308;
  */
 function toFinite(value) {
     if (!value) {
-        return value === 0 ? value : 0;
+        return 0;
     }
     value = toNumber(value);
     if (value === INFINITY || value === -INFINITY) {

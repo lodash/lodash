@@ -1,5 +1,5 @@
 import lodashStable from 'lodash';
-import { typedArrays, falsey, stubFalse, args, slice, symbol, realm } from './utils';
+import { typedArrays, falsey, stubFalse, args, slice, symbol, realm, root } from './utils';
 import isTypedArray from '../src/isTypedArray';
 
 describe('isTypedArray', () => {

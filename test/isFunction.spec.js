@@ -13,6 +13,7 @@ import {
     symbol,
     document,
     realm,
+    root,
 } from './utils';
 
 import isFunction from '../src/isFunction';

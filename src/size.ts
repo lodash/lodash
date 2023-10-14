@@ -30,7 +30,7 @@ function size(collection) {
     if (collection == null) {
         return 0;
     }
-    if (isArrayLike(collection)) {
+    if (isArrayLike(collection) && collection.constructor.name !== 'Object') {
         return isString(collection) ? stringSize(collection) : collection.length;
     }
     const tag = getTag(collection);

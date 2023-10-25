@@ -6,6 +6,6 @@ describe('omitBy', () => {
 
         const actual = omitBy(object, (n) => n != 2 && n != 4);
 
-        expect(actual, { b: 2).toEqual(d: 4 });
+        expect(actual).toEqual({ b: 2, d: 4 });
     });
 });

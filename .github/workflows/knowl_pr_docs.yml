@@ -1,4 +1,41 @@
-- name: Knowl - PR Review & Code Documents Sync
-  # You may pin to the exact commit or the version.
-  # uses: knowl-doc/knowl-ai-code-docs@28755961bc834bb2b020acef5ceaf8f9fcb37d67
-  uses: knowl-doc/knowl-ai-code-docs@v0.2
+# Create automated PR summaries as comments in every PR
+# Generate code docuemtns for the entire repo by manully running the action
+# Keep the code documents up-to-date with every code merge
+
+name: Knowl- PR Review & Code Documents Sync
+
+on:
+  push: # trigger on push events
+    branches:
+      - 'main' # trigger for the 'main' branch
+  pull_request: # trigger on pull request events
+    branches:
+      - 'main' # trigger for the 'main' branch
+  workflow_dispatch: # allow manual triggering of the workflow
+
+jobs:
+  pr-summary: # Job to create PR Summary
+    if: github.event_name == 'pull_request' && true # change it to false to disable this job
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v2 
+        with:
+          fetch-depth: 0 
+      - name: Generate PR Summary
+        uses: knowl-doc/sync-docs@master
+        with:
+          OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}} # optional. action will use Knowl's OpenAI API Key by default
+
+  gen-ai-doc: # to generate code documents and keep them updated
+    if: ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' ) && true # change it to false to disable this job
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v2 
+        with:
+          fetch-depth: 0 #
+      - name: Update Code Documents
+        uses: knowl-doc/knowl-ai-code-docs@main 
+        env:
+          KNOWL_API_KEY: ${{secrets.KNOWL_API_KEY}} # get Knowl api key from your Knowl workspace
+          OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}} # optional. action will use Knowl's OpenAI API Key by default
+          OPENAI_BATCH_SIZE: 40 

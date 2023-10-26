@@ -1,0 +1,4 @@
+- name: Knowl - PR Review & Code Documents Sync
+  # You may pin to the exact commit or the version.
+  # uses: knowl-doc/knowl-ai-code-docs@28755961bc834bb2b020acef5ceaf8f9fcb37d67
+  uses: knowl-doc/knowl-ai-code-docs@v0.2

@@ -101,10 +101,10 @@ function debounce(func, wait, options) {
     function startTimer(pendingFunc, milliseconds) {
         if (useRAF) {
             root.cancelAnimationFrame(timerId);
-            return root.requestAnimationFrame(pendingFunc);
+            timerId = root.requestAnimationFrame(pendingFunc);
         }
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        return setTimeout(pendingFunc, milliseconds);
+        timerId = setTimeout(pendingFunc, milliseconds);
     }
 
     function cancelTimer(id) {
@@ -119,7 +119,7 @@ function debounce(func, wait, options) {
         // Reset any `maxWait` timer.
         lastInvokeTime = time;
         // Start the timer for the trailing edge.
-        timerId = startTimer(timerExpired, wait);
+        startTimer(timerExpired, wait);
         // Invoke the leading edge.
         return leading ? invokeFunc(time) : result;
     }
@@ -153,7 +153,7 @@ function debounce(func, wait, options) {
             return trailingEdge(time);
         }
         // Restart the timer.
-        timerId = startTimer(timerExpired, remainingWait(time));
+        startTimer(timerExpired, remainingWait(time));
         return undefined;
     }
 
@@ -199,12 +199,12 @@ function debounce(func, wait, options) {
             }
             if (maxing) {
                 // Handle invocations in a tight loop.
-                timerId = startTimer(timerExpired, wait);
+                startTimer(timerExpired, wait);
                 return invokeFunc(lastCallTime);
             }
         }
         if (timerId === undefined) {
-            timerId = startTimer(timerExpired, wait);
+            startTimer(timerExpired, wait);
         }
         return result;
     }

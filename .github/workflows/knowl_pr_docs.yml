@@ -14,19 +14,6 @@ on:
   workflow_dispatch: # allow manual triggering of the workflow
 
 jobs:
-  review-doc-pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checking out code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Sync Docs
-        uses: knowl-doc/sync-docs@master
-        with:
-          knowl_api_key: ${{secrets.KNOWL_API_KEY}}
-          action_type: 0
   pr-summary: # Job to create PR Summary
     if: github.event_name == 'pull_request' && true # change it to false to disable this job
     runs-on: ubuntu-latest 
@@ -38,7 +25,8 @@ jobs:
         uses: knowl-doc/sync-docs@master
         with:
           OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}} # optional. action will use Knowl's OpenAI API Key by default
-
+          knowl_api_key: ${{secrets.KNOWL_API_KEY}}
+          action_type: 0
   gen-ai-doc: # to generate code documents and keep them updated
     if: ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' ) && true # change it to false to disable this job
     runs-on: ubuntu-latest 

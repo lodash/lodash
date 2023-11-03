@@ -23,8 +23,4 @@ const INFINITY = 1 / 0;
  * flatMapDeep([1, 2], duplicate)
  * // => [1, 1, 2, 2]
  */
-function flatMapDeep(collection, iteratee) {
-    return baseFlatten(map(collection, iteratee), INFINITY);
-}
-
-export default flatMapDeep;
+export const flatMapDeep = (collection, iteratee) => baseFlatten(map(collection, iteratee), INFINITY);

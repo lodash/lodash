@@ -13,12 +13,12 @@
  * jQuery(element).on('click', before(5, addContactToList))
  * // => Allows adding up to 4 contacts to the list.
  */
-function before(n, func) {
+export const before = (n, func) => {
     let result;
     if (typeof func !== 'function') {
         throw new TypeError('Expected a function');
     }
-    return function (...args) {
+    return  (...args) => {
         if (--n > 0) {
             result = func.apply(this, args);
         }
@@ -29,4 +29,3 @@ function before(n, func) {
     };
 }
 
-export default before;

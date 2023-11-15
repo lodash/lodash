@@ -12,7 +12,7 @@ const reIsUint = /^(?:0|[1-9]\d*)$/
  * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
  * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
  */
-function isIndex(value, length) {
+function isIndex(value: any, length?: number | null): boolean {
   const type = typeof value
   length = length == null ? MAX_SAFE_INTEGER : length
 

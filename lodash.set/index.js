@@ -508,7 +508,10 @@ function baseSet(object, path, value, customizer) {
   while (nested != null && ++index < length) {
     var key = toKey(path[index]),
         newValue = value;
-
+    
+    // CWE-1321 - use denylist of dangerous attributes
+    if (key in ["__proto__", "prototype", "constructor"]) continue
+      
     if (index != lastIndex) {
       var objValue = nested[key];
       newValue = customizer ? customizer(objValue, key, nested) : undefined;

@@ -14,11 +14,8 @@ function createMathOperation(operator, defaultValue) {
     if (value === undefined && other === undefined) {
       return defaultValue
     }
-    if (value !== undefined && other === undefined) {
-      return value
-    }
-    if (other !== undefined && value === undefined) {
-      return other
+    if(value === undefined || other === undefined) {
+      return value || other
     }
     if (typeof value === 'string' || typeof other === 'string') {
       value = baseToString(value)

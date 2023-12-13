@@ -6,7 +6,8 @@
     "browser": true,
     "es6": true,
     "jest": true,
-    "node": true
+    "node": true,
+    "es2021": true
   },
   "globals": {
     "BigInt": "readonly",

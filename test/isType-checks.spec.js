@@ -56,6 +56,7 @@ describe('isType checks', () => {
             'isUndefined',
             'isWeakMap',
             'isWeakSet',
+            'isWeakRef',
         ];
 
         lodashStable.each(funcs, (methodName) => {

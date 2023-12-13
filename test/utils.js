@@ -74,6 +74,7 @@ const Symbol = root.Symbol;
 const Uint8Array = root.Uint8Array;
 const WeakMap = root.WeakMap;
 const WeakSet = root.WeakSet;
+const WeakRef = root.WeakRef;
 
 const arrayBuffer = ArrayBuffer ? new ArrayBuffer(2) : undefined;
 const map = Map ? new Map() : undefined;
@@ -82,6 +83,7 @@ const set = Set ? new Set() : undefined;
 const symbol = Symbol ? Symbol('a') : undefined;
 const weakMap = WeakMap ? new WeakMap() : undefined;
 const weakSet = WeakSet ? new WeakSet() : undefined;
+const weakRef = WeakRef ? new WeakRef() : undefined;
 
 /** Math helpers. */
 const add = function (x, y) {
@@ -1152,6 +1154,7 @@ lodashStable.attempt(() => {
                 "    'undefined': undefined,",
                 "    'weakMap': root.WeakMap ? new root.WeakMap : undefined,",
                 "    'weakSet': root.WeakSet ? new root.WeakSet : undefined",
+                "    'weakRef': root.WeakRef ? new root.WeakRef : undefined",
                 '  };',
                 '',
                 `  ['${arrayViews.join("', '")}'].forEach(function(type) {`,
@@ -1208,6 +1211,7 @@ lodashStable.attempt(() => {
             "  'undefined': undefined,",
             "  'weakMap': root.WeakMap ? new root.WeakMap : undefined,",
             "  'weakSet': root.WeakSet ? new root.WeakSet : undefined",
+            "  'weakRef': root.WeakRef ? new root.WeakRef : undefined",
             '};',
             '',
             `_.each(['${arrayViews.join("', '")}'], function(type) {`,
@@ -1301,6 +1305,7 @@ export {
     symbol,
     weakMap,
     weakSet,
+    weakRef,
     add,
     doubled,
     isEven,

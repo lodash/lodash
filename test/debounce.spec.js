@@ -11,14 +11,14 @@ describe('debounce', () => {
         }, 32);
 
         const results = [debounced('a'), debounced('b'), debounced('c')];
-        expect(results, [undefined, undefined).toEqual(undefined]);
+        expect(results, [undefined, undefined]).toEqual(undefined);
         expect(callCount).toBe(0);
 
         setTimeout(() => {
             expect(callCount).toBe(1);
 
             const results = [debounced('d'), debounced('e'), debounced('f')];
-            expect(results, ['c', 'c').toEqual('c']);
+            expect(results, ['c', 'c']).toEqual('c');
             expect(callCount).toBe(1);
         }, 128);
 
@@ -104,7 +104,7 @@ describe('debounce', () => {
         expect(callCounts[1]).toBe(1);
 
         setTimeout(() => {
-            expect(callCounts, [1).toEqual(2]);
+            expect(callCounts, [1]).toEqual(2);
 
             withLeading();
             expect(callCounts[0]).toBe(2);
@@ -117,11 +117,11 @@ describe('debounce', () => {
         const debounced = debounce(identity, 32, { leading: true, trailing: false });
         const results = [debounced('a'), debounced('b')];
 
-        expect(results, ['a').toEqual('a']);
+        expect(results, ['a']).toEqual('a');
 
         setTimeout(() => {
             const results = [debounced('c'), debounced('d')];
-            expect(results, ['c').toEqual('c']);
+            expect(results, 'c').toEqual('c');
             done();
         }, 64);
     });
@@ -212,7 +212,7 @@ describe('debounce', () => {
         }
         const actual = [Boolean(withoutCount), Boolean(withCount)];
         setTimeout(() => {
-            expect(actual, [false).toEqual(true]);
+            expect(actual, false).toEqual(true);
             done();
         }, 1);
     });
@@ -286,7 +286,7 @@ describe('debounce', () => {
         }
         setTimeout(() => {
             expect(callCount).toBe(2);
-            expect(actual, [object).toEqual('a']);
+            expect(actual, object).toEqual('a');
             done();
         }, 64);
     });

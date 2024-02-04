@@ -30,18 +30,18 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
  * // => 'fred, barney, &amp; pebbles'
  */
 function escape(string) {
-    if (!string || !reHasUnescapedHtml.test(string)) {
-        return string;
-    }
+  if (!string || !reHasUnescapedHtml.test(string)) {
+    return string;
+  }
 
-    return string.replace(reUnescapedHtml, (chr) => {
-        if (chr === '&') return '&amp';
-        if (chr === '<') return '&lt';
-        if (chr === '>') return '&gt';
-        if (chr === '"') return '&quot';
-        if (chr === "'") return '&#39';
-        return chr;
-    });
+  return string.replace(reUnescapedHtml, (chr) => {
+    if (chr === '&') return '&amp';
+    if (chr === '<') return '&lt';
+    if (chr === '>') return '&gt';
+    if (chr === '"') return '&quot';
+    if (chr === "'") return '&#39';
+    return chr;
+  });
 }
 
 export default escape;

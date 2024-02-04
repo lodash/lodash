@@ -1,12 +1,3 @@
-/** Used to map characters to HTML entities. */
-const htmlEscapes = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-};
-
 /** Used to match HTML entities and HTML characters. */
 const reUnescapedHtml = /[&<>"']/g;
 const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
@@ -39,9 +30,18 @@ const reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
  * // => 'fred, barney, &amp; pebbles'
  */
 function escape(string) {
-    return string && reHasUnescapedHtml.test(string)
-        ? string.replace(reUnescapedHtml, (chr) => htmlEscapes[chr])
-        : string || '';
+  if (!string || !reHasUnescapedHtml.test(string)) {
+    return string;
+  }
+
+  return string.replace(reUnescapedHtml, (chr) => {
+    if (chr === '&') return '&amp';
+    if (chr === '<') return '&lt';
+    if (chr === '>') return '&gt';
+    if (chr === '"') return '&quot';
+    if (chr === "'") return '&#39';
+    return chr;
+  });
 }
 
 export default escape;

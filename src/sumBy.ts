@@ -18,7 +18,8 @@ import baseSum from './.internal/baseSum.js';
  * // => 20
  */
 function sumBy(array, iteratee) {
-    return array != null && array.length ? baseSum(array, iteratee) : 0;
+    const result = array != null && array.length ? baseSum(array, iteratee) : 0;
+    return typeof result === 'number' && !isNaN(result) ? result : NaN;
 }
 
 export default sumBy;

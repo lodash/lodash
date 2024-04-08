@@ -10,6 +10,10 @@ describe('head', () => {
         expect(head(array)).toBe(1);
     });
 
+    it('should return the first n elements', () => {
+        expect(head(array, 2)).toEqual([1, 2]);
+    });
+
     it('should return `undefined` when querying empty arrays', () => {
         arrayProto[0] = 1;
         expect(head([])).toBe(undefined);

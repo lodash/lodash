@@ -8,6 +8,10 @@ describe('last', () => {
         expect(last(array)).toBe(4);
     });
 
+    it('should return the last n elements', () => {
+        expect(last(array, 2)).toEqual([3, 4]);
+    });
+
     it('should return `undefined` when querying empty arrays', () => {
         const array = [];
         array['-1'] = 1;

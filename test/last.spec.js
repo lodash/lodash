@@ -9,7 +9,7 @@ describe('last', () => {
     });
 
     it('should return the last n elements', () => {
-        expect(last(array, 2)).toEqual([3, 4]);
+        expect(last(array, { n: 2 })).toEqual([3, 4]);
     });
 
     it('should return `undefined` when querying empty arrays', () => {

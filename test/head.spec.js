@@ -11,7 +11,7 @@ describe('head', () => {
     });
 
     it('should return the first n elements', () => {
-        expect(head(array, 2)).toEqual([1, 2]);
+        expect(head(array, { n: 2 })).toEqual([1, 2]);
     });
 
     it('should return `undefined` when querying empty arrays', () => {

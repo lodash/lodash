@@ -3,21 +3,48 @@
   "version": "5.0.0",
   "license": "MIT",
   "private": true,
-  "main": "lodash.js",
-  "engines": {
-    "node": ">=4.0.0"
-  },
+  "main": "dist/lodash.js",
   "sideEffects": false,
   "scripts": {
-    "style": "eslint *.js .internal/**/*.js",
-    "test": "mocha -r esm test/*.test.js",
-    "validate": "npm run style && npm run test"
+    "prepare": "husky install",
+    "lint": "eslint ./src/**/*.ts"
   },
   "devDependencies": {
-    "mocha": "^5.2.0",
-    "eslint": "^7.16.0",
-    "eslint-plugin-import": "^2.22.1",
-    "lodash": "4.17.20",
-    "esm": "^3.2.25"
-  }
+    "@commitlint/cli": "17.7.1",
+    "@commitlint/config-conventional": "17.7.0",
+    "@types/eslint": "8.44.2",
+    "@types/jest": "29.5.5",
+    "@typescript-eslint/eslint-plugin": "6.7.0",
+    "@typescript-eslint/parser": "6.7.0",
+    "eslint": "8.49.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-airbnb-typescript": "17.1.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-prettier": "5.0.0",
+    "husky": "8.0.3",
+    "lint-staged": "14.0.1",
+    "lodash": "4.17.21",
+    "prettier": "3.0.3"
+  },
+  "lint-staged": {
+    "src/**/*.{ts}": [
+      "eslint --fix"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "bun run commitlint --edit $1"
+    }
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "yarn": "^1.22.19"
+  },
+  "volta": {
+    "node": "18.17.1",
+    "yarn": "1.22.19"
+  },
+  "engineStrict": true
 }

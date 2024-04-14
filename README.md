@@ -2,18 +2,14 @@
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
-[FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
 [Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
-[Code of Conduct](https://code-of-conduct.openjsf.org) |
-[Twitter](https://twitter.com/bestiejs) |
-[Chat](https://gitter.im/lodash/lodash)
+[Code of Conduct](https://code-of-conduct.openjsf.org)
 
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
-Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
 ```shell
-$ npm run build
+$ bun run build
 $ lodash -o ./dist/lodash.js
 $ lodash core -o ./dist/lodash.core.js
 ```
@@ -34,14 +30,12 @@ In a browser:
 <script src="lodash.js"></script>
 ```
 
-Using npm:
+Using bun:
 ```shell
-$ npm i -g npm
-$ npm i lodash
+$ bun i lodash
 ```
-Note: add `--save` if you are using npm < 5.0.0
 
-In Node.js:
+In [Bun](https://bun.sh):
 ```js
 // Load the full build.
 var _ = require('lodash');
@@ -76,5 +70,3 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
 
  * [lodash](https://www.npmjs.com/package/lodash) & [per method packages](https://www.npmjs.com/search?q=keywords:lodash-modularized)
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
- * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
- * [lodash-amd](https://www.npmjs.com/package/lodash-amd)

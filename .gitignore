@@ -1,7 +1,8 @@
 .DS_Store
 *.log*
-doc/*.html
-node_modules
+dist/
+node_modules/
 *.code-workspace
+*.lockb
 *.sublime-project
 *.sublime-workspace

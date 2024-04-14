@@ -1,0 +1,99 @@
+{
+  "extends": ["airbnb-base", "prettier"],
+  "root": true,
+  "env": {
+    "amd": true,
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "globals": {
+    "BigInt": "readonly",
+    "BigInt64Array": "readonly",
+    "BigUint64Array": "readonly",
+    "globalThis": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    // Overridden
+    "camelcase": ["error", { "properties": "never", "allow": [ "W[0-9]+_"] }],
+    "import/extensions": "off",
+    "no-eval": "off",
+    "no-self-compare": "off",
+    "one-var": ["error", "never"],
+    // @TODO: Fix the following rules progressively.
+    "arrow-body-style": "warn",
+    "prefer-arrow-callback": "warn",
+    "prefer-object-spread": "off",
+    "max-classes-per-file": "off",
+    "dot-notation": "off",
+    "object-shorthand": "off",
+    "no-param-reassign": "off",
+    "no-cond-assign": "off",
+    "prefer-destructuring": "off",
+    "func-names": "off",
+    "no-nested-ternary": "off",
+    "no-plusplus": "off",
+    "strict": "off",
+    "no-restricted-syntax": "off",
+    "import/no-mutable-exports": "off",
+    "guard-for-in": "off",
+    "import/prefer-default-export": "off",
+    "prefer-rest-params": "off",
+    "prefer-spread": "off",
+    "no-lonely-if": "off",
+    "no-prototype-builtins": "off",
+    "no-continue": "off",
+    "no-shadow": "off",
+    // Rules up for discussion.
+    "no-multi-assign": "off",
+    "new-cap": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "parserOptions": {
+         "project": "./tsconfig.json"
+      },
+      "extends": [
+        "airbnb-typescript/base",
+        "prettier"
+      ],
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_" // For tsc compatibility.
+          }
+        ],
+        "comma-dangle": "off",
+        "implicit-arrow-linebreak": "off", // Conflicts with prettier.
+        "import/extensions": "off",
+        "import/prefer-default-export": "off",
+        "operator-linebreak": "off",
+        "object-curly-newline": "off",
+        "prefer-rest-params": "off", // We need to use params.
+        "prettier/prettier": "error",
+        "@typescript-eslint/no-shadow": "warn",
+        "@typescript-eslint/no-use-before-define": ["warn", { "functions": false }],
+        "import/no-cycle": "warn",
+        "no-bitwise": "off",
+        "no-unsafe-finally": "warn",
+        "no-param-reassign": "off",
+        "no-shadow": "warn"
+      }
+    }
+  ]
+}

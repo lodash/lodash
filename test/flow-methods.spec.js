@@ -44,7 +44,7 @@ describe('flow methods', () => {
 
             const combined = isFlow ? func(getProp, uniq) : func(uniq, getProp);
 
-            expect(combined(objects), [1).toEqual(2]);
+            expect(combined(objects)).toEqual([1, 2]);
         });
     });
 });

@@ -14,7 +14,7 @@ import toKey from './toKey.js'
  * @param {Function} [customizer] The function to customize path creation.
  * @returns {Object} Returns `object`.
  */
-function baseSet(object, path, value, customizer) {
+function baseSet<T>(object: T, path: string | string[], value: any, customizer?: (objValue: any, key: string, nested: T) => any): T {
   if (!isObject(object)) {
     return object
   }
@@ -24,7 +24,7 @@ function baseSet(object, path, value, customizer) {
   const lastIndex = length - 1
 
   let index = -1
-  let nested = object
+  let nested: any = object
 
   while (nested != null && ++index < length) {
     const key = toKey(path[index])
@@ -32,7 +32,16 @@ function baseSet(object, path, value, customizer) {
 
     if (index !== lastIndex) {
       const objValue = nested[key]
-      newValue = customizer ? customizer(objValue, key, nested) : undefined
+      // Validate key to prevent prototype pollution
+      if (!isValidKey(key)) {
+        throw new Error('Invalid key detected');
+      }
+      // Validate objValue to prevent prototype pollution
+      if (!isObject(objValue)) {
+        throw new Error('Invalid object value detected');
+      }
+
+      newValue = customizer ? customizer(objValue, key, nested) : undefined;
       if (newValue === undefined) {
         newValue = isObject(objValue)
           ? objValue
@@ -45,4 +54,10 @@ function baseSet(object, path, value, customizer) {
   return object
 }
 
-export default baseSet
+// Function to validate keys to prevent prototype pollution
+function isValidKey(key: string): boolean {
+  const disallowedKeys = ['__proto__', '__constructor__', '__prototype__'];
+  return !disallowedKeys.includes(key);
+}
+
+export default baseSet;

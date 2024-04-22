@@ -41,12 +41,12 @@ const freeParseInt = parseInt;
  * toNumber('3.2')
  * // => 3.2
  */
-function toNumber(value) {
+function toNumber(value, defaultValue = NAN) {
     if (typeof value === 'number') {
         return value;
     }
     if (isSymbol(value)) {
-        return NAN;
+        return defaultValue;
     }
     if (isObject(value)) {
         const other = typeof value.valueOf === 'function' ? value.valueOf() : value;
@@ -60,7 +60,7 @@ function toNumber(value) {
     return isBinary || reIsOctal.test(value)
         ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
         : reIsBadHex.test(value)
-        ? NAN
+        ? defaultValue
         : +value;
 }
 

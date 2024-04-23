@@ -25,6 +25,8 @@ const freeParseInt = parseInt;
  * @since 4.0.0
  * @category Lang
  * @param {*} value The value to process.
+ * @param {Object} [options={}] The options object.
+ * @param {number} [options.defaultValue=0] If NaN occurs, the options.defaultValue argument will be returned.
  * @returns {number} Returns the number.
  * @see isInteger, toInteger, isNumber
  * @example
@@ -40,8 +42,22 @@ const freeParseInt = parseInt;
  *
  * toNumber('3.2')
  * // => 3.2
+ *
+ * toNumber("someStringValue")
+ * // => NaN
+ *
+ * toNumber("someStringValue", {})
+ * // => NaN
+ *
+ * toNumber("someStringValue", {defaultValue: 0})
+ * // => 0
+ *
+ * toNumber("23", {defaultValue: 0})
+ * // => 23
  */
-function toNumber(value, defaultValue = NAN) {
+function toNumber(value, options = { defaultValue: NAN }) {
+    const { defaultValue = NAN } = options;
+    let finalValue;
     if (typeof value === 'number') {
         return value;
     }
@@ -53,15 +69,20 @@ function toNumber(value, defaultValue = NAN) {
         value = isObject(other) ? `${other}` : other;
     }
     if (typeof value !== 'string') {
-        return value === 0 ? value : +value;
+        finalValue = value === 0 ? value : +value;
+    } else {
+        value = value.replace(reTrim, '');
+        const isBinary = reIsBinary.test(value);
+
+        finalValue =
+            isBinary || reIsOctal.test(value)
+                ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+                : reIsBadHex.test(value)
+                ? defaultValue
+                : +value;
     }
-    value = value.replace(reTrim, '');
-    const isBinary = reIsBinary.test(value);
-    return isBinary || reIsOctal.test(value)
-        ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-        : reIsBadHex.test(value)
-        ? defaultValue
-        : +value;
+    if (Number.isNaN(finalValue)) return defaultValue;
+    return finalValue;
 }
 
 export default toNumber;

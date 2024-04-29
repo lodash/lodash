@@ -117,6 +117,14 @@ xdescribe('clone methods', function () {
         assert.notStrictEqual(actual, cyclical[`v${LARGE_ARRAY_SIZE - 1}`]);
     });
 
+    it('`_.cloneDeep` should accept the `skipNativeCheck` flag', () => {
+        const object = { primitive: 'a', fn: () => 'b' };
+        const actual = cloneDeep(object, { skipNativeCheck: true });
+
+        expect(actual).not.toEqual(object);
+        expect(actual.primitive).not.toEqual(object.primitive);
+    });
+
     it('`_.cloneDeepWith` should provide `stack` to `customizer`', () => {
         let actual;
 

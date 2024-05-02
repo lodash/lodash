@@ -45,6 +45,11 @@ function memoize(func, resolver) {
         throw new TypeError('Expected a function');
     }
     const memoized = function (...args) {
+        if (args.length > 1 && (resolver === null || resolver === undefined)) {
+            throw new TypeError(
+                'Expected resolver argument to memoize when calling a memoized function with multiple parameters',
+            );
+        }
         const key = resolver ? resolver.apply(this, args) : args[0];
         const cache = memoized.cache;
 

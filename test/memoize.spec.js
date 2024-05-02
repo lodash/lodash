@@ -42,11 +42,17 @@ describe('memoize', () => {
         },
     });
 
-    it('should memoize results based on the first argument given', () => {
-        const memoized = memoize((a, b, c) => a + b + c);
+    it('should memoize results based on the first argument without a resolver if passed only one argument', () => {
+        const memoized = memoize((a) => a + 1);
 
-        expect(memoized(1, 2, 3)).toBe(6);
-        expect(memoized(1, 3, 5)).toBe(6);
+        expect(memoized(1)).toBe(2);
+        expect(memoized(2)).toBe(3);
+    });
+
+    it('should throw if attempting to use without resolver and passing multiple arguments', () => {
+        const memoized = memoize((a,b,c) => a+b+c);
+        expect(() => memoized(1,2,3))
+        .toThrowError(new TypeError('Expected resolver argument to memoize when calling a memoized function with multiple parameters'));
     });
 
     it('should support a `resolver`', () => {

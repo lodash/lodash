@@ -8,6 +8,6 @@ const freeGlobalThis = typeof globalThis === 'object' && globalThis !== null && 
 const freeSelf = typeof self === 'object' && self !== null && self.Object === Object && self
 
 /** Used as a reference to the global object. */
-const root = freeGlobalThis || freeGlobal || freeSelf || Function('return this')()
+const root = freeGlobalThis || freeGlobal || freeSelf
 
 export default root

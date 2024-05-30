@@ -57,4 +57,19 @@ describe('reduce', () => {
 
         expect(args).toEqual(expected);
     });
+
+    it('should provide correct `iteratee` arguments when iterating an object with `length` attribute', () => {
+        const expected = { a: 1, b: 2, length: 7 };
+
+        const actual = reduce(
+            expected,
+            function (collection, value, key) {
+                collection[key] = value;
+                return collection;
+            },
+            {},
+        );
+
+        expect(actual).toEqual(expected);
+    });
 });

@@ -13,7 +13,7 @@ function baseEach(collection, iteratee) {
   if (collection == null) {
     return collection
   }
-  if (!isArrayLike(collection)) {
+  if (!isArrayLike(collection) || collection.constructor?.name === 'Object') {
     return baseForOwn(collection, iteratee)
   }
   const length = collection.length

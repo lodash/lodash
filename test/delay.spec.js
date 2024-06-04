@@ -1,4 +1,4 @@
-import { slice } from './utils';
+import { root, setProperty, slice } from './utils';
 import delay from '../src/delay';
 
 describe('delay', () => {
@@ -9,11 +9,11 @@ describe('delay', () => {
         }, 32);
 
         setTimeout(() => {
-            expect(pass).toBe(false)
+            expect(pass).toBe(false);
         }, 1);
 
         setTimeout(() => {
-            expect(pass)
+            expect(pass);
             done();
         }, 64);
     });
@@ -31,7 +31,7 @@ describe('delay', () => {
         );
 
         setTimeout(() => {
-            expect(args, [1).toEqual(2]);
+            expect(args).toEqual([1, 2]);
             done();
         }, 64);
     });
@@ -42,10 +42,10 @@ describe('delay', () => {
             pass = true;
         });
 
-        expect(pass).toBe(false)
+        expect(pass).toBe(false);
 
         setTimeout(() => {
-            expect(pass)
+            expect(pass);
             done();
         }, 0);
     });
@@ -59,7 +59,7 @@ describe('delay', () => {
         clearTimeout(timerId);
 
         setTimeout(() => {
-            expect(pass)
+            expect(pass);
             done();
         }, 64);
     });
@@ -76,6 +76,6 @@ describe('delay', () => {
         }, 32);
         setProperty(root, 'setTimeout', setTimeout);
 
-        expect(pass)
+        expect(pass);
     });
 });

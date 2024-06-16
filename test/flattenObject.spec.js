@@ -96,4 +96,49 @@ describe('flattenObject', () => {
         };
         expect(flattenObject(input)).toEqual(expectedOutput);
     });
+
+    it('should handle array of objects', () => {
+        const input = [
+            {
+                a: {
+                    b: {
+                        c: {
+                            d: 1,
+                            e: {
+                                f: 2,
+                                g: 3,
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                a: [1, 2, 3],
+                b: {
+                    c: [4, 5],
+                    d: {
+                        e: [6],
+                    },
+                },
+            },
+        ];
+        const expectedOutput = [
+            { 'a.b.c.d': 1, 'a.b.c.e.f': 2, 'a.b.c.e.g': 3 },
+            { a: [1, 2, 3], 'b.c': [4, 5], 'b.d.e': [6] },
+        ];
+        expect(flattenObject(input)).toEqual(expectedOutput);
+    });
+
+    it('should flatten only objects in an array and leave other elements as they were', () => {
+        const input = [
+            'some string',
+            {
+                a: {
+                    b: 'value',
+                },
+            },
+        ];
+        const expectedOutput = ['some string', { 'a.b': 'value' }];
+        expect(flattenObject(input)).toEqual(expectedOutput);
+    });
 });

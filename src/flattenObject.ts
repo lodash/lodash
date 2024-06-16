@@ -32,18 +32,33 @@ import isNull from './isNull.js';
  *     f: 4,
  * }
  */
-function flattenObject(object: any, prefix: string = ''): { [key: string]: any } {
+function flatten(object: any, prefix: string = ''): { [key: string]: any } {
     return Object.keys(object).reduce((acc: { [key: string]: any }, key) => {
         const nestedKey = prefix ? `${prefix}.${key}` : key;
         if (Array.isArray(object[key])) {
             acc[nestedKey] = object[key];
         } else if (isObject(object[key]) && !isNull(object[key])) {
-            Object.assign(acc, flattenObject(object[key], nestedKey));
+            Object.assign(acc, flatten(object[key], nestedKey));
         } else {
             acc[nestedKey] = object[key];
         }
         return acc;
     }, {});
+}
+
+function flattenObject(input: any): { [key: string]: any } | { [key: string]: any }[] {
+    if (Array.isArray(input)) {
+        return input.map((obj) => {
+            if (isObject(obj)) {
+                return flatten(obj);
+            }
+            return obj;
+        });
+    }
+    if (isObject(input)) {
+        return flatten(input);
+    }
+    return input;
 }
 
 export default flattenObject;

@@ -37,6 +37,7 @@ const rsMiscLower = `(?:${rsLower}|${rsMisc})`
 const rsMiscUpper = `(?:${rsUpper}|${rsMisc})`
 const rsOptContrLower = `(?:${rsApos}(?:d|ll|m|re|s|t|ve))?`
 const rsOptContrUpper = `(?:${rsApos}(?:D|LL|M|RE|S|T|VE))?`
+const rsOptPlural = '(?:s)?'
 const reOptMod = `${rsModifier}?`
 const rsOptVar = `[${rsVarRange}]?`
 const rsOptJoin = `(?:${rsZWJ}(?:${[rsNonAstral, rsRegional, rsSurrPair].join('|')})${rsOptVar + reOptMod})*`
@@ -47,7 +48,7 @@ const rsEmoji = `(?:${[rsDingbat, rsRegional, rsSurrPair].join('|')})${rsSeq}`
 
 const reUnicodeWords = RegExp([
   `${rsUpper}?${rsLower}+${rsOptContrLower}(?=${[rsBreak, rsUpper, '$'].join('|')})`,
-  `${rsMiscUpper}+${rsOptContrUpper}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
+  `${rsMiscUpper}+${rsOptContrUpper}${rsOptPlural}(?=${[rsBreak, rsUpper + rsMiscLower, '$'].join('|')})`,
   `${rsUpper}?${rsMiscLower}+${rsOptContrLower}`,
   `${rsUpper}+${rsOptContrUpper}`,
   rsOrdUpper,

@@ -11,6 +11,7 @@ import createAssigner from './.internal/createAssigner.js';
  * sources overwrite property assignments of previous sources.
  *
  * **Note:** This method mutates `object`.
+ * If multiple source are to be used and they are not intended to be mutated, use in conjunction with `_.clone` or `_.cloneDeep` on source objects.
  *
  * @since 0.5.0
  * @category Object

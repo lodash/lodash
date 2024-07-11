@@ -16,8 +16,8 @@ const hasOwnProperty = objectProto.hasOwnProperty;
  *
  * @since 0.1.0
  * @category Object
- * @param {Object} object The destination object.
- * @param {...Object} [sources] The source objects.
+ * @param {Object} object The destination object. (the object without the default properties)
+ * @param {...Object} [sources] The source objects. (the object/objects denoting the default properties)
  * @returns {Object} Returns `object`.
  * @see defaultsDeep
  * @example

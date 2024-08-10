@@ -1,8 +1,7 @@
-import lodashStable from 'lodash';
 import { _, args } from './utils';
 
 describe('union methods', () => {
-    lodashStable.each(['union', 'unionBy', 'unionWith'], (methodName) => {
+    ['union', 'unionBy', 'unionWith'].forEach((methodName) => {
         const func = _[methodName];
 
         it(`\`_.${methodName}\` should return the union of two arrays`, () => {

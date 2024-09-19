@@ -39,7 +39,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * isEmpty({ 'a': 1 })
  * // => false
  */
- function isEmpty(value) {
+ function isEmpty(value: any): boolean {
     if (value == null || value.length === 0) {
       return true;
     }

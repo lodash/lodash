@@ -13,7 +13,7 @@ describe('reverse', () => {
         const actual = reverse(array);
 
         expect(actual).toBe(array);
-        expect(array, [3, 2).toEqual(1]);
+        expect(array).toEqual([3, 2, 1]);
     });
 
     it('should return the wrapped reversed `array`', () => {

@@ -8603,6 +8603,33 @@
     });
 
     /**
+     * Samples an element from the collection based on weights.
+     * Higher weights increase the likelihood of selecting an element.
+     * 
+     * @static
+     * @memberOf _
+     * @since 4.17.22
+     * @category Collection
+     * @param {Object} collection The collection to sample from, where keys are items and values are their weights.
+     * @returns {*} Returns a randomly sampled key from the collection based on the provided weights. Higher weights increase the likelihood of selecting an element.
+     * @example
+     *
+     * _.weightedSample({ a: 1, b: 2, c: 3 });
+     * // => 'a', 'b', or 'c' based on weights.
+     */
+    function weightedSample(collection) {
+      if (!collection || !isObject(collection) || isEmpty(collection)) return undefined;
+      var shuffled = Object.keys(collection).reduce(function(acc, key) {
+        var weight = collection[key];
+        for (var i = 0; i < weight; i++) {
+          acc.push(key);
+        }
+        return acc;
+      }, []);
+      return sample(shuffleSelf(shuffled));
+    }
+
+    /**
      * Creates an array of unique values that is the
      * [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
      * of the given arrays. The order of result values is determined by the order
@@ -16930,6 +16957,7 @@
     lodash.uniqueId = uniqueId;
     lodash.upperCase = upperCase;
     lodash.upperFirst = upperFirst;
+    lodash.weightedSample = weightedSample;
 
     // Add aliases.
     lodash.each = forEach;

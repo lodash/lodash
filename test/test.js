@@ -26707,7 +26707,8 @@
       'truncate',
       'unescape',
       'upperCase',
-      'upperFirst'
+      'upperFirst',
+      'weightedSample',
     ];
 
     lodashStable.each(funcs, function(methodName) {
@@ -26952,7 +26953,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(317);
 
       var arrays = lodashStable.map(falsey, stubArray);
 
@@ -26970,7 +26971,7 @@
         else if (methodName == 'pull' || methodName == 'pullAll') {
           expected = falsey;
         }
-        if (lodashStable.includes(returnArrays, methodName) && methodName != 'sample') {
+        if (lodashStable.includes(returnArrays, methodName) && !["sample", "weightedSample"].includes(methodName)) {
           assert.deepEqual(actual, expected, '_.' + methodName + ' returns an array');
         }
         assert.ok(true, '`_.' + methodName + '` accepts falsey arguments');
@@ -27064,6 +27065,54 @@
     });
   }());
 
+  /*--------------------------------------------------------------------------*/
+  QUnit.module('lodash.weightedSample');
+
+  (function () {
+    QUnit.test('should sample a weighted object', function (assert) {
+      assert.expect(1);
+      var object = { 'a': 0.2, 'b': 0.5, 'c': 0.3 };
+      var actual = _.weightedSample(object);
+      assert.ok(['a', 'b', 'c'].includes(actual));
+    });
+
+    QUnit.test('should return undefined for empty object', function (assert) {
+      assert.expect(1);
+      var object = {};
+      var actual = _.weightedSample(object);
+      assert.strictEqual(actual, undefined);
+    });
+
+    QUnit.test('should return undefined for non-object input', function (assert) {
+      assert.expect(6);
+      var inputs = [null, undefined, 42, 'string', [], function () { }];
+      inputs.forEach(function (input) {
+        var actual = _.weightedSample(input);
+        assert.strictEqual(actual, undefined);
+      });
+    });
+
+    QUnit.test('should handle weights summing to more than 1', function (assert) {
+      assert.expect(1);
+      var object = { 'a': 2, 'b': 3, 'c': 5 };
+      var actual = _.weightedSample(object);
+      assert.ok(['a', 'b', 'c'].includes(actual));
+    });
+
+    QUnit.test('should handle zero weights', function (assert) {
+      assert.expect(1);
+      var object = { 'a': 0, 'b': 1, 'c': 0 };
+      var actual = _.weightedSample(object);
+      assert.strictEqual(actual, 'b');
+    });
+
+    QUnit.test('should handle single key object', function (assert) {
+      assert.expect(1);
+      var object = { 'a': 1 };
+      var actual = _.weightedSample(object);
+      assert.strictEqual(actual, 'a');
+    });
+  }());
   /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;

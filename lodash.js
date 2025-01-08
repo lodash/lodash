@@ -8619,14 +8619,24 @@
      */
     function weightedSample(collection) {
       if (!collection || !isObject(collection) || isEmpty(collection)) return undefined;
-      var shuffled = Object.keys(collection).reduce(function(acc, key) {
-        var weight = collection[key];
-        for (var i = 0; i < weight; i++) {
-          acc.push(key);
+    
+      var totalWeight = 0;
+      for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+          totalWeight += collection[key];
         }
-        return acc;
-      }, []);
-      return sample(shuffleSelf(shuffled));
+      }
+    
+      var randomIndex = nativeFloor(nativeRandom() * totalWeight);
+    
+      for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+          randomIndex -= collection[key];
+          if (randomIndex < 0) return key;
+        }
+      }
+    
+      return undefined; // In case something goes wrong (shouldn't happen)
     }
 
     /**

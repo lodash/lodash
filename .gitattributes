@@ -1,2 +1,2 @@
 * text=auto
-*.lockb binary diff=lockb
+bun.lock diff=json

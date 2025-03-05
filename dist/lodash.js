@@ -8454,8 +8454,52 @@
     function uniq(array) {
       return (array && array.length) ? baseUniq(array) : [];
     }
-
     /**
+     * This method is like `_.uniqBy` except that it skips elements where the
+     * specified property path doesn't exist. When using a property path string 
+     * as the iteratee, objects that don't have that path will be excluded from
+     * the result entirely.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.17.22
+     * @category Array
+     * @param {Array} array The array to inspect.
+     * @param {Function|string} [iteratee=_.identity] The iteratee invoked per element
+     *  or the property path to check for existence.
+     * @returns {Array} Returns the new duplicate free array containing only objects
+     *  where the property path exists.
+     * @example
+     *
+     * // With flat and nested objects
+     * var objects = [
+     *   { name: 'Foo' },
+     *   { name: 'Bar' },
+     *   { person: { name: 'Foo' } },
+     *   { person: { name: 'Bar' } }
+     * ];
+     * 
+     * // uniqByExisting only includes objects where property path exists
+     * _.uniqByExisting(objects, 'person.name');
+     * // => [{ person: { name: 'Foo' } }, { person: { name: 'Bar' } }]
+     */
+    function uniqByExisting(array, iteratee) {
+      if (!(array && array.length)) {
+        return [];
+      }
+      
+      var func = getIteratee(iteratee, 2);
+      var isPropertyPath = typeof iteratee === 'string';
+      
+      var filteredArray = isPropertyPath
+        ? arrayFilter(array, function(value) {
+            return func(value) !== undefined;
+          })
+        : array;
+      
+      return baseUniq(filteredArray, func);
+    }
+        /**
      * This method is like `_.uniq` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the criterion by which
      * uniqueness is computed. The order of result values is determined by the
@@ -8481,7 +8525,7 @@
     function uniqBy(array, iteratee) {
       return (array && array.length) ? baseUniq(array, getIteratee(iteratee, 2)) : [];
     }
-
+    
     /**
      * This method is like `_.uniq` except that it accepts `comparator` which
      * is invoked to compare elements of `array`. The order of result values is

@@ -14696,6 +14696,7 @@
      * 
      * _.startCase('3d');
      * // => '3D'
+     * 
      */
     var startCase = createCompounder(function(result, word, index) {
       return result + (index ? (result.isNaN ? ' ' : '') : '') + upperFirst(word);

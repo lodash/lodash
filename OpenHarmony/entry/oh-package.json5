@@ -1,0 +1,18 @@
+{
+  "license": "ISC",
+  "devDependencies": {},
+  "author": "",
+  "name": "entry",
+  "ohos": {
+    "org": "huawei",
+    "directoryLevel": "module",
+    "buildTool": "hvigor"
+  },
+  "description": "example description",
+  "main": "",
+  "repository": {},
+  "version": "2.0.0",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

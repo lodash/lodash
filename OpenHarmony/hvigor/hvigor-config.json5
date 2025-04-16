@@ -1,0 +1,18 @@
+{
+  "hvigorVersion": "3.0.9",
+  "dependencies": {
+    "@ohos/hvigor-ohos-plugin": "3.0.9"
+  },
+  "execution": {
+    // "daemon": true,                          /* Enable daemon compilation. Default: true */
+    // "incremental": true,                     /* Enable incremental compilation. Default: true */
+    // "parallel": true,                        /* Enable parallel compilation. Default: true */
+    // "typeCheck": false,                      /* Enable typeCheck. Default: false */
+  },
+  "logging": {
+    // "level": "info"                          /* Define the log level. Value: [ "debug" | "info" | "warn" | "error" ]. Default: "info" */
+  },
+  "debugging": {
+    // "stacktrace": false                      /* Disable stacktrace compilation. Default: false */
+  }
+}

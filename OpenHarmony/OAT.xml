@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <oatconfig>
+        <filefilterlist>
+            <filefilter name="binaryFileTypePolicyFilter" desc="Filters for resources files policies">
+                <filteritem type="filename" name="icon.png" desc="hvigor构建脚本，DevEco Studio自动生成，不手动修改"/>
+                <filteritem type="filename" name="app_icon.png" desc="hvigor构建脚本，DevEco Studio自动生成，不手动修改"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigor/hvigor-wrapper.js" type="filepath"/>
+                <filteritem type="filename" name="*.json5" desc="hvigor配置文件，DevEco Studio自动生成，不手动修改"/>
+            </filefilter>
+            <filefilter name="copyrightPolicyFilter" desc="Filters for compatibility，license header policies">
+                <filteritem type="filename" name="hvigorfile.ts" desc="hvigor构建脚本，DevEco Studio自动生成，不手动修改"/>
+                <filteritem type="filename" name="*.json5" desc="hvigor配置文件，DevEco Studio自动生成，不手动修改"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigorw" type="filename"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigorw.bat" type="filename"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigor/hvigor-wrapper.js" type="filepath"/>
+            </filefilter>
+            <filefilter name="defaultPolicyFilter" desc="Filters for compatibility，license header policies">
+                <filteritem type="filename" name="hvigorfile.ts" desc="hvigor构建脚本，DevEco Studio自动生成，不手动修改"/>
+                <filteritem type="filename" name="*.json5" desc="hvigor配置文件，DevEco Studio自动生成，不手动修改"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigorw" type="filename"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigorw.bat" type="filename"/>
+                <filteritem desc="hvigor配置文件，DevEco Studio自动生成，不手动修改" name="hvigor/hvigor-wrapper.js" type="filepath"/>
+            </filefilter>
+        </filefilterlist>
+        <policylist>
+            <policy name="projectPolicy" desc="">
+                <policyitem type="license" name="MIT" path="LICENSE" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="MIT license"/>
+                <policyitem type="license" name="MIT" path="NOTICE" rule="may" group="defaultGroup" filefilter="defaultPolicyFilter" desc="MIT license"/>
+            </policy>
+        </policylist>
+    </oatconfig>
+</configuration>

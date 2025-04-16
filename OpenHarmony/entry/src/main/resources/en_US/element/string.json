@@ -1,0 +1,196 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "Display_running_results",
+      "value": "Display running results:"
+    },
+    {
+      "name": "Split_the_array",
+      "value": "Split the array into multiple length blocks to form a new array"
+    },
+    {
+      "name": "Filter_out_false",
+      "value": "Filter out false values from the array to form a new array"
+    },
+    {
+      "name": "Display_the_array",
+      "value": "Display the array after deduplication"
+    },
+    {
+      "name": "Display_the_newly",
+      "value": "Display the newly generated array after merging multiple arrays"
+    },
+    {
+      "name": "Traverse_every_element",
+      "value": "Traverse every element in the collection"
+    },
+    {
+      "name": "Display_a_random",
+      "value": "Display a random element in the collection:"
+    },
+    {
+      "name": "Obtain_a_random",
+      "value": "Obtain a random element from the set"
+    },
+    {
+      "name": "Display_new_flattened",
+      "value": "Display new flattened array:"
+    },
+    {
+      "name": "Display_the_newy",
+      "value": "Display the new flattened array"
+    },
+    {
+      "name": "The_number_of_milliseconds",
+      "value": "The number of milliseconds from the Unix era (1 January 1970 00:00:00 UTC) until now: "
+    },
+    {
+      "name": "Obtain_the_number",
+      "value": "Obtain the number of milliseconds from the Unix era (1 January 1970 00:00:00 UTC) until now"
+    },
+    {
+      "name": "Return_upper_limit",
+      "value": "Return a new function with an upper limit"
+    },
+    {
+      "name": "Return_curry_function",
+      "value": "Return the new curry function"
+    },
+    {
+      "name": "Return_debounce_function",
+      "value": "Return a new debounce function"
+    },
+    {
+      "name": "Call_func_after",
+      "value": "Call func after delaying wait milliseconds and return the timer id"
+    },
+    {
+      "name": "Force_non_array",
+      "value": "Force non array arrays to arrays"
+    },
+    {
+      "name": "Obtain_the_copied",
+      "value": "Obtain the copied value"
+    },
+    {
+      "name": "Compare_the_values",
+      "value": "Compare the values of the two"
+    },
+    {
+      "name": "Check_if_the_value",
+      "value": "Check if the value is an ArrayBuffer object"
+    },
+    {
+      "name": "Check_an_object",
+      "value": "Check if the value is of the original Number numerical type or an object"
+    },
+    {
+      "name": "Perform_addition",
+      "value": "Perform addition operation (10+7)"
+    },
+    {
+      "name": "Perform_rounding",
+      "value": "Perform rounding to a few decimal places (6.004 rounding up to 2 decimal places)"
+    },
+    {
+      "name": "Average_value",
+      "value": "Average value of array:"
+    },
+    {
+      "name": "Calculate_the",
+      "value": "Calculate the average value of the array"
+    },
+    {
+      "name": "Get_values_limited",
+      "value": "Get values limited to one interval"
+    },
+    {
+      "name": "Check_certain_range",
+      "value": "Check if a value falls within a certain range"
+    },
+    {
+      "name": "Generate_certain_intervals",
+      "value": "Generate a number that includes a range between certain intervals"
+    },
+    {
+      "name": "Traverse_target_object",
+      "value": "Traverse and inherit the enumerable properties of the allocation source object onto the target object"
+    },
+    {
+      "name": "Accessing_certain_conditions",
+      "value": "Accessing each value in the collection and obtaining matching elements under certain conditions"
+    },
+    {
+      "name": "Traverse_objects",
+      "value": "Traverse objects"
+    },
+    {
+      "name": "Create_enumerable_properties",
+      "value": "Create an array named after the object itself and its inheritable enumerable properties"
+    },
+    {
+      "name": "Obtain_values_based_object",
+      "value": "Obtain values based on the path of the object"
+    },
+    {
+      "name": "Create_key_values",
+      "value": "Create an object with inverted key values"
+    },
+    {
+      "name": "Convert_string",
+      "value": "Convert string to camel hump format"
+    },
+    {
+      "name": "Convert_rest_to_lowercase",
+      "value": "Convert the first letter of the string to uppercase and the rest to lowercase"
+    },
+    {
+      "name": "Convert_the_characters",
+      "value": "Convert the characters'&','<','>',' ', and' 'of a given string into their corresponding HTML entities"
+    },
+    {
+      "name": "Convert_kebab_case",
+      "value": "Convert string to kebab case"
+    },
+    {
+      "name": "Fill_right_sides",
+      "value": "Fill in characters from the left and right sides"
+    },
+    {
+      "name": "Convert_cardinality",
+      "value": "Convert a string to an integer of a specified cardinality"
+    },
+    {
+      "name": "Get_corresponding_content",
+      "value": "Get a new function and use it as a parameter to filter out the corresponding content"
+    },
+    {
+      "name": "Check_be_returned",
+      "value": "Check the value to determine if a default value should be returned"
+    },
+    {
+      "name": "Get_parameter_received",
+      "value": "Get the first parameter received"
+    },
+    {
+      "name": "Create_function_parameter",
+      "value": "Create a function that returns the nth parameter"
+    },
+    {
+      "name": "Get_an_empty_object",
+      "value": "Get an empty object"
+    }
+  ]
+}

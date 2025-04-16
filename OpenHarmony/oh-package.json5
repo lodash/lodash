@@ -1,0 +1,18 @@
+{
+  "license": "ISC",
+  "devDependencies": {
+    "@ohos/hypium": "1.0.6"
+  },
+  "author": "",
+  "name": "guava",
+  "ohos": {
+    "org": "huawei",
+    "directoryLevel": "project",
+    "buildTool": "hvigor"
+  },
+  "description": "example description",
+  "main": "",
+  "repository": {},
+  "version": "2.0.0",
+  "dependencies": {}
+}

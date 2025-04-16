@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# ----------------------------------------------------------------------------
+#  Hvigor startup script, version 1.0.0
+#
+#  Required ENV vars:
+#  ------------------
+#    NODE_HOME - location of a Node home dir
+#    or
+#    Add /usr/local/nodejs/bin to the PATH environment variable
+# ----------------------------------------------------------------------------
+
+HVIGOR_APP_HOME="`pwd -P`"
+HVIGOR_WRAPPER_SCRIPT=${HVIGOR_APP_HOME}/hvigor/hvigor-wrapper.js
+warn() {
+	echo ""
+	echo -e "\033[1;33m`date '+[%Y-%m-%d %H:%M:%S]'`$@\033[0m"
+}
+
+error() {
+	echo ""
+	echo -e "\033[1;31m`date '+[%Y-%m-%d %H:%M:%S]'`$@\033[0m"
+}
+
+fail() {
+	error "$@"
+	exit 1
+}
+
+# Determine node to start hvigor wrapper script
+if [ -n "${NODE_HOME}" ];then
+   EXECUTABLE_NODE="${NODE_HOME}/bin/node"
+   if [ ! -x "$EXECUTABLE_NODE" ];then
+       fail "ERROR: NODE_HOME is set to an invalid directory,check $NODE_HOME\n\nPlease set NODE_HOME in your environment to the location where your nodejs installed"
+   fi
+else
+   EXECUTABLE_NODE="node"
+   which ${EXECUTABLE_NODE} > /dev/null 2>&1 || fail "ERROR: NODE_HOME is not set and not 'node' command found in your path"
+fi
+
+# Check hvigor wrapper script
+if [ ! -r "$HVIGOR_WRAPPER_SCRIPT" ];then
+	fail "ERROR: Couldn't find hvigor/hvigor-wrapper.js in ${HVIGOR_APP_HOME}"
+fi
+
+# start hvigor-wrapper script
+exec "${EXECUTABLE_NODE}" \
+	"${HVIGOR_WRAPPER_SCRIPT}" "$@"

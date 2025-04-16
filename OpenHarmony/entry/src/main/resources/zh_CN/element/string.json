@@ -1,0 +1,196 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "lodashDemo"
+    },
+    {
+      "name": "Display_running_results",
+      "value": "显示运行结果:"
+    },
+    {
+      "name": "Split_the_array",
+      "value": "将数组拆分成多个长度的区块，组成一个新数组"
+    },
+    {
+      "name": "Filter_out_false",
+      "value": "将数组过滤掉假值組成新数组"
+    },
+    {
+      "name": "Display_the_array",
+      "value": "展示去重后的数组"
+    },
+    {
+      "name": "Display_the_newly",
+      "value": "展示合并多个数组后新生成的数组"
+    },
+    {
+      "name": "Traverse_every_element",
+      "value": "遍历集合中的每个元素"
+    },
+    {
+      "name": "Display_a_random",
+      "value": "显示集合中一个随机元素:"
+    },
+    {
+      "name": "Obtain_a_random",
+      "value": "将获得集合中一个随机元素"
+    },
+    {
+      "name": "Display_new_flattened",
+      "value": "显示新扁平化数组:"
+    },
+    {
+      "name": "Display_the_newy",
+      "value": "展示新扁平化数组"
+    },
+    {
+      "name": "The_number_of_milliseconds",
+      "value": "Unix 纪元 (1 January 1970 00:00:00 UTC) 直到现在的毫秒数: "
+    },
+    {
+      "name": "Obtain_the_number",
+      "value": "获得 Unix 纪元 (1 January 1970 00:00:00 UTC) 直到现在的毫秒数"
+    },
+    {
+      "name": "Return_upper_limit",
+      "value": "返回新的有上限的函数"
+    },
+    {
+      "name": "Return_curry_function",
+      "value": "返回新的柯里化（curry）函数'"
+    },
+    {
+      "name": "Return_debounce_function",
+      "value": "返回新的去抖动函数"
+    },
+    {
+      "name": "Call_func_after",
+      "value": "延迟wait毫秒后调用 func,返回计时器id"
+    },
+    {
+      "name": "Force_non_array",
+      "value": "将非数组数组强制转为数组"
+    },
+    {
+      "name": "Obtain_the_copied",
+      "value": "获取拷贝后的值"
+    },
+    {
+      "name": "Compare_the_values",
+      "value": "比较两者的值"
+    },
+    {
+      "name": "Check_if_the_value",
+      "value": "检查值是否是ArrayBuffer对象"
+    },
+    {
+      "name": "Check_an_object",
+      "value": "检查值是否是原始Number数值型或者对象"
+    },
+    {
+      "name": "Perform_addition",
+      "value": "进行加法运算（10+7）"
+    },
+    {
+      "name": "Perform_rounding",
+      "value": "进行保留几位小数运算（6.004向上舍入保留2位小數）"
+    },
+    {
+      "name": "Average_value",
+      "value": "数组平均值："
+    },
+    {
+      "name": "Calculate_the",
+      "value": "求数组平均值"
+    },
+    {
+      "name": "Get_values_limited",
+      "value": "获取限制在一个区间之间的值"
+    },
+    {
+      "name": "Check_certain_range",
+      "value": "检查一个数值是否在某一区间之内"
+    },
+    {
+      "name": "Generate_certain_intervals",
+      "value": "产生一个包括某一区间之间的数"
+    },
+    {
+      "name": "Traverse_target_object",
+      "value": "遍历并继承分配来源对象的可枚举属性到目标对象上"
+    },
+    {
+      "name": "Accessing_certain_conditions",
+      "value": "访问集合的每个值,在一定条件下获取匹配的元素"
+    },
+    {
+      "name": "Traverse_objects",
+      "value": "遍历对象"
+    },
+    {
+      "name": "Create_enumerable_properties",
+      "value": "创建一个object自身和继承的可枚举属性名为数组"
+    },
+    {
+      "name": "Obtain_values_based_object",
+      "value": "根据对象的path路径获取值"
+    },
+    {
+      "name": "Create_key_values",
+      "value": "创建一个object键值倒置后的对象"
+    },
+    {
+      "name": "Convert_string",
+      "value": "转换字符串为驼峰写法"
+    },
+    {
+      "name": "Convert_rest_to_lowercase",
+      "value": "转换字符串首字母为大写，剩下为小写"
+    },
+    {
+      "name": "Convert_the_characters",
+      "value": "将给定字符串的字符“&”，“ <”，“>”，“”和“‘”转换为它们相应的HTML实体"
+    },
+    {
+      "name": "Convert_kebab_case",
+      "value": "转换字符串为kebab case"
+    },
+    {
+      "name": "Fill_right_sides",
+      "value": "从左侧和右侧填充字符"
+    },
+    {
+      "name": "Convert_cardinality",
+      "value": "转换字符串为指定基数的整数"
+    },
+    {
+      "name": "Get_corresponding_content",
+      "value": "获取新函数，并作为filter的参数筛选出对应的内容"
+    },
+    {
+      "name": "Check_be_returned",
+      "value": "检查值，以确定一个默认值是否应被返回"
+    },
+    {
+      "name": "Get_parameter_received",
+      "value": "获取接收的第一个参数"
+    },
+    {
+      "name": "Create_function_parameter",
+      "value": "创建一个函数，这个函数返回第n个参数"
+    },
+    {
+      "name": "Get_an_empty_object",
+      "value": "获取一个空对象"
+    }
+  ]
+}

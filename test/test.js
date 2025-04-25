@@ -21482,9 +21482,10 @@
   QUnit.module('lodash.sumBy');
 
   QUnit.test('should sum boolean values as numbers', function(assert) {
-    assert.expect(2);
+    assert.expect(3);
 
     assert.strictEqual(_.sumBy([{ bool: true }], 'bool'), 1);
+    assert.strictEqual(_.sumBy([{ bool: false }], 'bool'), 0);
     assert.strictEqual(_.sumBy([{ bool: true }, {bool: true}], 'bool'), 2);
   });
 

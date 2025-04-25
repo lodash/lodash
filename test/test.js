@@ -21481,6 +21481,13 @@
 
   QUnit.module('lodash.sumBy');
 
+  QUnit.test('should sum boolean values as numbers', function(assert) {
+    assert.expect(2);
+
+    assert.strictEqual(_.sumBy([{ bool: true }], 'bool'), 1);
+    assert.strictEqual(_.sumBy([{ bool: true }, {bool: true}], 'bool'), 2);
+  });
+
   (function() {
     var array = [6, 4, 2],
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];
@@ -21494,7 +21501,7 @@
 
       assert.deepEqual(actual, 6);
     });
-
+    
     QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 

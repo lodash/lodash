@@ -21501,7 +21501,7 @@
 
       assert.deepEqual(actual, 6);
     });
-    
+
     QUnit.test('should provide correct `iteratee` arguments', function(assert) {
       assert.expect(1);
 

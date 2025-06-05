@@ -20467,6 +20467,12 @@
 
       assert.strictEqual(_.size({ 'length': '0' }), 1);
     });
+
+    QUnit.test('should return string length for string values', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.size('hi'), 2);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

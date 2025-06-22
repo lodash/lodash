@@ -6,41 +6,52 @@
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  */
+
 ;(function() {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
+  // 声明一个 undefined 变量，防止在全局作用域中被覆盖
   var undefined;
 
   /** Used as the semantic version number. */
+  // 声明一个 VERSION 变量，用于存储 lodash 的版本号
   var VERSION = '4.17.21';
 
   /** Used as the size to enable large array optimizations. */
+  // 声明一个 LARGE_ARRAY_SIZE 变量，用于存储大型数组优化的阈值
   var LARGE_ARRAY_SIZE = 200;
 
   /** Error message constants. */
+  // 声明一个 CORE_ERROR_TEXT 变量，用于存储 core-js 使用不支持的错误信息
   var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.',
       FUNC_ERROR_TEXT = 'Expected a function',
       INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
 
   /** Used to stand-in for `undefined` hash values. */
+  // 声明一个 HASH_UNDEFINED 变量，用于存储 undefined 的占位符
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
 
   /** Used as the maximum memoize cache size. */
+  // 声明一个 MAX_MEMOIZE_SIZE 变量，用于存储 memoize 缓存的最大大小
   var MAX_MEMOIZE_SIZE = 500;
 
   /** Used as the internal argument placeholder. */
+  // 声明一个 PLACEHOLDER 变量，用于存储内部占位符
   var PLACEHOLDER = '__lodash_placeholder__';
 
   /** Used to compose bitmasks for cloning. */
+  // 声明一个 CLONE_DEEP_FLAG 变量，用于存储深度克隆的标志
   var CLONE_DEEP_FLAG = 1,
       CLONE_FLAT_FLAG = 2,
       CLONE_SYMBOLS_FLAG = 4;
 
   /** Used to compose bitmasks for value comparisons. */
+  // 声明一个 COMPARE_PARTIAL_FLAG 变量，用于存储部分比较的标志
   var COMPARE_PARTIAL_FLAG = 1,
       COMPARE_UNORDERED_FLAG = 2;
 
   /** Used to compose bitmasks for function metadata. */
+  // 声明一个 WRAP_BIND_FLAG 变量，用于存储绑定函数的标志
   var WRAP_BIND_FLAG = 1,
       WRAP_BIND_KEY_FLAG = 2,
       WRAP_CURRY_BOUND_FLAG = 4,
@@ -53,30 +64,36 @@
       WRAP_FLIP_FLAG = 512;
 
   /** Used as default options for `_.truncate`. */
+  // 声明一个 DEFAULT_TRUNC_LENGTH 变量，用于存储 truncate 默认长度
   var DEFAULT_TRUNC_LENGTH = 30,
       DEFAULT_TRUNC_OMISSION = '...';
 
   /** Used to detect hot functions by number of calls within a span of milliseconds. */
+  // 声明一个 HOT_COUNT 变量，用于存储热函数的调用次数阈值
   var HOT_COUNT = 800,
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees. */
+  // 声明一个 LAZY_FILTER_FLAG 变量，用于存储 lazy 过滤器的标志
   var LAZY_FILTER_FLAG = 1,
       LAZY_MAP_FLAG = 2,
       LAZY_WHILE_FLAG = 3;
 
   /** Used as references for various `Number` constants. */
+  // 声明一个 INFINITY 变量，用于存储无穷大
   var INFINITY = 1 / 0,
       MAX_SAFE_INTEGER = 9007199254740991,
       MAX_INTEGER = 1.7976931348623157e+308,
       NAN = 0 / 0;
 
   /** Used as references for the maximum length and index of an array. */
+  // 声明一个 MAX_ARRAY_LENGTH 变量，用于存储数组的最大长度
   var MAX_ARRAY_LENGTH = 4294967295,
       MAX_ARRAY_INDEX = MAX_ARRAY_LENGTH - 1,
       HALF_MAX_ARRAY_LENGTH = MAX_ARRAY_LENGTH >>> 1;
 
   /** Used to associate wrap methods with their bit flags. */
+  // 声明一个 wrapFlags 变量，用于存储 wrap 方法的标志
   var wrapFlags = [
     ['ary', WRAP_ARY_FLAG],
     ['bind', WRAP_BIND_FLAG],
@@ -90,6 +107,7 @@
   ];
 
   /** `Object#toString` result references. */
+  // 声明一个 argsTag 变量，用于存储 arguments 对象的标签
   var argsTag = '[object Arguments]',
       arrayTag = '[object Array]',
       asyncTag = '[object AsyncFunction]',
@@ -216,6 +234,7 @@
   var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
 
   /** Used to compose unicode character classes. */
+  // 匹配各种不常见的字符不如0宽字符，emoji
   var rsAstralRange = '\\ud800-\\udfff',
       rsComboMarksRange = '\\u0300-\\u036f',
       reComboHalfMarksRange = '\\ufe20-\\ufe2f',
@@ -433,6 +452,7 @@
   var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
   /** Used as a reference to the global object. */
+  // Function('return this')(); 保证代码在严格模式下也能返回全局this 'use strict'
   var root = freeGlobal || freeSelf || Function('return this')();
 
   /** Detect free variable `exports`. */
@@ -17206,4 +17226,5 @@
     // Export to the global object.
     root._ = _;
   }
+  // 通过this 的调用，在windwo 或者 exports 上挂载 _ 对象
 }.call(this));

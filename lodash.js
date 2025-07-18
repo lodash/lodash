@@ -11957,12 +11957,13 @@
      * _.isNaN(undefined);
      * // => false
      */
-    function isNaN(value) {
-      // An `NaN` primitive is the only value that is not equal to itself.
-      // Perform the `toStringTag` check first to avoid errors with some
-      // ActiveX objects in IE.
-      return isNumber(value) && value != +value;
-    }
+function isNaN(value) {
+  return typeof value === 'number' && value !== value ||
+    (isObjectLike(value) &&
+     baseGetTag(value) === numberTag &&
+     typeof value.valueOf() === 'number' &&
+     value.valueOf() !== value.valueOf());
+}
 
     /**
      * Checks if `value` is a pristine native function.

@@ -11293,18 +11293,24 @@
 
   (function() {
     QUnit.test('should return `true` for numbers', function(assert) {
-      assert.expect(3);
+      assert.expect(2);
 
       assert.strictEqual(_.isNumber(0), true);
       assert.strictEqual(_.isNumber(Object(0)), true);
-      assert.strictEqual(_.isNumber(NaN), true);
+    });
+
+    QUnit.test('should return `false` for NaNs', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.isNumber(NaN), false);
+      assert.strictEqual(_.isNumber(Object(NaN)), false);
     });
 
     QUnit.test('should return `false` for non-numbers', function(assert) {
       assert.expect(12);
 
       var expected = lodashStable.map(falsey, function(value) {
-        return typeof value == 'number';
+        return typeof value == 'number' && value === value;
       });
 
       var actual = lodashStable.map(falsey, function(value, index) {
@@ -25846,7 +25852,7 @@
 
       _.zipObjectDeep([keyToTest + '.a'], ['newValue']);
       // Can't access plain `a` as it's not defined and test fails
-      assert.notEqual(root['a'], 'newValue');
+      assert.notEqual(root.a, 'newValue');
     });
 
     QUnit.test('zipObjectDeep is not overwriting ' + keyToTest + ' on vars', function (assert) {
@@ -25855,20 +25861,20 @@
       const b = 'oldValue'
       _.zipObjectDeep([keyToTest + '.b'], ['newValue']);
       assert.equal(b, 'oldValue');
-      assert.notEqual(root['b'], 'newValue');
+      assert.notEqual(root.b, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['b']);
+      assert.notOk(root.b);
     });
 
     QUnit.test('zipObjectDeep is not overwriting global.' + keyToTest, function (assert) {
       assert.expect(2);
 
       _.zipObjectDeep([root + '.' + keyToTest + '.c'], ['newValue']);
-      assert.notEqual(root['c'], 'newValue');
+      assert.notEqual(root.c, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['c']);
+      assert.notOk(root.c);
     });
   });
 

@@ -3766,7 +3766,7 @@
           if (isArray(iteratee)) {
             return function(value) {
               return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
-            }
+            };
           }
           return iteratee;
         });
@@ -11961,7 +11961,8 @@
       // An `NaN` primitive is the only value that is not equal to itself.
       // Perform the `toStringTag` check first to avoid errors with some
       // ActiveX objects in IE.
-      return isNumber(value) && value != +value;
+      return (typeof value == 'number' ||
+        (isObjectLike(value) && baseGetTag(value) == numberTag)) && value != +value;
     }
 
     /**
@@ -12069,8 +12070,9 @@
      * // => false
      */
     function isNumber(value) {
-      return typeof value == 'number' ||
-        (isObjectLike(value) && baseGetTag(value) == numberTag);
+      return typeof value == 'number'
+        ? value === value
+        : (isObjectLike(value) && baseGetTag(value) == numberTag && value.valueOf() === value.valueOf());
     }
 
     /**

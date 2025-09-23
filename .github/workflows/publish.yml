@@ -1,0 +1,81 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-*'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install lodash-cli
+        run: npm install -g lodash-cli
+
+      - name: Build distribution files
+        run: npm run build
+
+      - name: Generate modular npm package
+        run: |
+          mkdir -p npm-package
+          lodash modularize exports=npm -o npm-package-temp
+
+          # Flatten the modular packages into individual files
+          for dir in npm-package-temp/lodash.*; do
+            if [ -d "$dir" ]; then
+              module_name=$(basename "$dir" | sed 's/^lodash\.//')
+              cp "$dir/index.js" "npm-package/${module_name}.js"
+            fi
+          done
+
+          # Copy built files
+          npm run build:main-modules npm-package
+          npm run build:fp-modules npm-package
+          cp dist/lodash.js npm-package/
+          cp dist/lodash.min.js npm-package/
+          cp LICENSE npm-package/
+
+      - name: Generate package.json for npm-package
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          cat > npm-package/package.json << EOF
+          {
+            "name": "lodash",
+            "version": "$VERSION",
+            "description": "Lodash modular utilities.",
+            "keywords": "modules, stdlib, util",
+            "homepage": "https://lodash.com/",
+            "repository": "lodash/lodash",
+            "icon": "https://lodash.com/icon.svg",
+            "license": "MIT",
+            "main": "lodash.js",
+            "author": "John-David Dalton <john.david.dalton@gmail.com>",
+            "contributors": [
+              "John-David Dalton <john.david.dalton@gmail.com>",
+              "Mathias Bynens <mathias@qiwi.be>"
+            ],
+            "scripts": { "test": "echo \"See https://travis-ci.org/lodash-archive/lodash-cli for testing details.\"" }
+          }
+          EOF
+
+      - name: Publish to npm with provenance
+        run: npm publish --provenance --access public
+        working-directory: npm-package

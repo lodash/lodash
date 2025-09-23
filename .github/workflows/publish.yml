@@ -36,15 +36,7 @@ jobs:
       - name: Generate modular npm package
         run: |
           mkdir -p npm-package
-          lodash modularize exports=npm -o npm-package-temp
-
-          # Flatten the modular packages into individual files
-          for dir in npm-package-temp/lodash.*; do
-            if [ -d "$dir" ]; then
-              module_name=$(basename "$dir" | sed 's/^lodash\.//')
-              cp "$dir/index.js" "npm-package/${module_name}.js"
-            fi
-          done
+          lodash modularize exports=node -o npm-package
 
           # Copy built files
           npm run build:main-modules npm-package

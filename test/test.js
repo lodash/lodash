@@ -4453,6 +4453,31 @@
       }, 192);
     });
 
+    QUnit.test('should handle synchronous blocking correctly', function(assert) {
+      assert.expect(1);
+      var done = assert.async();
+
+      var callCount = 0;
+      var debounced = _.debounce(function() {
+        callCount++;
+      }, 32, { leading: true, trailing: false });
+
+      debounced(); // Should be called immediately
+
+      // Synchronous blocking for 100ms
+      var start = Date.now();
+      while(Date.now() - start < 100) {
+        // block
+      }
+
+      debounced(); // Should be called immediately as well, since 100ms > 32ms
+
+      setTimeout(function() {
+        assert.strictEqual(callCount, 2);
+        done();
+      }, 64);
+    });
+
     QUnit.test('should invoke the trailing call with the correct arguments and `this` binding', function(assert) {
       assert.expect(2);
 

@@ -10483,6 +10483,8 @@
             timerId = setTimeout(timerExpired, wait);
             return invokeFunc(lastCallTime);
           }
+          clearTimeout(timerId);
+          return leadingEdge(lastCallTime);
         }
         if (timerId === undefined) {
           timerId = setTimeout(timerExpired, wait);

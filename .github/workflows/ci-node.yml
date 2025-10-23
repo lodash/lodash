@@ -4,8 +4,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    # Run on every PR, regardless of branch
-    branches: [ '*' ]
 
 jobs:
   test:

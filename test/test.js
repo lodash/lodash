@@ -22299,7 +22299,7 @@
     QUnit.test('should forbid code injection through the "variable" options', function(assert) {
       assert.expect(1);
 
-      assert.raises(function () {
+      assert.raises(function() {
         _.template('', { 'variable': '){console.log(process.env)}; with(obj' });
       });
     });
@@ -22655,7 +22655,7 @@
       var actual,
           expected = 'no error';
       try {
-          actual = _.template(expected, {'sourceURL': '\u2028\u2029\n!this would err if it was executed!'})();
+        actual = _.template(expected, {'sourceURL': '\u2028\u2029\n!this would err if it was executed!'})();
       } catch (e) {}
 
       assert.equal(actual, expected);
@@ -25840,35 +25840,35 @@
   });
 
   // zipObjectDeep prototype pollution
-  ['__proto__', 'constructor', 'prototype'].forEach(function (keyToTest) {
-    QUnit.test('zipObjectDeep is not setting ' + keyToTest + ' on global', function (assert) {
+  ['__proto__', 'constructor', 'prototype'].forEach(function(keyToTest) {
+    QUnit.test('zipObjectDeep is not setting ' + keyToTest + ' on global', function(assert) {
       assert.expect(1);
 
       _.zipObjectDeep([keyToTest + '.a'], ['newValue']);
       // Can't access plain `a` as it's not defined and test fails
-      assert.notEqual(root['a'], 'newValue');
+      assert.notEqual(root.a, 'newValue');
     });
 
-    QUnit.test('zipObjectDeep is not overwriting ' + keyToTest + ' on vars', function (assert) {
+    QUnit.test('zipObjectDeep is not overwriting ' + keyToTest + ' on vars', function(assert) {
       assert.expect(3);
 
-      const b = 'oldValue'
+      const b = 'oldValue';
       _.zipObjectDeep([keyToTest + '.b'], ['newValue']);
       assert.equal(b, 'oldValue');
-      assert.notEqual(root['b'], 'newValue');
+      assert.notEqual(root.b, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['b']);
+      assert.notOk(root.b);
     });
 
-    QUnit.test('zipObjectDeep is not overwriting global.' + keyToTest, function (assert) {
+    QUnit.test('zipObjectDeep is not overwriting global.' + keyToTest, function(assert) {
       assert.expect(2);
 
       _.zipObjectDeep([root + '.' + keyToTest + '.c'], ['newValue']);
-      assert.notEqual(root['c'], 'newValue');
+      assert.notEqual(root.c, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['c']);
+      assert.notOk(root.c);
     });
   });
 

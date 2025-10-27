@@ -12,6 +12,12 @@ supported with security updates:
 | 2.x   | :x:                  |
 | 1.x   | :x:                  |
 
+## Threat Model
+
+To better understand which classes of vulnerabilities are considered in-scope or out-of-scope for Lodash, please review the [Lodash Threat Model](./threat-model.md).
+
+The threat model defines Lodash’s trust boundaries and clarifies how security issues are assessed for triage and disclosure.
+
 ## Responsible disclosure security policy
 
 A responsible disclosure policy helps protect users of the project from publicly

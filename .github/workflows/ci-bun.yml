@@ -25,7 +25,7 @@ jobs:
 
       # TODO: Remove this step once the lockfile has been updated to v3 in the repository
       - name: Install npm dependencies (lockfile v3)
-        run: npm i --lockfile-version 3 --frozen-lockfile
+        run: npm i --lockfile-version 3 --package-lock-only
 
       - name: Install dependencies
         run: bun install

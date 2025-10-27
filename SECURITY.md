@@ -33,3 +33,9 @@ directly to the Lodash maintainers through the [Security tab](https://github.com
 repository.
 
 Your efforts to responsibly disclose your findings are sincerely appreciated.
+
+## Escalation
+
+If you do not receive an acknowledgement of your report within 6 business days, or if you cannot find a private security contact for the project, you may escalate to the OpenJS Foundation CNA at `security@lists.openjsf.org`.
+
+If the project acknowledges your report but does not provide any further response or engagement within 14 days, escalation is also appropriate.

@@ -1,10 +1,32 @@
+> [!IMPORTANT]
+> As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed below.
+
 # Lodash Governance
 
-We're establishing a formal governance structure and Technical Steering Committee. For more details, please see the [following blog post](https://openjsf.org/blog/sta-supports-lodash). In the interim, the following folks are participating:
+## Technical Steering Committee Members
 
-- [@jonchurch](https://github.com/jonchurch)- Jon Church
-- [@jdalton](https://github.com/jdalton)- John-David Dalton
-- [@ulisesgascon](https://github.com/ulisesgascon)- Ulises Gascón
-- [@tobie](https://github.com/tobie) - Tobie Langel
-- [@falsyvalues](https://github.com/falsyvalues) - Michał Lipiński
-- [@bensternthal](https://github.com/bensternthal) - Benjamin Sternthal
+The current Technical Steering Committee (TSC) members are:
+
+- John-David Dalton ([@jdalton](https://github.com/jdalton)), _(Lodash creator)_
+- Jon Church ([@jonchurch](https://github.com/jonchurch))
+- Jordan Harband ([@ljharb](https://github.com/ljharb))
+- Michał Lipiński ([@falsyvalues](https://github.com/falsyvalues))
+- Tobie Langel ([@tobie](https://github.com/tobie))
+- Ulises Gascón ([@ulisesgascon](https://github.com/UlisesGascon))
+
+## Security Triage Team
+
+The Security Triage Team is responsible for assessing and managing vulnerability and incident reports. Its current members are:
+
+- John-David Dalton ([@jdalton](https://github.com/jdalton))
+- Jon Church ([@jonchurch](https://github.com/jonchurch))
+- Jordan Harband ([@ljharb](https://github.com/ljharb))
+- Ulises Gascón ([@UlisesGascon](https://github.com/UlisesGascon))
+
+### Release Team
+
+The Release Team is sole responsible for publishing new versions of Lodash to npm. Its current member is:
+
+- John-David Dalton ([@jdalton](https://github.com/jdalton))
+
+

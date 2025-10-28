@@ -78,3 +78,29 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
+
+## Contributors
+
+We're establishing a formal governance structure and Technical Steering Committee. For more details, please see the [following blog post](https://openjsf.org/blog/sta-supports-lodash). In the interim, the following folks are assisting:
+
+### Committers
+
+- [@jonchurch](https://github.com/jonchurch)- Jon Church
+- [@jdalton](https://github.com/jdalton)- John-David Dalton
+- [@ulisesgascon](https://github.com/ulisesgascon)- Ulises Gascon
+- [@tobie](https://github.com/tobie) - Tobie Langel
+- [@falseyvalues](https://github.com/falseyvalues)- Michał Lipińsk
+
+### Security Triage
+
+- [@jonchurch](https://github.com/jonchurch)- Jon Church
+- [@jdalton](https://github.com/jdalton)- John-David Dalton
+- [@ulisesgascon](https://github.com/ulisesgascon)- Ulises Gascon
+- [@ljharb](https://github.com/ljharb)- Jordan Harband
+- [@falseyvalues](https://github.com/falseyvalues)- Michał Lipińsk
+
+### Publishers
+
+- [@jdalton](https://github.com/jdalton)- John-David Dalton
+
+

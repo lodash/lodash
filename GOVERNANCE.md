@@ -25,7 +25,7 @@ The Security Triage Team is responsible for assessing and managing vulnerability
 
 ### Release Team
 
-The Release Team is sole responsible for publishing new versions of Lodash to npm. Its current member is:
+The Release Team is solely responsible for publishing new versions of Lodash to npm. Its current member is:
 
 - John-David Dalton ([@jdalton](https://github.com/jdalton))
 

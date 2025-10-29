@@ -16,17 +16,10 @@ The current Technical Steering Committee (TSC) members are:
 
 ## Security Triage Team
 
-The Security Triage Team is responsible for assessing and managing vulnerability and incident reports. Its current members are:
-
-- John-David Dalton ([@jdalton](https://github.com/jdalton))
-- Jon Church ([@jonchurch](https://github.com/jonchurch))
-- Jordan Harband ([@ljharb](https://github.com/ljharb))
-- Ulises Gascón ([@UlisesGascon](https://github.com/UlisesGascon))
+The Security Triage Team is responsible for assessing and managing vulnerability and incident reports. Security triaging is currently handled by the [TSC](#technical-steering-committee-members).
 
 ### Release Team
 
 The Release Team is solely responsible for publishing new versions of Lodash to npm. Its current member is:
 
 - John-David Dalton ([@jdalton](https://github.com/jdalton))
-
-

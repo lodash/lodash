@@ -1,7 +1,7 @@
 # Incident Response Plan
 
 ## Introduction
-Security is a top priority for Lodash team. This document outlines the **formal process** for handling **security reports**, including how to **triage**, **assess**, and **disclose** vulnerabilities responsibly.
+Security is a top priority for Lodash. This document outlines the **formal process** for handling **security reports**, including how to **triage**, **assess**, and **disclose** vulnerabilities responsibly.
 
 ## Scope
 
@@ -137,7 +137,7 @@ Ideally, the report must contain **clear and detailed information** like (Affect
 
 1.2 If the report was created accidentally or intentionally in a public channel (e.g. GitHub issues), it is important to share this information ASAP in the private slack channel `#lodash-security-triage` so the Security Triage Team is aware of it. At this stage, our priority is to remove the report from public view as soon as possible and let the reporter know what happened next.
 
-1.2.1 In the case of a report made public in a Pull request or issue under the Lodash organization the following process will be followed (by a Lodash TSC Member):
+1.2.1 In the case of a report made public in a Pull request or issue under the Lodash GitHub organization the following process will be followed (by a Lodash TSC Member):
 
     * Move the issue to the private repository called [lodash/security-triage](https://github.com/lodash/security-triage).
     * For any related pull requests, create an associated issue in [lodash/security-triage](https://github.com/lodash/security-triage) repository. Add a copy of the patch for the pull request to the issue. Add screenshots of discussion from the pull request to the issue.
@@ -149,7 +149,7 @@ Ideally, the report must contain **clear and detailed information** like (Affect
         > FYI @xxxx we asked GitHub to delete your pull request while we work on releases in private.
     * Update the team in the slack channel #lodash-security-triage`.
 
-1.2.2 In the case that the report is made public in a different channel that we don't own/control, the TC team will attempt to mitigate this by trying to remove the report from public view (reporting to support, asking the reporter to remove the report, etc...).
+1.2.2 In the case that the report is made public in a different channel that we don't own/control, the Lodash TSC will attempt to mitigate this by trying to remove the report from public view (reporting to support, asking the reporter to remove the report, etc...).
 
 
 1.3 At this stage the Security Report Coordinator (SRC) will create a (private) issue in [lodash/security-triage](https://github.com/lodash/security-triage) repository with the existing information from the security report unless it already exists (step 1.2.1). This issue will serve as the central discussion point for this particular report. At this stage is expected from the Security Report Coordinator (SRC) to acknowledge receipt of the security report to the reporter.
@@ -171,14 +171,14 @@ Ideally, the report must contain **clear and detailed information** like (Affect
 
 3.2 The mitigation team (remediation developer(s), analyst(s), reporter(s)) will work on the patch(es), re-evaluate the report once the patch is ready and include regression tests (when possible).
 
-3.3 The Lodash TC will announce publicly on a public issue that there is security patch available and the plan to do a release with an specific date (ideally) and the versions affected without providing additional information to prevent early disclosure.
+3.3 The Lodash TSC will announce publicly on a public issue that there is security patch available and the plan to do a release with an specific date (ideally) and the versions affected without providing additional information to prevent early disclosure.
 
-3.4 The TC team will create the releases and publish them to npm.
+3.4 The Lodash TSC will create the releases and publish them to npm.
 
 ### Step 4: Public disclosure
 
 4.1 At this stage the Security Report Coordinator (SRC) will make the advisory public and close the coordination issue (opened in step 1).
 
-4.2 The Security Report Coordinator (SRC) can ask the TC team to coordinate blog post or social media announcements using the OpenJS Foundation channels.
+4.2 The Security Report Coordinator (SRC) can ask the Lodash TSC to coordinate blog post or social media announcements using the OpenJS Foundation channels.
 
 [Security Triage Team]: GOVERNANCE.md#security-triage-team

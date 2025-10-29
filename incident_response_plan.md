@@ -5,7 +5,7 @@ Security is a top priority for Lodash team. This document outlines the **formal 
 
 ## Scope
 
-The Security Triage Team will use this document as a process guide when a security vulnerability is reported, from triage to resolution. This process must align with the project's [SECURITY policy](SECURITY.md) and cannot diverge significantly.
+The [Security Triage Team][] will use this document as a process guide when a security vulnerability is reported, from triage to resolution. This process must align with the project's [SECURITY policy](SECURITY.md) and cannot diverge significantly.
 
 
 ## Security Report Handling Flowchart
@@ -76,7 +76,7 @@ This person submits a security report to the Security Triage Team and provides d
 **Expectations**
 - Provide detailed information about the suspected vulnerability.
 - Follow responsible disclosure guidelines (report privately before public disclosure).
-- Cooperate with the security team by providing additional details when needed.
+- Cooperate with the Security Triage Team by providing additional details when needed.
 - Test and verify patches (when applicable).
 - Respect security timelines and avoid premature public disclosure.
 
@@ -120,7 +120,7 @@ This person acts as the focal point for a specific security report and ensures t
 
 ## Runbook
 
-The following sections outline the **step-by-step process**, explaining each decision, scenario, and possible actions. In this guide we also include links that are private (limited to the security triage team), a general overview of the process in flowchart format can be found [here](#security-report-handling-flowchart).
+The following sections outline the **step-by-step process**, explaining each decision, scenario, and possible actions. In this guide we also include links that are private (limited to the Security Triage Team), a general overview of the process in flowchart format can be found [here](#security-report-handling-flowchart).
 
 ### Step 0: Security Report Received
 
@@ -135,9 +135,9 @@ Ideally, the report must contain **clear and detailed information** like (Affect
 > [!Note]
 > While this document refers to a single SRC for simplicity, in practice, having two coordinators is acceptable and often beneficial. A second coordinator can assist with tasks such as reviewing the advisory content before it is published, ensuring accuracy and completeness.
 
-1.2 If the report was created accidentally or intentionally in a public channel (e.g. GitHub issues), it is important to share this information ASAP in the private slack channel `#lodash-security-triage` so the Security triage team is aware of it. At this stage, our priority is to remove the report from public view as soon as possible and let the reporter know what happened next.
+1.2 If the report was created accidentally or intentionally in a public channel (e.g. GitHub issues), it is important to share this information ASAP in the private slack channel `#lodash-security-triage` so the Security Triage Team is aware of it. At this stage, our priority is to remove the report from public view as soon as possible and let the reporter know what happened next.
 
-1.2.1 In the case of a report made public in a Pull request or issue under the Lodash organization the following process will be followed (by a Lodash TC member):
+1.2.1 In the case of a report made public in a Pull request or issue under the Lodash organization the following process will be followed (by a Lodash TSC Member):
 
     * Move the issue to the private repository called [lodash/security-triage](https://github.com/lodash/security-triage).
     * For any related pull requests, create an associated issue in [lodash/security-triage](https://github.com/lodash/security-triage) repository. Add a copy of the patch for the pull request to the issue. Add screenshots of discussion from the pull request to the issue.
@@ -180,3 +180,5 @@ Ideally, the report must contain **clear and detailed information** like (Affect
 4.1 At this stage the Security Report Coordinator (SRC) will make the advisory public and close the coordination issue (opened in step 1).
 
 4.2 The Security Report Coordinator (SRC) can ask the TC team to coordinate blog post or social media announcements using the OpenJS Foundation channels.
+
+[Security Triage Team]: GOVERNANCE.md#security-triage-team

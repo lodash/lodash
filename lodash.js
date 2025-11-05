@@ -3635,27 +3635,48 @@
      * @param {Object} [stack] Tracks traversed source values and their merged
      *  counterparts.
      */
-    function baseMerge(object, source, srcIndex, customizer, stack) {
+
+    // old code 
+    // function baseMerge(object, source, srcIndex, customizer, stack) {
+    //   if (object === source) {
+    //     return;
+    //   }
+    //   baseFor(source, function(srcValue, key) {
+    //     stack || (stack = new Stack);
+    //     if (isObject(srcValue)) {
+    //       baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
+    //     }
+    //     else {
+    //       var newValue = customizer
+    //         ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
+    //         : undefined;
+
+    //       if (newValue === undefined) {
+    //         newValue = srcValue;
+    //       }
+    //       assignMergeValue(object, key, newValue);
+    //     }
+    //   }, keysIn);
+    // }
+
+    // optamized code 
+    function baseMerge(object, source, customizer) {
       if (object === source) {
         return;
       }
-      baseFor(source, function(srcValue, key) {
-        stack || (stack = new Stack);
+      baseForOwn(source, function(srcValue, key) {
+        if (object[key] === srcValue) {
+          return; // Skip redundant merging if the values are the same reference
+        }
+    
         if (isObject(srcValue)) {
-          baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
+          baseMergeDeep(object, source, key, customizer);
+        } else {
+          assignMergeValue(object, key, srcValue);
         }
-        else {
-          var newValue = customizer
-            ? customizer(safeGet(object, key), srcValue, (key + ''), object, source, stack)
-            : undefined;
-
-          if (newValue === undefined) {
-            newValue = srcValue;
-          }
-          assignMergeValue(object, key, newValue);
-        }
-      }, keysIn);
+      });
     }
+    
 
     /**
      * A specialized version of `baseMerge` for arrays and objects which performs

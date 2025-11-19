@@ -14693,9 +14693,13 @@
      *
      * _.startCase('__FOO_BAR__');
      * // => 'FOO BAR'
+     * 
+     * _.startCase('3d');
+     * // => '3D'
+     * 
      */
     var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + upperFirst(word);
+      return result + (index ? (result.isNaN ? ' ' : '') : '') + upperFirst(word);
     });
 
     /**

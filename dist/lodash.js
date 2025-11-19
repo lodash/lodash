@@ -8687,6 +8687,10 @@
      * first elements of the given arrays, the second of which contains the
      * second elements of the given arrays, and so on.
      *
+     * **Note:** When arrays have different lengths, iteration continues until
+     * the longest array is exhausted. Missing elements from shorter arrays
+     * are filled with `undefined`.
+     *
      * @static
      * @memberOf _
      * @since 0.1.0
@@ -8697,12 +8701,23 @@
      *
      * _.zip(['a', 'b'], [1, 2], [true, false]);
      * // => [['a', 1, true], ['b', 2, false]]
+     *
+     * // Arrays with different lengths
+     * _.zip(['a', 'b'], [1, 2, 3]);
+     * // => [['a', 1], ['b', 2], [undefined, 3]]
+     *
+     * _.zip(['a', 'b', 'c'], [1, 2]);
+     * // => [['a', 1], ['b', 2], ['c', undefined]]
      */
     var zip = baseRest(unzip);
 
     /**
      * This method is like `_.fromPairs` except that it accepts two arrays,
      * one of property identifiers and one of corresponding values.
+     *
+     * **Note:** When arrays have different lengths, if `props` is longer than
+     * `values`, the extra properties are assigned `undefined` values. If
+     * `values` is longer than `props`, the extra values are ignored.
      *
      * @static
      * @memberOf _
@@ -8715,6 +8730,14 @@
      *
      * _.zipObject(['a', 'b'], [1, 2]);
      * // => { 'a': 1, 'b': 2 }
+     *
+     * // Extra props get undefined values
+     * _.zipObject(['a', 'b', 'c'], [1, 2]);
+     * // => { 'a': 1, 'b': 2, 'c': undefined }
+     *
+     * // Extra values are ignored
+     * _.zipObject(['a', 'b'], [1, 2, 3]);
+     * // => { 'a': 1, 'b': 2 }
      */
     function zipObject(props, values) {
       return baseZipObject(props || [], values || [], assignValue);
@@ -8722,6 +8745,10 @@
 
     /**
      * This method is like `_.zipObject` except that it supports property paths.
+     *
+     * **Note:** When arrays have different lengths, if `props` is longer than
+     * `values`, the extra properties are assigned `undefined` values. If
+     * `values` is longer than `props`, the extra values are ignored.
      *
      * @static
      * @memberOf _
@@ -8734,6 +8761,14 @@
      *
      * _.zipObjectDeep(['a.b[0].c', 'a.b[1].d'], [1, 2]);
      * // => { 'a': { 'b': [{ 'c': 1 }, { 'd': 2 }] } }
+     *
+     * // Extra props get undefined values
+     * _.zipObjectDeep(['a.b.c', 'a.b.d', 'a.b.e'], [1, 2]);
+     * // => { 'a': { 'b': { 'c': 1, 'd': 2, 'e': undefined } } }
+     *
+     * // Extra values are ignored
+     * _.zipObjectDeep(['a.b.c', 'a.b.d'], [1, 2, 3]);
+     * // => { 'a': { 'b': { 'c': 1, 'd': 2 } } }
      */
     function zipObjectDeep(props, values) {
       return baseZipObject(props || [], values || [], baseSet);
@@ -8743,6 +8778,10 @@
      * This method is like `_.zip` except that it accepts `iteratee` to specify
      * how grouped values should be combined. The iteratee is invoked with the
      * elements of each group: (...group).
+     *
+     * **Note:** When arrays have different lengths, iteration continues until
+     * the longest array is exhausted. Missing elements from shorter arrays
+     * are passed as `undefined` to the iteratee function.
      *
      * @static
      * @memberOf _
@@ -8758,6 +8797,12 @@
      *   return a + b + c;
      * });
      * // => [111, 222]
+     *
+     * // Arrays with different lengths
+     * _.zipWith([1, 2, 3], [10, 20], function(a, b) {
+     *   return (a || 0) + (b || 0);
+     * });
+     * // => [11, 22, 3]
      */
     var zipWith = baseRest(function(arrays) {
       var length = arrays.length,

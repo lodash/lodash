@@ -11293,18 +11293,17 @@
 
   (function() {
     QUnit.test('should return `true` for numbers', function(assert) {
-      assert.expect(3);
+      assert.expect(2);
 
       assert.strictEqual(_.isNumber(0), true);
       assert.strictEqual(_.isNumber(Object(0)), true);
-      assert.strictEqual(_.isNumber(NaN), true);
     });
 
     QUnit.test('should return `false` for non-numbers', function(assert) {
-      assert.expect(12);
+      assert.expect(13);
 
       var expected = lodashStable.map(falsey, function(value) {
-        return typeof value == 'number';
+        return typeof value === 'number' && !Number.isNaN(value);
       });
 
       var actual = lodashStable.map(falsey, function(value, index) {
@@ -11313,6 +11312,7 @@
 
       assert.deepEqual(actual, expected);
 
+      assert.strictEqual(_.isNumber(NaN), false);
       assert.strictEqual(_.isNumber(args), false);
       assert.strictEqual(_.isNumber([1, 2, 3]), false);
       assert.strictEqual(_.isNumber(true), false);

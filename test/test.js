@@ -16573,6 +16573,18 @@
         assert.deepEqual(object, { 'a': { 'b': 2 } });
       });
     });
+
+    QUnit.test('should not mutate `object` when using deep paths with arrays (issue #5610)', function(assert) {
+      assert.expect(2);
+
+      var object = { 'foo': [{ 'bar': 1 }] };
+      _.omit(object, 'foo.0.bar');
+      assert.deepEqual(object, { 'foo': [{ 'bar': 1 }] }, 'original object should not be mutated');
+
+      var object2 = { 'foo': [{ 'bar': 1 }] };
+      _.omit(object2, ['foo[0].bar']);
+      assert.deepEqual(object2, { 'foo': [{ 'bar': 1 }] }, 'original object should not be mutated with bracket notation');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

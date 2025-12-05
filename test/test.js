@@ -16573,6 +16573,21 @@
         assert.deepEqual(object, { 'a': { 'b': 2 } });
       });
     });
+
+    // Prevent regression for https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+    QUnit.test('Security: _.omit should not allow modifying prototype or constructor properties', function(assert) {
+      assert.expect(3);
+
+      var testObj1 = {};
+      assert.strictEqual(typeof testObj1.toString, 'function', 'Object.toString should work before omit');
+
+      _.omit({}, ['__proto__.toString']);
+      _.omit({}, ['constructor.prototype.toString']);
+
+      var testObj2 = {};
+      assert.strictEqual(typeof testObj2.toString, 'function', 'Object.toString should still work after omit');
+      assert.strictEqual(Object.prototype.toString.call({}), '[object Object]', 'Object.toString should behave as expected');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -25238,6 +25253,21 @@
       else {
         skipAssert(assert);
       }
+    });
+
+    // Prevent regression for https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+    QUnit.test('Security: _.unset should not allow modifying prototype or constructor properties', function(assert) {
+      assert.expect(3);
+
+      var testStr1 = 'ABC';
+      assert.strictEqual(typeof testStr1.toLowerCase, 'function', 'String.toLowerCase should exist before unset');
+
+      _.unset({ foo: 'bar' }, 'foo.__proto__.toLowerCase');
+      _.unset({ foo: 'bar' }, 'foo.constructor.prototype.toLowerCase');
+
+      var testStr2 = 'ABC';
+      assert.strictEqual(typeof testStr2.toLowerCase, 'function', 'String.toLowerCase should still exist after unset');
+      assert.strictEqual(testStr2.toLowerCase(), 'abc', 'String.toLowerCase should work as expected');
     });
   }());
 

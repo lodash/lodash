@@ -14711,6 +14711,81 @@
       }
       return string.split(separator, limit);
     }
+    /**
+     * Splits `string` by an array of word separators and their connecting characters.
+     *
+     ***Note:** This method extends the functionality of
+     * [`String#split`](https://mdn.io/String/split) to handle multiple word separators
+     * and their connecting characters.
+     *
+     * @static
+     * @memberOf _
+     * @since 5.0.0
+     * @category String
+     * @param {string} [string=''] The string to split.
+     * @param {Array|RegExp|string} separator The separator pattern or array of patterns to split by.
+     * @param {number} [limit] The length to truncate results to.
+     * @returns {Array} Returns the string segments.
+     * @example
+     *
+     * _.splitByWords('apple-orange banana_grape', ['orange', 'banana']);
+     * // => ['apple-', 'grape']
+     * 
+     * _.splitByWords('a-b-c', '-', 2);
+     * // => ['a', 'b']
+     * 
+     * _.splitByWords('red:apple green:banana blue:grape', ['apple', 'banana', 'grape']);
+     * // => ['red:', 'green:', 'blue:']
+     */
+    function splitByWords(string, separator, limit) {
+      if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
+        separator = limit = undefined;
+      }
+      limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0;
+      if (!limit) {
+        return [];
+      }
+      string = toString(string);
+      
+      // For non-array separators, delegate to the native split
+      if (!Array.isArray(separator)) {
+        if (string && (
+              typeof separator == 'string' ||
+              (separator != null && !isRegExp(separator))
+            )) {
+          separator = baseToString(separator);
+          if (!separator && hasUnicode(string)) {
+            return castSlice(stringToArray(string), 0, limit);
+          }
+        }
+        return string.split(separator, limit);
+      }
+      
+      // Handle empty array of separators
+      if (separator.length === 0) {
+        return [string];
+      }
+      
+      // Build a pattern that matches any separator followed by connecting characters
+      let pattern = '';
+      for (let i = 0; i < separator.length; i++) {
+        const sep = baseToString(separator[i]).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if (i > 0) pattern += '|';
+        pattern += `${sep}[\\s_\\-]?`;
+      }
+      
+      // Replace all matched patterns with a standard delimiter
+      const standardDelimiter = '###SPLIT###'; // Unlikely to appear in normal text
+      const processed = string.replace(new RegExp(pattern, 'g'), standardDelimiter);
+      
+      // Split by the standard delimiter
+      const result = processed.split(standardDelimiter);
+      
+      // Filter out empty results and respect the limit
+      return result
+        .filter(item => item.trim() !== '')
+        .slice(0, limit);
+    }
 
     /**
      * Converts `string` to

@@ -960,8 +960,8 @@
    * @returns {number} Returns the sum.
    */
   function baseSum(array, iteratee) {
-    var result,
-        index = -1,
+    var result = 0;
+    var index = -1,
         length = array.length;
 
     while (++index < length) {

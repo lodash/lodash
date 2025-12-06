@@ -2590,6 +2590,13 @@
       var actual = lodashStable.map([[1, 2], [3, 4]], _.chunk);
       assert.deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
+
+    QUnit.test('should return an empty array when input is empty', function(assert) {
+      assert.expect(1);
+
+      var actual = _.chunk([], 3);
+      assert.deepEqual(actual, []);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

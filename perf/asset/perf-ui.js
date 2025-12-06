@@ -34,6 +34,15 @@
         'other=' + (otherIndex < 0 ? other : otherList[otherIndex].value);
     }
 
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     var span1 = document.createElement('span');
     span1.style.cssText = 'float:right';
     span1.innerHTML =
@@ -60,7 +69,7 @@
     toolbar.appendChild(span1);
 
     buildList.selectedIndex = (function() {
-      switch (build) {
+      switch (escapeHtml(build)) {
         case 'lodash':
         case null:                return 0;
       }
@@ -68,7 +77,7 @@
     }());
 
     otherList.selectedIndex = (function() {
-      switch (other) {
+      switch (escapeHtml(other)) {
         case 'underscore-dev':    return 0;
         case 'lodash':            return 2;
         case 'underscore':

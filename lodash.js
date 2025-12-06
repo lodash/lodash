@@ -14805,8 +14805,11 @@
      *  The sourceURL of the compiled template.
      * @param {string} [options.variable='obj']
      *  The data object variable name.
+     * @param {boolean} [options.isAsync=false]
+     *  Make the compiled template function an AsyncFunction. Fails if there is no
+     *  async/await support in the JS runtime.
      * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Function} Returns the compiled template function.
+     * @returns {Function|AsyncFunction} Returns the compiled template function.
      * @example
      *
      * // Use the "interpolate" delimiter to create a compiled template.
@@ -14873,6 +14876,19 @@
      *     "main": ' + _.template(mainText).source + '\
      *   };\
      * ');
+     *
+     * // Make an async template. This allows usage of await inside template.
+     * var compiled = _.template('<% print(await Promise.resolve(val)) %>', { isAsync: true });
+     * await compiled({ 'val': 42 });
+     * // => '42'
+     *
+     * compiled({ 'val': 69 }).then(function (res) { console.log(res) });
+     * // => '69'
+     *
+     * // ... also works inside interpolate or escape delimiters.
+     * compiled = _.template("<%= await Promise.resolve(val) %>", { isAsync: true });
+     * await compiled({ 'val': 42 });
+     * // => '42'
      */
     function template(string, options, guard) {
       // Based on John Resig's `tmpl` implementation
@@ -14894,6 +14910,7 @@
           isEvaluating,
           index = 0,
           interpolate = options.interpolate || reNoMatch,
+          isAsync = !!options.isAsync,
           source = "__p += '";
 
       // Compile the regexp to match each delimiter.
@@ -14959,7 +14976,12 @@
         .replace(reEmptyStringTrailing, '$1;');
 
       // Frame code as the function body.
-      source = 'function(' + (variable || 'obj') + ') {\n' +
+      source =
+        (isAsync
+          ? 'async '
+          : ''
+        ) +
+        'function(' + (variable || 'obj') + ') {\n' +
         (variable
           ? ''
           : 'obj || (obj = {});\n'

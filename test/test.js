@@ -163,9 +163,6 @@
   /** Used to provide falsey values to methods. */
   var falsey = [, null, undefined, false, 0, NaN, ''];
 
-  /** Used to provide extended falsey values including negative zero and BigInt zeros. */
-  var falseyWithBigInt = falsey.concat(-0, BigInt(0));
-
   /** Used to specify the emoji style glyph variant of characters. */
   var emojiVar = '\ufe0f';
 
@@ -3174,17 +3171,17 @@
       assert.expect(1);
 
       var array = ['0', '1', '2'];
-      assert.deepEqual(_.compact(falseyWithBigInt.concat(array)), array);
+      assert.deepEqual(_.compact(falsey.concat(array)), array);
     });
 
     QUnit.test('should work when in-between lazy operators', function(assert) {
       assert.expect(2);
 
       if (!isNpm) {
-        var actual = _(falseyWithBigInt).thru(_.slice).compact().thru(_.slice).value();
+        var actual = _(falsey).thru(_.slice).compact().thru(_.slice).value();
         assert.deepEqual(actual, []);
 
-        actual = _(falseyWithBigInt).thru(_.slice).push(true, 1).compact().push('a').value();
+        actual = _(falsey).thru(_.slice).push(true, 1).compact().push('a').value();
         assert.deepEqual(actual, [true, 1, 'a']);
       }
       else {

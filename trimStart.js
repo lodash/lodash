@@ -3,7 +3,7 @@ define(['./_baseToString', './_castSlice', './_charsStartIndex', './_stringToArr
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
 
-  /** Used to match leading and trailing whitespace. */
+  /** Used to match leading whitespace. */
   var reTrimStart = /^\s+/;
 
   /**

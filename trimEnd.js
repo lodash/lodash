@@ -1,10 +1,7 @@
-define(['./_baseToString', './_castSlice', './_charsEndIndex', './_stringToArray', './toString'], function(baseToString, castSlice, charsEndIndex, stringToArray, toString) {
+define(['./_baseToString', './_castSlice', './_charsEndIndex', './_stringToArray', './_trimmedEndIndex', './toString'], function(baseToString, castSlice, charsEndIndex, stringToArray, trimmedEndIndex, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;
-
-  /** Used to match leading and trailing whitespace. */
-  var reTrimEnd = /\s+$/;
 
   /**
    * Removes trailing whitespace or specified characters from `string`.
@@ -28,7 +25,7 @@ define(['./_baseToString', './_castSlice', './_charsEndIndex', './_stringToArray
   function trimEnd(string, chars, guard) {
     string = toString(string);
     if (string && (guard || chars === undefined)) {
-      return string.replace(reTrimEnd, '');
+      return string.slice(0, trimmedEndIndex(string) + 1);
     }
     if (!string || !(chars = baseToString(chars))) {
       return string;

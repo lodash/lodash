@@ -15,6 +15,9 @@ define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
    * values against any array or object value, respectively. See `_.isEqual`
    * for a list of supported value comparisons.
    *
+   * **Note:** Multiple values can be checked by combining several matchers
+   * using `_.overSome`
+   *
    * @static
    * @memberOf _
    * @since 3.0.0
@@ -30,6 +33,10 @@ define(['./_baseClone', './_baseMatches'], function(baseClone, baseMatches) {
    *
    * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
    * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
+   *
+   * // Checking for several possible values
+   * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
+   * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
    */
   function matches(source) {
     return baseMatches(baseClone(source, CLONE_DEEP_FLAG));

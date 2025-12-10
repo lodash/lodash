@@ -1,4 +1,4 @@
-define(['./_arrayMap', './_baseIteratee', './_baseMap', './_baseSortBy', './_baseUnary', './_compareMultiple', './identity'], function(arrayMap, baseIteratee, baseMap, baseSortBy, baseUnary, compareMultiple, identity) {
+define(['./_arrayMap', './_baseGet', './_baseIteratee', './_baseMap', './_baseSortBy', './_baseUnary', './_compareMultiple', './identity', './isArray'], function(arrayMap, baseGet, baseIteratee, baseMap, baseSortBy, baseUnary, compareMultiple, identity, isArray) {
 
   /**
    * The base implementation of `_.orderBy` without param guards.
@@ -10,8 +10,21 @@ define(['./_arrayMap', './_baseIteratee', './_baseMap', './_baseSortBy', './_bas
    * @returns {Array} Returns the new sorted array.
    */
   function baseOrderBy(collection, iteratees, orders) {
+    if (iteratees.length) {
+      iteratees = arrayMap(iteratees, function(iteratee) {
+        if (isArray(iteratee)) {
+          return function(value) {
+            return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
+          }
+        }
+        return iteratee;
+      });
+    } else {
+      iteratees = [identity];
+    }
+
     var index = -1;
-    iteratees = arrayMap(iteratees.length ? iteratees : [identity], baseUnary(baseIteratee));
+    iteratees = arrayMap(iteratees, baseUnary(baseIteratee));
 
     var result = baseMap(collection, function(value, key, collection) {
       var criteria = arrayMap(iteratees, function(iteratee) {

@@ -20481,6 +20481,13 @@
 
       assert.strictEqual(_.size('hi'), 2);
     });
+
+    QUnit.test('should count unicode symbols as single units', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.size('👨‍👩‍👧‍👦'), 1);
+      assert.strictEqual(_.size('👨\u200d👩\u200d👧\u200d👦'), 1);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

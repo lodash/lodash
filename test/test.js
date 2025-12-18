@@ -16573,6 +16573,21 @@
         assert.deepEqual(object, { 'a': { 'b': 2 } });
       });
     });
+
+    // Prevent regression for https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+    QUnit.test('Security: _.omit should not allow modifying prototype or constructor properties', function(assert) {
+      assert.expect(3);
+
+      var testObj1 = {};
+      assert.strictEqual(typeof testObj1.toString, 'function', 'Object.toString should work before omit');
+
+      _.omit({}, ['__proto__.toString']);
+      _.omit({}, ['constructor.prototype.toString']);
+
+      var testObj2 = {};
+      assert.strictEqual(typeof testObj2.toString, 'function', 'Object.toString should still work after omit');
+      assert.strictEqual(Object.prototype.toString.call({}), '[object Object]', 'Object.toString should behave as expected');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -22305,7 +22320,7 @@
     QUnit.test('should forbid code injection through the "variable" options', function(assert) {
       assert.expect(1);
 
-      assert.raises(function () {
+      assert.raises(function() {
         _.template('', { 'variable': '){console.log(process.env)}; with(obj' });
       });
     });
@@ -22661,7 +22676,7 @@
       var actual,
           expected = 'no error';
       try {
-          actual = _.template(expected, {'sourceURL': '\u2028\u2029\n!this would err if it was executed!'})();
+        actual = _.template(expected, {'sourceURL': '\u2028\u2029\n!this would err if it was executed!'})();
       } catch (e) {}
 
       assert.equal(actual, expected);
@@ -25245,6 +25260,21 @@
         skipAssert(assert);
       }
     });
+
+    // Prevent regression for https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+    QUnit.test('Security: _.unset should not allow modifying prototype or constructor properties', function(assert) {
+      assert.expect(3);
+
+      var testStr1 = 'ABC';
+      assert.strictEqual(typeof testStr1.toLowerCase, 'function', 'String.toLowerCase should exist before unset');
+
+      _.unset({ foo: 'bar' }, 'foo.__proto__.toLowerCase');
+      _.unset({ foo: 'bar' }, 'foo.constructor.prototype.toLowerCase');
+
+      var testStr2 = 'ABC';
+      assert.strictEqual(typeof testStr2.toLowerCase, 'function', 'String.toLowerCase should still exist after unset');
+      assert.strictEqual(testStr2.toLowerCase(), 'abc', 'String.toLowerCase should work as expected');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -25846,35 +25876,35 @@
   });
 
   // zipObjectDeep prototype pollution
-  ['__proto__', 'constructor', 'prototype'].forEach(function (keyToTest) {
-    QUnit.test('zipObjectDeep is not setting ' + keyToTest + ' on global', function (assert) {
+  ['__proto__', 'constructor', 'prototype'].forEach(function(keyToTest) {
+    QUnit.test('zipObjectDeep is not setting ' + keyToTest + ' on global', function(assert) {
       assert.expect(1);
 
       _.zipObjectDeep([keyToTest + '.a'], ['newValue']);
       // Can't access plain `a` as it's not defined and test fails
-      assert.notEqual(root['a'], 'newValue');
+      assert.notEqual(root.a, 'newValue');
     });
 
-    QUnit.test('zipObjectDeep is not overwriting ' + keyToTest + ' on vars', function (assert) {
+    QUnit.test('zipObjectDeep is not overwriting ' + keyToTest + ' on vars', function(assert) {
       assert.expect(3);
 
-      const b = 'oldValue'
+      const b = 'oldValue';
       _.zipObjectDeep([keyToTest + '.b'], ['newValue']);
       assert.equal(b, 'oldValue');
-      assert.notEqual(root['b'], 'newValue');
+      assert.notEqual(root.b, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['b']);
+      assert.notOk(root.b);
     });
 
-    QUnit.test('zipObjectDeep is not overwriting global.' + keyToTest, function (assert) {
+    QUnit.test('zipObjectDeep is not overwriting global.' + keyToTest, function(assert) {
       assert.expect(2);
 
       _.zipObjectDeep([root + '.' + keyToTest + '.c'], ['newValue']);
-      assert.notEqual(root['c'], 'newValue');
+      assert.notEqual(root.c, 'newValue');
 
       // ensure nothing was created
-      assert.notOk(root['c']);
+      assert.notOk(root.c);
     });
   });
 

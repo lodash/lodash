@@ -21529,6 +21529,14 @@
       assert.strictEqual(_.sumBy(arrays, 0), 6);
       assert.strictEqual(_.sumBy(objects, 'a'), 6);
     });
+
+    QUnit.test('should return NaN when non-numeric values are encountered', function(assert) {
+      assert.expect(3);
+
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': 'f' }, { 'a': null }], 'a')));
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': 'string' }], 'a')));
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': {} }], 'a')));
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

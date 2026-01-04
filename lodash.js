@@ -3403,9 +3403,17 @@
       if (value == null) {
         return value === undefined ? undefinedTag : nullTag;
       }
-      return symToStringTag && symToStringTag in Object(value)
-        ? getRawTag(value)
-        : objectToString(value);
+      try {
+        return symToStringTag && symToStringTag in Object(value)
+          ? getRawTag(value)
+          : objectToString(value);
+      } catch (e) {
+        try {
+          return objectToString(value);
+        } catch (e2) {
+          return objectTag;
+        }
+      }
     }
 
     /**
@@ -6712,34 +6720,81 @@
       var isOwn = hasOwnProperty.call(value, symToStringTag),
         tag = value[symToStringTag],
         unmasked = false,
-        getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-
-      if (!getOwnPropertyDescriptor) {
-        return nativeObjectToString.call(value);
-      }
+        getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
+        originalDescriptor;
 
       try {
-        // Only attempt to set Symbol.toStringTag if it's safe to do so.
-        var desc = getOwnPropertyDescriptor(value, symToStringTag);
-        if (!desc || desc.configurable) {
+        if (!getOwnPropertyDescriptor) {
+          return nativeObjectToString.call(value);
+        }
+
+        originalDescriptor = getOwnPropertyDescriptor(value, symToStringTag);
+
+        if (isOwn) {
+          var isAccessor =
+            originalDescriptor &&
+            (typeof originalDescriptor.get == "function" ||
+              typeof originalDescriptor.set == "function");
+
+          if (!originalDescriptor) {
+            value[symToStringTag] = undefined;
+            if (value[symToStringTag] === undefined) {
+              unmasked = true;
+            } else {
+              return nativeObjectToString.call(value);
+            }
+          } else if (!originalDescriptor.configurable) {
+            return nativeObjectToString.call(value);
+          } else if (isAccessor) {
+            Object.defineProperty(value, symToStringTag, {
+              configurable: true,
+              enumerable: originalDescriptor.enumerable,
+              writable: true,
+              value: undefined,
+            });
+            unmasked = true;
+          } else {
+            value[symToStringTag] = undefined;
+            if (value[symToStringTag] === undefined) {
+              unmasked = true;
+            } else {
+              return nativeObjectToString.call(value);
+            }
+          }
+        } else {
           value[symToStringTag] = undefined;
           unmasked = true;
         }
       } catch (e) {
-        // If any error occurs (cross-realm, proxy, read-only), skip assignment.
-        unmasked = false;
+        // If any error occurs (cross-realm, proxy, read-only), fall back to default string tag.
+        return nativeObjectToString.call(value);
       }
 
       var result = nativeObjectToString.call(value);
       if (unmasked) {
         try {
           if (isOwn) {
-            value[symToStringTag] = tag;
+            if (originalDescriptor) {
+              Object.defineProperty(value, symToStringTag, originalDescriptor);
+            } else {
+              value[symToStringTag] = tag;
+            }
           } else {
             delete value[symToStringTag];
           }
         } catch (e) {
-          // Best-effort restore; if it fails, do not throw.
+          if (
+            typeof process == "object" &&
+            process.env &&
+            process.env.NODE_ENV !== "production"
+          ) {
+            /* eslint-disable no-console */
+            console.warn(
+              "getRawTag: failed to restore Symbol.toStringTag",
+              e && e.message
+            );
+            /* eslint-enable no-console */
+          }
         }
       }
       return result;

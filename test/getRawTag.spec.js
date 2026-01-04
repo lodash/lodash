@@ -47,7 +47,7 @@ module.exports = function (QUnit, _, skipAssert, DataView, ArrayBuffer) {
         Object.defineProperty(obj, sym, {
           value: "CustomObject",
           configurable: false,
-          writable: false
+          writable: false,
         });
         var result = _.attempt(function () {
           return _.isPlainObject(obj);
@@ -71,7 +71,7 @@ module.exports = function (QUnit, _, skipAssert, DataView, ArrayBuffer) {
           set: function () {
             throw new Error("hostile setter");
           },
-          configurable: true
+          configurable: true,
         });
         var obj = Object.create(proto);
         var outcome = _.attempt(function () {
@@ -96,7 +96,7 @@ module.exports = function (QUnit, _, skipAssert, DataView, ArrayBuffer) {
           enumerable: false,
           get: function () {
             return "CustomGetter";
-          }
+          },
         });
 
         var outcome = _.attempt(function () {

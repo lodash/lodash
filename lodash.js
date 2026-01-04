@@ -6752,7 +6752,7 @@
               configurable: true,
               enumerable: originalDescriptor.enumerable,
               writable: true,
-              value: undefined
+              value: undefined,
             });
             unmasked = true;
           } else {

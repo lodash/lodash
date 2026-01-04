@@ -6086,20 +6086,28 @@
      */
     function getRawTag(value) {
       var isOwn = hasOwnProperty.call(value, symToStringTag),
-          tag = value[symToStringTag];
+          tag = value[symToStringTag],
+          unmasked = false;
 
       try {
-        value[symToStringTag] = undefined;
-        var unmasked = true;
-      } catch (e) {}
+        var desc = Object.getOwnPropertyDescriptor(value, symToStringTag);
+        if (!desc || desc.configurable) {
+          value[symToStringTag] = undefined;
+          unmasked = true;
+        }
+      } catch (e) {
+        unmasked = false;
+      }
 
       var result = nativeObjectToString.call(value);
       if (unmasked) {
-        if (isOwn) {
-          value[symToStringTag] = tag;
-        } else {
-          delete value[symToStringTag];
-        }
+        try {
+          if (isOwn) {
+            value[symToStringTag] = tag;
+          } else {
+            delete value[symToStringTag];
+          }
+        } catch (e) {}
       }
       return result;
     }

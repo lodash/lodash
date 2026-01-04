@@ -3403,9 +3403,17 @@
       if (value == null) {
         return value === undefined ? undefinedTag : nullTag;
       }
-      return symToStringTag && symToStringTag in Object(value)
-        ? getRawTag(value)
-        : objectToString(value);
+      try {
+        return symToStringTag && symToStringTag in Object(value)
+          ? getRawTag(value)
+          : objectToString(value);
+      } catch (e) {
+        try {
+          return objectToString(value);
+        } catch (e2) {
+          return objectTag;
+        }
+      }
     }
 
     /**
@@ -6709,16 +6717,15 @@
      * @returns {string} Returns the raw `toStringTag`.
      */
     function getRawTag(value) {
-      var isOwn = hasOwnProperty.call(value, symToStringTag),
-        tag = value[symToStringTag],
-        unmasked = false,
-        getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-
-      if (!getOwnPropertyDescriptor) {
-        return nativeObjectToString.call(value);
-      }
-
       try {
+        var isOwn = hasOwnProperty.call(value, symToStringTag),
+          tag = value[symToStringTag],
+          unmasked = false,
+          getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+        if (!getOwnPropertyDescriptor) {
+          return nativeObjectToString.call(value);
+        }
         // Only attempt to set Symbol.toStringTag if it's safe to do so.
         var desc = getOwnPropertyDescriptor(value, symToStringTag);
         if (!desc || desc.configurable) {
@@ -6726,20 +6733,38 @@
           unmasked = true;
         }
       } catch (e) {
-        // If any error occurs (cross-realm, proxy, read-only), skip assignment.
-        unmasked = false;
+        // If any error occurs (cross-realm, proxy, read-only), fall back to default string tag.
+        return nativeObjectToString.call(value);
       }
 
       var result = nativeObjectToString.call(value);
       if (unmasked) {
         try {
           if (isOwn) {
-            value[symToStringTag] = tag;
+            Object.defineProperty(value, symToStringTag, {
+              value: tag,
+              configurable: true,
+              enumerable: false,
+              writable: true,
+            });
           } else {
+            // If it was inherited, attempt to delete the own property we added
             delete value[symToStringTag];
           }
         } catch (e) {
-          // Best-effort restore; if it fails, do not throw.
+          if (
+            typeof process == "object" &&
+            process.env &&
+            process.env.NODE_ENV !== "production"
+          ) {
+            // dev-only diagnostic to help trace restore failures
+            /* eslint-disable no-console */
+            console.warn(
+              "getRawTag: failed to restore Symbol.toStringTag",
+              e && e.message
+            );
+            /* eslint-enable no-console */
+          }
         }
       }
       return result;

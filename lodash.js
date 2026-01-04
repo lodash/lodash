@@ -2996,6 +2996,28 @@
     }
 
     /**
+     * The base implementation of `_.adjacentDifference`.
+     *
+     * @private
+     * @param {Array} array The array to inspect.
+     * @param {Function} iteratee The iteratee invoked per element.
+     * @returns {Array} Returns the array of adjacent differences.
+     */
+    function baseAdjacentDifference(array, iteratee) {
+      var index = 0,
+        length = array.length,
+        result = Array(length - 1),
+        previous = iteratee(array[0]);
+
+      while (++index < length) {
+        var current = iteratee(array[index]);
+        result[index - 1] = current - previous;
+        previous = current;
+      }
+      return result;
+    }
+
+    /**
      * The base implementation of `baseForOwn` which iterates over `object`
      * properties returned by `keysFunc` and invokes `iteratee` for each property.
      * Iteratee functions may exit iteration early by explicitly returning `false`.
@@ -6917,6 +6939,34 @@
     }
 
     /*------------------------------------------------------------------------*/
+
+    /**
+    * Computes the difference between adjacent elements of `array`.
+    *
+    * @static
+    * @memberOf _
+    * @since 4.18.0
+    * @category Array
+    * @param {Array} array The array to inspect.
+    * @param {Function} [iteratee=identity] The iteratee invoked per element.
+    * @returns {Array} Returns the array of adjacent differences.
+    * @example
+    *
+    * _.adjacentDifference([10, 13, 15, 20]);
+    * // => [3, 2, 5]
+    *
+    * _.adjacentDifference([{x:1},{x:4},{x:6}], o => o.x);
+    * // => [3, 2]
+    */
+    function adjacentDifference(array, iteratee) {
+      var length = array == null ? 0 : array.length;
+      if (length < 2) {
+        return [];
+      }
+      iteratee = iteratee == null ? identity : iteratee;
+      return baseAdjacentDifference(array, iteratee);
+    }
+
 
     /**
      * Creates an array of elements split into groups the length of `size`.
@@ -16671,6 +16721,7 @@
     lodash.bindKey = bindKey;
     lodash.castArray = castArray;
     lodash.chain = chain;
+    lodash.adjacentDifference = adjacentDifference;
     lodash.chunk = chunk;
     lodash.compact = compact;
     lodash.concat = concat;

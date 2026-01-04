@@ -1,5 +1,0 @@
-.DS_Store
-*.log
-doc/*.html
-node_modules
-dist/

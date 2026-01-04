@@ -80,6 +80,5 @@ module.exports = function (QUnit, _, skipAssert, DataView, ArrayBuffer) {
         assert.strictEqual(outcome, false, "should not throw and return false");
       }
     );
-
   });
 };

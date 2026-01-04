@@ -6721,13 +6721,14 @@
         tag = value[symToStringTag],
         unmasked = false,
         getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
-        originalDescriptor;
+        originalDescriptor,
+        assignmentSucceeded;
+
+      if (!getOwnPropertyDescriptor) {
+        return nativeObjectToString.call(value);
+      }
 
       try {
-        if (!getOwnPropertyDescriptor) {
-          return nativeObjectToString.call(value);
-        }
-
         originalDescriptor = getOwnPropertyDescriptor(value, symToStringTag);
 
         if (isOwn) {
@@ -6738,7 +6739,8 @@
 
           if (!originalDescriptor) {
             value[symToStringTag] = undefined;
-            if (value[symToStringTag] === undefined) {
+            assignmentSucceeded = value[symToStringTag] === undefined;
+            if (assignmentSucceeded) {
               unmasked = true;
             } else {
               return nativeObjectToString.call(value);
@@ -6750,12 +6752,13 @@
               configurable: true,
               enumerable: originalDescriptor.enumerable,
               writable: true,
-              value: undefined,
+              value: undefined
             });
             unmasked = true;
           } else {
             value[symToStringTag] = undefined;
-            if (value[symToStringTag] === undefined) {
+            assignmentSucceeded = value[symToStringTag] === undefined;
+            if (assignmentSucceeded) {
               unmasked = true;
             } else {
               return nativeObjectToString.call(value);
@@ -6783,18 +6786,7 @@
             delete value[symToStringTag];
           }
         } catch (e) {
-          if (
-            typeof process == "object" &&
-            process.env &&
-            process.env.NODE_ENV !== "production"
-          ) {
-            /* eslint-disable no-console */
-            console.warn(
-              "getRawTag: failed to restore Symbol.toStringTag",
-              e && e.message
-            );
-            /* eslint-enable no-console */
-          }
+          // Best-effort restore; if it fails, do not throw.
         }
       }
       return result;

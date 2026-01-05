@@ -6086,20 +6086,82 @@
      */
     function getRawTag(value) {
       var isOwn = hasOwnProperty.call(value, symToStringTag),
-          tag = value[symToStringTag];
+          tag = value[symToStringTag],
+          unmasked = false,
+          getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
+          originalDescriptor,
+          assignmentSucceeded;
+
+      if (!getOwnPropertyDescriptor) {
+        return nativeObjectToString.call(value);
+      }
 
       try {
-        value[symToStringTag] = undefined;
-        var unmasked = true;
-      } catch (e) {}
+        originalDescriptor = getOwnPropertyDescriptor(value, symToStringTag);
+
+        if (isOwn) {
+          var isAccessor =
+            originalDescriptor &&
+            (typeof originalDescriptor.get == 'function' ||
+              typeof originalDescriptor.set == 'function');
+
+          if (!originalDescriptor) {
+            value[symToStringTag] = undefined;
+            assignmentSucceeded = value[symToStringTag] === undefined;
+            if (assignmentSucceeded) {
+              unmasked = true;
+            } else {
+              return nativeObjectToString.call(value);
+            }
+          } else if (!originalDescriptor.configurable) {
+            return nativeObjectToString.call(value);
+          } else if (isAccessor) {
+            // Fallback for environments that lack `defineProperty`.
+            if (!defineProperty) {
+              return nativeObjectToString.call(value);
+            }
+            defineProperty(value, symToStringTag, {
+              configurable: true,
+              enumerable: originalDescriptor.enumerable,
+              writable: true,
+              value: undefined
+            });
+            unmasked = true;
+          } else {
+            value[symToStringTag] = undefined;
+            assignmentSucceeded = value[symToStringTag] === undefined;
+            if (assignmentSucceeded) {
+              unmasked = true;
+            } else {
+              return nativeObjectToString.call(value);
+            }
+          }
+        } else {
+          value[symToStringTag] = undefined;
+          unmasked = true;
+        }
+      } catch (e) {
+        return nativeObjectToString.call(value);
+      }
 
       var result = nativeObjectToString.call(value);
       if (unmasked) {
-        if (isOwn) {
-          value[symToStringTag] = tag;
-        } else {
-          delete value[symToStringTag];
-        }
+        try {
+          if (isOwn) {
+            if (originalDescriptor) {
+              if (defineProperty) {
+                defineProperty(value, symToStringTag, originalDescriptor);
+              } else {
+                // Fallback when `defineProperty` cannot restore the tag.
+                value[symToStringTag] = tag;
+              }
+            } else {
+              value[symToStringTag] = tag;
+            }
+          } else {
+            delete value[symToStringTag];
+          }
+        } catch (e) {}
       }
       return result;
     }

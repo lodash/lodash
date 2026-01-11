@@ -11489,6 +11489,14 @@
       assert.strictEqual(_.isPlainObject(object), true);
     });
 
+    QUnit.test('should return `true` for objects with nested null prototype', function(assert) {
+      assert.expect(1);
+
+      var object = create(create(null));
+      object.a = 1;
+      assert.strictEqual(_.isPlainObject(object), true);
+    });
+
     QUnit.test('should return `true` for objects with a `valueOf` property', function(assert) {
       assert.expect(1);
 

@@ -12149,8 +12149,18 @@
         return true;
       }
       var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-      return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-        funcToString.call(Ctor) == objectCtorString;
+      if (typeof Ctor == 'function' && Ctor instanceof Ctor &&
+          funcToString.call(Ctor) == objectCtorString) {
+        return true;
+      }
+      // Handle nested null prototype chain
+      while (proto !== null) {
+        if (hasOwnProperty.call(proto, 'constructor')) {
+          return false;
+        }
+        proto = getPrototype(proto);
+      }
+      return true;
     }
 
     /**

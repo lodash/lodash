@@ -83,4 +83,5 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
 
+<!-- PR practice: minor documentation edit -->
 

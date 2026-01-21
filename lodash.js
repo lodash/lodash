@@ -16055,6 +16055,8 @@
      * `start` is specified without an `end` or `step`. If `end` is not specified,
      * it's set to `start` with `start` then set to `0`.
      *
+     * If `start` is greater than `end` the `step` defaults to `-1`.
+     *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
@@ -16077,6 +16079,9 @@
      *
      * _.range(1, 5);
      * // => [1, 2, 3, 4]
+     *
+     * _.range(5, 2);
+     * // => [5, 4, 3]
      *
      * _.range(0, 20, 5);
      * // => [0, 5, 10, 15]

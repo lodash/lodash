@@ -21496,6 +21496,14 @@
 
   QUnit.module('lodash.sumBy');
 
+  QUnit.test('should sum boolean values as numbers', function(assert) {
+    assert.expect(3);
+
+    assert.strictEqual(_.sumBy([{ bool: true }], 'bool'), 1);
+    assert.strictEqual(_.sumBy([{ bool: false }], 'bool'), 0);
+    assert.strictEqual(_.sumBy([{ bool: true }, {bool: true}], 'bool'), 2);
+  });
+
   (function() {
     var array = [6, 4, 2],
         objects = [{ 'a': 2 }, { 'a': 3 }, { 'a': 1 }];

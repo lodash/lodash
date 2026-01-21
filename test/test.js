@@ -21242,11 +21242,12 @@
 
   (function() {
     QUnit.test('should uppercase only the first character of each word', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       assert.strictEqual(_.startCase('--foo-bar--'), 'Foo Bar');
       assert.strictEqual(_.startCase('fooBar'), 'Foo Bar');
       assert.strictEqual(_.startCase('__FOO_BAR__'), 'FOO BAR');
+      assert.strictEqual(_.startCase('3d'), '3D');
     });
   }());
 

@@ -22689,6 +22689,81 @@
 
       assert.deepEqual(actual, ['one', '&quot;two&quot;', 'three']);
     });
+
+    QUnit.test('should compile to Function by default', function(assert) {
+      assert.expect(2);
+
+      var actual = _.template("");
+
+      var AsyncFunction = async function(){}.constructor;
+      assert.ok(actual instanceof Function, "Function");
+      assert.notOk(actual instanceof AsyncFunction, "AsyncFunction");
+    });
+
+    QUnit.test('should compile to Function when asked for not async', function(assert) {
+      assert.expect(2);
+
+      var actual = _.template("", { isAsync: false });
+
+      var AsyncFunction = async function(){}.constructor;
+      assert.ok(actual instanceof Function, "Function");
+      assert.notOk(actual instanceof AsyncFunction, "AsyncFunction");
+    });
+
+    QUnit.test('should compile to AsyncFunction when asked for async', function(assert) {
+      assert.expect(2);
+
+      var actual = _.template("", { isAsync: true });
+
+      var AsyncFunction = async function(){}.constructor;
+      assert.ok(actual instanceof Function, "Function");
+      assert.ok(actual instanceof AsyncFunction, "AsyncFunction");
+    });
+
+    QUnit.test('should run async template with await in evaluate delimiter', function(assert) {
+      assert.expect(2);
+
+      var options = { isAsync: true };
+      var compiled = _.template("<% print(await Promise.resolve(42)) %>", options);
+
+      var actual   = compiled(),
+          expected = "42";
+
+      return actual.then(function(rv) {
+        assert.ok(actual instanceof Promise, "Promise");
+        assert.equal(rv, expected, "Retval");
+      });
+    });
+
+    QUnit.test('should run async template with await in interpolate delimiter', function(assert) {
+      assert.expect(2);
+
+      var options = { isAsync: true };
+      var compiled = _.template("<%= await Promise.resolve(42) %>", options);
+
+      var actual   = compiled(),
+          expected = "42";
+
+      return actual.then(function(rv) {
+        assert.ok(actual instanceof Promise, "Promise");
+        assert.equal(rv, expected, "Retval");
+      });
+    });
+
+    QUnit.test('should run async template with await in escape delimiter', function(assert) {
+      assert.expect(2);
+
+      var options = { isAsync: true };
+      var compiled = _.template("<%- await Promise.resolve(42) %>", options);
+
+      var actual   = compiled(),
+          expected = "42";
+
+      return actual.then(function(rv) {
+        assert.ok(actual instanceof Promise, "Promise");
+        assert.equal(rv, expected, "Retval");
+      });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

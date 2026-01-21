@@ -6961,7 +6961,7 @@
 
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
-     * `0`, `-0', '0n`, `""`, `undefined`, and `NaN` are falsy.
+     * `0`, `-0`, `0n`, `""`, `undefined`, and `NaN` are falsy.
      *
      * @static
      * @memberOf _

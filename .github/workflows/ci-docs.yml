@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js (latest)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'node' # Use 'node' for the latest version
           cache: 'npm'

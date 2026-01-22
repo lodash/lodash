@@ -10032,6 +10032,9 @@
      *
      * _.sortBy(users, ['user', 'age']);
      * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
+     *
+     * _.sortBy(users, 'user');
+     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
      */
     var sortBy = baseRest(function(collection, iteratees) {
       if (collection == null) {

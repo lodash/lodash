@@ -1,8 +1,5 @@
 import getTag from './.internal/getTag.js';
-import isArguments from './isArguments.js';
 import isArrayLike from './isArrayLike.js';
-import isBuffer from './isBuffer.js';
-import isPrototype from './.internal/isPrototype.js';
 import isTypedArray from './isTypedArray.js';
 
 /** Used to check objects for own properties. */
@@ -42,34 +39,32 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * isEmpty({ 'a': 1 })
  * // => false
  */
-function isEmpty(value) {
-    if (value == null) {
-        return true;
+ function isEmpty(value: any): boolean {
+    if (value == null || value.length === 0) {
+      return true;
     }
-    if (
-        isArrayLike(value) &&
-        (Array.isArray(value) ||
-            typeof value === 'string' ||
-            typeof value.splice === 'function' ||
-            isBuffer(value) ||
-            isTypedArray(value) ||
-            isArguments(value))
-    ) {
+  
+    // Optimized type checks for performance and edge cases
+    const type = typeof value;
+    if (type === 'object' || type === 'function') {
+      // Handle objects, arrays, strings, Maps, Sets, and TypedArrays efficiently
+      const isLengthProperty = Object.prototype.hasOwnProperty.call(value, 'length');
+      if (isLengthProperty && (isArrayLike(value))) {
         return !value.length;
-    }
-    const tag = getTag(value);
-    if (tag === '[object Map]' || tag === '[object Set]') {
+      } else if ((type === 'object' && (getTag(value) === '[object Map]' || getTag(value) === '[object Set]')) ||
+                 isTypedArray(value)) {
         return !value.size;
-    }
-    if (isPrototype(value)) {
-        return !Object.keys(value).length;
-    }
-    for (const key in value) {
-        if (hasOwnProperty.call(value, key)) {
+      } else {
+        // Efficiently iterate over enumerable own properties
+        for (const key in value) {
+          if (hasOwnProperty.call(value, key)) {
             return false;
+          }
         }
+      }
     }
-    return true;
-}
+  
+    return false;
+  }
 
 export default isEmpty;

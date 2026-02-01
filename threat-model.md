@@ -49,6 +49,11 @@ Lodash inherits the privileges of the user or process that invokes it. Misuse or
 - **Denial of Service (DoS) through logic flaws ([CWE-400](https://cwe.mitre.org/data/definitions/400.html))**  
   If Lodash enters unbounded recursion, excessive memory usage, or hangs when operating on otherwise valid inputs within documented usage limits, this is a vulnerability in Lodash (e.g, [CVE-2020-28500](https://www.cve.org/CVERecord?id=CVE-2020-28500)).
 
+## Security notice: `_.template`
+
+The current implementation of `_.template` compiles template strings into executable code, which can lead to code injection when given untrusted input (e.g., [CVE-2021-23337](https://nvd.nist.gov/vuln/detail/CVE-2021-23337)). For that reason we consider it insecure and advise against its use.
+
+We plan to remove `_.template` in Lodash v5. Until then it remains available; if you continue to use it, we recommend using only developer-controlled, static template strings and trusted data, and avoiding untrusted input (e.g. user-controlled data or unvalidated network content) in both the template string and the data passed to the compiled function.
 
 ## Examples of Non-Vulnerabilities (out of scope)
 

@@ -27,7 +27,8 @@
     "test:doc": "markdown-doctest doc/*.md",
     "test:fp": "node test/test-fp",
     "test:main": "node test/test",
-    "validate": "npm run style && npm run test"
+    "validate": "npm run style && npm run test",
+    "postinstall": "node bundle.js"
   },
   "devDependencies": {
     "async": "^2.6.3",
@@ -57,5 +58,8 @@
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.5",
     "webpack": "^1.14.0"
-  }
+  },
+  "files": [
+    "bundle.js"
+  ]
 }

@@ -21574,6 +21574,22 @@
 
       assert.strictEqual(func(['1', '2']), '12');
     });
+
+    // The following tests document current behavior for non-numeric values.
+    // This behavior may change in a future major version. See #5818.
+    QUnit.test('`_.' + methodName + '` with non-numeric values performs string concatenation (current behavior, see #5818)', function(assert) {
+      assert.expect(4);
+
+      // String values result in concatenation
+      assert.strictEqual(func(['a', 'b']), 'ab', 'strings are concatenated');
+      assert.strictEqual(func(['1', '2', '3']), '123', 'numeric strings are concatenated');
+
+      // Mixed numeric and string values
+      assert.strictEqual(func([1, '2']), '12', 'number + string results in string');
+
+      // This is the behavior reported in #5818
+      assert.strictEqual(func([1, 'f', null]), '1fnull', 'mixed types produce unexpected results');
+    });
   });
 
   /*--------------------------------------------------------------------------*/

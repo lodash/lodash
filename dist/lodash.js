@@ -6965,7 +6965,7 @@
 
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
-     * `0`, `""`, `undefined`, and `NaN` are falsey.
+     * `0`, `-0`, `0n`, `""`, `undefined`, and `NaN` are falsy.
      *
      * @static
      * @memberOf _
@@ -16458,12 +16458,17 @@
     /**
      * Computes the mean of the values in `array`.
      *
+     * **Note:** This method does not coerce values to numbers. If the array
+     * contains non-numeric values, unexpected results may occur due to JavaScript's
+     * type coercion rules. For predictable results, ensure array contains only numbers.
+     * See [#5818](https://github.com/lodash/lodash/issues/5818) for details.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the mean.
+     * @returns {number|*} Returns the mean.
      * @example
      *
      * _.mean([4, 2, 8, 6]);
@@ -16478,13 +16483,18 @@
      * invoked for each element in `array` to generate the value to be averaged.
      * The iteratee is invoked with one argument: (value).
      *
+     * **Note:** The iteratee should return numeric values. If non-numeric values
+     * are returned, unexpected results may occur due to JavaScript's type coercion
+     * rules. For predictable results, ensure the iteratee returns only numbers.
+     * See [#5818](https://github.com/lodash/lodash/issues/5818) for details.
+     *
      * @static
      * @memberOf _
      * @since 4.7.0
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the mean.
+     * @returns {number|*} Returns the mean.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16617,16 +16627,26 @@
     /**
      * Computes the sum of the values in `array`.
      *
+     * **Note:** This method does not coerce values to numbers. If the array
+     * contains non-numeric values (e.g., strings), JavaScript's `+` operator will
+     * perform string concatenation instead of addition, leading to unexpected results.
+     * For predictable results, ensure array contains only numbers.
+     * See [#5818](https://github.com/lodash/lodash/issues/5818) for details.
+     *
      * @static
      * @memberOf _
      * @since 3.4.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the sum.
+     * @returns {number|string} Returns the sum, or a string if non-numeric values are present.
      * @example
      *
      * _.sum([4, 2, 8, 6]);
      * // => 20
+     *
+     * // Non-numeric values result in string concatenation (not recommended)
+     * _.sum(['1', '2']);
+     * // => '12'
      */
     function sum(array) {
       return (array && array.length)
@@ -16639,13 +16659,19 @@
      * invoked for each element in `array` to generate the value to be summed.
      * The iteratee is invoked with one argument: (value).
      *
+     * **Note:** The iteratee should return numeric values. If non-numeric values
+     * are returned (e.g., strings), JavaScript's `+` operator will perform string
+     * concatenation instead of addition, leading to unexpected results.
+     * For predictable results, ensure the iteratee returns only numbers.
+     * See [#5818](https://github.com/lodash/lodash/issues/5818) for details.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the sum.
+     * @returns {number|string} Returns the sum, or a string if non-numeric values are present.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16656,6 +16682,10 @@
      * // The `_.property` iteratee shorthand.
      * _.sumBy(objects, 'n');
      * // => 20
+     *
+     * // Non-numeric values result in string concatenation (not recommended)
+     * _.sumBy([{ 'a': '1' }, { 'a': '2' }], 'a');
+     * // => '12'
      */
     function sumBy(array, iteratee) {
       return (array && array.length)

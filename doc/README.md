@@ -6591,7 +6591,7 @@ The iteratee is invoked with one argument: *(value)*.
 2. `[iteratee=_.identity]` *(Function)*: The iteratee invoked per element.
 
 #### Returns
-*(number)*: Returns the mean.
+*(number)*: Returns the mean. If array is empty, then will return `NaN`.
 
 #### Example
 ```js

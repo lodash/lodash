@@ -16484,7 +16484,7 @@
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the mean.
+     * @returns {number} Returns the mean. If array is empty, then will return `NaN`
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16495,6 +16495,10 @@
      * // The `_.property` iteratee shorthand.
      * _.meanBy(objects, 'n');
      * // => 5
+     *
+     * // If array is empty, then will return NaN
+     * _.meanBy([], 'foo')
+     * // => NaN
      */
     function meanBy(array, iteratee) {
       return baseMean(array, getIteratee(iteratee, 2));

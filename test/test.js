@@ -21529,6 +21529,35 @@
       assert.strictEqual(_.sumBy(arrays, 0), 6);
       assert.strictEqual(_.sumBy(objects, 'a'), 6);
     });
+
+    QUnit.test('should return NaN when iteratee returns a non-numeric value', function(assert) {
+      assert.expect(6);
+
+      // String value
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': 'f' }, { 'a': 2 }], 'a')), 'returns NaN for string value');
+
+      // Object value
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': {} }], 'a')), 'returns NaN for object value');
+
+      // All string values
+      assert.ok(isNaN(_.sumBy([{ 'a': 'x' }, { 'a': 'y' }], 'a')), 'returns NaN for all string values');
+
+      // Array value
+      assert.ok(isNaN(_.sumBy([{ 'a': [] }], 'a')), 'returns NaN for array value');
+
+      // Null value
+      assert.ok(isNaN(_.sumBy([{ 'a': 1 }, { 'a': null }], 'a')), 'returns NaN for null value');
+
+      // Function value
+      assert.ok(isNaN(_.sumBy([{ 'a': function() {} }], 'a')), 'returns NaN for function value');
+    });
+
+    QUnit.test('should handle undefined values by skipping them', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.sumBy([{ 'a': 1 }, { 'a': undefined }, { 'a': 2 }], 'a'), 3);
+      assert.strictEqual(_.sumBy([{ 'a': 1 }, { 'a': 2 }], 'a'), 3);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -21569,10 +21598,10 @@
       assert.deepEqual(func([1, NaN]), NaN);
     });
 
-    QUnit.test('`_.' + methodName + '` should not coerce values to numbers', function(assert) {
+    QUnit.test('`_.' + methodName + '` should return NaN for non-numeric values', function(assert) {
       assert.expect(1);
 
-      assert.strictEqual(func(['1', '2']), '12');
+      assert.ok(isNaN(func(['1', '2'])), 'returns NaN for string values');
     });
   });
 

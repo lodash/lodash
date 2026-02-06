@@ -951,13 +951,74 @@
   }
 
   /**
+   * Checks if `value` is a number primitive.
+   * This validates if a value can be safely used in numeric operations.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is a number (including NaN, Infinity),
+   *  else `false`.
+   * @example
+   *
+   * isNumeric(3);
+   * // => true
+   *
+   * isNumeric(NaN);
+   * // => true
+   *
+   * isNumeric(Infinity);
+   * // => true
+   *
+   * isNumeric('3');
+   * // => false
+   *
+   * isNumeric(null);
+   * // => false
+   */
+  function isNumeric(value) {
+    return typeof value === 'number';
+  }
+
+  /**
+   * Returns a descriptive string for the type of a value.
+   * Used for warning messages when non-numeric values are encountered.
+   *
+   * @private
+   * @param {*} value The value to describe.
+   * @returns {string} Returns a description of the value type.
+   */
+  function describeType(value) {
+    if (value === null) {
+      return 'null';
+    }
+    if (Array.isArray(value)) {
+      return 'array';
+    }
+    var type = typeof value;
+    if (type === 'object') {
+      var constructor = value.constructor;
+      if (constructor && constructor.name && constructor.name !== 'Object') {
+        return constructor.name;
+      }
+      return 'object';
+    }
+    if (type === 'function') {
+      return value.name ? 'function ' + value.name + '()' : 'function';
+    }
+    if (type === 'string') {
+      return 'string "' + (value.length > 20 ? value.slice(0, 20) + '...' : value) + '"';
+    }
+    return type;
+  }
+
+  /**
    * The base implementation of `_.sum` and `_.sumBy` without support for
    * iteratee shorthands.
    *
    * @private
    * @param {Array} array The array to iterate over.
    * @param {Function} iteratee The function invoked per iteration.
-   * @returns {number} Returns the sum.
+   * @returns {number} Returns the sum, or NaN if non-numeric values are encountered.
    */
   function baseSum(array, iteratee) {
     var result,
@@ -967,6 +1028,15 @@
     while (++index < length) {
       var current = iteratee(array[index]);
       if (current !== undefined) {
+        if (!isNumeric(current)) {
+          if (typeof console !== 'undefined' && console.warn) {
+            console.warn(
+              'lodash: sum/sumBy encountered non-numeric value at index ' + index + '. ' +
+              'Expected number, got ' + describeType(current) + '. Returning NaN.'
+            );
+          }
+          return NAN;
+        }
         result = result === undefined ? current : (result + current);
       }
     }
@@ -6965,7 +7035,7 @@
 
     /**
      * Creates an array with all falsey values removed. The values `false`, `null`,
-     * `0`, `""`, `undefined`, and `NaN` are falsey.
+     * `0`, `-0`, `0n`, `""`, `undefined`, and `NaN` are falsy.
      *
      * @static
      * @memberOf _
@@ -16458,16 +16528,22 @@
     /**
      * Computes the mean of the values in `array`.
      *
+     * **Note:** Returns `NaN` if array contains non-numeric values. A console
+     * warning is emitted describing the invalid value.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the mean.
+     * @param {Array<number>} array The array to iterate over.
+     * @returns {number} Returns the mean, or `NaN` if non-numeric values are encountered.
      * @example
      *
      * _.mean([4, 2, 8, 6]);
      * // => 5
+     *
+     * _.mean([1, 2, 'three']);
+     * // => NaN (with console warning)
      */
     function mean(array) {
       return baseMean(array, identity);
@@ -16478,13 +16554,18 @@
      * invoked for each element in `array` to generate the value to be averaged.
      * The iteratee is invoked with one argument: (value).
      *
+     * **Note:** The iteratee must return a numeric value. Non-numeric return
+     * values (strings, objects, arrays, functions, null, etc.) will cause `NaN`
+     * to be returned and a console warning to be emitted describing the invalid value.
+     *
      * @static
      * @memberOf _
      * @since 4.7.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the mean.
+     * @param {Function|string} [iteratee=_.identity] The iteratee invoked per element.
+     *  If a string is provided, it is used as a property path to extract numeric values.
+     * @returns {number} Returns the mean, or `NaN` if non-numeric values are encountered.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16495,6 +16576,10 @@
      * // The `_.property` iteratee shorthand.
      * _.meanBy(objects, 'n');
      * // => 5
+     *
+     * // Returns NaN for non-numeric values (with console warning)
+     * _.meanBy([{ 'a': 1 }, { 'a': 'two' }], 'a');
+     * // => NaN
      */
     function meanBy(array, iteratee) {
       return baseMean(array, getIteratee(iteratee, 2));
@@ -16617,16 +16702,22 @@
     /**
      * Computes the sum of the values in `array`.
      *
+     * **Note:** Returns `NaN` if array contains non-numeric values. A console
+     * warning is emitted describing the invalid value.
+     *
      * @static
      * @memberOf _
      * @since 3.4.0
      * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the sum.
+     * @param {Array<number>} array The array to iterate over.
+     * @returns {number} Returns the sum, or `NaN` if non-numeric values are encountered.
      * @example
      *
      * _.sum([4, 2, 8, 6]);
      * // => 20
+     *
+     * _.sum([1, 2, 'three']);
+     * // => NaN (with console warning)
      */
     function sum(array) {
       return (array && array.length)
@@ -16639,13 +16730,18 @@
      * invoked for each element in `array` to generate the value to be summed.
      * The iteratee is invoked with one argument: (value).
      *
+     * **Note:** The iteratee must return a numeric value. Non-numeric return
+     * values (strings, objects, arrays, functions, null, etc.) will cause `NaN`
+     * to be returned and a console warning to be emitted describing the invalid value.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the sum.
+     * @param {Function|string} [iteratee=_.identity] The iteratee invoked per element.
+     *  If a string is provided, it is used as a property path to extract numeric values.
+     * @returns {number} Returns the sum, or `NaN` if non-numeric values are encountered.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16656,6 +16752,12 @@
      * // The `_.property` iteratee shorthand.
      * _.sumBy(objects, 'n');
      * // => 20
+     *
+     * // Returns NaN for non-numeric values (with console warning)
+     * _.sumBy([{ 'a': 1 }, { 'a': 'two' }], 'a');
+     * // => NaN
+     * // Console: "lodash: sum/sumBy encountered non-numeric value at index 1.
+     * //          Expected number, got string "two". Returning NaN."
      */
     function sumBy(array, iteratee) {
       return (array && array.length)

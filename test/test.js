@@ -2533,6 +2533,14 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.chunk');
+  QUnit.test('should return empty array when size is NaN explicitly', function(assert) {
+  assert.expect(1);
+
+  var array = [1, 2, 3];
+
+  assert.deepEqual(_.chunk(array, NaN), []);
+});
+
 
   (function() {
     var array = [0, 1, 2, 3, 4, 5];

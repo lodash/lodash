@@ -9239,9 +9239,10 @@
     }
 
     /**
-     * Iterates over elements of `collection`, returning an array of all elements
-     * `predicate` returns truthy for. The predicate is invoked with three
-     * arguments: (value, index|key, collection).
+     * The opposite of `_.reject`; this method iterates over elements of
+     * `collection`, returning an array of all elements `predicate` returns
+     * truthy for. The predicate is invoked with three arguments:
+     * (value, index|key, collection).
      *
      * **Note:** Unlike `_.remove`, this method returns a new array.
      *
@@ -15247,7 +15248,7 @@
     }
 
     /**
-     * The inverse of `_.escape`; this method converts the HTML entities
+     * The opposite of `_.escape`; this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
      * their corresponding characters.
      *

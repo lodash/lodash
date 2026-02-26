@@ -1,17 +1,41 @@
 # Migrating from Individual Lodash Method Packages
 
-This guide helps you migrate from individual lodash method packages (e.g., `lodash.trim`, `lodash.trimend`) to the main `lodash` package or native JavaScript alternatives.
+This guide helps you migrate from individual lodash method packages to the main `lodash` package or native JavaScript alternatives.
 
 ## Why Migrate?
 
-Some individual lodash method packages contain **unfixed security vulnerabilities**:
+**9 individual lodash method packages contain unfixed security vulnerabilities** affecting approximately **40 million weekly downloads combined**. The main `lodash` package (v4.17.21+) contains fixes for all these vulnerabilities.
 
-| Package | Vulnerability | Status |
-|---------|--------------|--------|
-| `lodash.trim` | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) (ReDoS) | **Unfixed** |
-| `lodash.trimend` | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) (ReDoS) | **Unfixed** |
+## Affected Packages
 
-The main `lodash` package (v4.17.21+) contains fixes for these vulnerabilities.
+### ReDoS Vulnerability (CVE-2020-28500)
+
+| Package | Last Version | Weekly Downloads | Main Package Fix |
+|---------|-------------|------------------|------------------|
+| `lodash.trim` | 4.5.1 | ~3M | v4.17.21 |
+| `lodash.trimend` | 4.5.1 | ~1M | v4.17.21 |
+
+**Impact:** CPU exhaustion via crafted input with excessive whitespace patterns.
+
+### Command Injection (CVE-2021-23337) - CVSS 7.2 HIGH
+
+| Package | Last Version | Weekly Downloads | Main Package Fix |
+|---------|-------------|------------------|------------------|
+| `lodash.template` | 4.5.0 | ~8M | v4.17.21 |
+
+**Impact:** Arbitrary code execution when untrusted input is passed to template options.
+
+### Prototype Pollution (CVE-2020-8203) - CVSS 7.4 HIGH
+
+| Package | Last Version | Weekly Downloads | Main Package Fix |
+|---------|-------------|------------------|------------------|
+| `lodash.set` | 4.3.2 | ~15M | v4.17.19 |
+| `lodash.setwith` | 4.3.2 | ~3M | v4.17.19 |
+| `lodash.update` | 4.10.2 | ~1M | v4.17.19 |
+| `lodash.updatewith` | 4.10.2 | ~500K | v4.17.19 |
+| `lodash.pick` | 4.4.0 | ~12M | v4.17.19 |
+
+**Impact:** Attackers can modify Object prototype, affecting all objects in the application.
 
 ## Migration Options
 
@@ -22,14 +46,16 @@ Replace individual package imports with imports from the main `lodash` package:
 ```javascript
 // Before (VULNERABLE)
 const trim = require('lodash.trim');
-const trimEnd = require('lodash.trimend');
+const template = require('lodash.template');
+const set = require('lodash.set');
 
 // After (FIXED) - Named import
-const { trim, trimEnd } = require('lodash');
+const { trim, template, set } = require('lodash');
 
 // After (FIXED) - Direct method import (tree-shakeable)
 const trim = require('lodash/trim');
-const trimEnd = require('lodash/trimEnd');
+const template = require('lodash/template');
+const set = require('lodash/set');
 ```
 
 For ES modules:
@@ -37,59 +63,79 @@ For ES modules:
 ```javascript
 // Before (VULNERABLE)
 import trim from 'lodash.trim';
-import trimEnd from 'lodash.trimend';
+import template from 'lodash.template';
+import set from 'lodash.set';
 
 // After (FIXED) - Using lodash-es for better tree-shaking
-import { trim, trimEnd } from 'lodash-es';
+import { trim, template, set } from 'lodash-es';
 
 // After (FIXED) - Direct import
 import trim from 'lodash-es/trim';
-import trimEnd from 'lodash-es/trimEnd';
+import template from 'lodash-es/template';
+import set from 'lodash-es/set';
 ```
 
 ### Option 2: Use Native JavaScript Methods
 
-For simple use cases, native JavaScript methods provide equivalent functionality:
+For some methods, native JavaScript provides equivalent functionality:
+
+#### String Methods (trim, trimEnd)
 
 ```javascript
-// Before (lodash.trim)
+// Before (lodash.trim) - VULNERABLE
 const trim = require('lodash.trim');
 const result = trim('  hello  ');
 
-// After (native)
+// After (native) - SAFE
 const result = '  hello  '.trim();
+const resultEnd = '  hello  '.trimEnd();
 ```
 
-```javascript
-// Before (lodash.trimend)
-const trimEnd = require('lodash.trimend');
-const result = trimEnd('  hello  ');
-
-// After (native)
-const result = '  hello  '.trimEnd();
-```
-
-**Note:** Lodash's `trim` and `trimEnd` functions support custom character sets:
+**Note:** Lodash's `trim` supports custom character sets. If you need this, use the main package:
 
 ```javascript
 // Lodash - trim specific characters
 _.trim('-_-abc-_-', '_-');  // => 'abc'
-
-// Native - only trims whitespace
-'-_-abc-_-'.trim();  // => '-_-abc-_-'
 ```
 
-If you need custom character trimming, use the main `lodash` package.
+#### Object Methods (set, pick)
+
+```javascript
+// Before (lodash.set) - VULNERABLE
+const set = require('lodash.set');
+set(object, 'a.b.c', value);
+
+// After (native) - For simple cases
+object.a = { b: { c: value } };
+
+// Or use main lodash for complex paths
+const { set } = require('lodash');
+set(object, 'a.b.c', value);
+```
+
+```javascript
+// Before (lodash.pick) - VULNERABLE
+const pick = require('lodash.pick');
+const result = pick(object, ['a', 'b']);
+
+// After (native) - Using destructuring
+const { a, b } = object;
+const result = { a, b };
+
+// Or use main lodash
+const { pick } = require('lodash');
+const result = pick(object, ['a', 'b']);
+```
 
 ### Option 3: Bundle Size Optimization
 
 If you're concerned about bundle size (the main reason for using individual packages), consider these alternatives:
 
-1. **lodash-es with tree-shaking**: Modern bundlers (webpack, rollup, vite) can tree-shake `lodash-es`:
+1. **lodash-es with tree-shaking**: Modern bundlers can tree-shake `lodash-es`:
 
    ```javascript
-   import { trim } from 'lodash-es';
-   // Only the trim function is included in your bundle
+   import { trim, set, template } from 'lodash-es';
+   // Only the used functions are included in your bundle
    ```
 
 2. **babel-plugin-lodash**: Automatically transforms lodash imports:
@@ -104,34 +150,68 @@ If you're concerned about bundle size (the main reason for using individual pack
 
 3. **lodash-webpack-plugin**: Further reduces bundle size by removing unused features.
 
-## Updating package.json
+## Quick Migration Commands
 
-Remove individual packages and add the main lodash package:
+Remove all vulnerable packages and add the main lodash package:
 
 ```bash
-# Remove vulnerable packages
-npm uninstall lodash.trim lodash.trimend
+# Remove all vulnerable individual packages
+npm uninstall lodash.trim lodash.trimend lodash.template \
+  lodash.set lodash.setwith lodash.update lodash.updatewith lodash.pick
 
 # Add main lodash package (if not already present)
-npm install lodash
+npm install lodash@^4.17.21
 ```
 
 ## Finding Affected Dependencies
 
-Check if your dependencies use vulnerable individual packages:
+Check if your project or dependencies use vulnerable individual packages:
 
 ```bash
-npm ls lodash.trim lodash.trimend
+# Check for all affected packages
+npm ls lodash.trim lodash.trimend lodash.template \
+  lodash.set lodash.setwith lodash.update lodash.updatewith lodash.pick
 ```
 
 If dependencies use these packages, consider:
-- Opening issues on those projects
-- Using npm overrides (npm 8.3+) to force resolution to the main package
+- Opening issues on those projects requesting migration
+- Using npm overrides (npm 8.3+) to force resolution to the main package:
+
+```json
+{
+  "overrides": {
+    "lodash.set": "npm:lodash@^4.17.21",
+    "lodash.template": "npm:lodash@^4.17.21"
+  }
+}
+```
+
+**Note:** npm overrides may not work for all packages due to API differences. Test thoroughly.
+
+## Security References
+
+### CVE-2020-28500 (ReDoS)
+- [NVD Entry](https://nvd.nist.gov/vuln/detail/CVE-2020-28500)
+- [GitHub Advisory GHSA-29mw-wpgm-hmr9](https://github.com/advisories/GHSA-29mw-wpgm-hmr9)
+- Fixed in main lodash v4.17.21
+
+### CVE-2021-23337 (Command Injection)
+- [NVD Entry](https://nvd.nist.gov/vuln/detail/CVE-2021-23337)
+- [GitHub Advisory GHSA-35jh-r3h4-6jhm](https://github.com/advisories/GHSA-35jh-r3h4-6jhm)
+- Fixed in main lodash v4.17.21
+- CVSS 3.1: 7.2 (HIGH)
+
+### CVE-2020-8203 (Prototype Pollution)
+- [NVD Entry](https://nvd.nist.gov/vuln/detail/CVE-2020-8203)
+- [GitHub Advisory GHSA-p6mc-m468-83gw](https://github.com/advisories/GHSA-p6mc-m468-83gw)
+- [HackerOne Report](https://hackerone.com/reports/712065)
+- Fixed in main lodash v4.17.19
+- CVSS 3.1: 7.4 (HIGH)
 
 ## Additional Resources
 
 - [Lodash Documentation](https://lodash.com/docs)
 - [lodash-es on npm](https://www.npmjs.com/package/lodash-es)
 - [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
-- [CVE-2020-28500 Details](https://nvd.nist.gov/vuln/detail/CVE-2020-28500)
-- [GHSA-29mw-wpgm-hmr9](https://github.com/advisories/GHSA-29mw-wpgm-hmr9)
+- [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
+- [Issue #6106 - Discussion on individual packages](https://github.com/lodash/lodash/issues/6106)

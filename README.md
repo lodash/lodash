@@ -13,6 +13,17 @@
 > [!IMPORTANT]
 > As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed in [GOVERNANCE.md](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md).
 
+> [!WARNING]
+> **Security Notice: Individual Method Packages**
+>
+> Some individual lodash method packages (e.g., `lodash.trim`, `lodash.trimend`) remain vulnerable to [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) (ReDoS). These packages have not been updated since their initial release and do not contain security fixes present in the main `lodash` package.
+>
+> **Recommended Actions:**
+> - Use the main `lodash` package (v4.17.21+) instead of individual method packages
+> - Or use native JavaScript methods like `String.prototype.trim()`
+>
+> See [SECURITY.md](./SECURITY.md) for more information.
+
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
@@ -24,12 +35,12 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.js) (~4 kB gzipped)
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.js) (~24 kB gzipped)
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.23/LICENSE) & supports modern environments.<br>
-Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that's right for you.
 
 ## Installation
 
@@ -68,7 +79,7 @@ Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6
 ## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
-numbers, objects, strings, etc. Lodash’s modular methods are great for:
+numbers, objects, strings, etc. Lodash's modular methods are great for:
 
  * Iterating arrays, objects, & strings
  * Manipulating & testing values
@@ -82,5 +93,3 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
-
-

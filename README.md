@@ -14,15 +14,28 @@
 > As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed in [GOVERNANCE.md](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md).
 
 > [!WARNING]
-> **Security Notice: Individual Method Packages**
+> **Security Notice: Individual Method Packages (~40M combined weekly downloads affected)**
 >
-> Some individual lodash method packages (e.g., `lodash.trim`, `lodash.trimend`) remain vulnerable to [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) (ReDoS). These packages have not been updated since their initial release and do not contain security fixes present in the main `lodash` package.
+> Several individual lodash method packages remain vulnerable and have **not received security patches**. Users should migrate to the main `lodash` package or native alternatives.
+>
+> **Affected Packages:**
+>
+> | Package | Vulnerability | CVE | Severity |
+> |---------|--------------|-----|----------|
+> | `lodash.trim` | ReDoS | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) | Medium |
+> | `lodash.trimend` | ReDoS | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) | Medium |
+> | `lodash.template` | Command Injection | [CVE-2021-23337](https://nvd.nist.gov/vuln/detail/CVE-2021-23337) | **High (7.2)** |
+> | `lodash.set` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.setwith` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.update` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.updatewith` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.pick` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
 >
 > **Recommended Actions:**
 > - Use the main `lodash` package (v4.17.21+) instead of individual method packages
-> - Or use native JavaScript methods like `String.prototype.trim()`
+> - Or use native JavaScript methods where available
 >
-> See [SECURITY.md](./SECURITY.md) for more information.
+> See [Individual Packages Migration Guide](./doc/INDIVIDUAL_PACKAGES_MIGRATION.md) and [SECURITY.md](./SECURITY.md) for more information.
 
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 

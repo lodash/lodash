@@ -16472,7 +16472,7 @@
      * @since 4.0.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the mean.
+     * @returns {number} Returns the mean, or `NaN` for empty arrays.
      * @example
      *
      * _.mean([4, 2, 8, 6]);
@@ -16493,7 +16493,7 @@
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the mean.
+     * @returns {number} Returns the mean, or `NaN` for empty arrays.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];

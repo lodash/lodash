@@ -2771,19 +2771,35 @@
       assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
     });
 
-    QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
-      assert.expect(1);
+    QUnit.test('`_.clone` and `_.cloneDeep` should copy own keys shadowing non-writable inherited keys', function(assert) {
+      assert.expect(4);
 
-      var actual;
+      if (!defineProperty || !create) {
+        skipAssert(assert, 4);
+        return;
+      }
 
-      _.cloneDeepWith({ 'a': 1 }, function() {
-        actual = _.last(arguments);
+      var proto = {};
+      defineProperty(proto, 'hasOwnProperty', {
+        'configurable': false,
+        'enumerable': true,
+        'value': noop,
+        'writable': false
       });
 
-      assert.ok(isNpm
-        ? actual.constructor.name == 'Stack'
-        : actual instanceof mapCaches.Stack
-      );
+      var source = create(proto);
+      defineProperty(source, 'hasOwnProperty', {
+        'configurable': true,
+        'enumerable': true,
+        'value': 'a string',
+        'writable': true
+      });
+
+      lodashStable.each(['clone', 'cloneDeep'], function(methodName) {
+        var cloned = _[methodName](source);
+        assert.strictEqual(cloned.hasOwnProperty, 'a string');
+        assert.strictEqual(hasOwnProperty.call(cloned, 'hasOwnProperty'), true);
+      });
     });
 
     lodashStable.each(['clone', 'cloneDeep'], function(methodName) {

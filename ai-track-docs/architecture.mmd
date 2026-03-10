@@ -1,0 +1,37 @@
+graph TD
+    subgraph Source
+        A[lodash.js — main UMD bundle]
+    end
+
+    subgraph FP Build
+        B[fp/_baseConvert.js]
+        C[fp/_mapping.js]
+        D[fp/placeholder.js]
+        B --> C
+    end
+
+    subgraph Build Tooling — lib/
+        E[lib/main/build-dist.js]
+        F[lib/fp/build-dist.js]
+        G[lib/common/mapping.js]
+        E --> A
+        F --> B
+    end
+
+    subgraph Tests
+        H[test/test.js — main QUnit suite]
+        I[test/test-fp.js — FP QUnit suite]
+        J[test/playwright-runner.spec.js]
+        H --> A
+        I --> B
+        J --> H
+        J --> I
+    end
+
+    subgraph Vendor — vendored libs
+        K[vendor/backbone]
+        L[vendor/underscore]
+    end
+
+    H -.->|compat checks| K
+    H -.->|compat checks| L

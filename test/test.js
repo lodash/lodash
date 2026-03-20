@@ -24693,6 +24693,12 @@
       assert.strictEqual(_.unescape(_.escape(unescaped)), unescaped);
     });
 
+    QUnit.test('should unescape the "&#38;" entity', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.unescape('&#38;'), '&');
+    });
+
     lodashStable.each(['&#96;', '&#x2F;'], function(entity) {
       QUnit.test('should not unescape the "' + entity + '" entity', function(assert) {
         assert.expect(1);

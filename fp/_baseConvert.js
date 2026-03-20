@@ -543,8 +543,7 @@ function baseConvert(util, name, func, options) {
           return;
         }
       }
-      func.convert = createConverter(key, func);
-      pairs.push([key, func]);
+      pairs.push([key, wrap(key, func, _)]);
     }
   });
 

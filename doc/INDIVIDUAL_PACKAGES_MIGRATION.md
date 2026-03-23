@@ -4,7 +4,7 @@ This guide helps you migrate from individual lodash method packages to the main 
 
 ## Why Migrate?
 
-**9 individual lodash method packages contain unfixed security vulnerabilities** affecting approximately **40 million weekly downloads combined**. The main `lodash` package (v4.17.21+) contains fixes for all these vulnerabilities.
+**9 individual lodash method packages contain unfixed security vulnerabilities** affecting approximately **4.8 million weekly downloads combined**. The main `lodash` package (v4.17.21+) contains fixes for all these vulnerabilities.
 
 ## Affected Packages
 
@@ -12,8 +12,8 @@ This guide helps you migrate from individual lodash method packages to the main 
 
 | Package | Last Version | Weekly Downloads | Main Package Fix |
 |---------|-------------|------------------|------------------|
-| `lodash.trim` | 4.5.1 | ~3M | v4.17.21 |
-| `lodash.trimend` | 4.5.1 | ~1M | v4.17.21 |
+| `lodash.trim` | 4.5.1 | ~60K | v4.17.21 |
+| `lodash.trimend` | 4.5.1 | ~50K | v4.17.21 |
 
 **Impact:** CPU exhaustion via crafted input with excessive whitespace patterns.
 
@@ -21,7 +21,7 @@ This guide helps you migrate from individual lodash method packages to the main 
 
 | Package | Last Version | Weekly Downloads | Main Package Fix |
 |---------|-------------|------------------|------------------|
-| `lodash.template` | 4.5.0 | ~8M | v4.17.21 |
+| `lodash.template` | 4.5.0 | ~2.4M | v4.17.21 |
 
 **Impact:** Arbitrary code execution when untrusted input is passed to template options.
 
@@ -29,11 +29,11 @@ This guide helps you migrate from individual lodash method packages to the main 
 
 | Package | Last Version | Weekly Downloads | Main Package Fix |
 |---------|-------------|------------------|------------------|
-| `lodash.set` | 4.3.2 | ~15M | v4.17.19 |
-| `lodash.setwith` | 4.3.2 | ~3M | v4.17.19 |
-| `lodash.update` | 4.10.2 | ~1M | v4.17.19 |
-| `lodash.updatewith` | 4.10.2 | ~500K | v4.17.19 |
-| `lodash.pick` | 4.4.0 | ~12M | v4.17.19 |
+| `lodash.set` | 4.3.2 | ~1.2M | v4.17.19 |
+| `lodash.setwith` | 4.3.2 | ~11K | v4.17.19 |
+| `lodash.update` | 4.10.2 | ~2K | v4.17.19 |
+| `lodash.updatewith` | 4.10.2 | ~20 | v4.17.19 |
+| `lodash.pick` | 4.4.0 | ~1.1M | v4.17.19 |
 
 **Impact:** Attackers can modify Object prototype, affecting all objects in the application.
 
@@ -175,18 +175,19 @@ npm ls lodash.trim lodash.trimend lodash.template \
 
 If dependencies use these packages, consider:
 - Opening issues on those projects requesting migration
-- Using npm overrides (npm 8.3+) to force resolution to the main package:
+- Using npm overrides (npm 8.3+) with the [lodash-modularized](https://github.com/xsfj/lodash-modularized) community project:
 
 ```json
 {
   "overrides": {
-    "lodash.set": "npm:lodash@^4.17.21",
-    "lodash.template": "npm:lodash@^4.17.21"
+    "lodash.set": "npm:@lodash-modularized/set@^1.0.0",
+    "lodash.template": "npm:@lodash-modularized/template@^1.0.0",
+    "lodash.trim": "npm:@lodash-modularized/trim@^1.0.0"
   }
 }
 ```
 
-**Note:** npm overrides may not work for all packages due to API differences. Test thoroughly.
+**Note:** The `@lodash-modularized` packages re-export from the main `lodash` package, preserving the same API while applying security fixes. See the [full overrides list](https://github.com/xsfj/lodash-modularized#usage) for all packages.
 
 ## Security References
 

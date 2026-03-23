@@ -14,7 +14,7 @@
 > As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed in [GOVERNANCE.md](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md).
 
 > [!WARNING]
-> **Security Notice: Individual Method Packages (~40M combined weekly downloads affected)**
+> **Security Notice: Individual Method Packages (~4.8M combined weekly downloads affected)**
 >
 > Several individual lodash method packages remain vulnerable and have **not received security patches**. Users should migrate to the main `lodash` package or native alternatives.
 >

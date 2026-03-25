@@ -24676,9 +24676,10 @@
     });
 
     QUnit.test('should unescape the proper entities', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       assert.strictEqual(_.unescape(escaped), unescaped);
+      assert.strictEqual(_.unescape('Couples Therapy Naked &#38; Afraid'), 'Couples Therapy Naked & Afraid');
     });
 
     QUnit.test('should handle strings with nothing to unescape', function(assert) {

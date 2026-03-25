@@ -18682,9 +18682,10 @@
     });
 
     QUnit.test('`_.' + methodName + '` should support a `step` of `0`', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       assert.deepEqual(func(1, 4, 0), [1, 1, 1]);
+      assert.deepEqual(func(4, 1, 0), []);
     });
 
     QUnit.test('`_.' + methodName + '` should work with a `step` larger than `end`', function(assert) {

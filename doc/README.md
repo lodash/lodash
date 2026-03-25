@@ -9649,6 +9649,9 @@ properties may be accessed as free variables in the template. If a setting
 object is given, it takes precedence over `_.templateSettings` values.
 <br>
 <br>
+**Security:** `_.template` is insecure and should not be used. It will be removed in Lodash v5. Avoid untrusted input. See [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md).
+<br>
+<br>
 **Note:** In the development build `_.template` utilizes
 [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
 for easier debugging.
@@ -11253,6 +11256,9 @@ _.uniqueId();
 (Object): By default, the template delimiters used by lodash are like those in
 embedded Ruby *(ERB)* as well as ES2015 template strings. Change the
 following template settings to use alternative delimiters.
+<br>
+<br>
+**Security:** See [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md) — `_.template` is insecure and will be removed in v5.
 
 ---
 

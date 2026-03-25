@@ -2594,7 +2594,7 @@
      * @param {*} value The value to assign.
      */
     function baseAssignValue(object, key, value) {
-      if (key == '__proto__' && defineProperty) {
+      if ((key == '__proto__' || key == 'hasOwnProperty') && defineProperty) {
         defineProperty(object, key, {
           'configurable': true,
           'enumerable': true,
@@ -10430,9 +10430,9 @@
       wait = toNumber(wait) || 0;
       if (isObject(options)) {
         leading = !!options.leading;
-        maxing = 'maxWait' in options;
+        maxing = options.maxWait !== undefined;
         maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
+        trailing = options.trailing !== undefined ? !!options.trailing : trailing;
       }
 
       function invokeFunc(time) {
@@ -11013,8 +11013,8 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (isObject(options)) {
-        leading = 'leading' in options ? !!options.leading : leading;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
+        leading = options.leading !== undefined ? !!options.leading : leading;
+        trailing = options.trailing !== undefined ? !!options.trailing : trailing;
       }
       return debounce(func, wait, {
         'leading': leading,

@@ -2924,6 +2924,26 @@
         assert.notStrictEqual(actual, object);
       });
 
+      QUnit.test('`_.' + methodName + '` should clone own shadow properties when inherited keys are non-writable', function(assert) {
+        assert.expect(2);
+
+        var proto = Object.freeze({
+          'hasOwnProperty': objectProto.hasOwnProperty
+        });
+        var object = Object.create(proto);
+        Object.defineProperty(object, 'hasOwnProperty', {
+          'configurable': true,
+          'enumerable': true,
+          'value': 'shadowed',
+          'writable': true
+        });
+
+        var actual = func(object);
+
+        assert.strictEqual(actual.hasOwnProperty, 'shadowed');
+        assert.strictEqual(Object.prototype.hasOwnProperty.call(actual, 'hasOwnProperty'), true);
+      });
+
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
         assert.expect(7);
 

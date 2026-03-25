@@ -13,6 +13,30 @@
 > [!IMPORTANT]
 > As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed in [GOVERNANCE.md](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md).
 
+> [!WARNING]
+> **Security Notice: Individual Method Packages (~4.8M combined weekly downloads affected)**
+>
+> Several individual lodash method packages remain vulnerable and have **not received security patches**. Users should migrate to the main `lodash` package or native alternatives.
+>
+> **Affected Packages:**
+>
+> | Package | Vulnerability | CVE | Severity |
+> |---------|--------------|-----|----------|
+> | `lodash.trim` | ReDoS | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) | Medium |
+> | `lodash.trimend` | ReDoS | [CVE-2020-28500](https://nvd.nist.gov/vuln/detail/CVE-2020-28500) | Medium |
+> | `lodash.template` | Command Injection | [CVE-2021-23337](https://nvd.nist.gov/vuln/detail/CVE-2021-23337) | **High (7.2)** |
+> | `lodash.set` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.setwith` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.update` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.updatewith` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+> | `lodash.pick` | Prototype Pollution | [CVE-2020-8203](https://nvd.nist.gov/vuln/detail/CVE-2020-8203) | **High (7.4)** |
+>
+> **Recommended Actions:**
+> - Use the main `lodash` package (v4.17.21+) instead of individual method packages
+> - Or use native JavaScript methods where available
+>
+> See [Individual Packages Migration Guide](./doc/INDIVIDUAL_PACKAGES_MIGRATION.md) and [SECURITY.md](./SECURITY.md) for more information.
+
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
 Generated using [lodash-cli](https://www.npmjs.com/package/lodash-cli):
@@ -24,12 +48,12 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.core.js) (~4 kB gzipped)
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.23/dist/lodash.js) (~24 kB gzipped)
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
 Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.23/LICENSE) & supports modern environments.<br>
-Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
+Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that's right for you.
 
 ## Installation
 
@@ -68,7 +92,7 @@ Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6
 ## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
-numbers, objects, strings, etc. Lodash’s modular methods are great for:
+numbers, objects, strings, etc. Lodash's modular methods are great for:
 
  * Iterating arrays, objects, & strings
  * Manipulating & testing values
@@ -82,5 +106,3 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
-
-

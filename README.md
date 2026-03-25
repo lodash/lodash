@@ -83,4 +83,28 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
 
+## ESM & Tree-shaking Tips
+
+When bundling for the browser, import only what you need to avoid shipping the entire
+Lodash package by accident.
+
+```js
+// Avoid: pulls in the full lodash package in many setups
+import _ from 'lodash'
+
+// Better: load only the method you need
+import debounce from 'lodash/debounce'
+
+// ESM build option for modern bundlers
+import { debounce } from 'lodash-es'
+```
+
+For the smallest bundles:
+
+- Prefer per-method imports (`lodash/debounce`, `lodash/map`, etc.).
+- If your toolchain supports ESM tree-shaking well, use `lodash-es`.
+- Pair with [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash)
+  and [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
+  when using Babel/Webpack to remove unused paths and features.
+
 

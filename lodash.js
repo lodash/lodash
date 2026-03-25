@@ -11394,7 +11394,9 @@
      * _.isArray(_.noop);
      * // => false
      */
-    var isArray = Array.isArray;
+    function isArray(value) {
+      return Array.isArray(value);
+    }
 
     /**
      * Checks if `value` is classified as an `ArrayBuffer` object.

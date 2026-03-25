@@ -2602,7 +2602,27 @@
           'writable': true
         });
       } else {
-        object[key] = value;
+        // In strict mode, assigning to a property whose name shadows a
+        // non-writable property on a frozen prototype (e.g. a frozen
+        // Object.prototype) throws a TypeError.  In sloppy mode the same
+        // assignment silently fails, leaving no own property on `object`.
+        // Fall back to Object.defineProperty so that own properties with
+        // prototype-shadowing names are correctly set in both modes.
+        var succeeded;
+        try {
+          object[key] = value;
+          succeeded = hasOwnProperty.call(object, key);
+        } catch (e) {
+          succeeded = false;
+        }
+        if (!succeeded && defineProperty) {
+          defineProperty(object, key, {
+            'configurable': true,
+            'enumerable': true,
+            'value': value,
+            'writable': true
+          });
+        }
       }
     }
 

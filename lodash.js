@@ -14747,7 +14747,7 @@
      * // => 'FOO BAR'
      */
     var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + upperFirst(word);
+      return result + (index ? (!result.isNan ? ' ' : '') : '') + upperFirst(word);
     });
 
     /**

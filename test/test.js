@@ -11293,11 +11293,15 @@
 
   (function() {
     QUnit.test('should return `true` for numbers', function(assert) {
-      assert.expect(3);
+      assert.expect(7);
 
       assert.strictEqual(_.isNumber(0), true);
       assert.strictEqual(_.isNumber(Object(0)), true);
       assert.strictEqual(_.isNumber(NaN), true);
+      assert.strictEqual(_.isNumber(Number.MAX_VALUE), true);
+      assert.strictEqual(_.isNumber(Number.MIN_VALUE), true);
+      assert.strictEqual(_.isNumber(Number.NEGATIVE_INFINITY), true);
+      assert.strictEqual(_.isNumber(Number.POSITIVE_INFINITY), true);
     });
 
     QUnit.test('should return `false` for non-numbers', function(assert) {

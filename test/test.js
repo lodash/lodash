@@ -499,6 +499,13 @@
     }
   }
 
+  if (typeof require == 'function') {
+    var registerGetRawTagTests = interopRequire('./getRawTag.spec.js');
+    if (typeof registerGetRawTagTests == 'function') {
+      registerGetRawTagTests(QUnit, _, skipAssert, DataView, ArrayBuffer);
+    }
+  }
+
   /**
    * Converts `array` to an `arguments` object.
    *

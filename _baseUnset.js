@@ -20,7 +20,10 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 function baseUnset(object, path) {
   path = castPath(path, object);
 
-  // Prevent prototype pollution, see: https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+  // Prevent prototype pollution:
+  // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
+  // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
+  // https://github.com/lodash/lodash/security/advisories/GHSA-w36w-cm3g-pc62
   var index = -1,
       length = path.length;
 
@@ -28,32 +31,17 @@ function baseUnset(object, path) {
     return true;
   }
 
-  var isRootPrimitive = object == null || (typeof object !== 'object' && typeof object !== 'function');
-
   while (++index < length) {
-    var key = path[index];
-
-    // skip non-string keys (e.g., Symbols, numbers)
-    if (typeof key !== 'string') {
-      continue;
-    }
+    var key = toKey(path[index]);
 
     // Always block "__proto__" anywhere in the path if it's not expected
     if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
       return false;
     }
 
-    // Block "constructor.prototype" chains
-    if (key === 'constructor' &&
-        (index + 1) < length &&
-        typeof path[index + 1] === 'string' &&
-        path[index + 1] === 'prototype') {
-
-      // Allow ONLY when the path starts at a primitive root, e.g., _.unset(0, 'constructor.prototype.a')
-      if (isRootPrimitive && index === 0) {
-        continue;
-      }
-
+    // Block constructor/prototype as non-terminal traversal keys to prevent
+    // escaping the object graph into built-in constructors and prototypes.
+    if ((key === 'constructor' || key === 'prototype') && index < length - 1) {
       return false;
     }
   }

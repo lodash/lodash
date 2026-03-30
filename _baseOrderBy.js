@@ -15,7 +15,7 @@ define(['./_arrayMap', './_baseGet', './_baseIteratee', './_baseMap', './_baseSo
         if (isArray(iteratee)) {
           return function(value) {
             return baseGet(value, iteratee.length === 1 ? iteratee[0] : iteratee);
-          }
+          };
         }
         return iteratee;
       });

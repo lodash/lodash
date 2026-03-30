@@ -22,7 +22,7 @@ define([], function() {
 
     while (++index < length) {
       var pair = pairs[index];
-      result[pair[0]] = pair[1];
+      baseAssignValue(result, pair[0], pair[1]);
     }
     return result;
   }

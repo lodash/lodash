@@ -1,4 +1,4 @@
-define(['./_baseToString', './_castSlice', './_charsEndIndex', './_stringToArray', './_trimmedEndIndex', './toString'], function(baseToString, castSlice, charsEndIndex, stringToArray, trimmedEndIndex, toString) {
+define(['./_baseToString', './_castSlice', './_charsEndIndex', './_stringToArray', './toString', './_trimmedEndIndex'], function(baseToString, castSlice, charsEndIndex, stringToArray, toString, trimmedEndIndex) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

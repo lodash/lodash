@@ -25357,7 +25357,7 @@
       assert.strictEqual(typeof String.fromCharCode, 'function', 'String.fromCharCode should exist before unset');
 
       _.unset('', [ 'constructor', 'fromCharCode']);
-      _.unset({ foo: 'bar' }, [ 'foo', 'constructor', 'fromCharCode']);
+      _.unset({ foo: 'bar' }, ['foo', 'constructor', 'fromCharCode']);
 
       assert.strictEqual(typeof String.fromCharCode, 'function', 'String.fromCharCode should not be deletable via constructor traversal');
 

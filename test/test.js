@@ -22693,6 +22693,52 @@
 
       assert.deepEqual(actual, ['one', '&quot;two&quot;', 'three']);
     });
+
+    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-xj2r-5m88-79m3
+    QUnit.test('should not execute code via malicious imports key names', function(assert) {
+      assert.expect(2);
+
+      // Default-parameter injection via imports key
+      var executed = false;
+      var key = 'a = (global.templateTest1 = true, 1)';
+      var imports = {};
+      imports[key] = undefined;
+
+      try { _.template('hello', { 'imports': imports }); } catch (e) {}
+      executed = global.templateTest1 === true;
+      delete global.templateTest1;
+
+      assert.strictEqual(executed, false, 'should not execute default-parameter expression in imports key');
+
+      // Same without spaces
+      var executed2 = false;
+      var key2 = 'a=(global.templateTest2=true,1)';
+      var imports2 = {};
+      imports2[key2] = undefined;
+
+      try { _.template('hello', { 'imports': imports2 }); } catch (e) {}
+      executed2 = global.templateTest2 === true;
+      delete global.templateTest2;
+
+      assert.strictEqual(executed2, false, 'should not execute compact default-parameter expression in imports key');
+    });
+
+    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-xj2r-5m88-79m3
+    QUnit.test('should not enumerate inherited keys from imports sources', function(assert) {
+      assert.expect(1);
+
+      // Simulate prototype pollution: inherited key with code injection
+      var executed = false;
+      var payload = 'a = (global.templateTest3 = true, 1)';
+      var polluted = Object.create({ [payload]: undefined });
+      polluted._ = _;
+
+      try { _.template('hello', { 'imports': polluted }); } catch (e) {}
+      executed = global.templateTest3 === true;
+      delete global.templateTest3;
+
+      assert.strictEqual(executed, false, 'should not execute code from inherited imports keys');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

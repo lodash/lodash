@@ -1,6 +1,6 @@
-# lodash.trimend v4.5.1
+# lodash.trimend v4.5.2
 
-The [lodash](https://lodash.com/) method `_.trimEnd` exported as a [Node.js](https://nodejs.org/) module.
+The [Lodash](https://lodash.com/) method `_.trimEnd` exported as a [Node.js](https://nodejs.org/) module.
 
 ## Installation
 
@@ -15,4 +15,4 @@ In Node.js:
 var trimEnd = require('lodash.trimend');
 ```
 
-See the [documentation](https://lodash.com/docs#trimEnd) or [package source](https://github.com/lodash/lodash/blob/4.5.1-npm-packages/lodash.trimend) for more details.
+See the [documentation](https://lodash.com/docs#trimEnd) or [package source](https://github.com/lodash/lodash/blob/4.5.2-npm-packages/lodash.trimend) for more details.

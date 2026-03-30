@@ -9,6 +9,10 @@
 var reInterpolate = require('lodash._reinterpolate'),
     templateSettings = require('lodash.templatesettings');
 
+/** Error message constants. */
+var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`',
+    INVALID_TEMPL_IMPORTS_ERROR_TEXT = 'Invalid `imports` option passed into `_.template`';
+
 /** Used to detect hot functions by number of calls within a span of milliseconds. */
 var HOT_COUNT = 800,
     HOT_SPAN = 16;
@@ -61,6 +65,18 @@ var reEmptyStringLeading = /\b__p \+= '';/g,
  * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
  */
 var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/**
+ * Used to validate the `validate` option in `_.template` variable.
+ *
+ * Forbids characters which could potentially change the meaning of the function argument definition:
+ * - "()," (modification of function parameters)
+ * - "=" (default value)
+ * - "[]{}" (destructuring of function parameters)
+ * - "/" (beginning of a comment)
+ * - whitespace
+ */
+var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
 /**
  * Used to match
@@ -1350,6 +1366,10 @@ function keysIn(object) {
  * properties may be accessed as free variables in the template. If a setting
  * object is given, it takes precedence over `_.templateSettings` values.
  *
+ * **Security:** `_.template` is insecure and should not be used. It will be
+ * removed in Lodash v5. Avoid untrusted input. See
+ * [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md).
+ *
  * **Note:** In the development build `_.template` utilizes
  * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
  * for easier debugging.
@@ -1457,11 +1477,17 @@ function template(string, options, guard) {
     options = undefined;
   }
   string = toString(string);
-  options = assignInWith({}, options, settings, customDefaultsAssignIn);
+  options = assignWith({}, options, settings, customDefaultsAssignIn);
 
-  var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
+  var imports = assignWith({}, options.imports, settings.imports, customDefaultsAssignIn),
       importsKeys = keys(imports),
       importsValues = baseValues(imports, importsKeys);
+
+  arrayEach(importsKeys, function(key) {
+    if (reForbiddenIdentifierChars.test(key)) {
+      throw new Error(INVALID_TEMPL_IMPORTS_ERROR_TEXT);
+    }
+  });
 
   var isEscaping,
       isEvaluating,
@@ -1479,11 +1505,11 @@ function template(string, options, guard) {
 
   // Use a sourceURL for easier debugging.
   // The sourceURL gets injected into the source that's eval-ed, so be careful
-  // with lookup (in case of e.g. prototype pollution), and strip newlines if any.
-  // A newline wouldn't be a valid sourceURL anyway, and it'd enable code injection.
+  // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
+  // and escape the comment, thus injecting code that gets evaled.
   var sourceURL = hasOwnProperty.call(options, 'sourceURL')
     ? ('//# sourceURL=' +
-       (options.sourceURL + '').replace(/[\r\n]/g, ' ') +
+       (options.sourceURL + '').replace(/\s/g, ' ') +
        '\n')
     : '';
 
@@ -1516,12 +1542,16 @@ function template(string, options, guard) {
 
   // If `variable` is not specified wrap a with-statement around the generated
   // code to add the data object to the top of the scope chain.
-  // Like with sourceURL, we take care to not check the option's prototype,
-  // as this configuration is a code injection vector.
   var variable = hasOwnProperty.call(options, 'variable') && options.variable;
   if (!variable) {
     source = 'with (obj) {\n' + source + '\n}\n';
   }
+  // Throw an error if a forbidden character was found in `variable`, to prevent
+  // potential command injection attacks.
+  else if (reForbiddenIdentifierChars.test(variable)) {
+    throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
+  }
+
   // Cleanup code by stripping empty strings.
   source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
     .replace(reEmptyStringMiddle, '$1')

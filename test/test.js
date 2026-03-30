@@ -22705,8 +22705,8 @@
       imports[key] = undefined;
 
       try { _.template('hello', { 'imports': imports }); } catch (e) {}
-      executed = global.templateTest1 === true;
-      delete global.templateTest1;
+      executed = root.templateTest1 === true;
+      delete root.templateTest1;
 
       assert.strictEqual(executed, false, 'should not execute default-parameter expression in imports key');
 
@@ -22717,8 +22717,8 @@
       imports2[key2] = undefined;
 
       try { _.template('hello', { 'imports': imports2 }); } catch (e) {}
-      executed2 = global.templateTest2 === true;
-      delete global.templateTest2;
+      executed2 = root.templateTest2 === true;
+      delete root.templateTest2;
 
       assert.strictEqual(executed2, false, 'should not execute compact default-parameter expression in imports key');
     });
@@ -22734,8 +22734,8 @@
       polluted._ = _;
 
       try { _.template('hello', { 'imports': polluted }); } catch (e) {}
-      executed = global.templateTest3 === true;
-      delete global.templateTest3;
+      executed = root.templateTest3 === true;
+      delete root.templateTest3;
 
       assert.strictEqual(executed, false, 'should not execute code from inherited imports keys');
     });

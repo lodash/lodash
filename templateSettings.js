@@ -5,6 +5,10 @@ define(['./escape', './_reEscape', './_reEvaluate', './_reInterpolate'], functio
    * embedded Ruby (ERB) as well as ES2015 template strings. Change the
    * following template settings to use alternative delimiters.
    *
+   * **Security:** See
+   * [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md)
+   * — `_.template` is insecure and will be removed in v5.
+   *
    * @static
    * @memberOf _
    * @type {Object}

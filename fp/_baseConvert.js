@@ -457,7 +457,7 @@ function baseConvert(util, name, func, options) {
   }
 
   /**
-   * Creates a function that wraps `func` and applys the conversions
+   * Creates a function that wraps `func` and applies the conversions
    * rules by `name`.
    *
    * @private

@@ -1,4 +1,3 @@
-import assignInWith from './assignInWith.js';
 import attempt from './attempt.js';
 import baseValues from './_baseValues.js';
 import customDefaultsAssignIn from './_customDefaultsAssignIn.js';
@@ -11,7 +10,8 @@ import templateSettings from './templateSettings.js';
 import toString from './toString.js';
 
 /** Error message constants. */
-var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
+var INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`',
+    INVALID_TEMPL_IMPORTS_ERROR_TEXT = 'Invalid `imports` option passed into `_.template`';
 
 /** Used to match empty string literals in compiled template source. */
 var reEmptyStringLeading = /\b__p \+= '';/g,
@@ -54,6 +54,10 @@ var hasOwnProperty = objectProto.hasOwnProperty;
  * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
  * properties may be accessed as free variables in the template. If a setting
  * object is given, it takes precedence over `_.templateSettings` values.
+ *
+ * **Security:** `_.template` is insecure and should not be used. It will be
+ * removed in Lodash v5. Avoid untrusted input. See
+ * [threat model](https://github.com/lodash/lodash/blob/main/threat-model.md).
  *
  * **Note:** In the development build `_.template` utilizes
  * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
@@ -162,11 +166,17 @@ function template(string, options, guard) {
     options = undefined;
   }
   string = toString(string);
-  options = assignInWith({}, options, settings, customDefaultsAssignIn);
+  options = assignWith({}, options, settings, customDefaultsAssignIn);
 
-  var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
+  var imports = assignWith({}, options.imports, settings.imports, customDefaultsAssignIn),
       importsKeys = keys(imports),
       importsValues = baseValues(imports, importsKeys);
+
+  arrayEach(importsKeys, function(key) {
+    if (reForbiddenIdentifierChars.test(key)) {
+      throw new Error(INVALID_TEMPL_IMPORTS_ERROR_TEXT);
+    }
+  });
 
   var isEscaping,
       isEvaluating,

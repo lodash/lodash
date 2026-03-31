@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.23';
+  var VERSION = '4.18.0';
 
   /** Error message constants. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -1477,7 +1477,7 @@
 
   /**
    * Creates an array with all falsey values removed. The values `false`, `null`,
-   * `0`, `""`, `undefined`, and `NaN` are falsey.
+   * `0`, `-0`, `0n`, `""`, `undefined`, and `NaN` are falsy.
    *
    * @static
    * @memberOf _

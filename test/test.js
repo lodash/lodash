@@ -16577,7 +16577,6 @@
 
     // Prevent regression for
     // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
-    // https://github.com/lodash/lodash/security/advisories/GHSA-7p9j-vj7v-w7j7
     QUnit.test('Security: _.omit should not allow modifying prototype or constructor properties', function(assert) {
       assert.expect(3);
 
@@ -22694,7 +22693,7 @@
       assert.deepEqual(actual, ['one', '&quot;two&quot;', 'three']);
     });
 
-    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-xj2r-5m88-79m3
+    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc
     QUnit.test('should not execute code via malicious imports key names', function(assert) {
       assert.expect(2);
 
@@ -22723,7 +22722,7 @@
       assert.strictEqual(executed2, false, 'should not execute compact default-parameter expression in imports key');
     });
 
-    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-xj2r-5m88-79m3
+    // Related to https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc
     QUnit.test('should not enumerate inherited keys from imports sources', function(assert) {
       assert.expect(1);
 
@@ -25370,7 +25369,7 @@
     });
 
     // Prevent regression for:
-    // https://github.com/lodash/lodash/security/advisories/GHSA-w36w-cm3g-pc62
+    // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
     QUnit.test('Security: _.unset should protect built-in prototype methods on primitive types', function(assert) {
       assert.expect(11);
 

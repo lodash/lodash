@@ -62,9 +62,6 @@ var at = require('lodash/at');
 var curryN = require('lodash/fp/curryN');
 ```
 
-**Note:**<br>
-Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
-
 ## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>

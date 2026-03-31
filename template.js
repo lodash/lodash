@@ -1,4 +1,4 @@
-define(['./attempt', './_baseValues', './_customDefaultsAssignIn', './_escapeStringChar', './isError', './_isIterateeCall', './keys', './_reInterpolate', './templateSettings', './toString'], function(attempt, baseValues, customDefaultsAssignIn, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings, toString) {
+define(['./_arrayEach', './assignWith', './attempt', './_baseValues', './_customDefaultsAssignIn', './_escapeStringChar', './isError', './_isIterateeCall', './keys', './_reInterpolate', './templateSettings', './toString'], function(arrayEach, assignWith, attempt, baseValues, customDefaultsAssignIn, escapeStringChar, isError, isIterateeCall, keys, reInterpolate, templateSettings, toString) {
 
   /** Used as a safe reference for `undefined` in pre-ES5 environments. */
   var undefined;

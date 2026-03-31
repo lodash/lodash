@@ -1,6 +1,6 @@
 {
   "name": "lodash.trim",
-  "version": "4.5.2",
+  "version": "4.18.0",
   "description": "The Lodash method `_.trim` exported as a module.",
   "homepage": "https://lodash.com/",
   "icon": "https://lodash.com/icon.svg",
@@ -12,5 +12,7 @@
     "Mathias Bynens <mathias@qiwi.be>"
   ],
   "repository": "lodash/lodash",
-  "scripts": { "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\"" }
+  "scripts": {
+    "test": "echo \"See https://travis-ci.org/lodash/lodash-cli for testing details.\""
+  }
 }

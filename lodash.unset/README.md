@@ -1,4 +1,4 @@
-# lodash.unset v4.5.3
+# lodash.unset v4.18.0
 
 The [Lodash](https://lodash.com/) method `_.unset` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var unset = require('lodash.unset');
 ```
 
-See the [documentation](https://lodash.com/docs#unset) or [package source](https://github.com/lodash/lodash/blob/4.5.3-npm-packages/lodash.unset) for more details.
+See the [documentation](https://lodash.com/docs#unset) or [package source](https://github.com/lodash/lodash/blob/4.18.0-npm-packages/lodash.unset) for more details.

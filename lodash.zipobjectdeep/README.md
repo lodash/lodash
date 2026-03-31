@@ -1,4 +1,4 @@
-# lodash.zipobjectdeep v4.4.3
+# lodash.zipobjectdeep v4.18.0
 
 The [Lodash](https://lodash.com/) method `_.zipObjectDeep` exported as a [Node.js](https://nodejs.org/) module.
 
@@ -15,4 +15,4 @@ In Node.js:
 var zipObjectDeep = require('lodash.zipobjectdeep');
 ```
 
-See the [documentation](https://lodash.com/docs#zipObjectDeep) or [package source](https://github.com/lodash/lodash/blob/4.4.3-npm-packages/lodash.zipobjectdeep) for more details.
+See the [documentation](https://lodash.com/docs#zipObjectDeep) or [package source](https://github.com/lodash/lodash/blob/4.18.0-npm-packages/lodash.zipobjectdeep) for more details.

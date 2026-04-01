@@ -2925,6 +2925,33 @@
         assert.notStrictEqual(actual, object);
       });
 
+      QUnit.test('`_.' + methodName + '` should clone own properties that shadow frozen `Object.prototype` properties', function(assert) {
+        assert.expect(2);
+
+        // Object.freeze(Object.prototype) is irreversible so run in an isolated
+        // vm context to avoid contaminating the global prototype for other tests.
+        var _vm = (function() { try { return require('vm'); } catch(e) { return null; } }());
+        if (!_vm || !Object.freeze) {
+          assert.ok(true, 'test skipped: requires Node.js vm module and Object.freeze');
+          assert.ok(true, 'test skipped: requires Node.js vm module and Object.freeze');
+          return;
+        }
+
+        var context = _vm.createContext({ _: _, JSON: JSON, Object: Object });
+        var result = JSON.parse(_vm.runInContext([
+          'Object.freeze(Object.prototype);',
+          'var orig = { foo: "bar", hasOwnProperty: "custom" };',
+          'var cloned = _.clone(orig);',
+          'JSON.stringify({',
+          '  hasOwn: Object.prototype.hasOwnProperty.call(cloned, "hasOwnProperty"),',
+          '  value: cloned.hasOwnProperty',
+          '})'
+        ].join('\n'), context));
+
+        assert.ok(result.hasOwn, 'cloned object should have `hasOwnProperty` as an own property');
+        assert.strictEqual(result.value, 'custom', 'cloned `hasOwnProperty` should equal "custom"');
+      });
+
       QUnit.test('`_.' + methodName + '` should clone symbol properties', function(assert) {
         assert.expect(7);
 

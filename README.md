@@ -1,4 +1,4 @@
-# lodash-amd v4.18.0
+# lodash-amd v4.18.1
 
 The [Lodash](https://lodash.com/) library exported as [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) modules.
 
@@ -27,4 +27,4 @@ require({
 });
 ```
 
-See the [package source](https://github.com/lodash/lodash/tree/4.18.0-amd) for more details.
+See the [package source](https://github.com/lodash/lodash/tree/4.18.1-amd) for more details.

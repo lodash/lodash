@@ -1,6 +1,6 @@
 /**
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="npm" -o ./`
+ * Build: `lodash modularize exports="npm" --repo lodash/lodash#4.18.1 -o ./`
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -179,6 +179,27 @@ function apply(func, thisArg, args) {
     case 3: return func.call(thisArg, args[0], args[1], args[2]);
   }
   return func.apply(thisArg, args);
+}
+
+/**
+ * A specialized version of `_.forEach` for arrays without support for
+ * iteratee shorthands.
+ *
+ * @private
+ * @param {Array} [array] The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns `array`.
+ */
+function arrayEach(array, iteratee) {
+  var index = -1,
+      length = array == null ? 0 : array.length;
+
+  while (++index < length) {
+    if (iteratee(array[index], index, array) === false) {
+      break;
+    }
+  }
+  return array;
 }
 
 /**
@@ -497,28 +518,6 @@ function baseKeys(object) {
 }
 
 /**
- * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-function baseKeysIn(object) {
-  if (!isObject(object)) {
-    return nativeKeysIn(object);
-  }
-  var isProto = isPrototype(object),
-      result = [];
-
-  for (var key in object) {
-    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-
-/**
  * The base implementation of `_.rest` which doesn't validate or coerce arguments.
  *
  * @private
@@ -765,25 +764,6 @@ function isPrototype(value) {
       proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
 
   return value === proto;
-}
-
-/**
- * This function is like
- * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
- * except that it includes inherited enumerable properties.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-function nativeKeysIn(object) {
-  var result = [];
-  if (object != null) {
-    for (var key in Object(object)) {
-      result.push(key);
-    }
-  }
-  return result;
 }
 
 /**
@@ -1268,7 +1248,7 @@ function toString(value) {
 }
 
 /**
- * This method is like `_.assignIn` except that it accepts `customizer`
+ * This method is like `_.assign` except that it accepts `customizer`
  * which is invoked to produce the assigned values. If `customizer` returns
  * `undefined`, assignment is handled by the method instead. The `customizer`
  * is invoked with five arguments: (objValue, srcValue, key, object, source).
@@ -1278,26 +1258,25 @@ function toString(value) {
  * @static
  * @memberOf _
  * @since 4.0.0
- * @alias extendWith
  * @category Object
  * @param {Object} object The destination object.
  * @param {...Object} sources The source objects.
  * @param {Function} [customizer] The function to customize assigned values.
  * @returns {Object} Returns `object`.
- * @see _.assignWith
+ * @see _.assignInWith
  * @example
  *
  * function customizer(objValue, srcValue) {
  *   return _.isUndefined(objValue) ? srcValue : objValue;
  * }
  *
- * var defaults = _.partialRight(_.assignInWith, customizer);
+ * var defaults = _.partialRight(_.assignWith, customizer);
  *
  * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
  * // => { 'a': 1, 'b': 2 }
  */
-var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
-  copyObject(source, keysIn(source), object, customizer);
+var assignWith = createAssigner(function(object, source, srcIndex, customizer) {
+  copyObject(source, keys(source), object, customizer);
 });
 
 /**
@@ -1330,33 +1309,6 @@ var assignInWith = createAssigner(function(object, source, srcIndex, customizer)
  */
 function keys(object) {
   return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-}
-
-/**
- * Creates an array of the own and inherited enumerable property names of `object`.
- *
- * **Note:** Non-object values are coerced to objects.
- *
- * @static
- * @memberOf _
- * @since 3.0.0
- * @category Object
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
- * }
- *
- * Foo.prototype.c = 3;
- *
- * _.keysIn(new Foo);
- * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
- */
-function keysIn(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
 }
 
 /**

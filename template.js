@@ -1,3 +1,5 @@
+import arrayEach from './_arrayEach.js';
+import assignWith from './assignWith.js';
 import attempt from './attempt.js';
 import baseValues from './_baseValues.js';
 import customDefaultsAssignIn from './_customDefaultsAssignIn.js';

@@ -1,7 +1,7 @@
 /**
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash exports="amd" -d -o ./main.js`
+ * Build: `lodash exports="amd" -d --repo lodash/lodash#4.18.1 -o ./main.js`
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -13,7 +13,7 @@
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.18.0';
+  var VERSION = '4.18.1';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -4380,7 +4380,6 @@
       // Prevent prototype pollution:
       // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
       // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
-      // https://github.com/lodash/lodash/security/advisories/GHSA-w36w-cm3g-pc62
       var index = -1,
           length = path.length;
 

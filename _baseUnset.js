@@ -20,7 +20,6 @@ define(['./_castPath', './last', './_parent', './_toKey'], function(castPath, la
     // Prevent prototype pollution:
     // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
     // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
-    // https://github.com/lodash/lodash/security/advisories/GHSA-w36w-cm3g-pc62
     var index = -1,
         length = path.length;
 

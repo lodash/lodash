@@ -263,6 +263,14 @@
       assert.strictEqual(isArray()(array), true);
     });
 
+    QUnit.test('should not mutate globals when adding `.convert`', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(Array.isArray.convert, undefined);
+      fp.convert({ 'isArray': Array.isArray });
+      assert.strictEqual(Array.isArray.convert, undefined);
+    });
+
     QUnit.test('should convert method aliases', function(assert) {
       assert.expect(1);
 

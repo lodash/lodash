@@ -1,6 +1,6 @@
-var attempt = require('./attempt'),
-    arrayEach = require('./_arrayEach'),
-    assignWith = require('./assignWith')
+var arrayEach = require('./_arrayEach'),
+    assignWith = require('./assignWith'),
+    attempt = require('./attempt'),
     baseValues = require('./_baseValues'),
     customDefaultsAssignIn = require('./_customDefaultsAssignIn'),
     escapeStringChar = require('./_escapeStringChar'),

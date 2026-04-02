@@ -7471,7 +7471,7 @@
     }
 
     /**
-     * The inverse of `_.toPairs`; this method returns an object composed
+     * The opposite of `_.toPairs`; this method returns an object composed
      * from key-value `pairs`.
      *
      * @static
@@ -7480,6 +7480,7 @@
      * @category Array
      * @param {Array} pairs The key-value pairs.
      * @returns {Object} Returns the new object.
+     * @see _.toPairs
      * @example
      *
      * _.fromPairs([['a', 1], ['b', 2]]);
@@ -10073,6 +10074,7 @@
      * @param {number} n The number of calls before `func` is invoked.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
+     * @see _.before
      * @example
      *
      * var saves = ['profile', 'settings'];
@@ -10133,6 +10135,7 @@
      * @param {number} n The number of calls at which `func` is no longer invoked.
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new restricted function.
+     * @see _.after
      * @example
      *
      * jQuery(element).on('click', _.before(5, addContactToList));
@@ -13585,6 +13588,7 @@
      * @param {Object} object The source object.
      * @param {...(string|string[])} [paths] The property paths to omit.
      * @returns {Object} Returns the new object.
+     * @see _.pick
      * @example
      *
      * var object = { 'a': 1, 'b': '2', 'c': 3 };
@@ -13627,6 +13631,7 @@
      * @param {Object} object The source object.
      * @param {Function} [predicate=_.identity] The function invoked per property.
      * @returns {Object} Returns the new object.
+     * @see _.pickBy
      * @example
      *
      * var object = { 'a': 1, 'b': '2', 'c': 3 };
@@ -13648,6 +13653,7 @@
      * @param {Object} object The source object.
      * @param {...(string|string[])} [paths] The property paths to pick.
      * @returns {Object} Returns the new object.
+     * @see _.omit
      * @example
      *
      * var object = { 'a': 1, 'b': '2', 'c': 3 };
@@ -13670,6 +13676,7 @@
      * @param {Object} object The source object.
      * @param {Function} [predicate=_.identity] The function invoked per property.
      * @returns {Object} Returns the new object.
+     * @see _.omitBy
      * @example
      *
      * var object = { 'a': 1, 'b': '2', 'c': 3 };
@@ -13814,6 +13821,7 @@
      * @category Object
      * @param {Object} object The object to query.
      * @returns {Array} Returns the key-value pairs.
+     * @see _.fromPairs
      * @example
      *
      * function Foo() {
@@ -14351,6 +14359,7 @@
      * @category String
      * @param {string} [string=''] The string to escape.
      * @returns {string} Returns the escaped string.
+     * @see _.unescape
      * @example
      *
      * _.escape('fred, barney, & pebbles');
@@ -15250,7 +15259,7 @@
     }
 
     /**
-     * The inverse of `_.escape`; this method converts the HTML entities
+     * The opposite of `_.escape`; this method converts the HTML entities
      * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
      * their corresponding characters.
      *
@@ -15263,6 +15272,7 @@
      * @category String
      * @param {string} [string=''] The string to unescape.
      * @returns {string} Returns the unescaped string.
+     * @see _.escape
      * @example
      *
      * _.unescape('fred, barney, &amp; pebbles');
@@ -15741,6 +15751,7 @@
      * @param {Array|string} path The path of the method to invoke.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Function} Returns the new invoker function.
+     * @see _.methodOf
      * @example
      *
      * var objects = [
@@ -15772,6 +15783,7 @@
      * @param {Object} object The object to query.
      * @param {...*} [args] The arguments to invoke the method with.
      * @returns {Function} Returns the new invoker function.
+     * @see _.method
      * @example
      *
      * var array = _.times(3, _.constant),
@@ -16016,6 +16028,7 @@
      * @category Util
      * @param {Array|string} path The path of the property to get.
      * @returns {Function} Returns the new accessor function.
+     * @see _.propertyOf
      * @example
      *
      * var objects = [
@@ -16043,6 +16056,7 @@
      * @category Util
      * @param {Object} object The object to query.
      * @returns {Function} Returns the new accessor function.
+     * @see _.property
      * @example
      *
      * var array = [0, 1, 2],

@@ -3,7 +3,7 @@
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
-[Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
+[Contributing](https://github.com/lodash/lodash/blob/main/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
 [Code of Conduct](https://github.com/openjs-foundation/cross-project-council/blob/main/CODE_OF_CONDUCT.md) |
 [Governance](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md) |

@@ -5298,7 +5298,7 @@
      */
     function createInverter(setter, toIteratee) {
       return function(object, iteratee) {
-        return baseInverter(object, setter, toIteratee(iteratee), Object.create(null));
+        return baseInverter(object, setter, toIteratee(iteratee), { __proto__: null });
       };
     }
 

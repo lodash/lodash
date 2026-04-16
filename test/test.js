@@ -8655,6 +8655,14 @@
         skipAssert(assert, 2);
       }
     });
+
+    QUnit.test('should work with a key of "__proto__"', function(assert) {
+      assert.expect(2);
+
+      var object = { 'userId': 'alice', 'role': '__proto__', 'team': 'eng' };
+      assert.deepEqual(_.invert(object), { 'alice': 'userId', '__proto__': 'role', 'eng': 'team' });
+      assert.deepEqual(_.invertBy(object), { 'alice': ['userId'], '__proto__': ['role'], 'eng': ['team'] });
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

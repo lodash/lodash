@@ -6578,7 +6578,7 @@ FBL.cacheDocument = function cacheDocument()
  *
  * Support for listeners registration. This object also extended by Firebug.Module so,
  * all modules supports listening automatically. Notice that array of listeners
- * is created for each intance of a module within initialize method. Thus all derived
+ * is created for each instance of a module within initialize method. Thus all derived
  * module classes must ensure that Firebug.Module.initialize method is called for the
  * super class.
  */

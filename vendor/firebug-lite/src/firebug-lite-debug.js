@@ -2619,7 +2619,7 @@ this.addGlobalEvent = function(name, handler)
         }
         catch(E)
         {
-            // Avoid acess denied
+            // Avoid access denied
         }
     }
 };
@@ -2642,7 +2642,7 @@ this.removeGlobalEvent = function(name, handler)
         }
         catch(E)
         {
-            // Avoid acess denied
+            // Avoid access denied
         }
     }
 };
@@ -10604,7 +10604,7 @@ append(ChromeBase,
         {
             // TODO: xxxpedro only needed in persistent
             // should use FirebugChrome.clone, but popup FBChrome
-            // isn't acessible
+            // isn't accessible
             Firebug.context.persistedState.selectedPanelName = oldChrome.selectedPanel.name;
         }
 
@@ -20677,7 +20677,7 @@ Firebug.Spy = extend(Firebug.Module,
 
                 contexts.splice(i, 1);
 
-                // If no context is using spy, remvove the (only one) HTTP observer.
+                // If no context is using spy, remove the (only one) HTTP observer.
                 if (contexts.length == 0)
                 {
                     httpObserver.removeObserver(SpyHttpObserver, "firebug-http-event");
@@ -20925,7 +20925,7 @@ function onHTTPSpyReadyStateChange(spy, event)
         // Update UI.
         updateHttpSpyInfo(spy);
 
-        // Notify Net pane about a request beeing loaded.
+        // Notify Net pane about a request being loaded.
         // xxxHonza: I don't think this is necessary.
         var netProgress = spy.context.netProgress;
         if (netProgress)
@@ -20985,8 +20985,8 @@ function onHTTPSpyAbort(spy)
     spy.statusText = "Aborted";
     updateLogRow(spy);
 
-    // Notify Net pane about a request beeing aborted.
-    // xxxHonza: the net panel shoud find out this itself.
+    // Notify Net pane about a request being aborted.
+    // xxxHonza: the net panel should find out this itself.
     var netProgress = spy.context.netProgress;
     if (netProgress)
         netProgress.post(netProgress.abortFile, [spy.request, spy.endTime, spy.postText, spy.responseText]);
@@ -25434,7 +25434,7 @@ CssParser = (function(){
     }
 
     /**
-     * Replaces all occurances of substring defined by regexp
+     * Replaces all occurrences of substring defined by regexp
      * @param {String} str
      * @return {RegExp} re
      * @return {String}
@@ -29439,7 +29439,7 @@ Firebug.DOMBasePanel.prototype = extend(Firebug.Panel,
                 timeouts.push(this.context.setTimeout(function()
                 {
                     // TODO: xxxpedro can this be a timing error related to the
-                    // "iteration number" approach insted of "duration time"?
+                    // "iteration number" approach instead of "duration time"?
                     // avoid error in IE8
                     if (!tbody.lastChild) return;
 
@@ -29546,7 +29546,7 @@ Firebug.DOMBasePanel.prototype = extend(Firebug.Panel,
                 timeouts.push(this.context.setTimeout(function()
                 {
                     // TODO: xxxpedro can this be a timing error related to the
-                    // "iteration number" approach insted of "duration time"?
+                    // "iteration number" approach instead of "duration time"?
                     // avoid error in IE8
                     if (!_tbody.lastChild) return;
 
@@ -29967,7 +29967,7 @@ Firebug.DOMBasePanel.prototype = extend(Firebug.Panel,
         else if (object instanceof SourceLink)
             return 0;
         else
-            return 1; // just agree to support everything but not agressively.
+            return 1; // just agree to support everything but not aggressively.
     },
 
     refresh: function()

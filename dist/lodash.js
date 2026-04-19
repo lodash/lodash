@@ -13312,7 +13312,7 @@
         value = nativeObjectToString.call(value);
       }
 
-      result[value] = key;
+      baseAssignValue(result, value, key)
     }, constant(identity));
 
     /**
@@ -13350,7 +13350,7 @@
       if (hasOwnProperty.call(result, value)) {
         result[value].push(key);
       } else {
-        result[value] = [key];
+        baseAssignValue(result, value, [key]);
       }
     }, getIteratee);
 

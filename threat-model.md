@@ -75,6 +75,12 @@ Lodash functions that accept path arguments (e.g., `_.get`, `_.set`, `_.pick`, `
 
 Constructing such objects requires executing JavaScript code (e.g., `Object.defineProperty`), which cannot be expressed in JSON or any serialization format. If an attacker can execute `Object.defineProperty`, they already have arbitrary code execution in the runtime. This falls under the "code that invokes Lodash" trust boundary (see Elements Lodash Trusts, item 3).
 
+### Inherent JavaScript Prototype Behavior
+
+JavaScript's prototype chain is a language-level feature. If a report demonstrates read-only prototype access (e.g., `_.get(obj, 'constructor.prototype')` returning `Object.prototype`), that describes standard JavaScript semantics, not a security flaw.
+
+Lodash guards against writing to built-in prototypes (e.g., blocking `__proto__` and `constructor.prototype` keys in `_.set`, `_.merge`, etc.), but it does not and cannot prevent reading inherited properties. Operations like reading `obj.constructor`, traversing `__proto__`, or accessing `Object.prototype` through normal property resolution are expected runtime behavior, not Lodash vulnerabilities.
+
 ### Vulnerabilities in the JavaScript Runtime or Platform
 
 If a Lodash method triggers a bug in the JavaScript engine (e.g., V8, SpiderMonkey, JavaScriptCore) that leads to memory corruption or incorrect behavior, the vulnerability lies in the engine, not Lodash.

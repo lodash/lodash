@@ -81,6 +81,12 @@ JavaScript's prototype chain is a language-level feature. If a report demonstrat
 
 Lodash guards against writing to built-in prototypes (e.g., blocking `__proto__` and `constructor.prototype` keys in `_.set`, `_.merge`, etc.), but it does not and cannot prevent reading inherited properties. Operations like reading `obj.constructor`, traversing `__proto__`, or accessing `Object.prototype` through normal property resolution are expected runtime behavior, not Lodash vulnerabilities.
 
+### Vulnerability Chaining and Gadgets
+
+If a report demonstrates impact only by combining a Lodash behavior with a separate, independent vulnerability in another library or application component, the vulnerability lies in the downstream consumer, not in Lodash. Each reported vulnerability must be independently exploitable through Lodash alone.
+
+If a Lodash function produces a specific object shape that, when later passed to a different library's vulnerable function, leads to code execution or other impact, the root cause is in the downstream library, not Lodash.
+
 ### Vulnerabilities in the JavaScript Runtime or Platform
 
 If a Lodash method triggers a bug in the JavaScript engine (e.g., V8, SpiderMonkey, JavaScriptCore) that leads to memory corruption or incorrect behavior, the vulnerability lies in the engine, not Lodash.

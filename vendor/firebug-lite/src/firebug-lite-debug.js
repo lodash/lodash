@@ -1055,7 +1055,7 @@ this.stripNewLines = function(value)
 
 this.escapeJS = function(value)
 {
-    return value.replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace('"', '\\"', "g");
+    return value.replace(/\r/g, "\\r").replace(/\n/g, "\\n").replace(/"/g, '\\"');
 };
 
 function escapeHTMLAttribute(value)
@@ -17785,11 +17785,7 @@ Firebug.InlineEditor.prototype = domplate(Firebug.BaseEditor,
                 DIV({"class": "textEditorTop2"})
             ),
             DIV({"class": "textEditorInner1"},
-                DIV({"class": "textEditorInner2"},
-                    INPUT(
-                        inlineEditorAttributes
-                    )
-                )
+                DIV({"class": "textEditorInner2"})
             ),
             DIV({"class": "textEditorBottom1"},
                 DIV({"class": "textEditorBottom2"})
@@ -17797,9 +17793,7 @@ Firebug.InlineEditor.prototype = domplate(Firebug.BaseEditor,
         ),
 
     inputTag :
-        INPUT({"class": "textEditorInner", type: "text",
-            /*oninput: "$onInput",*/ onkeypress: "$onKeyPress", onoverflow: "$onOverflow"}
-        ),
+        DIV({"class": "textEditorInner"}),
 
     expanderTag:
         IMG({"class": "inlineExpander", src: "blank.gif"}),
@@ -17848,13 +17842,14 @@ Firebug.InlineEditor.prototype = domplate(Firebug.BaseEditor,
 
     getValue: function()
     {
-        return this.input.value;
+        return this.input ? this.input.value : "";
     },
 
     setValue: function(value)
     {
         // It's only a one-line editor, so new lines shouldn't be allowed
-        return this.input.value = stripNewLines(value);
+        if (this.input) { return this.input.value = stripNewLines(value); }
+        return stripNewLines(value);
     },
 
     show: function(target, panel, value, targetSize)

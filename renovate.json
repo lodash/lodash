@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "enabledManagers": ["npm", "github-actions"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 10,
+  "minimumReleaseAge": "14d"
+}

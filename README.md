@@ -1,13 +1,17 @@
-# lodash v4.17.21
+# lodash v4.18.1
 
 [Site](https://lodash.com/) |
 [Docs](https://lodash.com/docs) |
 [FP Guide](https://github.com/lodash/lodash/wiki/FP-Guide) |
 [Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
-[Code of Conduct](https://js.foundation/conduct/) |
+[Code of Conduct](https://github.com/openjs-foundation/cross-project-council/blob/main/CODE_OF_CONDUCT.md) |
+[Governance](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md) |
 [Twitter](https://twitter.com/bestiejs) |
 [Chat](https://gitter.im/lodash/lodash)
+
+> [!IMPORTANT]
+> As announced on the [OpenJS Foundation blog](https://openjsf.org/blog/sta-supports-lodash), Lodash has received support from the Sovereign Tech Agency and will transition to the Feature-Complete maturity stage so that it remains stable, secure, and sustainable long-term. As part of this effort, Lodash is rebooting its governance. A draft charter will be published shortly. The upcoming Technical Steering Committee (TSC) is already at work. For transparency, its members are listed in [GOVERNANCE.md](https://github.com/lodash/lodash/blob/HEAD/GOVERNANCE.md).
 
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 
@@ -20,11 +24,11 @@ $ lodash core -o ./dist/lodash.core.js
 
 ## Download
 
- * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.17.21/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.21/dist/lodash.core.min.js))
- * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.17.21/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.17.21/dist/lodash.min.js))
+ * [Core build](https://raw.githubusercontent.com/lodash/lodash/4.18.1/dist/lodash.core.js) ([~4 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.18.1/dist/lodash.core.min.js))
+ * [Full build](https://raw.githubusercontent.com/lodash/lodash/4.18.1/dist/lodash.js) ([~24 kB gzipped](https://raw.githubusercontent.com/lodash/lodash/4.18.1/dist/lodash.min.js))
  * [CDN copies](https://www.jsdelivr.com/projects/lodash)
 
-Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.17.21/LICENSE) & supports modern environments.<br>
+Lodash is released under the [MIT license](https://raw.githubusercontent.com/lodash/lodash/4.18.1/LICENSE) & supports modern environments.<br>
 Review the [build differences](https://github.com/lodash/lodash/wiki/build-differences) & pick one that’s right for you.
 
 ## Installation
@@ -58,9 +62,6 @@ var at = require('lodash/at');
 var curryN = require('lodash/fp/curryN');
 ```
 
-**Note:**<br>
-Install [n_](https://www.npmjs.com/package/n_) for Lodash use in the Node.js < 6 REPL.
-
 ## Why Lodash?
 
 Lodash makes JavaScript easier by taking the hassle out of working with arrays,<br>
@@ -78,3 +79,5 @@ Lodash is available in a [variety of builds](https://lodash.com/custom-builds) &
  * [lodash-es](https://www.npmjs.com/package/lodash-es), [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash), & [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin)
  * [lodash/fp](https://github.com/lodash/lodash/tree/npm/fp)
  * [lodash-amd](https://www.npmjs.com/package/lodash-amd)
+
+

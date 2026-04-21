@@ -1,0 +1,39 @@
+name: CI Browsers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    # Run on every PR, regardless of branch
+    branches: [ '*' ]
+  workflow_dispatch:
+
+jobs:
+  test-docs:
+    name: Modern Browsers Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npx playwright install --with-deps
+          npm install -D @playwright/test@latest
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start server
+        run: |
+          npx http-server -p 9001 &
+          sleep 2
+
+      - name: Run Playwright tests
+        run: npx playwright test

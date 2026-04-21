@@ -12,6 +12,12 @@ supported with security updates:
 | 2.x   | :x:                  |
 | 1.x   | :x:                  |
 
+## Threat Model
+
+To better understand which classes of vulnerabilities are considered in-scope or out-of-scope for Lodash, please review the [Lodash Threat Model](./threat-model.md).
+
+The threat model defines Lodash’s trust boundaries and clarifies how security issues are assessed for triage and disclosure.
+
 ## Responsible disclosure security policy
 
 A responsible disclosure policy helps protect users of the project from publicly
@@ -33,3 +39,9 @@ directly to the Lodash maintainers through the [Security tab](https://github.com
 repository.
 
 Your efforts to responsibly disclose your findings are sincerely appreciated.
+
+## Escalation
+
+If you do not receive an acknowledgement of your report within 6 business days, or if you cannot find a private security contact for the project, you may escalate to the OpenJS Foundation CNA at `security@lists.openjsf.org`.
+
+If the project acknowledges your report but does not provide any further response or engagement within 14 days, escalation is also appropriate.

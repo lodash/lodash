@@ -69,6 +69,12 @@ Applications using Lodash are responsible for input validation. Passing attacker
 
 If a developer intentionally merges user input into global objects or fails to isolate data structures, that is a misuse of Lodash’s documented API, not a Lodash defect.
 
+### Stateful or Accessor-Backed Path Arguments
+
+Lodash functions that accept path arguments (e.g., `_.get`, `_.set`, `_.pick`, `_.unset`, `_.omit`) expect paths to be plain data: strings, or arrays of strings and numbers. If a report relies on path arguments that use accessor properties (getters/setters), Proxy objects, or other stateful mechanisms that change value between reads, it is out of scope.
+
+Constructing such objects requires executing JavaScript code (e.g., `Object.defineProperty`), which cannot be expressed in JSON or any serialization format. If an attacker can execute `Object.defineProperty`, they already have arbitrary code execution in the runtime. This falls under the "code that invokes Lodash" trust boundary (see Elements Lodash Trusts, item 3).
+
 ### Vulnerabilities in the JavaScript Runtime or Platform
 
 If a Lodash method triggers a bug in the JavaScript engine (e.g., V8, SpiderMonkey, JavaScriptCore) that leads to memory corruption or incorrect behavior, the vulnerability lies in the engine, not Lodash.

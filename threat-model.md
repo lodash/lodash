@@ -71,9 +71,11 @@ If a developer intentionally merges user input into global objects or fails to i
 
 ### Stateful or Accessor-Backed Path Arguments
 
-Lodash functions that accept path arguments (e.g., `_.get`, `_.set`, `_.pick`, `_.unset`, `_.omit`) expect paths to be plain data: strings, or arrays of strings and numbers. If a report relies on path arguments that use accessor properties (getters/setters), Proxy objects, or other stateful mechanisms that change value between reads, it is out of scope.
+Path arguments to Lodash functions are expected (and documented) to be data, not code. Functions like `_.get`, `_.set`, `_.pick`, `_.unset`, and `_.omit` take paths as strings or arrays of strings and numbers.
 
-Constructing such objects requires executing JavaScript code (e.g., `Object.defineProperty`), which cannot be expressed in JSON or any serialization format. If an attacker can execute `Object.defineProperty`, they already have arbitrary code execution in the runtime. This falls under the "code that invokes Lodash" trust boundary (see Elements Lodash Trusts, item 3).
+Getters, setters, and Proxies are code, not data. They run JavaScript code when a property is read, and they can't be serialized as JSON or sent over the wire. Something has to call `Object.defineProperty` (or equivalent) from inside the process to set them up.
+
+If a report relies on a path element returning different values on different reads (a check/use mismatch), the attack needs code running inside the process, not just attacker-supplied data. That puts it outside Lodash's trust boundary; see "code that invokes Lodash" under [Elements Lodash Trusts](#elements-lodash-trusts).
 
 ### Inherent JavaScript Prototype Behavior
 

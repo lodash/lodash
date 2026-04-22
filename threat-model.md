@@ -83,9 +83,9 @@ Lodash guards against writing to built-in prototypes (e.g., blocking `__proto__`
 
 ### Vulnerability Chaining and Gadgets
 
-If a report demonstrates impact only by combining a Lodash behavior with a separate, independent vulnerability in another library or application component, the vulnerability lies in the downstream consumer, not in Lodash. Each reported vulnerability must be independently exploitable through Lodash alone.
+A Lodash vulnerability has to be exploitable through Lodash alone. If a report's impact depends on combining Lodash behavior with a separate bug in another library or application component, the bug is in the downstream code, not Lodash.
 
-If a Lodash function produces a specific object shape that, when later passed to a different library's vulnerable function, leads to code execution or other impact, the root cause is in the downstream library, not Lodash.
+Gadget reports fall under this too. If a Lodash function produces an object shape that later causes a vulnerable function in some other library to execute code, the root cause is that library accepting the shape, not Lodash producing it.
 
 ### Vulnerabilities in the JavaScript Runtime or Platform
 

@@ -79,9 +79,11 @@ If a report relies on a path element returning different values on different rea
 
 ### Inherent JavaScript Prototype Behavior
 
-JavaScript's prototype chain is a language-level feature. If a report demonstrates read-only prototype access (e.g., `_.get(obj, 'constructor.prototype')` returning `Object.prototype`), that describes standard JavaScript semantics, not a security flaw.
+Lodash blocks writes to built-in prototypes. Keys like `__proto__` and `constructor.prototype` are filtered in `_.set`, `_.merge`, and similar functions. It does not and cannot block reads.
 
-Lodash guards against writing to built-in prototypes (e.g., blocking `__proto__` and `constructor.prototype` keys in `_.set`, `_.merge`, etc.), but it does not and cannot prevent reading inherited properties. Operations like reading `obj.constructor`, traversing `__proto__`, or accessing `Object.prototype` through normal property resolution are expected runtime behavior, not Lodash vulnerabilities.
+Reading inherited properties is how JavaScript works. `obj.constructor`, traversing `__proto__`, or reaching `Object.prototype` through normal property resolution are language semantics, not Lodash behavior.
+
+If a report shows only read-only prototype access (e.g. `_.get(obj, 'constructor.prototype')` returning `Object.prototype`), it's describing JavaScript, not a Lodash vulnerability.
 
 ### Vulnerability Chaining and Gadgets
 

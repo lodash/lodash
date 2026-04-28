@@ -2683,7 +2683,16 @@
       if (isArr) {
         result = initCloneArray(value);
         if (!isDeep) {
-          return copyArray(value, result);
+          // Copy preserving sparse-array holes so cloned arrays match
+          // the original's `in` semantics (mirrors `structuredClone`).
+          var index = -1,
+              length = value.length;
+          while (++index < length) {
+            if (index in value) {
+              result[index] = value[index];
+            }
+          }
+          return result;
         }
       } else {
         var tag = getTag(value),
@@ -2733,6 +2742,10 @@
         if (props) {
           key = subValue;
           subValue = value[key];
+        } else if (!(key in value)) {
+          // Preserve sparse array holes instead of materializing them as
+          // `undefined` entries (matches `structuredClone` semantics).
+          return;
         }
         // Recursively populate clone (susceptible to call stack limits).
         assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack));

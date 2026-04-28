@@ -3111,6 +3111,25 @@
           }
         });
       });
+
+      QUnit.test('`_.' + methodName + '` should preserve sparse-array holes', function(assert) {
+        assert.expect(8);
+
+        var sparse = Array(5);
+        sparse[3] = 42;
+
+        var actual = func(sparse);
+        assert.strictEqual(actual.length, 5);
+        assert.notOk(0 in actual);
+        assert.notOk(2 in actual);
+        assert.ok(3 in actual);
+        assert.strictEqual(actual[3], 42);
+
+        var nested = func({ 'arr': sparse }).arr;
+        assert.notOk(0 in nested);
+        assert.ok(3 in nested);
+        assert.strictEqual(nested[3], 42);
+      });
     });
 
     lodashStable.each(['cloneWith', 'cloneDeepWith'], function(methodName) {

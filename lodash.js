@@ -1533,7 +1533,7 @@
         nativeFloor = Math.floor,
         nativeGetSymbols = Object.getOwnPropertySymbols,
         nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined,
-        nativeIsFinite = context.isFinite,
+        nativeIsFinite = context.isFinite || isFinite,
         nativeJoin = arrayProto.join,
         nativeKeys = overArg(Object.keys, Object),
         nativeMax = Math.max,

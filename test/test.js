@@ -19940,6 +19940,19 @@
       actual = func(NaN, 2);
       assert.deepEqual(actual, isCeil ? NaN : NaN);
     });
+
+    QUnit.test('`_.' + methodName + '` should not throw when context lacks `isFinite` (issue #5746)', function(assert) {
+      assert.expect(2);
+
+      if (!isModularize) {
+        var lodash = _.runInContext({});
+        assert.strictEqual(lodash[methodName](4.006), isCeil ? 5 : 4);
+        assert.strictEqual(lodash[methodName](4.016, 2), isFloor ? 4.01 : 4.02);
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
   });
 
   /*--------------------------------------------------------------------------*/

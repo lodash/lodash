@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v44.0.0
+        uses: renovatebot/github-action@4ebebabcd582dddea1692b05c3d5279f8e372b53 # v44.0.0
         with:
           configurationFile: renovate.json
         env:

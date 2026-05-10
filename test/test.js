@@ -2772,6 +2772,14 @@
       assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
     });
 
+    QUnit.test('`_.cloneDeep` should accept the `skipNativeCheck` flag', function(assert) {
+        const object = { primitive: 'a', fn: () => 'b' };
+        const actual = _.cloneDeep(object, { skipNativeCheck: true });
+
+        assert.notStrictEqual(actual, object);
+        assert.notStrictEqual(actual.primitive, object.primitive);
+    });
+
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
       assert.expect(1);
 

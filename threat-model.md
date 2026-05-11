@@ -49,6 +49,11 @@ Lodash inherits the privileges of the user or process that invokes it. Misuse or
 - **Denial of Service (DoS) through logic flaws ([CWE-400](https://cwe.mitre.org/data/definitions/400.html))**  
   If Lodash enters unbounded recursion, excessive memory usage, or hangs when operating on otherwise valid inputs within documented usage limits, this is a vulnerability in Lodash (e.g, [CVE-2020-28500](https://www.cve.org/CVERecord?id=CVE-2020-28500)).
 
+## Security notice: `_.template`
+
+The current implementation of `_.template` compiles template strings into executable code, which can lead to code injection when given untrusted input (e.g., [CVE-2021-23337](https://nvd.nist.gov/vuln/detail/CVE-2021-23337)). For that reason we consider it insecure and advise against its use.
+
+We plan to remove `_.template` in Lodash v5. Until then it remains available; if you continue to use it, we recommend using only developer-controlled, static template strings and trusted data, and avoiding untrusted input (e.g. user-controlled data or unvalidated network content) in both the template string and the data passed to the compiled function.
 
 ## Examples of Non-Vulnerabilities (out of scope)
 
@@ -63,6 +68,28 @@ Applications using Lodash are responsible for input validation. Passing attacker
 ### Prototype Pollution via Trusted Code
 
 If a developer intentionally merges user input into global objects or fails to isolate data structures, that is a misuse of Lodash’s documented API, not a Lodash defect.
+
+### Stateful or Accessor-Backed Path Arguments
+
+Path arguments to Lodash functions are expected (and documented) to be data, not code. Functions like `_.get`, `_.set`, `_.pick`, `_.unset`, and `_.omit` take paths as strings or arrays of strings and numbers.
+
+Getters, setters, and Proxies are code, not data. They run JavaScript code when a property is read, and they can't be serialized as JSON or sent over the wire. Something has to call `Object.defineProperty` (or equivalent) from inside the process to set them up.
+
+If a report relies on a path element returning different values on different reads (a check/use mismatch), the attack needs code running inside the process, not just attacker-supplied data. That puts it outside Lodash's trust boundary; see "code that invokes Lodash" under [Elements Lodash Trusts](#elements-lodash-trusts).
+
+### Inherent JavaScript Prototype Behavior
+
+Lodash blocks writes to built-in prototypes. Keys like `__proto__` and `constructor.prototype` are filtered in `_.set`, `_.merge`, and similar functions. It does not and cannot block reads.
+
+Reading inherited properties is how JavaScript works. `obj.constructor`, traversing `__proto__`, or reaching `Object.prototype` through normal property resolution are language semantics, not Lodash behavior.
+
+If a report shows only read-only prototype access (e.g. `_.get(obj, 'constructor.prototype')` returning `Object.prototype`), it's describing JavaScript, not a Lodash vulnerability.
+
+### Vulnerability Chaining and Gadgets
+
+A Lodash vulnerability has to be exploitable through Lodash alone. If a report's impact depends on combining Lodash behavior with a separate bug in another library or application component, the bug is in the downstream code, not Lodash.
+
+Gadget reports fall under this too. If a Lodash function produces an object shape that later causes a vulnerable function in some other library to execute code, the root cause is that library accepting the shape, not Lodash producing it.
 
 ### Vulnerabilities in the JavaScript Runtime or Platform
 

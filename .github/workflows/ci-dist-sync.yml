@@ -1,0 +1,37 @@
+name: CI Dist Sync
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dist-sync:
+    name: Verify dist files are in sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build dist files
+        run: npm run build
+
+      - name: Check dist files are in sync
+        run: |
+          if git diff --exit-code dist/; then
+            echo "dist/ files are in sync with source"
+          else
+            echo "::error::dist/ files are out of sync. Run 'npm run build' and commit the updated dist/ files."
+            exit 1
+          fi

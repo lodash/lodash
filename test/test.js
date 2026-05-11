@@ -22315,10 +22315,14 @@
     });
 
     QUnit.test('should forbid code injection through the "variable" options', function(assert) {
-      assert.expect(1);
+      assert.expect(2);
 
       assert.raises(function() {
         _.template('', { 'variable': '){console.log(process.env)}; with(obj' });
+      });
+
+      assert.raises(function() {
+        _.template('', { 'variable': 'eval`42`' });
       });
     });
 

@@ -16187,7 +16187,7 @@
      * @memberOf _
      * @since 4.19.0
      * @category Util
-     * @returns {NaN} Returns `NaN`.
+     * @returns {number} Returns `NaN`.
      * @example
      *
      * _.times(2, _.stubNaN);

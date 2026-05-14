@@ -16194,7 +16194,7 @@
      * // => [NaN, NaN]
      */
     function stubNaN() {
-      return NaN;
+      return NAN;
     }
 
     /**

@@ -21363,12 +21363,14 @@
 
   QUnit.module('stub methods');
 
-  lodashStable.each(['noop', 'stubTrue', 'stubFalse', 'stubArray', 'stubObject', 'stubString'], function(methodName) {
+  lodashStable.each(['noop', 'stubTrue', 'stubFalse', 'stubNaN', 'stubNull', 'stubArray', 'stubObject', 'stubString'], function(methodName) {
     var func = _[methodName];
 
     var pair = ({
       'stubArray': [[], 'an empty array'],
       'stubFalse': [false, '`false`'],
+      'stubNaN': [NaN, '`NaN`'],
+      'stubNull': [null, '`null`'],
       'stubObject': [{}, 'an empty object'],
       'stubString': ['', 'an empty string'],
       'stubTrue': [true, '`true`'],
@@ -27109,7 +27111,7 @@
     var acceptFalsey = lodashStable.difference(allMethods, rejectFalsey);
 
     QUnit.test('should accept falsey arguments', function(assert) {
-      assert.expect(316);
+      assert.expect(318);
 
       var arrays = lodashStable.map(falsey, stubArray);
 

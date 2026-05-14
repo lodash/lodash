@@ -1656,7 +1656,7 @@
      * `repeat`, `result`, `round`, `runInContext`, `sample`, `shift`, `size`,
      * `snakeCase`, `some`, `sortedIndex`, `sortedIndexBy`, `sortedLastIndex`,
      * `sortedLastIndexBy`, `startCase`, `startsWith`, `stubArray`, `stubFalse`,
-     * `stubObject`, `stubString`, `stubTrue`, `subtract`, `sum`, `sumBy`,
+     * `stubNaN`, `stubNull`, `stubObject`, `stubString`, `stubTrue`, `subtract`, `sum`, `sumBy`,
      * `template`, `times`, `toFinite`, `toInteger`, `toJSON`, `toLength`,
      * `toLower`, `toNumber`, `toSafeInteger`, `toString`, `toUpper`, `trim`,
      * `trimEnd`, `trimStart`, `truncate`, `unescape`, `uniqueId`, `upperCase`,
@@ -16181,6 +16181,40 @@
     }
 
     /**
+     * This method returns `NaN`.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.19.0
+     * @category Util
+     * @returns {number} Returns `NaN`.
+     * @example
+     *
+     * _.times(2, _.stubNaN);
+     * // => [NaN, NaN]
+     */
+    function stubNaN() {
+      return NAN;
+    }
+
+    /**
+     * This method returns `null`.
+     *
+     * @static
+     * @memberOf _
+     * @since 4.19.0
+     * @category Util
+     * @returns {null} Returns `null`.
+     * @example
+     *
+     * _.times(2, _.stubNull);
+     * // => [null, null]
+     */
+    function stubNull() {
+      return null;
+    }
+
+    /**
      * This method returns a new empty object.
      *
      * @static
@@ -16927,6 +16961,8 @@
     lodash.minBy = minBy;
     lodash.stubArray = stubArray;
     lodash.stubFalse = stubFalse;
+    lodash.stubNaN = stubNaN;
+    lodash.stubNull = stubNull;
     lodash.stubObject = stubObject;
     lodash.stubString = stubString;
     lodash.stubTrue = stubTrue;

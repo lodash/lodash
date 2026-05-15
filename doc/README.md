@@ -10907,7 +10907,8 @@ _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
 Creates an array of numbers *(positive and/or negative)* progressing from
 `start` up to, but not including, `end`. A step of `-1` is used if a negative
 `start` is specified without an `end` or `step`. If `end` is not specified,
-it's set to `start` with `start` then set to `0`.
+it's set to `start` with `start` then set to `0`. When `step` is omitted and
+`end` is specified, the default direction follows `end - start`.
 <br>
 <br>
 **Note:** JavaScript follows the IEEE-754 standard for resolving
@@ -10934,6 +10935,9 @@ _.range(-4);
 
 _.range(1, 5);
 // => [1, 2, 3, 4]
+
+_.range(10, 0);
+// => [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 _.range(0, 20, 5);
 // => [0, 5, 10, 15]

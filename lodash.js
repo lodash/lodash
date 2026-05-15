@@ -8718,6 +8718,10 @@
      * first elements of the given arrays, the second of which contains the
      * second elements of the given arrays, and so on.
      *
+     * Grouping continues until the longest input array is exhausted. If a
+     * shorter array runs out of elements, `undefined` is used for the missing
+     * group values.
+     *
      * @static
      * @memberOf _
      * @since 0.1.0
@@ -8728,12 +8732,19 @@
      *
      * _.zip(['a', 'b'], [1, 2], [true, false]);
      * // => [['a', 1, true], ['b', 2, false]]
+     *
+     * _.zip(['a', 'b'], [1, 2, 3]);
+     * // => [['a', 1], ['b', 2], [undefined, 3]]
      */
     var zip = baseRest(unzip);
 
     /**
      * This method is like `_.fromPairs` except that it accepts two arrays,
      * one of property identifiers and one of corresponding values.
+     *
+     * If `props` is longer than `values`, the extra properties are assigned
+     * `undefined`. If `values` is longer than `props`, the extra values are
+     * ignored.
      *
      * @static
      * @memberOf _
@@ -8746,6 +8757,9 @@
      *
      * _.zipObject(['a', 'b'], [1, 2]);
      * // => { 'a': 1, 'b': 2 }
+     *
+     * _.zipObject(['a', 'b', 'c'], [1, 2]);
+     * // => { 'a': 1, 'b': 2, 'c': undefined }
      */
     function zipObject(props, values) {
       return baseZipObject(props || [], values || [], assignValue);
@@ -8774,6 +8788,9 @@
      * This method is like `_.zip` except that it accepts `iteratee` to specify
      * how grouped values should be combined. The iteratee is invoked with the
      * elements of each group: (...group).
+     *
+     * Grouping follows `_.zip`, so groups are produced until the longest array
+     * is exhausted and missing values are `undefined`.
      *
      * @static
      * @memberOf _

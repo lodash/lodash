@@ -2693,7 +2693,7 @@
           return cloneBuffer(value, isDeep);
         }
         if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
-          result = (isFlat || isFunc) ? {} : initCloneObject(value);
+          result = (isFlat || isFunc) ? Object.create(null) : initCloneObject(value);
           if (!isDeep) {
             return isFlat
               ? copySymbolsIn(value, baseAssignIn(result, value))

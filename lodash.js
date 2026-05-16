@@ -14150,7 +14150,8 @@
      * floats, a floating-point number is returned instead of an integer.
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
-     * floating-point values which can produce unexpected results.
+     * floating-point values which can produce unexpected results. If `step`
+     * is `0`, each element of the range is set to `start`.
      *
      * **Note:** If `lower` is greater than `upper`, the values are swapped.
      *
@@ -16105,7 +16106,7 @@
 
     /**
      * This method is like `_.range` except that it populates values in
-     * descending order.
+     * descending order. A `step` of `0` produces repeated `start` values.
      *
      * @static
      * @memberOf _

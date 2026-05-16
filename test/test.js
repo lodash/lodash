@@ -20650,6 +20650,45 @@
 
   /*--------------------------------------------------------------------------*/
 
+  QUnit.module('lodash.snakeCase');
+
+  (function() {
+    QUnit.test('should convert `Foo Bar` to snake case', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.snakeCase('Foo Bar'), 'foo_bar');
+    });
+
+    QUnit.test('should convert camel cased strings', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.snakeCase('fooBar'), 'foo_bar');
+    });
+
+    QUnit.test('should convert strings with dashes and underscores as delimiters', function(assert) {
+      assert.expect(1);
+
+      assert.strictEqual(_.snakeCase('--FOO-BAR--'), 'foo_bar');
+    });
+
+    QUnit.test('should handle acronyms', function(assert) {
+      assert.expect(3);
+
+      assert.strictEqual(_.snakeCase('safeHTML'), 'safe_html');
+      assert.strictEqual(_.snakeCase('XMLHttpRequest'), 'xml_http_request');
+      assert.strictEqual(_.snakeCase('escapeHTMLEntities'), 'escape_html_entities');
+    });
+
+    QUnit.test('should work with numbers', function(assert) {
+      assert.expect(2);
+
+      assert.strictEqual(_.snakeCase('enable 6h format'), 'enable_6_h_format');
+      assert.strictEqual(_.snakeCase('walk 500 miles'), 'walk_500_miles');
+    });
+  }());
+
+  /*--------------------------------------------------------------------------*/
+
   QUnit.module('lodash.some');
 
   (function() {

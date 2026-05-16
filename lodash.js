@@ -2595,7 +2595,8 @@
      * @param {*} value The value to assign.
      */
     function baseAssignValue(object, key, value) {
-      if (key == '__proto__' && defineProperty) {
+      if (defineProperty && (key == '__proto__' ||
+            (key in objectProto && !hasOwnProperty.call(object, key)))) {
         defineProperty(object, key, {
           'configurable': true,
           'enumerable': true,

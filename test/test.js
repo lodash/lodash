@@ -16578,7 +16578,7 @@
     // Prevent regression for
     // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
     QUnit.test('Security: _.omit should not allow modifying prototype or constructor properties', function(assert) {
-      assert.expect(3);
+      assert.expect(5);
 
       var testObj1 = {};
       assert.strictEqual(typeof testObj1.toString, 'function', 'Object.toString should work before omit');
@@ -16586,6 +16586,17 @@
       _.omit({}, ['__proto__.toString']);
       _.omit({}, ['constructor.prototype.toString']);
       _.omit({}, [['constructor'], ['prototype'], ['toString']]);
+
+      try {
+        objectProto.foo = 'bar';
+        _.omit({}, [[['__proto__'], ['foo']]]);
+        assert.strictEqual(objectProto.foo, 'bar', '__proto__ access via array-wrapped segments should be blocked');
+
+        _.omit({}, [[['constructor'], ['prototype'], ['foo']]]);
+        assert.strictEqual(objectProto.foo, 'bar', 'constructor.prototype access via array-wrapped segments should be blocked');
+      } finally {
+        delete objectProto.foo;
+      }
 
       var testObj2 = {};
       assert.strictEqual(typeof testObj2.toString, 'function', 'Object.toString should still work after omit');
@@ -25308,7 +25319,7 @@
     // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
     // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
     QUnit.test('Security: _.unset should not allow modifying prototype or constructor properties', function(assert) {
-      assert.expect(6);
+      assert.expect(7);
 
       var testStr1 = 'ABC';
       assert.strictEqual(typeof testStr1.toLowerCase, 'function', 'String.toLowerCase should exist before unset');
@@ -25323,10 +25334,16 @@
       assert.strictEqual(typeof testStr2.toLowerCase, 'function', 'String.toLowerCase should still exist after unset');
       assert.strictEqual(testStr2.toLowerCase(), 'abc', 'String.toLowerCase should work as expected');
 
-      objectProto.foo = 'bar';
-      _.unset({}, [['__proto__'], ['foo']]);
-      assert.strictEqual(objectProto.foo, 'bar', '__proto__ access via array-wrapped segments should be blocked');
-      delete objectProto.foo;
+      try {
+        objectProto.foo = 'bar';
+        _.unset({}, [['__proto__'], ['foo']]);
+        assert.strictEqual(objectProto.foo, 'bar', '__proto__ access via array-wrapped segments should be blocked');
+
+        _.unset({}, [['constructor'], ['prototype'], ['foo']]);
+        assert.strictEqual(objectProto.foo, 'bar', 'constructor.prototype access via array-wrapped segments should be blocked');
+      } finally {
+        delete objectProto.foo;
+      }
 
       assert.strictEqual(typeof funcProto.apply, 'function', 'Function.prototype.apply should exist before unset');
 

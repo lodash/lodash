@@ -4389,8 +4389,8 @@
       while (++index < length) {
         var key = toKey(path[index]);
 
-        // Always block "__proto__" anywhere in the path if it's not expected
-        if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
+        // Always block "__proto__" anywhere in the path
+        if (key === '__proto__') {
           return false;
         }
 

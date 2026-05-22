@@ -4,7 +4,7 @@
 [Docs](https://lodash.com/docs) |
 [Contributing](https://github.com/lodash/lodash/blob/master/.github/CONTRIBUTING.md) |
 [Wiki](https://github.com/lodash/lodash/wiki "Changelog, Roadmap, etc.") |
-[Code of Conduct](https://code-of-conduct.openjsf.org)
+[Code of Conduct](https://github.com/openjs-foundation/cross-project-council/blob/main/CODE_OF_CONDUCT.md)
 
 The [Lodash](https://lodash.com/) library exported as a [UMD](https://github.com/umdjs/umd) module.
 

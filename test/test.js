@@ -8634,6 +8634,15 @@
       assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
     });
 
+    QUnit.test('should treat "__proto__" values as regular keys', function(assert) {
+      assert.expect(2);
+
+      var actual = _.invert({ 'a': '__proto__' });
+
+      assert.strictEqual(actual.__proto__, 'a');
+      assert.strictEqual(Object.getPrototypeOf(actual), objectProto);
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
@@ -8696,6 +8705,15 @@
           expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] };
 
       assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+    });
+
+    QUnit.test('should treat "__proto__" values as regular keys', function(assert) {
+      assert.expect(2);
+
+      var actual = _.invertBy({ 'a': '__proto__' });
+
+      assert.deepEqual(actual.__proto__, ['a']);
+      assert.strictEqual(Object.getPrototypeOf(actual), objectProto);
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {

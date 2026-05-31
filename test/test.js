@@ -16575,6 +16575,16 @@
       });
     });
 
+    QUnit.test('should not mutate `object` when using deep array paths', function(assert) {
+      assert.expect(4);
+
+      lodashStable.each(['foo.0.bar', ['foo.0.bar'], 'foo[0].bar', ['foo[0].bar']], function(path) {
+        var object = { 'foo': [{ 'bar': 1 }] };
+        _.omit(object, path);
+        assert.deepEqual(object, { 'foo': [{ 'bar': 1 }] });
+      });
+    });
+
     // Prevent regression for
     // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
     QUnit.test('Security: _.omit should not allow modifying prototype or constructor properties', function(assert) {

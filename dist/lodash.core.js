@@ -2514,7 +2514,9 @@
    * _.isArray(_.noop);
    * // => false
    */
-  var isArray = Array.isArray;
+  function isArray(value) {
+    return Array.isArray(value);
+  }
 
   /**
    * Checks if `value` is array-like. A value is considered array-like if it's

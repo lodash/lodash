@@ -2679,6 +2679,10 @@
       if (!isObject(value)) {
         return value;
       }
+      // Temporal types are immutable - return reference directly.
+      if (Object.prototype.toString.call(value).slice(0, 18) === '[object Temporal.') {
+        return value;
+      }
       var isArr = isArray(value);
       if (isArr) {
         result = initCloneArray(value);

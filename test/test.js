@@ -2772,6 +2772,31 @@
       assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
     });
 
+    QUnit.test('`_.cloneDeep` should deep clone map keys', function(assert) {
+      assert.expect(3);
+
+      if (Map) {
+        var actual,
+            actualKey,
+            key = { 'a': { 'b': 1 } },
+            map = new Map;
+
+        map.set(key, 'value');
+
+        actual = _.cloneDeep(map);
+        actualKey = actual.keys().next().value;
+
+        assert.notStrictEqual(actualKey, key);
+        assert.notStrictEqual(actualKey.a, key.a);
+
+        key.a.b = 2;
+        assert.strictEqual(actualKey.a.b, 1);
+      }
+      else {
+        skipAssert(assert, 3);
+      }
+    });
+
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
       assert.expect(1);
 

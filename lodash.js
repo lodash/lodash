@@ -2720,7 +2720,10 @@
         });
       } else if (isMap(value)) {
         value.forEach(function(subValue, key) {
-          result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
+          result.set(
+            baseClone(key, bitmask, customizer, key, value, stack),
+            baseClone(subValue, bitmask, customizer, key, value, stack)
+          );
         });
       }
 

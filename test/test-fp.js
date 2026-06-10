@@ -459,7 +459,7 @@
 
   (function() {
     QUnit.test('should work with `fp.indexOf`', function(assert) {
-      assert.expect(10);
+      assert.expect(12);
 
       var array = ['a', 'b', 'c'],
           other = ['b', 'd', 'b'],
@@ -476,6 +476,11 @@
 
       actual = fp.omit(other)(object);
       assert.deepEqual(actual, { 'a': 1, 'c': 2 }, 'fp.omit');
+
+      object = { 'a': [{ 'b': 1, 'c': 2 }] };
+      actual = fp.omit(['a.0.b'])(object);
+      assert.deepEqual(actual, { 'a': [{ 'c': 2 }] }, 'fp.omit with deep array paths');
+      assert.deepEqual(object, { 'a': [{ 'b': 1, 'c': 2 }] }, 'fp.omit with deep array paths should not mutate');
 
       actual = fp.union(other)(array);
       assert.deepEqual(actual, ['a', 'b', 'c', 'd'], 'fp.union');

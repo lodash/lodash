@@ -16511,6 +16511,16 @@
       assert.deepEqual(_.omit(nested, 'b.c'), { 'a': 1, 'b': { 'd': 3} });
     });
 
+    QUnit.test('should not mutate arrays for deep paths', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': [{ 'b': 1, 'c': 2 }] },
+          actual = _.omit(object, 'a.0.b');
+
+      assert.deepEqual(actual, { 'a': [{ 'c': 2 }] });
+      assert.deepEqual(object, { 'a': [{ 'b': 1, 'c': 2 }] });
+    });
+
     QUnit.test('should support path arrays', function(assert) {
       assert.expect(1);
 

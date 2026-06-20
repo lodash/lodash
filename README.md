@@ -44,6 +44,11 @@ $ npm i -g npm
 $ npm i --save lodash
 ```
 
+Using Deno:
+```shell
+$ deno install lodash
+```
+
 In Node.js:
 ```js
 // Load the full build.

@@ -968,6 +968,9 @@
     while (++index < length) {
       var current = iteratee(array[index]);
       if (current !== undefined) {
+        if (typeof current != 'number') {
+          return NaN;
+        }
         result = result === undefined ? current : (result + current);
       }
     }

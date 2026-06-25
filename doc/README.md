@@ -9609,6 +9609,10 @@ _.startCase('fooBar');
 
 _.startCase('__FOO_BAR__');
 // => 'FOO BAR'
+
+// Numbers are treated as separate words.
+_.startCase('abc123def');
+// => 'Abc 123 Def'
 ```
 ---
 

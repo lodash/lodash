@@ -8662,6 +8662,13 @@
         skipAssert(assert, 2);
       }
     });
+
+    QUnit.test('should handle `__proto__` as a value without polluting the prototype', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': 2, 'c': '__proto__' };
+      assert.deepEqual(_.invert(object), { '1': 'a', '2': 'b', ['__proto__']: 'c' });
+    })
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -8717,6 +8724,13 @@
       else {
         skipAssert(assert, 2);
       }
+    });
+
+    QUnit.test('should handle `__proto__` as a value without polluting the prototype', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1, 'b': '__proto__', 'c': '__proto__'};
+      assert.deepEqual(_.invertBy(object), { '1': ['a'], ['__proto__']: ['b', 'c'] });
     });
   }());
 

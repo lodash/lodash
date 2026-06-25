@@ -109,7 +109,7 @@
     var result;
     assert.equal(_.extend({}, {a: 'b'}).a, 'b', 'can extend an object with the attributes of another');
     assert.equal(_.extend({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
-    assert.equal(_.extend({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overriden");
+    assert.equal(_.extend({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overridden");
     result = _.extend({x: 'x'}, {a: 'a'}, {b: 'b'});
     assert.deepEqual(result, {x: 'x', a: 'a', b: 'b'}, 'can extend from multiple source objects');
     result = _.extend({x: 'x'}, {a: 'a', x: 2}, {a: 'b'});
@@ -140,7 +140,7 @@
     var result;
     assert.equal(_.extendOwn({}, {a: 'b'}).a, 'b', 'can extend an object with the attributes of another');
     assert.equal(_.extendOwn({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
-    assert.equal(_.extendOwn({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overriden");
+    assert.equal(_.extendOwn({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overridden");
     result = _.extendOwn({x: 'x'}, {a: 'a'}, {b: 'b'});
     assert.deepEqual(result, {x: 'x', a: 'a', b: 'b'}, 'can extend from multiple source objects');
     result = _.extendOwn({x: 'x'}, {a: 'a', x: 2}, {a: 'b'});
@@ -560,7 +560,7 @@
     assert.strictEqual(_.isEqual(new Foo, other), false, 'Objects from different constructors are not equal');
 
 
-    // Tricky object cases val comparisions
+    // Tricky object cases val comparisons
     assert.equal(_.isEqual([0], [-0]), false);
     assert.equal(_.isEqual({a: 0}, {a: -0}), false);
     assert.equal(_.isEqual([NaN], [NaN]), true);

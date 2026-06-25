@@ -510,7 +510,15 @@ function baseConvert(util, name, func, options) {
       };
     }
     result.convert = createConverter(realName, func);
-    result.placeholder = func.placeholder = placeholder;
+    result.placeholder = placeholder;
+    // Avoid polluting native functions (like Array.isArray) with placeholder property.
+    // Use lodash's isNative when available (placeholder is the lodash object when converting the library).
+    var isNative = typeof placeholder.isNative == 'function'
+      ? placeholder.isNative
+      : function(fn) { return typeof fn == 'function' && /\[native code\]/.test(fn.toString()); };
+    if (!isNative(func)) {
+      func.placeholder = placeholder;
+    }
 
     return result;
   }
@@ -543,8 +551,18 @@ function baseConvert(util, name, func, options) {
           return;
         }
       }
-      func.convert = createConverter(key, func);
-      pairs.push([key, func]);
+      // Wrap native functions to avoid polluting them with `convert` property.
+      // Use lodash's isNative which is available since we're converting the library.
+      if (_.isNative(func)) {
+        var wrapped = function() {
+          return func.apply(this, arguments);
+        };
+        wrapped.convert = createConverter(key, func);
+        pairs.push([key, wrapped]);
+      } else {
+        func.convert = createConverter(key, func);
+        pairs.push([key, func]);
+      }
     }
   });
 

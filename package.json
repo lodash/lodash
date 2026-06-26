@@ -56,6 +56,7 @@
     "requirejs": "^2.3.6",
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.5",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "express": "^5.2.1"
   }
 }

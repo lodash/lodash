@@ -57,5 +57,9 @@
     "sauce-tunnel": "^2.5.0",
     "uglify-js": "2.7.5",
     "webpack": "^1.14.0"
+  },
+  "homepage": "https://github.com/lodash/lodash",
+  "bugs": {
+    "url": "https://github.com/lodash/lodash/issues"
   }
 }

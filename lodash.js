@@ -14351,6 +14351,7 @@
      * @category String
      * @param {string} [string=''] The string to escape.
      * @returns {string} Returns the escaped string.
+     * @see _.unescape
      * @example
      *
      * _.escape('fred, barney, & pebbles');
@@ -15263,6 +15264,7 @@
      * @category String
      * @param {string} [string=''] The string to unescape.
      * @returns {string} Returns the unescaped string.
+     * @see _.escape
      * @example
      *
      * _.unescape('fred, barney, &amp; pebbles');

@@ -10417,10 +10417,14 @@
       }
       wait = toNumber(wait) || 0;
       if (isObject(options)) {
-        leading = !!options.leading;
-        maxing = 'maxWait' in options;
+        leading = 'leading' in options && options.leading !== undefined
+          ? !!options.leading
+          : leading;
+        maxing = 'maxWait' in options && options.maxWait !== undefined;
         maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
+        trailing = 'trailing' in options && options.trailing !== undefined
+          ? !!options.trailing
+          : trailing;
       }
 
       function invokeFunc(time) {
@@ -11001,8 +11005,12 @@
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       if (isObject(options)) {
-        leading = 'leading' in options ? !!options.leading : leading;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
+        leading = 'leading' in options && options.leading !== undefined
+          ? !!options.leading
+          : leading;
+        trailing = 'trailing' in options && options.trailing !== undefined
+          ? !!options.trailing
+          : trailing;
       }
       return debounce(func, wait, {
         'leading': leading,

@@ -206,6 +206,16 @@
     'Uint32Array'
   ];
 
+  if (typeof BigInt64Array != 'undefined') {
+    typedArrays.push('BigInt64Array');
+  }
+  if (typeof BigUint64Array != 'undefined') {
+    typedArrays.push('BigUint64Array');
+  }
+  if (typeof Float16Array != 'undefined') {
+    typedArrays.push('Float16Array');
+  }
+
   /** Used to check whether methods support array views. */
   var arrayViews = typedArrays.concat('DataView');
 
@@ -3098,6 +3108,23 @@
             }
           });
         });
+      });
+
+      QUnit.test('`_.' + methodName + '` should clone `BigInt64Array` values', function(assert) {
+        assert.expect(4);
+
+        if (typeof BigInt64Array != 'undefined') {
+          var array = new BigInt64Array([BigInt(1), BigInt(2)]),
+              actual = func(array);
+
+          assert.ok(actual instanceof BigInt64Array);
+          assert.deepEqual(actual, array);
+          assert.notStrictEqual(actual, array);
+          assert.strictEqual(actual.buffer === array.buffer, !isDeep);
+        }
+        else {
+          skipAssert(assert, 4);
+        }
       });
 
       lodashStable.forOwn(uncloneable, function(value, key) {
@@ -15057,21 +15084,26 @@
     QUnit.test('should merge typed arrays', function(assert) {
       assert.expect(4);
 
-      var array1 = [0],
-          array2 = [0, 0],
-          array3 = [0, 0, 0, 0],
-          array4 = [0, 0, 0, 0, 0, 0, 0, 0];
+      var buffer = ArrayBuffer && new ArrayBuffer(8);
 
-      var arrays = [array2, array1, array4, array3, array2, array4, array4, array3, array2],
-          buffer = ArrayBuffer && new ArrayBuffer(8);
+      // BigInt-backed typed arrays store `bigint` elements, so merging with a
+      // plain-number array mixes element types; exercise the number-backed ones.
+      var numericTypedArrays = lodashStable.reject(typedArrays, function(type) {
+        return /^Big/.test(type);
+      });
 
-      var expected = lodashStable.map(typedArrays, function(type, index) {
-        var array = arrays[index].slice();
+      var lengths = lodashStable.map(numericTypedArrays, function(type) {
+        var Ctor = root[type];
+        return Ctor ? new Ctor(buffer).length : 0;
+      });
+
+      var expected = lodashStable.map(numericTypedArrays, function(type, index) {
+        var array = lodashStable.times(lengths[index], stubZero);
         array[0] = 1;
         return root[type] ? { 'value': array } : false;
       });
 
-      var actual = lodashStable.map(typedArrays, function(type) {
+      var actual = lodashStable.map(numericTypedArrays, function(type) {
         var Ctor = root[type];
         return Ctor ? _.merge({ 'value': new Ctor(buffer) }, { 'value': [1] }) : false;
       });
@@ -15079,15 +15111,15 @@
       assert.ok(lodashStable.isArray(actual));
       assert.deepEqual(actual, expected);
 
-      expected = lodashStable.map(typedArrays, function(type, index) {
-        var array = arrays[index].slice();
+      expected = lodashStable.map(numericTypedArrays, function(type, index) {
+        var array = lodashStable.times(lengths[index], stubZero);
         array.push(1);
         return root[type] ? { 'value': array } : false;
       });
 
-      actual = lodashStable.map(typedArrays, function(type, index) {
+      actual = lodashStable.map(numericTypedArrays, function(type, index) {
         var Ctor = root[type],
-            array = lodashStable.range(arrays[index].length);
+            array = lodashStable.range(lengths[index]);
 
         array.push(1);
         return Ctor ? _.merge({ 'value': array }, { 'value': new Ctor(buffer) }) : false;

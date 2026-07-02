@@ -115,7 +115,10 @@
       weakSetTag = '[object WeakSet]';
 
   var arrayBufferTag = '[object ArrayBuffer]',
+      bigInt64Tag = '[object BigInt64Array]',
+      bigUint64Tag = '[object BigUint64Array]',
       dataViewTag = '[object DataView]',
+      float16Tag = '[object Float16Array]',
       float32Tag = '[object Float32Array]',
       float64Tag = '[object Float64Array]',
       int8Tag = '[object Int8Array]',
@@ -307,11 +310,12 @@
 
   /** Used to identify `toStringTag` values of typed arrays. */
   var typedArrayTags = {};
-  typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-  typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-  typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-  typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-  typedArrayTags[uint32Tag] = true;
+  typedArrayTags[bigInt64Tag] = typedArrayTags[bigUint64Tag] =
+  typedArrayTags[float16Tag] = typedArrayTags[float32Tag] =
+  typedArrayTags[float64Tag] = typedArrayTags[int8Tag] =
+  typedArrayTags[int16Tag] = typedArrayTags[int32Tag] =
+  typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] =
+  typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
   typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
   typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
   typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
@@ -324,16 +328,18 @@
   /** Used to identify `toStringTag` values supported by `_.clone`. */
   var cloneableTags = {};
   cloneableTags[argsTag] = cloneableTags[arrayTag] =
-  cloneableTags[arrayBufferTag] = cloneableTags[dataViewTag] =
+  cloneableTags[arrayBufferTag] = cloneableTags[bigInt64Tag] =
+  cloneableTags[bigUint64Tag] = cloneableTags[dataViewTag] =
   cloneableTags[boolTag] = cloneableTags[dateTag] =
-  cloneableTags[float32Tag] = cloneableTags[float64Tag] =
-  cloneableTags[int8Tag] = cloneableTags[int16Tag] =
-  cloneableTags[int32Tag] = cloneableTags[mapTag] =
-  cloneableTags[numberTag] = cloneableTags[objectTag] =
-  cloneableTags[regexpTag] = cloneableTags[setTag] =
-  cloneableTags[stringTag] = cloneableTags[symbolTag] =
-  cloneableTags[uint8Tag] = cloneableTags[uint8ClampedTag] =
-  cloneableTags[uint16Tag] = cloneableTags[uint32Tag] = true;
+  cloneableTags[float16Tag] = cloneableTags[float32Tag] =
+  cloneableTags[float64Tag] = cloneableTags[int8Tag] =
+  cloneableTags[int16Tag] = cloneableTags[int32Tag] =
+  cloneableTags[mapTag] = cloneableTags[numberTag] =
+  cloneableTags[objectTag] = cloneableTags[regexpTag] =
+  cloneableTags[setTag] = cloneableTags[stringTag] =
+  cloneableTags[symbolTag] = cloneableTags[uint8Tag] =
+  cloneableTags[uint8ClampedTag] = cloneableTags[uint16Tag] =
+  cloneableTags[uint32Tag] = true;
   cloneableTags[errorTag] = cloneableTags[funcTag] =
   cloneableTags[weakMapTag] = false;
 
@@ -6290,7 +6296,8 @@
         case dataViewTag:
           return cloneDataView(object, isDeep);
 
-        case float32Tag: case float64Tag:
+        case bigInt64Tag: case bigUint64Tag:
+        case float16Tag: case float32Tag: case float64Tag:
         case int8Tag: case int16Tag: case int32Tag:
         case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
           return cloneTypedArray(object, isDeep);

@@ -3114,7 +3114,7 @@
         assert.expect(4);
 
         if (typeof BigInt64Array != 'undefined') {
-          var array = new BigInt64Array([1n, 2n]),
+          var array = new BigInt64Array([BigInt(1), BigInt(2)]),
               actual = func(array);
 
           assert.ok(actual instanceof BigInt64Array);

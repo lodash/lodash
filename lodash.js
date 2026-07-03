@@ -8716,7 +8716,8 @@
     /**
      * Creates an array of grouped elements, the first of which contains the
      * first elements of the given arrays, the second of which contains the
-     * second elements of the given arrays, and so on.
+     * second elements of the given arrays, and so on. Grouping continues until
+     * the longest array is exhausted.
      *
      * @static
      * @memberOf _
@@ -8728,12 +8729,16 @@
      *
      * _.zip(['a', 'b'], [1, 2], [true, false]);
      * // => [['a', 1, true], ['b', 2, false]]
+     *
+     * _.zip(['a', 'b'], [1, 2, 3]);
+     * // => [['a', 1], ['b', 2], [undefined, 3]]
      */
     var zip = baseRest(unzip);
 
     /**
      * This method is like `_.fromPairs` except that it accepts two arrays,
-     * one of property identifiers and one of corresponding values.
+     * one of property identifiers and one of corresponding values. Additional
+     * values are ignored and additional props are assigned `undefined`.
      *
      * @static
      * @memberOf _
@@ -8746,6 +8751,9 @@
      *
      * _.zipObject(['a', 'b'], [1, 2]);
      * // => { 'a': 1, 'b': 2 }
+     *
+     * _.zipObject(['a', 'b', 'c'], [1, 2]);
+     * // => { 'a': 1, 'b': 2, 'c': undefined }
      */
     function zipObject(props, values) {
       return baseZipObject(props || [], values || [], assignValue);
@@ -8753,6 +8761,8 @@
 
     /**
      * This method is like `_.zipObject` except that it supports property paths.
+     * Additional values are ignored and additional props are assigned
+     * `undefined`.
      *
      * @static
      * @memberOf _
@@ -8773,7 +8783,8 @@
     /**
      * This method is like `_.zip` except that it accepts `iteratee` to specify
      * how grouped values should be combined. The iteratee is invoked with the
-     * elements of each group: (...group).
+     * elements of each group: (...group). Grouping continues until the longest
+     * array is exhausted.
      *
      * @static
      * @memberOf _
@@ -8789,6 +8800,11 @@
      *   return a + b + c;
      * });
      * // => [111, 222]
+     *
+     * _.zipWith([1, 2], [10, 20, 30], function(a, b) {
+     *   return a + b;
+     * });
+     * // => [11, 22, NaN]
      */
     var zipWith = baseRest(function(arrays) {
       var length = arrays.length,

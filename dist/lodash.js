@@ -5034,9 +5034,12 @@
     function createCaseFirst(methodName) {
       return function(string) {
         string = toString(string);
+        if (!string) {
+          return '';
+        }
 
         var strSymbols = hasUnicode(string)
-          ? stringToArray(string)
+          ? unicodeToArray(string)
           : undefined;
 
         var chr = strSymbols

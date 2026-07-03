@@ -13282,8 +13282,9 @@
 
   (function() {
     QUnit.test('should lowercase only the first character', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
+      assert.strictEqual(_.lowerFirst(''), '');
       assert.strictEqual(_.lowerFirst('fred'), 'fred');
       assert.strictEqual(_.lowerFirst('Fred'), 'fred');
       assert.strictEqual(_.lowerFirst('FRED'), 'fRED');
@@ -25523,8 +25524,9 @@
 
   (function() {
     QUnit.test('should uppercase only the first character', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
+      assert.strictEqual(_.upperFirst(''), '');
       assert.strictEqual(_.upperFirst('fred'), 'Fred');
       assert.strictEqual(_.upperFirst('Fred'), 'Fred');
       assert.strictEqual(_.upperFirst('FRED'), 'FRED');

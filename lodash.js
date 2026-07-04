@@ -2735,7 +2735,9 @@
           subValue = value[key];
         }
         // Recursively populate clone (susceptible to call stack limits).
-        assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack));
+        if (!isArr || hasOwnProperty.call(value, key)) {
+          assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack));
+        }
       });
       return result;
     }
@@ -4835,7 +4837,9 @@
 
       array || (array = Array(length));
       while (++index < length) {
-        array[index] = source[index];
+        if (index in source) {
+          array[index] = source[index];
+        }
       }
       return array;
     }

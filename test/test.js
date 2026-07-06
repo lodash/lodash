@@ -8641,6 +8641,22 @@
       assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
     });
 
+    QUnit.test('should handle `__proto__` values (regression)', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 'x', 'b': '__proto__', 'c': 'y' },
+          expected = { 'x': 'a', 'y': 'c' };
+
+      Object.defineProperty(expected, '__proto__', {
+        'enumerable': true,
+        'configurable': true,
+        'writable': true,
+        'value': 'b'
+      });
+
+      assert.deepEqual(_.invert(object), expected);
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
@@ -8703,6 +8719,22 @@
           expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] };
 
       assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+    });
+
+    QUnit.test('should handle `__proto__` values in `invertBy` (regression)', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 'x', 'b': '__proto__', 'c': 'y' },
+          expected = { 'x': ['a'], 'y': ['c'] };
+
+      Object.defineProperty(expected, '__proto__', {
+        'enumerable': true,
+        'configurable': true,
+        'writable': true,
+        'value': ['b']
+      });
+
+      assert.deepEqual(_.invertBy(object), expected);
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {

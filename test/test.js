@@ -2591,6 +2591,13 @@
       var actual = lodashStable.map([[1, 2], [3, 4]], _.chunk);
       assert.deepEqual(actual, [[[1], [2]], [[3], [4]]]);
     });
+
+    QUnit.test('should return an empty array when input is empty', function(assert) {
+      assert.expect(1);
+
+      var actual = _.chunk([], 3);
+      assert.deepEqual(actual, []);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -11294,11 +11301,15 @@
 
   (function() {
     QUnit.test('should return `true` for numbers', function(assert) {
-      assert.expect(3);
+      assert.expect(7);
 
       assert.strictEqual(_.isNumber(0), true);
       assert.strictEqual(_.isNumber(Object(0)), true);
       assert.strictEqual(_.isNumber(NaN), true);
+      assert.strictEqual(_.isNumber(Number.MAX_VALUE), true);
+      assert.strictEqual(_.isNumber(Number.MIN_VALUE), true);
+      assert.strictEqual(_.isNumber(Number.NEGATIVE_INFINITY), true);
+      assert.strictEqual(_.isNumber(Number.POSITIVE_INFINITY), true);
     });
 
     QUnit.test('should return `false` for non-numbers', function(assert) {
@@ -21256,11 +21267,12 @@
 
   (function() {
     QUnit.test('should uppercase only the first character of each word', function(assert) {
-      assert.expect(3);
+      assert.expect(4);
 
       assert.strictEqual(_.startCase('--foo-bar--'), 'Foo Bar');
       assert.strictEqual(_.startCase('fooBar'), 'Foo Bar');
       assert.strictEqual(_.startCase('__FOO_BAR__'), 'FOO BAR');
+      assert.strictEqual(_.startCase('foo123bar345'), 'Foo 123 Bar 345');
     });
   }());
 

@@ -20352,6 +20352,45 @@
     });
   });
 
+  // Prevent regression for prototype pollution via a shared built-in reachable
+  // through a path (e.g. `toString.call`). Every method below funnels into
+  // `baseSet`, which must refuse to traverse into inherited built-in properties,
+  // whether the built-in is reached on the passed object or on an object created
+  // while walking the path.
+  lodashStable.each(['set', 'setWith', 'update', 'updateWith', 'zipObjectDeep'], function(methodName) {
+    var cases = [
+      { 'path': 'toString.call', 'builtin': 'toString', 'plainBase': true },
+      { 'path': 'valueOf.call', 'builtin': 'valueOf', 'plainBase': true },
+      { 'path': 'a.toString.call', 'builtin': 'toString', 'plainBase': false }
+    ];
+
+    QUnit.test('Security: `_.' + methodName + '` should not allow modifying a shared built-in via the path', function(assert) {
+      assert.expect(cases.length * 2);
+
+      var func = _[methodName];
+
+      lodashStable.each(cases, function(data) {
+        var builtin = objectProto[data.builtin];
+
+        assert.strictEqual(typeof builtin.call, 'function', 'Object.prototype.' + data.builtin + '.call should be a function before ' + methodName);
+
+        if (methodName == 'zipObjectDeep') {
+          func([data.path], ['newValue']);
+        } else {
+          var object = data.plainBase ? {} : create(null),
+              value = /^update/.test(methodName) ? lodashStable.constant('newValue') : 'newValue';
+
+          func(object, data.path, value);
+        }
+
+        var polluted = builtin.call;
+        delete builtin.call;
+
+        assert.strictEqual(typeof polluted, 'function', 'Object.prototype.' + data.builtin + '.call should still be a function after ' + methodName);
+      });
+    });
+  });
+
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.shuffle');

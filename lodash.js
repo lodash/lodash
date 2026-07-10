@@ -4045,7 +4045,7 @@
           var objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
           if (newValue === undefined) {
-            newValue = isObject(objValue)
+            newValue = isObject(objValue) && hasOwnProperty.call(nested, key)
               ? objValue
               : (isIndex(path[index + 1]) ? [] : {});
           }

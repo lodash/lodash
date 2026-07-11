@@ -25408,6 +25408,26 @@
 
       assert.strictEqual(typeof booleanProto.valueOf, 'function', 'Boolean.prototype.valueOf should still exist after unset attempts');
     });
+
+    QUnit.test('Security: _.unset should block nested `__proto__` traversal when the root has an own `__proto__`', function(assert) {
+      assert.expect(5);
+
+      assert.strictEqual(typeof objectProto.toString, 'function', 'Object.prototype.toString should exist before unset');
+
+      // JSON.parse gives the root an own `__proto__` data property; a nested
+      // segment must not use that to reach the real prototype.
+      var target = JSON.parse('{"__proto__": {}, "x": {}}');
+      assert.strictEqual(_.unset(target, 'x.__proto__.toString'), false, 'nested __proto__ traversal should be blocked');
+      _.unset(target, ['x', ['__proto__'], 'valueOf']);
+
+      assert.strictEqual(typeof objectProto.toString, 'function', 'Object.prototype.toString should still exist after unset attempts');
+      assert.strictEqual(typeof objectProto.valueOf, 'function', 'Object.prototype.valueOf should still exist after unset attempts');
+
+      // Deleting an own `__proto__` data property is still allowed.
+      var owned = JSON.parse('{"__proto__": {"a": 1}}');
+      _.unset(owned, '__proto__');
+      assert.notOk(objectProto.hasOwnProperty.call(owned, '__proto__'), 'an own `__proto__` property should still be removable');
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

@@ -4389,7 +4389,14 @@
       while (++index < length) {
         var key = toKey(path[index]);
 
-        // Always block "__proto__" anywhere in the path if it's not expected
+        // Block "__proto__" when it is used to traverse into an object, unless
+        // the root actually carries it as an own property. The own check alone
+        // consulted only the root, so a nested segment such as "a.__proto__.x"
+        // slipped through whenever the root held an own "__proto__" (e.g. from
+        // JSON.parse('{"__proto__":{}}')) and resolved to the real prototype.
+        if (key === '__proto__' && index < length - 1) {
+          return false;
+        }
         if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
           return false;
         }

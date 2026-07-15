@@ -16064,7 +16064,8 @@
      * Creates an array of numbers (positive and/or negative) progressing from
      * `start` up to, but not including, `end`. A step of `-1` is used if a negative
      * `start` is specified without an `end` or `step`. If `end` is not specified,
-     * it's set to `start` with `start` then set to `0`.
+     * it's set to `start` with `start` then set to `0`. If `step` is not specified
+     * and `start` is greater than `end`, a step of `-1` is used.
      *
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
@@ -16094,6 +16095,9 @@
      *
      * _.range(0, -4, -1);
      * // => [0, -1, -2, -3]
+     *
+     * _.range(10, 0);
+     * // => [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
      *
      * _.range(1, 4, 0);
      * // => [1, 1, 1]

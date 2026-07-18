@@ -2845,6 +2845,34 @@
         }
       });
 
+      QUnit.test('`_.' + methodName + '` should clone buffers without using the deprecated Buffer constructor', function(assert) {
+        assert.expect(3);
+
+        if (!(Buffer && Buffer.from && typeof process !== 'undefined' && process.on)) {
+          skipAssert(assert, 3);
+          return;
+        }
+
+        var warnings = [],
+            onWarning = function(warning) {
+              if (warning && warning.name === 'DeprecationWarning' && /Buffer\(\) is deprecated/.test(String(warning.message))) {
+                warnings.push(warning);
+              }
+            };
+
+        process.on('warning', onWarning);
+        try {
+          var buffer = Buffer.from([1, 2, 3]),
+              actual = methodName == 'cloneDeep' ? _.merge({}, { 'value': buffer }).value : func(buffer);
+
+          assert.deepEqual(lodashStable.toArray(actual), [1, 2, 3]);
+          assert.notStrictEqual(actual, buffer);
+          assert.strictEqual(warnings.length, 0);
+        } finally {
+          process.removeListener('warning', onWarning);
+        }
+      });
+
       QUnit.test('`_.' + methodName + '` should clone `index` and `input` array properties', function(assert) {
         assert.expect(2);
 

@@ -4601,8 +4601,18 @@
         return buffer.slice();
       }
       var length = buffer.length,
-          result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
+          Ctor = buffer.constructor,
+          result;
 
+      if (allocUnsafe) {
+        result = allocUnsafe(length);
+      } else if (typeof Ctor.allocUnsafe == 'function') {
+        result = Ctor.allocUnsafe(length);
+      } else if (typeof Ctor.from == 'function') {
+        return Ctor.from(buffer);
+      } else {
+        result = new Ctor(length);
+      }
       buffer.copy(result);
       return result;
     }
@@ -4615,7 +4625,9 @@
      * @returns {ArrayBuffer} Returns the cloned array buffer.
      */
     function cloneArrayBuffer(arrayBuffer) {
-      var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
+      // Always use ArrayBuffer to avoid Node.js DEP0005 when `arrayBuffer` is a Buffer
+      // (Buffers are Uint8Array instances whose constructor is the deprecated Buffer ctor).
+      var result = new ArrayBuffer(arrayBuffer.byteLength);
       new Uint8Array(result).set(new Uint8Array(arrayBuffer));
       return result;
     }
@@ -4666,8 +4678,14 @@
      * @returns {Object} Returns the cloned typed array.
      */
     function cloneTypedArray(typedArray, isDeep) {
+      var Ctor = typedArray.constructor;
+      // Avoid deprecated `new Buffer(...)` (Node.js DEP0005). Buffers are typed arrays, and
+      // `isBuffer` may be unavailable (e.g. when Buffer is hidden during lodash init).
+      if (typeof Ctor.allocUnsafe == 'function' && typeof typedArray.copy == 'function') {
+        return cloneBuffer(typedArray, isDeep);
+      }
       var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
-      return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+      return new Ctor(buffer, typedArray.byteOffset, typedArray.length);
     }
 
     /**

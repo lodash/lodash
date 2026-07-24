@@ -9609,6 +9609,10 @@ _.startCase('fooBar');
 
 _.startCase('__FOO_BAR__');
 // => 'FOO BAR'
+
+// Numbers are treated as separate words.
+_.startCase('abc123def');
+// => 'Abc 123 Def'
 ```
 ---
 
@@ -9674,7 +9678,7 @@ For more information on precompiling templates see
 <br>
 <br>
 For more information on Chrome extension sandboxes see
-[Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
+[Chrome's extensions documentation](https://developer.chrome.com/docs/extensions/how-to/security/sandboxing-eval).
 
 #### Since
 0.1.0

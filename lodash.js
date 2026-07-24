@@ -8658,7 +8658,7 @@
     /**
      * This method is like `_.xor` except that it accepts `iteratee` which is
      * invoked for each element of each `arrays` to generate the criterion by
-     * which by which they're compared. The order of result values is determined
+     * which they're compared. The order of result values is determined
      * by the order they occur in the arrays. The iteratee is invoked with one
      * argument: (value).
      *
@@ -9265,7 +9265,7 @@
      *
      * // Combining several predicates using `_.overEvery` or `_.overSome`.
      * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
-     * // => objects for ['fred', 'barney']
+     * // => objects for ['barney', 'fred']
      */
     function filter(collection, predicate) {
       var func = isArray(collection) ? arrayFilter : baseFilter;
@@ -15634,7 +15634,7 @@
      *
      * // The `_.matchesProperty` iteratee shorthand.
      * _.filter(users, _.iteratee(['user', 'fred']));
-     * // => [{ 'user': 'fred', 'age': 40 }]
+     * // => [{ 'user': 'fred', 'age': 40, 'active': false }]
      *
      * // The `_.property` iteratee shorthand.
      * _.map(users, _.iteratee('user'));

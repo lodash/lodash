@@ -4380,7 +4380,8 @@
       // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
       // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
       var index = -1,
-          length = path.length;
+          length = path.length,
+          current = object;
 
       if (!length) {
         return true;
@@ -4390,7 +4391,7 @@
         var key = toKey(path[index]);
 
         // Always block "__proto__" anywhere in the path if it's not expected
-        if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
+        if (key === '__proto__' && (current == null || !hasOwnProperty.call(current, '__proto__'))) {
           return false;
         }
 
@@ -4399,6 +4400,8 @@
         if ((key === 'constructor' || key === 'prototype') && index < length - 1) {
           return false;
         }
+
+        current = current == null ? current : current[key];
       }
 
       var obj = parent(object, path);

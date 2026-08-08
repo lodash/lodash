@@ -8641,6 +8641,13 @@
       assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
     });
 
+    QUnit.test('should not drop values that equal `__proto__`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'userId': 'alice', 'role': '__proto__', 'team': 'eng' };
+      assert.deepEqual(_.invert(object), { 'alice': 'userId', '__proto__': 'role', 'eng': 'team' });
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
@@ -8701,6 +8708,15 @@
 
       var object = { 'a': 'hasOwnProperty', 'b': 'constructor' },
           expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] };
+
+      assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+    });
+
+    QUnit.test('should not drop groups whose value equals `__proto__`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 'group1', 'b': '__proto__', 'c': 'group1' },
+          expected = { 'group1': ['a', 'c'], '__proto__': ['b'] };
 
       assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
     });

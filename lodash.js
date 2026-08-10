@@ -16461,6 +16461,8 @@
     /**
      * Computes the mean of the values in `array`.
      *
+     * **Note:** Returns `NaN` if `array` is empty.
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
@@ -16480,6 +16482,8 @@
      * This method is like `_.mean` except that it accepts `iteratee` which is
      * invoked for each element in `array` to generate the value to be averaged.
      * The iteratee is invoked with one argument: (value).
+     *
+     * **Note:** Returns `NaN` if `array` is empty.
      *
      * @static
      * @memberOf _

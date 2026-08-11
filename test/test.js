@@ -22805,6 +22805,13 @@
       assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/g }), 'hi-diddly-ho there...');
     });
 
+    QUnit.test('should not hang with a `separator` that matches the empty string', function(assert) {
+      assert.expect(1);
+
+      var longString = 'a,b' + lodashStable.repeat('X', 200);
+      assert.strictEqual(_.truncate(longString, { 'length': 30, 'separator': /(?<=,)\s*/ }), 'a,...');
+    });
+
     QUnit.test('should treat negative `length` as `0`', function(assert) {
       assert.expect(2);
 

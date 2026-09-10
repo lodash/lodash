@@ -16516,6 +16516,21 @@
       assert.deepEqual(_.omit(object, ['a', 'd'], 'c'), { 'b': 2 });
     });
 
+    QUnit.test('should not get omitted properties', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': 1 };
+      defineProperty(object, 'b', {
+        'configurable': true,
+        'enumerable': true,
+        'get': function() {
+          throw new Error('omitted property should not be read');
+        }
+      });
+
+      assert.deepEqual(_.omit(object, 'b'), { 'a': 1 });
+    });
+
     QUnit.test('should support deep paths', function(assert) {
       assert.expect(1);
 

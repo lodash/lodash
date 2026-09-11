@@ -7602,6 +7602,36 @@
 
       assert.notOk(actual);
     });
+
+    QUnit.test('should not pollute prototype when target is a function/class', function(assert) {
+      assert.expect(3);
+
+      // Plain-object target prototype-pollution is covered by the two
+      // tests above. This test covers the function/class target case —
+      // the `safeGet` helper used by `baseMerge` historically filtered
+      // `__proto__` and `constructor` but not `prototype`, so a payload
+      // like `{ "prototype": { "x": 1 } }` would write through to
+      // `Class.prototype.x` (and to `Object.prototype.x` if the target
+      // is `Object` itself).
+
+      function MyCtor() {}
+      _.merge(MyCtor, JSON.parse('{"prototype":{"polluted":"X"}}'));
+      var instanceLeaked = 'polluted' in new MyCtor();
+      delete MyCtor.prototype.polluted;
+      assert.notOk(instanceLeaked);
+
+      _.merge(Object, JSON.parse('{"prototype":{"polluted":"GLOBAL"}}'));
+      var globalLeaked = 'polluted' in {};
+      delete objectProto.polluted;
+      assert.notOk(globalLeaked);
+
+      // `mergeWith` and `defaultsDeep` share the same code path and
+      // must also be guarded.
+      _.defaultsDeep(Object, JSON.parse('{"prototype":{"defaulted":"D"}}'));
+      var defaultsLeaked = 'defaulted' in {};
+      delete objectProto.defaulted;
+      assert.notOk(defaultsLeaked);
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

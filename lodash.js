@@ -6706,7 +6706,7 @@
         return;
       }
 
-      if (key == '__proto__') {
+      if (key == '__proto__' || key == 'prototype') {
         return;
       }
 

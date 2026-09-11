@@ -4731,6 +4731,19 @@
 
       assert.notOk(actual);
     });
+
+    QUnit.test('should not merge onto inherited built-in methods', function(assert) {
+      assert.expect(3);
+
+      var actual = _.defaultsDeep({}, JSON.parse('{"toString":{"x":1},"valueOf":{"y":2}}'));
+
+      assert.notOk('x' in objectProto.toString);
+      assert.notOk('y' in objectProto.valueOf);
+      assert.deepEqual(actual, { 'toString': { 'x': 1 }, 'valueOf': { 'y': 2 } });
+
+      delete objectProto.toString.x;
+      delete objectProto.valueOf.y;
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

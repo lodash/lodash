@@ -5668,6 +5668,14 @@
      * @returns {*} Returns the value to assign.
      */
     function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
+      // `objValue` comes from `safeGet`, so for a missing `key` it is the value
+      // `object` inherits (e.g. `Object.prototype.toString`). Merging `srcValue`
+      // into that would mutate shared, inherited state, so only merge in place
+      // when `key` is an own property; otherwise defer to the default merge,
+      // which clones `srcValue` onto `object`.
+      if (!hasOwnProperty.call(object, key)) {
+        return undefined;
+      }
       if (isObject(objValue) && isObject(srcValue)) {
         // Recursively merge objects and arrays (susceptible to call stack limits).
         stack.set(srcValue, objValue);

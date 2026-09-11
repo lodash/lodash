@@ -25348,6 +25348,21 @@
       assert.strictEqual(typeof funcProto.apply, 'function', 'Function.prototype.apply should not be deletable via deep constructor.prototype chain');
     });
 
+    QUnit.test('Security: _.unset should check `__proto__` ownership on the current node, not the root', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(typeof objectProto.toString, 'function', 'Object.prototype.toString should exist before unset');
+
+      var object = JSON.parse('{"__proto__": 1, "a": {}}');
+      _.unset(object, ['a', '__proto__', 'toString']);
+
+      assert.strictEqual(typeof objectProto.toString, 'function', 'Object.prototype.toString should still exist when the root owns a `__proto__` key');
+
+      var owner = JSON.parse('{"__proto__": {"x": 1}}');
+      assert.strictEqual(_.unset(owner, '__proto__'), true, 'a legitimate own `__proto__` data property should be deletable');
+      assert.notOk(objectProto.hasOwnProperty.call(owner, '__proto__'), 'the own `__proto__` data property should be gone after unset');
+    });
+
     QUnit.test('Security: _.unset should not allow deleting static methods from constructors', function(assert) {
       assert.expect(8);
 

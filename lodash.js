@@ -16620,16 +16620,26 @@
     /**
      * Computes the sum of the values in `array`.
      *
+     * **Note:** If `array` contains non-numeric values (e.g., strings),
+     * JavaScript's `+` operator performs string concatenation instead of
+     * addition, producing unexpected results. Ensure all values are numbers.
+     * See [#5818](https://github.com/lodash/lodash/issues/5818) for details.
+     *
      * @static
      * @memberOf _
      * @since 3.4.0
      * @category Math
      * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the sum.
+     * @returns {number|string} Returns the sum, or a concatenated string if
+     *  non-numeric values are present.
      * @example
      *
      * _.sum([4, 2, 8, 6]);
      * // => 20
+     *
+     * // Non-numeric values cause string concatenation -- not recommended.
+     * _.sum(['1', '2']);
+     * // => '12'
      */
     function sum(array) {
       return (array && array.length)
@@ -16642,13 +16652,19 @@
      * invoked for each element in `array` to generate the value to be summed.
      * The iteratee is invoked with one argument: (value).
      *
+     * **Note:** If the iteratee returns non-numeric values (e.g., strings),
+     * JavaScript's `+` operator performs string concatenation instead of
+     * addition, producing unexpected results. Ensure the iteratee returns
+     * numbers. See [#5818](https://github.com/lodash/lodash/issues/5818).
+     *
      * @static
      * @memberOf _
      * @since 4.0.0
      * @category Math
      * @param {Array} array The array to iterate over.
      * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the sum.
+     * @returns {number|string} Returns the sum, or a concatenated string if
+     *  the iteratee returns non-numeric values.
      * @example
      *
      * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
@@ -16659,6 +16675,10 @@
      * // The `_.property` iteratee shorthand.
      * _.sumBy(objects, 'n');
      * // => 20
+     *
+     * // Non-numeric values cause string concatenation -- not recommended.
+     * _.sumBy([{ 'a': '1' }, { 'a': '2' }], 'a');
+     * // => '12'
      */
     function sumBy(array, iteratee) {
       return (array && array.length)

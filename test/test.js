@@ -4278,6 +4278,51 @@
       }, 64);
     });
 
+    QUnit.test('should treat `undefined` option values as defaults', function(assert) {
+      assert.expect(4);
+
+      var done = assert.async();
+
+      var defaultCount = 0,
+          undefinedCount = 0,
+          falseCount = 0,
+          trueCount = 0;
+
+      var withDefault = _.debounce(function() { defaultCount++; }, 32);
+      var withUndefined = _.debounce(function() { undefinedCount++; }, 32, { 'trailing': undefined });
+      var withFalse = _.debounce(function() { falseCount++; }, 32, { 'trailing': false });
+      var withTrue = _.debounce(function() { trueCount++; }, 32, { 'trailing': true });
+
+      withDefault();
+      withUndefined();
+      withFalse();
+      withTrue();
+
+      setTimeout(function() {
+        assert.strictEqual(defaultCount, 1);
+        assert.strictEqual(undefinedCount, 1);
+        assert.strictEqual(falseCount, 0);
+        assert.strictEqual(trueCount, 1);
+        done();
+      }, 64);
+    });
+
+    QUnit.test('should treat `leading` of `undefined` as the default', function(assert) {
+      assert.expect(2);
+
+      var undefinedCount = 0,
+          trueCount = 0;
+
+      var withUndefined = _.debounce(function() { undefinedCount++; }, 32, { 'leading': undefined });
+      var withTrue = _.debounce(function() { trueCount++; }, 32, { 'leading': true, 'trailing': false });
+
+      withUndefined();
+      withTrue();
+
+      assert.strictEqual(undefinedCount, 0);
+      assert.strictEqual(trueCount, 1);
+    });
+
     QUnit.test('should support a `leading` option', function(assert) {
       assert.expect(4);
 
@@ -4408,6 +4453,35 @@
         withoutMaxWait();
       }
       var actual = [Boolean(withoutCount), Boolean(withCount)];
+      setTimeout(function() {
+        assert.deepEqual(actual, [false, true]);
+        done();
+      }, 1);
+    });
+
+    QUnit.test('should not enable maxing when `maxWait` is `undefined`', function(assert) {
+      assert.expect(1);
+
+      var done = assert.async();
+
+      var limit = (argv || isPhantom) ? 1000 : 320,
+          undefinedCount = 0,
+          numberedCount = 0;
+
+      var withUndefined = _.debounce(function() {
+        undefinedCount++;
+      }, 64, { 'maxWait': undefined });
+
+      var withNumber = _.debounce(function() {
+        numberedCount++;
+      }, 64, { 'maxWait': 128 });
+
+      var start = +new Date;
+      while ((new Date - start) < limit) {
+        withUndefined();
+        withNumber();
+      }
+      var actual = [Boolean(undefinedCount), Boolean(numberedCount)];
       setTimeout(function() {
         assert.deepEqual(actual, [false, true]);
         done();
@@ -22865,6 +22939,30 @@
       }, 64);
     });
 
+    QUnit.test('should invoke repeatedly when `wait` is `undefined`', function(assert) {
+      assert.expect(1);
+
+      var done = assert.async();
+
+      var omittedCount = 0,
+          undefinedCount = 0,
+          limit = (argv || isPhantom) ? 1000 : 320;
+
+      var withOmitted = _.throttle(function() { omittedCount++; });
+      var withUndefined = _.throttle(function() { undefinedCount++; }, undefined);
+
+      var start = +new Date;
+      while ((new Date - start) < limit) {
+        withOmitted();
+        withUndefined();
+      }
+      var actual = [omittedCount > 1, undefinedCount > 1];
+      setTimeout(function() {
+        assert.deepEqual(actual, [true, true]);
+        done();
+      }, 1);
+    });
+
     QUnit.test('subsequent calls should return the result of the first call', function(assert) {
       assert.expect(5);
 
@@ -23015,6 +23113,20 @@
       assert.strictEqual(withoutLeading('a'), undefined);
     });
 
+    QUnit.test('should treat `leading` of `undefined` as the default', function(assert) {
+      assert.expect(4);
+
+      var withDefault = _.throttle(identity, 32);
+      var withUndefined = _.throttle(identity, 32, { 'leading': undefined });
+      var withFalse = _.throttle(identity, 32, { 'leading': false });
+      var withTrue = _.throttle(identity, 32, { 'leading': true });
+
+      assert.strictEqual(withDefault('a'), 'a');
+      assert.strictEqual(withUndefined('a'), 'a');
+      assert.strictEqual(withFalse('a'), undefined);
+      assert.strictEqual(withTrue('a'), 'a');
+    });
+
     QUnit.test('should support a `trailing` option', function(assert) {
       assert.expect(6);
 
@@ -23042,6 +23154,34 @@
       setTimeout(function() {
         assert.strictEqual(withCount, 2);
         assert.strictEqual(withoutCount, 1);
+        done();
+      }, 256);
+    });
+
+    QUnit.test('should treat `trailing` of `undefined` as the default', function(assert) {
+      assert.expect(2);
+
+      var done = assert.async();
+
+      var undefinedCount = 0,
+          falseCount = 0;
+
+      var withUndefined = _.throttle(function() {
+        undefinedCount++;
+      }, 64, { 'trailing': undefined });
+
+      var withFalse = _.throttle(function() {
+        falseCount++;
+      }, 64, { 'trailing': false });
+
+      withUndefined();
+      withUndefined();
+      withFalse();
+      withFalse();
+
+      setTimeout(function() {
+        assert.strictEqual(undefinedCount, 2);
+        assert.strictEqual(falseCount, 1);
         done();
       }, 256);
     });

@@ -2779,6 +2779,19 @@
       assert.notStrictEqual(actual, cyclical['v' + (LARGE_ARRAY_SIZE - 1)]);
     });
 
+    QUnit.test('`_.cloneDeep` should preserve sparse array holes instead of cloning them to `undefined`', function(assert) {
+      assert.expect(3);
+
+      var array = Array(3);
+      array[1] = 1;
+
+      var actual = _.cloneDeep(array);
+
+      assert.deepEqual(Object.keys(actual), ['1']);
+      assert.strictEqual(actual.length, array.length);
+      assert.ok(!(0 in actual) && (1 in actual) && !(2 in actual));
+    });
+
     QUnit.test('`_.cloneDeepWith` should provide `stack` to `customizer`', function(assert) {
       assert.expect(1);
 

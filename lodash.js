@@ -2733,6 +2733,9 @@
         if (props) {
           key = subValue;
           subValue = value[key];
+        } else if (!(key in value)) {
+          // Leave sparse array holes as holes instead of cloning them to `undefined`.
+          return;
         }
         // Recursively populate clone (susceptible to call stack limits).
         assignValue(result, key, baseClone(subValue, bitmask, customizer, key, value, stack));

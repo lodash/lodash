@@ -8641,6 +8641,23 @@
       assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
     });
 
+    QUnit.test('should preserve entries when the inverted key is `__proto__`', function(assert) {
+      assert.expect(2);
+
+      var object = { 'userId': 'alice', 'role': '__proto__', 'team': 'eng' },
+          expected = { 'alice': 'userId', 'eng': 'team' };
+
+      defineProperty(expected, '__proto__', {
+        'configurable': true,
+        'enumerable': true,
+        'value': 'role',
+        'writable': true
+      });
+
+      assert.deepEqual(_.invert(object), expected);
+      assert.ok(hasOwnProperty.call(_.invert(object), '__proto__'));
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 
@@ -8703,6 +8720,23 @@
           expected = { 'hasOwnProperty': ['a'], 'constructor': ['b'] };
 
       assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+    });
+
+    QUnit.test('should preserve entries when the inverted key is `__proto__`', function(assert) {
+      assert.expect(2);
+
+      var object = { 'a': 'group1', 'b': '__proto__', 'c': 'group1' },
+          expected = { 'group1': ['a', 'c'] };
+
+      defineProperty(expected, '__proto__', {
+        'configurable': true,
+        'enumerable': true,
+        'value': ['b'],
+        'writable': true
+      });
+
+      assert.ok(lodashStable.isEqual(_.invertBy(object), expected));
+      assert.ok(hasOwnProperty.call(_.invertBy(object), '__proto__'));
     });
 
     QUnit.test('should return a wrapped value when chaining', function(assert) {

@@ -16069,6 +16069,9 @@
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
+     * **Note:** When `step` is `0` and `start` is greater than `end`, an empty
+     * array is returned.
+     *
      * @static
      * @since 0.1.0
      * @memberOf _
@@ -16097,6 +16100,9 @@
      *
      * _.range(1, 4, 0);
      * // => [1, 1, 1]
+     *
+     * _.range(4, 2, 0);
+     * // => []
      *
      * _.range(0);
      * // => []
@@ -16135,6 +16141,9 @@
      *
      * _.rangeRight(1, 4, 0);
      * // => [1, 1, 1]
+     *
+     * _.rangeRight(4, 2, 0);
+     * // => []
      *
      * _.rangeRight(0);
      * // => []

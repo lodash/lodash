@@ -16069,6 +16069,9 @@
      * **Note:** JavaScript follows the IEEE-754 standard for resolving
      * floating-point values which can produce unexpected results.
      *
+     * **Note:** A `step` of `0` produces an array of the same length as
+     * it would with a `step` of `1`, with every element equal to `start`.
+     *
      * @static
      * @since 0.1.0
      * @memberOf _
@@ -16106,6 +16109,9 @@
     /**
      * This method is like `_.range` except that it populates values in
      * descending order.
+     *
+     * **Note:** A `step` of `0` produces an array of the same length as
+     * it would with a `step` of `1`, with every element equal to `start`.
      *
      * @static
      * @memberOf _

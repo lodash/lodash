@@ -8718,6 +8718,10 @@
      * first elements of the given arrays, the second of which contains the
      * second elements of the given arrays, and so on.
      *
+     * When the given arrays have different lengths, grouping continues
+     * through the longest array and `undefined` is used for the missing
+     * elements of the shorter arrays.
+     *
      * @static
      * @memberOf _
      * @since 0.1.0
@@ -8728,12 +8732,19 @@
      *
      * _.zip(['a', 'b'], [1, 2], [true, false]);
      * // => [['a', 1, true], ['b', 2, false]]
+     *
+     * _.zip(['a', 'b'], [1, 2, 3]);
+     * // => [['a', 1], ['b', 2], [undefined, 3]]
      */
     var zip = baseRest(unzip);
 
     /**
      * This method is like `_.fromPairs` except that it accepts two arrays,
      * one of property identifiers and one of corresponding values.
+     *
+     * If the `props` array is shorter than `values`, only the property
+     * identifiers provided are assigned. If the `values` array is shorter,
+     * the remaining properties are assigned `undefined`.
      *
      * @static
      * @memberOf _
@@ -8746,6 +8757,9 @@
      *
      * _.zipObject(['a', 'b'], [1, 2]);
      * // => { 'a': 1, 'b': 2 }
+     *
+     * _.zipObject(['a', 'b', 'c'], [1, 2]);
+     * // => { 'a': 1, 'b': 2, 'c': undefined }
      */
     function zipObject(props, values) {
       return baseZipObject(props || [], values || [], assignValue);

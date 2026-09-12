@@ -5298,7 +5298,9 @@
      */
     function createInverter(setter, toIteratee) {
       return function(object, iteratee) {
-        return baseInverter(object, setter, toIteratee(iteratee), {});
+        // Use a null-prototype object so "__proto__" values become real own
+        // properties instead of mutating the prototype (see #6195).
+        return baseInverter(object, setter, toIteratee(iteratee), Object.create(null));
       };
     }
 

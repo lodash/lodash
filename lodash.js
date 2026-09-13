@@ -4597,7 +4597,8 @@
      * @returns {Buffer} Returns the cloned buffer.
      */
     function cloneBuffer(buffer, isDeep) {
-      if (isDeep) {
+      if (!isDeep) {
+        // slice here does a shallow copy
         return buffer.slice();
       }
       var length = buffer.length,

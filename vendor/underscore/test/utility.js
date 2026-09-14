@@ -160,7 +160,7 @@
 
   // Don't care what they escape them to just that they're escaped and can be unescaped
   QUnit.test('_.escape & unescape', function(assert) {
-    // test & (&amp;) seperately obviously
+    // test & (&amp;) separately obviously
     var escapeCharacters = ['<', '>', '"', '\'', '`'];
 
     _.each(escapeCharacters, function(escapeChar) {
@@ -172,7 +172,7 @@
       s = 'a ' + escapeChar + escapeChar + escapeChar + 'some more string' + escapeChar;
       e = _.escape(s);
 
-      assert.equal(e.indexOf(escapeChar), -1, 'can escape multiple occurances of ' + escapeChar);
+      assert.equal(e.indexOf(escapeChar), -1, 'can escape multiple occurrences of ' + escapeChar);
       assert.equal(_.unescape(e), s, 'multiple occurrences of ' + escapeChar + ' can be unescaped');
     });
 
@@ -412,7 +412,7 @@
     assert.deepEqual(settings, {});
   });
 
-  QUnit.test('#779 - delimeters are applied to unescaped text.', function(assert) {
+  QUnit.test('#779 - delimiters are applied to unescaped text.', function(assert) {
     assert.expect(1);
     var template = _.template('<<\nx\n>>', null, {evaluate: /<<(.*?)>>/g});
     assert.strictEqual(template(), '<<\nx\n>>');

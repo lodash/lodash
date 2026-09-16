@@ -8641,6 +8641,14 @@
       assert.deepEqual(_.invert(object), { 'hasOwnProperty': 'a', 'constructor': 'b' });
     });
 
+    QUnit.test('should work with a value of `__proto__`', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': '__proto__' };
+      var actual = _.invert(object);
+      assert.strictEqual(Object.getOwnPropertyDescriptor(actual, '__proto__').value, 'a');
+    });
+
     QUnit.test('should work with an object that has a `length` property', function(assert) {
       assert.expect(1);
 

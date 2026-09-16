@@ -13597,13 +13597,18 @@
       if (object == null) {
         return result;
       }
-      var isDeep = false;
+      var isDeep = false,
+          omitKeys = [];
+
       paths = arrayMap(paths, function(path) {
         path = castPath(path, object);
+        if (path.length == 1) {
+          omitKeys.push(toKey(path[0]));
+        }
         isDeep || (isDeep = path.length > 1);
         return path;
       });
-      copyObject(object, getAllKeysIn(object), result);
+      copyObject(object, baseDifference(getAllKeysIn(object), omitKeys), result);
       if (isDeep) {
         result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
       }

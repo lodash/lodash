@@ -81,13 +81,23 @@
     otherList.addEventListener('change', eventHandler);
   });
 
+  /** Matches absolute URLs (http://, https://, // and other schemes) that must not
+   *  be used as script src values to prevent remote script injection. */
+  var reAbsoluteUrl = /^(?:[a-z][a-z\d+\-.]*:|\/\/)/i;
+
   // The lodash build file path.
   ui.buildPath = (function() {
     var result;
     switch (build) {
       case null:                build  = 'lodash';
       case 'lodash':            result = 'dist/lodash.min.js'; break;
-      default:                  return build;
+      default:
+        if (reAbsoluteUrl.test(build)) {
+          build = 'lodash';
+          result = 'dist/lodash.min.js';
+          break;
+        }
+        return build;
     }
     return basePath + result;
   }());
@@ -100,7 +110,13 @@
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case null:                other  = 'underscore';
       case 'underscore':        result = 'vendor/underscore/underscore-min.js'; break;
-      default:                  return other;
+      default:
+        if (reAbsoluteUrl.test(other)) {
+          other = 'underscore';
+          result = 'vendor/underscore/underscore-min.js';
+          break;
+        }
+        return other;
     }
     return basePath + result;
   }());

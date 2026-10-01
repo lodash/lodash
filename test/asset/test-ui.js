@@ -13,7 +13,24 @@
   /** The `ui` object. */
   var ui = {};
 
+  /** Used to match characters that can terminate an HTML attribute value. */
+  var reUnsafePathChar = /["'<>`]/g;
+
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Percent-encodes the characters of `path` that could otherwise close the
+   * `src` attribute it's interpolated into.
+   *
+   * @private
+   * @param {string} path The path to escape.
+   * @returns {string} Returns the escaped path.
+   */
+  function escapePath(path) {
+    return path.replace(reUnsafePathChar, function(chr) {
+      return '%' + chr.charCodeAt(0).toString(16).toUpperCase();
+    });
+  }
 
   // Initialize controls.
   addEventListener('load', function() {
@@ -114,7 +131,7 @@
       case 'lodash-core':       result = 'dist/lodash.core.min.js'; break;
       case null:                build  = 'lodash-dev';
       case 'lodash-dev':        result = 'lodash.js'; break;
-      default:                  return build;
+      default:                  return escapePath(build);
     }
     return basePath + result;
   }());
@@ -127,7 +144,7 @@
       case 'dojo':      result = 'node_modules/dojo/dojo.js'; break;
       case 'requirejs': result = 'node_modules/requirejs/require.js'; break;
       case null:        loader = 'none'; return '';
-      default:          return loader;
+      default:          return escapePath(loader);
     }
     return basePath + result;
   }());

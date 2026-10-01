@@ -21,3 +21,15 @@ test('underscore', async ({ page }) => {
   await page.goto('http://localhost:9001/test/underscore.html');
   await expect(page.locator('text=0 failed')).toBeVisible({ timeout: 60000 });
 });
+
+test('build param is not injected as markup', async ({ page }) => {
+  const payload = 'x"></script><script>window.injected = true</script>';
+  await page.goto('http://localhost:9001/test/index.html?build=' + encodeURIComponent(payload), { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => window.injected)).toBeUndefined();
+});
+
+test('loader param is not injected as markup', async ({ page }) => {
+  const payload = 'x"></script><script>window.injected = true</script>';
+  await page.goto('http://localhost:9001/test/index.html?loader=' + encodeURIComponent(payload), { waitUntil: 'domcontentloaded' });
+  expect(await page.evaluate(() => window.injected)).toBeUndefined();
+});

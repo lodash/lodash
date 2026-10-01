@@ -13,7 +13,24 @@
   /** The `ui` object. */
   var ui = {};
 
+  /** Used to match characters that can terminate an HTML attribute value. */
+  var reUnsafePathChar = /["'<>`]/g;
+
   /*--------------------------------------------------------------------------*/
+
+  /**
+   * Percent-encodes the characters of `path` that could otherwise close the
+   * `src` attribute it's interpolated into.
+   *
+   * @private
+   * @param {string} path The path to escape.
+   * @returns {string} Returns the escaped path.
+   */
+  function escapePath(path) {
+    return path.replace(reUnsafePathChar, function(chr) {
+      return '%' + chr.charCodeAt(0).toString(16).toUpperCase();
+    });
+  }
 
   // Initialize controls.
   addEventListener('load', function() {
@@ -87,7 +104,7 @@
     switch (build) {
       case null:                build  = 'lodash';
       case 'lodash':            result = 'dist/lodash.min.js'; break;
-      default:                  return build;
+      default:                  return escapePath(build);
     }
     return basePath + result;
   }());
@@ -100,7 +117,7 @@
       case 'underscore-dev':    result = 'vendor/underscore/underscore.js'; break;
       case null:                other  = 'underscore';
       case 'underscore':        result = 'vendor/underscore/underscore-min.js'; break;
-      default:                  return other;
+      default:                  return escapePath(other);
     }
     return basePath + result;
   }());

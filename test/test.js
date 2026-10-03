@@ -2369,6 +2369,15 @@
       assert.strictEqual(_.camelCase('xhr2 request'), 'xhr2Request');
     });
 
+    QUnit.test('should handle plural acronyms', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.camelCase('APIs'), 'apis');
+      assert.strictEqual(_.camelCase('fooAPIs'), 'fooApis');
+      assert.strictEqual(_.camelCase('APIs foo'), 'apisFoo');
+      assert.strictEqual(_.camelCase('IDs and URLs'), 'idsAndUrls');
+    });
+
     QUnit.test('should handle acronyms', function(assert) {
       assert.expect(6);
 

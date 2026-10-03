@@ -278,6 +278,7 @@
   /** Used to match complex or compound words. */
   var reUnicodeWord = RegExp([
     rsUpper + '?' + rsLower + '+' + rsOptContrLower + '(?=' + [rsBreak, rsUpper, '$'].join('|') + ')',
+    rsUpper + '{2,}s(?=' + [rsBreak, '$'].join('|') + ')',
     rsMiscUpper + '+' + rsOptContrUpper + '(?=' + [rsBreak, rsUpper + rsMiscLower, '$'].join('|') + ')',
     rsUpper + '?' + rsMiscLower + '+' + rsOptContrLower,
     rsUpper + '+' + rsOptContrUpper,

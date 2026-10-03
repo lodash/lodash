@@ -2701,6 +2701,13 @@
           }
         } else {
           if (!cloneableTags[tag]) {
+            // Temporal.* values are immutable (internal slots). Return the
+            // same reference so cloneDeep preserves instanceof / methods.
+            // Nested Temporal already returns by reference via `object ? value`;
+            // top-level previously became `{}` (#6215).
+            if (isTemporal(value)) {
+              return value;
+            }
             return object ? value : {};
           }
           result = initCloneByTag(value, tag, isDeep);
@@ -3295,6 +3302,20 @@
      */
     function baseIsDate(value) {
       return isObjectLike(value) && baseGetTag(value) == dateTag;
+    }
+
+    /**
+     * Checks if `value` is a Temporal proposal instance (`Temporal.PlainDate`,
+     * `Temporal.Instant`, …). Detection is by `toStringTag` so it works with
+     * native Temporal and polyfills without a hard dependency.
+     *
+     * @private
+     * @param {*} value The value to check.
+     * @returns {boolean} Returns `true` if `value` is a Temporal instance.
+     */
+    function isTemporal(value) {
+      var tag = getTag(value);
+      return typeof tag == 'string' && tag.indexOf('[object Temporal.') == 0;
     }
 
     /**

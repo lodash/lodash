@@ -2749,6 +2749,25 @@
       assert.ok(actual !== array && actual[0] === array[0]);
     });
 
+    QUnit.test('`_.cloneDeep` should preserve Temporal.* instances by reference', function(assert) {
+      assert.expect(4);
+      // Mock Temporal via toStringTag — no polyfill dependency required.
+      var temporal = {};
+      if (typeof Symbol != 'undefined' && Symbol.toStringTag) {
+        Object.defineProperty(temporal, Symbol.toStringTag, { 'value': 'Temporal.PlainDate' });
+      } else {
+        assert.ok(true, 'skip: Symbol.toStringTag unavailable');
+        assert.ok(true);
+        assert.ok(true);
+        assert.ok(true);
+        return;
+      }
+      assert.strictEqual(Object.prototype.toString.call(temporal), '[object Temporal.PlainDate]');
+      assert.strictEqual(_.cloneDeep(temporal), temporal, 'top-level Temporal is returned by reference');
+      assert.strictEqual(_.cloneDeep({ 'd': temporal }).d, temporal, 'nested Temporal is returned by reference');
+      assert.notDeepEqual(_.cloneDeep({ 'a': 1 }), temporal);
+    });
+
     QUnit.test('`_.cloneDeep` should deep clone objects with circular references', function(assert) {
       assert.expect(1);
 

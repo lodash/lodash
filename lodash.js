@@ -8728,6 +8728,13 @@
      *
      * _.zip(['a', 'b'], [1, 2], [true, false]);
      * // => [['a', 1, true], ['b', 2, false]]
+     *
+     * _.zip(['a', 'b', 'c'], [1, 2]);
+     * // => [['a', 1], ['b', 2], ['c', null]]
+     *
+     * When the given arrays have different lengths, the result has as many
+     * groups as the longest array, and the missing positions are filled with
+     * `null`. See `_.zipObject` for the `undefined` counterpart of this.
      */
     var zip = baseRest(unzip);
 
@@ -8746,6 +8753,17 @@
      *
      * _.zipObject(['a', 'b'], [1, 2]);
      * // => { 'a': 1, 'b': 2 }
+     *
+     * _.zipObject(['a', 'b', 'c'], [1, 2]);
+     * // => { 'a': 1, 'b': 2, 'c': undefined }
+     *
+     * Iteration runs over `props`, so `values` shorter than `props` yields
+     * `undefined` for the remaining keys (and the key is still present), while
+     * `props` shorter than `values` simply ignores the extra values. Note that
+     * `JSON.stringify` hides the `undefined` value, which is why the example
+     * above prints as `{ 'a': 1, 'b': 2 }`.
+     *
+     * @see _.zip, _.zipObjectDeep, _.fromPairs
      */
     function zipObject(props, values) {
       return baseZipObject(props || [], values || [], assignValue);

@@ -4859,13 +4859,14 @@
 
       while (++index < length) {
         var key = props[index];
+        var sourceValue = source[key];
 
         var newValue = customizer
-          ? customizer(object[key], source[key], key, object, source)
+          ? customizer(object[key], sourceValue, key, object, source)
           : undefined;
 
         if (newValue === undefined) {
-          newValue = source[key];
+          newValue = sourceValue;
         }
         if (isNew) {
           baseAssignValue(object, key, newValue);

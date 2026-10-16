@@ -1,0 +1,22 @@
+name: NPMscan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  npmscan:
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run NPMscan
+        uses: NPMscan/npmscan-action@de14168f65640a4ed1f0e82ad3ad8c80483d360d
+        with:
+          file: package-lock.json
+          mode: warn
+          fail-on-error: false

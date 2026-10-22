@@ -17825,6 +17825,176 @@
       assert.deepEqual(_.pick(nested, 'b.c'), { 'b': { 'c': 2 } });
     });
 
+    QUnit.test('should not reread accessors to create path containers', function(assert) {
+      assert.expect(8);
+
+      lodashStable.each(['a.b', [['a', 'b']]], function(path) {
+        lodashStable.each([false, true], function(inherited) {
+          var reads = 0,
+              object = {};
+
+          defineProperty(object, 'a', {
+            'get': function() {
+              if (++reads == 3) {
+                throw new Error('third read');
+              }
+              return { 'b': 1 };
+            }
+          });
+
+          assert.deepEqual(_.pick(inherited ? lodashStable.create(object) : object, path), { 'a': { 'b': 1 } });
+          assert.strictEqual(reads, 2);
+        });
+      });
+    });
+
+    QUnit.test('should preserve containers resolved by deep accessors', function(assert) {
+      assert.expect(18);
+
+      lodashStable.each([false, true], function(isArray) {
+        lodashStable.each(['a.2.b', 'a[2].b', [['a', 2, 'b']]], function(path) {
+          var reads = [0, 0],
+              object = {},
+              nested = isArray ? Array(3) : {},
+              expected = { 'a': isArray ? [, , { 'b': 1 }] : { '2': { 'b': 1 } } };
+
+          defineProperty(object, 'a', {
+            'get': function() {
+              if (++reads[0] == 3) {
+                throw new Error('third read');
+              }
+              return nested;
+            }
+          });
+          defineProperty(nested, '2', {
+            'get': function() {
+              if (++reads[1] == 3) {
+                throw new Error('third read');
+              }
+              return { 'b': 1 };
+            }
+          });
+
+          var actual = _.pick(object, path);
+          assert.deepEqual(actual, expected);
+          assert.strictEqual(lodashStable.isArray(actual.a), isArray);
+          assert.deepEqual(reads, [2, 2]);
+        });
+      });
+    });
+
+    QUnit.test('should not reread proxies to create path containers', function(assert) {
+      assert.expect(4);
+
+      if (Proxy) {
+        lodashStable.each(['a.0.b', [['a', 0, 'b']]], function(path) {
+          var reads = [],
+              handler = {
+                'get': function(target, key) {
+                  reads.push(key);
+                  return target[key];
+                }
+              },
+              nested = new Proxy({ 'b': 1 }, handler),
+              object = new Proxy({ 'a': new Proxy({ '0': nested }, handler) }, handler);
+
+          assert.deepEqual(_.pick(object, path), { 'a': { '0': { 'b': 1 } } });
+          assert.deepEqual(reads, ['a', '0', 'b', 'a', '0', 'b']);
+        });
+      } else {
+        skipAssert(assert, 4);
+      }
+    });
+
+    QUnit.test('should preserve nested objects with numeric keys', function(assert) {
+      assert.expect(12);
+
+      var object = { 'a': { '0': { 'c': 'ABC', 'd': 'DEF' }, 'label': 'kept' } },
+          expected = { 'a': { '0': { 'c': 'ABC' }, 'label': 'kept' } },
+          paths = [
+            ['a.0.c', 'a.label'],
+            ['a[0].c', 'a.label'],
+            [['a', 0, 'c'], ['a', 'label']]
+          ];
+
+      lodashStable.each(paths, function(paths) {
+        lodashStable.times(2, function() {
+          var actual = _.pick(object, paths);
+          assert.deepEqual(actual, expected);
+          assert.deepEqual(JSON.parse(JSON.stringify(actual)), expected);
+          paths.reverse();
+        });
+      });
+    });
+
+    QUnit.test('should preserve nested arrays and objects', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': [, , { '0': { 'c': 1, 'd': 2 } }] },
+          expected = { 'a': [, , { '0': { 'c': 1 } }] };
+
+      assert.deepEqual(_.pick(object, 'a.2.0.c'), expected);
+    });
+
+    QUnit.test('should preserve inferred containers for array properties', function(assert) {
+      assert.expect(4);
+
+      var object = { 'a': [{ 'c': 1, 'd': 2 }] },
+          expected = { 'a': { 'label': { 'c': 3 }, '0': { 'c': 1 } } };
+
+      object.a.label = { 'c': 3, 'd': 4 };
+
+      assert.deepEqual(_.pick(object, ['a.label.c', 'a.0.c']), expected);
+      assert.deepEqual(_.pick(object, 'a.length'), { 'a': { 'length': 1 } });
+      assert.strictEqual(JSON.stringify(_.pick(object, 'a.label.c')), '{"a":{"label":{"c":3}}}');
+      assert.strictEqual(JSON.stringify(_.pick(object, 'a.length')), '{"a":{"length":1}}');
+    });
+
+    QUnit.test('should not reuse inherited destination containers', function(assert) {
+      assert.expect(6);
+
+      var object = { 'a': [{ 'c': 1 }] },
+          paths = [['a.map.review5948'], ['a.0.c', 'a.map.review5948']];
+
+      object.a.map = { 'review5948': 42 };
+
+      lodashStable.each(paths, function(paths) {
+        try {
+          var actual = _.pick(object, paths);
+          assert.strictEqual(actual.a.map.review5948, 42);
+          assert.notStrictEqual(actual.a.map, arrayProto.map);
+          assert.notOk(lodashStable.has(arrayProto.map, 'review5948'));
+        } finally {
+          delete arrayProto.map.review5948;
+        }
+      });
+    });
+
+    QUnit.test('should preserve inherited nested objects with numeric keys', function(assert) {
+      assert.expect(1);
+
+      function Foo() {}
+      Foo.prototype = { '0': { 'c': 1, 'd': 2 }, 'label': 'kept' };
+
+      var object = lodashStable.create({ 'a': new Foo });
+      assert.deepEqual(_.pick(object, ['a.0.c', 'a.label']), { 'a': { '0': { 'c': 1 }, 'label': 'kept' } });
+    });
+
+    QUnit.test('should preserve references to selected objects', function(assert) {
+      assert.expect(5);
+
+      var object = { 'a': { '0': { 'c': 1, 'd': 2 } } },
+          paths = ['a', 'a.0.c'];
+
+      lodashStable.each([object.a, [object.a[0]]], function(value) {
+        lodashStable.times(2, function() {
+          assert.strictEqual(_.pick({ 'a': value }, paths).a, value);
+          paths.reverse();
+        });
+      });
+      assert.strictEqual(_.pick(object, 'a.0').a[0], object.a[0]);
+    });
+
     QUnit.test('should support path arrays', function(assert) {
       assert.expect(1);
 

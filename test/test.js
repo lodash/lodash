@@ -17825,6 +17825,95 @@
       assert.deepEqual(_.pick(nested, 'b.c'), { 'b': { 'c': 2 } });
     });
 
+    QUnit.test('should preserve nested objects with numeric keys', function(assert) {
+      assert.expect(12);
+
+      var object = { 'a': { '0': { 'c': 'ABC', 'd': 'DEF' }, 'label': 'kept' } },
+          expected = { 'a': { '0': { 'c': 'ABC' }, 'label': 'kept' } },
+          paths = [
+            ['a.0.c', 'a.label'],
+            ['a[0].c', 'a.label'],
+            [['a', 0, 'c'], ['a', 'label']]
+          ];
+
+      lodashStable.each(paths, function(paths) {
+        lodashStable.times(2, function() {
+          var actual = _.pick(object, paths);
+          assert.deepEqual(actual, expected);
+          assert.deepEqual(JSON.parse(JSON.stringify(actual)), expected);
+          paths.reverse();
+        });
+      });
+    });
+
+    QUnit.test('should preserve nested arrays and objects', function(assert) {
+      assert.expect(1);
+
+      var object = { 'a': [, , { '0': { 'c': 1, 'd': 2 } }] },
+          expected = { 'a': [, , { '0': { 'c': 1 } }] };
+
+      assert.deepEqual(_.pick(object, 'a.2.0.c'), expected);
+    });
+
+    QUnit.test('should preserve inferred containers for array properties', function(assert) {
+      assert.expect(4);
+
+      var object = { 'a': [{ 'c': 1, 'd': 2 }] },
+          expected = { 'a': { 'label': { 'c': 3 }, '0': { 'c': 1 } } };
+
+      object.a.label = { 'c': 3, 'd': 4 };
+
+      assert.deepEqual(_.pick(object, ['a.label.c', 'a.0.c']), expected);
+      assert.deepEqual(_.pick(object, 'a.length'), { 'a': { 'length': 1 } });
+      assert.strictEqual(JSON.stringify(_.pick(object, 'a.label.c')), '{"a":{"label":{"c":3}}}');
+      assert.strictEqual(JSON.stringify(_.pick(object, 'a.length')), '{"a":{"length":1}}');
+    });
+
+    QUnit.test('should not reuse inherited destination containers', function(assert) {
+      assert.expect(6);
+
+      var object = { 'a': [{ 'c': 1 }] },
+          paths = [['a.map.review5948'], ['a.0.c', 'a.map.review5948']];
+
+      object.a.map = { 'review5948': 42 };
+
+      lodashStable.each(paths, function(paths) {
+        try {
+          var actual = _.pick(object, paths);
+          assert.strictEqual(actual.a.map.review5948, 42);
+          assert.notStrictEqual(actual.a.map, arrayProto.map);
+          assert.notOk(lodashStable.has(arrayProto.map, 'review5948'));
+        } finally {
+          delete arrayProto.map.review5948;
+        }
+      });
+    });
+
+    QUnit.test('should preserve inherited nested objects with numeric keys', function(assert) {
+      assert.expect(1);
+
+      function Foo() {}
+      Foo.prototype = { '0': { 'c': 1, 'd': 2 }, 'label': 'kept' };
+
+      var object = lodashStable.create({ 'a': new Foo });
+      assert.deepEqual(_.pick(object, ['a.0.c', 'a.label']), { 'a': { '0': { 'c': 1 }, 'label': 'kept' } });
+    });
+
+    QUnit.test('should preserve references to selected objects', function(assert) {
+      assert.expect(5);
+
+      var object = { 'a': { '0': { 'c': 1, 'd': 2 } } },
+          paths = ['a', 'a.0.c'];
+
+      lodashStable.each([object.a, [object.a[0]]], function(value) {
+        lodashStable.times(2, function() {
+          assert.strictEqual(_.pick({ 'a': value }, paths).a, value);
+          paths.reverse();
+        });
+      });
+      assert.strictEqual(_.pick(object, 'a.0').a[0], object.a[0]);
+    });
+
     QUnit.test('should support path arrays', function(assert) {
       assert.expect(1);
 

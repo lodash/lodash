@@ -3070,15 +3070,19 @@
      * @private
      * @param {Object} object The object to query.
      * @param {Array|string} path The path of the property to get.
+     * @param {Array} [parents] The array to populate with path parents.
      * @returns {*} Returns the resolved value.
      */
-    function baseGet(object, path) {
+    function baseGet(object, path, parents) {
       path = castPath(path, object);
 
       var index = 0,
           length = path.length;
 
       while (object != null && index < length) {
+        if (parents) {
+          parents.push(object);
+        }
         object = object[toKey(path[index++])];
       }
       return (index && index == length) ? object : undefined;
@@ -3825,16 +3829,15 @@
 
       while (++index < length) {
         var path = paths[index],
-            value = baseGet(object, path);
+            parents = [],
+            value = baseGet(object, path, parents);
 
         if (predicate(value, path)) {
-          var nested = object,
-              pathIndex = 0;
+          var pathIndex = 0;
 
           path = castPath(path, object);
           baseSet(result, path, value, function(objValue, key, parent) {
-            nested = nested == null ? undefined : nested[key];
-            ++pathIndex;
+            var nested = parents[++pathIndex];
             if (isObject(objValue) && hasOwnProperty.call(parent, key)) {
               return objValue;
             }

@@ -17825,6 +17825,87 @@
       assert.deepEqual(_.pick(nested, 'b.c'), { 'b': { 'c': 2 } });
     });
 
+    QUnit.test('should not reread accessors to create path containers', function(assert) {
+      assert.expect(8);
+
+      lodashStable.each(['a.b', [['a', 'b']]], function(path) {
+        lodashStable.each([false, true], function(inherited) {
+          var reads = 0,
+              object = {};
+
+          defineProperty(object, 'a', {
+            'get': function() {
+              if (++reads == 3) {
+                throw new Error('third read');
+              }
+              return { 'b': 1 };
+            }
+          });
+
+          assert.deepEqual(_.pick(inherited ? lodashStable.create(object) : object, path), { 'a': { 'b': 1 } });
+          assert.strictEqual(reads, 2);
+        });
+      });
+    });
+
+    QUnit.test('should preserve containers resolved by deep accessors', function(assert) {
+      assert.expect(18);
+
+      lodashStable.each([false, true], function(isArray) {
+        lodashStable.each(['a.2.b', 'a[2].b', [['a', 2, 'b']]], function(path) {
+          var reads = [0, 0],
+              object = {},
+              nested = isArray ? Array(3) : {},
+              expected = { 'a': isArray ? [, , { 'b': 1 }] : { '2': { 'b': 1 } } };
+
+          defineProperty(object, 'a', {
+            'get': function() {
+              if (++reads[0] == 3) {
+                throw new Error('third read');
+              }
+              return nested;
+            }
+          });
+          defineProperty(nested, '2', {
+            'get': function() {
+              if (++reads[1] == 3) {
+                throw new Error('third read');
+              }
+              return { 'b': 1 };
+            }
+          });
+
+          var actual = _.pick(object, path);
+          assert.deepEqual(actual, expected);
+          assert.strictEqual(lodashStable.isArray(actual.a), isArray);
+          assert.deepEqual(reads, [2, 2]);
+        });
+      });
+    });
+
+    QUnit.test('should not reread proxies to create path containers', function(assert) {
+      assert.expect(4);
+
+      if (Proxy) {
+        lodashStable.each(['a.0.b', [['a', 0, 'b']]], function(path) {
+          var reads = [],
+              handler = {
+                'get': function(target, key) {
+                  reads.push(key);
+                  return target[key];
+                }
+              },
+              nested = new Proxy({ 'b': 1 }, handler),
+              object = new Proxy({ 'a': new Proxy({ '0': nested }, handler) }, handler);
+
+          assert.deepEqual(_.pick(object, path), { 'a': { '0': { 'b': 1 } } });
+          assert.deepEqual(reads, ['a', '0', 'b', 'a', '0', 'b']);
+        });
+      } else {
+        skipAssert(assert, 4);
+      }
+    });
+
     QUnit.test('should preserve nested objects with numeric keys', function(assert) {
       assert.expect(12);
 

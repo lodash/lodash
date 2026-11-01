@@ -15237,6 +15237,9 @@
           separator.lastIndex = 0;
           while ((match = separator.exec(substring))) {
             var newEnd = match.index;
+            if (!match[0].length) {
+              separator.lastIndex += (separator.unicode || separator.unicodeSets) && substring.codePointAt(separator.lastIndex) > 0xFFFF ? 2 : 1;
+            }
           }
           result = result.slice(0, newEnd === undefined ? end : newEnd);
         }

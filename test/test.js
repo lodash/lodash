@@ -22805,6 +22805,15 @@
       assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /,? +/g }), 'hi-diddly-ho there...');
     });
 
+    QUnit.test('should support a `separator` that matches an empty string', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /(?<=,)x*/ }), 'hi-diddly-ho there,...');
+      assert.strictEqual(_.truncate(string, { 'length': 24, 'separator': /(?<=,)x*/g }), 'hi-diddly-ho there,...');
+      assert.strictEqual(_.truncate('a\ud83d\udca9bc', { 'length': 3, 'omission': '', 'separator': /(?<=a)/u }), 'a');
+      assert.strictEqual(_.truncate('a\ud83d\udca9bc', { 'length': 3, 'omission': '', 'separator': /(?<=a)/gu }), 'a');
+    });
+
     QUnit.test('should treat negative `length` as `0`', function(assert) {
       assert.expect(2);
 

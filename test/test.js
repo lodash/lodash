@@ -20350,6 +20350,56 @@
         assert.ok(pass);
       });
     });
+    QUnit.test('`_.' + methodName + '` should set `constructor` and `prototype` terminal keys', function(assert) {
+      assert.expect(4);
+
+      var object = {};
+      func(object, 'constructor', updater);
+      assert.strictEqual(object.constructor, value);
+
+      object = {};
+      func(object, ['prototype'], updater);
+      assert.strictEqual(object.prototype, value);
+
+      object = {};
+      func(object, 'a.constructor', updater);
+      assert.deepEqual(object, { 'a': { 'constructor': value } });
+
+      object = { 'a': {} };
+      func(object, ['a', 'prototype'], updater);
+      assert.deepEqual(object, { 'a': { 'prototype': value } });
+    });
+
+    QUnit.test('`_.' + methodName + '` should not assign to built-ins via `constructor` or `prototype` traversal', function(assert) {
+      assert.expect(8);
+
+      lodashStable.each([
+        ['constructor', 'prototype', 'polluted'],
+        'constructor.prototype.polluted',
+        ['a', 'constructor', 'prototype', 'polluted'],
+        ['prototype', 'polluted'],
+        ['a', 'prototype', 'polluted'],
+        ['__proto__', 'polluted'],
+        'a.__proto__.polluted',
+        [['a'], ['__proto__'], ['polluted']]
+      ], function(path) {
+        func({ 'a': {} }, path, updater);
+      });
+
+      lodashStable.each([{}, { 'a': {} }, [], '', 0, true], function(object) {
+        func(object, ['constructor', 'keys'], updater);
+        func(object, 'constructor.isFinite', updater);
+      });
+
+      assert.strictEqual(typeof Object.keys, 'function', 'Object.keys should not be overwritten');
+      assert.strictEqual(typeof Number.isFinite, 'function', 'Number.isFinite should not be overwritten');
+      assert.notOk('polluted' in objectProto, 'Object.prototype should not be polluted');
+      assert.notOk('polluted' in arrayProto, 'Array.prototype should not be polluted');
+      assert.notOk('polluted' in stringProto, 'String.prototype should not be polluted');
+      assert.notOk('polluted' in funcProto, 'Function.prototype should not be polluted');
+      assert.notOk('polluted' in numberProto, 'Number.prototype should not be polluted');
+      assert.notOk('polluted' in booleanProto, 'Boolean.prototype should not be polluted');
+    });
   });
 
   /*--------------------------------------------------------------------------*/
@@ -26039,6 +26089,15 @@
       // ensure nothing was created
       assert.notOk(root.c);
     });
+  });
+
+  QUnit.test('zipObjectDeep should treat `constructor` and `prototype` as terminal keys', function(assert) {
+    assert.expect(2);
+
+    var actual = _.zipObjectDeep(['constructor', 'a.prototype'], ['x', 'y']);
+
+    assert.strictEqual(actual.constructor, 'x');
+    assert.deepEqual(actual.a, { 'prototype': 'y' });
   });
 
   /*--------------------------------------------------------------------------*/

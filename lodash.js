@@ -4037,7 +4037,11 @@
         var key = toKey(path[index]),
             newValue = value;
 
-        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        // Only `__proto__` is blocked as a terminal key because assigning it would
+        // invoke the `[[Prototype]]` setter. Assigning an own `constructor` or
+        // `prototype` key is a plain own property write, so those are blocked only
+        // when traversing further, matching the guard used by `baseUnset`.
+        if (key === '__proto__' || ((key === 'constructor' || key === 'prototype') && index != lastIndex)) {
           return object;
         }
 

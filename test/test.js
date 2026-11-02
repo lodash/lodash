@@ -20350,6 +20350,7 @@
         assert.ok(pass);
       });
     });
+
     QUnit.test('`_.' + methodName + '` should set `constructor` and `prototype` terminal keys', function(assert) {
       assert.expect(4);
 

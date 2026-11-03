@@ -19303,6 +19303,96 @@
 
       assert.deepEqual(array, [2]);
     });
+
+    QUnit.test('should remove many elements from a large array', function(assert) {
+      assert.expect(3);
+
+      var array = lodashStable.range(LARGE_ARRAY_SIZE * 10),
+          expected = lodashStable.filter(array, isEven),
+          expectedRemoved = lodashStable.reject(array, isEven);
+
+      var actual = _.remove(array, function(n) {
+        return !isEven(n);
+      });
+
+      assert.deepEqual(array, expected);
+      assert.deepEqual(actual, expectedRemoved);
+      assert.strictEqual(array.length, expected.length);
+    });
+
+    QUnit.test('should keep holes in place when removing many elements', function(assert) {
+      assert.expect(4);
+
+      var array = lodashStable.range(LARGE_ARRAY_SIZE + 6);
+      delete array[LARGE_ARRAY_SIZE + 3];
+      delete array[LARGE_ARRAY_SIZE + 5];
+
+      _.remove(array, function(n, index) {
+        return index < LARGE_ARRAY_SIZE;
+      });
+
+      assert.strictEqual(array.length, 6);
+      assert.deepEqual([array[0], array[2], array[4]], [LARGE_ARRAY_SIZE, LARGE_ARRAY_SIZE + 2, LARGE_ARRAY_SIZE + 4]);
+      assert.notOk('3' in array);
+      assert.notOk('5' in array);
+    });
+
+    QUnit.test('should work when `predicate` changes the length of a large array', function(assert) {
+      assert.expect(5);
+
+      var array = lodashStable.range(LARGE_ARRAY_SIZE * 2),
+          expected = lodashStable.reject(array, isEven).concat(-1);
+
+      _.remove(array, function(n, index, array) {
+        if (index == 0) {
+          array.push(-1);
+        }
+        return isEven(n);
+      });
+
+      assert.deepEqual(array, expected);
+
+      array = lodashStable.range(LARGE_ARRAY_SIZE * 2);
+      expected = lodashStable.reject(lodashStable.range(LARGE_ARRAY_SIZE), isEven);
+
+      var actual = _.remove(array, function(n, index, array) {
+        if (index == 0) {
+          array.length = LARGE_ARRAY_SIZE;
+        }
+        return isEven(index);
+      });
+
+      assert.deepEqual(array, expected);
+      assert.strictEqual(actual.length, LARGE_ARRAY_SIZE);
+
+      array = lodashStable.range(LARGE_ARRAY_SIZE * 2);
+      actual = _.remove(array, function(n, index, array) {
+        if (index == array.length - 1) {
+          array.length = 1;
+        }
+        return index > 1;
+      });
+
+      assert.deepEqual(array, [0]);
+      assert.strictEqual(actual.length, LARGE_ARRAY_SIZE * 2 - 2);
+    });
+
+    QUnit.test('should throw when removing many elements from a frozen array', function(assert) {
+      assert.expect(2);
+
+      if (freeze) {
+        var array = freeze(lodashStable.range(LARGE_ARRAY_SIZE * 2));
+
+        assert.raises(function() {
+          _.remove(array, isEven);
+        }, TypeError);
+
+        assert.deepEqual(array, lodashStable.range(LARGE_ARRAY_SIZE * 2));
+      }
+      else {
+        skipAssert(assert, 2);
+      }
+    });
   }());
 
   /*--------------------------------------------------------------------------*/

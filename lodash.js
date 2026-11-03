@@ -657,6 +657,45 @@
   }
 
   /**
+   * A specialized version of `basePullAt` for arrays. It removes the elements
+   * in one pass instead of one `splice` per index, keeping holes as holes.
+   *
+   * @private
+   * @param {Array} array The array to modify.
+   * @param {number[]} indexes The indexes of elements to remove, sorted in
+   *  ascending order and without duplicates.
+   * @returns {Array} Returns `array`.
+   */
+  function arrayPullAt(array, indexes) {
+    // Strict mode makes a failed write throw, as `splice` does, for example
+    // when `array` is frozen.
+    'use strict';
+
+    var length = array.length,
+        pullIndex = 0,
+        pullLength = indexes.length,
+        resIndex = pullLength ? indexes[0] : length,
+        index = resIndex - 1;
+
+    while (++index < length) {
+      if (pullIndex < pullLength && index === indexes[pullIndex]) {
+        pullIndex++;
+      } else {
+        if (index in array) {
+          array[resIndex] = array[index];
+        } else {
+          delete array[resIndex];
+        }
+        resIndex++;
+      }
+    }
+    if (resIndex < length) {
+      array.length = resIndex;
+    }
+    return array;
+  }
+
+  /**
    * Appends the elements of `values` to `array`.
    *
    * @private
@@ -7956,7 +7995,13 @@
           indexes.push(index);
         }
       }
-      basePullAt(array, indexes);
+      // One `splice` per removed element is quadratic, so compact in one pass
+      // when many elements are removed.
+      if (isArray(array) && indexes.length >= LARGE_ARRAY_SIZE) {
+        arrayPullAt(array, indexes);
+      } else {
+        basePullAt(array, indexes);
+      }
       return result;
     }
 

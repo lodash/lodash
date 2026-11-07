@@ -23271,6 +23271,72 @@
       }, 64);
     });
 
+    QUnit.test('`_.' + methodName + '` should use defaults for undefined options', function(assert) {
+      assert.expect(2);
+
+      var callCount = 0,
+          funced = func(function() { return ++callCount; }, 32, {
+            'leading': undefined,
+            'trailing': undefined
+          });
+
+      funced();
+      assert.strictEqual(callCount, isDebounce ? 0 : 1);
+      funced();
+      assert.strictEqual(funced.flush(), isDebounce ? 1 : 2);
+      funced.cancel();
+    });
+
+    QUnit.test('`_.' + methodName + '` should preserve zero-wait throttling when wait is omitted', function(assert) {
+      assert.expect(3);
+
+      if (isDebounce || isModularize) {
+        skipAssert(assert, 3);
+        return;
+      }
+      var lodash = _.runInContext({
+        'Date': { 'now': function() { return 0; } },
+        'setTimeout': function() { return 1; },
+        'clearTimeout': noop
+      });
+
+      lodashStable.each([[], [undefined], [0]], function(args) {
+        var callCount = 0;
+        args.unshift(function() { callCount++; });
+        var throttled = lodash.throttle.apply(lodash, args);
+        throttled();
+        throttled();
+        assert.strictEqual(callCount, 2);
+      });
+    });
+
+    QUnit.test('`_.' + methodName + '` should not enable maxWait when undefined', function(assert) {
+      assert.expect(1);
+
+      if (!isDebounce || isModularize) {
+        skipAssert(assert);
+        return;
+      }
+      var callCount = 0,
+          time = 0,
+          lodash = _.runInContext({
+            'Date': { 'now': function() { return time; } },
+            'setTimeout': function() { return 1; },
+            'clearTimeout': noop
+          });
+
+      var funced = lodash.debounce(function() { callCount++; }, 32, {
+        'maxWait': undefined
+      });
+
+      funced();
+      time = 16;
+      funced();
+      time = 32;
+      funced();
+      assert.strictEqual(callCount, 0);
+    });
+
     QUnit.test('`_.' + methodName + '` should support flushing delayed calls', function(assert) {
       assert.expect(2);
 

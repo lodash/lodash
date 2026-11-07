@@ -23271,6 +23271,31 @@
       }, 64);
     });
 
+    QUnit.test('`_.' + methodName + '` should clear the timeout before flushing', function(assert) {
+      assert.expect(4);
+
+      if (isModularize) {
+        skipAssert(assert, 4);
+        return;
+      }
+      var callCount = 0,
+          cleared = [],
+          lodash = _.runInContext({
+            'setTimeout': function() { return 1; },
+            'clearTimeout': function(id) { cleared.push(id); }
+          });
+
+      var funced = lodash[methodName](function() {
+        assert.deepEqual(cleared, [1]);
+        return ++callCount;
+      }, 32, { 'leading': false });
+
+      funced();
+      assert.strictEqual(funced.flush(), 1);
+      assert.strictEqual(funced.flush(), 1);
+      assert.deepEqual(cleared, [1]);
+    });
+
     QUnit.test('`_.' + methodName + '` should support flushing delayed calls', function(assert) {
       assert.expect(2);
 

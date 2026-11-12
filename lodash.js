@@ -4380,7 +4380,8 @@
       // https://github.com/lodash/lodash/security/advisories/GHSA-xxjr-mmjv-4gpg
       // https://github.com/lodash/lodash/security/advisories/GHSA-f23m-r3pf-42rh
       var index = -1,
-          length = path.length;
+          length = path.length,
+          current = object;
 
       if (!length) {
         return true;
@@ -4389,8 +4390,11 @@
       while (++index < length) {
         var key = toKey(path[index]);
 
-        // Always block "__proto__" anywhere in the path if it's not expected
-        if (key === '__proto__' && !hasOwnProperty.call(object, '__proto__')) {
+        // Always block "__proto__" unless the *current* node owns that key.
+        // Checking only the root (the previous behavior) disabled the guard
+        // for every later segment once the root itself had an own "__proto__".
+        if (key === '__proto__' &&
+            !(current != null && hasOwnProperty.call(current, '__proto__'))) {
           return false;
         }
 
@@ -4399,10 +4403,15 @@
         if ((key === 'constructor' || key === 'prototype') && index < length - 1) {
           return false;
         }
+
+        if (index < length - 1 && current != null) {
+          current = current[key];
+        }
       }
 
-      var obj = parent(object, path);
-      return obj == null || delete obj[toKey(last(path))];
+      // Reuse the parent reached by the walk above. Calling parent() would
+      // traverse accessor segments again (different objects, double side effects).
+      return current == null || delete current[toKey(last(path))];
     }
 
     /**

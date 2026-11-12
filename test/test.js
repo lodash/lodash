@@ -25348,6 +25348,38 @@
       assert.strictEqual(typeof funcProto.apply, 'function', 'Function.prototype.apply should not be deletable via deep constructor.prototype chain');
     });
 
+    // https://github.com/lodash/lodash/issues/6263
+    QUnit.test('Security: _.unset should check __proto__ ownership on the current path node', function(assert) {
+      assert.expect(2);
+
+      objectProto.lodashUnsetGuard = 'keep';
+      var object = JSON.parse('{"__proto__": 1}');
+      object.child = {};
+
+      assert.strictEqual(_.unset(object, ['child', '__proto__', 'lodashUnsetGuard']), false);
+      assert.strictEqual(objectProto.lodashUnsetGuard, 'keep', 'should not delete from Object.prototype when only the root owns __proto__');
+
+      delete objectProto.lodashUnsetGuard;
+    });
+
+    QUnit.test('should unset on the parent from the first walk, not a second traversal', function(assert) {
+      assert.expect(3);
+
+      var reads = 0;
+      var first = { 'value': 1 };
+      var second = { 'value': 2 };
+      var object = {
+        get child() {
+          reads += 1;
+          return reads === 1 ? first : second;
+        }
+      };
+
+      assert.strictEqual(_.unset(object, ['child', 'value']), true);
+      assert.ok(!('value' in first), 'should delete from the first getter result');
+      assert.ok('value' in second, 'should not traverse the getter a second time');
+    });
+
     QUnit.test('Security: _.unset should not allow deleting static methods from constructors', function(assert) {
       assert.expect(8);
 

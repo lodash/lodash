@@ -25362,6 +25362,24 @@
       delete objectProto.lodashUnsetGuard;
     });
 
+    QUnit.test('should unset on the parent from the first walk, not a second traversal', function(assert) {
+      assert.expect(3);
+
+      var reads = 0;
+      var first = { 'value': 1 };
+      var second = { 'value': 2 };
+      var object = {
+        get child() {
+          reads += 1;
+          return reads === 1 ? first : second;
+        }
+      };
+
+      assert.strictEqual(_.unset(object, ['child', 'value']), true);
+      assert.ok(!('value' in first), 'should delete from the first getter result');
+      assert.ok('value' in second, 'should not traverse the getter a second time');
+    });
+
     QUnit.test('Security: _.unset should not allow deleting static methods from constructors', function(assert) {
       assert.expect(8);
 

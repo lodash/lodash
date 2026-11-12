@@ -4409,8 +4409,9 @@
         }
       }
 
-      var obj = parent(object, path);
-      return obj == null || delete obj[toKey(last(path))];
+      // Reuse the parent reached by the walk above. Calling parent() would
+      // traverse accessor segments again (different objects, double side effects).
+      return current == null || delete current[toKey(last(path))];
     }
 
     /**

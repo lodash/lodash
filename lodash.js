@@ -11107,8 +11107,10 @@
      * and supports cloning arrays, array buffers, booleans, date objects, maps,
      * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
      * arrays. The own enumerable properties of `arguments` objects are cloned
-     * as plain objects. An empty object is returned for uncloneable values such
-     * as error objects, functions, DOM nodes, and WeakMaps.
+     * as plain objects. When passed directly, regular functions and generators
+     * are copied as plain objects containing their own enumerable properties.
+     * For other uncloneable values passed directly, such as error objects,
+     * DOM nodes, and WeakMaps, the result is an empty object.
      *
      * @static
      * @memberOf _
@@ -11167,6 +11169,7 @@
 
     /**
      * This method is like `_.clone` except that it recursively clones `value`.
+     * Nested functions keep their original references.
      *
      * @static
      * @memberOf _
@@ -11182,6 +11185,13 @@
      * var deep = _.cloneDeep(objects);
      * console.log(deep[0] === objects[0]);
      * // => false
+     *
+     * var fn = function() {};
+     * console.log(_.cloneDeep(fn));
+     * // => {}
+     *
+     * console.log(_.cloneDeep({ 'fn': fn }).fn === fn);
+     * // => true
      */
     function cloneDeep(value) {
       return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG);

@@ -3825,7 +3825,8 @@
     function basePickBy(object, paths, predicate) {
       var index = -1,
           length = paths.length,
-          result = {};
+          result = {},
+          resultContainers;
 
       while (++index < length) {
         var path = paths[index],
@@ -3838,12 +3839,17 @@
           path = castPath(path, object);
           baseSet(result, path, value, function(objValue, key, parent) {
             var nested = parents[++pathIndex];
-            if (isObject(objValue) && hasOwnProperty.call(parent, key)) {
+            resultContainers || (resultContainers = new SetCache([result]));
+            if (isObject(objValue) &&
+                (!resultContainers.has(parent) || hasOwnProperty.call(parent, key))) {
               return objValue;
             }
-            return isObject(nested) && !isArray(nested)
+            var container = isObject(nested) && !isArray(nested)
               ? {}
               : (isIndex(path[pathIndex]) ? [] : {});
+
+            resultContainers.add(container);
+            return container;
           });
         }
       }

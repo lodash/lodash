@@ -17995,6 +17995,18 @@
       assert.strictEqual(_.pick(object, 'a.0').a[0], object.a[0]);
     });
 
+    QUnit.test('should preserve inherited containers of selected objects', function(assert) {
+      assert.expect(3);
+
+      var inherited = { 'b': { 'c': 1, 'd': 2 } },
+          value = lodashStable.create(inherited),
+          actual = _.pick({ 'a': value }, ['a', 'a.b.c']);
+
+      assert.strictEqual(actual.a, value);
+      assert.strictEqual(actual.a.b, inherited.b);
+      assert.strictEqual(actual.a.b.d, 2);
+    });
+
     QUnit.test('should support path arrays', function(assert) {
       assert.expect(1);
 

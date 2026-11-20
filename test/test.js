@@ -25348,6 +25348,19 @@
       assert.strictEqual(typeof funcProto.apply, 'function', 'Function.prototype.apply should not be deletable via deep constructor.prototype chain');
     });
 
+    QUnit.test('Security: _.unset should check "__proto__" on the current object, not the root', function(assert) {
+      assert.expect(2);
+
+      Object.prototype.victim = 'SAFE';
+      var root = JSON.parse('{"__proto__":1,"a":{}}');
+
+      var actual = _.unset(root, 'a.__proto__.victim');
+
+      assert.strictEqual(actual, false, 'unset should refuse the nested "__proto__" traversal');
+      assert.strictEqual(Object.prototype.victim, 'SAFE', 'Object.prototype should not be modified');
+      delete Object.prototype.victim;
+    });
+
     QUnit.test('Security: _.unset should not allow deleting static methods from constructors', function(assert) {
       assert.expect(8);
 

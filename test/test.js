@@ -19824,6 +19824,15 @@
       assert.strictEqual(actual, 4.1);
     });
 
+    QUnit.test('`_.' + methodName + '` should preserve large integers at positive precisions', function(assert) {
+      assert.expect(4);
+
+      assert.strictEqual(func(1e307, 2), 1e307);
+      assert.strictEqual(func(-1e307, 2), -1e307);
+      assert.strictEqual(func(MAX_INTEGER, 1), MAX_INTEGER);
+      assert.strictEqual(func(-MAX_INTEGER, 1), -MAX_INTEGER);
+    });
+
     QUnit.test('`_.' + methodName + '` should work with a negative precision', function(assert) {
       assert.expect(1);
 
